@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Research Director Desktop</title>
+    <link rel="stylesheet" href="./chrome.css" />
+  </head>
+  <body>
+    <header id="toolbar" class="toolbar hidden">
+      <button id="back-to-launcher" type="button">← Back to launcher</button>
+      <span id="content-location" class="content-location"></span>
+      <button id="open-in-browser" type="button" class="hidden">Open in browser</button>
+    </header>
+
+    <main id="launcher-view" class="view">
+      <h1>Research Director Desktop</h1>
+      <p class="subtitle">Choose where to work. Nothing leaves this device unless you choose the online runtime.</p>
+
+      <section class="cards">
+        <article class="card">
+          <h2>Offline Atlas</h2>
+          <p>
+            Browse the packaged static atlas build. Runs entirely on this device — no network, no account,
+            no telemetry from this shell.
+          </p>
+          <button id="open-atlas" type="button">Open offline atlas</button>
+          <p id="atlas-status" class="status"></p>
+        </article>
+
+        <article class="card">
+          <h2>Connect to Online Runtime</h2>
+          <p>
+            Open the authenticated Director for full cloud-backed projects. Requires HTTPS (or localhost HTTP
+            for development). Your session and credentials stay inside the runtime site; this shell stores
+            <strong>only the URL</strong>, never tokens.
+          </p>
+          <form id="connect-form">
+            <input id="runtime-url" type="text" placeholder="https://director.example.com" autocomplete="off" />
+            <button type="submit">Connect</button>
+          </form>
+          <p id="connect-status" class="status"></p>
+        </article>
+
+        <article class="card">
+          <h2>System &amp; Models</h2>
+          <p>
+            Inspect this machine, create isolated Python environments, and download reviewed local models.
+            Everything in this panel is local-only; downloads come only from the reviewed catalog over HTTPS.
+          </p>
+          <button id="open-system" type="button">Open System &amp; Models</button>
+        </article>
+
+        <article class="card">
+          <h2>Local Projects</h2>
+          <p>
+            Run text-only specialist squads (Director / Research / Build / Review) on your own OpenAI or
+            Anthropic key — or a local Ollama — with hard token, time, and dollar budgets. Keys stay
+            encrypted in your OS keychain; prompts go only to the provider you choose.
+          </p>
+          <button id="open-projects" type="button">Open Local Projects</button>
+        </article>
+      </section>
+
+      <footer class="privacy">
+        <h3>Privacy &amp; billing</h3>
+        <ul>
+          <li><strong>Offline atlas &amp; System &amp; Models:</strong> fully local. No data leaves your device; no charges.</li>
+          <li>
+            <strong>Online runtime:</strong> your projects, prompts, and files are processed by the hosted Director
+            service under its own terms; usage may be billed by that service. The desktop shell never sees your
+            credentials.
+          </li>
+          <li>
+            <strong>Model downloads:</strong> files are fetched from Hugging Face over HTTPS into this device only.
+            Models are never executed by this shell.
+          </li>
+          <li><strong>Job log:</strong> local JSONL log of downloads/venvs under the app data directory. No secrets.</li>
+          <li>
+            <strong>Local Projects:</strong> prompts and generated text go directly from this device to the
+            provider you select (OpenAI / Anthropic) or to your local Ollama. Providers bill your own key per
+            their terms. Your budgets (tokens / minutes / USD) are hard stops. API keys are stored only as
+            OS-keychain-encrypted blobs under the app data directory and are never displayed or logged.
+          </li>
+        </ul>
+      </footer>
+    </main>
+
+    <main id="projects-view" class="view hidden">
+      <div class="row space-between">
+        <h1>Local Projects</h1>
+        <button id="projects-back" type="button">← Back to launcher</button>
+      </div>
+
+      <section class="panel">
+        <h2>API keys</h2>
+        <p class="muted">
+          Keys are encrypted with your OS keychain (Electron safeStorage) and stored only as encrypted blobs
+          under the app data directory. They are used only for direct API calls from this device to the
+          selected provider, are never shown again after entry (not even a last4), and never appear in logs,
+          events, or artifacts. Revoke deletes the encrypted blob. See SECURITY.md for the threat model
+          (rooted devices, unlocked keyrings, your responsibilities).
+        </p>
+        <p id="vault-warning" class="status error hidden"></p>
+        <div id="key-rows"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Ollama (optional, local only)</h2>
+        <p class="muted">
+          Detects an Ollama server you already started at <code>http://127.0.0.1:11434</code> and lists the
+          models you already downloaded. This shell never installs or starts Ollama, never pulls models, and
+          never contacts remote Ollama hosts.
+        </p>
+        <button id="ollama-detect" type="button" class="secondary">Detect Ollama</button>
+        <span id="ollama-status" class="status"></span>
+        <div id="ollama-models" class="row wrap"></div>
+      </section>
+
+      <section class="panel">
+        <h2>New project</h2>
+        <form id="project-form" class="stack">
+          <input id="proj-name" type="text" placeholder="Project name" autocomplete="off" />
+          <textarea id="proj-goal" rows="3" placeholder="Goal (text only)…"></textarea>
+          <div class="row wrap">
+            <label>Provider
+              <select id="proj-provider">
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="ollama">Ollama (local)</option>
+              </select>
+            </label>
+            <button id="proj-list-models" type="button" class="secondary">List models (live)</button>
+            <select id="proj-model-select" class="hidden"></select>
+            <input id="proj-model" type="text" placeholder="model id" autocomplete="off" />
+          </div>
+          <h3>Squad</h3>
+          <div id="squad-editor" class="stack"></div>
+          <div class="row wrap">
+            <button type="button" id="squad-add" class="secondary">+ Add node</button>
+            <button type="button" id="squad-reset" class="secondary">Reset to standard squad</button>
+          </div>
+          <button type="submit">Create project</button>
+        </form>
+        <p id="proj-status" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <div class="row space-between">
+          <h2>Projects</h2>
+          <button id="projects-refresh" type="button">Refresh</button>
+        </div>
+        <div id="project-list" class="stack"></div>
+      </section>
+
+      <section class="panel" id="run-panel">
+        <h2>Run: <span id="run-project-name">(select a project)</span></h2>
+        <div id="run-config" class="stack">
+          <div class="row wrap">
+            <label>Run max tokens <input id="run-max-tokens" type="number" min="1" value="20000" /></label>
+            <label>Run max minutes <input id="run-max-minutes" type="number" min="0.1" step="0.1" value="10" /></label>
+            <label>Run max USD <input id="run-max-usd" type="number" min="0.0001" step="0.01" value="1" /></label>
+          </div>
+          <div class="row wrap">
+            <label>Input $ / 1M tokens <input id="rate-input" type="number" min="0" step="0.01" value="0" /></label>
+            <label>Output $ / 1M tokens <input id="rate-output" type="number" min="0" step="0.01" value="0" /></label>
+          </div>
+          <p class="muted">
+            Price rates are yours: enter the rates from your provider's pricing page. With 0 rates the USD
+            budget never triggers. Budgets are hard stops; partial artifacts are always preserved.
+          </p>
+          <div class="row wrap">
+            <button id="run-start" type="button">Run</button>
+            <button id="run-pause" type="button" class="secondary">Pause</button>
+            <button id="run-resume" type="button" class="secondary">Resume</button>
+            <button id="run-cancel" type="button" class="danger">Cancel</button>
+          </div>
+          <p id="run-status" class="status"></p>
+        </div>
+        <div id="run-detail"></div>
+        <div id="artifact-view"></div>
+      </section>
+    </main>
+
+    <main id="system-view" class="view hidden">
+      <div class="row space-between">
+        <h1>System &amp; Models</h1>
+        <button id="system-back" type="button">← Back to launcher</button>
+      </div>
+
+      <section class="panel">
+        <div class="row space-between">
+          <h2>System information</h2>
+          <button id="refresh-sysinfo" type="button">Refresh</button>
+        </div>
+        <div id="sysinfo" class="kv"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Virtual environments</h2>
+        <p class="muted">
+          Creates an isolated Python venv under the app data directory (<code>userData/venvs/&lt;name&gt;</code>)
+          using the detected Python 3. The shell never activates environments and never runs repo or model code.
+        </p>
+        <form id="venv-form" class="stack">
+          <input id="venv-name" type="text" placeholder="venv name (e.g. hf-tools)" autocomplete="off" />
+          <label><input id="venv-install-hf" type="checkbox" /> Install pinned <code>huggingface_hub</code> tool</label>
+          <label class="confirm">
+            <input id="venv-confirm" type="checkbox" />
+            I confirm creating this virtual environment on my device.
+          </label>
+          <button type="submit">Create venv</button>
+        </form>
+        <p id="venv-status" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <div class="row space-between">
+          <h2>Model catalog (reviewed)</h2>
+          <button id="refresh-catalog" type="button">Refresh</button>
+        </div>
+        <p class="muted">
+          Only models reviewed into <code>models.catalog.json</code> appear here. Downloads require your
+          confirmation, are pinned to a commit, land under <code>userData/models</code>, and are never executed.
+        </p>
+        <div id="catalog"></div>
+        <p id="catalog-status" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <div class="row space-between">
+          <h2>Jobs</h2>
+          <button id="refresh-jobs" type="button">Refresh</button>
+        </div>
+        <table id="jobs-table">
+          <thead>
+            <tr><th>Job</th><th>Kind</th><th>Status</th><th>Progress</th><th>Detail</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+
+    <script type="module" src="./chrome.js"></script>
+  </body>
+</html>

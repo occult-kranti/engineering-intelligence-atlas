@@ -1,0 +1,2119 @@
+import type { AgentRepo, SkillEntry, TopicSearch, Community } from './types';
+
+export const AGENT_REPOS: AgentRepo[] = [
+  {
+    "domain": "Agent skills",
+    "repository": "anthropics/skills",
+    "url": "https://github.com/anthropics/skills",
+    "official": "Official Anthropic",
+    "purpose": "Agent Skill examples, document skills, design/testing/MCP/skill-creation references",
+    "status": "Active; not archived",
+    "license": "Per-skill LICENSE.txt; document skills Apache-2.0; no root license",
+    "pushedAt": "2026-11-16",
+    "stars": 197718,
+    "verified": "2026-11-20",
+    "caveat": "Educational examples; test locally and audit every bundled script."
+  },
+  {
+    "domain": "Agent plugins",
+    "repository": "anthropics/claude-plugins-official",
+    "url": "https://github.com/anthropics/claude-plugins-official",
+    "official": "Official Anthropic",
+    "purpose": "Anthropic-managed Claude Code plugin directory",
+    "status": "Active",
+    "license": "Apache-2.0",
+    "pushedAt": "2026-11-20",
+    "stars": 47735,
+    "verified": "2026-11-20",
+    "caveat": "Review plugin manifests, hooks, MCP servers, and permissions."
+  },
+  {
+    "domain": "Security agents",
+    "repository": "anthropics/defending-code-reference-harness",
+    "url": "https://github.com/anthropics/defending-code-reference-harness",
+    "official": "Official Anthropic",
+    "purpose": "Threat modeling, scanning, triage, patching skills and autonomous reference harness",
+    "status": "Active reference harness",
+    "license": "GitHub reports Other; read LICENSE and component terms",
+    "pushedAt": "2026-08-06",
+    "stars": 7770,
+    "verified": "2026-11-20",
+    "caveat": "Autonomous scanning requires repository/data authorization and isolated credentials."
+  },
+  {
+    "domain": "Vendor agent host",
+    "repository": "anthropics/claude-code",
+    "url": "https://github.com/anthropics/claude-code",
+    "official": "Official Anthropic",
+    "purpose": "Claude Code issue tracker, examples, plugins, and changelog",
+    "status": "Active",
+    "license": "Proprietary commercial terms; not open source",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Do not assume reuse rights from public visibility."
+  },
+  {
+    "domain": "Agent skills",
+    "repository": "openai/skills",
+    "url": "https://github.com/openai/skills",
+    "official": "Official OpenAI",
+    "purpose": "Historical Codex system/curated skills catalog",
+    "status": "DEPRECATED by README; use openai/plugins; not GitHub-archived",
+    "license": "Per-skill LICENSE.txt; no root license",
+    "pushedAt": "2026-10-28",
+    "stars": 28845,
+    "verified": "2026-11-20",
+    "caveat": "README points to plugins; referenced experimental directory is absent in current tree."
+  },
+  {
+    "domain": "Agent plugins",
+    "repository": "openai/plugins",
+    "url": "https://github.com/openai/plugins",
+    "official": "Official OpenAI",
+    "purpose": "Current curated Codex plugin examples across engineering, design, security, data, games, Slack, and partners",
+    "status": "Active",
+    "license": "No root license detected; inspect each plugin’s terms",
+    "pushedAt": "2026-11-18",
+    "stars": 8023,
+    "verified": "2026-11-20",
+    "caveat": "Public visibility is not a reuse license; audit manifests and per-plugin terms."
+  },
+  {
+    "domain": "Agent plugins",
+    "repository": "openai/community-plugins",
+    "url": "https://github.com/openai/community-plugins",
+    "official": "Official OpenAI host; community submissions",
+    "purpose": "Community-submitted Codex plugins",
+    "status": "Active; new/small catalog",
+    "license": "Apache-2.0",
+    "pushedAt": "2026-11-18",
+    "stars": 22,
+    "verified": "2026-11-20",
+    "caveat": "Community submissions require independent security review."
+  },
+  {
+    "domain": "Agent plugins",
+    "repository": "openai/role-specific-plugins",
+    "url": "https://github.com/openai/role-specific-plugins",
+    "official": "Official OpenAI",
+    "purpose": "Role-specific Codex plugin templates",
+    "status": "Active",
+    "license": "No root license detected",
+    "pushedAt": "2026-09-30",
+    "stars": 564,
+    "verified": "2026-11-20",
+    "caveat": "Verify per-template terms and role-fit evidence."
+  },
+  {
+    "domain": "Coding agents",
+    "repository": "openai/codex",
+    "url": "https://github.com/openai/codex",
+    "official": "Official OpenAI",
+    "purpose": "Open coding-agent harness/CLI and IDE integrations",
+    "status": "Active",
+    "license": "Apache-2.0",
+    "pushedAt": "2026-11-20",
+    "stars": 135898,
+    "verified": "2026-11-20",
+    "caveat": "Sandbox and least privilege remain necessary despite open code."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "openai/openai-agents-python",
+    "url": "https://github.com/openai/openai-agents-python",
+    "official": "Official OpenAI",
+    "purpose": "Lightweight agents, handoffs, guardrails, and tracing SDK",
+    "status": "Active",
+    "license": "MIT",
+    "pushedAt": "2026-11-20",
+    "stars": 30774,
+    "verified": "2026-11-20",
+    "caveat": "Provider/tool permissions and application evaluation remain user responsibilities."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "openai/openai-agents-js",
+    "url": "https://github.com/openai/openai-agents-js",
+    "official": "Official OpenAI",
+    "purpose": "TypeScript multi-agent and voice-agent workflows",
+    "status": "Active",
+    "license": "MIT",
+    "pushedAt": "2026-11-20",
+    "stars": 4030,
+    "verified": "2026-11-20",
+    "caveat": "Pin APIs and test realtime/voice permissions and privacy."
+  },
+  {
+    "domain": "Agent conventions",
+    "repository": "openai/agents.md",
+    "url": "https://github.com/openai/agents.md",
+    "official": "Official OpenAI",
+    "purpose": "AGENTS.md convention and FAQ",
+    "status": "Active",
+    "license": "MIT",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Convention, not a full versioned specification or conformance suite."
+  },
+  {
+    "domain": "Agent evaluation",
+    "repository": "openai/mle-bench",
+    "url": "https://github.com/openai/mle-bench",
+    "official": "Official OpenAI",
+    "purpose": "Benchmark for ML-engineering agents",
+    "status": "Active research benchmark",
+    "license": "GitHub reports Other; inspect license and dataset terms",
+    "pushedAt": "2026-04-24",
+    "stars": 1801,
+    "verified": "2026-11-20",
+    "caveat": "Benchmark results do not establish production readiness."
+  },
+  {
+    "domain": "UI testing agents",
+    "repository": "openai/openai-testing-agent-demo",
+    "url": "https://github.com/openai/openai-testing-agent-demo",
+    "official": "Official OpenAI",
+    "purpose": "Computer-using UI testing agent demonstration",
+    "status": "Demo; not a complete QA replacement",
+    "license": "GitHub reports Other; inspect terms",
+    "pushedAt": "2025-06-17",
+    "stars": 770,
+    "verified": "2026-11-20",
+    "caveat": "Autonomous UI actions need sandboxed test data and human review."
+  },
+  {
+    "domain": "Agent orchestration",
+    "repository": "openai/symphony",
+    "url": "https://github.com/openai/symphony",
+    "official": "Official OpenAI",
+    "purpose": "Isolated autonomous implementation runs and project-work orchestration",
+    "status": "Active",
+    "license": "Apache-2.0",
+    "pushedAt": "2026-09-15",
+    "stars": 28101,
+    "verified": "2026-11-20",
+    "caveat": "Review issue access, isolation, secrets, and execution policy before use."
+  },
+  {
+    "domain": "Agent history",
+    "repository": "openai/swarm",
+    "url": "https://github.com/openai/swarm",
+    "official": "Official OpenAI",
+    "purpose": "Educational lightweight multi-agent orchestration",
+    "status": "Educational/legacy; use current Agents SDK for new work",
+    "license": "MIT",
+    "pushedAt": "2026-04-15",
+    "stars": 22150,
+    "verified": "2026-11-20",
+    "caveat": "Do not confuse educational exploration with current production recommendation."
+  },
+  {
+    "domain": "Skills standard",
+    "repository": "agentskills/agentskills",
+    "url": "https://github.com/agentskills/agentskills",
+    "official": "Agent Skills standard organization / Linux Foundation AAIF",
+    "purpose": "Open Agent Skills specification, docs, and skills-ref validator",
+    "status": "Active; evolving standard",
+    "license": "Code Apache-2.0; documentation CC BY 4.0",
+    "pushedAt": "2026-11-04",
+    "stars": 27465,
+    "verified": "2026-11-20",
+    "caveat": "Versioning/security roadmap is evolving; test cross-client portability."
+  },
+  {
+    "domain": "MCP",
+    "repository": "modelcontextprotocol/servers",
+    "url": "https://github.com/modelcontextprotocol/servers",
+    "official": "Official MCP organization",
+    "purpose": "Reference MCP servers and implementation examples",
+    "status": "Active; not archived",
+    "license": "Mixed/per-component terms; GitHub reports Other",
+    "pushedAt": "2026-11-19",
+    "stars": 92117,
+    "verified": "2026-11-20",
+    "caveat": "Reference servers are not automatically safe for production or sensitive data."
+  },
+  {
+    "domain": "MCP",
+    "repository": "modelcontextprotocol/python-sdk",
+    "url": "https://github.com/modelcontextprotocol/python-sdk",
+    "official": "Official MCP organization",
+    "purpose": "Official MCP Python SDK",
+    "status": "Active",
+    "license": "MIT",
+    "pushedAt": "2026-11-17",
+    "stars": 24908,
+    "verified": "2026-11-20",
+    "caveat": "Validate server identity, tool descriptions, authorization, and input/output trust."
+  },
+  {
+    "domain": "MCP",
+    "repository": "modelcontextprotocol/typescript-sdk",
+    "url": "https://github.com/modelcontextprotocol/typescript-sdk",
+    "official": "Official MCP organization",
+    "purpose": "Official MCP TypeScript SDK",
+    "status": "Active",
+    "license": "GitHub reports Other; inspect current LICENSE",
+    "pushedAt": "2026-11-19",
+    "stars": 13787,
+    "verified": "2026-11-20",
+    "caveat": "Pin protocol/SDK versions and test compatibility."
+  },
+  {
+    "domain": "MCP tooling",
+    "repository": "modelcontextprotocol/inspector",
+    "url": "https://github.com/modelcontextprotocol/inspector",
+    "official": "Official MCP organization",
+    "purpose": "Deterministic MCP server testing and inspection",
+    "status": "Active",
+    "license": "GitHub reports Other; inspect current LICENSE",
+    "pushedAt": "2026-11-18",
+    "stars": 11335,
+    "verified": "2026-11-20",
+    "caveat": "Use in a controlled environment with test credentials only."
+  },
+  {
+    "domain": "MCP registry",
+    "repository": "modelcontextprotocol/registry",
+    "url": "https://github.com/modelcontextprotocol/registry",
+    "official": "Official MCP organization",
+    "purpose": "Community-driven MCP server registry service",
+    "status": "Active",
+    "license": "License file present; verify current terms",
+    "pushedAt": "2026-11-20",
+    "stars": 7481,
+    "verified": "2026-11-20",
+    "caveat": "Registry inclusion is not a security endorsement."
+  },
+  {
+    "domain": "A2A",
+    "repository": "a2aproject/A2A",
+    "url": "https://github.com/a2aproject/A2A",
+    "official": "Official A2A / Linux Foundation project",
+    "purpose": "Agent2Agent protocol specification and ecosystem entry point",
+    "status": "Active",
+    "license": "Apache-2.0",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "A2A complements rather than replaces MCP; assess actual interoperability needs."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "langchain-ai/langgraph",
+    "url": "https://github.com/langchain-ai/langgraph",
+    "official": "Official LangChain",
+    "purpose": "Stateful agent graphs, durable execution, and human-in-the-loop workflows",
+    "status": "Active",
+    "license": "MIT",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Fast API evolution; use explicit state and eval-gated deployment."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "pydantic/pydantic-ai",
+    "url": "https://github.com/pydantic/pydantic-ai",
+    "official": "Official Pydantic",
+    "purpose": "Type-safe Python agent framework",
+    "status": "Active",
+    "license": "MIT",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Validate provider/tool compatibility and structured-output behavior."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "microsoft/autogen",
+    "url": "https://github.com/microsoft/autogen",
+    "official": "Official Microsoft",
+    "purpose": "Agentic AI framework and research ecosystem",
+    "status": "Maintenance mode per README; not archived",
+    "license": "GitHub reports CC BY 4.0; inspect code/document license split",
+    "pushedAt": "2026-11-12",
+    "stars": 61945,
+    "verified": "2026-11-20",
+    "caveat": "Do not describe as archived; review migration guidance to Agent Framework."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "microsoft/agent-framework",
+    "url": "https://github.com/microsoft/agent-framework",
+    "official": "Official Microsoft reference; path needs re-verification",
+    "purpose": "Successor direction for AutoGen/Semantic Kernel applications",
+    "status": "Repository path returned 404 to one verification path on 2026-11-20; satellites active",
+    "license": "Verify current LICENSE and repository path",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Unresolved repository-path discrepancy; do not treat as fully verified."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "microsoft/agent-framework-go",
+    "url": "https://github.com/microsoft/agent-framework-go",
+    "official": "Official Microsoft",
+    "purpose": "Go agent and multi-agent workflow support",
+    "status": "Active/preview context",
+    "license": "MIT",
+    "pushedAt": "2026-11-20",
+    "stars": 685,
+    "verified": "2026-11-20",
+    "caveat": "Check preview/GA status and feature parity."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "ag2ai/ag2",
+    "url": "https://github.com/ag2ai/ag2",
+    "official": "Community AG2 project",
+    "purpose": "Community agent framework fork and ongoing development",
+    "status": "Active",
+    "license": "Apache-2.0",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Review API compatibility and relationship to AutoGen Classic."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "crewAIInc/crewAI",
+    "url": "https://github.com/crewAIInc/crewAI",
+    "official": "Official CrewAI",
+    "purpose": "Role-based crews and YAML-oriented agent workflows",
+    "status": "Active",
+    "license": "MIT",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Measure orchestration overhead, reliability, and task fit."
+  },
+  {
+    "domain": "Agent frameworks",
+    "repository": "google/adk-python",
+    "url": "https://github.com/google/adk-python",
+    "official": "Official Google",
+    "purpose": "Google Agent Development Kit for Python",
+    "status": "Active",
+    "license": "Apache-2.0",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Evaluate provider coupling and current SDK lifecycle."
+  },
+  {
+    "domain": "Agent runtimes",
+    "repository": "block/goose",
+    "url": "https://github.com/block/goose",
+    "official": "Official Block / AAIF direction",
+    "purpose": "Open agent runtime with MCP-native workflows",
+    "status": "Active",
+    "license": "Apache-2.0",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Review local tool privileges and extension trust."
+  },
+  {
+    "domain": "Skills distribution",
+    "repository": "vercel-labs/skills",
+    "url": "https://github.com/vercel-labs/skills",
+    "official": "Official Vercel Labs; community distribution layer",
+    "purpose": "skills.sh CLI and multi-agent skill discovery/install tooling",
+    "status": "Active",
+    "license": "MIT",
+    "pushedAt": null,
+    "stars": null,
+    "verified": "2026-11-20",
+    "caveat": "Not a standards body or safety guarantee; disable/audit telemetry as required and pin content."
+  },
+  {
+    "domain": "Reverse-engineering agents",
+    "repository": "LaurieWired/GhidraMCP",
+    "url": "https://github.com/LaurieWired/GhidraMCP",
+    "official": "Community project",
+    "purpose": "MCP bridge between Ghidra and AI assistants",
+    "status": "Active community tool",
+    "license": "Apache-2.0",
+    "pushedAt": "2026-10-10",
+    "stars": 11987,
+    "verified": "2026-11-20",
+    "caveat": "Authorize targets, isolate tools, and treat decompiler/sample content as untrusted."
+  },
+  {
+    "domain": "Reverse-engineering agents",
+    "repository": "REMnux/remnux-mcp-server",
+    "url": "https://github.com/REMnux/remnux-mcp-server",
+    "official": "Official REMnux organization",
+    "purpose": "AI-assistant access to REMnux malware-analysis toolkit and reporting guidance",
+    "status": "Active",
+    "license": "GPL-3.0",
+    "pushedAt": "2026-11-16",
+    "stars": 142,
+    "verified": "2026-11-20",
+    "caveat": "Run only in an isolated authorized analysis environment; no public sample upload by default."
+  }
+];
+
+export const SKILL_ENTRIES: SkillEntry[] = [
+  {
+    "vendor": "Anthropic",
+    "name": "academy-guide",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/academy-guide",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "algorithmic-art",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/algorithmic-art",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "brand-guidelines",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/brand-guidelines",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "canvas-design",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/canvas-design",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "claude-api",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/claude-api",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "discernment-nudge",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/discernment-nudge",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "doc-coauthoring",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/doc-coauthoring",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "docx",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/docx",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; document skills Apache-2.0",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "frontend-design",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/frontend-design",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "internal-comms",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/internal-comms",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "mcp-builder",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/mcp-builder",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "pdf",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/pdf",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; document skills Apache-2.0",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "pptx",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/pptx",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; document skills Apache-2.0",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "skill-creator",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/skill-creator",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "slack-gif-creator",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/slack-gif-creator",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "theme-factory",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/theme-factory",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "web-artifacts-builder",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "webapp-testing",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/webapp-testing",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; verify current terms",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "Anthropic",
+    "name": "xlsx",
+    "url": "https://github.com/anthropics/skills/tree/main/skills/xlsx",
+    "type": "Agent Skill",
+    "status": "Active official example",
+    "license": "Per-skill LICENSE.txt; document skills Apache-2.0",
+    "verified": "2026-11-20",
+    "caveat": "Official demonstration; product behavior may differ; audit and test locally."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "imagegen",
+    "url": "https://github.com/openai/skills/tree/main/skills/.system/imagegen",
+    "type": "System Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance for new work."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "openai-docs",
+    "url": "https://github.com/openai/skills/tree/main/skills/.system/openai-docs",
+    "type": "System Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance for new work."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "plugin-creator",
+    "url": "https://github.com/openai/skills/tree/main/skills/.system/plugin-creator",
+    "type": "System Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance for new work."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "skill-creator",
+    "url": "https://github.com/openai/skills/tree/main/skills/.system/skill-creator",
+    "type": "System Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance for new work."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "skill-installer",
+    "url": "https://github.com/openai/skills/tree/main/skills/.system/skill-installer",
+    "type": "System Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance for new work."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "aspnet-core",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/aspnet-core",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "chatgpt-apps",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/chatgpt-apps",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "cli-creator",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/cli-creator",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "cloudflare-deploy",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/cloudflare-deploy",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "define-goal",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/define-goal",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "figma",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/figma",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "figma-code-connect-components",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/figma-code-connect-components",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "figma-create-design-system-rules",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/figma-create-design-system-rules",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "figma-create-new-file",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/figma-create-new-file",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "figma-generate-design",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/figma-generate-design",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "figma-generate-library",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/figma-generate-library",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "figma-implement-design",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/figma-implement-design",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "figma-use",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/figma-use",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "gh-address-comments",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/gh-address-comments",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "gh-fix-ci",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/gh-fix-ci",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "hatch-pet",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/hatch-pet",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "jupyter-notebook",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/jupyter-notebook",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "linear",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/linear",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "migrate-to-codex",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/migrate-to-codex",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "netlify-deploy",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/netlify-deploy",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "notion-knowledge-capture",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/notion-knowledge-capture",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "notion-meeting-intelligence",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/notion-meeting-intelligence",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "notion-research-documentation",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/notion-research-documentation",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "notion-spec-to-implementation",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/notion-spec-to-implementation",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "openai-docs",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/openai-docs",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "pdf",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/pdf",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "playwright",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/playwright",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "playwright-interactive",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/playwright-interactive",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "render-deploy",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/render-deploy",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "screenshot",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/screenshot",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "security-best-practices",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/security-best-practices",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "security-ownership-map",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/security-ownership-map",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "security-threat-model",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/security-threat-model",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "sentry",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/sentry",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "speech",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/speech",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "transcribe",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/transcribe",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "vercel-deploy",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/vercel-deploy",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "winui-app",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/winui-app",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "yeet",
+    "url": "https://github.com/openai/skills/tree/main/skills/.curated/yeet",
+    "type": "Curated Agent Skill",
+    "status": "Deprecated repository; historical reference",
+    "license": "Per-skill LICENSE.txt",
+    "verified": "2026-11-20",
+    "caveat": "Use current openai/plugins guidance; audit any MCP/API integration and permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "adobe",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/adobe",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "airtable",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/airtable",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "atlassian-rovo",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/atlassian-rovo",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "boltz-api-cli",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/boltz-api-cli",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "build-ios-apps",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/build-ios-apps",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "build-macos-apps",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/build-macos-apps",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "build-web-apps",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/build-web-apps",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "build-web-data-visualization",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/build-web-data-visualization",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "canva",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/canva",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "chatcut",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/chatcut",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "circleci",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/circleci",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "clickup",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/clickup",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "cloudflare",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/cloudflare",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "coderabbit",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/coderabbit",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "codex-security",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/codex-security",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "consensus",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/consensus",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "creative-production",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/creative-production",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "data-analytics",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/data-analytics",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "datadog",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/datadog",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "dropbox",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/dropbox",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "expo",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/expo",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "figma",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/figma",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "game-studio",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/game-studio",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "github",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/github",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "gmail",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/gmail",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "google-calendar",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/google-calendar",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "google-drive",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/google-drive",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "granola",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/granola",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "higgsfield",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/higgsfield",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "hyperframes",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/hyperframes",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "life-science-research",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/life-science-research",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "linear",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/linear",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "lovable",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/lovable",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "magicpath",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/magicpath",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "mixpanel-headless",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/mixpanel-headless",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "monday-com",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/monday-com",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "ngs-analysis",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/ngs-analysis",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "notion",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/notion",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "nvidia",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/nvidia",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "openai-ads-conversions",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/openai-ads-conversions",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "openai-developers",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/openai-developers",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "outlook-calendar",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/outlook-calendar",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "outlook-email",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/outlook-email",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "plugin-eval",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/plugin-eval",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "posthog",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/posthog",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "product-design",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/product-design",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "public-equity-investing",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/public-equity-investing",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "remotion",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/remotion",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "sentry",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/sentry",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "sharepoint",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/sharepoint",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "shopify",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/shopify",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "slack",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/slack",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "stripe",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/stripe",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "supabase",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/supabase",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "superpowers",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/superpowers",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "teams",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/teams",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "temporal",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/temporal",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "test-android-apps",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/test-android-apps",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "twilio-developer-kit",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/twilio-developer-kit",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "vercel",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/vercel",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "zoom",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/zoom",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  },
+  {
+    "vendor": "OpenAI",
+    "name": "zotero",
+    "url": "https://github.com/openai/plugins/tree/main/plugins/zotero",
+    "type": "Codex Plugin",
+    "status": "Current official catalog example",
+    "license": "No root license detected; inspect per-plugin terms",
+    "verified": "2026-11-20",
+    "caveat": "Review .codex-plugin/plugin.json plus skills, agents, hooks, MCP, assets, and data permissions."
+  }
+];
+
+export const TOPIC_SEARCHES: TopicSearch[] = [
+  {
+    "domain": "Cybersecurity",
+    "tags": "cybersecurity, infosec, appsec, devsecops, osint, reverse-engineering, ctf, ai-security",
+    "query": "topic:cybersecurity stars:>5000 pushed:>2026-01-01 archived:false",
+    "url": "https://github.com/topics/cybersecurity",
+    "verified": "2026-11-20",
+    "caveat": "Security topics mix education, defensive and offensive tooling; require authorized-use review."
+  },
+  {
+    "domain": "Application security",
+    "tags": "appsec, application-security, owasp, devsecops, sast, dast",
+    "query": "(topic:appsec OR topic:devsecops) stars:>1000 archived:false",
+    "url": "https://github.com/topics/appsec",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "Reverse engineering",
+    "tags": "reverse-engineering, binary-analysis, decompilation, malware-analysis, firmware-analysis, ghidra",
+    "query": "topic:reverse-engineering pushed:>2026-01-01 archived:false",
+    "url": "https://github.com/topics/reverse-engineering",
+    "verified": "2026-11-20",
+    "caveat": "Prefer official tools and lawful labs; do not execute unknown artifacts on the host."
+  },
+  {
+    "domain": "AI agents and skills",
+    "tags": "ai-agents, agent-skills, claude-code, codex, mcp, mcp-server, llm-agents",
+    "query": "topic:agent-skills pushed:>2026-06-01 archived:false",
+    "url": "https://github.com/topics/agent-skills",
+    "verified": "2026-11-20",
+    "caveat": "Extremely noisy/fast-moving; official-owner and per-folder license review required."
+  },
+  {
+    "domain": "MCP",
+    "tags": "mcp, model-context-protocol, mcp-server, mcp-client",
+    "query": "topic:mcp-server pushed:>2026-06-01 archived:false",
+    "url": "https://github.com/topics/mcp-server",
+    "verified": "2026-11-20",
+    "caveat": "Registry/topic inclusion is not a security endorsement."
+  },
+  {
+    "domain": "Backend",
+    "tags": "backend, api, rest-api, graphql, microservices, fastapi, django, spring-boot, nodejs",
+    "query": "topic:backend stars:>2000 pushed:>2026-01-01 archived:false",
+    "url": "https://github.com/topics/backend",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "Backend Go",
+    "tags": "golang, go, backend, distributed-systems",
+    "query": "topic:backend language:go stars:>2000 archived:false",
+    "url": "https://github.com/topics/backend",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "Frontend",
+    "tags": "frontend, react, vue, svelte, angular, web-components, accessibility",
+    "query": "topic:frontend stars:>2000 pushed:>2026-01-01 archived:false",
+    "url": "https://github.com/topics/frontend",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "Full-stack",
+    "tags": "fullstack, full-stack, nextjs, nuxt, sveltekit, mern-stack",
+    "query": "topic:fullstack stars:>1000 pushed:>2026-01-01 archived:false",
+    "url": "https://github.com/topics/fullstack",
+    "verified": "2026-11-20",
+    "caveat": "Student/tutorial projects are common; inspect production evidence and tests."
+  },
+  {
+    "domain": "Platform and DevOps",
+    "tags": "devops, kubernetes, terraform, platform-engineering, sre, observability",
+    "query": "topic:kubernetes stars:>1000 archived:false",
+    "url": "https://github.com/topics/kubernetes",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "Data engineering",
+    "tags": "data-engineering, data-pipeline, etl, airflow, dbt, streaming",
+    "query": "topic:data-engineering pushed:>2026-01-01 archived:false",
+    "url": "https://github.com/topics/data-engineering",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "Machine learning",
+    "tags": "machine-learning, deep-learning, llm, mlops, model-evaluation",
+    "query": "topic:machine-learning pushed:>2026-01-01 archived:false",
+    "url": "https://github.com/topics/machine-learning",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "UI design systems",
+    "tags": "design-system, design-tokens, ui-components, figma-plugin, a11y",
+    "query": "topic:design-system stars:>500 archived:false",
+    "url": "https://github.com/topics/design-system",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "UX research and accessibility",
+    "tags": "ux, ux-research, accessibility, a11y, inclusive-design",
+    "query": "topic:accessibility pushed:>2026-01-01 archived:false",
+    "url": "https://github.com/topics/accessibility",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "Game development",
+    "tags": "gamedev, game-engine, godot, bevy, unity, unreal-engine, game-jam",
+    "query": "topic:game-engine stars:>1000 archived:false",
+    "url": "https://github.com/topics/gamedev",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "Rust game development",
+    "tags": "gamedev, bevy, rust, ecs, game-engine",
+    "query": "topic:gamedev language:rust pushed:>2026-01-01 archived:false",
+    "url": "https://github.com/topics/bevy",
+    "verified": "2026-11-20",
+    "caveat": "Topics are discovery aids; inspect provenance, license, maintenance, tests, and security."
+  },
+  {
+    "domain": "Skill files",
+    "tags": "SKILL.md, AGENTS.md, CLAUDE.md, plugin.json, MCP manifests",
+    "query": "filename:SKILL.md frontend",
+    "url": "https://github.com/search?q=filename%3ASKILL.md+frontend&type=code",
+    "verified": "2026-11-20",
+    "caveat": "Code search returns unreviewed content; never install directly from a result."
+  },
+  {
+    "domain": "Security skill files",
+    "tags": "SKILL.md, threat-model, security-review, AppSec",
+    "query": "filename:SKILL.md security threat model",
+    "url": "https://github.com/search?q=filename%3ASKILL.md+security+threat+model&type=code",
+    "verified": "2026-11-20",
+    "caveat": "Audit instructions/scripts for scope, egress, secrets access, and unsafe testing."
+  },
+  {
+    "domain": "Game skill files",
+    "tags": "SKILL.md, game-studio, gameplay, Godot, Unreal",
+    "query": "filename:SKILL.md game development",
+    "url": "https://github.com/search?q=filename%3ASKILL.md+game+development&type=code",
+    "verified": "2026-11-20",
+    "caveat": "Verify engine rights, assets, and generated-code quality."
+  },
+  {
+    "domain": "Repository health",
+    "tags": "OpenSSF Scorecard, CHAOSS, releases, SECURITY.md",
+    "query": "org:ossf scorecard",
+    "url": "https://github.com/ossf/scorecard",
+    "verified": "2026-11-20",
+    "caveat": "Stars are not a maintenance or security metric; inspect individual checks."
+  }
+];
+
+export const COMMUNITIES: Community[] = [
+  {
+    "domain": "Cybersecurity",
+    "name": "OWASP",
+    "platform": "Slack",
+    "url": "https://owasp.org/slack/invite",
+    "official": "Official OWASP",
+    "access": "Open invite; link has had outages",
+    "verified": "2026-11-20",
+    "caveat": "Verify the current invite through OWASP; do not automate participation."
+  },
+  {
+    "domain": "Cybersecurity",
+    "name": "Hack The Box",
+    "platform": "Discord/help center",
+    "url": "https://help.hackthebox.com/en/articles/5193100-welcome",
+    "official": "Official HTB",
+    "access": "Public/community rules",
+    "verified": "2026-11-20",
+    "caveat": "Keep testing inside authorized labs and scopes."
+  },
+  {
+    "domain": "Cybersecurity",
+    "name": "TryHackMe",
+    "platform": "Discord/community",
+    "url": "https://tryhackme.com/community",
+    "official": "Official TryHackMe",
+    "access": "Public/community rules",
+    "verified": "2026-11-20",
+    "caveat": "Use educational labs only."
+  },
+  {
+    "domain": "Backend Go",
+    "name": "Gophers",
+    "platform": "Slack",
+    "url": "https://invite.slack.golangbridge.org/",
+    "official": "Community-run; linked from Go community resources",
+    "access": "Open invite",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Backend Go",
+    "name": "Gophers",
+    "platform": "Discord",
+    "url": "https://discord.gg/golang",
+    "official": "Community-run; linked from Go community resources",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Django",
+    "name": "Django Forum",
+    "platform": "Discourse",
+    "url": "https://forum.djangoproject.com/",
+    "official": "Official Django",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Django",
+    "name": "Django Discord",
+    "platform": "Discord",
+    "url": "https://chat.djangoproject.com",
+    "official": "Official Django",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Node.js",
+    "name": "Node.js Community",
+    "platform": "Discord and other channels",
+    "url": "https://nodejs.org/en/about/get-involved",
+    "official": "Official Node.js project",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Cloud native",
+    "name": "Kubernetes",
+    "platform": "Slack",
+    "url": "https://slack.k8s.io/",
+    "official": "Official Kubernetes",
+    "access": "Self-invite",
+    "verified": "2026-11-20",
+    "caveat": "AI agents/bots and self-promotion may be prohibited; follow current community rules."
+  },
+  {
+    "domain": "Cloud native",
+    "name": "CNCF",
+    "platform": "Slack",
+    "url": "https://slack.cncf.io",
+    "official": "Official CNCF",
+    "access": "Invite flow; entry point may change",
+    "verified": "2026-11-20",
+    "caveat": "Use the current official community page if the inviter redirects or changes."
+  },
+  {
+    "domain": "React",
+    "name": "Reactiflux",
+    "platform": "Discord",
+    "url": "https://discord.gg/reactiflux",
+    "official": "Community-run; linked by React community page",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Svelte",
+    "name": "Svelte",
+    "platform": "Discord",
+    "url": "https://svelte.dev/chat",
+    "official": "Official Svelte community",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Vue",
+    "name": "Vue Land",
+    "platform": "Discord",
+    "url": "https://chat.vuejs.org",
+    "official": "Official Vue community",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Storybook",
+    "name": "Storybook",
+    "platform": "Discord/community",
+    "url": "https://storybook.js.org/community",
+    "official": "Official Storybook",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Next.js",
+    "name": "Next.js",
+    "platform": "Discord/GitHub Discussions",
+    "url": "https://nextjs.org/",
+    "official": "Official Vercel/Next.js project",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "AI & ML",
+    "name": "Hugging Face",
+    "platform": "Discord",
+    "url": "https://hf.co/join/discord",
+    "official": "Official Hugging Face",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "UI/UX",
+    "name": "Penpot Community",
+    "platform": "Forum",
+    "url": "https://community.penpot.app",
+    "official": "Official Penpot",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "UI/UX",
+    "name": "Friends of Figma",
+    "platform": "Community/chapters",
+    "url": "https://friends.figma.com/",
+    "official": "Official Figma community program",
+    "access": "Public; some chapters application-based",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Design systems",
+    "name": "Design Systems Community",
+    "platform": "Slack",
+    "url": "https://design.systems/",
+    "official": "Practitioner community; unofficial",
+    "access": "Open invite may change",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Game development",
+    "name": "Godot Community",
+    "platform": "Forum/Discord/community hub",
+    "url": "https://godotengine.org/community/",
+    "official": "Official Godot Foundation",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the hub rather than cached invite URLs."
+  },
+  {
+    "domain": "Game development",
+    "name": "Bevy Community",
+    "platform": "Discord/community hub",
+    "url": "https://bevyengine.org/community/",
+    "official": "Official Bevy",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Game development",
+    "name": "Unity",
+    "platform": "Discord",
+    "url": "https://discord.gg/unity",
+    "official": "Official Unity",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Game development",
+    "name": "Unreal Slackers",
+    "platform": "Discord",
+    "url": "https://unrealslackers.org/",
+    "official": "Community-run; unofficial",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Use the official community landing page; review code of conduct and privacy before joining."
+  },
+  {
+    "domain": "Agent Skills",
+    "name": "Agent Skills Community",
+    "platform": "Discord",
+    "url": "https://discord.gg/MKPE9g8aUy",
+    "official": "Linked by agentskills/agentskills README",
+    "access": "Public",
+    "verified": "2026-11-20",
+    "caveat": "Share no private code, credentials, or unreviewed skill bundles."
+  }
+];
+

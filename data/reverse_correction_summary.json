@@ -1,0 +1,219 @@
+{
+ "correction_pass_date": "2026-11-20",
+ "deliverables": {
+  "workbook": "reverse_engineered_software_landscape.xlsx",
+  "report": "reverse_engineered_software_landscape.md",
+  "charts": [
+   "reverse_engineered_catalog_coverage.png",
+   "reverse_engineered_clusters.png"
+  ]
+ },
+ "counts": {
+  "source_records_total": 29873,
+  "records_by_source": {
+   "interoperability": 17667,
+   "games": 3030,
+   "awesome_rea_catalog": 5191,
+   "awesome_rea_repository_index": 3500,
+   "rea_topic_snapshot": 485
+  },
+  "tier4_excluded_rows_kept": 191,
+  "distinct_groups_repo_root_rule": 22711,
+  "excluded_only_projects_removed_from_analytics": 189,
+  "in_scope_unique_projects": 22522,
+  "in_scope_projects_with_excluded_occurrence": 2,
+  "duplicate_in_scope_occurrences_collapsed": 7160,
+  "multi_source_projects": 5139,
+  "multi_source_share": 0.2282,
+  "in_scope_uniques_by_source": {
+   "interoperability": 17667,
+   "games": 3017,
+   "awesome_rea_catalog": 5169,
+   "awesome_rea_repository_index": 3311,
+   "rea_topic_snapshot": 485
+  },
+  "overlap": {
+   "interoperability|interoperability": 17667,
+   "interoperability|games": 2141,
+   "interoperability|awesome_rea_catalog": 3308,
+   "interoperability|awesome_rea_repository_index": 1124,
+   "interoperability|rea_topic_snapshot": 291,
+   "games|interoperability": 2141,
+   "games|games": 3017,
+   "games|awesome_rea_catalog": 1328,
+   "games|awesome_rea_repository_index": 198,
+   "games|rea_topic_snapshot": 113,
+   "awesome_rea_catalog|interoperability": 3308,
+   "awesome_rea_catalog|games": 1328,
+   "awesome_rea_catalog|awesome_rea_catalog": 5169,
+   "awesome_rea_catalog|awesome_rea_repository_index": 482,
+   "awesome_rea_catalog|rea_topic_snapshot": 187,
+   "awesome_rea_repository_index|interoperability": 1124,
+   "awesome_rea_repository_index|games": 198,
+   "awesome_rea_repository_index|awesome_rea_catalog": 482,
+   "awesome_rea_repository_index|awesome_rea_repository_index": 3311,
+   "awesome_rea_repository_index|rea_topic_snapshot": 195,
+   "rea_topic_snapshot|interoperability": 291,
+   "rea_topic_snapshot|games": 113,
+   "rea_topic_snapshot|awesome_rea_catalog": 187,
+   "rea_topic_snapshot|awesome_rea_repository_index": 195,
+   "rea_topic_snapshot|rea_topic_snapshot": 485
+  }
+ },
+ "games": {
+  "rows": 3030,
+  "link_status": {
+   "200": 3028,
+   "401": 1,
+   "403": 1
+  },
+  "link_exceptions": {
+   "401": "grand-theft-auto-v",
+   "403": "super-mario-64-multiplayer"
+  },
+  "link_ok_all_true_disclosure": "upstream link_ok=True for all 3,030 rows; link-checked does not mean accessible",
+  "types": {
+   "decompilation": 920,
+   "static-recomp": 1009,
+   "source-port": 364,
+   "engine-remake": 409,
+   "browser-port": 57,
+   "disassembly": 238,
+   "tool": 16,
+   "mod": 17
+  },
+  "ai_flag_true": 747,
+  "ai_flag_false": 2283,
+  "mean_curator_score": 3.25,
+  "health": {
+   "active": 2613,
+   "inactive": 356,
+   "unknown": 61
+  }
+ },
+ "activity": {
+  "tier1_last_activity": "blank for all 5,191 rows (no activity field in export; verified_at is a catalog review date only)",
+  "records_with_real_activity_date": 24167,
+  "activity_span": [
+   "2008-03-26",
+   "2026-11-20"
+  ]
+ },
+ "language": {
+  "blank_records_interop_plus_topic_only": 1216,
+  "note": "games/awesome_rea_catalog/awesome_rea_repository_index do not record language"
+ },
+ "license": {
+  "by_status": {
+   "declared": 15121,
+   "not-reported": 7192,
+   "not-collected": 5191,
+   "unrecognized": 2225,
+   "unknown-missing-or-unrecognized": 144
+  },
+  "blank_rows_total": 12383,
+  "noassertion_rows_total": 2369,
+  "note": "blank/NOASSERTION never prove absence of a license; topic collector maps missing and NOASSERTION together"
+ },
+ "clusters": {
+  "k": 20,
+  "parameters": "TfidfVectorizer(1-2 grams, min_df=3, max_df=0.5, sublinear_tf, 15k features) + NMF(k=20, nndsvda, seed 42, max_iter=600)",
+  "population": "22,522 in-scope unique projects",
+  "sizes_by_cluster_id": {
+   "C1": 2734,
+   "C18": 2473,
+   "C10": 2137,
+   "C17": 1723,
+   "C19": 1376,
+   "C9": 1368,
+   "C11": 1253,
+   "C8": 1225,
+   "C2": 1168,
+   "C14": 1117,
+   "C3": 907,
+   "C15": 901,
+   "C0": 866,
+   "C5": 804,
+   "C6": 601,
+   "C4": 591,
+   "C16": 500,
+   "C12": 353,
+   "C13": 288,
+   "C7": 137
+  },
+  "sizes_sum": 22522,
+  "mixed_or_approximate": [
+   "C5",
+   "C8",
+   "C9",
+   "C15",
+   "C19"
+  ],
+  "audit": "2+ representatives read per cluster; labels are cautious readings, not verified semantics"
+ },
+ "dedup_edge_cases": {
+  "rule": "GitHub/GitLab URLs group by repository root (owner/repo); tree/blob/subpaths/anchors preserved as member canonical_urls/titles/source_record_keys",
+  "battle_city": "interop root listing + 14 games tree/main/<Game> rows merged into https://github.com/cyneprepou4uk/nes-games-disassembly (15 occurrences, all titles/keys preserved)",
+  "dinosaur_calculator": "rea-dinosaur-speed-case and rea-calculator-percent-case (same blob URL, different anchors) preserved as titles/record keys on the morluto/rea unique row",
+  "hacking_x1_pro": "LibreOffice recalc mis-unescapes literal _x1_ to control char and exports _x0001_; post-recalc XML repair restores https://github.com/sieveandsand/hacking_x1_pro (asserted exactly one occurrence)",
+  "record_key_repeat": "games record_key cyneprepou4uk-nes-games-disassembly repeats 14x; occurrence-stable IDs SR000001+/U00001+ assigned in load/first-occurrence order"
+ },
+ "tier1_metadata": {
+  "paper_count": "catalog meta paper_count=442 is separate source metadata; exported kind has no 'paper' value (case-study 4025, tool 910, integration 97, documentation 49, learning-resource 49, collection 33, project 15, research 13)",
+  "evidence_class": {
+   "1": 1126,
+   "2": 3844,
+   "3": 186,
+   "0": 15,
+   "blank": 20
+  },
+  "evidence_status": {
+   "observed": 5171,
+   "unknown": 20
+  },
+  "note": "the 20 blank evidence_class rows are exactly the 20 evidence_status=unknown rows; evidence_class=0 rows are status=observed"
+ },
+ "xlsx_gate": {
+  "recalc": "LibreOffice headless convert (full recalc)",
+  "boolean_wrapper_formulas_stripped": 10721,
+  "analytical_formulas_remaining": {
+   "Summary": 154,
+   "Cluster_Summary": 20,
+   "total": 174
+  },
+  "boolean_cells_native": 10721,
+  "freeze_panes_restored": [
+   "Source_Records",
+   "Unique_Projects",
+   "Cluster_Summary",
+   "Cluster_Assignments",
+   "Topic_Search_Sample",
+   "Acquisition_Log",
+   "Data_Dictionary"
+  ],
+  "verify_gate": "all checks PASS (.work/verify_gate.py): cached formula values independently recomputed and matched"
+ },
+ "acquisition_hashes_sha256": {
+  "interoperability.json": "40d9bd58f822858cfe098c7dce703fbf61145044dea95f09a49794a3f2fb492e",
+  "games.json": "8d103f9aa537aa7b2951126b7d4af7b7ec215ce8eb448bbcd7ce04fab7063ae0",
+  "awesome_rea_catalog.json": "a20542915ee8eb9d25c43b774a31c8be61865226b61e87b587c97e0c0534a9ae",
+  "awesome_rea_repository_index.json": "e9a7a8d304650f265360e6c893b23531ee7570e3f05160b3cec9b4cc6259570d",
+  "rea_topic_snapshot.json": "6c3d5663fae7022173d163417aea73c38c65a2161d3e90807a6926180351435d",
+  "note": "inputs unchanged (read-only evidence); hashes identical to pre-correction build"
+ },
+ "interoperability_upstream": [
+  "https://awesome.alexgaoth.com/",
+  "https://awesome.alexgaoth.com/data.json",
+  "https://github.com/alexgaoth/awesome-reverse-engineered"
+ ],
+ "corrections_for_atlas_integration": [
+  "Unique/cluster/analytical population is 22,522 in-scope projects (was 22,750); 189 excluded-only Tier-4 projects removed, all 29,873 occurrences retained in Source_Records",
+  "Multi-source corroborated core is 5,139 (was 5,136); overlap matrix recomputed under repository-root grouping",
+  "Do not cite last_activity for Tier-1 rows; use verified_at only as catalog review date",
+  "Use license_status for any license analysis; blank != unlicensed; topic NOASSERTION = unknown",
+  "Language blank = 1,216 (interoperability + topic snapshot only), not 12,937",
+  "games link_status: 3,028 x 200, 1 x 401 (grand-theft-auto-v), 1 x 403 (super-mario-64-multiplayer); link_ok=True for all",
+  "Cluster IDs/labels changed after re-run on in-scope population; mixed/approximate clusters: C5, C8, C9, C15, C19",
+  "Tier-1 paper_count=442 not representable in kind_type; treat as separate source metadata"
+ ]
+}

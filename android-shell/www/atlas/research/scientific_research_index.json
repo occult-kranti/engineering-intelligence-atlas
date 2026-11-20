@@ -1,0 +1,240 @@
+{
+  "name": "scientific_and_model_research_library",
+  "compiled": "2026-11-20",
+  "verification_date": "2026-11-20",
+  "trust_policy": "Evidence labels propagated verbatim; [V] vendor-reported is never independently verified; no universal SOTA ranking exists.",
+  "source_reports": [
+    "mathematics_research_library.md",
+    "physics_research_library.md",
+    "chemistry_research_library.md",
+    "biology_research_library.md",
+    "sota_open_model_landscape.md",
+    "game_reconstruction_and_forks.md",
+    "scientific-research-library/agents/mathematics-researcher.md",
+    "scientific-research-library/agents/physics-researcher.md",
+    "scientific-research-library/agents/biology-researcher.md",
+    "scientific-research-library/agents/chemistry-researcher.md",
+    "scientific-research-library/agents/science-historian.md",
+    "scientific-research-library/agents/game-reconstruction-engineer.md",
+    "scientific-research-library/agents/ai-open-model-researcher.md"
+  ],
+  "agents": [
+    {
+      "agent_id": "mathematics-researcher",
+      "name": "Mathematics Researcher",
+      "domain": "Mathematics",
+      "skill": "mathematics-research",
+      "charter_source": "scientific-research-library/agents/mathematics-researcher.md",
+      "status": "dedicated charter present"
+    },
+    {
+      "agent_id": "physics-researcher",
+      "name": "Physics Researcher",
+      "domain": "Physics",
+      "skill": "physics-research",
+      "charter_source": "scientific-research-library/agents/physics-researcher.md",
+      "status": "dedicated charter present"
+    },
+    {
+      "agent_id": "chemistry-researcher",
+      "name": "Chemistry Researcher",
+      "domain": "Chemistry",
+      "skill": "chemistry-research",
+      "charter_source": "scientific-research-library/agents/chemistry-researcher.md",
+      "status": "dedicated charter present"
+    },
+    {
+      "agent_id": "biology-researcher",
+      "name": "Biology Researcher",
+      "domain": "Biology",
+      "skill": "biology-research",
+      "charter_source": "scientific-research-library/agents/biology-researcher.md",
+      "status": "dedicated charter present"
+    },
+    {
+      "agent_id": "science-historian",
+      "name": "Science Historian",
+      "domain": "Science History",
+      "skill": "science-history-research",
+      "charter_source": "scientific-research-library/agents/science-historian.md",
+      "status": "dedicated charter present"
+    },
+    {
+      "agent_id": "game-reconstruction-engineer",
+      "name": "Game Reconstruction Engineer",
+      "domain": "Game Reconstruction",
+      "skill": "game-reconstruction-engineering",
+      "charter_source": "scientific-research-library/agents/game-reconstruction-engineer.md",
+      "status": "dedicated charter present"
+    },
+    {
+      "agent_id": "ai-open-model-researcher",
+      "name": "AI Open-Model Researcher",
+      "domain": "AI Open-Model Landscape",
+      "skill": "ai-open-model-research",
+      "charter_source": "scientific-research-library/agents/ai-open-model-researcher.md",
+      "status": "dedicated charter present"
+    }
+  ],
+  "skills": [
+    {
+      "skill_name": "agent-research-director",
+      "folder": "agent-research-director/",
+      "packaged_archive": "agent-research-director.skill"
+    },
+    {
+      "skill_name": "ai-open-model-research",
+      "folder": "ai-open-model-research/",
+      "packaged_archive": "ai-open-model-research.skill"
+    },
+    {
+      "skill_name": "architecture-and-built-heritage-research",
+      "folder": "architecture-and-built-heritage-research/",
+      "packaged_archive": "architecture-and-built-heritage-research.skill"
+    },
+    {
+      "skill_name": "biology-research",
+      "folder": "biology-research/",
+      "packaged_archive": "biology-research.skill"
+    },
+    {
+      "skill_name": "chemistry-research",
+      "folder": "chemistry-research/",
+      "packaged_archive": "chemistry-research.skill"
+    },
+    {
+      "skill_name": "computational-geometry-engineering",
+      "folder": "computational-geometry-engineering/",
+      "packaged_archive": "computational-geometry-engineering.skill"
+    },
+    {
+      "skill_name": "defensive-reverse-engineering",
+      "folder": "defensive-reverse-engineering/",
+      "packaged_archive": "defensive-reverse-engineering.skill"
+    },
+    {
+      "skill_name": "engineering-job-market-intelligence",
+      "folder": "engineering-job-market-intelligence/",
+      "packaged_archive": "engineering-job-market-intelligence.skill"
+    },
+    {
+      "skill_name": "engineering-organization-architect",
+      "folder": "engineering-organization-architect/",
+      "packaged_archive": "engineering-organization-architect.skill"
+    },
+    {
+      "skill_name": "game-reconstruction-engineering",
+      "folder": "game-reconstruction-engineering/",
+      "packaged_archive": "game-reconstruction-engineering.skill"
+    },
+    {
+      "skill_name": "local-model-runtime-engineering",
+      "folder": "local-model-runtime-engineering/",
+      "packaged_archive": "local-model-runtime-engineering.skill"
+    },
+    {
+      "skill_name": "mathematics-research",
+      "folder": "mathematics-research/",
+      "packaged_archive": "mathematics-research.skill"
+    },
+    {
+      "skill_name": "physics-research",
+      "folder": "physics-research/",
+      "packaged_archive": "physics-research.skill"
+    },
+    {
+      "skill_name": "science-history-research",
+      "folder": "science-history-research/",
+      "packaged_archive": "science-history-research.skill"
+    },
+    {
+      "skill_name": "spatial-3d-production-engineering",
+      "folder": "spatial-3d-production-engineering/",
+      "packaged_archive": "spatial-3d-production-engineering.skill"
+    }
+  ],
+  "counts": {
+    "agents": 7,
+    "skills": 15,
+    "resource_occurrences": 4163,
+    "unique_resource_urls": 3813,
+    "game_catalog_rows": 3030,
+    "game_rows_breakdown": {
+      "static_recompilation": 1009,
+      "decompilation": 920,
+      "engine_remake": 409,
+      "source_port": 364,
+      "disassembly": 238,
+      "browser_port": 57,
+      "tool": 16,
+      "mod": 17
+    },
+    "model_entries": 105,
+    "evaluation_rows": 73,
+    "resource_occurrences_by_domain": {
+      "Mathematics": 409,
+      "Physics": 456,
+      "Chemistry": 52,
+      "Biology": 166,
+      "Game Reconstruction": 3080
+    },
+    "resource_occurrences_by_report": {
+      "mathematics_research_library.md": 409,
+      "physics_research_library.md": 456,
+      "chemistry_research_library.md": 52,
+      "biology_research_library.md": 166,
+      "game_reconstruction_and_forks.md": 3080
+    },
+    "resource_evidence_classes": {
+      "report_curated": 1083,
+      "game_ecosystem_tiers": 50,
+      "tier2_link_checked": 3030
+    },
+    "model_evidence_classes": {
+      "V_and_I_mixed": 20,
+      "V_vendor_only": 26,
+      "I_independent": 30,
+      "unlabeled": 23,
+      "R_registry": 6
+    }
+  },
+  "files": {
+    "workbook": "scientific_and_model_research_library.xlsx",
+    "map_png": "scientific_research_map.png",
+    "index": "scientific_research_index.json"
+  },
+  "sheets": {
+    "Guide": {
+      "rows": 31,
+      "role": "orientation + trust boundaries"
+    },
+    "Summary": {
+      "rows": 43,
+      "role": "formula-driven roll-up (all counts are live formulas)"
+    },
+    "Agent_Catalog": {
+      "rows": 7
+    },
+    "Skill_Catalog": {
+      "rows": 15
+    },
+    "Domain_Coverage": {
+      "rows": 127
+    },
+    "Resource_Catalog": {
+      "rows": 4163
+    },
+    "Unique_Resources": {
+      "rows": 3813
+    },
+    "SOTA_Model_Catalog": {
+      "rows": 105
+    },
+    "Evaluation_Matrix": {
+      "rows": 73
+    },
+    "Data_Dictionary": {
+      "rows": 32
+    }
+  }
+}

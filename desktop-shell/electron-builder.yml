@@ -1,0 +1,24 @@
+appId: com.researchdirector.desktop
+productName: Research Director Desktop
+copyright: Copyright © 2026
+directories:
+  output: release
+files:
+  - dist/**
+  - models.catalog.json
+  - package.json
+extraResources:
+  - from: resources/atlas
+    to: atlas
+    filter:
+      - '**/*'
+# No code signing, no auto-publish, no store metadata: debug/dev packages only.
+publish: null
+linux:
+  target:
+    - AppImage
+    - dir
+  category: Utility
+  artifactName: research-director-desktop-${version}-${arch}.${ext}
+# Windows (nsis/zip) and macOS (dmg/zip) packaging must be run on their
+# respective host OSes; see README.md "Packaging".

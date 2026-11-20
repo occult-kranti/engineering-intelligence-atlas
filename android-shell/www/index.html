@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#211d17" />
+    <meta
+      name="description"
+      content="Research Director — offline Engineering Intelligence Atlas plus a connection screen for an authenticated online runtime."
+    />
+    <title>Research Director</title>
+    <link rel="stylesheet" href="./launcher.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@capacitor/core": "./vendor/capacitor-core.js",
+          "@capacitor/preferences": "./vendor/capacitor-preferences.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main class="shell" id="top">
+      <header class="masthead">
+        <p class="kicker">Research Director</p>
+        <h1 class="title">Engineering Intelligence Atlas</h1>
+        <p class="lede">
+          Choose the fully offline atlas bundled with this app, or connect to a running
+          Research Director server for the authenticated online Director.
+        </p>
+      </header>
+
+      <section class="card" aria-labelledby="offline-heading">
+        <h2 id="offline-heading">Offline Atlas</h2>
+        <p>
+          The static, evidence-first atlas is packaged inside this app. It works with no
+          network connection and sends nothing anywhere.
+        </p>
+        <a class="btn btn-primary" href="./atlas/index.html">Open Offline Atlas</a>
+      </section>
+
+      <section class="card" aria-labelledby="project-heading">
+        <h2 id="project-heading">Project Mode</h2>
+        <p>
+          Run a small text-only research squad (Director → Research → Build → Review) against a
+          goal, on-device, using your own OpenAI or Anthropic API key. Keys are encrypted with
+          the Android Keystore; provider calls are made natively to the official API hosts only.
+        </p>
+        <a class="btn btn-primary" href="./project.html">Open Project Mode</a>
+      </section>
+
+      <section class="card" aria-labelledby="runtime-heading">
+        <h2 id="runtime-heading">Connect Runtime</h2>
+        <p>
+          Enter the address of <em>your own</em> running Research Director server. The
+          remote page opens in this app's WebView and is responsible for sign-in.
+        </p>
+        <form id="runtime-form" novalidate>
+          <label class="field-label" for="runtime-url">Runtime URL</label>
+          <input
+            id="runtime-url"
+            name="runtime-url"
+            type="url"
+            inputmode="url"
+            autocomplete="url"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="https://director.example.com"
+            aria-describedby="runtime-help runtime-status"
+          />
+          <p class="help" id="runtime-help">
+            HTTPS is required. Plain HTTP is accepted only for localhost development
+            (localhost, 127.0.0.1, 10.0.2.2).
+          </p>
+          <div class="row">
+            <button class="btn btn-primary" type="submit">Connect</button>
+            <button class="btn btn-ghost" type="button" id="runtime-forget">Forget saved URL</button>
+          </div>
+        </form>
+        <p class="status" id="runtime-status" role="status" aria-live="polite"></p>
+      </section>
+
+      <section class="card card-quiet" aria-labelledby="privacy-heading">
+        <h2 id="privacy-heading">Privacy &amp; costs</h2>
+        <ul class="notes">
+          <li>
+            The launcher itself stores only the runtime URL you enter (Capacitor Preferences /
+            local app storage). Project mode additionally stores API keys — encrypted with the
+            Android Keystore, ciphertext only in app-private storage — plus non-secret project
+            data (goals, squad notes, budgets, run logs, text artifacts).
+          </li>
+          <li>
+            The online Director is a remote web app. Any cloud or LLM/API usage happens
+            on the server you connect to, requires that server to be running and
+            authenticated, and can incur charges billed by that server's providers.
+            Project mode instead calls api.openai.com / api.anthropic.com directly from
+            native code with your key; those calls are billed by the provider to you.
+          </li>
+          <li>
+            Links that leave the runtime or atlas open in your system browser.
+          </li>
+        </ul>
+      </section>
+
+      <footer class="footer">
+        <p>Research Director Android shell · debug build · atlas bundled offline</p>
+      </footer>
+    </main>
+    <script type="module" src="./js/launcher.js"></script>
+  </body>
+</html>

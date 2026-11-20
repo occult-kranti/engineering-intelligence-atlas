@@ -1,0 +1,392 @@
+/* Research Director launcher — shares the Engineering Intelligence Atlas identity:
+   warm paper, near-black ink, cornflower accent, Manrope UI type. */
+
+@font-face {
+  font-family: 'Manrope';
+  src: url('./fonts/manrope-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Manrope';
+  src: url('./fonts/manrope-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Manrope';
+  src: url('./fonts/manrope-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --paper: hsl(48 14% 96%);
+  --paper-raised: hsl(48 18% 98.5%);
+  --ink: hsl(40 14% 8%);
+  --ink-soft: hsl(40 6% 34%);
+  --line: hsl(42 10% 82%);
+  --accent: hsl(44 10% 92%);
+  --cornflower: hsl(219 46% 46%);
+  --danger: hsl(0 62% 40%);
+  --radius: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  font-size: 1rem;
+  line-height: 1.55;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom)
+    env(safe-area-inset-left);
+}
+
+.shell {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.masthead {
+  padding: 0.75rem 0 0.25rem;
+}
+
+.kicker {
+  margin: 0 0 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cornflower);
+}
+
+.title {
+  margin: 0;
+  font-size: 1.9rem;
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+.lede {
+  margin: 0.6rem 0 0;
+  color: var(--ink-soft);
+}
+
+.card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.1rem 1.1rem 1.25rem;
+}
+
+.card h2 {
+  margin: 0 0 0.4rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.card p {
+  margin: 0 0 0.9rem;
+  color: var(--ink-soft);
+}
+
+.card-quiet {
+  background: transparent;
+}
+
+.notes {
+  margin: 0;
+  padding-left: 1.1rem;
+  color: var(--ink-soft);
+}
+
+.notes li {
+  margin-bottom: 0.5rem;
+}
+
+.field-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+}
+
+input[type='url'] {
+  width: 100%;
+  min-height: 3rem; /* 48px touch target */
+  padding: 0.6rem 0.8rem;
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+input[type='url']:focus-visible {
+  outline: 3px solid var(--cornflower);
+  outline-offset: 1px;
+}
+
+.help {
+  margin: 0.45rem 0 0.9rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem; /* 48px touch target */
+  min-width: 3rem;
+  padding: 0.55rem 1.15rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn:focus-visible {
+  outline: 3px solid var(--cornflower);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn-primary:hover {
+  background: hsl(40 14% 16%);
+}
+
+.btn-ghost {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.btn-ghost:hover {
+  background: var(--accent);
+}
+
+.btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.status {
+  min-height: 1.4rem;
+  margin: 0.75rem 0 0;
+  font-size: 0.9rem;
+}
+
+.status[data-tone='error'] {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.status[data-tone='info'] {
+  color: var(--ink-soft);
+}
+
+.footer {
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn {
+    transition: background-color 120ms ease-in-out;
+  }
+}
+
+/* ---- Project mode ---- */
+
+.status[data-tone='ok'] {
+  color: hsl(140 45% 28%);
+  font-weight: 600;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.75rem;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.badge[data-tone='ok'] {
+  color: hsl(140 45% 28%);
+  border-color: hsl(140 35% 60%);
+}
+
+.badge[data-tone='muted'] {
+  color: var(--ink-soft);
+}
+
+.badge[data-tone='error'] {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
+.keyrow {
+  border-top: 1px solid var(--line);
+  padding-top: 0.9rem;
+  margin-top: 0.9rem;
+}
+
+.keyrow h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+input[type='text'],
+input[type='password'],
+input[type='number'],
+select,
+textarea {
+  min-height: 3rem; /* 48px touch target */
+  padding: 0.6rem 0.8rem;
+  font: inherit;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+
+textarea {
+  width: 100%;
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+input[type='text']:focus-visible,
+input[type='password']:focus-visible,
+input[type='number']:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--cornflower);
+  outline-offset: 1px;
+}
+
+.field-label.grow {
+  flex: 1 1 14rem;
+}
+
+.field-label.grow input {
+  width: 100%;
+}
+
+.squad {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.8rem;
+  margin: 0 0 0.9rem;
+}
+
+.squad legend {
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0 0.3rem;
+}
+
+.squad-row {
+  display: grid;
+  grid-template-columns: auto 9rem 1fr;
+  gap: 0.5rem;
+  align-items: start;
+  margin-bottom: 0.6rem;
+}
+
+.squad-row input[type='checkbox'] {
+  width: 1.4rem;
+  height: 1.4rem;
+  margin-top: 0.8rem;
+}
+
+.project-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.project-item .btn {
+  align-self: flex-start;
+  text-align: left;
+}
+
+.nodes {
+  margin: 0.6rem 0;
+  padding-left: 1.3rem;
+}
+
+.nodes li[data-tone='done'] {
+  color: hsl(140 45% 28%);
+}
+
+.nodes li[data-tone='running'] {
+  color: var(--cornflower);
+  font-weight: 700;
+}
+
+.nodes li[data-tone='error'] {
+  color: var(--danger);
+}
+
+.nodes li[data-tone='skipped'] {
+  color: var(--ink-soft);
+  text-decoration: line-through;
+}
+
+pre.log,
+pre.artifact {
+  background: var(--accent);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0.7rem;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.8rem;
+  max-height: 22rem;
+  overflow-y: auto;
+}
+
+details {
+  margin-bottom: 0.5rem;
+}
+
+summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 2rem;
+}

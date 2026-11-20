@@ -1,0 +1,240 @@
+@import '@fontsource/manrope/400.css';
+@import '@fontsource/manrope/500.css';
+@import '@fontsource/manrope/600.css';
+@import '@fontsource/manrope/700.css';
+@import '@fontsource/manrope/800.css';
+@import '@fontsource/pt-serif/400.css';
+@import '@fontsource/pt-serif/400-italic.css';
+@import '@fontsource/pt-serif/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Near-monochrome off-white / near-black foundation */
+    --paper: 48 14% 96%;
+    --paper-raised: 48 18% 98.5%;
+    --ink: 40 14% 8%;
+    --ink-soft: 40 6% 34%;
+    --line: 42 10% 82%;
+    /* Dark editorial surface */
+    --dark: 40 14% 9%;
+    --dark-raised: 40 10% 14%;
+    --dark-ink: 48 18% 92%;
+    --dark-ink-soft: 44 8% 60%;
+    /* Accents — reserved for evidence & status */
+    --mustard: 42 78% 36%;
+    --sage: 82 22% 38%;
+    --cornflower: 219 46% 46%;
+    --alert: 8 62% 38%;
+
+    /* shadcn token bridge */
+    --background: var(--paper);
+    --foreground: var(--ink);
+    --card: var(--paper-raised);
+    --card-foreground: var(--ink);
+    --popover: var(--paper-raised);
+    --popover-foreground: var(--ink);
+    --primary: var(--ink);
+    --primary-foreground: var(--paper);
+    --secondary: 44 10% 92%;
+    --secondary-foreground: var(--ink);
+    --muted: 44 10% 92%;
+    --muted-foreground: var(--ink-soft);
+    --accent: 44 10% 92%;
+    --accent-foreground: var(--ink);
+    --destructive: var(--alert);
+    --destructive-foreground: 48 30% 96%;
+    --border: var(--line);
+    --input: var(--line);
+    --ring: var(--cornflower);
+    --radius: 0.125rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  * {
+    border-color: hsl(var(--border));
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--cornflower));
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: hsl(var(--ink));
+    color: hsl(var(--paper));
+  }
+}
+
+@layer components {
+  /* Monospace identifiers & counts */
+  .mono {
+    font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas,
+      'Liberation Mono', monospace;
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  .tnum {
+    font-variant-numeric: tabular-nums lining-nums;
+  }
+
+  /* Long-form / evidence prose */
+  .prose-evidence {
+    font-family: 'PT Serif', Georgia, serif;
+    line-height: 1.65;
+  }
+
+  /* Ruled separators */
+  .rule {
+    border-top: 1px solid hsl(var(--line));
+  }
+  .rule-dark {
+    border-top: 1px solid hsl(40 8% 24%);
+  }
+
+  /* Dark editorial panel */
+  .panel-dark {
+    background: hsl(var(--dark));
+    color: hsl(var(--dark-ink));
+  }
+  .panel-dark-raised {
+    background: hsl(var(--dark-raised));
+    color: hsl(var(--dark-ink));
+  }
+
+  /* Chapter kicker */
+  .kicker {
+    @apply text-xs font-bold uppercase tracking-[0.18em] text-[hsl(var(--ink-soft))];
+  }
+
+  /* Status / evidence chips — the only color in the catalog */
+  .chip {
+    @apply mono inline-flex items-center gap-1 border px-1.5 py-px text-[11px] font-medium leading-5;
+  }
+  .chip-neutral {
+    color: hsl(var(--ink-soft));
+    border-color: hsl(var(--line));
+    background: transparent;
+  }
+  .chip-mustard {
+    color: hsl(40 85% 28%);
+    border-color: hsl(var(--mustard) / 0.6);
+    background: hsl(var(--mustard) / 0.1);
+  }
+  .chip-sage {
+    color: hsl(82 32% 26%);
+    border-color: hsl(var(--sage) / 0.6);
+    background: hsl(var(--sage) / 0.1);
+  }
+  .chip-cornflower {
+    color: hsl(219 52% 34%);
+    border-color: hsl(var(--cornflower) / 0.6);
+    background: hsl(var(--cornflower) / 0.1);
+  }
+  .chip-alert {
+    color: hsl(8 64% 30%);
+    border-color: hsl(var(--alert) / 0.6);
+    background: hsl(var(--alert) / 0.08);
+  }
+
+  /* Text-first controls: active = bold + rule, never filled */
+  .tab-control {
+    @apply inline-flex min-h-[44px] items-center gap-2 border-b-2 border-transparent px-3 text-sm font-medium text-[hsl(var(--ink-soft))] transition-colors;
+  }
+  .tab-control:hover {
+    color: hsl(var(--ink));
+    border-color: hsl(var(--line));
+  }
+  .tab-control[aria-selected='true'],
+  .tab-control[aria-pressed='true'],
+  .tab-control[data-active='true'] {
+    color: hsl(var(--ink));
+    border-color: hsl(var(--ink));
+    font-weight: 700;
+  }
+
+  /* Bordered utility buttons (pagination, menu) */
+  .btn {
+    @apply inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 border border-[hsl(var(--line))] bg-[hsl(var(--paper-raised))] px-3 text-sm font-medium text-[hsl(var(--ink))] transition-colors;
+  }
+  .btn:hover:not(:disabled) {
+    border-color: hsl(var(--ink));
+  }
+  .btn:disabled {
+    opacity: 0.4;
+  }
+
+  .input {
+    @apply min-h-[44px] w-full border border-[hsl(var(--line))] bg-[hsl(var(--paper-raised))] px-3 text-sm text-[hsl(var(--ink))];
+  }
+  .input::placeholder {
+    color: hsl(var(--ink-soft));
+  }
+
+  /* External links */
+  .ext-link {
+    @apply inline-flex items-baseline gap-1 font-medium text-[hsl(219_52%_34%)] underline decoration-[hsl(var(--cornflower)/0.45)] underline-offset-2;
+  }
+  .ext-link:hover {
+    @apply decoration-2;
+  }
+  .panel-dark .ext-link {
+    color: hsl(219 60% 74%);
+  }
+
+  /* Dense catalog table */
+  .table-cat {
+    @apply w-full border-collapse bg-[hsl(var(--paper-raised))] text-sm;
+  }
+  .table-cat th {
+    @apply border-b border-[hsl(var(--ink))] px-3 py-2 text-left text-[11px] font-bold uppercase tracking-wider text-[hsl(var(--ink-soft))];
+  }
+  .table-cat td {
+    @apply border-b border-[hsl(var(--line))] px-3 py-2 align-top;
+  }
+  .table-cat tr:last-child td {
+    border-bottom: 0;
+  }
+
+  /* Expandable region with purposeful height transition */
+  .expand-region {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 200ms ease;
+  }
+  .expand-region[data-open='true'] {
+    grid-template-rows: 1fr;
+  }
+  .expand-region > div {
+    overflow: hidden;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
