@@ -58,7 +58,47 @@ const noOsSandbox = !isWin && process.env.ATLAS_CI_NO_SANDBOX === '1';
 const args = [`--user-data-dir=${userData}`, ...(noOsSandbox ? ['--no-sandbox'] : [])];
 const captured = [];
 const errors = [];
+const childOutput = [];
+const appEvents = [];
+let launchDiagnostic = null;
 let application;
+// Redact credential-like values and the isolated profile path; bound all evidence size.
+const redactText = value => String(value)
+  .split(profile).join('<profile>')
+  .replace(/(^|[^A-Za-z0-9_-])(?:sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}/g, '$1[redacted]')
+  .replace(/(token|secret|password|authorization|api[_-]?key)(\s*[=:]\s*)\S+/gi, '$1$2[redacted]')
+  .slice(0, 4000);
+const pushBounded = (list, entry, max = 200) => { if (list.length < max) list.push(entry); };
+function writeDiagnostics(extra) {
+  try {
+    writeFileSync(join(screenshots, 'launch-diagnostics.json'), JSON.stringify({
+      schemaVersion: 1, at: new Date().toISOString(), platform: process.platform, arch: process.arch,
+      childOutput, appEvents, ...extra,
+    }, null, 2) + '\n');
+  } catch {}
+}
+async function firstWindowWithDiagnostics(app) {
+  try {
+    return await app.firstWindow({ timeout: 30000 });
+  } catch (error) {
+    const diag = { error: redactText(error instanceof Error ? error.message : error), windows: [], isReady: null };
+    try {
+      Object.assign(diag, await app.evaluate(({ app: electronApp, BrowserWindow }) => ({
+        isReady: electronApp.isReady(),
+        windows: BrowserWindow.getAllWindows().map(win => ({
+          id: win.id, destroyed: win.isDestroyed(),
+          visible: win.isDestroyed() ? false : win.isVisible(),
+          url: win.isDestroyed() ? '' : String(win.webContents.getURL()).slice(0, 300),
+          loading: win.isDestroyed() ? null : win.webContents.isLoading(),
+          crashed: win.isDestroyed() ? null : win.webContents.isCrashed(),
+        })),
+      })));
+    } catch (inner) { diag.evaluateError = redactText(inner instanceof Error ? inner.message : inner); }
+    launchDiagnostic = diag;
+    writeDiagnostics({ firstWindowTimeout: diag });
+    throw error;
+  }
+}
 let page;
 let receipt;
 
@@ -76,6 +116,20 @@ try {
   if (!isWin) assert(environment.DISPLAY, 'Run this test under xvfb-run or an isolated Linux display.');
   if (isWin) assert.equal(peMachine(executablePath), 0x8664, 'Application executable is not PE x64.');
   application = await electron.launch({ executablePath, args, cwd: dirname(executablePath), env: environment, timeout: 45000 });
+  const child = application.process();
+  for (const [name, stream] of [['stdout', child.stdout], ['stderr', child.stderr]]) {
+    stream?.on('data', chunk => pushBounded(childOutput, { stream: name, text: redactText(chunk.toString('utf8')) }));
+  }
+  child.on('exit', (code, signal) => pushBounded(appEvents, { event: 'child-exit', code, signal }));
+  application.evaluate(({ app: electronApp }) => {
+    electronApp.on('web-contents-created', (_event, contents) => {
+      const log = globalThis.__atlasSmokeEvents ??= [];
+      const add = entry => { if (log.length < 100) log.push({ ...entry, at: Date.now() }); };
+      contents.on('did-fail-load', (_e, code, description, url) => add({ event: 'did-fail-load', code, description: String(description).slice(0, 200), url: String(url).slice(0, 200) }));
+      contents.on('render-process-gone', (_e, details) => add({ event: 'render-process-gone', reason: details?.reason, exitCode: details?.exitCode }));
+      contents.on('did-finish-load', () => add({ event: 'did-finish-load' }));
+    });
+  }).catch(() => {});
   const appInfo = await application.evaluate(({ app }) => ({
     packaged: app.isPackaged,
     version: app.getVersion(),
@@ -91,7 +145,7 @@ try {
   assert.equal(buildMeta.arch, process.arch, 'Packaged helper metadata arch mismatch.');
   assert.equal(buildMeta.binary, helperName, 'Packaged helper metadata binary mismatch.');
   if (isWin) assert.equal(peMachine(binary), 0x8664, 'Packaged helper is not PE x64.');
-  page = await application.firstWindow();
+  page = await firstWindowWithDiagnostics(application);
   page.setDefaultTimeout(15000);
   page.on('pageerror', error => errors.push(error.message));
   await application.context().route(/^https?:\/\//, route => route.abort());
@@ -119,6 +173,10 @@ try {
   const beforeSpend = initial.office.snapshot.budget.committedUsd;
 
   await page.locator('.sidebar .nav-item[data-view="office"]').click();
+  // The packaged default is the Freeflow host; assert it, then use the real Operations / Manage button.
+  await page.locator('#freeflow-host').waitFor({ state: 'visible' });
+  assert(await page.locator('#freeflow-host').count() === 1, 'Packaged renderer is missing the Freeflow host.');
+  await page.locator('#ff-nav-operations').click();
   await page.locator('#office-native-status').filter({ hasText: 'Local state loaded' }).waitFor({ state: 'visible' });
   await page.locator('[data-workspace-tab="chat"]').click();
   await page.locator('#chat-goal-mode').selectOption('manual');
@@ -192,6 +250,13 @@ try {
   writeFileSync(join(screenshots, 'receipt.json'), JSON.stringify(receipt, null, 2) + '\n');
   console.log(`Packaged desktop acceptance passed: real Rust state, persisted local plan, ${captured.length} screenshots, no provider work.`);
 } catch (error) {
+  if (application && !launchDiagnostic) {
+    try {
+      const events = await application.evaluate(() => globalThis.__atlasSmokeEvents ?? []);
+      pushBounded(appEvents, { event: 'collected-webcontents-events', events });
+    } catch {}
+  }
+  writeDiagnostics({ failure: redactText(error instanceof Error ? error.message : error), firstWindowTimeout: launchDiagnostic });
   if (page) await page.screenshot({ path: join(screenshots, 'failure.png'), fullPage: false }).catch(() => {});
   writeFileSync(join(screenshots, 'receipt.json'), JSON.stringify({ schemaVersion: 1, status: 'failed', at: new Date().toISOString(), error: error instanceof Error ? error.message : String(error), screenshots: captured, pageErrors: errors }, null, 2) + '\n');
   throw error;

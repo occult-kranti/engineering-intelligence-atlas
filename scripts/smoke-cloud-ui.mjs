@@ -414,11 +414,21 @@ try {
 
     // Follow a real connected route into the shared cloud renderer. Its data is
     // still the same synthetic office supplied by the API fixture above.
+    // Fresh default navigation (no workspace param): the newly mounted Freeflow host must be visible first.
+    await page.goto(base + '/workspace/chrome.html?company=fixture-company#office', {waitUntil: 'networkidle'});
+    await page.locator('#freeflow-host').waitFor({state: 'visible'});
+    assert.equal(await page.locator('#freeflow-host').count(), 1, 'Cloud renderer is missing the Freeflow host; the synced renderer is stale.');
+    assert.ok(await page.locator('#office-native-status').isHidden(), 'Legacy status must be hidden while Freeflow is the default surface.');
+    checks.push(`Freeflow ${viewport.width}: fresh default cloud navigation shows the mounted Freeflow host first`);
+    await page.goto(base + '/applications', {waitUntil: 'networkidle'});
+    await page.waitForFunction(() => document.querySelectorAll('.directory-company').length === 3);
     await page.locator('#company-fixture-company').getByRole('link', {name: 'Blueprint', exact: true}).click();
     // Workers assets canonicalizes this existing HTML asset with a 307 to the
     // extensionless path. Both forms must retain the exact company/tab query.
     await page.waitForURL(url => ['/workspace/chrome.html', '/workspace/chrome'].includes(url.pathname)
       && url.searchParams.get('company') === 'fixture-company' && url.searchParams.get('workspace') === 'blueprint');
+    // Explicit legacy workspace links open Operations; use the real visible control if the status is still hidden.
+    if (await page.locator('#office-native-status').isHidden()) await page.locator('#ff-nav-operations').click();
     await page.locator('#office-native-status').filter({hasText: 'Cloud workspace'}).waitFor({state: 'visible'});
     await page.locator('#workspace-panel-blueprint').waitFor({state: 'visible'});
     assert.equal(new URL(page.url()).searchParams.get('company'), 'fixture-company');

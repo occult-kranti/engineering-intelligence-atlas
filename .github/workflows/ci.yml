@@ -249,9 +249,22 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-          cache-dependency-path: cloud-workspace/package-lock.json
+          cache-dependency-path: |
+            cloud-workspace/package-lock.json
+            desktop-shell/package-lock.json
+      - name: Install desktop-shell dependencies without the Electron binary
+        working-directory: desktop-shell
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+        run: npm ci
+      - name: Build the shared desktop renderer
+        working-directory: desktop-shell
+        run: npm run build
       - run: npm ci
         working-directory: cloud-workspace
+      - name: Sync the real shared renderer into the cloud workspace
+        working-directory: cloud-workspace
+        run: node scripts/sync-desktop.mjs "$GITHUB_WORKSPACE"
       - name: Verify owner access, atomic budgets, revisions, device claims and queue recovery
         working-directory: cloud-workspace
         run: |

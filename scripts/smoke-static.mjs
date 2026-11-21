@@ -137,6 +137,14 @@ try {
       if (!['GET', 'HEAD'].includes(request.method())) errors.push(`Read-only preview attempted ${request.method()} ${request.url()}`);
     });
     await page.goto(`${base}desktop-preview/chrome.html`, { waitUntil: 'networkidle' });
+    // Default URL (no workspace=blueprint): Freeflow must be the visible first surface.
+    await page.locator('#freeflow-host').waitFor({ state: 'visible' });
+    await page.locator('#freeflow-surface').waitFor({ state: 'visible' });
+    assert(await page.locator('#freeflow-host').count() === 1, 'Freeflow host must be mounted exactly once.');
+    assert(await page.locator('#office-native-status').isHidden(), 'Legacy status must be hidden while Freeflow is the default surface.');
+    interactionChecks.push(`Freeflow ${viewport.width}: host visible first on the default URL with the legacy surface hidden`);
+    // Switch through the real, visible Operations / Manage control; never force hidden clicks.
+    await page.locator('#ff-nav-operations').click();
     await page.locator('#office-native-status').filter({ hasNotText: 'Checking' }).waitFor({ state: 'visible' });
     const capture = async (route, surface = 'desktop', fullPage = false) => {
       // Let the application's transient status finish naturally; do not hide
