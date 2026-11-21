@@ -2,9 +2,10 @@
 
 **A personal workspace for Donna, your permanent agent team, and the repositories they maintain.**
 
-One scoped chat connects to an interactive office blueprint and an ownership
-whiteboard. Companies contain offices, departments and employees; goals become
-bounded dependency graphs with queues, checkpoints, budgets and evidence.
+One continuous canvas holds the company conference table, office blueprints,
+Donna conversation, ownership whiteboard and the controls used to run the work.
+Companies contain offices, departments and employees; goals become bounded
+dependency graphs with queues, checkpoints, budgets and evidence.
 
 [Private signed-in office](https://atlas-command-office.whatswrong-inc.chatgpt.site) ·
 [Public atlas](https://occult-kranti.github.io/engineering-intelligence-atlas/) ·
@@ -12,6 +13,20 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 [Published releases and downloads](https://github.com/occult-kranti/engineering-intelligence-atlas/releases) ·
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
+
+## Endless canvas — 0.8.0 release candidate
+
+The desktop and private website now keep the workspace in one spatial world. Company seats stay at the conference table while the selected company's office blueprint is laid beside it. Conversation, crew, goals, hiring, queue, ledger, models and settings are canvas elements that can be moved, resized, pinned, collapsed and reopened through **Find a surface**. Camera focus, keyboard controls, reduced motion and saved local layouts support the same workspace at different scales.
+
+**Donna & sub-Donnas** resolves the actual saved company and department assistants, contracted shared specialists and deterministic runtime checks. Missing definitions remain unconfigured. Scoped draft-goal and pause/resume actions use the existing native authority boundary. A saved employee does not imply a running model; source review and ledger observation make zero model calls.
+
+The owner website enters the canvas by default. Connections, People & access and Applications & integrations open as embedded canvas elements with the existing forms and data rules. Visiting-employee and invitation entry flows retain their restricted projections, sign-in behavior and token handling.
+
+[Source Review](project/SOURCE_REVIEW.md) checks external repository and job-context text for instruction attempts, records coverage and hands flagged material to Donna. Repository text cannot change tools or authority. Advisory robots preferences have a separate exact-source policy decision; a general website crawler is not implemented.
+
+The [Kimi branch review](project/KIMI_BRANCH_REVIEW.md) verified **2,053 added files**, not 2,053 added lines, at the supplied commit. Current Donna coordination adapts selected ideas using the existing native model. The older archived runtime and binaries remain separate. Sonnet supplied the new universe compositor and focused tests; the code was independently reviewed and corrected before integration. [Sanitized usage accounting](project/CLAUDE_USAGE.md) records the observed request and retained uncertainty.
+
+**Publication and full candidate verification are pending.** [The 0.8.0 validation record](project/ENDLESS_CANVAS_VALIDATION.md) separates focused checks from the required build, browser, package and publication gates. [Release notes](project/RELEASE_NOTES.md) describe this candidate. The last verified application downloads are the 0.7.0 release below; no VPS rental, model-weight download or live ChatGPT tunnel is implied by this source update.
 
 ## Freeflow studio and private runtimes — 0.7.0 released
 
@@ -23,7 +38,7 @@ The private website adds **People & access**, **Visiting office**, and invitatio
 
 The [headless runtime](headless-runtime/README.md), [VPS deployment pack](deploy/README.md), [encrypted cloud-device sync](deploy/CLOUD_DEVICE_SYNC.md) and [nine-tool MCP adapter](tools/DAFTAR_RUNTIME_MCP.md) let a configured Linux host run the native office independently of a laptop. The [shared model pool](deploy/MODEL_POOL.md) reuses reviewed local model downloads across scoped employee assignments. A deterministic permanent observer checks native index/ledger health with zero model calls.
 
-[Release notes](project/RELEASE_NOTES.md) · [Validation and current acceptance boundaries](project/FREEFLOW_VALIDATION.md) · [Vast/VPS and ChatGPT architecture](project/CLOUD_RUNTIME_PLAN.md). Deployment recipes do not provision a paid host or create a ChatGPT tunnel automatically.
+[0.7.0 validation and acceptance boundaries](project/FREEFLOW_VALIDATION.md) · [Vast/VPS and ChatGPT architecture](project/CLOUD_RUNTIME_PLAN.md). Deployment recipes do not provision a paid host or create a ChatGPT tunnel automatically.
 
 ## Company kits — 0.6.1 released
 
@@ -87,9 +102,9 @@ npm --prefix desktop-shell run sync-atlas -- --src ../docs
 npm --prefix desktop-shell start
 ```
 
-Node22.12+ and Rust stable are required. Complete setup, MCP configuration,
+Node 22.13+ and Rust stable are required. Complete setup, MCP configuration,
 credential import and limitations are in [HANDOFF.md](HANDOFF.md). Actual test,
-build and deployment outcomes are in [project/VALIDATION.md](project/VALIDATION.md).
+build and deployment outcomes are separated by release in the [0.8.0 candidate record](project/ENDLESS_CANVAS_VALIDATION.md), [0.7.0 receipt](project/FREEFLOW_VALIDATION.md) and [earlier validation](project/VALIDATION.md).
 
 ## CEO portfolio and shared teams
 

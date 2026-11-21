@@ -1,4 +1,4 @@
-# Daftar private cloud office · 0.6.0
+# Daftar private cloud office · 0.8.0 source candidate
 
 Daftar is the renamed personal command office built in the existing Engineering Intelligence Atlas repository. This directory contains its owner-private website: the shared desktop renderer, ChatGPT sign-in, D1 persistence, Donna chat, device pairing and a durable relay for native commands. Existing Atlas package IDs, API paths and URLs remain compatible.
 
@@ -7,6 +7,14 @@ Daftar is the renamed personal command office built in the existing Engineering 
 - [Public atlas and read-only example](https://occult-kranti.github.io/engineering-intelligence-atlas/)
 - [Executed release validation](https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/project/VALIDATION.md)
 - [Desktop and editor setup](https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/project/EDITOR_AND_CLOUD.md)
+
+## Continuous canvas entry
+
+The owner website now opens the shared continuous canvas. Top-level `/`, `/access` and `/applications` probe the existing session and redirect only a signed-in owner with the required owner capability. The access/application routes select their corresponding canvas surface; company and supported workspace deep links are preserved. Signed-out or failed session checks retain the original usable entry content.
+
+The parent renderer hosts the existing forms in same-origin elements using `?canvas=1`. Embedded routes omit the full site header/hero, retain semantic forms and drafts, and never start another owner redirect. Known authentication links escape the frame only through user navigation. `/visit` and `/join` remain valid independent entry routes with their existing restricted projections and invitation-fragment consumption; they are not redirected into the owner workspace.
+
+The wrapper does not change API authorization, create grants, modify the Site audience or add a postMessage bridge. [The 0.8.0 candidate record](../project/ENDLESS_CANVAS_VALIDATION.md) tracks source checks separately from publication and hosted acceptance; the earlier deployment receipt does not certify this candidate.
 
 ## One workspace, explicit responsibilities
 

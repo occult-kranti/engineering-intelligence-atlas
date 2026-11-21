@@ -1,14 +1,14 @@
 # Claude development usage
 
-Current 0.5.0 draft checkpoint: **20 November 2026 (America/New_York)**. Source receipts retain their original UTC timestamps. Authorized development ceiling: **$100 USD**.
+Current checkpoint: **0.8.0 endless-canvas development**. Historical source receipts retain their original UTC timestamps. Authorized development ceiling: **$100 USD**. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
 
 | Accounting category | USD | Interpretation |
 | --- | ---: | --- |
-| Observed native/development requests | **0.776748** | Usage returned by the recorded provider requests |
+| Observed native/development requests | **0.883690** | Usage returned by the recorded provider requests |
 | Observed successful hosted request | **0.022140** | Confirmed cloud reply and usage |
-| Total observed usage | **0.798888** | Native plus cloud; no allocation added |
-| Retained uncertain attempts | **0.285266** | Earlier native reservation 0.150000 plus cloud reservations 0.135266 |
-| Conservative usage accounting | **1.084154** | Observed usage plus retained uncertainty, against the 100.000000 ceiling |
+| Total observed usage | **0.905830** | Native/development plus cloud; no allocation added |
+| Retained uncertain attempts | **0.495762** | Earlier 0.285266 plus the blocked canvas source-review reservation 0.210496 |
+| Conservative usage accounting | **1.401592** | Observed usage plus retained uncertainty, against the 100.000000 ceiling |
 | Cloud allocation | **5.000000 reserved capacity** | Held inside the same global ceiling; contains cloud usage and is not an additional charge |
 
 The totals reconcile to [claude-usage.json](claude-usage.json). A reserved allocation, an uncertain attempt and observed usage are separate records. Do not add the $5 allocation to the observed or conservative usage totals, and do not describe an uncertain reservation as a confirmed provider charge.
@@ -32,10 +32,20 @@ The totals reconcile to [claude-usage.json](claude-usage.json). A reserved alloc
 | Daftar directory review | 8,047 | 2,636 | 0.042454 | Saved directory review; observed usage |
 | First two hosted preflight failures | Unobserved | Unobserved | 0.135266 reserved | Edge runtime rejected a request option before a confirmed provider response; uncertainty retained |
 | Successful hosted Donna reply | 7,800 | 654 | 0.022140 | Confirmed reply after the request-option correction; no tools executed |
+| Blocked canvas source review | Unobserved | Unobserved | 0.210496 reserved | Automatic approval review classified public source as private; no provider response or actual charge observed |
+| Endless-canvas universe compositor and tests | 20,716 | 6,551 | 0.106942 | Sonnet returned implementation and tests; independently reviewed, corrected and integrated |
 
 The first call is recorded as incomplete delivery even though the HTTP call completed. Subsequent requests used supported `between_tools` thinking with medium effort. The integrated server was reviewed and hardened by the director; generated code was not accepted merely because the provider returned it.
 
 Accounting uses the [official Claude price card](https://platform.claude.com/docs/en/about-claude/pricing) recorded for these standard/global Sonnet 5.5 requests: $2 per million input tokens and $10 per million output tokens. The original development calls and successful cloud receipt report no cache read/write tokens. The complete sanitized request accounting is in [claude-usage.json](claude-usage.json).
+
+## Endless-canvas coding request
+
+The first canvas request was blocked by automatic approval review because the supplied public source was classified as private. Its **$0.210496** conservative reservation remains recorded; no completed provider response or actual charge is claimed for that attempt.
+
+A new bounded request established all three source files as public using unauthenticated reads and matching hashes. That request completed with **20,716 input tokens, 6,551 output tokens and $0.106942 observed usage**, request ID `d38ebb65-3dd2-461f-baaf-a791eb25a74f`. Sonnet supplied the universe compositor and focused tests. Independent review corrected scope continuity, malformed geometry and member-isolation issues before integration. There was no blanket retry of an uncertain billed request, and the earlier reservation was not cleared.
+
+This is a completed coding response and reviewed implementation input. Full integrated testing, packaged application acceptance and publication have separate receipts in [the 0.8.0 validation record](ENDLESS_CANVAS_VALIDATION.md).
 
 ## Completed Donna rounds
 

@@ -11,7 +11,8 @@
 //   studio.destroy()
 // Heat: callback returns per-node { level: 0..4, label, metric? } or null (shown as unknown).
 
-import { type Camera, type Rect, fitBounds, normalizeCamera, worldToScreen, isVisible, screenToWorld } from './camera.js';
+import { type Camera, type Rect, type Size, fitBounds, normalizeCamera, worldToScreen, isVisible, screenToWorld } from './camera.js';
+import { buildUniverse } from './universe.js';
 import { loadCameraPref, mountControls, type Controls } from './controls.js';
 import { buildScene, type FreeflowFocus, type FreeflowScene, type FreeflowSnapshot, type SceneNode, type SceneThread } from './model.js';
 import { mountScene, type SceneRenderer } from './scene.js';
@@ -24,6 +25,9 @@ export interface StudioHeat { level: 0 | 1 | 2 | 3 | 4 | 'unknown' | 'off'; labe
 type NodeMeta = SceneNode['metadata'];
 
 export interface StudioOptions {
+  /** Persistent world for the owner renderer. Member canvases retain their restricted projection. */
+  continuousCanvas?: boolean;
+  onSurface?(surface: 'company-directory' | 'object-inspector'): void;
   onNavigate(focus: FreeflowFocus): void;
   onAction(action: StudioActionKind, context: StudioActionContext): void;
   heat?(node: Readonly<SceneNode>): StudioHeat | null | undefined;
@@ -35,8 +39,14 @@ export interface Studio {
   update(snapshot: FreeflowSnapshot, focus?: FreeflowFocus): void;
   setActive(active: boolean): void;
   setCapabilities(fn: ((spec: InspectorActionSpec) => StudioActionState) | null): void;
+  getCamera(): Camera;
+  getViewport(): Size;
+  setCamera(camera: Camera): void;
+  stopMotion(): void;
+  showCanvas(): void;
+  frame(): void;
   destroy(): void;
-  elements: { root: HTMLElement; canvasHost: HTMLElement; listHost: HTMLElement };
+  elements: { root: HTMLElement; canvasHost: HTMLElement; listHost: HTMLElement; world: HTMLElement; inspectorHost: HTMLElement };
 }
 
 const WARN_VISIBLE = 3;
@@ -62,6 +72,7 @@ function mk<K extends keyof HTMLElementTagNameMap>(tag: K, cls: string, text?: s
 
 export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   const root = mk('section', 'ff-studio');
+  if (options.continuousCanvas) root.classList.add('ff-studio--continuous');
   root.setAttribute('aria-label', 'Office studio');
   const header = mk('header', 'ff-header');
   const left = mk('div', '');
@@ -101,6 +112,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   let snapshot: FreeflowSnapshot = {};
   let focus: FreeflowFocus = { kind: 'portfolio' };
   let scene: FreeflowScene | null = null;
+  let focusBounds: Rect | null = null;
   let selectedId: string | null = null;
   let selectedThread: string | null = null;
   let active = true;
@@ -111,6 +123,9 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   let inspectorOpen = false;
   let warnExpanded = false;
   let currentKey = '';
+  // A deep-linked panel can frame before the first snapshot assigns a scope.
+  // Adopt that explicit choice once; subsequent scope changes keep normal restore/fit behavior.
+  let initialCamera: Camera | null = null;
   let fitPending = false;
   let canvasShown = true;
   let capsFn = options.capabilities ?? null;
@@ -149,7 +164,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     getCamera: () => sceneR.getCamera(),
     setCamera: (c) => sceneR.setCamera(c),
     onCameraChange: (c, ph) => { if (ph === 'end' && currentKey) cams.set(currentKey, c); },
-    getBounds: () => (scene ? (scene.bounds as Rect) : null),
+    getBounds: () => focusBounds ?? (scene ? (scene.bounds as Rect) : null),
     focusKey: 'pending',
     active: false,
     storage,
@@ -171,11 +186,15 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     if (!scene) { fitPending = false; return; }
     const mem = cams.get(currentKey);
     if (mem) { fitPending = false; sceneR.setCamera(mem); controls.sync(); return; }
+    // An empty loading projection has placeholder extents, not a useful saved
+    // camera. Wait for actual nodes and the full-size canvas before framing.
+    if (!scene.nodes.length) { fitPending = true; return; }
     const saved = readStored(currentKey);
     if (saved) { fitPending = false; const c = normalizeCamera(saved); cams.set(currentKey, c); sceneR.setCamera(c); controls.sync(); return; }
     if (!active || !canvasShown || listMode || !realCanvas()) { fitPending = true; return; }
     fitPending = false;
-    const c = fitBounds(sceneR.getCamera(), sceneR.getViewport(), scene.bounds as Rect, 24);
+    const base = options.continuousCanvas ? normalizeCamera({ ...sceneR.getCamera(), pitch: focus.kind === 'portfolio' ? 26 : 0, yaw: focus.kind === 'portfolio' ? -3 : 0 }) : sceneR.getCamera();
+    const c = fitBounds(base, sceneR.getViewport(), focusBounds ?? scene.bounds as Rect, options.continuousCanvas ? 90 : 24);
     cams.set(currentKey, c);
     sceneR.setCamera(c);
     controls.sync();
@@ -206,7 +225,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   function selectNode(id: string | null, from: 'canvas' | 'list' | 'api'): void {
     selectedId = id;
     selectedThread = null;
-    if (id && !inspectorOpen) { inspectorOpen = true; layout(); }
+    if (id && !inspectorOpen) { inspectorOpen = true; if (!options.continuousCanvas) layout(); }
     if (from !== 'canvas') sceneR.select(id);
     if (from !== 'list') list.setSelected(id);
     if (id && from === 'list' && !listMode && scene) {
@@ -270,6 +289,14 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   }
 
   function layout(): void {
+    if (options.continuousCanvas) {
+      canvasShown = true; listMode = false; cameraBar.hidden = false; canvasHost.hidden = false;
+      listHost.hidden = false; inspHost.hidden = false;
+      viewBtn.textContent = 'Find company';
+      viewBtn.setAttribute('aria-pressed', 'false');
+      syncControlsActive();
+      return;
+    }
     canvasShown = !listMode;
     cameraBar.hidden = listMode;
     canvasHost.hidden = listMode;
@@ -282,44 +309,61 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     if (!listMode && fitPending) { tryFit(); if (fitPending) requestAnimationFrame(() => { if (!destroyed && fitPending) tryFit(); }); }
   }
 
-  const onView = () => { userToggled = true; listMode = !listMode; layout(); };
-  const onInsp = () => { inspectorOpen = !inspectorOpen; layout(); };
+  const onView = () => { if (options.continuousCanvas) { options.onSurface?.('company-directory'); return; } userToggled = true; listMode = !listMode; layout(); };
+  const onInsp = () => { if (options.continuousCanvas) { options.onSurface?.('object-inspector'); return; } inspectorOpen = !inspectorOpen; layout(); };
   const onWarn = () => { warnExpanded = !warnExpanded; renderHeader(); };
   viewBtn.addEventListener('click', onView);
   inspBtn.addEventListener('click', onInsp);
   noticeBtn.addEventListener('click', onWarn);
 
   const mq = typeof matchMedia !== 'undefined' ? matchMedia('(max-width: 720px)') : null;
-  const onMq = () => { narrow = !!mq?.matches; if (!userToggled) { listMode = narrow; layout(); } };
+  const onMq = () => { narrow = !!mq?.matches; if (!userToggled && !options.continuousCanvas) { listMode = narrow; layout(); } };
   mq?.addEventListener('change', onMq);
-  if (mq) { narrow = mq.matches; listMode = narrow; }
+  if (mq) { narrow = mq.matches; listMode = options.continuousCanvas ? false : narrow; }
   layout();
 
   return {
-    elements: { root, canvasHost, listHost },
+    elements: { root, canvasHost, listHost, world: sceneR.elements.world, inspectorHost: inspHost },
+    getCamera: () => sceneR.getCamera(),
+    getViewport: () => sceneR.getViewport(),
+    setCamera(c) {
+      if (destroyed) return;
+      const camera = normalizeCamera(c);
+      fitPending = false;
+      if (currentKey) cams.set(currentKey, camera); else initialCamera = camera;
+      sceneR.setCamera(camera);
+      controls.sync();
+    },
+    stopMotion() { controls.stopMotion(); },
+    showCanvas() { userToggled = true; listMode = false; layout(); },
+    frame() { if (focusBounds) controls.goTo(fitBounds(sceneR.getCamera(), sceneR.getViewport(), focusBounds, 80)); },
     update(snap, f) {
       if (destroyed) return;
       snapshot = snap;
       const nextFocus = f ?? focus;
-      const key = focusKey(nextFocus);
+      const key = (options.continuousCanvas ? 'universe:' : '') + focusKey(nextFocus);
       const changed = key !== currentKey;
       focus = nextFocus;
-      const built = applyHeat(buildScene(snapshot, focus));
+      const raw = options.continuousCanvas ? buildUniverse(snapshot, focus) : buildScene(snapshot, focus);
+      focusBounds = 'focusBounds' in raw ? raw.focusBounds as Rect : raw.bounds;
+      const built = applyHeat(raw);
       scene = built;
       controls.setBrowseBounds(focus.kind === 'portfolio' && built.nodes.length > 1 ? built.tableBounds ?? null : null);
       if (changed) {
         currentKey = key;
+        if (initialCamera) { cams.set(key, initialCamera); initialCamera = null; }
         selectedId = null; selectedThread = null;
         fitPending = true;
-        controls.setBounds(built.bounds as Rect);
+        controls.setBounds(focusBounds);
         sceneR.update(built);
         controls.setFocusKey(key);
         tryFit();
       } else {
-        controls.setBounds(built.bounds as Rect);
+        controls.setBounds(focusBounds);
         if (selectedId && !built.nodes.some((n) => n.id === selectedId)) selectedId = null;
         if (selectedThread && !built.threads.some((t) => t.id === selectedThread)) selectedThread = null;
         sceneR.update(built);
+        if (fitPending) tryFit();
       }
       list.update(built);
       sceneR.select(selectedId);

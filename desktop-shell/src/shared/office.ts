@@ -183,4 +183,6 @@ export interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; er
 export interface OfficeWorkerStatus {
   enabled: boolean; running: boolean; activeJobId: string | null; lastError: string | null;
   concurrency?: number; activeJobIds?: string[];
+  /** Latest bounded deterministic reviews. Flagged reports are linked by the job's artifact. */
+  sourceReviews?: import('./source-review').SourceReviewReport[];
 }

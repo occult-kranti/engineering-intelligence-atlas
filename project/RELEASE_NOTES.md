@@ -1,25 +1,39 @@
-# Daftar 0.7.0 — Freeflow company studio and private runtimes
+# Daftar 0.8.0 — one endless company canvas
 
-This release brings the Freeflow conference table, company and subdepartment hierarchy, visiting-employee workspaces, shared local models, a permanent observer and a Linux headless runtime into one source tree.
+Daftar keeps the conference table, company seats, office blueprints, Donna conversation and work controls in one continuous spatial workspace. Existing forms become canvas elements, with their saved scope, validation, handlers and drafts intact.
 
-## Workspace
+## One world for the work
 
-Company seats lead into offices and nested departments. The canvas supports top and perspective views, pan/zoom/rotation, optional automatic seat browsing, edge pan, list navigation and bounded rendering. Donna is movable with pointer or keyboard and includes docking, position lock/reset, scope and connection options. Both Violet studio and Golden drafting remain available.
+The conference table remains in the composed world when a company's blueprint opens. Focusing an office or department moves the camera within that company layout. Owners can pan, zoom, rotate, use perspective, browse company seats automatically or use keyboard/list navigation. Night office and Drafting paper use a shared charcoal, olive, brass and warm-ivory palette while preserving existing theme preference keys.
 
-## Ownership and sharing
+Conversation, crew, scope, ownership, roadmap, whiteboard, decisions, goals, hiring, queues, knowledge, ledger, models and settings are movable and resizable elements. Panels support pinning, collapse, close/reopen and saved device-local positions. **Find a surface** and **Home** keep tools and the conference table reachable. Camera flights are interruptible, reduced-motion preference is respected, and presentation storage contains bounded geometry rather than form contents or permissions.
 
-The private website adds People & access, a visiting office and an invitation review screen. Owner membership edits use revision checks; expiry/revocation and owner deactivation are rechecked at admission. Visitor canvases use a restricted projection and mask inaccessible areas. Hidden roadmap changes do not alter a visitor's counts or fingerprint. Company membership still requires access to the private Site; the release does not broaden the Site audience.
+## Donna and her crew
 
-Native company and department parents are validated as forests. Departments cannot cross company or office boundaries. Parent relationships do not grant permissions or cascade pause/resume. Additive hierarchy reconciliation preserves existing custom parents and existing company records.
+The crew view derives Donna, company/office assistants and department coordinators from actual saved employee identities. Shared specialists require matching contracts and scope. Missing, duplicate or mismatched definitions remain unconfigured. Deterministic Source Review and ledger observation appear separately from employee definitions and model activity.
 
-## Runtime, models and observer
+The crew's scoped actions draft a goal, pause a scope or resume it through the existing native command boundary. A draft does not start a model request. Resuming a scope can admit already authorized queued work. Recorded grant hints are checked against expiry, revocation and parent evidence, then native authority validates the actual command.
 
-A Node service reuses the Rust core and worker pool on a Linux VPS or Vast VM. It supplies authenticated private HTTP control, durable command receipts, optional configured cloud-device synchronization, and nine stdio MCP tools. Jobs survive an MCP client disconnect, and workers start paused after a restart.
+## Website controls within the canvas
 
-A shared model pool deduplicates approved Ollama pulls, tracks per-company request receipts, verifies installed model digests and binds employee assignments. Shared model bytes do not share private prompts. Runtime operators must explicitly configure local-only Ollama; existing office jobs using other tags need a reviewed model assignment. Host/GPU costs remain separate from token accounting. No model weights or paid infrastructure are included in the release.
+Signed-in owners enter the canvas by default. Website/device connections, People & access, Applications & integrations, visiting-employee entry and invitation review have compact embedded presentations inside it. The original forms retain their revision checks, restricted projections and drafts. Signed-out entry remains usable, and visitor/invitation routes preserve their independent access and token-consumption flows. Existing company and workspace deep links remain supported.
 
-The permanent observer runs deterministic checks without a model call, uses live lease evidence for running jobs, reports index coverage and recorded ledger problems, and cannot turn a successfully committed command into an apparent failure. Its initial implementation and tests were authored through the configured Sonnet conversation and then independently reviewed and integrated.
+## Source Review
+
+The deterministic shared reviewer inspects external text already supplied by managed GitHub reads or prepared for OfficeWorker jobs. It records source hashes, fixed findings and coverage, and hands flagged material to Donna without a model call. Reports are retained through the existing artifact/job/ledger pathway. External instructions cannot change the owner's task, grant capabilities or authorize credential disclosure.
+
+Robot exclusion preferences are classified separately from instruction attempts. An exact-source owner advisory override can be represented by the public-read policy; it does not bypass authentication, rate limits, redirects or unavailable content. **A general website crawler is not implemented.** See [Source Review](SOURCE_REVIEW.md) for the active integration and boundaries.
+
+## Reviewed provenance and retained runtime
+
+The supplied Kimi commit was reviewed as an additive historical archive: **2,053 added files, 810,510 added text lines, 338 binary files and no changes to existing main files**. Current Donna coordination selectively adapts ideas using the native employee/contract model. The old alternate runtime, store and binary packages are not installed over the current product. [The branch audit](KIMI_BRANCH_REVIEW.md) records provenance, package verification and historical claims that were not rerun.
+
+Sonnet authored the universe compositor and focused tests through a bounded public-source request; the implementation was independently reviewed and corrected. [The sanitized development ledger](CLAUDE_USAGE.md) separates observed usage from a retained blocked-request reservation.
+
+The Rust authority, durable receipts, restricted memberships, shared local model pool, permanent observer and Linux headless/MCP runtime remain the execution foundation. VPS recipes do not rent a machine, download model weights or create a live ChatGPT tunnel. Android remains the atlas companion; the full native Office runtime runs in the desktop or configured Linux service.
 
 ## Verification and setup
 
-See [the 0.7.0 validation receipt](FREEFLOW_VALIDATION.md), [VPS setup](../deploy/README.md), [shared models](../deploy/MODEL_POOL.md), [MCP setup](../tools/DAFTAR_RUNTIME_MCP.md), and [the current handoff](../HANDOFF.md). The release workflow builds Linux, Windows x64, VS Code and the Android atlas and publishes only after its gates pass. Signed installers, an owner-machine keychain test, a real Vast rental and a live ChatGPT tunnel are separate acceptance environments.
+[The 0.8.0 validation record](ENDLESS_CANVAS_VALIDATION.md) tracks candidate checks separately from release and deployment. The required workflow gates cover web/static assets, checksums, headless/container operation, MySQL connectors, Linux and Windows desktop packages, Android, cloud, VS Code and design tools. A source version bump is not evidence that those gates or publication completed.
+
+See [maintainer setup](../HANDOFF.md), [VPS deployment](../deploy/README.md), [shared models](../deploy/MODEL_POOL.md), [runtime MCP](../tools/DAFTAR_RUNTIME_MCP.md) and the [last verified 0.7.0 publication](release-0.7.0.json).

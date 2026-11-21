@@ -4,6 +4,21 @@ This file distinguishes implemented behavior from deployment and validation work
 The detailed worker asks and returns are in [the shared ledger](project/WORKER_LEDGER.md),
 with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
+## Endless company canvas — 0.8.0 candidate
+
+| Outcome | State | Acceptance |
+| --- | --- | --- |
+| Conference table and company blueprint in one spatial world | Implemented candidate | Stable scope coordinates, bounded geometry, member isolation and final browser acceptance |
+| Movable application elements with saved layout | Implemented candidate | Form/draft continuity, keyboard movement/resize, close/reopen, reduced motion and corrupt-storage recovery |
+| Donna hierarchy and scoped proposals | Implemented; focused checks passed | Actual employee IDs/contracts, malformed and expired grant handling, native revalidation and honest runtime status |
+| Owner website entry and embedded management forms | Implemented; route/TypeScript checks passed | Final owner, signed-out, visitor, invitation and narrow-browser gates |
+| Deterministic external-source review | Implemented candidate | Managed GitHub/worker integration, bounded private reports and no model/tool authority from source text |
+| Kimi branch review | Verified audit | 2,053 added files; selective original implementation; old runtime and package acceptance remain separate |
+| General website crawler, live VPS/ChatGPT connection | Separate work | No crawler transport or paid host provisioned by this increment |
+| 0.8.0 packages and publication | Pending final gates | Exact source, required CI, package digests, hosted deployment and acceptance receipts |
+
+See [the candidate validation record](project/ENDLESS_CANVAS_VALIDATION.md), [source review](project/SOURCE_REVIEW.md) and [Kimi provenance](project/KIMI_BRANCH_REVIEW.md). The previous 0.7.0 release remains independently documented below.
+
 ## Freeflow and shared cloud execution — 0.7.0
 
 | Outcome | State | Acceptance |

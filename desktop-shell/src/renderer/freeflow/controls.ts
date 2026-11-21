@@ -38,6 +38,8 @@ export interface Controls {
   perspective(): void;
   rotate(deltaDeg: number): void;
   sync(): void;
+  stopMotion(): void;
+  goTo(camera: Camera): void;
   destroy(): void;
   elements: { root: HTMLElement; angle: HTMLElement };
 }
@@ -60,7 +62,7 @@ function isTyping(t: EventTarget | null): boolean {
   const e = t as HTMLElement | null;
   if (!e || !e.tagName) return false;
   const tag = e.tagName;
-  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.isContentEditable === true || !!e.closest?.('[contenteditable="true"],.donna-dock,.ff-list-search');
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.isContentEditable === true || !!e.closest?.('[contenteditable="true"],.donna-dock,.ff-list-search,.canvas-panel,.canvas-launcher');
 }
 
 function validPref(v: unknown): Camera | null {
@@ -246,10 +248,11 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   }
 
   const rectPt = (e: { clientX: number; clientY: number }): Point => { const r = vp.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-  const onBackground = (e: Event) => !(e.target as HTMLElement | null)?.closest?.('.ff-node,.ff-controls,button,input,textarea,select,a');
+  const onBackground = (e: Event) => !(e.target as HTMLElement | null)?.closest?.('.ff-node,.ff-controls,.canvas-panel,.canvas-launcher,button,input,textarea,select,a');
 
   function onWheel(e: WheelEvent): void {
     if (!active || destroyed) return;
+    if ((e.target as HTMLElement | null)?.closest?.('.canvas-panel,.canvas-launcher')) return;
     e.preventDefault();
     pauseBrowsing();
     stopMotion();
@@ -427,6 +430,8 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
     setActive(a) { if (a === active) return; active = a; applyActive(); },
     fit, reset, topView, perspective, rotate,
     sync() { if (!destroyed) readAngle(); },
+    stopMotion() { if (!destroyed) cancelAll(); },
+    goTo(camera) { if (!destroyed) { cancelAll(); go(normalizeCamera(camera)); } },
     destroy() {
       if (destroyed) return;
       cancelAll();

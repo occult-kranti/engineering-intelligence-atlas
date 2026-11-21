@@ -77,7 +77,8 @@ export function describeNode(n: SceneNode): string {
   const md = n.metadata || {};
   let prefix: string = n.kind;
   if (n.kind === 'reference') {
-    if (md['organizational'] === true || md['portal'] === true) prefix = md['role'] === 'parent' ? 'Parent company link' : md['role'] === 'child' ? 'Subcompany link' : 'Company link';
+    if (md['tableBlueprint'] === true) prefix = 'Saved blueprint preview';
+    else if (md['organizational'] === true || md['portal'] === true) prefix = md['role'] === 'parent' ? 'Parent company link' : md['role'] === 'child' ? 'Subcompany link' : 'Company link';
     else if (md['globalAssistant'] === true) prefix = 'Global assistant reference';
     else if (md['serviceHost'] === true || md['layoutOnly'] === true) prefix = 'Service host reference';
     else if (md['memberShared'] === true) prefix = 'Shared employee reference';
@@ -107,6 +108,33 @@ function detailSvg(n: SceneNode, lod: 'rich' | 'simple'): SVGSVGElement {
   } else if (n.kind === 'room' || n.kind === 'whiteboard') {
     s.appendChild(svg('path', { class: 'ff-door', d: `M ${w * 0.1} ${h} A ${Math.min(24, w * 0.2)} ${Math.min(24, w * 0.2)} 0 0 1 ${w * 0.1 + Math.min(24, w * 0.2)} ${h - Math.min(24, w * 0.2)}`, fill: 'none' }));
   }
+  return s;
+}
+
+/** Each outline comes from a saved room; each office is fitted separately without invented rooms. */
+function tablePlanSvg(n: SceneNode): SVGSVGElement | null {
+  const offices = (n.blueprintPreview?.offices ?? []).slice(0, 2);
+  if (!offices.some(office => office.rooms.length > 0)) return null;
+  const s = svg('svg', { class: 'ff-table-plan-svg', viewBox: '0 0 220 84', 'aria-hidden': 'true', focusable: 'false' });
+  let remaining = 32;
+  const cellWidth = 220 / offices.length;
+  offices.forEach((office, index) => {
+    const rooms = office.rooms.slice(0, remaining).filter(room => Object.values(room.rect).every(Number.isFinite) && room.rect.width > 0 && room.rect.height > 0);
+    remaining -= rooms.length;
+    const label = svg('text', { class: 'ff-table-plan-office-label', x: String(index * cellWidth + 4), y: '10' });
+    label.textContent = office.label; s.append(label);
+    if (!rooms.length) return;
+    const x0 = Math.min(...rooms.map(room => room.rect.x)), y0 = Math.min(...rooms.map(room => room.rect.y));
+    const width = Math.max(...rooms.map(room => room.rect.x + room.rect.width)) - x0;
+    const height = Math.max(...rooms.map(room => room.rect.y + room.rect.height)) - y0;
+    const scale = Math.min((cellWidth - 12) / Math.max(1, width), 64 / Math.max(1, height));
+    const ox = index * cellWidth + (cellWidth - width * scale) / 2, oy = 16 + (64 - height * scale) / 2;
+    for (const room of rooms) {
+      const rect = svg('rect', { class: 'ff-table-plan-room', x: String(ox + (room.rect.x - x0) * scale), y: String(oy + (room.rect.y - y0) * scale), width: String(room.rect.width * scale), height: String(room.rect.height * scale), fill: 'none' });
+      rect.dataset.roomId = room.id;
+      const title = svg('title'); title.textContent = room.label; rect.append(title); s.append(rect);
+    }
+  });
   return s;
 }
 
@@ -168,6 +196,7 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   e.style.cssText = `position:absolute;left:0;top:0;width:${Math.max(1, fin(n.rect.width))}px;height:${Math.max(1, fin(n.rect.height))}px;transform:translate(${fin(n.rect.x)}px,${fin(n.rect.y)}px)`;
   e.dataset.lod = lod;
   e.dataset.status = n.status;
+  e.classList.toggle('ff-node--table-plan', n.metadata['tableBlueprint'] === true);
   e.classList.toggle('is-selected', selected);
   e.setAttribute('aria-label', describeNode(n));
   e.setAttribute('aria-pressed', String(selected));
@@ -176,9 +205,17 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   const paper = e.firstElementChild as HTMLElement;
   const hk = heatOf(n);
   const assign = typeof n.metadata['assignment'] === 'string' ? (n.metadata['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department');
-  const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}`;
+  const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}|${n.blueprintPreview ? JSON.stringify(n.blueprintPreview) : ''}`;
   if (e.dataset.sig === key) return;
   e.dataset.sig = key;
+  if (n.metadata['tableBlueprint'] === true) {
+    paper.replaceChildren(el('div', 'ff-table-plan-title', n.label));
+    const plan = tablePlanSvg(n);
+    if (plan) paper.append(plan);
+    else paper.append(el('div', 'ff-table-plan-empty', n.blueprintPreview?.officeCount ? 'No saved room geometry' : 'No saved blueprint'));
+    paper.append(el('div', 'ff-table-plan-caption', n.subtitle), el('span', 'ff-table-plan-open ff-node-open', 'Open layout ↵'));
+    return;
+  }
   paper.replaceChildren(detailSvg(n, lod));
   if (n.kind === 'folio' && n.metadata['seat'] === true) {
     const chair = el('div', 'ff-chair');
@@ -330,8 +367,8 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
     if (!tab) tab = (interactive.find(eligible) ?? null)?.id ?? null;
     tabId = tab;
     const cands = scene.nodes.filter((n) => n.id === selectedId || n.id === focusedId || n.id === tabId || intersects(n.rect, vis));
-    // Container-first ordering then smaller (more specific) nodes win the rich budget.
-    const rank = (n: SceneNode) => (n.id === selectedId || n.id === focusedId || n.id === tabId ? 0 : 1);
+    // Selected nodes stay reachable. Decorative blueprint previews cannot displace company chairs.
+    const rank = (n: SceneNode) => (n.id === selectedId || n.id === focusedId || n.id === tabId ? 0 : n.metadata['tableBlueprint'] === true ? 2 : 1);
     const sorted = [...cands].sort((a, b) => rank(a) - rank(b) || a.rect.width * a.rect.height - b.rect.width * b.rect.height);
     const chosen = sorted.slice(0, RICH_NODE_BUDGET);
     const chosenIds = new Set(chosen.map((n) => n.id));

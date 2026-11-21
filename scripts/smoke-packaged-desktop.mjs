@@ -9,6 +9,7 @@ import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { runPackagedFreeflowCheck } from './freeflow-browser-checks.mjs';
+import { openCanvasSurface, assertEndlessShell, checkEndlessPanelInteractions } from './endless-canvas-browser-checks.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(join(root, 'site-source', 'package.json'));
@@ -202,6 +203,7 @@ try {
   if (isWin) assert.equal(peMachine(binary), 0x8664, 'Packaged helper is not PE x64.');
   page = await firstWindowWithDiagnostics(application);
   page.setDefaultTimeout(15000);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   page.on('pageerror', error => errors.push(error.message));
   await application.context().route(/^https?:\/\//, route => route.abort());
   await page.waitForFunction(() => typeof window.desktopBridge?.officeSnapshot === 'function');
@@ -227,13 +229,13 @@ try {
   const beforeGoals = initial.office.snapshot.goals.length;
   const beforeSpend = initial.office.snapshot.budget.committedUsd;
 
-  await page.locator('.sidebar .nav-item[data-view="office"]').click();
-  // The packaged default is the Freeflow host; assert it, then use the real Operations / Manage button.
+  // The packaged default is one world. Reach forms through its real surface finder.
   await page.locator('#freeflow-host').waitFor({ state: 'visible' });
-  assert(await page.locator('#freeflow-host').count() === 1, 'Packaged renderer is missing the Freeflow host.');
-  await page.locator('#ff-nav-operations').click();
+  await assertEndlessShell(page, 'Packaged default');
+  assert.equal(await page.locator('#freeflow-host').count(), 1, 'Packaged renderer is missing the Freeflow host.');
+  await openCanvasSurface(page, 'scope');
   await page.locator('#office-native-status').filter({ hasText: 'Local state loaded' }).waitFor({ state: 'visible' });
-  await page.locator('[data-workspace-tab="chat"]').click();
+  await openCanvasSurface(page, 'donna');
   await page.locator('#chat-goal-mode').selectOption('manual');
   const title = 'Packaged smoke: create a local delivery plan';
   await page.locator('#chat-message').fill(title);
@@ -251,36 +253,56 @@ try {
   assert.deepEqual(invalidControls, [], 'The real composer must be valid before a local plan can be submitted.');
   await page.locator('#chat-send').click();
   await page.locator('#chat-status').filter({ hasText: 'Brief and plan saved.' }).waitFor({ state: 'visible' });
+  await openCanvasSurface(page, 'goals');
   await page.locator('#workspace-goals').getByText(title, { exact: true }).waitFor({ state: 'visible' });
   const after = await page.evaluate(() => window.desktopBridge.officeSnapshot());
   assert.equal(after.ok, true, after.error);
   assert.equal(after.snapshot.goals.length, beforeGoals + 1);
   const goal = after.snapshot.goals.find(item => item.title === title);
   assert(goal && goal.mode === 'plan' && goal.status === 'planned', 'UI action did not persist the local plan.');
+  const goalEvent = after.snapshot.events.find(event => event.entityId === goal.id && event.action === 'create_goal');
+  assert(goalEvent, 'The native ledger must record the created goal.');
   assert.equal(after.snapshot.budget.committedUsd, beforeSpend, 'A local plan must not consume provider budget.');
   assert.equal(after.snapshot.jobs.filter(job => job.status === 'running').length, 0);
   const saved = JSON.parse(readFileSync(join(appInfo.userData, 'company', 'company-state.json'), 'utf8'));
   assert(saved.office.goals.some(item => item.id === goal.id), 'Native plan was not saved in the isolated profile.');
+  assert(saved.office.events.some(event => event.id === goalEvent.id), 'The goal ledger entry was not saved in the isolated profile.');
   await capture('office');
 
-  await page.locator('[data-workspace-tab="blueprint"]').click();
+  await openCanvasSurface(page, 'office-ledger');
+  await page.locator('#office-ledger-search').fill(goal.id);
+  await page.locator('#office-ledger .activity-row').filter({ hasText: goal.id }).first().waitFor({ state: 'visible' });
+  await capture('goal-ledger');
+  await page.locator('#office-ledger-search').fill('');
+
+  await openCanvasSurface(page, 'workspace-blueprint');
   await page.locator('#workspace-panel-blueprint').waitFor({ state: 'visible' });
   await page.locator('.blueprint-room').first().waitFor({ state: 'visible' });
   await capture('blueprint');
-  await page.locator('[data-workspace-tab="decisions"]').click();
+  await openCanvasSurface(page, 'workspace-decisions');
   await page.locator('#decision-create-form').waitFor({ state: 'visible' });
   await capture('decisions');
-  await page.locator('.sidebar .nav-item[data-view="settings"]').click();
+  await openCanvasSurface(page, 'settings');
   await page.locator('#cloud-connection-panel').waitFor({ state: 'visible' });
   const cloud = await page.evaluate(() => window.desktopBridge.cloudStatus());
   assert.equal(cloud.configured, false);
   assert.equal(cloud.lastSyncedAt, null);
   await capture('settings');
+  // Exercise drafts and panel gestures against the real packaged renderer, then
+  // compare native records so a presentation interaction cannot create work.
+  const canvasReceipt = await checkEndlessPanelInteractions(page, 'Packaged native workspace');
+  const afterPanels = await page.evaluate(() => window.desktopBridge.officeSnapshot());
+  assert.equal(afterPanels.ok, true, afterPanels.error);
+  for (const key of ['goals', 'jobs', 'schedules', 'events']) {
+    assert.deepEqual(afterPanels.snapshot[key], after.snapshot[key], `Canvas-only interactions changed native ${key}.`);
+  }
+  assert.equal(afterPanels.snapshot.budget.committedUsd, beforeSpend, 'Canvas interactions must not consume provider budget.');
   const freeflowReceipt = await runPackagedFreeflowCheck({ page, capture });
   assert.deepEqual(errors, [], 'Packaged renderer raised an unhandled error.');
 
   receipt = {
     freeflow: freeflowReceipt,
+    canvas: { ...canvasReceipt, nativeRecordsUnchanged: true },
     schemaVersion: 1,
     status: 'passed',
     at: new Date().toISOString(),
@@ -298,6 +320,7 @@ try {
     osSandbox: noOsSandbox ? 'disabled only for isolated CI runner' : 'default',
     nativeStateLoaded: true,
     localGoalPersisted: true,
+    localGoalLedgerPersisted: true,
     providerSpendChanged: false,
     providerCredentialsConfigured: false,
     cloudConnected: false,

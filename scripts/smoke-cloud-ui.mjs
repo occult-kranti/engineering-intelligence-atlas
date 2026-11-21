@@ -15,6 +15,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { installRendererFixture } from '../desktop-shell/tests/fixtures/renderer-bridge.mjs';
 import { runFreeflowCloudChecks } from './freeflow-browser-checks.mjs';
+import { assertEndlessShell, checkEndlessPanelInteractions, openCanvasSurface, settleCanvas } from './endless-canvas-browser-checks.mjs';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const cloudRoot = path.resolve(process.env.DAFTAR_CLOUD_UI_SOURCE || path.join(repository, 'cloud-workspace'));
@@ -26,7 +27,7 @@ const fixtureAt = '2026-11-20T12:00:00.000Z';
 const screenshots = [], checks = [], pageErrors = [], unexpectedRequests = [], blockedExternal = [];
 const receipt = {
   schemaVersion: 1, status: 'running', startedAt: new Date().toISOString(),
-  scope: 'Built cloud homepage, directory, owner access, visiting office, invitation review and shared-renderer links with synthetic API fixtures',
+  scope: 'Built continuous canvas, owner entry routing, embedded connections/directory/access, visiting office, invitation review and shared-renderer links with synthetic API fixtures',
   data: 'Test-only Fixture companies; no owner portfolio, credentials, private source metadata or production API responses',
   apiMode: 'Every browser /api/* request is intercepted; only the local built pages/assets reach Wrangler',
   authentication: 'Synthetic /api/session and /api/collaboration/session responses exercise client states only',
@@ -294,11 +295,107 @@ function deferred() {
   const promise = new Promise(done => { resolve = done; });
   return {promise, resolve};
 }
+async function checkOwnerCanvasEntries(page, base, state, viewport) {
+  const discarded = 'synthetic-navigation-token';
+  const routes = [
+    {route: `/?company=fixture-company&token=${discarded}`, surface: null},
+    {route: `/?companyId=fixture-company&token=${discarded}#devices`, surface: 'connections', path: '/', anchor: '#devices'},
+    {route: `/applications?company=fixture-company&token=${discarded}#design-connections`, surface: 'applications', path: '/applications', anchor: '#design-connections'},
+    {route: `/access?company=fixture-company&token=${discarded}#invite=${discarded}`, surface: 'access', path: '/access', anchor: ''},
+  ];
+  for (const entry of routes) {
+    stage = `owner-canvas-entry-${entry.surface || 'home'}-${viewport.width}`;
+    const start = state.calls.length;
+    await page.goto(base + entry.route, {waitUntil: 'networkidle'});
+    await page.waitForURL(url => ['/workspace/chrome.html', '/workspace/chrome'].includes(url.pathname));
+    await page.locator('#freeflow-host .ff-world').waitFor({state: 'attached'});
+    await page.waitForFunction(() => document.querySelector('#office-company-select')?.value === 'fixture-company');
+    // A website surface can be far from the company scene. Its correctly framed
+    // viewport may cull every scene card; loaded scope and the live world are the
+    // readiness contract here. Plain home must still render actual scene nodes.
+    if (!entry.surface) await page.locator('#freeflow-host .ff-node').first().waitFor({state: 'attached'});
+    await settleCanvas(page);
+    await assertEndlessShell(page, `Owner ${entry.surface || 'home'} entry ${viewport.width}`);
+    const url = new URL(page.url());
+    assert.equal(state.calls[start], 'GET /api/session', 'Owner entry checks its session before opening protected content');
+    assert.equal(url.searchParams.get('company'), 'fixture-company', 'Owner redirect retains the selected company');
+    assert.equal(url.searchParams.get('surface'), entry.surface);
+    assert.equal(url.hash, '#office');
+    assert.equal(url.searchParams.has('token'), false, 'Unrelated navigation data must not propagate into the canvas');
+    assert.equal(url.searchParams.has('canvas'), false, 'The top level remains the full canvas');
+    if (!entry.surface) continue;
+    const panel = await openCanvasSurface(page, entry.surface);
+    const iframe = panel.locator('iframe');
+    await iframe.waitFor({state: 'visible'});
+    const childUrl = new URL(await iframe.getAttribute('src'), base);
+    assert.equal(childUrl.origin, base);
+    assert.equal(childUrl.pathname, entry.path);
+    assert.equal(childUrl.searchParams.get('canvas'), '1');
+    assert.equal(childUrl.searchParams.get('company'), 'fixture-company', 'Selected company reaches the actual child document');
+    assert.equal(childUrl.hash, entry.anchor, 'Only the relevant public section anchor reaches the child');
+    assert.equal(childUrl.href.includes(discarded), false, 'Invitation/auth-like navigation data does not enter an unrelated iframe');
+    const handle = await iframe.elementHandle();
+    const frame = await handle.contentFrame();
+    assert.ok(frame, 'The canvas surface owns a real browser frame');
+    await frame.locator(`.canvas-surface[data-canvas-surface="${entry.surface}"]`).waitFor({state: 'visible'});
+    assert.equal(await frame.evaluate(() => typeof window.desktopBridge), 'undefined', 'Embedded cloud forms do not acquire the owner runtime bridge');
+    if (entry.surface === 'access') await frame.getByRole('heading', {name: 'A seat in Fixture Engineering', exact: true}).waitFor({state: 'visible'});
+    if (entry.surface === 'connections') await frame.getByLabel('Device name', {exact: true}).waitFor({state: 'visible'});
+    if (entry.surface === 'applications') await frame.locator('#company-fixture-company').waitFor({state: 'visible'});
+    assert.equal(page.frames().filter(frame => frame !== page.mainFrame() && /\/workspace\/chrome(?:\.html)?(?:[?#]|$)/.test(frame.url())).length, 0, 'A canvas surface must not recursively embed another full renderer');
+    await handle.dispose();
+  }
+  checks.push(`Owner entries ${viewport.width}: home/access/applications lead to one canvas; iframe company and allowlisted anchors survive; tokens are discarded`);
+
+  // The owner canvas may display a visitor surface, but that iframe still uses
+  // its own collaboration session and receives only a member projection.
+  const collaboration = state.collaboration;
+  collaboration.isOwner = false; collaboration.sessionSeen = false;
+  const memberReads = [];
+  const observe = request => {
+    if (!new URL(request.url()).pathname.startsWith('/api/')) return;
+    let frame; try { frame = request.frame(); } catch { return; }
+    if (frame !== page.mainFrame() && new URL(frame.url()).pathname === '/visit') memberReads.push(`${request.method()} ${new URL(request.url()).pathname}`);
+  };
+  page.on('request', observe);
+  try {
+    const panel = await openCanvasSurface(page, 'visit');
+    const handle = await panel.locator('iframe').elementHandle();
+    const frame = await handle.contentFrame();
+    assert.ok(frame);
+    await frame.locator('.collab-member-canvas .ff-studio').waitFor({state: 'visible'});
+    // A newly opened phone panel can also give its child a narrow viewport.
+    const canvasView = frame.getByRole('button', {name: 'Canvas view', exact: true});
+    if (await canvasView.isVisible()) await canvasView.click();
+    const restricted = frame.locator('.collab-member-canvas .ff-node--restricted');
+    await restricted.waitFor({state: 'visible'});
+    assert.equal(await restricted.getAttribute('aria-disabled'), 'true');
+    assert.equal(await frame.evaluate(() => typeof window.desktopBridge), 'undefined');
+    assert.equal(await frame.getByText('Fixture Sketchbook', {exact: true}).count(), 0);
+    assert.equal(await frame.getByRole('button', {name: 'Post note', exact: true}).count(), 0);
+    assert.equal(await frame.getByRole('button', {name: 'Submit proposal', exact: true}).count(), 0);
+    assert.equal(memberReads[0], 'GET /api/collaboration/session');
+    assert.ok(memberReads.length >= 2 && memberReads.every(key => key.startsWith('GET /api/collaboration/')), 'In-canvas visitor reads remain within the collaboration API');
+    await capture(page, 'fixture-canvas-visiting-boundary', viewport, false);
+    await handle.dispose();
+  } finally {
+    page.off('request', observe);
+    collaboration.isOwner = true; collaboration.sessionSeen = false;
+  }
+  checks.push(`In-canvas visitor ${viewport.width}: member-only records, restricted region, no runtime bridge, no write controls and collaboration-only reads`);
+  // Close through the real controls so later isolated authentication checks do
+  // not reopen previously requested websites from the persisted local layout.
+  for (const id of ['connections', 'applications', 'access', 'visit']) {
+    const panel = await openCanvasSurface(page, id);
+    await panel.locator('.canvas-panel-close').click();
+  }
+}
+
 async function checkCollaborationRoutes(page, base, state, viewport) {
   const fixture = state.collaboration;
   stage = `collaboration-owner-${viewport.width}`;
   const start = state.calls.length;
-  await page.goto(base + '/access?company=fixture-company', {waitUntil: 'networkidle'});
+  await page.goto(base + '/access?canvas=1&company=fixture-company', {waitUntil: 'networkidle'});
   await page.getByRole('heading', {name: 'A seat in Fixture Engineering', exact: true}).waitFor({state: 'visible'});
   assert.equal(state.calls[start], 'GET /api/collaboration/session', 'Access must check its collaboration session first');
   const hold = {companyId: 'fixture-company', started: deferred(), release: deferred(), response: structuredClone(fixture.access['fixture-company'])};
@@ -391,7 +488,7 @@ async function checkCollaborationRoutes(page, base, state, viewport) {
 
   stage = `collaboration-signin-${viewport.width}`;
   fixture.authenticated = false; fixture.sessionSeen = false;
-  for (const [route, heading] of [['/access', 'Sign in to manage access'], ['/visit', 'Sign in to your visiting office'], [`/join#invite=${fixture.token}`, 'Sign in before joining']]) {
+  for (const [route, heading] of [['/access?canvas=1', 'Sign in to manage access'], ['/visit', 'Sign in to your visiting office'], [`/join#invite=${fixture.token}`, 'Sign in before joining']]) {
     const before = state.calls.length;
     await page.goto(base + route, {waitUntil: 'networkidle'});
     await page.getByRole('heading', {name: heading, exact: true}).waitFor({state: 'visible'});
@@ -412,6 +509,24 @@ async function checkScopedLinks(page, base) {
   checks.push('Directory links retain the company and distinct Donna, Blueprint, Ownership, Roadmap, Whiteboard and Expert panel routes');
 }
 
+async function checkCloudRuntimeLimits(page, state, viewport) {
+  await openCanvasSurface(page, 'crew');
+  const runtime = await page.locator('#canvas-crew-runtime').innerText();
+  const before = state.calls.length;
+  await page.locator('#canvas-dispatch-toggle').click();
+  await page.locator('#global-status').filter({hasText: 'This operation runs in the connected desktop application.'}).waitFor({state: 'visible'});
+  assert.equal(await page.locator('#canvas-crew-runtime').innerText(), runtime, 'An unavailable dispatcher leaves the known runtime state unchanged');
+  assert.equal(await page.locator('#canvas-dispatch-toggle').innerText(), 'Enable dispatch');
+  assert.doesNotMatch(await page.locator('#worker-result').innerText(), /Dispatcher enabled/, 'A rejected runtime response cannot become a success status');
+  assert.deepEqual(state.calls.slice(before).filter(call => !call.startsWith('GET ')), [], 'Unsupported cloud runtime action never queues a native command or provider request');
+  await openCanvasSurface(page, 'source-review');
+  await page.getByText('Connect the desktop or VPS runtime to receive source-review reports.', {exact: true}).waitFor({state: 'visible'});
+  await page.locator('.canvas-source-policy > summary').click();
+  assert.match(await page.locator('.canvas-source-policy').innerText(), /General website crawling is not connected/);
+  await capture(page, 'fixture-canvas-runtime-limits', viewport, false);
+  checks.push(`Runtime ${viewport.width}: unsupported dispatch displays its real error with no write request or false success; source review reports its actual connected state`);
+}
+
 async function checkConnectedStudio(page, viewport) {
   const company = page.locator('#office-company-select');
   const assertScope = async () => {
@@ -427,6 +542,7 @@ async function checkConnectedStudio(page, viewport) {
   assert.equal(await page.locator('#workspace-theme').inputValue(), 'drafting');
   await assertScope();
 
+  await openCanvasSurface(page, 'scope');
   const heat = page.locator('#workspace-heat-mode');
   await page.locator('.heat-key > summary').click();
   for (const [mode, label] of [['workload', '1 unresolved job'], ['budget', '10% job allowance'], ['attention', '1 flagged job']]) {
@@ -448,7 +564,7 @@ async function checkConnectedStudio(page, viewport) {
   await capture(page, 'fixture-connected-blueprint-drafting', viewport, false);
   checks.push(`Studio ${viewport.width}: loaded signal engine, actual workload/cost/attention, six labelled levels, and an explicit off state`);
 
-  await page.locator('#workspace-tab-softboard').click();
+  await openCanvasSurface(page, 'workspace-softboard');
   await page.getByRole('heading', {name: 'See the people behind the work.', exact: true}).waitFor({state: 'visible'});
   assert.equal(await page.locator('#workspace-softboard .org-company').innerText(), 'Fixture Engineering');
   assert.equal(await page.locator('#workspace-softboard .org-office').innerText(), 'Product studio');
@@ -469,7 +585,7 @@ async function checkConnectedStudio(page, viewport) {
   await capture(page, 'fixture-connected-ownership', viewport);
   checks.push(`Ownership ${viewport.width}: actual hierarchy, searchable people, focused inspector, unknown data and company scope`);
 
-  await page.locator('#workspace-tab-timeline').click();
+  await openCanvasSurface(page, 'workspace-timeline');
   await page.getByRole('heading', {name: 'From intention to evidence.', exact: true}).waitFor({state: 'visible'});
   assert.deepEqual(await page.locator('#workspace-timeline .roadmap-lane').evaluateAll(rows => rows.map(row => row.dataset.stage)), ['planned', 'in-progress', 'blocked', 'done']);
   const outcome = page.locator('.studio-outcome[data-roadmap-id="fixture-outcome"]');
@@ -485,28 +601,12 @@ async function checkConnectedStudio(page, viewport) {
   await capture(page, 'fixture-connected-roadmap', viewport);
   checks.push(`Roadmap ${viewport.width}: recorded ownership, four delivery stages, empty filtered lane and restored scope`);
 
-  // A draft never invokes /api/chat. Follow the same conversation DOM node
-  // between its home and dock so duplicate composers cannot hide data loss.
-  await page.locator('#workspace-tab-chat').click();
-  const draft = `Unsent synthetic brief at ${viewport.width}px`;
-  await page.locator('#chat-message').fill(draft);
-  const conversation = await page.locator('#donna-conversation').elementHandle();
-  await page.locator('#workspace-tab-blueprint').click();
-  await page.locator('#donna-dock-toggle').click();
-  assert.equal(await conversation.evaluate(node => node.parentElement?.id), 'donna-dock-slot');
-  assert.equal(await page.locator('#chat-message').inputValue(), draft);
-  await page.locator('#workspace-tab-timeline').click();
-  assert.equal(await page.locator('#chat-message').inputValue(), draft);
-  assert.equal(await page.locator('#donna-conversation').count(), 1);
-  if (viewport.width === 1440) await capture(page, 'fixture-connected-donna-dock', viewport, false);
-  await page.locator('#donna-dock-close').click();
-  assert.equal(await page.evaluate(() => document.activeElement?.id), 'donna-dock-toggle');
-  await page.locator('#workspace-tab-chat').click();
-  assert.equal(await conversation.evaluate(node => node.parentElement?.id), 'donna-chat-home');
-  assert.equal(await page.locator('#chat-message').inputValue(), draft);
-  await conversation.dispose();
+  const panelChecks = await checkEndlessPanelInteractions(page, `Connected studio ${viewport.width}`);
+  assert.ok(Object.values(panelChecks).every(Boolean));
   await assertScope();
-  checks.push(`Donna ${viewport.width}: one conversation, unsent draft survives tab/dock switches, focus returns and company stays selected`);
+  await capture(page, 'fixture-connected-live-panels', viewport, false);
+  checks.push(`Canvas ${viewport.width}: simultaneous live surfaces, two retained drafts, stable conversation DOM, pinned movement, resize, Escape rollback and reduced motion`);
+
 }
 
 try {
@@ -529,14 +629,16 @@ try {
     page.on('pageerror', error => pageErrors.push({viewport: viewport.width, message: error.message}));
     page.on('response', response => { if (response.url().startsWith(base) && !new URL(response.url()).pathname.startsWith('/api/') && response.status() >= 400) unexpectedRequests.push({key: String(response.status()) + ' ' + new URL(response.url()).pathname, reason: 'Built page or asset failed'}); });
 
-    await page.goto(base + '/', {waitUntil: 'networkidle'});
+    await checkOwnerCanvasEntries(page, base, state, viewport);
+    const beforeConnections = state.calls.length;
+    await page.goto(base + '/?canvas=1', {waitUntil: 'networkidle'});
     await page.getByText('Your saved office is ready.', {exact: false}).waitFor({state: 'visible'});
-    assert.equal(state.calls[0], 'GET /api/session', 'Homepage must load its session before private records');
-    await page.getByRole('navigation', {name: 'Daftar workspace'}).getByRole('link', {name: 'Directory', exact: true}).waitFor({state: 'visible'});
-    assert.equal(await page.getByRole('link', {name: 'Open your office', exact: true}).getAttribute('href'), '/workspace/chrome.html#office');
+    assert.equal(state.calls[beforeConnections], 'GET /api/session', 'Embedded connections must load its session before private records');
+    assert.equal(await page.locator('.canvas-surface[data-canvas-surface=connections]').count(), 1);
+    assert.equal(await page.getByRole('navigation', {name: 'Daftar workspace'}).count(), 0, 'An embedded form does not introduce another screen navigation');
     await page.getByLabel('Device name', {exact: true}).fill('Fixture laptop');
     await capture(page, 'fixture-home', viewport);
-    checks.push(`Homepage ${viewport.width}: Daftar navigation, saved-state summary, devices and office entry`);
+    checks.push(`Connections ${viewport.width}: embedded session state, saved-state summary and labelled device form`);
     await page.waitForFunction(() => document.documentElement.dataset.theme === 'blueprint');
     const darkCanvas = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--canvas').trim());
     assert.ok(darkCanvas, 'The built homepage must load the shared studio palette');
@@ -547,8 +649,7 @@ try {
     if (viewport.width === 1440) await capture(page, 'fixture-home-drafting', viewport);
 
     const beforeDirectory = state.calls.length;
-    await page.getByRole('navigation', {name: 'Daftar workspace'}).getByRole('link', {name: 'Directory', exact: true}).click();
-    await page.waitForURL(base + '/applications');
+    await page.goto(base + '/applications?canvas=1', {waitUntil: 'networkidle'});
     await page.locator('.directory-company').first().waitFor({state: 'visible'});
     await page.waitForFunction(() => document.querySelectorAll('.directory-company').length === 3);
     assert.equal(state.calls[beforeDirectory], 'GET /api/session', 'Directory must load its session before private records');
@@ -621,27 +722,28 @@ try {
     await page.locator('#freeflow-host').waitFor({state: 'visible'});
     assert.equal(await page.locator('#freeflow-host').count(), 1, 'Cloud renderer is missing the Freeflow host; the synced renderer is stale.');
     assert.ok(await page.locator('#office-native-status').isHidden(), 'Legacy status must be hidden while Freeflow is the default surface.');
-    if (viewport.width > 720) await assertToolbarLane(page, '#freeflow-host', `Freeflow ${viewport.width}`);
+    await assertEndlessShell(page, `Freeflow ${viewport.width}`);
     checks.push(`Freeflow ${viewport.width}: fresh default cloud navigation shows the mounted Freeflow host first`);
-    await page.goto(base + '/applications', {waitUntil: 'networkidle'});
+    await page.goto(base + '/applications?canvas=1', {waitUntil: 'networkidle'});
     await page.waitForFunction(() => document.querySelectorAll('.directory-company').length === 3);
     await page.locator('#company-fixture-company').getByRole('link', {name: 'Blueprint', exact: true}).click();
     // Workers assets canonicalizes this existing HTML asset with a 307 to the
     // extensionless path. Both forms must retain the exact company/tab query.
     await page.waitForURL(url => ['/workspace/chrome.html', '/workspace/chrome'].includes(url.pathname)
       && url.searchParams.get('company') === 'fixture-company' && url.searchParams.get('workspace') === 'blueprint');
-    // Explicit legacy workspace links open Operations; use the real visible control if the status is still hidden.
-    if (await page.locator('#office-native-status').isHidden()) await page.locator('#ff-nav-operations').click();
-    await page.locator('#office-native-status').filter({hasText: 'Cloud workspace'}).waitFor({state: 'visible'});
+    await page.locator('.canvas-panel[data-panel-id="workspace-blueprint"][data-open="true"]').waitFor({state: 'visible'});
     await page.locator('#workspace-panel-blueprint').waitFor({state: 'visible'});
+    await assertEndlessShell(page, `Blueprint deep link ${viewport.width}`);
     assert.equal(new URL(page.url()).searchParams.get('company'), 'fixture-company');
     assert.ok(await page.locator('#office-blueprint .blueprint-room').count() > 0, 'Connected blueprint should show the synthetic saved room');
     await checkConnectedStudio(page, viewport);
+    await checkCloudRuntimeLimits(page, state, viewport);
     // Also exercise the reverse shared-renderer → cloud boundary, then reload
     // the React page. This is a local preference, not a production save claim.
+    await openCanvasSurface(page, 'scope');
     await page.locator('#workspace-theme').selectOption('blueprint');
     assert.equal(await page.evaluate(() => localStorage.getItem('daftar-studio-theme')), 'blueprint');
-    await page.goto(base + '/applications', {waitUntil: 'networkidle'});
+    await page.goto(base + '/applications?canvas=1', {waitUntil: 'networkidle'});
     await page.waitForFunction(() => document.documentElement.dataset.theme === 'blueprint' && document.querySelectorAll('.directory-company').length === 3);
     assert.equal(await page.locator('#cloud-studio-theme').inputValue(), 'blueprint');
     await page.reload({waitUntil: 'networkidle'});
@@ -655,7 +757,7 @@ try {
     if (viewport.width === 390) {
       state.authenticated = false; state.sessionSeen = false;
       const previousCalls = state.calls.length;
-      await page.goto(base + '/applications', {waitUntil: 'networkidle'});
+      await page.goto(base + '/applications?canvas=1', {waitUntil: 'networkidle'});
       await page.getByRole('heading', {name: 'Your directory stays private.', exact: true}).waitFor({state: 'visible'});
       assert.equal(await page.locator('.directory-company').count(), 0);
       assert.deepEqual(state.calls.slice(previousCalls), ['GET /api/session'], 'A rejected synthetic session must not fetch private directory APIs');
@@ -681,7 +783,7 @@ try {
       await page.locator('#cloud-welcome').click();
       await page.waitForURL(base + '/');
       await page.getByRole('link', {name: 'Sign in', exact: true}).waitFor({state: 'visible'});
-      assert.deepEqual(state.calls.slice(beforeWelcome), ['GET /api/session'], 'Welcome must not fetch private records after a rejected session');
+      assert.deepEqual(state.calls.slice(beforeWelcome), ['GET /api/session', 'GET /api/session'], 'Unframed welcome checks entry and form sessions without requesting private records');
       checks.push('Direct renderer sign-in state: denied reads expose no metadata, cloud/budget status stays unavailable, chat is disabled and welcome opens sign-in');
     }
     assert.deepEqual(pageErrors, [], 'Cloud UI emitted browser exceptions');

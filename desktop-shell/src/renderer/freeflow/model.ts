@@ -49,6 +49,17 @@ export type FreeflowFocus =
 
 export type SceneNodeKind = 'folio' | 'office' | 'department' | 'room' | 'employee' | 'whiteboard' | 'reference' | 'fallback' | 'restricted';
 
+/** Bounded view of real saved rooms. Coordinates are office-local, never inferred rooms. */
+export interface SceneBlueprintPreview {
+  officeCount: number;
+  roomCount: number;
+  invalidRoomCount: number;
+  offices: Array<{
+    officeId: string; label: string; blueprintId: string;
+    rooms: Array<{ id: string; label: string; rect: LRect }>;
+  }>;
+}
+
 export interface SceneNode {
   id: string;
   kind: SceneNodeKind;
@@ -67,6 +78,7 @@ export interface SceneNode {
   rect: LRect;
   metadata: Record<string, string | number | boolean | string[] | null>;
   counts: Record<string, number>;
+  blueprintPreview?: SceneBlueprintPreview;
 }
 
 export interface FreeflowScene {

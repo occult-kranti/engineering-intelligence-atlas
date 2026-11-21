@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { assertEndlessShell, checkEndlessPanelInteractions, openCanvasSurface } from './endless-canvas-browser-checks.mjs';
 
 const RICH_NODE_BUDGET = 240, THREAD_BUDGET = 160, LIST_PAGE_SIZE = 50;
 const FIXTURE_AT = '2026-11-20T12:00:00.000Z';
@@ -16,14 +17,14 @@ const MATRIX = [
   {n: '04', name: 'department-top-heat', w: 1280, h: 720, theme: 'drafting'},
   {n: '05', name: 'department-perspective', w: 1920, h: 1080, theme: 'blueprint'},
   {n: '06', name: 'conference-top-chairs', w: 1920, h: 1080, theme: 'drafting'},
-  {n: '07', name: 'conference-list-fallback', w: 390, h: 844, theme: 'blueprint'},
-  {n: '08', name: 'department-list-fallback', w: 390, h: 844, theme: 'drafting'},
+  {n: '07', name: 'conference-company-directory', w: 390, h: 844, theme: 'blueprint'},
+  {n: '08', name: 'department-company-directory', w: 390, h: 844, theme: 'drafting'},
 ];
 
 const IDS = {
   company: 'folio:fixture-company',
-  room: 'room:fixture-company:fixture-office:fixture-room',
-  employee: 'employee:fixture-company:fixture-specialist',
+  room: 'universe:blueprint:room:fixture-company:fixture-office:fixture-room',
+  employee: 'universe:blueprint:employee:fixture-company:fixture-specialist',
 };
 
 function percentile(values, p) {
@@ -52,11 +53,6 @@ async function assertTheme(page, theme, label) {
   assert.equal(got.root, theme, `${label}: document theme`);
   assert.equal(got.select, theme, `${label}: theme select`);
   return got;
-}
-
-async function setTheme(page, theme) {
-  await page.locator('#workspace-theme').selectOption(theme);
-  await settle(page);
 }
 
 async function waitStudio(page) {
@@ -110,25 +106,24 @@ async function openDepartment(page) {
   await settle(page);
 }
 
-async function listFallbackCheck(page, label, {nodeId, query, destination}) {
-  const s = await canvasStats(page);
-  assert.ok(s.canvasHidden, `${label}: canvas must be hidden at 390px`);
-  await page.locator('#freeflow-host .ff-list-host').waitFor({state: 'visible'});
+async function directoryPanelCheck(page, label, {nodeId, query, destination}) {
+  await assertEndlessShell(page, label);
+  await openCanvasSurface(page, 'company-directory');
   const search = page.locator('#freeflow-host .ff-list-search');
   await search.fill(query);
   await settle(page);
-  // List order includes employees, whose Enter action intentionally leaves the
-  // studio for their management panel. Exercise the actual scope navigator here.
   const target = page.locator(`#freeflow-host .ff-list-button[data-node-id="${nodeId}"]`);
   await target.waitFor({state: 'visible'});
   await target.focus();
   await page.keyboard.press('Enter');
   await page.waitForFunction(expected => document.querySelector('#freeflow-host .ff-breadcrumbs button[aria-current="page"]')?.textContent === expected, destination);
   await settle(page);
-  await page.locator('#freeflow-host .ff-list-host').waitFor({state: 'visible'});
-  await search.waitFor({state: 'visible'});
+  assert.equal(await page.locator('.canvas-panel[data-panel-id="company-directory"]').getAttribute('data-open'), 'true', `${label}: changing scope retains the live directory surface`);
+  // Scope navigation frames the selected blueprint. Reframe its persistent
+  // directory using the real launcher before the next input interaction.
+  await openCanvasSurface(page, 'company-directory');
   assert.equal(await search.inputValue(), '', `${label}: entering a new scope resets the list filter`);
-  assert.ok((await canvasStats(page)).canvasHidden, `${label}: scope navigation preserves the narrow list view`);
+  assert.equal((await canvasStats(page)).canvasHidden, false, `${label}: directory never replaces the narrow canvas`);
 }
 
 async function cameraCheck(page, label) {
@@ -235,20 +230,21 @@ export async function runFreeflowCloudChecks({browser, base, makeState, installA
     for (const row of MATRIX) {
       const state = makeState();
       const viewport = {width: row.w, height: row.h};
-      const init = {fn: ([t, withDonna]) => { try { localStorage.setItem('daftar-studio-theme', t); if (withDonna) localStorage.setItem('daftar-studio-donna-pos', JSON.stringify({x: 1000, y: 750, locked: false})); } catch {} }, arg: [row.theme, row.n === '02']};
+      const init = {fn: theme => { try { localStorage.setItem('daftar-studio-theme', theme); } catch {} }, arg: row.theme};
       ({context, page} = await newContext(browser, base, installApiFixture, state, viewport, init));
       page.on('pageerror', e => receipt.browserErrors.push({shot: row.n, message: e.message}));
       page.on('response', r => { const u = new URL(r.url()); if (u.origin === base && !u.pathname.startsWith('/api/') && r.status() >= 400) receipt.browserErrors.push({shot: row.n, message: `${r.status()} ${u.pathname}`}); });
       await time(receipt.timings.ready, `ready-${row.n}`, async () => {
-        await page.goto(base + '/', {waitUntil: 'domcontentloaded'});
-        await page.getByText('Your saved office is ready.', {exact: false}).waitFor({state: 'visible'});
-        const url = row.n <= '03' || row.n === '02' || row.n === '03' ? '/workspace/chrome.html#office' : '/workspace/chrome.html#office';
-        await page.goto(base + (row.n === '04' || row.n === '05' || row.n === '08' ? '/workspace/chrome.html?company=fixture-company#office' : url), {waitUntil: 'domcontentloaded'});
+        const companyScope = ['04', '05', '08'].includes(row.n);
+        await page.goto(base + (companyScope ? '/?company=fixture-company' : '/'), {waitUntil: 'domcontentloaded'});
+        await page.waitForURL(url => ['/workspace/chrome.html', '/workspace/chrome'].includes(url.pathname));
         await waitStudio(page);
+        if (companyScope) await page.waitForFunction(() => document.querySelector('#freeflow-host .ff-breadcrumbs button[aria-current="page"]')?.textContent === 'Fixture Engineering');
+        assert.equal(state.calls[0], 'GET /api/session', 'Canvas entry checks the owner session first');
       });
       const themeInfo = await assertTheme(page, row.theme, `shot ${row.n}`);
       canvasTokens[row.theme] = themeInfo.canvas;
-      const desktop = row.w > 720;
+      const interactionStarted = Date.now();
       const stage = await (async () => {
         if (row.n === '01') {
           await setView(page, 'perspective');
@@ -268,89 +264,65 @@ export async function runFreeflowCloudChecks({browser, base, makeState, installA
           const emp = page.locator(`#freeflow-host .ff-node[data-node-id="${IDS.employee}"]`);
           await emp.waitFor({state: 'attached'});
           await emp.click();
-          await settle(page);
-          await page.locator('#freeflow-host .ff-inspector[aria-label="Ownership inspector"]').waitFor({state: 'visible'}).catch(async () => { await page.locator('#freeflow-host .ff-tools button', {hasText: 'Inspector'}).click(); await page.locator('#freeflow-host .ff-inspector').waitFor({state: 'visible'}); });
-          const toggle = page.locator('#donna-dock-toggle');
-          await toggle.waitFor({state: 'visible'});
-          const box = await toggle.boundingBox();
-          assert.ok(box && box.x >= 0 && box.y >= 0 && box.x + box.width <= row.w && box.y + box.height <= row.h, `restored Donna launcher inside viewport ${JSON.stringify(box)}`);
-          await toggle.click();
-          await page.locator('#donna-dock').waitFor({state: 'visible'});
+          await openCanvasSurface(page, 'object-inspector');
+          await page.locator('#freeflow-host .ff-inspector[aria-label="Ownership inspector"]').waitFor({state: 'visible'});
+          assert.match(await page.locator('#freeflow-host .ff-inspector').innerText(), /Fixture engineer/);
+          const donna = await openCanvasSurface(page, 'donna');
           await page.setViewportSize({width: 800, height: 600});
           await settle(page);
-          const dbox = await page.locator('#donna-dock').boundingBox();
-          assert.ok(dbox && dbox.x >= 0 && dbox.y >= 0 && dbox.x + dbox.width <= 800 + 1 && dbox.y + dbox.height <= 600 + 1, `Donna dock inside smaller viewport ${JSON.stringify(dbox)}`);
+          await openCanvasSurface(page, 'donna');
+          const box = await donna.boundingBox();
+          assert.ok(box && box.x >= -1 && box.y >= -1 && box.x + box.width <= 801 && box.y + box.height <= 601, `Reframed Donna surface fits the smaller viewport ${JSON.stringify(box)}`);
+          await assertEndlessShell(page, 'resized Donna canvas');
           await page.setViewportSize(viewport);
-          await settle(page);
-          await page.locator('#donna-move-handle').focus();
-          await page.keyboard.press('ArrowLeft');
-          await page.keyboard.press('ArrowUp');
-          await page.keyboard.press('Home');
-          await settle(page);
-          const inline = await page.evaluate(() => { const e = document.getElementById('donna-dock'); const t = document.getElementById('donna-dock-toggle'); return [e, t].map(x => ({left: x.style.left, top: x.style.top, right: x.style.right, bottom: x.style.bottom})); });
-          for (const s of inline) assert.deepEqual(s, {left: '', top: '', right: '', bottom: ''}, 'reset clears inline overrides');
-          await page.locator('#donna-dock-close').click();
-          await page.locator('#donna-dock-toggle').waitFor({state: 'visible'});
-          return 'company top inspector donna';
+          await openCanvasSurface(page, 'object-inspector');
+          assert.equal(await donna.getAttribute('data-open'), 'true', 'Inspector focus preserves the live Donna panel');
+          return 'company top, persistent inspector and Donna surfaces';
         }
         if (row.n === '03') {
           await openCompany(page, 'fixture-company');
+          const panels = await checkEndlessPanelInteractions(page, 'matrix 03');
+          assert.ok(Object.values(panels).every(Boolean));
           await setView(page, 'perspective');
-          await page.locator('#donna-dock-toggle').click();
-          await page.locator('#donna-dock').waitFor({state: 'visible'});
-          const before = await page.locator('#donna-conversation').elementHandle();
-          await page.locator('#chat-message').fill('Unsent Freeflow draft');
-          await page.locator('#donna-dock-close').click();
-          await page.locator('#donna-dock-toggle').click();
-          await page.locator('#donna-dock').waitFor({state: 'visible'});
-          assert.equal(await page.locator('#chat-message').inputValue(), 'Unsent Freeflow draft', 'draft survives collapse');
-          const same = await page.evaluate(([el]) => document.getElementById('donna-conversation') === el, [before]);
-          assert.ok(same, 'same conversation element');
-          await page.locator('#ff-nav-operations').click();
-          await page.locator('#workspace-chat-form').waitFor({state: 'visible'}).catch(() => {});
-          await page.locator('#ff-return-studio').waitFor({state: 'visible'});
-          assert.ok(new URL(page.url()).searchParams.get('workspace') === 'chat', 'workspace=chat in URL');
           assert.equal(new URL(page.url()).searchParams.get('company'), 'fixture-company');
-          assert.equal(await page.locator('#chat-message').inputValue(), 'Unsent Freeflow draft', 'draft survives Operations switch');
-          await page.locator('#ff-return-studio').click();
-          await waitStudio(page);
-          const u = new URL(page.url());
-          assert.equal(u.searchParams.get('workspace'), null); assert.equal(u.searchParams.get('ceo'), null);
-          assert.equal(await page.locator('#chat-message').inputValue(), 'Unsent Freeflow draft', 'draft survives return');
-          assert.equal(await page.locator('#donna-conversation').count(), 1); assert.equal(await page.locator('#workspace-chat-form').count(), 1);
-          await page.reload({waitUntil: 'domcontentloaded'});
-          await waitStudio(page);
-          assert.ok(await page.locator('#freeflow-host .ff-studio').isVisible(), 'default URL reloads Freeflow');
-          await page.locator('#chat-message').fill('Unsent Freeflow draft').catch(() => {});
-          await page.locator('#donna-dock-toggle').click().catch(() => {});
-          return 'company perspective donna draft';
+          return 'company perspective with persistent drafts and independently controlled panels';
         }
         if (row.n === '04') {
-          await openCompany(page, 'fixture-company').catch(() => {});
           await openDepartment(page);
           await setView(page, 'top');
-          const heat = page.locator('#ff-heat-controls #workspace-heat-mode');
+          await openCanvasSurface(page, 'scope');
+          const heat = page.locator('#workspace-heat-mode');
           assert.equal(await page.locator('#workspace-heat-mode').count(), 1, 'single heat select');
           assert.equal(await page.locator('#workspace-theme').count(), 1, 'single theme select');
           await heat.waitFor({state: 'visible'});
           for (const mode of ['workload', 'budget', 'attention']) {
+            await openCanvasSurface(page, 'scope');
             await heat.selectOption(mode);
+            await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: 'Fit scene to view'}).click();
             await settle(page);
             const levels = await page.evaluate(() => [...document.querySelectorAll('#freeflow-host .ff-node[data-heat-level]')].map(n => ({id: n.dataset.nodeId, level: n.dataset.heatLevel, text: n.querySelector('.ff-node-heat')?.textContent || ''})));
             const emp = levels.find(l => l.id === IDS.employee);
-            if (emp) assert.equal(emp.level, '1', `${mode} level 1`);
-            const res = levels.find(l => l.id === 'employee:fixture-company:fixture-researcher');
-            if (res) assert.equal(res.level, 'unknown', 'researcher heat unknown');
+            assert.ok(emp, `${mode}: measured employee is actually mounted`);
+            assert.equal(emp.level, '1', `${mode} level 1`);
+            const res = levels.find(l => l.id === 'universe:blueprint:employee:fixture-company:fixture-researcher');
+            assert.ok(res, `${mode}: unknown-data employee is actually mounted`);
+            assert.equal(res.level, 'unknown', 'researcher heat unknown');
           }
+          await openCanvasSurface(page, 'scope');
           await heat.selectOption('workload');
+          await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: 'Fit scene to view'}).click();
           await settle(page);
           const txt = await page.locator('#freeflow-host').textContent();
           assert.match(txt, /1 unresolved job/, 'workload text');
+          await openCanvasSurface(page, 'scope');
           await heat.selectOption('off');
+          await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: 'Fit scene to view'}).click();
           await settle(page);
           assert.equal(await page.locator('#freeflow-host .ff-node[data-heat-level]').count(), 0, 'heat off clears levels');
           assert.equal(await page.locator('#freeflow-host .ff-node-heat').count(), 0, 'heat off clears badges');
+          await openCanvasSurface(page, 'scope');
           await heat.selectOption('workload');
+          await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: 'Fit scene to view'}).click();
           await settle(page);
           const labels = await page.evaluate(() => [...document.querySelectorAll('#freeflow-host .ff-segment-tag')].map(e => e.textContent));
           assert.ok(labels.length > 0, 'room/department labels visible');
@@ -359,7 +331,6 @@ export async function runFreeflowCloudChecks({browser, base, makeState, installA
           return 'department top heat';
         }
         if (row.n === '05') {
-          await openCompany(page, 'fixture-company').catch(() => {});
           await openDepartment(page);
           await setView(page, 'perspective');
           await cameraCheck(page, 'shot05');
@@ -369,29 +340,23 @@ export async function runFreeflowCloudChecks({browser, base, makeState, installA
           await setView(page, 'top');
           const s = await canvasStats(page);
           assert.ok(s.chairs >= 1 && s.canvasW > 0 && s.canvasH > 0);
-          await page.locator('#ff-nav-table').click().catch(() => {});
+          await page.getByRole('button', {name: 'Return to the conference table', exact: true}).click();
           return 'conference top chairs';
         }
         if (row.n === '07') {
-          await listFallbackCheck(page, 'shot07', {nodeId: IDS.company, query: 'Fixture Engineering', destination: 'Fixture Engineering'});
-          return 'conference list fallback';
+          await directoryPanelCheck(page, 'shot07', {nodeId: IDS.company, query: 'Fixture Engineering', destination: 'Fixture Engineering'});
+          return 'conference directory on the continuous mobile canvas';
         }
-        await listFallbackCheck(page, 'shot08', {nodeId: IDS.room, query: 'Product studio', destination: 'Engineering'});
-        return 'department list fallback';
+        await directoryPanelCheck(page, 'shot08', {nodeId: IDS.room, query: 'Product studio', destination: 'Engineering'});
+        return 'department directory on the continuous mobile canvas';
       })();
       await assertTheme(page, row.theme, `shot ${row.n} post-interaction`);
       const stats = await canvasStats(page);
-      if (desktop) {
-        assert.ok(stats.canvasW > 0 && stats.canvasH > 0, `shot ${row.n}: canvas visible`);
-        assert.ok(!stats.canvasHidden, `shot ${row.n}: canvas not hidden`);
-        const bounds = await page.evaluate(() => ['.ff-header', '.ff-controls'].map(s => { const e = document.querySelector('#freeflow-host ' + s); const b = e?.getBoundingClientRect(); return b ? {w: b.width, h: b.height, r: b.right, l: b.left} : null; }));
-        for (const b of bounds) assert.ok(b && b.w > 0 && b.h > 0 && b.r <= row.w + 1 && b.l >= -1, `shot ${row.n}: control bounds usable`);
-      } else {
-        assert.ok(stats.canvasHidden, `shot ${row.n}: list fallback hides canvas`);
-      }
+      await assertEndlessShell(page, `shot ${row.n}`);
+      assert.ok(stats.canvasW > 0 && stats.canvasH > 0 && !stats.canvasHidden, `shot ${row.n}: canvas remains visible`);
       assert.equal(await page.locator('#donna-conversation').count(), 1); assert.equal(await page.locator('#workspace-chat-form').count(), 1); assert.equal(await page.locator('#chat-message').count(), 1);
       receipt.domCounts[`shot${row.n}`] = stats;
-      await time(receipt.timings.interaction, `shot-${row.n}`, async () => {});
+      receipt.timings.interaction.push({label: `shot-${row.n}`, ms: Date.now() - interactionStarted});
       await shot(page, `freeflow-${row.n}-${row.name}`, viewport, {theme: row.theme, stage});
       receipt.shots.push({n: row.n, theme: row.theme, viewport, stage});
       assert.deepEqual(receipt.browserErrors, [], 'browser errors');
@@ -407,18 +372,32 @@ export async function runFreeflowCloudChecks({browser, base, makeState, installA
       ({context, page} = await newContext(browser, base, installApiFixture, state, {width: 1280, height: 720}, {fn: t => { try { localStorage.setItem('daftar-studio-theme', t); } catch {} }, arg: 'blueprint'}));
       page.on('pageerror', e => receipt.browserErrors.push({shot: 'modes', message: e.message}));
       await page.goto(base + '/', {waitUntil: 'domcontentloaded'});
-      await page.getByText('Your saved office is ready.', {exact: false}).waitFor({state: 'visible'});
+      await page.waitForURL(url => ['/workspace/chrome.html', '/workspace/chrome'].includes(url.pathname));
+      await waitStudio(page);
       await page.goto(base + '/workspace/chrome.html?company=fixture-company#office', {waitUntil: 'domcontentloaded'});
       await waitStudio(page);
       await page.goto(base + '/workspace/chrome.html?company=fixture-company&workspace=chat#office', {waitUntil: 'domcontentloaded'});
       await page.locator('#workspace-chat-form').waitFor({state: 'visible'});
-      await page.locator('#ceo-toggle').click();
+      const conversation = await page.locator('#donna-conversation').elementHandle();
+      await page.locator('#chat-message').fill('Unsent CEO entry draft');
+      await openCanvasSurface(page, 'portfolio');
       await settle(page);
       const u = new URL(page.url());
-      assert.equal(u.searchParams.get('ceo'), 'true'); assert.equal(u.searchParams.get('workspace'), null); assert.equal(u.searchParams.get('company'), 'fixture-company');
+      assert.equal(u.searchParams.get('company'), 'fixture-company');
+      assert.equal(await page.locator('.canvas-panel[data-panel-id=portfolio]').getAttribute('data-open'), 'true');
+      assert.equal(await page.locator('.canvas-panel[data-panel-id=donna]').getAttribute('data-open'), 'true');
+      assert.equal(await conversation.evaluate(node => node === document.getElementById('donna-conversation')), true);
+      assert.equal(await page.locator('#chat-message').inputValue(), 'Unsent CEO entry draft');
+      await assertEndlessShell(page, 'Donna and CEO surfaces');
+      await conversation.dispose();
+      await page.goto(base + '/workspace/chrome.html?company=fixture-company&ceo=true#office', {waitUntil: 'domcontentloaded'});
+      await page.locator('.canvas-panel[data-panel-id=portfolio][data-open=true]').waitFor({state: 'visible'});
+      assert.equal(new URL(page.url()).searchParams.get('ceo'), 'true');
+      assert.equal(new URL(page.url()).searchParams.has('workspace'), false);
+      await assertEndlessShell(page, 'CEO deep link');
       audit(state, 'modes');
       await closeCtx();
-      receipt.checks.push('Default URL opens Freeflow; explicit workspace opens Operations; CEO entry serializes ceo=true without workspace');
+      receipt.checks.push('Owner URL opens the continuous canvas; Donna and CEO surfaces coexist without replacing forms; ceo=true deep link remains supported');
     }
 
     // ----- capacity -----
@@ -429,55 +408,75 @@ export async function runFreeflowCloudChecks({browser, base, makeState, installA
       ({context, page} = await newContext(browser, base, installApiFixture, state, viewport, {fn: t => { try { localStorage.setItem('daftar-studio-theme', t); } catch {} }, arg: cap.theme}));
       page.on('pageerror', e => receipt.browserErrors.push({shot: cap.name, message: e.message}));
       await page.goto(base + '/', {waitUntil: 'domcontentloaded'});
-      await page.getByText('Your saved office is ready.', {exact: false}).waitFor({state: 'visible'});
+      await page.waitForURL(url => ['/workspace/chrome.html', '/workspace/chrome'].includes(url.pathname));
+      await waitStudio(page);
       await page.goto(base + (cap.scope === 'portfolio' ? '/workspace/chrome.html#office' : '/workspace/chrome.html?company=fixture-company#office'), {waitUntil: 'domcontentloaded'});
       await waitStudio(page);
       await assertTheme(page, cap.theme, cap.name);
       const sourceCompanies = snap.companies.length, sourceDesks = snap.blueprints[0].desks.length, sourceBoards = snap.blueprints[0].whiteboards.length;
       assert.equal(sourceCompanies, 200); assert.equal(snap.blueprints[0].rooms.length, 100); assert.equal(sourceDesks, 1000); assert.equal(sourceBoards, 200); assert.equal(snap.departments.length, 10);
+      await assertEndlessShell(page, cap.name);
       if (cap.scope === 'portfolio') {
-        const s = await canvasStats(page);
-        assert.equal(s.chairs, 200, 'portfolio exposes 200 chairs');
-        assert.ok(s.nodes > 0 && s.threads > 0, 'nonvacuous portfolio nodes/threads');
-        const srcThreads = snap.companies.filter(c => c.parentCompanyId).length;
-        assert.ok(srcThreads >= 199, 'source organizational links');
-        const list = page.locator('#freeflow-host .ff-list-host');
-        await page.locator('#freeflow-host .ff-tools button', {hasText: 'List view'}).click();
-        await list.waitFor({state: 'visible'});
-        const countTxt = await page.locator('#freeflow-host .ff-list-count').textContent();
-        assert.match(countTxt, /records/, 'list count');
+        const initial = await canvasStats(page);
+        const seats = await page.locator('#freeflow-host .ff-node--seat').count();
+        assert.ok(seats > 0 && seats < sourceCompanies, 'A readable initial table window mounts part of the 200-company world');
+        assert.equal(initial.chairs, seats, 'Each mounted company seat has exactly one decorative chair');
+        assert.ok(initial.nodes > 0 && initial.threads > 0, 'Nonvacuous portfolio nodes and organizational threads');
+        const readableSeats = await page.locator('#freeflow-host .ff-node--seat').evaluateAll(nodes => nodes.map(node => node.getBoundingClientRect()).filter(box => box.right > 0 && box.left < innerWidth && box.bottom > 0 && box.top < innerHeight).map(box => box.width));
+        assert.ok(readableSeats.length > 0 && Math.max(...readableSeats) >= 160, `Initial company seats remain readable without fitting all 200 at once: ${JSON.stringify(readableSeats)}`);
+        assert.equal(snap.companies.filter(company => company.parentCompanyId).length, 199, 'Source organizational links are retained');
+        await openCanvasSurface(page, 'company-directory');
+        assert.match(await page.locator('#freeflow-host .ff-list-count').textContent(), /records/, 'Accessible directory includes the entire source scene');
+        const listedCompanies = new Set();
+        for (let index = 0; index < 20; index++) {
+          const ids = await page.locator('#freeflow-host .ff-list-button').evaluateAll(buttons => buttons.map(button => button.dataset.nodeId));
+          assert.ok(ids.length <= LIST_PAGE_SIZE, 'Every directory page stays bounded');
+          ids.filter(id => id?.startsWith('folio:')).forEach(id => listedCompanies.add(id.slice('folio:'.length)));
+          const next = page.locator('#freeflow-host .ff-list-next');
+          if (await next.isDisabled()) break;
+          assert.ok(index < 19, 'The capacity directory must terminate within its bounded fixture page count');
+          await next.click(); await settle(page);
+        }
+        assert.deepEqual([...listedCompanies].sort(), snap.companies.map(company => company.id).sort(), 'All 200 real company seats remain accessible across directory pages');
         await page.locator('#freeflow-host .ff-list-search').fill('Capacity company 199');
         await settle(page);
-        const hit = page.locator('#freeflow-host .ff-list-button', {hasText: 'Capacity company 199'}).first();
-        await hit.waitFor({state: 'visible'});
-        await hit.click();
-        await page.locator('#freeflow-host .ff-inspector').waitFor({state: 'visible'}).catch(async () => { await page.locator('#freeflow-host .ff-tools button', {hasText: 'Inspector'}).click(); });
-        await page.locator('#freeflow-host .ff-list-search').fill('');
-        await settle(page);
-        const next = page.locator('#freeflow-host .ff-list-next');
-        if (await next.isEnabled()) { await next.click(); await settle(page); }
-        await page.locator('#freeflow-host .ff-tools button', {hasText: 'Canvas view'}).click();
-        await settle(page);
+        const hit = page.locator('#freeflow-host .ff-list-button[data-node-id="folio:cap-company-199"]');
+        await hit.waitFor({state: 'visible'}); await hit.click();
+        const inspector = await openCanvasSurface(page, 'object-inspector');
+        assert.match(await inspector.innerText(), /Capacity company 199/);
+        await inspector.locator('.canvas-panel-close').click();
       } else {
-        const s = await canvasStats(page);
-        assert.ok(s.nodes > 0, 'office scope has nodes');
-        await page.locator('#freeflow-host .ff-tools button', {hasText: 'List view'}).click();
-        for (const term of ['Capacity employee 99-9', 'Capacity board 99-1']) {
+        assert.ok((await canvasStats(page)).nodes > 0, 'Company scope has real nodes');
+        for (const [term, nodeId] of [
+          ['Capacity employee 99-9', 'universe:blueprint:employee:fixture-company:cap-emp-99-9'],
+          ['Capacity board 99-1', 'universe:blueprint:board:fixture-company:fixture-office:cap-board-99-1'],
+        ]) {
+          await openCanvasSurface(page, 'company-directory');
           await page.locator('#freeflow-host .ff-list-search').fill(term);
           await settle(page);
-          const hit = page.locator('#freeflow-host .ff-list-button').first();
-          await hit.waitFor({state: 'visible'});
-          await hit.click();
+          const hit = page.locator(`#freeflow-host .ff-list-button[data-node-id="${nodeId}"]`);
+          await hit.waitFor({state: 'visible'}); await hit.click();
+          const inspector = await openCanvasSurface(page, 'object-inspector');
+          assert.match(await inspector.innerText(), new RegExp(term));
+          await inspector.locator('.canvas-panel-close').click();
         }
-        await page.locator('#freeflow-host .ff-list-search').fill('');
-        await page.locator('#freeflow-host .ff-tools button', {hasText: 'Canvas view'}).click();
-        await settle(page);
       }
-      // transition loop
+      const directory = await openCanvasSurface(page, 'company-directory');
+      await page.locator('#freeflow-host .ff-list-search').fill('');
+      await directory.locator('.canvas-panel-close').click();
+      // Compare the same camera/view before and after the loop; virtualization
+      // may legitimately change mounted counts for different viewpoints.
+      await setView(page, 'top');
+      await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: 'Fit scene to view'}).click();
+      await settle(page);
       const baseline = await canvasStats(page);
       for (let i = 0; i < 20; i++) {
         await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: i % 2 ? 'Top view' : 'Perspective view'}).click();
         await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: 'Fit scene to view'}).click();
+        await settle(page);
+        const step = await canvasStats(page);
+        assert.ok(step.nodes > 0 && step.nodes <= RICH_NODE_BUDGET && step.threads <= THREAD_BUDGET && step.listButtons <= LIST_PAGE_SIZE, `Capacity transition ${i} stays nonempty and within all render budgets`);
+        assert.equal(step.dupNodes + step.dupThreads + step.dupList, 0, `Capacity transition ${i} retains unique identities`);
       }
       await settle(page);
       const final = await canvasStats(page);
@@ -495,7 +494,7 @@ export async function runFreeflowCloudChecks({browser, base, makeState, installA
       audit(state, cap.name);
       await closeCtx();
     }
-    receipt.checks.push('Capacity: bounded mounted nodes/threads/list, unique IDs, no accumulation after 20 transitions');
+    receipt.checks.push('Capacity: 200 companies remain searchable, 1000 desks/200 boards retain stable identities, readable initial table, bounded DOM throughout 20 transitions and no accumulated forms');
     receipt.timingSummary = {ready: summarizeTimings(receipt.timings.ready), interaction: summarizeTimings(receipt.timings.interaction), longTasks: 'not instrumented'};
     receipt.status = 'passed';
   } catch (error) {
@@ -519,32 +518,48 @@ export async function runPackagedFreeflowCheck({page, capture}) {
   const snapshot = () => page.evaluate(async () => {
     const r = await window.desktopBridge.officeSnapshot();
     const s = r.snapshot;
-    return {ok: r.ok, activeCompanyId: s.activeCompanyId, jobs: s.jobs.length, goals: s.goals.length, schedules: s.schedules.length, committedUsd: s.budget.committedUsd, companies: s.companies.map(c => c.id), employees: s.employees.map(e => ({id: e.id, companyId: e.companyId, status: e.status}))};
+    return {ok: r.ok, nativeSnapshot: s, activeCompanyId: s.activeCompanyId, jobs: s.jobs.length, goals: s.goals.length, schedules: s.schedules.length, committedUsd: s.budget.committedUsd, companies: s.companies.map(c => c.id), employees: s.employees.map(e => ({id: e.id, name: e.name, companyId: e.companyId, status: e.status}))};
   });
   const before = await snapshot();
   assert.equal(before.ok, true);
-  // return to studio via visible navigation
-  await page.locator('.sidebar .nav-item[data-view="office"]').click();
-  const retStudio = page.locator('#ff-return-studio');
-  if (await retStudio.isVisible().catch(() => false)) await retStudio.click();
-  else await page.locator('#ff-nav-table').click();
+  // Home reframes the same native world; it does not replace mounted forms.
+  await page.getByRole('button', {name: 'Return to the conference table', exact: true}).click();
   await page.locator('#freeflow-host .ff-studio').waitFor({state: 'visible'});
   await page.locator('#freeflow-host .ff-node').first().waitFor({state: 'attached'});
   await settle(page);
   // open only the already-active real company
   const activeId = before.activeCompanyId;
   assert.ok(activeId, 'active company present');
-  let node = page.locator(`#freeflow-host .ff-node[data-node-id="folio:${activeId}"]`);
-  if (await node.count()) {
-    await node.focus();
-    await page.keyboard.press('Enter');
-    await settle(page);
-  }
+  const directory = await openCanvasSurface(page, 'company-directory');
+  const node = page.locator(`#freeflow-host .ff-list-button[data-node-id="folio:${activeId}"]`);
+  // Search by the exact active company label; identifiers remain the final match.
+  const activeLabel = await page.evaluate(async id => (await window.desktopBridge.officeSnapshot()).snapshot.companies.find(company => company.id === id)?.name || '', activeId);
+  await page.locator('#freeflow-host .ff-list-search').fill(activeLabel);
+  await node.waitFor({state: 'visible'}); await node.focus(); await page.keyboard.press('Enter');
+  await settle(page);
+  await openCanvasSurface(page, 'company-directory');
+  await directory.locator('.canvas-panel-close').click();
+  await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: 'Fit scene to view'}).click();
+  await settle(page);
   const emp = before.employees.find(e => e.companyId === activeId && e.status !== 'fired');
   let selected = null;
   if (emp) {
-    const en = page.locator(`#freeflow-host .ff-node[data-node-id^="employee:"][data-node-id$=":${emp.id}"]`).first();
-    if (await en.count()) { await en.click(); await settle(page); selected = emp.id; }
+    // Previously opened live panels may legitimately cover a scene card. Use
+    // the same visible directory a user can reach, then verify exact identity
+    // and the real inspector instead of forcing a click through another form.
+    await openCanvasSurface(page, 'company-directory');
+    await page.locator('#freeflow-host .ff-list-search').fill(emp.name);
+    const en = page.locator(`#freeflow-host .ff-list-button[data-node-id="universe:blueprint:employee:${activeId}:${emp.id}"]`);
+    await en.waitFor({state: 'visible'}); await en.focus(); await page.keyboard.press('Space');
+    await settle(page);
+    assert.equal(await en.getAttribute('aria-pressed'), 'true', 'The native employee is selected through its stable directory identity');
+    const inspector = await openCanvasSurface(page, 'object-inspector');
+    assert.equal(await inspector.locator('.ff-inspector-header').innerText(), emp.name, 'The actual native employee reaches the ownership inspector');
+    await inspector.locator('.canvas-panel-close').click();
+    await openCanvasSurface(page, 'company-directory');
+    await directory.locator('.canvas-panel-close').click();
+    await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: 'Fit scene to view'}).click();
+    await settle(page); selected = emp.id;
   }
   const ctl = page.locator('#freeflow-host .ff-controls');
   const worldBefore = await page.locator('#freeflow-host .ff-world').evaluate(e => e.style.transform);
@@ -559,12 +574,15 @@ export async function runPackagedFreeflowCheck({page, capture}) {
   assert.ok(nodes > 0, 'native Freeflow renders nodes');
   const canvas = await page.locator('#freeflow-host .ff-canvas-host').boundingBox();
   assert.ok(canvas && canvas.width > 0 && canvas.height > 0, 'native canvas visible');
+  await assertEndlessShell(page, 'Native Freeflow');
   await capture('freeflow-native-studio');
   const after = await snapshot();
   assert.equal(after.jobs, before.jobs, 'no jobs created'); assert.equal(after.goals, before.goals, 'no goals created');
   assert.equal(after.schedules, before.schedules, 'no schedules created'); assert.equal(after.committedUsd, before.committedUsd, 'no budget change');
   assert.equal(after.activeCompanyId, before.activeCompanyId, 'company unchanged');
   assert.deepEqual(after.companies, before.companies, 'companies unchanged');
+  assert.deepEqual(after.employees, before.employees, 'employee scope and status unchanged');
+  assert.deepEqual(after.nativeSnapshot, before.nativeSnapshot, 'Canvas navigation, selection and camera controls leave the complete native snapshot unchanged');
   timings.push({label: 'native-freeflow', ms: Date.now() - t0});
   return {status: 'passed', activeCompanyId: activeId, selectedEmployee: selected, nodes, cameraChanged: worldBefore !== worldAfter, screenshot: 'freeflow-native-studio.png', timings, nativeRecordsUnchanged: true};
 }
