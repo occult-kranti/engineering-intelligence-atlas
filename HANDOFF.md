@@ -15,10 +15,13 @@ React/TypeScript/MySQL runtime remains available as a separate deployment option
 
 ## Install a published build and restore personal work
 
-The [latest verified release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/latest)
-contains an unsigned Linux x86_64 AppImage, a VS Code VSIX, and an Android debug APK. The mobile
-shell carries the research atlas; the complete personal Office runtime is in the
-desktop application. Neither download contains personal company records or keys.
+Use the assets attached to a [published release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases)
+whose tag and acceptance receipts are recorded in [validation](project/VALIDATION.md).
+The 0.5.0 candidate produces an unsigned Linux x86_64 AppImage, a VS Code VSIX
+and an Android debug APK; its final CI/publication receipts are pending. Do not
+infer that an older release contains the new editor package. The mobile shell
+carries the research atlas; the complete personal Office runtime is in the
+desktop application. Packages exclude personal company records and keys.
 
 For a private workspace archive, first launch the desktop app and find its user
 data directory in Models & system. Close the app, then run the release's restore
@@ -70,7 +73,7 @@ Open [Daftar](https://atlas-command-office.whatswrong-inc.chatgpt.site) and sign
 
 The website saves its office snapshot and cloud conversation in D1. Native repository work, job execution and files remain on the laptop. Restore the supplied personal workspace before first pairing so a fresh empty desktop cannot overwrite an existing cloud portfolio. Create a desktop pairing on the website, paste it into Settings → Account & cloud connection, and choose **Sync now**. Connection itself does not upload or start an unattended loop. A conflict preserves both sides until reviewed.
 
-Install `atlas-office-0.5.0.vsix` through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page.
+The editor candidate package is `atlas-office-0.5.0.vsix`; once its release gate passes, install the published asset through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page.
 
 Cloud model calls use a separate atomic admission ledger funded by an allocation held in the native global budget. Do not release that allocation while the cloud runtime can still spend it. Unknown provider outcomes keep their reservations. [Full protocol and verification](project/EDITOR_AND_CLOUD.md).
 
@@ -174,6 +177,27 @@ private reasoning. Provider-specific task budgets and effort modes are distinct
 from application spending limits; see [the research](project/PROMPT_BUDGET_RESEARCH.md).
 
 ## Release record and remaining work
+
+The current source candidate is
+[`841521320e56f9402566164393cac66208c9590d`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d).
+[Verify 44858908405](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405)
+passed the installed desktop, web, editor, Android, design and MySQL gates, but
+failed cloud UI and skipped release. Cloud build/API success is recorded
+separately. A corrected cloud gate and final
+[Pages review](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
+remain pending. The separate hosted website deployment of
+source `03b9264757c38ae86689cc03f23defed39383498` succeeded at
+`2026-11-21T03:00:33.507277Z` (20 November, America/New_York).
+
+The first candidate exposed two real acceptance failures: ambiguous directory
+select labels and a desktop form whose default USD values violated its min/step
+rules. Explicit filter labels and aligned numeric steps are now implemented;
+the 192-assertion renderer suite includes default-value regressions. Candidate
+8415213 passed the real packaged desktop form path. Its second cloud failure was
+a strict URL assertion after the Worker redirected to its extensionless
+workspace path with the same scope and the Blueprint loaded. The gate correction
+preserves scoped DOM checks. A live public HTML/CSS cache mismatch also requires
+content-addressed generated assets and a new exact-candidate acceptance run.
 
 See [validation](project/VALIDATION.md), [panel decisions](project/PANEL_DECISIONS.md),
 [worker ledger](project/WORKER_LEDGER.md), [timeline](TIMELINE.md) and

@@ -6,15 +6,23 @@ with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
 ## Connected office 0.5.0
 
+Release candidate
+[`8415213`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d)
+has local implementation checks, passed installed desktop/editor candidate
+gates and a deployed website update. Its cloud UI gate failed, so final
+Verify/Pages/browser approval and release publication remain pending in
+[validation](project/VALIDATION.md); a completed implementation row is not a
+claim that the final installer was accepted.
+
 Donna completed two real Claude roadmap requests, a three-request expert panel, and two further reviews for Daftar management and its application directory. Their recommendations are accepted as planning evidence; release checks have separate receipts. The current delivery adds adaptive panels, five reusable research lenses, a VS Code client, a private signed-in website, explicit conflict-aware desktop sync, and the shared working-studio redesign.
 
 | Outcome | Owner | Current acceptance |
 | --- | --- | --- |
 | Decision panel DAG and research staff reuse | Donna / Research & Knowledge | Real provider artifacts, native lifecycle tests, whole-panel budget and explicit evidence decision |
-| Thin VS Code client | Platform engineering | Packaged VSIX, protocol tests; installed-host gate recorded in validation |
+| Thin VS Code client | Platform engineering | Packaged VSIX, 11 protocol tests and candidate editor job passed; owner-session acceptance remains separate |
 | Private website and saved cloud chat | Cloud platform | Deployed owner-private Sites app, D1 migrations, server API and live Claude handoff |
-| Explicit desktop communication | Platform engineering / QA | One writer, compare-and-set snapshots, native idempotency receipts, preserved conflicts, explicit sync |
-| Compact shared studio | Design Studio / QA | One composer, hierarchy, blueprint, ownership whiteboard, decision room, laptop and mobile captures |
+| Explicit desktop communication | Platform engineering / QA | Live queued-command/native-effect and bidirectional supported-scope chat checks passed; restore-stable hashes and local replay/size regressions passed; group-chat import remains separate |
+| Compact shared studio | Design Studio / QA | Shared composer, hierarchy, blueprint, whiteboard and decision room implemented; 192 renderer assertions and candidate packaged-form acceptance passed; current cloud UI/visual review remains a release gate |
 | Timed permissions and promotions | Donna / Security | Scope, expiry, live parent revocation, default-deny managed policy, native side-effect checks and cross-office regression |
 | Private application catalog | Directory steward | Recorded repository/Site sources, separate dates, unconfirmed associations, revision checks, bounded URL validation |
 | Figma and OpenPencil handoff | Design interoperability lead | Official per-client authentication path; real bounded HTML → `.fig` → SVG smoke with no network or provider calls |
@@ -47,6 +55,7 @@ See [connected release evidence](project/CONNECTED_RELEASE.md), [editor/cloud se
 
 ### 1. Validate the installed personal workspace
 
+- Resolve the remaining cloud UI failure and complete final Verify/Pages and visual approval, then retain the exact source tag, screenshots and downloaded-asset integrity receipts. Candidate installed desktop/editor gates passed; the owner's laptop and keychain remain a separate acceptance context.
 - Run the packaged application on the owner's actual laptop and import credentials into that machine's keychain.
 - Reconnect GitHub with the owner's token, refresh all repositories, and verify private-company visibility from that machine.
 - Exercise a small provider-backed goal with observed accounting, a deliberately exhausted global budget, and a deliberate resume.

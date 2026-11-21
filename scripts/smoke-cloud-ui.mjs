@@ -286,7 +286,10 @@ try {
     // Follow a real connected route into the shared cloud renderer. Its data is
     // still the same synthetic office supplied by the API fixture above.
     await page.locator('#company-fixture-company').getByRole('link', {name: 'Blueprint', exact: true}).click();
-    await page.waitForURL(url => url.pathname === '/workspace/chrome.html' && url.searchParams.get('workspace') === 'blueprint');
+    // Workers assets canonicalizes this existing HTML asset with a 307 to the
+    // extensionless path. Both forms must retain the exact company/tab query.
+    await page.waitForURL(url => ['/workspace/chrome.html', '/workspace/chrome'].includes(url.pathname)
+      && url.searchParams.get('company') === 'fixture-company' && url.searchParams.get('workspace') === 'blueprint');
     await page.locator('#office-native-status').filter({hasText: 'Cloud workspace'}).waitFor({state: 'visible'});
     await page.locator('#workspace-panel-blueprint').waitFor({state: 'visible'});
     assert.equal(new URL(page.url()).searchParams.get('company'), 'fixture-company');
@@ -314,6 +317,8 @@ try {
   receipt.status = 'failed'; receipt.failedStage = stage;
   receipt.error = error instanceof Error ? error.message : String(error);
   if (activePage && !activePage.isClosed()) {
+    // This browser contains only the synthetic fixture routes defined above.
+    receipt.finalPageUrl = activePage.url();
     try { const file = 'failure.png'; await activePage.screenshot({path: path.join(artifactRoot, file), fullPage: true}); screenshots.push({file, fixtureOnly: true, failure: true}); } catch {}
   }
   process.exitCode = 1;

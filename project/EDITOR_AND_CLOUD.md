@@ -85,9 +85,35 @@ Use the same company-state directory as the desktop to avoid a separate workspac
 
 ## Verification and remaining acceptance
 
+Current source candidate:
+[`8415213`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d).
+The latest hosted source `03b9264757c38ae86689cc03f23defed39383498` was deployed
+at `2026-11-21T03:00:33.507277Z` (20 November, America/New_York).
+Candidate [Verify](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405)
+passed installed desktop and editor gates plus web, Android, design and MySQL;
+cloud build/API tests passed but cloud UI failed and release was skipped.
+A fully passing candidate and final
+[Pages review](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
+remain outstanding.
+
 The extension's Node tests exercise endpoint validation, exact-Origin desktop pairing, token headers, revision-aware queueing, no optimistic completion, no paid retry, and response-size bounds. Desktop tests exercise encrypted origin-bound credentials, explicit-only transfer, native receipts after a lost acknowledgement, stale local state, seed protection, writer conflicts, disconnection and projection limits. The native integration test executes a real Rust binary and verifies matching canonical hashes and stale-state rejection.
 
-Release receipts must separately record production sign-in, server-backed Claude chat, live cloud sync, browser UI inspection and native installation. Packaging a VSIX does not by itself prove activation in a user editor session. The extension is distributed as a VSIX; a Marketplace publisher submission and signed cross-platform desktop installers remain separate delivery work.
+Observed checks include **11 editor client tests**, **28 cloud API/directory tests**,
+**3 real native contract tests** and **192 renderer assertions**. The earlier live
+deployed API/native protocol imported four cloud messages without duplicate
+imports on replay, applied one queued command once, exposed a saved native brief
+through hosted chat, and matched the final projection hashes. It made no provider
+calls and used test encryption storage rather than the installed OS keychain.
+The real export/restore regression also preserves hash equality when artifact
+directories and filenames change. See [the exact evidence and dates](VALIDATION.md).
+
+The first candidate's ambiguous cloud filter labels and invalid default USD
+min/step combinations have code and regression corrections. Candidate installed
+desktop/editor jobs passed; cloud UI, current visual review and production owner
+sign-in retain their own acceptance gates. A CI editor result does not establish
+the owner's editor session. Marketplace submission,
+the owner's laptop keychain and signed cross-platform installers remain separate
+delivery work.
 
 ## Primary documentation consulted
 

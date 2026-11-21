@@ -4,7 +4,19 @@ Daftar is the new product name for the personal company and agent workspace in t
 
 This document explains the integrated architecture and accepted decisions. [VALIDATION.md](VALIDATION.md) is the authority for executed build, installation, provider, browser and publication checks. A feature described here does not substitute for an acceptance receipt. Historical 0.4.3 results remain historical.
 
-Checkpoint: **20 November 2026 (America/New_York)**. The live deployed API/native sync protocol passed at `2026-11-21T02:33:46.715Z`; final combined CI, installed-package acceptance and 0.5.0 release publication remain pending. Exact evidence timestamps below stay in UTC.
+Checkpoint: **20 November 2026 (America/New_York)**. The live deployed API/native sync protocol passed at `2026-11-21T02:33:46.715Z`. Candidate installed desktop/editor gates passed; cloud UI and final visual/release approval remain pending. Exact evidence timestamps below stay in UTC.
+
+The current GitHub candidate is
+[`841521320e56f9402566164393cac66208c9590d`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d).
+[Verify 44858908405](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405)
+passed its desktop, web, editor, Android, design and MySQL gates but failed cloud
+UI, so release was skipped. Cloud build/API checks passed. The final
+[Pages review](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
+and a fully passing release candidate remain outstanding. The latest hosted source is separately
+`03b9264757c38ae86689cc03f23defed39383498`, deployed as
+`appgdep_6b01094b1bf48191b53b9b012252ce89` at
+`2026-11-21T03:00:33.507277Z`. The earlier live protocol receipt below retains
+the deployment revision actually exercised at that time.
 
 ## Entry points
 
@@ -109,7 +121,7 @@ The actual deployed API, production `CloudSyncService` and real compiled Rust co
 | Provider use | Zero provider calls during this synchronization test |
 | Private application directory | Owner-private catalog seeded; individual records are excluded from this public document |
 
-The test used an AES-GCM storage adapter in the protocol harness, **not an installed OS-keychain acceptance test**. The verification device was revoked and its writer assignment released afterward. The production deployment used source revision `1f850c42b14739ce62d3b9b6562680bcdc5afdbd` and completed at `2026-11-21T02:33:20Z`. This is a hosted deployment revision, not a claim about a GitHub release tag. Browser sign-in interactions, packaged desktop activation and installed VSIX acceptance retain their own gates.
+The test used an AES-GCM storage adapter in the protocol harness, **not an installed OS-keychain acceptance test**. The verification device was revoked and its writer assignment released afterward. The earlier production deployment exercised by this receipt used source revision `1f850c42b14739ce62d3b9b6562680bcdc5afdbd` and completed at `2026-11-21T02:33:20Z`. This is a hosted deployment revision, not a claim about a GitHub release tag. Browser sign-in interactions, packaged desktop activation and installed VSIX acceptance retain their own gates.
 
 ## Budget checkpoint and failure handling
 
@@ -137,6 +149,22 @@ D1 is the implemented website store. It fits the existing private Sites identity
 Supabase remains an optional adapter for future PostgreSQL collaboration, membership and richer querying. Before enabling it, preserve the existing revision/idempotency contract, define owner/organization records, apply authenticated ownership policies, test concurrency and migration/restore, and confirm measured need. Supabase's [RLS documentation](https://supabase.com/docs/guides/database/postgres/row-level-security) explains the underlying access-policy mechanism. No unrelated existing database was modified for this release.
 
 ## Acceptance and next work
+
+The first candidate built but exposed real browser/desktop acceptance failures:
+ambiguous directory select labels and default USD inputs inconsistent with their
+min/step constraints. The current candidate fixes the labels and numeric steps
+and passes **192 renderer assertions**, including default validity regressions.
+Branding, sidebar subtitle layout and disclosure glyphs were corrected; smoke
+captures now wait for transient notices and reset scroll without hiding controls.
+CI explicitly retains the OpenPencil outputs. Candidate 8415213 passed the
+packaged desktop form path. Its second cloud failure was a strict URL assertion:
+the Worker canonicalized `/workspace/chrome.html` to `/workspace/chrome` with
+the same company/workspace queries and the Blueprint loaded. The corrected gate
+accepts exactly those paths and retains its DOM checks; the remainder of the
+stopped sweep is not claimed as passed. A separately observed public HTML/CSS
+cache mismatch is prompting content-addressed generated assets and another
+candidate. Final visual review and release approval remain outstanding; see
+[validation](VALIDATION.md).
 
 The release workflow has separate gates for the web renderer, database connectors, native desktop, Android, cloud API/build and VS Code package. The desktop acceptance script launches the packaged Linux application and exercises its real Rust state. The editor acceptance script installs the VSIX into an isolated VS Code instance before activation. These checks must actually pass on the candidate commit; the scripts' presence alone is not evidence of success.
 

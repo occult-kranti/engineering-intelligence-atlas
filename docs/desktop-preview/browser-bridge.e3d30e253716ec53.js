@@ -27,7 +27,7 @@ if (!browserWindow.desktopBridge && personalBrowser) {
     browserWindow.desktopBridge = bridge;
 }
 if (!browserWindow.desktopBridge && ['http:', 'https:'].includes(location.protocol) && !personalBrowser) {
-    const preview = fetch('./preview-state.json').then(async (response) => { if (!response.ok)
+    const preview = fetch('./preview-state.6339761d7902456b.json').then(async (response) => { if (!response.ok)
         throw new Error('Starter preview is unavailable.'); return response.json(); });
     const bridge = { version: 3, transport: 'public-preview' };
     const unavailable = async () => ({ ok: false, snapshot: null, error: 'This is a read-only starter preview. Open the private desktop/browser workspace to make changes.' });

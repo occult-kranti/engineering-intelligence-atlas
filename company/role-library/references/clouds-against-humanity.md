@@ -1,6 +1,6 @@
 # Clouds Against Humanity: Security specialist reference path
 
-Owner: existing `security` role. Coordinator: Donna. Review date: **2026-11-21**.
+Owner: existing `security` role. Coordinator: Donna. Review date: **20 November 2026 (America/New_York)**; UTC receipt date: **2026-11-21**.
 This is a source review and a proposed learning path; no upstream lab, cloud
 resource, operating system installation or paid provider job was run for it.
 

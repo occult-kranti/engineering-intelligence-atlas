@@ -3,15 +3,31 @@
 ## Current connected release draft · v0.5.0
 
 Checkpoint: **20 November 2026 (America/New_York)**. Evidence timestamps retain
-UTC. The checks below are observed component and protocol results; **final
-combined CI, installed-package acceptance, final browser inspection and 0.5.0
-release publication are still pending**. Historical v0.4.x receipts below do not
-certify this candidate.
+UTC. The checks below are observed component and protocol results. Candidate
+installed desktop/editor gates passed, while **final combined CI, cloud UI,
+final browser inspection and 0.5.0 release publication remain pending**.
+Owner-laptop/keychain acceptance is separate. Historical v0.4.x receipts below
+do not certify this candidate.
+
+The current source candidate is
+[`841521320e56f9402566164393cac66208c9590d`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d).
+[Verify 44858908405](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405)
+passed its desktop installed smoke, web, editor, Android, design and MySQL gates,
+but its cloud UI gate failed again and the release job was skipped. The cloud
+build/API checks passed; this does not establish browser UI acceptance. The
+second UI failure was traced to a strict redirect assertion, described below;
+this candidate is not release-approved.
+[Pages 44858909265](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
+retains its separate completed-receipt/review gate. The latest private website deployment succeeded
+at `2026-11-21T03:00:33.507277Z`, from hosted source
+`03b9264757c38ae86689cc03f23defed39383498`, deployment
+`appgdep_6b01094b1bf48191b53b9b012252ce89`. These hosted identifiers are distinct
+from the GitHub candidate and are not a release tag.
 
 | Current gate | Observed result | Evidence / practical limit |
 | --- | --- | --- |
 | Rust control core | **70 passed** | Native grants, parent expiry/revocation, scope checks, migrations, remote receipts and full cloud-message import; [native source](../native-core/src/) |
-| Desktop TypeScript/build and renderer compilation | **Passed** | Main, preload, shared types and renderer compile; installed application behavior is a separate gate |
+| Desktop TypeScript/build and renderer compilation | **Passed; candidate installed smoke also passed** | Main, preload and shared renderer compile; Verify 44858908405 exercised the packaged desktop/native form path; owner-laptop/keychain acceptance remains separate |
 | Desktop service tests | **375 passed / 26 files** | Includes sync, real native contract, worker admission, accounting and profile migration; [tests](../desktop-shell/tests/) |
 | Real JS ↔ Rust cloud contract | **3 passed** | Canonical hash agreement and durable cloud message import without provider dispatch; included in the desktop total, not added again |
 | Renderer behavior | **192 assertions passed** | Synthetic pure-DOM behavior including timed authority, delegation controls and existing office/decision flows; not visual browser evidence |
@@ -19,7 +35,7 @@ certify this candidate.
 | Static build integrity | **169 files checked** | Current public build integrity; remote Pages/browser acceptance remains pending |
 | Cloud API and directory tests | **28 passed: 21 API + 7 directory** | [Cloud tests](../cloud-workspace/tests/); admission, scoped data and directory projection checks |
 | Cloud TypeScript and build | **Passed** | Strict checking and Vinext build, including `/` and `/applications`; source/build success is distinct from browser sign-in acceptance |
-| VS Code client and package | **11 client tests passed; syntax and VSIX packaging passed** | [Extension](../vscode-extension/); installed Extension Host activation awaits CI |
+| VS Code client and package | **11 client tests, syntax and packaging passed; candidate editor job passed** | [Extension](../vscode-extension/); exact installed-host details belong to the candidate receipt, not a claim about the owner's editor session |
 | Python preparation, restore and directory | **25 passed, including 10 indexer tests** | [Indexer tests](../scripts/test_index_github_applications.py): bounded reads, global deduplication/cap, timeout, cache freshness and atomic private checkpoints |
 | MCP protocol and scale/query boundaries | **26 passed** | Fifteen existing plus eleven new checks: successful large-response compaction, 16 MiB native ceiling, complete bounded metadata pagination, stale-cursor detection and no mutation/replay during reads |
 | Live large-state MCP protocol | **Passed** | Actual approximately 1.9 MiB native state returned a successful compact JSON-RPC response; read-only metadata pagination covered the selected collection exactly once, with no mutation or provider call; private record counts omitted |
@@ -49,7 +65,7 @@ The owner-retained protocol receipt records:
   application-directory seeding, with catalog records omitted from this report.
 - **Zero provider calls** during the synchronization test.
 
-The production deployment used hosted source revision
+The earlier deployment exercised by this protocol receipt used hosted source revision
 `1f850c42b14739ce62d3b9b6562680bcdc5afdbd`, completed at
 `2026-11-21T02:33:20Z`. The protocol harness used AES-GCM test storage, not the
 installed desktop's OS keychain. Its verification device was revoked and the
@@ -70,14 +86,37 @@ The director’s real private export/restore rehearsal exposed three panel evide
 
 ### Pending final acceptance
 
+The first candidate's real cloud and desktop checks found defects that the
+earlier pure-DOM suite had not established: ambiguous directory select labels
+prevented the cloud test from resolving controls, and the desktop's default USD
+values failed native HTML min/step validation. The current candidate adds
+explicit visible-label references, aligned steps, a native form-validity
+diagnostic and default-value regressions; **192 renderer assertions pass**.
+Brand/disclosure glyphs and sidebar clipping were also corrected. Capture waits,
+scroll reset and explicit retention of OpenPencil outputs improve the next
+evidence package without bypassing its assertions. Entry 033 in the
+[worker ledger](WORKER_LEDGER.md) preserves the failed first-run findings.
+
+The second cloud gate stopped at a harness URL assumption: the Worker returned
+HTTP 307 from `/workspace/chrome.html` to `/workspace/chrome`, preserving the
+exact company and workspace query values, and the actual Blueprint loaded.
+The corrected gate accepts only those two paths, retains the scoped DOM checks
+and records the final page URL. This explains the failed assertion without
+claiming that the remainder of that stopped browser sweep passed.
+
+Live public-preview inspection also exposed new HTML arriving with cached older
+CSS. Generated preview assets are being changed to content-addressed URLs for
+the next candidate. That source/build correction and its fresh exact-candidate
+browser/CI receipts are still required before release approval.
+
 | Gate | Current boundary |
 | --- | --- |
-| Combined candidate CI and release | Pending exact-candidate remote run, release job and published tag |
-| Packaged desktop activation | Smoke harness exists; real installed launch, native operation and OS-keychain behavior still need their own receipt |
-| Installed VSIX activation | Isolated installed-extension harness exists; actual Extension Host acceptance awaits CI |
-| Current browser/visual sweep | Pending completed cloud/public/desktop browser checks and review of the resulting current screenshots |
+| Combined candidate CI and release | Verify 44858908405 passed the listed component jobs but failed cloud UI; its release job was skipped. A fully passing candidate and published tag remain pending |
+| Packaged desktop activation | Candidate 8415213 installed desktop smoke passed, including the corrected form/native path; owner-laptop installation and OS-keychain acceptance remain separate |
+| Installed VSIX activation | Candidate editor job passed; retain its installed-host receipt before final delivery, and distinguish CI activation from the owner's session |
+| Current browser/visual sweep | Pages 44858909265 and the current cloud/desktop checks await completion and review of their resulting screenshots; earlier screenshots do not certify the corrected candidate |
 | Owner sign-in UI and writer recovery | API protocol passed; browser interaction and replacement-writer recovery remain separate checks |
-| Downloaded 0.5.0 assets and restore | Pending published binaries, downloaded hashes and current portable restore evidence |
+| Downloaded 0.5.0 assets and final owner bundle | Pending published binaries, downloaded hashes and the final delivered owner bundle; the existing real export/restore projection regression already passed |
 
 The observed usage checkpoint is **$0.776748 native + $0.022140 cloud =
 $0.798888**, with **$0.285266 retained uncertainty**, for **$1.084154 conservative

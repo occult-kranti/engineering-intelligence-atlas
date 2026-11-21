@@ -9,11 +9,21 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 [Private signed-in office](https://atlas-command-office.whatswrong-inc.chatgpt.site) ·
 [Public atlas](https://occult-kranti.github.io/engineering-intelligence-atlas/) ·
 [Desktop starter preview](https://occult-kranti.github.io/engineering-intelligence-atlas/desktop-preview/chrome.html) ·
-[Desktop, VS Code and Android downloads](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/latest) ·
+[Published releases and downloads](https://github.com/occult-kranti/engineering-intelligence-atlas/releases) ·
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
 ## Current product — connected office 0.5.0
+
+The private website update is deployed. Desktop/editor release candidate
+[`8415213`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d)
+passed its installed desktop and editor gates in [Verify](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405),
+but the cloud UI gate still failed and publication was skipped. A fully passing
+candidate and final [Pages](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
+review are required before 0.5.0 is called a verified release. Local checks include 70 Rust
+tests, 375 desktop tests and 192 renderer assertions. The live API/native sync
+and portable-state checks have separate observed evidence in
+[validation](project/VALIDATION.md).
 
 - **Donna workspace:** company/office/department/employee conversation scope, local plans, actual provider returns, and one place to inspect progress.
 - **Office and whiteboard:** persistent rooms, employee positions, keyboard movement, boards and goal/job ownership mappings.
