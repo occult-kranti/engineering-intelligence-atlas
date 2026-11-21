@@ -49,7 +49,24 @@ export class PersonalDashboardServer {
     res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');res.setHeader('Referrer-Policy','no-referrer');
     res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'; form-action 'none'");
     if(req.headers.host!==new URL(this.origin).host){res.writeHead(403);res.end('Invalid host');return;}
-    const url=new URL(req.url||'/',this.origin);this.expire();
+    const rawTarget=req.url||'/';
+    const rawPath=rawTarget.split(/[?#]/,1)[0]!;
+    const unsafeRawPath=(()=>{
+      if(rawPath.includes('\\'))return true;
+      let decoded=rawPath;
+      for(let i=0;i<3;i++){
+        if(/%5c/i.test(decoded)||decoded.includes('\\'))return true;
+        try{const next=decodeURIComponent(decoded);if(next===decoded)break;decoded=next;}catch{return true;}
+      }
+      if(decoded.includes('\\'))return true;
+      return rawPath.split('/').some(seg=>{
+        let s=seg;
+        for(let i=0;i<3;i++){try{const n=decodeURIComponent(s);if(n===s)break;s=n;}catch{return true;}}
+        return s==='.'||s==='..';
+      });
+    })();
+    if(unsafeRawPath){res.writeHead(400);res.end('Invalid path');return;}
+    const url=new URL(rawTarget,this.origin);this.expire();
     if(req.method==='GET'&&has(ALLOWED_FILES,url.pathname)){
       const file=ALLOWED_FILES[url.pathname]!;res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8');
       let bytes:Buffer;
