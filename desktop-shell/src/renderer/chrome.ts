@@ -1972,8 +1972,16 @@ function initOffice(): void {
     const companyId=value('office-company-select');if(!companyId)return;
     void ffTransitionScope({kind:'company',companyId},null);
   });
-  $('office-office-select').addEventListener('change',() => { selectedOfficeId=value('office-office-select'); selectedDepartmentId=''; renderOffice(); });
-  $('office-department-select').addEventListener('change',() => { selectedDepartmentId=value('office-department-select'); renderOffice(); });
+  $('office-office-select').addEventListener('change',() => {
+    const companyId=officeCompany()?.id;const officeId=value('office-office-select');
+    if(!companyId||!officeId){selectedOfficeId=officeId;selectedDepartmentId='';renderOffice();return;}
+    void ffTransitionScope({kind:'office',companyId,officeId},null);
+  });
+  $('office-department-select').addEventListener('change',() => {
+    const companyId=officeCompany()?.id;const departmentId=value('office-department-select');const officeId=selectedOfficeId;
+    if(!companyId||!officeId){selectedDepartmentId=departmentId;renderOffice();return;}
+    void ffTransitionScope(departmentId?{kind:'department',companyId,officeId,departmentId}:{kind:'office',companyId,officeId},null);
+  });
   $('office-queue-filter').addEventListener('change',renderOfficeJobs); $('office-ledger-search').addEventListener('input',() => renderOfficeEvents($('office-ledger'),150));
   $('queue-mode').addEventListener('change',() => $('queue-provider-fields').classList.toggle('hidden',value('queue-mode') !== 'provider'));
 
@@ -2299,7 +2307,7 @@ function switchWorkspaceTab(name:string):void{
   renderUnifiedWorkspace();
 }
 function renderUnifiedWorkspace():void{
-  if(ffStudio){if(ffFocus.kind==='portfolio'&&new URLSearchParams(location.search).has('company'))ffFocus=ffFocusFromUrl();ffRefresh();}
+  if(ffStudio)ffRefresh();
   $('workspace-studio-signals').classList.toggle('hidden',workspaceTab==='chat'||workspaceTab==='decisions');
   renderWorkspaceControls();renderPortfolio();renderWorkspaceLocator();renderDecisionPanels();renderCloudConnection();
   if(spatialOfficeId!==selectedOfficeId){spatialOfficeId=selectedOfficeId;resetRoomForm();resetBoardForm();}
@@ -2984,31 +2992,55 @@ function ffCanonicalizeUrl(): void {
   if (ffFocus.kind === 'portfolio') url.searchParams.delete('company'); else url.searchParams.set('company', ffFocus.companyId);
   history.replaceState(null, '', url.toString());
 }
+/** Align scene, pickers and URL with the ACTUAL canonical snapshot after a failed/queued/superseded transition. */
+function ffReconcileToCanonical(): void {
+  const s = officeState;
+  if (s) {
+    const activeId = s.activeCompanyId;
+    const f = ffFocus;
+    const stillValid = f.kind !== 'portfolio' && f.companyId === activeId && ffValidateFocus(f) === null;
+    if (!stillValid) {
+      if (f.kind === 'portfolio' && !s.companies.some((c) => c.id === activeId)) { /* stay portfolio */ }
+      else if (f.kind === 'portfolio') { /* portfolio stays honest; pickers follow canonical company */ }
+      else ffFocus = { kind: 'company', companyId: activeId };
+      const offices = s.offices.filter((o) => o.companyId === activeId);
+      if (!offices.some((o) => o.id === selectedOfficeId)) selectedOfficeId = offices[0]?.id || '';
+      if (!s.departments.some((d) => d.id === selectedDepartmentId && d.officeId === selectedOfficeId)) selectedDepartmentId = '';
+    }
+  }
+  ffCanonicalizeUrl(); renderOffice(); ffRefresh();
+}
+function ffNavStatus(intent: FfScopeIntent, message: string, kind: '' | 'ok' | 'error'): void {
+  if (intent.token !== ffScopeSeq) return; // only the latest intent may publish status
+  setStatus($('workspace-action-status'), message, kind);
+}
 async function ffRunScopeIntent(intent: FfScopeIntent): Promise<void> {
   if (intent.token !== ffScopeSeq) return; // superseded before it started
   const focus = intent.focus;
   const problem = ffValidateFocus(focus);
-  if (problem) { setStatus($('workspace-action-status'), problem, 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
+  if (problem) { ffNavStatus(intent, problem, 'error'); ffReconcileToCanonical(); return; }
   if (focus.kind !== 'portfolio' && officeState && officeState.activeCompanyId !== focus.companyId) {
     if (workspaceReadOnly()) officeState.activeCompanyId = focus.companyId;
     else {
-      if (!bridge?.officeCommand) { setStatus($('workspace-action-status'), 'Open the installed desktop app to switch companies.', 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
+      if (!bridge?.officeCommand) { ffNavStatus(intent, 'Open the installed desktop app to switch companies.', 'error'); ffReconcileToCanonical(); return; }
+      ffNavStatus(intent, 'Switching company…', '');
       let result: OfficeResult;
       try { result = await bridge.officeCommand({ action: 'select_company', companyId: focus.companyId }); }
-      catch (error) { setStatus($('workspace-action-status'), error instanceof Error ? error.message : 'Company selection failed.', 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
-      if (!result.ok || !result.snapshot) { setStatus($('workspace-action-status'), result.error || 'Company selection failed.', 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
+      catch (error) { ffNavStatus(intent, error instanceof Error ? error.message : 'Company selection failed.', 'error'); ffReconcileToCanonical(); return; }
+      if (result.ok && result.snapshot) { officeState = result.snapshot; officeSampledAt = new Date().toISOString(); }
+      if (!result.ok || !result.snapshot) { ffNavStatus(intent, result.error || 'Company selection failed.', 'error'); ffReconcileToCanonical(); return; }
       if (result.queued) {
-        officeState = result.snapshot; officeSampledAt = new Date().toISOString();
-        setStatus($('workspace-action-status'), `Queued for desktop confirmation${result.commandId ? ` · ${result.commandId}` : ''}. The company has not been switched yet.`);
-        renderOffice(); ffCanonicalizeUrl(); ffRefresh(); return;
+        ffNavStatus(intent, `Queued for desktop confirmation${result.commandId ? ` · ${result.commandId}` : ''}. The company has not been switched yet.`, '');
+        ffReconcileToCanonical(); return;
       }
-      officeState = result.snapshot; officeSampledAt = new Date().toISOString();
-      if (result.snapshot.activeCompanyId !== focus.companyId) { setStatus($('workspace-action-status'), 'The workspace did not confirm the requested company.', 'error'); renderOffice(); ffCanonicalizeUrl(); ffRefresh(); return; }
+      if (intent.token !== ffScopeSeq) { ffReconcileToCanonical(); return; }
+      if (result.snapshot.activeCompanyId !== focus.companyId) { ffNavStatus(intent, 'The workspace did not confirm the requested company.', 'error'); ffReconcileToCanonical(); return; }
     }
   }
   if (intent.token !== ffScopeSeq) return; // a newer intent supersedes the confirmed result
   const recheck = ffValidateFocus(focus);
-  if (recheck) { setStatus($('workspace-action-status'), recheck, 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
+  if (recheck) { ffNavStatus(intent, recheck, 'error'); ffReconcileToCanonical(); return; }
+  ffNavStatus(intent, '', '');
   ffFocus = focus;
   if (focus.kind !== 'portfolio') {
     if ('officeId' in focus && focus.officeId) selectedOfficeId = focus.officeId;
@@ -3140,7 +3172,15 @@ function ffActionConfirmed(action: StudioActionKind, ctx: StudioActionContext): 
       ffShowOps(); switchOfficeTab('queue'); ($('queue-composer') as HTMLDetailsElement).open = true;
       ffOpenPanel('', 'queue-goal'); break;
     }
-    case 'new-goal' as unknown as StudioActionKind: ffRevealComposer(); break;
+    case 'new-goal' as unknown as StudioActionKind: {
+      renderOffice();
+      const target = ffChatTarget(ctx);
+      renderWorkspaceControls(); conversationSignature = ''; renderConversation(); renderWorkspaceGoals();
+      if (!target.ok) { setStatus($('workspace-action-status'), target.message || 'This conversation is unavailable.', 'error'); break; }
+      ffRevealComposer();
+      setStatus($('chat-status'), target.message || '');
+      break;
+    }
     case 'roadmap': ffOperations = true; ffApplyMode(); setPortfolioOpen(false); switchWorkspaceTab('timeline'); break;
     case 'whiteboard': toWorkspace('whiteboard', 'whiteboard-add-node'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } break;
     case 'ownership': {
@@ -3210,6 +3250,8 @@ function boot(): void {
   if(workspaceRoute||ceoRoute)ffOperations=true;ffFocus=params.get('company')||params.get('companyId')?{kind:'company',companyId:params.get('company')||params.get('companyId')||''}:{kind:'portfolio'};
   navigate(workspaceRoute||ceoRoute?'office':route in VIEW_IDS?route:'office',false);if(workspaceRoute)switchWorkspaceTab(workspaceRoute);if(ceoRoute)setPortfolioOpen(true);ffApplyMode();
   const deepLinkFocus=ffFocus;ffFocus={kind:'portfolio'};
+  { const status=document.getElementById('workspace-action-status'),bar=document.querySelector('#freeflow-surface .ff-surface-bar');
+    if(status&&bar&&!bar.contains(status)){status.classList.add('ff-nav-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');bar.append(status);} }
   void safeTask(async()=>{
     await refreshWorkspace();
     if(!officeState&&bridge?.officeSnapshot)await refreshOffice();
