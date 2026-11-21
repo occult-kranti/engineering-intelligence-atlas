@@ -442,3 +442,10 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Returned:** Corrected BuildKit context pruning and added a protected-secrets rebuild gate; targeted explicit navigable mobile fixtures; used retained Windows boot stages to remove an unnecessary eager appData lookup. Preserved test assertions, profile isolation and secret permissions. Local desktop suite passed 504 tests after the Windows correction.
 - **Evidence:** .dockerignore; .github/workflows/headless-runtime.yml; scripts/freeflow-browser-checks.mjs; desktop-shell/src/main/profileMigration.ts; desktop-shell/tests/profile-migration.test.ts
 - **Next handoff:** Require the corrected candidate's full GitHub CI and main release run; initial failures are retained in run44944163515.
+
+## 057 · Publisher / acceptance handoff · complete
+
+- **Ask:** Push the integrated release, verify platform and deployment gates, and preserve a concrete owner handoff.
+- **Returned:** PR #1 merged at `9ac0080`; the merged source passed eleven verification jobs plus release. Pages and the owner-private Site are deployed. Five application assets and SHA256SUMS are published; the downloaded manifest and GitHub asset digests agree. Runtime source is unchanged by this documentation receipt.
+- **Evidence:** project/release-0.7.0.json; project/FREEFLOW_VALIDATION.md; GitHub runs44945005197,44945563924 and44945563914
+- **Next handoff:** Select a real VPS/Vast host, establish the owner-issued writer/tunnel connection, and perform host/device acceptance before claiming production remote execution or migrated live hierarchy.

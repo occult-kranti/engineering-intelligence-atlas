@@ -13,7 +13,9 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
-## Freeflow studio and private runtimes — 0.7.0
+## Freeflow studio and private runtimes — 0.7.0 released
+
+[Daftar 0.7.0 is published](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.7.0) from `9ac0080`. All eleven verification jobs, release publication and Pages passed. Linux and Windows packaged apps exercised the real native core; the private website is deployed and the owner session was verified. All five package digests match the downloaded checksum manifest. [Exact publication receipt](project/release-0.7.0.json).
 
 Company seats now form an interactive conference table with pan, zoom, perspective, automatic browsing and a keyboard/list alternative. Company and subdepartment relationships are explicit and cycle-checked. Donna's movable panel retains scoped conversations and adds docking, position lock/reset, connection and access options.
 

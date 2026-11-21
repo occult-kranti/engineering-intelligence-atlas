@@ -1,0 +1,240 @@
+{
+  "schemaVersion": 1,
+  "version": "0.7.0",
+  "codeCommit": "9ac008011d5bde2d1d09f55ae5caa176d7d5973d",
+  "sourceTree": "eb7d52e7007b0905c557fc91cd72d445c2656208",
+  "pullRequest": "https://github.com/occult-kranti/engineering-intelligence-atlas/pull/1",
+  "testedPullRequestHead": "771bbe6c0ecc242a00f870e2c23e229825335e47",
+  "releaseUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.7.0",
+  "publishedAt": "2026-11-21T20:25:40Z",
+  "displayDate": "2026-11-21",
+  "displayTimezone": "America/New_York",
+  "verification": {
+    "pullRequestCi": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44945005197",
+    "pullRequestCiStatus": "success",
+    "combinedCi": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44945563924",
+    "combinedCiStatus": "success",
+    "jobs": [
+      {
+        "name": "release-checksums",
+        "id": 136971992481,
+        "conclusion": "success"
+      },
+      {
+        "name": "design-tools",
+        "id": 136971992610,
+        "conclusion": "success"
+      },
+      {
+        "name": "desktop-windows",
+        "id": 136971992705,
+        "conclusion": "success"
+      },
+      {
+        "name": "cloud",
+        "id": 136971992734,
+        "conclusion": "success"
+      },
+      {
+        "name": "mysql-connectors",
+        "id": 136971992768,
+        "conclusion": "success"
+      },
+      {
+        "name": "desktop",
+        "id": 136971992787,
+        "conclusion": "success"
+      },
+      {
+        "name": "web",
+        "id": 136971992801,
+        "conclusion": "success"
+      },
+      {
+        "name": "headless / container",
+        "id": 136971992808,
+        "conclusion": "success"
+      },
+      {
+        "name": "android",
+        "id": 136971992817,
+        "conclusion": "success"
+      },
+      {
+        "name": "editor",
+        "id": 136971992818,
+        "conclusion": "success"
+      },
+      {
+        "name": "headless / runtime",
+        "id": 136971992844,
+        "conclusion": "success"
+      },
+      {
+        "name": "release",
+        "id": 136973884894,
+        "conclusion": "success"
+      }
+    ],
+    "pagesCi": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44945563914",
+    "pagesCiStatus": "success",
+    "rustTests": 95,
+    "desktopTests": 504,
+    "rendererAssertions": 294,
+    "cloudApiTests": 98,
+    "headlessHttpMcpCloudTests": 55,
+    "hierarchyReconcilerTests": 12,
+    "pythonTests": 27,
+    "webTests": 75,
+    "webIntegrationSkipsWithoutLiveServices": 22,
+    "staticFiles": 182
+  },
+  "releaseAssets": [
+    {
+      "name": "app-debug.apk",
+      "bytes": 8682648,
+      "sha256": "7f8d55a6ed106680cb15d3fc0ea077bb16e580ba1c8f83730e90c4baba1ec6d0",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.7.0/app-debug.apk",
+      "state": "uploaded",
+      "matchesDownloadedChecksumManifest": true
+    },
+    {
+      "name": "atlas-office-0.7.0.vsix",
+      "bytes": 18275,
+      "sha256": "e064f8b6ecaef544a2f1b354532e09a6912c4abd89fe66731fc434f8a242f5a1",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.7.0/atlas-office-0.7.0.vsix",
+      "state": "uploaded",
+      "matchesDownloadedChecksumManifest": true
+    },
+    {
+      "name": "daftar-desktop-0.7.0-windows-x64.exe",
+      "bytes": 129088025,
+      "sha256": "7698ebe3ed1489ee4836ba726099c620a76b183998ae5f670a98d9baeafbd5cb",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.7.0/daftar-desktop-0.7.0-windows-x64.exe",
+      "state": "uploaded",
+      "matchesDownloadedChecksumManifest": true
+    },
+    {
+      "name": "daftar-desktop-0.7.0-windows-x64.zip",
+      "bytes": 163344428,
+      "sha256": "6e4cdfc33282a7456c7d3c079816d5f2f907d9910822801a39276dfea4514c14",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.7.0/daftar-desktop-0.7.0-windows-x64.zip",
+      "state": "uploaded",
+      "matchesDownloadedChecksumManifest": true
+    },
+    {
+      "name": "daftar-desktop-0.7.0-x86_64.AppImage",
+      "bytes": 136357522,
+      "sha256": "a2d71e7352f94dcd2b9744b3cca8dd8c1e30a44568e431be7b7f43903b423a9f",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.7.0/daftar-desktop-0.7.0-x86_64.AppImage",
+      "state": "uploaded",
+      "matchesDownloadedChecksumManifest": true
+    },
+    {
+      "name": "SHA256SUMS",
+      "bytes": 479,
+      "sha256": "41424f366a9fa5ced5913677d9d96bb5ad7ec0287f0929865e1affdd85ee521b",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.7.0/SHA256SUMS",
+      "state": "uploaded",
+      "manifestItselfDownloadedAndHashed": true
+    }
+  ],
+  "downloadVerification": {
+    "manifestBytes": 479,
+    "manifestSha256": "41424f366a9fa5ced5913677d9d96bb5ad7ec0287f0929865e1affdd85ee521b",
+    "allFivePackageDigestsMatchManifest": true,
+    "packageBytesRedownloadedInThisSession": false,
+    "method": "Downloaded published checksum manifest; verified its digest and all five package digests against GitHub release metadata. CI checks and publishes the built packages."
+  },
+  "website": {
+    "url": "https://atlas-command-office.whatswrong-inc.chatgpt.site",
+    "audience": "owner-only",
+    "sourceCommit": "88c0c330027d97a6d95f6d17bc7a3fbc9c23bdba",
+    "deploymentId": "appgdep_6b01f7cc5e3881919b7e25cc44e9a184",
+    "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_92bd8a47ace0819194dce8950562199e",
+    "deploymentStatus": "succeeded",
+    "deployedAt": "2026-11-21T19:58:10.358439+00:00",
+    "productionOwnerAuthenticationVerified": true,
+    "productionGuestAuthenticationVerified": false,
+    "observed": [
+      "loaded company conference table",
+      "automatic browsing stops on interaction",
+      "Donna options",
+      "owner People & access dashboard",
+      "restricted company visiting-office canvas",
+      "invitation review"
+    ],
+    "newMembershipsOrAudienceGrants": 0
+  },
+  "browserEvidence": {
+    "cloud": {
+      "primaryChecks": 71,
+      "freeflowMatrixCases": 8,
+      "screenshots": 34,
+      "capacity": {
+        "companies": 200,
+        "desks": 1000,
+        "boards": 200,
+        "transitions": 20
+      },
+      "providerCalls": 0,
+      "syntheticApiFixtures": true,
+      "productionAuthenticationVerifiedByTheseFixtures": false,
+      "evidenceUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44945005197/artifacts/14723570906"
+    },
+    "packagedDesktop": {
+      "platforms": [
+        "linux/x64",
+        "windows/x64"
+      ],
+      "realNativeCoreLoaded": true,
+      "localGoalPersisted": true,
+      "isolatedProfiles": true,
+      "providerSpendChanged": false,
+      "scope": "Unpacked release applications in CI. NSIS installation/upgrade, signing, SmartScreen and an owner-device OS-keychain acceptance remain unverified."
+    }
+  },
+  "container": {
+    "initialImageBuild": true,
+    "rebuildWithUnreadable0700Secrets": true,
+    "healthyBoot": true,
+    "ownerHttpStatus": true,
+    "inContainerMcp": true,
+    "workersPaused": true,
+    "liveVpsOrVastRental": false,
+    "gpuInference": false
+  },
+  "privateIntegration": {
+    "repositoryHierarchyAppliedToPrivateOwnerCopy": true,
+    "repeatApplyMutations": 0,
+    "nativeExportRestoreProjectionMatched": true,
+    "missingArtifactReferences": 0,
+    "sourceRegistersPublished": false,
+    "upgradedHierarchySyncedToLiveSite": false
+  },
+  "providerUsageThisIncrement": {
+    "boundedSonnetCodingRequestsThroughPrivateDonna": 1,
+    "recurringObserverModelCalls": 0,
+    "modelWeightsDownloaded": false,
+    "note": "Does not claim zero ChatGPT, hosting, infrastructure or historical provider cost."
+  },
+  "priorFailedCandidates": [
+    {
+      "head": "259aff3939e1cc2e6819485c36bcf95260791599",
+      "run": 44944163515,
+      "reasons": [
+        "Docker context traversed a protected directory",
+        "Mobile fixture selected employee management instead of scope navigation",
+        "Windows startup eagerly resolved an unused appData path"
+      ],
+      "fixedAndReverified": true
+    }
+  ],
+  "remainingAcceptance": [
+    "Selected VPS/Vast host and real provider or GPU configuration",
+    "Owner-issued runtime device pairing and reviewed single-writer migration",
+    "ChatGPT tunnel/plugin account connection",
+    "Owner-machine installer/upgrade and OS-keychain acceptance",
+    "General-purpose isolated shell executor and public multi-user MCP/OAuth gateway"
+  ]
+}

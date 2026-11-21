@@ -88,3 +88,5 @@ Related: [Roadmap](ROADMAP.md) · [Handoff](HANDOFF.md) · [Backend research](pr
 - **054: Portfolio reconciliation** — Applied additive private company-parent relationships, verified zero-change replay and preserved a restorable private workspace. Public fixtures and private state remained separate. [Current validation](project/FREEFLOW_VALIDATION.md).
 
 - **055: Independent release review** — Fixed restored-backup/same-device overwrite cases, made runtime/container checks a release dependency and verified the published private website. Final desktop/headless suites passed 503/55 tests; remote package checks remain authoritative.
+
+- **057: Release publication** — Merged PR #1 at `9ac0080`; all eleven verification jobs plus release and Pages passed. Published five application packages and the checksum manifest; all package digests matched. Verified the owner-private website and retained the upgraded private archive. [Exact receipt](project/release-0.7.0.json).

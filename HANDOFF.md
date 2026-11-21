@@ -13,9 +13,11 @@ manager, project runner and Android source remain available. The architecture is
 Electron/TypeScript with a Rust state and control core, plus the deployed owner-private Sites/Vinext/D1 companion. The earlier
 React/TypeScript/MySQL runtime remains available as a separate deployment option.
 
-## Freeflow 0.7.0 integration
+## Freeflow 0.7.0 — released
 
-The unified branch includes the Freeflow renderer, nested company/department organization, visiting-member API and pages, shared local model control, permanent deterministic observer, headless runtime and optional encrypted cloud-device synchronization. See [the current validation receipt](project/FREEFLOW_VALIDATION.md) for exact checks and deployment status.
+Published source `9ac0080` passed all eleven verification jobs, release and Pages. The [publication receipt](project/release-0.7.0.json) records package hashes, actual browser/container/desktop checks and owner-private website acceptance.
+
+The unified source includes the Freeflow renderer, nested company/department organization, visiting-member API and pages, shared local model control, permanent deterministic observer, headless runtime and optional encrypted cloud-device synchronization. See [the current validation receipt](project/FREEFLOW_VALIDATION.md) for exact checks and deployment status.
 
 A configured VPS can consume the existing website queue through an owner-issued desktop-kind device pairing. Preserve a single writer, restore matching state before the first connection, and review any conflict. [Cloud migration instructions](deploy/CLOUD_DEVICE_SYNC.md) explain device revocation/release and cold-start checks. The shared model registry is host-local and separate from the Site projection; download/assignment controls are exposed in the native/personal-browser UI and private MCP/HTTP bridge.
 
