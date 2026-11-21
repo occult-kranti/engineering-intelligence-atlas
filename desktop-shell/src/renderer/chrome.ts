@@ -2837,7 +2837,7 @@ function studioPreference(key: string, fallback: string): string { try { return 
 function saveStudioPreference(key: string, value: string): void { try { localStorage.setItem(`daftar-studio-${key}`,value); } catch { /* Private browsing can still use the current view. */ } }
 function studioHeatMode(): StudioHeatMode { const selected=value('workspace-heat-mode'); return ['workload','budget','attention','off'].includes(selected)?selected as StudioHeatMode:'workload'; }
 function currentStudioSignals(): StudioSignals|null {
-  const key=[officeCompany()?.id,selectedOfficeId,selectedDepartmentId,officeSampledAt].join('|');
+  const key=[officeCompany()?.id,selectedOfficeId,selectedDepartmentId,signalGeneration()].join('|');
   if(studioSignalState!==officeState||studioSignalKey!==key){studioSignalState=officeState;studioSignalKey=key;studioSignals=null;
     if(officeState&&window.DaftarSignals){try{studioSignals=window.DaftarSignals.build(officeState,{companyId:officeCompany()?.id,officeId:selectedOfficeId||undefined,departmentId:selectedDepartmentId||undefined,now:new Date().toISOString(),...(officeSampledAt?{sampledAt:officeSampledAt}:{})});}catch{/* Missing signals must not look like a healthy zero. */}}
   }
@@ -2913,8 +2913,38 @@ function initStudio():void{
 let ffStudio: Studio | null = null;
 let ffFocus: FreeflowFocus = { kind: 'portfolio' };
 let ffOperations = false;
-let ffHeatCache = new Map<string, StudioHeat | null>();
+let ffHeatCache = new Map<string, StudioSignals | null>();
 let ffHeatKey = '';
+const FF_CLOCK_MS = 30_000;
+const FF_SNAPSHOT_IDS = new WeakMap<object, number>();
+let ffSnapshotSeq = 0;
+let ffHeatTimer: ReturnType<typeof setTimeout> | null = null;
+function ffSnapshotId(): number {
+  if (!officeState) return 0;
+  let id = FF_SNAPSHOT_IDS.get(officeState);
+  if (id === undefined) { id = ++ffSnapshotSeq; FF_SNAPSHOT_IDS.set(officeState, id); }
+  return id;
+}
+/** One finite generation shared by Freeflow and legacy signals: snapshot identity + receipt + bounded clock bucket. */
+function signalGeneration(): string {
+  return `${ffSnapshotId()}|${officeSampledAt}|${Math.floor(Date.now() / FF_CLOCK_MS)}`;
+}
+function ffHeatVisible(): boolean {
+  return !document.hidden && activeView === 'office' && studioHeatMode() !== 'off';
+}
+function ffStopHeatTimer(): void { if (ffHeatTimer !== null) { clearTimeout(ffHeatTimer); ffHeatTimer = null; } }
+function ffScheduleHeatTimer(): void {
+  ffStopHeatTimer();
+  if (!ffHeatVisible() || !officeState) return;
+  const wait = FF_CLOCK_MS - (Date.now() % FF_CLOCK_MS) + 50;
+  ffHeatTimer = setTimeout(() => {
+    ffHeatTimer = null;
+    if (!ffHeatVisible()) return;
+    if (ffStudio) ffRefresh();
+    renderStudioSignals();
+    ffScheduleHeatTimer();
+  }, wait);
+}
 function ffReadOnlyCaps(spec: InspectorActionSpec): StudioActionState {
   if (workspaceReadOnly() && ['new-job','new-company','new-office','new-department','hire'].includes(spec.action)) return { enabled: false, reason: 'Read-only starter preview.' };
   return { enabled: true };
@@ -2926,13 +2956,14 @@ function ffFocusFromUrl(): FreeflowFocus {
 }
 function ffSignalsFor(scope: {companyId?: string; officeId?: string; departmentId?: string}): StudioSignals | null {
   if (!officeState || !window.DaftarSignals) return null;
-  const key = `${officeSampledAt}|${scope.companyId||''}|${scope.officeId||''}|${scope.departmentId||''}`;
-  if (ffHeatKey !== officeSampledAt) { ffHeatCache = new Map(); ffHeatKey = officeSampledAt; }
-  const cached = (ffHeatCache as unknown as Map<string, StudioSignals | null>).get(key);
+  const gen = signalGeneration();
+  const key = `${scope.companyId||''}|${scope.officeId||''}|${scope.departmentId||''}`;
+  if (ffHeatKey !== gen) { ffHeatCache = new Map(); ffHeatKey = gen; }
+  const cached = ffHeatCache.get(key);
   if (cached !== undefined) return cached;
   let result: StudioSignals | null = null;
   try { result = window.DaftarSignals.build(officeState, { ...scope, now: new Date().toISOString(), ...(officeSampledAt ? { sampledAt: officeSampledAt } : {}) }); } catch { result = null; }
-  (ffHeatCache as unknown as Map<string, StudioSignals | null>).set(key, result);
+  ffHeatCache.set(key, result);
   return result;
 }
 function ffHeat(node: Readonly<SceneNode>): StudioHeat | null {
@@ -2951,6 +2982,14 @@ function ffHeat(node: Readonly<SceneNode>): StudioHeat | null {
 function ffSetNav(name: string): void {
   document.querySelectorAll<HTMLButtonElement>('[data-ff-nav]').forEach((b) => { const on = b.dataset.ffNav === name; b.classList.toggle('active', on); b.setAttribute('aria-pressed', String(on)); });
 }
+/** Reparent the existing heat select and legend into the persistent canvas bar (no second ID or state). */
+function ffMountHeatControls(): void {
+  const slot = document.getElementById('ff-heat-controls'); const select = document.getElementById('workspace-heat-mode'); const key = document.querySelector('#workspace-studio-signals .heat-key');
+  if (!slot || !select) return;
+  const control = select.closest('.signal-control') || select;
+  if (!slot.contains(control)) slot.append(control);
+  if (key && !slot.contains(key)) slot.append(key);
+}
 function ffApplyMode(): void {
   const canvas = activeView === 'office' && !ffOperations && !portfolioOpen;
   document.body.classList.toggle('ff-canvas-mode', canvas);
@@ -2958,6 +2997,17 @@ function ffApplyMode(): void {
   $('freeflow-surface').classList.toggle('hidden', activeView !== 'office');
   $('ff-return-studio').classList.toggle('hidden', !ffOperations || ffFocus.kind === 'portfolio');
   ffStudio?.setActive(activeView === 'office' && !portfolioOpen && !ffOperations);
+  ffScheduleHeatTimer();
+}
+/** Single serializer for view mode + company scope. Mode fields never conflict. */
+function ffSerializeUrl(): void {
+  const url = new URL(location.href);
+  url.searchParams.delete('companyId'); url.searchParams.delete('workspace'); url.searchParams.delete('ceo');
+  if (ffFocus.kind === 'portfolio') url.searchParams.delete('company'); else url.searchParams.set('company', ffFocus.companyId);
+  const canvas = activeView === 'office' && !ffOperations && !portfolioOpen;
+  if (portfolioOpen) url.searchParams.set('ceo', 'true');
+  else if (!canvas && activeView === 'office' && ['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(workspaceTab)) url.searchParams.set('workspace', workspaceTab);
+  history.replaceState(null, '', url.toString());
 }
 function ffRefresh(): void {
   if (!ffStudio) return;
@@ -2986,12 +3036,7 @@ function ffValidateFocus(focus: FreeflowFocus): string | null {
   }
   return null;
 }
-function ffCanonicalizeUrl(): void {
-  const url = new URL(location.href);
-  url.searchParams.delete('companyId');
-  if (ffFocus.kind === 'portfolio') url.searchParams.delete('company'); else url.searchParams.set('company', ffFocus.companyId);
-  history.replaceState(null, '', url.toString());
-}
+function ffCanonicalizeUrl(): void { ffSerializeUrl(); }
 /** Align scene, pickers and URL with the ACTUAL canonical snapshot after a failed/queued/superseded transition. */
 function ffReconcileToCanonical(): void {
   const s = officeState;
@@ -3047,6 +3092,7 @@ async function ffRunScopeIntent(intent: FfScopeIntent): Promise<void> {
     selectedDepartmentId = focus.kind === 'department' ? focus.departmentId : '';
   }
   if (intent.operations !== null) { ffOperations = intent.operations; ffSetNav(intent.operations ? 'operations' : 'table'); }
+  ffApplyMode();
   ffCanonicalizeUrl();
   renderOffice();
   ffRefresh();
@@ -3208,17 +3254,21 @@ function initFreeflowHost(): void {
   ffStudio = mountStudio(host, { onNavigate: ffNavigate, onAction: ffAction, heat: ffHeat, capabilities: ffReadOnlyCaps });
   document.querySelectorAll<HTMLButtonElement>('[data-ff-nav]').forEach((b) => b.addEventListener('click', () => {
     const name = b.dataset.ffNav || 'table'; ffSetNav(name);
-    if (name === 'table') { ffOperations = false; setPortfolioOpen(false); ffNavigate({ kind: 'portfolio' }); ffApplyMode(); }
-    else if (name === 'studio') { ffOperations = false; setPortfolioOpen(false); ffSetNav('table'); ffApplyMode(); ffRefresh(); }
-    else if (name === 'team') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('softboard'); }
-    else if (name === 'roadmap') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('timeline'); }
-    else if (name === 'whiteboard') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('whiteboard'); }
-    else { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('chat'); }
+    if (name === 'table') { ffOperations = false; setPortfolioOpen(false); ffNavigate({ kind: 'portfolio' }); ffApplyMode(); ffSerializeUrl(); }
+    else if (name === 'studio') { ffOperations = false; setPortfolioOpen(false); ffSetNav('table'); ffApplyMode(); ffRefresh(); ffSerializeUrl(); }
+    else if (name === 'team') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('softboard'); ffSerializeUrl(); }
+    else if (name === 'roadmap') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('timeline'); ffSerializeUrl(); }
+    else if (name === 'whiteboard') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('whiteboard'); ffSerializeUrl(); }
+    else { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('chat'); ffSerializeUrl(); }
   }));
   $('ff-create-blueprint').addEventListener('click', () => workspaceTask(async () => { await ensureWorkspaceBlueprint(); ffRefresh(); }));
   $('workspace-heat-mode').addEventListener('change', ffRefresh);
   $('workspace-theme').addEventListener('change', () => ffRefresh());
-  window.addEventListener('beforeunload', () => { ffStudio?.destroy(); ffStudio = null; });
+  ffMountHeatControls();
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (ffStudio) ffRefresh(); renderStudioSignals(); } ffScheduleHeatTimer(); });
+  $('workspace-heat-mode').addEventListener('change', ffScheduleHeatTimer);
+  window.addEventListener('beforeunload', () => { ffStopHeatTimer(); ffStudio?.destroy(); ffStudio = null; });
+  window.addEventListener('pagehide', ffStopHeatTimer);
   window.addEventListener('hashchange', () => { ffApplyMode(); });
 }
 // ---------------------------------------------------------------- boot
@@ -3248,7 +3298,9 @@ function boot(): void {
   } else if (bridge?.transport === 'personal-browser') { $('core-label').textContent='Private browser workspace'; $('core-note').textContent='Connected to your desktop app'; }
   const route = location.hash.replace('#', '') as ViewName;const params=new URLSearchParams(location.search);const requested=params.get('workspace')||'';const workspaceRoute=['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(requested)?requested:null;const ceoRoute=params.get('ceo')==='true';
   if(workspaceRoute||ceoRoute)ffOperations=true;ffFocus=params.get('company')||params.get('companyId')?{kind:'company',companyId:params.get('company')||params.get('companyId')||''}:{kind:'portfolio'};
-  navigate(workspaceRoute||ceoRoute?'office':route in VIEW_IDS?route:'office',false);if(workspaceRoute)switchWorkspaceTab(workspaceRoute);if(ceoRoute)setPortfolioOpen(true);ffApplyMode();
+  navigate(workspaceRoute||ceoRoute?'office':route in VIEW_IDS?route:'office',false);if(workspaceRoute)switchWorkspaceTab(workspaceRoute);if(ceoRoute)setPortfolioOpen(true);
+  if(workspaceRoute||ceoRoute){const navName=ceoRoute?'operations':workspaceRoute==='softboard'?'team':workspaceRoute==='timeline'?'roadmap':workspaceRoute==='whiteboard'?'whiteboard':'operations';ffSetNav(navName);}
+  ffApplyMode();
   const deepLinkFocus=ffFocus;ffFocus={kind:'portfolio'};
   { const status=document.getElementById('workspace-action-status'),bar=document.querySelector('#freeflow-surface .ff-surface-bar');
     if(status&&bar&&!bar.contains(status)){status.classList.add('ff-nav-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');bar.append(status);} }

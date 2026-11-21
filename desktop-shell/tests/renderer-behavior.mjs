@@ -253,4 +253,18 @@ check(ke('authority-summary').textContent.includes('7 indexed records')&&ke('aut
 check(ke('authority-ledger').textContent.includes('Retained importer history decision'),'authority decision history remains intact');
 ke('office-tab-ledger').click();await flush();check(ke('office-ledger').textContent.includes('Retained importer identity event')&&kf.office.knowledge.length===137,'full event history and persisted knowledge records remain available');
 check(!kf.calls.some(call=>call.name==='officeCommand'),'viewing source notes and opening references never mutates company state');knowledgeView.window.close();
+// Heat controls, freshness generation and URL mode consistency.
+{
+const hd2=await makeDom(true,undefined,'?company=fixture-company&workspace=whiteboard');const hw2=hd2.window,hdoc=hw2.document;
+check(hdoc.querySelectorAll('#workspace-heat-mode').length===1,'exactly one heat select exists');
+check(hdoc.getElementById('ff-heat-controls').contains(hdoc.getElementById('workspace-heat-mode')),'heat select is reparented into persistent canvas controls');
+check(new hw2.URL(hw2.location.href).searchParams.get('workspace')==='whiteboard','intentional supported legacy mode is reflected in URL');
+hdoc.getElementById('workspace-heat-mode').value='attention';hdoc.getElementById('workspace-heat-mode').dispatchEvent(new hw2.Event('change',{bubbles:true}));await flush();
+check(hw2.localStorage.getItem('daftar-studio-heat')==='attention','heat preference persists');
+hdoc.getElementById('ff-nav-table').click();await flush();
+const q1=new hw2.URL(hw2.location.href).searchParams;check(!q1.has('workspace')&&!q1.has('ceo')&&!q1.has('company'),'Conference table clears mode and company parameters');
+hd2.window.close();
+const ceoq=await makeDom(true,undefined,'?ceo=true');const cw=ceoq.window;cw.document.getElementById('ff-nav-table').click();await flush();
+check(!new cw.URL(cw.location.href).searchParams.has('ceo'),'Conference table clears CEO mode');ceoq.window.close();
+}
 console.log(JSON.stringify({suite:'renderer pure-DOM interaction',checks,passed:true,fixtureOnly:true,networkCalls:0,providerCalls:0,visualVerification:false},null,2));
