@@ -353,4 +353,3 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Returned:** Created both companies through native commands; zero-mutation replay passed. Saved roadmaps, source knowledge, first-cycle draft goals and scoped handoffs; matched native/cloud projections and private directory. Corrected the static compiler failure found by CI. Released 0.6.1 from 600d5fc after all seven jobs, release and Pages passed; deployed matching private Site, verified downloaded digests and independently checked private export/restore. No new provider calls or external social actions.
 - **Evidence:** project/COMPANY_KITS.md; project/release-0.6.1.json; project/VALIDATION.md
 - **Next handoff:** Run the newly requested Windows-first freeflow redesign through Donna/Director and the native agent platform; preserve this release and private records.
-
