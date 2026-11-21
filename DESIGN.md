@@ -34,3 +34,9 @@ Motion communicates navigation and progress. Short camera flights are interrupti
 Virtualize scene nodes, cap rendered lists and panel preferences, and bound deep hierarchy labels without discarding descendants. Repeated navigation, close/reopen, hidden tabs, unavailable storage and malformed saved coordinates must remain usable. Listener and animation cleanup belongs to the component lifecycle.
 
 Perform a baseline review, one full visual sweep, one grouped correction and one confirmation. Functional regression tests cover larger scenes and permission races separately from screenshots.
+
+## Next blueprint concept: flat circles in a continuous world
+
+The latest design brief uses flat, color-coded circles for people and roles, clean floorplan lines, company-contained offices/departments and anchored work elements. It supersedes the physical-office/figurine studies. The camera and table can occupy a real 3D scene while the blueprint content stays flat. Top view remains the normal operating view; optional orbit, zoom and bounded spring/snapping behavior preserve the same world and record identities.
+
+This is a planned replacement concept, not an implementation or release claim. [The blueprint-world plan](design/blueprint-world/PLAN.md) defines the graphics/physics decision, shared model, Claude implementation packages and acceptance gates. The current prototype and its publication receipts remain separate historical checkpoints.
