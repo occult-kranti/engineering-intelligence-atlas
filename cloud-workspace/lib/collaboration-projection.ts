@@ -10,7 +10,7 @@ const str = (v: unknown, n = 300): string | null => (typeof v === 'string' && v.
 const fin = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
 const unit = (v: unknown): number | null => { const n = fin(v); return n !== null && n >= 0 && n <= 1 ? n : null; };
 const size = (v: unknown): number | null => { const n = fin(v); return n !== null && n > 0 && n <= 1 ? n : null; };
-const strs = (v: unknown, cap = LIMITS.links): string[] => (Array.isArray(v) ? v.filter((x) => typeof x === 'string' && x.length <= 120).slice(0, cap) : []);
+const strs = (v: unknown, cap: number = LIMITS.links): string[] => (Array.isArray(v) ? v.filter((x) => typeof x === 'string' && x.length <= 120).slice(0, cap) : []);
 function meta(matched: number, returned: number) { return { matched, returned, truncated: returned < matched }; }
 function cap<T>(items: T[], n: number): { out: T[]; m: ReturnType<typeof meta> } { const out = items.slice(0, n); return { out, m: meta(items.length, out.length) }; }
 const q = (...p: string[]) => p.join('::');
@@ -36,7 +36,16 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
   const services = list(portfolio.services);
   const contracts = list(portfolio.contracts);
   const svcById = new Map<string, Row>(); for (const s of services) if (typeof s.id === 'string') svcById.set(s.id, s);
-  const recipientContracts = contracts.filter((c) => c.recipientCompanyId === companyId && svcById.has(c.serviceId));
+  const officeById = new Map<string, Row>(); for (const o of officesAll) officeById.set(o.id, o);
+  const deptById = new Map<string, Row>(); for (const d of deptsAll) deptById.set(d.id, d);
+  const recipientContracts = contracts.filter((c) => {
+    if (c.recipientCompanyId !== companyId || !svcById.has(c.serviceId)) return false;
+    const ro = c.recipientOfficeId, rd = c.recipientDepartmentId;
+    if (ro != null && !officeById.has(ro)) return false;
+    if (rd != null) { const d = deptById.get(rd); if (!d) return false; if (ro != null && d.officeId !== ro) return false; }
+    return true;
+  });
+  const contractOffice = (employeeId: string, officeId: string): boolean => recipientContracts.some((c) => strs(c.employeeIds, 500).includes(employeeId) && (c.recipientOfficeId == null || c.recipientOfficeId === officeId));
   const hostServices = services.filter((s) => s.companyId === companyId && officeIds.has(s.officeId));
 
   // roleRefs: employeeId -> provenance info
@@ -64,7 +73,14 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
   const sceneBps: Row[] = [];
   // Pre-pass collect candidate layout employee refs so role cards can include them.
   const preDeskEmp = new Set<string>(); const preBoardOwner = new Set<string>();
-  for (const b of blueprints.out) { for (const d of list(b.desks)) if (str(d.employeeId)) preDeskEmp.add(d.employeeId); for (const w of list(b.whiteboards)) if (str(w.ownerEmployeeId)) preBoardOwner.add(w.ownerEmployeeId); }
+  const placeable = (employeeId: unknown, officeId: string): boolean => {
+    if (typeof employeeId !== 'string') return false;
+    const e = empById.get(employeeId); if (!e) return false;
+    if (e.companyId === companyId) return e.officeId == null || e.officeId === officeId;
+    if (hostServices.some((s) => s.officeId === officeId && (strs(s.employeeIds, 500).includes(employeeId) || strs(s.retiredEmployeeIds, 500).includes(employeeId)))) return true;
+    return contractOffice(employeeId, officeId);
+  };
+  for (const b of blueprints.out) { for (const d of list(b.desks)) if (placeable(d.employeeId, b.officeId)) preDeskEmp.add(d.employeeId); for (const w of list(b.whiteboards)) if (placeable(w.ownerEmployeeId, b.officeId)) preBoardOwner.add(w.ownerEmployeeId); }
   // Role relevance: layout reference counts only if validated against host/contract relationships.
   for (const id of [...preDeskEmp, ...preBoardOwner]) {
     const emp = empById.get(id); if (!emp) continue;
@@ -86,7 +102,7 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
     else if (r.hostRetired && !r.hostMember) availability = 'historical';
     else availability = 'layout-only';
     const card: Row = { id, name: str(e.name, 120), role: str(e.role, 120), kind: str(e.kind, 20), shared: foreign, availability, provenance: r.home ? 'home' : r.hostMember || r.hostRetired ? 'service-host' : 'service-contract', toolAccess: false };
-    if (r.home) { card.status = str(e.status, 20); card.officeId = officeIds.has(e.officeId) ? e.officeId : null; card.departmentId = deptIds.has(e.departmentId) ? e.departmentId : null; }
+    if (r.home) { card.status = str(e.status, 20); card.officeId = retainedOffices.has(e.officeId) ? e.officeId : null; card.departmentId = retainedDepts.has(e.departmentId) ? e.departmentId : null; }
     else { if (r.serviceId) card.serviceId = r.serviceId; }
     cards.push(card);
   }
@@ -102,7 +118,7 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
       const x = unit(r.x), y = unit(r.y), w = size(r.width), h = size(r.height);
       if (x === null || y === null || w === null || h === null) return false;
       if (x + w > 1.0001 || y + h > 1.0001) return false;
-      if (r.departmentId != null && !deptIds.has(r.departmentId)) return false;
+      if (r.departmentId != null) { const dd = deptById.get(r.departmentId); if (!dd || dd.officeId !== b.officeId) return false; }
       return true;
     });
     roomTotals.matched += roomsValid.length;
@@ -112,12 +128,12 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
       rooms.push({ id: r.id, sceneId: q(companyId, b.officeId, r.id), name: str(r.name, 120), departmentId: r.departmentId && retainedDepts.has(r.departmentId) ? r.departmentId : null, x: r.x, y: r.y, width: r.width, height: r.height });
     }
     const desksValid = list(b.desks).filter((d) => {
-      if (!str(d.id) || !roomIds.has(d.roomId) || !retainedRoles.has(d.employeeId)) return false;
+      if (!str(d.id) || !roomIds.has(d.roomId) || !retainedRoles.has(d.employeeId) || !placeable(d.employeeId, b.officeId)) return false;
       return unit(d.x) !== null && unit(d.y) !== null;
     });
     deskTotals.matched += desksValid.length;
     const desks = desksValid.slice(0, LIMITS.desks).map((d) => { deskTotals.returned++; return { id: d.id, sceneId: q(companyId, b.officeId, d.id), roomId: d.roomId, roomSceneId: q(companyId, b.officeId, d.roomId), employeeId: d.employeeId, x: d.x, y: d.y }; });
-    const boardsValid = list(b.whiteboards).filter((w) => str(w.id) && roomIds.has(w.roomId) && unit(w.x) !== null && unit(w.y) !== null && retainedRoles.has(w.ownerEmployeeId));
+    const boardsValid = list(b.whiteboards).filter((w) => str(w.id) && roomIds.has(w.roomId) && unit(w.x) !== null && unit(w.y) !== null && retainedRoles.has(w.ownerEmployeeId) && placeable(w.ownerEmployeeId, b.officeId));
     boardTotals.matched += boardsValid.length;
     const whiteboards = boardsValid.slice(0, LIMITS.whiteboards).map((w) => { boardTotals.returned++; return { id: w.id, sceneId: q(companyId, b.officeId, w.id), roomId: w.roomId, roomSceneId: q(companyId, b.officeId, w.roomId), title: str(w.title, 200), ownerEmployeeId: w.ownerEmployeeId, x: w.x, y: w.y, _goalIds: strs(w.goalIds, 200), _jobIds: strs(w.jobIds, 200), _roadmapIds: strs(w.roadmapItemIds, 200) }; });
     sceneBps.push({ id: b.id, officeId: b.officeId, companyId, rooms, desks, whiteboards });
@@ -128,7 +144,15 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
   const goals = cap(goalsAll, LIMITS.goals);
   const goalById = new Map<string, Row>(); for (const g of goalsAll) goalById.set(g.id, g);
   const retainedGoals = new Set(goals.out.map((g) => g.id as string));
-  const goalsOut = goals.out.map((g) => ({ id: g.id, title: str(g.title, 200), status: str(g.status, 40), scope: obj(g.scope) ? { kind: str(g.scope.kind, 20), id: str(g.scope.id, 120) } : null }));
+  const scopeOf = (s: unknown): Row | null => {
+    if (!obj(s)) return null; const k = s.kind, id = s.id; if (typeof id !== 'string') return null;
+    if (k === 'company') return id === companyId ? { kind: 'company', id } : null;
+    if (k === 'office') return retainedOffices.has(id) ? { kind: 'office', id } : null;
+    if (k === 'department') return retainedDepts.has(id) ? { kind: 'department', id } : null;
+    if (k === 'employee') return retainedRoles.has(id) ? { kind: 'employee', id } : null;
+    return null;
+  };
+  const goalsOut = goals.out.map((g) => { const sc = scopeOf(g.scope); return { id: g.id, title: str(g.title, 200), status: str(g.status, 40), scope: sc, scopeRestricted: sc === null }; });
   const jobsAll = list(snapshot.jobs).filter((j) => j.companyId === companyId && str(j.id));
   const jobs = cap(jobsAll, LIMITS.jobs);
   const retainedJobs = new Set(jobs.out.map((j) => j.id as string));
@@ -141,7 +165,8 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
   // Roadmap: company-scoped only.
   const allRoad = list(portfolio.roadmap);
   const roadAll = allRoad.filter((r) => obj(r.scope) && r.scope.kind === 'company' && r.scope.id === companyId && str(r.id));
-  const restrictedLinked = allRoad.filter((r) => obj(r.scope) && r.scope.kind !== 'company' && (strs(r.goalIds, 500).some((g) => retainedGoals.has(g)) || strs(r.jobIds, 500).some((j) => retainedJobs.has(j)))).length;
+  const visibleBoardRoad = new Set<string>(); for (const b of blueprints.out) for (const w of list(b.whiteboards)) for (const id of strs(w.roadmapItemIds, 200)) visibleBoardRoad.add(id);
+  const restrictedLinked = allRoad.filter((r) => typeof r.id === 'string' && visibleBoardRoad.has(r.id) && !(obj(r.scope) && r.scope.kind === 'company' && r.scope.id === companyId)).length;
   const road = cap(roadAll, LIMITS.roadmap);
   const retainedRoad = new Set(road.out.map((r) => r.id as string));
   const contractIds = new Set(recipientContracts.map((c) => c.id as string));
@@ -155,7 +180,7 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
   return {
     company: { id: company.id, name: str(company.name, 200), status: str(company.status, 20) },
     offices: officesOut, departments: deptsOut, roleCards: roleOut, blueprints: sceneBps, jobs: jobsOut, goals: goalsOut, roadmap: roadOut,
-    truncation: { offices: offices.m, departments: departments.m, roleCards: roleCards.m, blueprints: blueprints.m, rooms: meta(roomTotals.matched, roomTotals.returned), desks: meta(deskTotals.matched, deskTotals.returned), whiteboards: meta(boardTotals.matched, boardTotals.returned), jobs: jobs.m, goals: goals.m, roadmap: road.m, restrictedLinkedRoadmap: restrictedLinked },
+    truncation: { offices: meta(officesAll.length, offices.out.length), departments: meta(deptsAll.length, departments.out.length), parentCapOmitted: { blueprints: bpAll.length - bpAll.filter((b) => retainedOffices.has(b.officeId)).length, departments: deptsAll.length - deptsAll.filter((d) => retainedOffices.has(d.officeId)).length }, roleCards: roleCards.m, blueprints: blueprints.m, rooms: meta(roomTotals.matched, roomTotals.returned), desks: meta(deskTotals.matched, deskTotals.returned), whiteboards: meta(boardTotals.matched, boardTotals.returned), jobs: jobs.m, goals: goals.m, roadmap: road.m, restrictedLinkedRoadmap: restrictedLinked },
     counts: { offices: officesOut.length, departments: deptsOut.length, roleCards: roleOut.length, jobs: jobsOut.length, goals: goalsOut.length, roadmap: roadOut.length },
   };
 }
