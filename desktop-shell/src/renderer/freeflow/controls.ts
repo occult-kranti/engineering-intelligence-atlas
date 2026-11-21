@@ -3,16 +3,14 @@
 //
 // API for the studio orchestrator:
 //   const c = mountControls(host, {
-//     viewport,                 // HTMLElement receiving pointer/wheel/touch (the canvas host)
-//     getViewportSize(),        // Size of the canvas
-//     getCamera(), setCamera(cam), onCameraChange?(cam, phase)  // phase: 'frame'|'end'
-//     getBounds?()              // scene bounds Rect for Fit/Reset
-//     focusKey?: string, active?: boolean, storage?: Storage|null,
+//     viewport, getViewportSize(), getCamera(), setCamera(cam), onCameraChange?(cam, phase),
+//     getBounds?(), focusKey?, active?, storage?, ownsCamera?  // default true
 //   });
-//   c.setBounds(rect); c.setFocusKey(key); c.setActive(bool); c.fit(); c.destroy();
+//   c.setBounds(rect); c.setFocusKey(key); c.setActive(bool); c.fit(); c.sync(); c.destroy();
+// When ownsCamera is false the host studio owns restore/fit; controls only translate gestures.
 
 import {
-  type Camera, type Rect, type Size, type Point, DEFAULT_CAMERA, MAX_PITCH,
+  type Camera, type Rect, type Size, type Point, DEFAULT_CAMERA,
   easeSpring, fitBounds, interpolateCamera, normalizeCamera, wrapDegrees, zoomAt, screenToWorld,
 } from './camera.js';
 
@@ -26,6 +24,7 @@ export interface ControlsOptions {
   focusKey?: string;
   active?: boolean;
   storage?: Pick<Storage, 'getItem' | 'setItem'> | null;
+  ownsCamera?: boolean;
 }
 
 export interface Controls {
@@ -37,6 +36,7 @@ export interface Controls {
   topView(): void;
   perspective(): void;
   rotate(deltaDeg: number): void;
+  sync(): void;
   destroy(): void;
   elements: { root: HTMLElement; angle: HTMLElement };
 }
@@ -80,22 +80,36 @@ function defaultStorage(): Pick<Storage, 'getItem' | 'setItem'> | null {
   try { return typeof localStorage !== 'undefined' ? localStorage : null; } catch { return null; }
 }
 
+function realSize(s: Size): boolean {
+  return !!s && Number.isFinite(s.width) && Number.isFinite(s.height) && s.width > 1 && s.height > 1;
+}
+
+/** Camera that keeps world point `anchor` under screen point `to` (translation only). */
+function anchorTo(cam: Camera, vpSize: Size, anchor: Point, to: Point): Camera {
+  const cur = screenToWorld(cam, vpSize, to);
+  return normalizeCamera({ ...cam, x: cam.x + (anchor.x - cur.x), y: cam.y + (anchor.y - cur.y) });
+}
+
 export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   const vp = o.viewport;
   const storage = o.storage === undefined ? defaultStorage() : o.storage;
+  const owns = o.ownsCamera !== false;
   let focusKey = o.focusKey ?? 'default';
   let active = o.active !== false;
   let bounds: Rect | null = o.getBounds?.() ?? null;
   let destroyed = false;
   let raf = 0;
   let anim: { from: Camera; to: Camera; t0: number } | null = null;
-  let inertia: { vx: number; vy: number; last: number } | null = null;
+  let inertia: { vx: number; vy: number; last: number; anchor: Point; pt: Point } | null = null;
   let wheelTimer = 0;
   const pointers = new Map<number, Point>();
-  let panLast: Point | null = null;
-  let panVel = { x: 0, y: 0, t: 0 };
-  let pinch: { dist: number } | null = null;
+  const captured = new Set<number>();
+  let panAnchor: Point | null = null;
+  let panVel = { x: 0, y: 0, t: 0, px: 0, py: 0 };
+  let pinch: { dist: number; anchor: Point } | null = null;
   let dirty = false;
+  let restored = false; // owned restore/fit satisfied for current focus
+  const priorTouch = vp.style.touchAction;
   const reduce = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const root = document.createElement('div');
@@ -105,6 +119,7 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   const angle = document.createElement('span');
   angle.className = 'ff-controls-angle';
   angle.setAttribute('role', 'status');
+  angle.setAttribute('aria-live', 'polite');
   const btns: HTMLButtonElement[] = [];
   function btn(label: string, title: string, fn: () => void): HTMLButtonElement {
     const b = document.createElement('button');
@@ -115,8 +130,10 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   const readAngle = () => { const c = o.getCamera(); angle.textContent = `Rotation ${Math.round(c.yaw)}° · Tilt ${Math.round(c.pitch)}° · Zoom ${Math.round(c.zoom * 100)}%`; };
 
   function emit(cam: Camera, phase: 'frame' | 'end'): void {
-    o.setCamera(cam); readAngle(); o.onCameraChange?.(cam, phase);
-    if (phase === 'end') { dirty = false; saveCameraPref(focusKey, cam, storage); } else dirty = true;
+    o.setCamera(cam);
+    if (phase === 'end') { readAngle(); dirty = false; if (owns || realSize(o.getViewportSize())) saveCameraPref(focusKey, cam, storage); }
+    else dirty = true;
+    o.onCameraChange?.(cam, phase);
   }
   function stopMotion(): void {
     if (raf) { cancelAnimationFrame(raf); raf = 0; }
@@ -132,10 +149,8 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
       if (t >= 1) anim = null;
     } else if (inertia) {
       const dt = Math.min(32, now - inertia.last); inertia.last = now;
-      const c = o.getCamera();
-      const a = (c.yaw * Math.PI) / 180;
-      const dx = (inertia.vx * dt) / c.zoom, dy = (inertia.vy * dt) / c.zoom;
-      emit(normalizeCamera({ ...c, x: c.x - (dx * Math.cos(a) + dy * Math.sin(a)), y: c.y - (-dx * Math.sin(a) + dy * Math.cos(a)) }), 'frame');
+      inertia.pt = { x: inertia.pt.x + inertia.vx * dt, y: inertia.pt.y + inertia.vy * dt };
+      emit(anchorTo(o.getCamera(), o.getViewportSize(), inertia.anchor, inertia.pt), 'frame');
       inertia.vx *= 0.9; inertia.vy *= 0.9;
       if (Math.hypot(inertia.vx, inertia.vy) < 0.02) { inertia = null; commit(); }
     }
@@ -185,55 +200,73 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
     const f = clampN(Math.exp(-d * base), 1 / MAX_WHEEL_FACTOR, MAX_WHEEL_FACTOR);
     emit(zoomAt(o.getCamera(), o.getViewportSize(), rectPt(e), f), 'frame');
     clearTimeout(wheelTimer);
-    wheelTimer = window.setTimeout(commit, 180);
+    wheelTimer = window.setTimeout(() => { wheelTimer = 0; commit(); }, 180);
   }
   function pinchDist(): number { const [a, b] = [...pointers.values()]; return a && b ? Math.hypot(a.x - b.x, a.y - b.y) : 0; }
+  function pinchMid(): Point { const [a, b] = [...pointers.values()]; return { x: ((a?.x ?? 0) + (b?.x ?? 0)) / 2, y: ((a?.y ?? 0) + (b?.y ?? 0)) / 2 }; }
   function onDown(e: PointerEvent): void {
     if (!active || destroyed || !onBackground(e) || (e.pointerType === 'mouse' && e.button !== 0)) return;
-    stopMotion();
+    stopMotion(); clearTimeout(wheelTimer); wheelTimer = 0;
     pointers.set(e.pointerId, rectPt(e));
-    try { vp.setPointerCapture(e.pointerId); } catch { /* not capturable */ }
-    if (pointers.size === 2) { pinch = { dist: pinchDist() }; panLast = null; }
-    else { panLast = rectPt(e); panVel = { x: 0, y: 0, t: performance.now() }; vp.classList.add('is-panning'); }
-  }
-  function onMove(e: PointerEvent): void {
-    if (!pointers.has(e.pointerId)) return;
-    const p = rectPt(e);
-    pointers.set(e.pointerId, p);
-    if (pointers.size >= 2 && pinch) {
-      const d = pinchDist();
-      if (d > 0 && pinch.dist > 0) {
-        const [a, b] = [...pointers.values()];
-        const mid = { x: ((a?.x ?? 0) + (b?.x ?? 0)) / 2, y: ((a?.y ?? 0) + (b?.y ?? 0)) / 2 };
-        emit(zoomAt(o.getCamera(), o.getViewportSize(), mid, clampN(d / pinch.dist, 0.8, 1.25)), 'frame');
-      }
-      pinch.dist = d;
-    } else if (panLast) {
-      const now = performance.now(), dt = Math.max(1, now - panVel.t);
-      const c = o.getCamera();
-      const a = (c.yaw * Math.PI) / 180;
-      const dx = (p.x - panLast.x) / c.zoom, dy = (p.y - panLast.y) / c.zoom;
-      emit(normalizeCamera({ ...c, x: c.x - (dx * Math.cos(a) + dy * Math.sin(a)), y: c.y - (-dx * Math.sin(a) + dy * Math.cos(a)) }), 'frame');
-      panVel = { x: clampN((p.x - panLast.x) / dt, -2, 2), y: clampN((p.y - panLast.y) / dt, -2, 2), t: now };
-      panLast = p;
+    try { vp.setPointerCapture(e.pointerId); captured.add(e.pointerId); } catch { /* not capturable */ }
+    const size = o.getViewportSize();
+    if (pointers.size === 2) {
+      pinch = { dist: pinchDist(), anchor: screenToWorld(o.getCamera(), size, pinchMid()) };
+      panAnchor = null;
+    } else {
+      const p = rectPt(e);
+      panAnchor = screenToWorld(o.getCamera(), size, p);
+      panVel = { x: 0, y: 0, t: performance.now(), px: p.x, py: p.y };
+      vp.classList.add('is-panning');
     }
   }
+  function onMove(e: PointerEvent): void {
+    if (!pointers.has(e.pointerId) || !active || destroyed) return;
+    const p = rectPt(e);
+    pointers.set(e.pointerId, p);
+    const size = o.getViewportSize();
+    if (pointers.size >= 2 && pinch) {
+      const d = pinchDist();
+      const mid = pinchMid();
+      let cam = o.getCamera();
+      if (d > 0 && pinch.dist > 0) cam = zoomAt(cam, size, mid, clampN(d / pinch.dist, 0.8, 1.25));
+      cam = anchorTo(cam, size, pinch.anchor, mid);
+      pinch.dist = d;
+      emit(cam, 'frame');
+    } else if (panAnchor) {
+      const now = performance.now(), dt = Math.max(1, now - panVel.t);
+      emit(anchorTo(o.getCamera(), size, panAnchor, p), 'frame');
+      panVel = { x: clampN((p.x - panVel.px) / dt, -2, 2), y: clampN((p.y - panVel.py) / dt, -2, 2), t: now, px: p.x, py: p.y };
+    }
+  }
+  function releaseCapture(id: number): void {
+    if (captured.delete(id)) { try { vp.releasePointerCapture(id); } catch { /* already released */ } }
+  }
   function release(e: PointerEvent | null, fling: boolean): void {
-    if (e) pointers.delete(e.pointerId);
+    if (e) { pointers.delete(e.pointerId); releaseCapture(e.pointerId); }
     if (pointers.size < 2) pinch = null;
     if (pointers.size === 0) {
       vp.classList.remove('is-panning');
       const recent = performance.now() - panVel.t < 80;
-      if (fling && panLast && recent && !reduce() && Math.hypot(panVel.x, panVel.y) > 0.15 && active) {
-        inertia = { vx: panVel.x, vy: panVel.y, last: performance.now() };
+      const cur = panVel.px !== undefined ? { x: panVel.px, y: panVel.py } : null;
+      if (fling && panAnchor && cur && recent && !reduce() && Math.hypot(panVel.x, panVel.y) > 0.15 && active && !destroyed) {
+        inertia = { vx: panVel.x, vy: panVel.y, last: performance.now(), anchor: panAnchor, pt: cur };
         raf = requestAnimationFrame(tick);
       } else commit();
-      panLast = null;
-    } else if (pointers.size === 1) panLast = [...pointers.values()][0] ?? null;
+      panAnchor = null;
+    } else if (pointers.size === 1) {
+      const rem = [...pointers.values()][0];
+      if (rem) { panAnchor = screenToWorld(o.getCamera(), o.getViewportSize(), rem); panVel = { x: 0, y: 0, t: performance.now(), px: rem.x, py: rem.y }; }
+    }
   }
   const onUp = (e: PointerEvent) => release(e, e.type === 'pointerup');
-  const onLost = (e: PointerEvent) => { if (pointers.has(e.pointerId)) release(e, false); };
-  function cancelAll(): void { pointers.clear(); pinch = null; panLast = null; vp.classList.remove('is-panning'); stopMotion(); commit(); }
+  const onLost = (e: PointerEvent) => { captured.delete(e.pointerId); if (pointers.has(e.pointerId)) release(e, false); };
+  function cancelAll(): void {
+    for (const id of [...captured]) releaseCapture(id);
+    pointers.clear(); pinch = null; panAnchor = null;
+    clearTimeout(wheelTimer); wheelTimer = 0;
+    vp.classList.remove('is-panning'); stopMotion(); commit();
+  }
   const onVis = () => { if (document.hidden) cancelAll(); };
   const onBlur = () => cancelAll();
 
@@ -242,14 +275,19 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
     if (!vp.contains(e.target as Node) && e.target !== vp) return;
     if ((e.target as HTMLElement).closest?.('.ff-node') && ['Enter', ' '].includes(e.key)) return;
     const c = o.getCamera();
-    const a = (c.yaw * Math.PI) / 180, st = PAN_STEP / c.zoom;
-    const pan = (dx: number, dy: number) => go({ ...c, x: c.x + dx * Math.cos(a) - dy * Math.sin(a), y: c.y + dx * Math.sin(a) + dy * Math.cos(a) });
+    const size = o.getViewportSize();
+    // Screen-space step: content follows the arrow direction consistently under any yaw/pitch.
+    const pan = (dx: number, dy: number) => {
+      const center = { x: size.width / 2, y: size.height / 2 };
+      const anchor = screenToWorld(c, size, { x: center.x + dx, y: center.y + dy });
+      go(anchorTo(c, size, anchor, center));
+    };
     let handled = true;
     switch (e.key) {
-      case 'ArrowLeft': pan(-st, 0); break;
-      case 'ArrowRight': pan(st, 0); break;
-      case 'ArrowUp': pan(0, -st); break;
-      case 'ArrowDown': pan(0, st); break;
+      case 'ArrowLeft': pan(-PAN_STEP, 0); break;
+      case 'ArrowRight': pan(PAN_STEP, 0); break;
+      case 'ArrowUp': pan(0, -PAN_STEP); break;
+      case 'ArrowDown': pan(0, PAN_STEP); break;
       case '+': case '=': zoomStep(1.25); break;
       case '-': case '_': zoomStep(1 / 1.25); break;
       case 'f': case 'F': fit(); break;
@@ -269,27 +307,44 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   vp.addEventListener('keydown', onKey);
   document.addEventListener('visibilitychange', onVis);
   window.addEventListener('blur', onBlur);
-  vp.style.touchAction = 'none';
 
-  function applyActive(): void { for (const b of btns) b.disabled = !active; root.dataset.active = String(active); if (!active) cancelAll(); }
-  applyActive();
-  void (screenToWorld);
-
-  function restore(): void {
-    const p = loadCameraPref(focusKey, storage);
-    if (p) emit(p, 'end');
-    else { const b = curBounds(); if (b) emit(fitBounds(o.getCamera(), o.getViewportSize(), b, 48), 'end'); }
+  function applyActive(): void {
+    for (const b of btns) b.disabled = !active;
+    root.dataset.active = String(active);
+    if (active) vp.style.touchAction = 'none';
+    else { cancelAll(); vp.style.touchAction = priorTouch; }
   }
+  applyActive();
+
+  // Owned restore: saved camera wins; otherwise fit once with a real viewport and bounds.
+  function tryOwnedInit(force: boolean): void {
+    if (!owns || destroyed || (restored && !force)) return;
+    const p = loadCameraPref(focusKey, storage);
+    if (p) { restored = true; emit(p, 'end'); return; }
+    const b = curBounds();
+    const size = o.getViewportSize();
+    if (!b || !realSize(size)) return; // wait; never persist a fallback zero-size fit
+    restored = true;
+    emit(fitBounds(o.getCamera(), size, b, 48), 'end');
+  }
+  tryOwnedInit(false);
 
   return {
     elements: { root, angle },
-    setBounds(b) { bounds = b; },
-    setFocusKey(k) { if (k === focusKey) return; commit(); stopMotion(); focusKey = k; restore(); },
+    setBounds(b) { bounds = b; if (owns && !restored) tryOwnedInit(false); },
+    setFocusKey(k) {
+      if (k === focusKey) return;
+      cancelAll();
+      focusKey = k; restored = false;
+      tryOwnedInit(true);
+    },
     setActive(a) { if (a === active) return; active = a; applyActive(); },
     fit, reset, topView, perspective, rotate,
+    sync() { if (!destroyed) readAngle(); },
     destroy() {
       if (destroyed) return;
-      destroyed = true; stopMotion(); clearTimeout(wheelTimer); commit();
+      cancelAll();
+      destroyed = true;
       vp.removeEventListener('wheel', onWheel);
       vp.removeEventListener('pointerdown', onDown);
       vp.removeEventListener('pointermove', onMove);
@@ -299,7 +354,7 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
       vp.removeEventListener('keydown', onKey);
       document.removeEventListener('visibilitychange', onVis);
       window.removeEventListener('blur', onBlur);
-      void MAX_PITCH;
+      vp.style.touchAction = priorTouch;
       root.remove();
     },
   };
