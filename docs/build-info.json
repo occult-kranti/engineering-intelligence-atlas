@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "buildMode": "static",
-  "sourceSha256": "bcb1c9234874a60abc802f21f074ee3e1fb05ba9cfb673f9bb01f0658ec56b87",
+  "sourceSha256": "a764a33576aa31230d8bea6e96c4eabffba93599efddbffce340d1b635d5f9e4",
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "assets/DirectorShell-CINQMSLb.css": "145efbe4f7b92c3fd193d3bb3f2f12d8d18394b2fef43c37795552e532f41803",
@@ -103,8 +103,8 @@
     "assets/science-DIbnrChB.js": "5c849b3253fd47cc8e842bc7505bed76118f9899d83ac4c6944485516fad8b44",
     "desktop-preview/browser-bridge.e3d30e253716ec53.js": "e3d30e253716ec536e7a9e6f3c739b0ebc767b2d876b4635330de48da3dfede5",
     "desktop-preview/chrome.32a6e07447d920cd.css": "32a6e07447d920cd1b0f60abc5e90fd536c962df170b1019ed58f6752c3977eb",
-    "desktop-preview/chrome.5c28355d3527f083.js": "5c28355d3527f0834aa22406e6f1b2cef74a20444680daafbf4a75fe935cbccd",
-    "desktop-preview/chrome.html": "379c3df1432e7bb401afd32cef0fedf9d77928970864878ba0be73e479e97e12",
+    "desktop-preview/chrome.968b9e2f07167afb.js": "968b9e2f07167afb6b66d504a54822f12cb7ae0cecbac31f739f5b6eab77f1aa",
+    "desktop-preview/chrome.html": "6b31e7bcc579cbcb254a9faaedf389aba37a636ad2881db3904eed4498986677",
     "desktop-preview/office-signals.479f2f6a818e656a.js": "479f2f6a818e656a3a46b611dda109eac5223339c103b03f78c5b973d9d2624c",
     "desktop-preview/preview-state.6339761d7902456b.json": "6339761d7902456b252e8db4b6ffe71ed5ebecd45e908e7bab6d90eb5a5bdb68",
     "desktop-preview/studio-tokens.9ae00f532d356700.css": "9ae00f532d3567001de65d7ad6d11b9fda82713f62ea42f8e0b9baca90ad70f6",
@@ -172,7 +172,7 @@
     "research/sota_multimodal_media_models.md": "8b6763168b2a4426a227d3411a3363842ff00d31cc706c878f56379136524b0c",
     "research/sota_open_model_landscape.md": "952f46c03cd69b3177870e5f98a632c0ff7f887d44bc2a3683c5ee74c6dee888",
     "research/sota_scientific_models.md": "18c8695ad1487ccad36e48b91708ca3bc6bee0049a041a0f9abed81d99559e76",
-    "sw.js": "93b4027195087c5587481269750a71dbffd0af840e0f423a68a80de080b47f57",
+    "sw.js": "fbf9bc0e60a7be8c40545c760c06152fa64d34a271f413d817bb15adbb42dae5",
     "workbox-051dea9f.js": "954497c1756c293988d7e65d0f9a74b9d965bbbbdeed268b4e567b66febc149a"
   }
 }

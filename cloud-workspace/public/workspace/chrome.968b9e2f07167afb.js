@@ -1698,7 +1698,11 @@ function knowledgeSourceUrls(note) {
         }
         try {
             const url = new URL(reference);
-            const secretParameter = [...url.searchParams.keys(), ...new URLSearchParams(url.hash.slice(1)).keys()].some(key => /token|secret|password|api[-_]?key/i.test(key));
+            let secretParameter = false;
+            for (const parameters of [url.searchParams, new URLSearchParams(url.hash.slice(1))]) {
+                parameters.forEach((_value, key) => { if (/token|secret|password|api[-_]?key/i.test(key))
+                    secretParameter = true; });
+            }
             if (url.protocol === 'https:' && !url.username && !url.password && !secretParameter)
                 urls.add(url.href);
         }
