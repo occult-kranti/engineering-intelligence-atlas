@@ -324,10 +324,12 @@ try {
   // past the scope controls. These sizes cover the new compact command deck.
   for (const viewport of [{width:1280,height:720},{width:1024,height:768}]) for (const presentation of ['blueprint','drafting']) {
     const context=await browser.newContext({viewport,reducedMotion:'reduce'});
-    await context.addInitScript(p=>{try{localStorage.setItem('daftar.studio.theme',p);localStorage.setItem('studio-theme',p);localStorage.setItem('daftar-theme',p);}catch{}},presentation);
+    await context.addInitScript(p=>{try{localStorage.setItem('daftar-studio-theme',p);}catch{}},presentation);
     const page=await context.newPage();
     await page.goto(`${base}desktop-preview/chrome.html?workspace=chat#office`,{waitUntil:'networkidle'});
     await page.locator('#chat-send').waitFor({state:'visible'});
+    const actualTheme=await page.evaluate(()=>document.documentElement.getAttribute('data-theme'));
+    assert(actualTheme===presentation,`Requested ${presentation} theme but DOM data-theme is ${actualTheme} at ${viewport.width}x${viewport.height}`);
     await page.evaluate(()=>document.fonts&&document.fonts.ready);
     await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
     const box=await page.locator('#chat-send').boundingBox();
