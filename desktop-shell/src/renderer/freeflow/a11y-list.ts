@@ -80,7 +80,13 @@ export function mountA11yList(host: HTMLElement, callbacks: ListCallbacks = {}, 
     const pages = Math.max(1, Math.ceil(results.length / size));
     page = Math.min(Math.max(0, page), pages - 1);
     const slice = results.slice(page * size, page * size + size);
-    const activeId = (document.activeElement as HTMLElement | null)?.dataset?.nodeId ?? null;
+    // Focus ownership is per instance: only a row inside THIS list counts.
+    const activeEl = document.activeElement as HTMLElement | null;
+    const ownedRow = activeEl && list.contains(activeEl) ? (activeEl.closest?.('.ff-list-button') as HTMLElement | null) : null;
+    const activeId = ownedRow?.dataset?.nodeId ?? null;
+    const searchHadFocus = activeEl === search;
+    let activeIdx = -1;
+    if (activeId) activeIdx = Array.from(list.querySelectorAll('.ff-list-button')).indexOf(ownedRow as Element);
     list.replaceChildren();
     for (const n of slice) {
       const li = document.createElement('li');
@@ -109,7 +115,18 @@ export function mountA11yList(host: HTMLElement, callbacks: ListCallbacks = {}, 
     pageLabel.textContent = `Page ${page + 1} of ${pages}`;
     prev.disabled = page <= 0;
     next.disabled = page >= pages - 1;
-    if (activeId) (list.querySelector(`[data-node-id="${CSS.escape ? CSS.escape(activeId) : activeId}"]`) as HTMLElement | null)?.focus?.({ preventScroll: true });
+    if (activeId) {
+      const same = list.querySelector(`[data-node-id="${CSS.escape ? CSS.escape(activeId) : activeId}"]`) as HTMLElement | null;
+      if (same) same.focus?.({ preventScroll: true });
+      else {
+        // Focused row disappeared: recover to the nearest remaining row on this page, else the search control.
+        const rows = list.querySelectorAll('.ff-list-button');
+        if (rows.length) (rows[Math.min(Math.max(activeIdx, 0), rows.length - 1)] as HTMLElement).focus?.({ preventScroll: true });
+        else search.focus?.({ preventScroll: true });
+      }
+    } else if (searchHadFocus) {
+      // Search keeps focus across re-render (it is not replaced); nothing to steal or restore.
+    }
   }
 
   function refilter(): void { results = filterNodes(nodes, search.value); render(); }

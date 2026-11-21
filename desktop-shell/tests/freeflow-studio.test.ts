@@ -148,7 +148,12 @@ describe('freeflow studio (mounted)', () => {
     expect(list.resultCount()).toBe(1);
     const btn = host.querySelector('.ff-list-button') as HTMLElement;
     btn.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
-    dom.key(btn, 'Enter');
+    // Click re-renders; follow the current DOM instead of the stale reference.
+    const current = host.querySelector('[data-node-id="employee:c1:e0299"]') as HTMLElement;
+    expect(current).not.toBeNull();
+    expect(current.isConnected).toBe(true);
+    current.focus();
+    dom.key(current, 'Enter');
     expect(opened).toEqual(['employee:c1:e0299']);
   });
 
@@ -176,10 +181,41 @@ describe('freeflow studio (mounted)', () => {
     A.l.setQuery('Emp');
     B.l.update(buildScene(small(), { kind: 'portfolio' }));
     expect((A.host.querySelector('.ff-list-search') as HTMLInputElement).value).toBe('Emp');
-    // Remove focused row in same scope: focus must land somewhere meaningful, not body.
-    const s2 = buildScene(dense(2), { kind: 'company', companyId: 'c1' });
-    A.l.update(s2);
-    expect(document.activeElement).not.toBe(document.body);
+    // Independence: focus in A, update/setSelected on B with identical IDs -> focus stays in A.
+    const C = mk();
+    C.l.update(s1);
+    const aRow = A.host.querySelector('[data-node-id="employee:c1:e0002"]') as HTMLElement;
+    aRow.focus();
+    expect(document.activeElement).toBe(aRow);
+    C.l.update(s1);
+    C.l.setSelected('employee:c1:e0002');
+    expect(A.host.contains(document.activeElement)).toBe(true);
+    expect((document.activeElement as HTMLElement).dataset.nodeId).toBe('employee:c1:e0002');
+    // Unrelated input keeps focus during a background update.
+    const other = document.createElement('input');
+    document.body.appendChild(other);
+    other.focus();
+    A.l.update(s1);
+    expect(document.activeElement).toBe(other);
+    // Remove focused row in same scope: focus lands on a connected row inside A, no callbacks.
+    A.l.setQuery('');
+    const row = A.host.querySelector('[data-node-id="employee:c1:e0002"]') as HTMLElement;
+    row.focus();
+    expect(document.activeElement).toBe(row);
+    const before = sel.length;
+    A.l.update(buildScene(dense(2), { kind: 'company', companyId: 'c1' }));
+    const now = document.activeElement as HTMLElement;
+    expect(now).not.toBe(document.body);
+    expect(now.isConnected).toBe(true);
+    expect(A.host.contains(now)).toBe(true);
+    expect(now.classList.contains('ff-list-button')).toBe(true);
+    expect(sel.length).toBe(before);
+    // No rows remain: focus goes to this list's search input.
+    (A.host.querySelector('[data-node-id]') as HTMLElement).focus();
+    A.l.setQuery('zzzz-no-match');
+    expect(A.l.resultCount()).toBe(0);
+    expect(document.activeElement).toBe(A.l.elements.search);
+    expect(sel.length).toBe(before);
   });
 
   it('mounted capabilities: denied action is disabled, visible reason, zero callbacks; allowed fires once with exact context', () => {
