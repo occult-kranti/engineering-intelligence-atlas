@@ -7,7 +7,9 @@
 .ff-nav-btn.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .ff-nav-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .ff-surface-host { flex: 1; min-height: 0; }
-body.ff-operations .ff-surface { display: none; }
+body.ff-operations .ff-surface { height: auto; min-height: 0; }
+body.ff-operations .ff-surface .ff-surface-host { display: none; }
+.ff-surface-bar #ff-return-studio.hidden { display: none; }
 body:not(.ff-operations) #office-view > :not(.page-heading):not(#freeflow-surface):not(.hidden) { }
 body.ff-canvas-mode #office-view .page-heading,
 body.ff-canvas-mode #office-view .ceo-entry,

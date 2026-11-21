@@ -2945,7 +2945,8 @@ function ffApplyMode(): void {
   const canvas = activeView === 'office' && !ffOperations && !portfolioOpen;
   document.body.classList.toggle('ff-canvas-mode', canvas);
   document.body.classList.toggle('ff-operations', ffOperations);
-  $('freeflow-surface').classList.toggle('hidden', activeView !== 'office' || portfolioOpen);
+  $('freeflow-surface').classList.toggle('hidden', activeView !== 'office');
+  $('ff-return-studio').classList.toggle('hidden', !ffOperations || ffFocus.kind === 'portfolio');
   ffStudio?.setActive(activeView === 'office' && !portfolioOpen && !ffOperations);
 }
 function ffRefresh(): void {
@@ -3023,6 +3024,7 @@ function initFreeflowHost(): void {
   document.querySelectorAll<HTMLButtonElement>('[data-ff-nav]').forEach((b) => b.addEventListener('click', () => {
     const name = b.dataset.ffNav || 'table'; ffSetNav(name);
     if (name === 'table') { ffOperations = false; setPortfolioOpen(false); ffNavigate({ kind: 'portfolio' }); ffApplyMode(); }
+    else if (name === 'studio') { ffOperations = false; setPortfolioOpen(false); ffSetNav('table'); ffApplyMode(); ffRefresh(); }
     else if (name === 'team') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('softboard'); }
     else if (name === 'roadmap') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('timeline'); }
     else if (name === 'whiteboard') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('whiteboard'); }
