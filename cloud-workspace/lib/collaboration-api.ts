@@ -71,10 +71,13 @@ async function createInvitation(env: AtlasEnv, user: CollabUser, companyId: stri
   insist((pending?.n ?? 0) < 100, 'Too many pending invitations.', 429, 'capacity');
   const token = [...crypto.getRandomValues(new Uint8Array(32))].map((n) => n.toString(16).padStart(2, '0')).join('');
   const id = crypto.randomUUID(); const exps = new Date(exp).toISOString();
-  await env.DB!.batch([
-    env.DB!.prepare("INSERT INTO daftar_invitations (id,company_id,role,token_digest,intended_email,invited_by_user_id,status,expires_at,created_at) VALUES (?,?,?,?,?,?,'pending',?,?)").bind(id, companyId, b.role, await sha256(token), intended, user.id, exps, now()),
-    event(env, user.id, 'invitation.create', companyId, id, `Created ${b.role} invitation`),
+  const admit = "(SELECT COUNT(*) FROM daftar_invitations WHERE company_id=? AND status='pending') < 100 AND " + COMPANY_OK + " AND EXISTS (SELECT 1 FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner' AND o.user_id=? AND u.status='active')";
+  const admitArgs = [companyId, companyId, user.id];
+  const createResults = await env.DB!.batch([
+    env.DB!.prepare("INSERT INTO daftar_invitations (id,company_id,role,token_digest,intended_email,invited_by_user_id,status,expires_at,created_at) SELECT ?,?,?,?,?,?,'pending',?,? WHERE " + admit).bind(id, companyId, b.role, await sha256(token), intended, user.id, exps, now(), ...admitArgs),
+    event(env, user.id, 'invitation.create', companyId, id, `Created ${b.role} invitation`, "changes() = 1 AND EXISTS (SELECT 1 FROM daftar_invitations WHERE id=? AND status='pending')", [id]),
   ]);
+  if ((createResults[0].meta?.changes ?? 0) !== 1) throw new CollabError('Invitation capacity reached or company unavailable.', 429, 'capacity');
   return json({ ok: true, invitation: { id, companyId, role: b.role, intendedEmail: intended, expiresAt: exps }, token, joinPath: `/join#invite=${token}`, shownOnce: true, siteAccessNote: 'The invitee must also be granted access to this Site through its custom-access settings; no bypass token is provided.' }, 201);
 }
 async function listInvitations(env: AtlasEnv, user: CollabUser, companyId: string): Promise<Response> {
@@ -88,7 +91,7 @@ async function revokeInvitation(env: AtlasEnv, user: CollabUser, id: string): Pr
   insist(inv, 'Invitation not found.', 404, 'not_found');
   const [r] = await env.DB!.batch([
     env.DB!.prepare("UPDATE daftar_invitations SET status='revoked' WHERE id=? AND status='pending'").bind(id),
-    event(env, user.id, 'invitation.revoke', inv.company_id, id, 'Revoked invitation', "EXISTS (SELECT 1 FROM daftar_invitations WHERE id=? AND status='revoked')", [id]),
+    event(env, user.id, 'invitation.revoke', inv.company_id, id, 'Revoked invitation', "changes() = 1 AND EXISTS (SELECT 1 FROM daftar_invitations WHERE id=? AND status='revoked')", [id]),
   ]);
   return json({ ok: true, revoked: (r.meta?.changes ?? 0) === 1 });
 }
@@ -149,14 +152,14 @@ async function acceptInvitation(env: AtlasEnv, user: CollabUser, request: Reques
 }
 async function revokeMembership(env: AtlasEnv, user: CollabUser, id: string): Promise<Response> {
   requireOwner(user);
-  const m = await env.DB!.prepare('SELECT * FROM daftar_company_memberships WHERE id=?').bind(id).first<Row>();
+  const m = await env.DB!.prepare("SELECT * FROM daftar_company_memberships WHERE id=? AND workspace_id='owner'").bind(id).first<Row>();
   insist(m, 'Membership not found.', 404, 'not_found');
   const stamp = now();
   const results = await env.DB!.batch([
-    env.DB!.prepare("UPDATE daftar_company_memberships SET status='revoked',revoked_at=?,revoked_by_user_id=?,acl_revision=acl_revision+1,updated_at=? WHERE id=? AND status='active'").bind(stamp, user.id, stamp, id),
-    env.DB!.prepare('UPDATE daftar_resource_grants SET revoked_at=? WHERE (beneficiary_user_id=? OR owner_user_id=?) AND company_id=? AND revoked_at IS NULL').bind(stamp, m.user_id, m.user_id, m.company_id),
-    env.DB!.prepare('UPDATE daftar_task_proposals SET assigned_user_id=NULL WHERE company_id=? AND assigned_user_id=? AND status=\'proposed\'').bind(m.company_id, m.user_id),
-    event(env, user.id, 'membership.revoke', m.company_id, id, `Revoked membership of ${m.user_id}`, "EXISTS (SELECT 1 FROM daftar_company_memberships WHERE id=? AND status='revoked' AND revoked_at=?)", [id, stamp]),
+    env.DB!.prepare("UPDATE daftar_company_memberships SET status='revoked',revoked_at=?,revoked_by_user_id=?,acl_revision=acl_revision+1,updated_at=? WHERE id=? AND workspace_id='owner' AND status='active'").bind(stamp, user.id, stamp, id),
+    event(env, user.id, 'membership.revoke', m.company_id, id, `Revoked membership of ${m.user_id}`, "changes() = 1 AND EXISTS (SELECT 1 FROM daftar_company_memberships WHERE id=? AND workspace_id='owner' AND status='revoked' AND revoked_at=?)", [id, stamp]),
+    env.DB!.prepare("UPDATE daftar_resource_grants SET revoked_at=? WHERE (beneficiary_user_id=? OR owner_user_id=?) AND company_id=? AND revoked_at IS NULL AND EXISTS (SELECT 1 FROM daftar_company_memberships WHERE id=? AND workspace_id='owner' AND status='revoked' AND revoked_at=?)").bind(stamp, m.user_id, m.user_id, m.company_id, id, stamp),
+    env.DB!.prepare("UPDATE daftar_task_proposals SET assigned_user_id=NULL WHERE company_id=? AND assigned_user_id=? AND status='proposed' AND EXISTS (SELECT 1 FROM daftar_company_memberships WHERE id=? AND workspace_id='owner' AND status='revoked' AND revoked_at=?)").bind(m.company_id, m.user_id, id, stamp),
   ]);
   return json({ ok: true, revoked: (results[0].meta?.changes ?? 0) === 1 });
 }
