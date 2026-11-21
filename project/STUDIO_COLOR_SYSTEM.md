@@ -264,3 +264,59 @@ does not itself establish a pass. The same browser review identified the
 goal-sidebar `.scope-note p` as another legacy foreground; its isolated
 correction is muted text on the existing surface, leaving its separately
 themed eyebrow and link control unchanged.
+
+### Candidate `81afaf3` screenshot review and targeted corrections
+
+The color reviewer inspected 20 exported captures from the candidate's
+`cloud-44865684035`, `pages-44865684142` and `packaged-desktop-ui` artifacts.
+Coverage included both home themes; public dark blueprint, ownership and
+roadmap; light ownership, blueprint, heat legend and Donna dock; narrow
+ownership, roadmap, directory and home; and packaged desktop office, decisions
+and settings. The cloud receipt recorded 42 checks and 18 screenshots with
+synthetic fixture data and zero provider calls. It explicitly did not establish
+production authentication or persistence.
+
+The corrected navigation, save-state control and canvas descriptions were
+visibly legible in those captures. The light legend retained its ordinal
+labels and a separate dashed question-mark marker for unknown values. Narrow
+cloud directory, ownership and roadmap content wrapped within the captured
+viewport. These are observations of the named captures, not general conformance
+claims.
+
+The candidate still required correction. Its public browser gate stopped at
+a populated mobile room height of 507.19px against an existing limit below
+400px, so that candidate did not receive a complete passing public-browser
+receipt. Packaged screenshots exposed hardcoded dark child text inside the
+themed conversation, goal card, decision sidebar and cloud-state panel. This
+affected saved content even though its parent surfaces had already adopted
+the palette.
+
+The renderer owner applied explicit semantic foregrounds to those observed
+elements. A subsequent source review confirmed these mappings:
+
+| Observed element | Target token | Old dark contrast | Corrected dark / light contrast |
+| --- | --- | ---: | ---: |
+| User message body | Ink on action-soft | 1.67:1 | 10.39:1 / 13.69:1 |
+| Donna message body | Ink on surface | 2.38:1 | 14.79:1 / 15.82:1 |
+| Speaker labels | Ink on the message's own fill | 1.74:1 user / 2.48:1 Donna | Same corrected body pairs above |
+| User-message timestamp/header | Muted on action-soft | 2.32:1 | 5.88:1 / 5.20:1 |
+| Saved goal counts | Muted on surface | 3.30:1 | 8.37:1 / 6.00:1 |
+| Plan and ownership disclosure | Accent on surface | 3.33:1 | 12.63:1 / 7.51:1 |
+| Decision principle heading | Ink on surface | 2.01:1 | 14.79:1 / 15.82:1 |
+| Decision principle paragraph / expertise legend | Muted on surface | 3.41:1 / 2.80:1 | 8.37:1 / 6.00:1 |
+| Cloud-state values / labels | Ink / muted on surface | 1.75:1 / 3.41:1 | 14.79:1 / 15.82:1 values; 8.37:1 / 6.00:1 labels |
+| Assigned-people locator | Muted on canvas | 3.93:1 | 9.35:1 / 5.45:1 |
+
+The foreground selectors are `chat-message-text`, `chat-message-header strong`,
+`chat-message-header`, `goal-card p`, `goal-steps`, `goal-step strong`,
+`goal-step span`, `goal-steps summary`, `decision-principle strong/p`,
+`decision-role-fieldset legend`, `cloud-state-grid strong/span` and
+`locator-people`. The pale decision checkbox tiles were readable in the
+capture and were not changed merely to match a preferred appearance.
+
+The ratios above are calculations from the specified foregrounds and actual
+surface roles, not a claim that the corrected candidate has already passed a
+browser run. The targeted mobile layout change and saved-content corrections
+require new screenshots and a passing receipt from the rerun. The earlier
+candidate's images remain failed-candidate evidence, not proof of the final
+release's appearance.

@@ -6,6 +6,8 @@ The current candidate adds the violet/green/gold studio, a shared light theme, o
 
 The managed browser preview confirmed both homepage palettes and persistence into the shared renderer. It exposed actual navigation/background specificity and dim helper-text defects; these were corrected and eight rendered contrast regressions added to the public browser gate. A missing hosted snapshot also exposed misleading cloud-session/upgrade labels; visible recovery and six DOM regressions now cover this state. Final combined CI, screenshots, packages, owner-private deployment and exact release/download receipts are still pending. The verified 0.5.0 records below remain historical.
 
+The first combined candidate, `81afaf3`, passed MySQL, desktop, Android, cloud, editor and design checks in [Verify 44865684035](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44865684035). The public web gate and [Pages 44865684142](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44865684142) stopped at a real 390px layout regression: a heavily staffed room measured 507.19px against the retained 400px maximum. The release job was skipped. Mobile employee cards now use two columns, retain 44px hit areas and keep the View all action. Independent review of the packaged screenshots also found legacy dark text in saved messages, goals, decision guidance and sync status; those selectors now use the shared ink/muted tokens. All 218 DOM assertions still pass. The failed sweeps are preserved as failed evidence; final room geometry and corrected captures require the new browser run.
+
 ## Released connected office · v0.5.0
 
 Checkpoint: **20 November 2026 (America/New_York)**. Evidence timestamps retain
