@@ -305,4 +305,60 @@ const staff=sc.describeNode({...base,subtitle:'Reviewer',status:'contracted',emp
 check(staff.startsWith('Contracted staff reference'),'real contract reference keeps staff label');
 lw.close();
 }
+// Packet 18b: movable Donna, options and real entry actions.
+{
+const dd=await makeDom(true,undefined,'?company=fixture-company',(w0)=>{w0.__opened=[];});const dw=dd.window,ddoc=dw.document,df=dw.__atlasFixture;const de=(i)=>ddoc.getElementById(i);
+ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();
+de('donna-dock-toggle').click();await flush();
+const cmdBefore=df.calls.filter(c=>c.name==='officeCommand').length;
+de('chat-message').value='Keep this draft';
+check(ddoc.querySelectorAll('#donna-conversation').length===1&&ddoc.querySelectorAll('#workspace-chat-form').length===1,'exactly one Donna conversation and composer');
+const h=de('donna-move-handle');
+h.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));await flush();
+check(de('donna-dock').classList.contains('donna-moved')&&de('donna-dock').style.left!=='','keyboard Move positions Donna with left/top');
+h.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'Home',bubbles:true}));await flush();
+check(!de('donna-dock').classList.contains('donna-moved'),'keyboard reset clears moved position');
+const ta=de('chat-message');const arrow=new dw.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true});ta.dispatchEvent(arrow);check(!arrow.defaultPrevented&&!de('donna-dock').classList.contains('donna-moved'),'textarea arrow keys are not hijacked');
+de('donna-options-toggle').click();check(!de('donna-options-menu').classList.contains('hidden')&&de('donna-options-toggle').getAttribute('aria-expanded')==='true','Options menu opens');
+de('donna-options-menu').dispatchEvent(new dw.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));check(de('donna-options-menu').classList.contains('hidden')&&ddoc.activeElement===de('donna-options-toggle'),'Escape closes options and restores focus');
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="lock"]').click();
+check(de('donna-option-lock').textContent==='Unlock position','lock option has truthful label');
+h.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));await flush();check(!de('donna-dock').classList.contains('donna-moved'),'locked position prevents movement');
+ddoc.querySelector('[data-donna-option="lock"]').click();
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="dock-left"]').click();await flush();check(de('donna-dock').classList.contains('donna-moved'),'dock-left sets explicit position');
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="collapse"]').click();await flush();
+check(de('donna-dock').classList.contains('hidden')&&ddoc.activeElement===de('donna-dock-toggle'),'collapse returns to bubble and focuses launcher');
+de('donna-dock-toggle').click();await flush();
+check(de('chat-message').value==='Keep this draft'&&ddoc.querySelectorAll('#donna-conversation').length===1,'draft and single composer survive collapse/reopen');
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="scope"]').click();await flush();check(ddoc.activeElement===de('chat-scope')&&de('chat-message').value==='Keep this draft','Conversation scope focuses chat-scope and preserves draft');
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="keys"]').click();await flush();check(!de('settings-view').classList.contains('hidden'),'API keys option reveals settings');
+ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();de('donna-dock-toggle').click();await flush();
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="connections"]').click();await flush();check(!de('settings-view').classList.contains('hidden'),'Connections option reveals settings');
+ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();de('donna-dock-toggle').click();await flush();
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="agents"]').click();await flush();check(!de('ceo-panel').classList.contains('hidden')&&de('ceo-authority-editor').open,'Agent permissions opens authority editor');
+check(df.calls.filter(c=>c.name==='officeCommand').length===cmdBefore,'presentation and navigation options send no commands');
+// Web team URL
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
+check(df.calls.filter(c=>c.name==='openExternal').length===0,'Web team with no configured base opens no external link');
+check(de('donna-options-status').textContent.includes('Setup required'),'Web team without base exposes setup required');
+de('cloud-url').value='https://site.example.test/path?x=1#h';de('cloud-device-token').value='tok';await submit('cloud-connect-form');
+ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();de('donna-dock-toggle').click();await flush();
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
+const opens=df.calls.filter(c=>c.name==='openExternal'&&c.args.url.endsWith('/team'));
+check(opens.length===1&&opens[0].args.url==='https://site.example.test/team','configured HTTPS base opens exactly /team without query/hash/token');
+de('cloud-url').value='https://user:pw@site.example.test';
+const before2=df.calls.filter(c=>c.name==='openExternal').length;
+check(df.calls.filter(c=>c.name==='officeCommand').every(c=>c.args.action!=='post_chat'),'Donna options never post chat');
+check(before2===1,'only one external open recorded');
+// Storage throwing
+const sd=await makeDom(true,undefined,'',(w1)=>{Object.defineProperty(w1,'localStorage',{value:{getItem(){throw new Error('denied');},setItem(){throw new Error('denied');},removeItem(){throw new Error('denied');}},configurable:true});});
+sd.window.document.querySelector('.nav-item[data-view="office"]').click();await flush();sd.window.document.getElementById('donna-dock-toggle').click();await flush();
+sd.window.document.getElementById('donna-move-handle').dispatchEvent(new sd.window.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true}));await flush();
+check(sd.window.document.querySelectorAll('#donna-conversation').length===1,'denied storage leaves Donna usable');sd.window.close();
+// Public preview
+const pv=await makeDom(true,'public-preview');pv.window.document.querySelector('.nav-item[data-view="office"]').click();await flush();pv.window.document.getElementById('donna-dock-toggle').click();await flush();
+pv.window.document.getElementById('donna-options-toggle').click();pv.window.document.querySelector('[data-donna-option="team"]').click();await flush();
+check(pv.window.__atlasFixture.calls.filter(c=>c.name==='openExternal').length===0,'public preview acquires no external access through Donna options');pv.window.close();
+dd.window.close();
+}
 console.log(JSON.stringify({suite:'renderer pure-DOM interaction',checks,passed:true,fixtureOnly:true,networkCalls:0,providerCalls:0,visualVerification:false},null,2));
