@@ -1,0 +1,9 @@
+{
+  "test": "synthetic-public-provider-adapter",
+  "dataSent": "Fixed public test string only; no repository or portfolio data",
+  "ok": true,
+  "inputTokens": 65,
+  "outputTokens": 17,
+  "usageObserved": true,
+  "costUsd": 0.0003
+}

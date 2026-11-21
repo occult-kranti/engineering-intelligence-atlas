@@ -51,7 +51,7 @@ const { __setConnectorBaseForTests } = await import("./http");
 const { sha256Hex } = await import("../registry/intake");
 type User = (typeof users.$inferSelect);
 
-const DB_OK = !!process.env.DATABASE_URL;
+const RUN_DATABASE_TESTS = process.env.RUN_DATABASE_TESTS === "1";
 const stamp = Date.now().toString(36);
 
 // Distinctive canary secrets — must never appear in outputs/logs.
@@ -91,8 +91,9 @@ async function expectCode(p: Promise<unknown>, code: string) {
   throw new Error(`expected ${code} but call succeeded`);
 }
 
-describe.skipIf(!DB_OK)("integration router", () => {
+describe.skipIf(!RUN_DATABASE_TESTS)("integration router (explicit database opt-in)", () => {
   beforeAll(async () => {
+    expect(!!process.env.DATABASE_URL, "RUN_DATABASE_TESTS requires an isolated DATABASE_URL").toBe(true);
     const db = getDb();
     const mkUser = async (tag: string): Promise<User> => {
       const unionId = `test-integ-${tag}-${stamp}`;

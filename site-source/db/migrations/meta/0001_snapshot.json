@@ -1275,6 +1275,17 @@
           "notNull": true,
           "autoincrement": false
         },
+        "url_sha256": {
+          "name": "url_sha256",
+          "type": "char(64)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "generated": {
+            "as": "sha2(`url`, 256)",
+            "type": "stored"
+          }
+        },
         "purpose": {
           "name": "purpose",
           "type": "text",
@@ -1319,10 +1330,10 @@
         }
       },
       "indexes": {
-        "registry_resources_url_idx": {
-          "name": "registry_resources_url_idx",
+        "registry_resources_url_sha256_idx": {
+          "name": "registry_resources_url_sha256_idx",
           "columns": [
-            "url"
+            "url_sha256"
           ],
           "isUnique": true
         }

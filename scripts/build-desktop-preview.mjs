@@ -1,0 +1,16 @@
+import { spawnSync } from 'node:child_process';
+import { cpSync, existsSync, mkdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { repoRoot, webRoot } from './static-build-lib.mjs';
+const compiler = join(webRoot, 'node_modules/typescript/bin/tsc');
+if (!existsSync(compiler)) throw new Error('Install locked web dependencies to build the desktop preview.');
+const shell = join(repoRoot, 'desktop-shell');
+const compiled = spawnSync(process.execPath, [compiler, '-p', join(shell, 'tsconfig.renderer.json')], { cwd: repoRoot, stdio: 'inherit' });
+if (compiled.status !== 0) process.exit(compiled.status ?? 1);
+const dest = join(webRoot, 'public/desktop-preview');
+mkdirSync(dest, { recursive: true });
+for (const file of ['chrome.js', 'browser-bridge.js']) cpSync(join(shell, 'dist/renderer', file), join(dest, file));
+for (const file of ['chrome.html', 'chrome.css']) cpSync(join(shell, 'src/renderer', file), join(dest, file));
+const seed = join(repoRoot, 'company/preview-state.json');
+if (existsSync(seed)) cpSync(seed, join(dest, 'preview-state.json'));
+console.log('Built desktop preview from the same renderer source.');

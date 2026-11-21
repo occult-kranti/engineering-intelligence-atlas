@@ -1,6 +1,7 @@
-import { app, safeStorage, session } from 'electron';
+import { app, dialog, safeStorage, session } from 'electron';
 import path from 'node:path';
-import { WindowManager } from './windows';
+import fs from 'node:fs';
+import { WindowManager, openExternalUrl } from './windows';
 import { JobManager } from './jobs';
 import { SettingsStore } from './settings';
 import { registerIpc } from './ipc';
@@ -8,6 +9,11 @@ import { CredentialVault } from './vault';
 import { generateWithProvider } from './providers';
 import { generateWithOllama } from './ollama';
 import { ProjectRunner, ProjectStore, type GenerateFn } from './projects';
+import { CompanyService, findNativeCore } from './company';
+import { OfficeService } from './office';
+import { OfficeWorkerPool } from './officeWorker';
+import { PersonalDashboardServer } from './personalDashboard';
+import { withGlobalBudget } from './globalBudget';
 
 /**
  * Research Director Desktop — main process entry.
@@ -16,7 +22,8 @@ import { ProjectRunner, ProjectStore, type GenerateFn } from './projects';
  *  - contextIsolation: true, nodeIntegration: false, sandbox: true everywhere.
  *  - No remote module, no TLS certificate bypass, no shell-based process
  *    spawning, no arbitrary command execution (only fixed execFile argument
- *    vectors for python -m venv / pip install and nvidia-smi).
+ *    vectors for python -m venv / pip install, nvidia-smi and the bundled
+ *    Rust metadata/state core; no repository code is executed).
  *  - Remote pages run in a WebContentsView with NO preload, so the
  *    desktopBridge IPC surface is unreachable from remote content; every IPC
  *    handler additionally validates the sender is the local file:// chrome.
@@ -60,9 +67,67 @@ async function main(): Promise<void> {
     }
     return generateWithProvider(req.provider, key, req);
   };
-  const projectRunner = new ProjectRunner(projectStore, generate);
+  const checkoutRoot = path.resolve(app.getAppPath(), '..');
+  const companyService = new CompanyService({
+    userDataPath,
+    seedDir: app.isPackaged ? path.join(process.resourcesPath, 'company') : path.join(checkoutRoot, 'company'),
+    binaryPath: findNativeCore(app.getAppPath(), app.isPackaged ? process.resourcesPath : undefined),
+    repositoryRoot: !app.isPackaged && fs.existsSync(path.join(checkoutRoot, '.git')) ? checkoutRoot : null,
+    listRuns: () => projectStore.listRuns(),
+    pickRepository: async () => {
+      const selection = await dialog.showOpenDialog(windowManager.window, {
+        title: 'Choose the local company repository',
+        buttonLabel: 'Index this folder',
+        properties: ['openDirectory'],
+      });
+      return selection.canceled ? null : selection.filePaths[0] ?? null;
+    },
+  });
+  const officeService = new OfficeService({
+    githubToken: () => vault.getKey('github'),
+    userDataPath,
+    seedDir: app.isPackaged ? path.join(process.resourcesPath, 'company') : path.join(checkoutRoot, 'company'),
+    binaryPath: findNativeCore(app.getAppPath(), app.isPackaged ? process.resourcesPath : undefined),
+  });
+  const projectRunner = new ProjectRunner(projectStore, withGlobalBudget(generate, request => officeService.workerCommand(request)));
+  const officeWorker = new OfficeWorkerPool({
+    prepareContext: (job) => officeService.prepareWorkerContext(job),
+    executeTool: async (job, text) => {
+      if (!job.allowedTools.includes('github.publish_changes')) throw new Error('Publishing is not an allowed capability for this job.');
+      await officeService.assertWorkerCapability(job, 'github.publish_changes');
+      let changes: Record<string, unknown>;
+      try { changes = JSON.parse(text); } catch { throw new Error('The code employee did not return a valid JSON changeset. Artifact preserved.'); }
+      if (!changes || typeof changes !== 'object' || Array.isArray(changes)) throw new Error('Expected a changeset object.');
+      const result = await officeService.githubOperation({ ...changes, action: 'github_operation', companyId: job.companyId, operation: 'publish_changes', reviewed: job.authorized });
+      if (!result.ok) throw new Error(result.error || 'GitHub publication failed.');
+      const published = result.snapshot?.lastAction?.github as { url?: string; commit?: string };
+      if (!published?.url) throw new Error('GitHub publication returned no verified commit evidence.');
+      return { summary: `Published commit ${published.commit}`, evidenceUrl: published.url };
+    },
+    snapshot: () => officeService.officeSnapshot(),
+    command: (request) => officeService.workerCommand(request),
+    generate,
+    artifactRoot: path.join(userDataPath, 'office-artifacts'),
+    seedDir: app.isPackaged ? path.join(process.resourcesPath, 'company') : path.join(checkoutRoot, 'company'),
+  });
+  app.once('before-quit', () => officeWorker.stop());
 
-  registerIpc({ windowManager, jobManager, settings, vault, projectStore, projectRunner, catalogPath, userDataPath });
+  let browserHandlers = new Map<string, (...args: unknown[]) => unknown>();
+  const personalDashboard = new PersonalDashboardServer({
+    rendererRoot: path.join(__dirname, '../renderer'),
+    dispatch: (method, args) => {
+      const handler = browserHandlers.get(method);
+      if (!handler || method === 'openPersonalDashboard') throw new Error('Unsupported browser operation.');
+      return handler(...args);
+    },
+  });
+  browserHandlers = registerIpc({ windowManager, jobManager, settings, vault, projectStore, projectRunner, companyService, officeService, officeWorker, catalogPath, userDataPath,
+    openPersonalDashboard: async () => {
+      try { const url = await personalDashboard.launchUrl(); const opened = await openExternalUrl(url); return { ...opened, url: new URL(url).origin }; }
+      catch { return { ok: false, error: 'The personal browser dashboard could not start.' }; }
+    },
+  });
+  app.once('before-quit', () => { void personalDashboard.close(); });
 
   app.on('activate', () => {
     // Single-window shell: re-create only if the window was destroyed.

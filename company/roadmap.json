@@ -1,0 +1,206 @@
+{
+  "milestones": [
+    {
+      "id": "foundation",
+      "title": "01 / Reliable foundation",
+      "description": "Register the company and make public, offline and clean-clone builds reproducible."
+    },
+    {
+      "id": "workspace",
+      "title": "02 / Company workspace",
+      "description": "Ship the redesigned desktop, Rust company core, team, roadmap and usage views."
+    },
+    {
+      "id": "release",
+      "title": "03 / Verified distribution",
+      "description": "Independent tests, versioned build artifacts, current documentation and deployment checks."
+    },
+    {
+      "id": "next",
+      "title": "04 / Durable orchestration",
+      "description": "Restart recovery, provider lifecycle, native shell evaluation and signed cross-platform releases."
+    }
+  ],
+  "tasks": [
+    {
+      "id": "github-register",
+      "title": "Register this repository as the first company",
+      "ownerId": "github",
+      "status": "done",
+      "priority": "P0",
+      "milestone": "foundation",
+      "evidence": "project/MCP_REGISTRATION.json: live GitHub metadata + default-branch ref verified via MCP",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "pages-assets",
+      "title": "Repair Pages and offline asset paths",
+      "ownerId": "release",
+      "status": "done",
+      "priority": "P0",
+      "milestone": "foundation",
+      "evidence": "scripts/check-static.mjs: portable entry, CSS, PWA and source/output hashes pass",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "clean-build",
+      "title": "Repair shell sync paths and database migration packaging",
+      "ownerId": "release",
+      "status": "done",
+      "priority": "P0",
+      "milestone": "foundation",
+      "evidence": "site-source/db/check-migrations.ts: 3 migrations, 54 statements, 19 tables; shell sync scripts repaired",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "company-core",
+      "title": "Build the Rust company state and bounded repository index",
+      "ownerId": "rust",
+      "status": "done",
+      "priority": "P0",
+      "milestone": "workspace",
+      "evidence": "native-core: 44 Rust tests and actual JS/Rust goal lifecycle pass",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "desktop-design",
+      "title": "Rebuild the desktop workspace and navigation",
+      "ownerId": "design",
+      "status": "done",
+      "priority": "P0",
+      "milestone": "workspace",
+      "evidence": "desktop-shell: strict build +125 interaction checks; published visual review tracked in project/VALIDATION.md",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "mcp-employee",
+      "title": "Expose company employees through a local MCP server",
+      "ownerId": "github",
+      "status": "done",
+      "priority": "P1",
+      "milestone": "workspace",
+      "evidence": "tools/atlas-mcp.test.mjs:15tests pass; live first-company registration completed",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "usage-budget",
+      "title": "Show real run usage and development budget evidence",
+      "ownerId": "director",
+      "status": "done",
+      "priority": "P1",
+      "milestone": "workspace",
+      "evidence": "desktop tests: global admission, unknown billing, retained artifacts; project/CLAUDE_USAGE.md",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "release-tests",
+      "title": "Verify current builds and publish reproducible artifacts",
+      "ownerId": "review",
+      "status": "done",
+      "priority": "P0",
+      "milestone": "release",
+      "evidence": "project/VALIDATION.md:328 desktop tests,125 UI assertions,44 Rust tests; Linux AppImage built and provided as a durable download; CI release gates are separate.",
+      "updatedAt": "2026-11-21T00:20:24.367730+00:00"
+    },
+    {
+      "id": "runtime-deploy",
+      "title": "Document and validate a supported authenticated hosted runtime",
+      "ownerId": "release",
+      "status": "todo",
+      "priority": "P1",
+      "milestone": "next",
+      "evidence": null,
+      "updatedAt": "2026-11-20T00:00:00Z"
+    },
+    {
+      "id": "android-device",
+      "title": "Run Android release checks on an emulator and physical device",
+      "ownerId": "review",
+      "status": "todo",
+      "priority": "P1",
+      "milestone": "next",
+      "evidence": null,
+      "updatedAt": "2026-11-20T00:00:00Z"
+    },
+    {
+      "id": "restart-recovery",
+      "title": "Extend current lease recovery into an OS worker and distributed runtime",
+      "ownerId": "rust",
+      "status": "todo",
+      "priority": "P1",
+      "milestone": "next",
+      "evidence": "Native lost-lease handling and retained billing are implemented; background daemon and multi-host leases remain future work",
+      "updatedAt": "2026-11-20T00:00:00Z"
+    },
+    {
+      "id": "tauri-evaluation",
+      "title": "Benchmark a Tauri shell against Electron before replacing it",
+      "ownerId": "rust",
+      "status": "todo",
+      "priority": "P2",
+      "milestone": "next",
+      "evidence": null,
+      "updatedAt": "2026-11-20T00:00:00Z"
+    },
+    {
+      "id": "signed-packages",
+      "title": "Sign and validate Windows, macOS and Android distributions",
+      "ownerId": "release",
+      "status": "todo",
+      "priority": "P2",
+      "milestone": "next",
+      "evidence": null,
+      "updatedAt": "2026-11-20T00:00:00Z"
+    },
+    {
+      "id": "private-portfolio",
+      "title": "Import all owned GitHub repositories into personal companies",
+      "ownerId": "github",
+      "status": "done",
+      "priority": "P1",
+      "milestone": "workspace",
+      "evidence": "Owner-only import receipt retained privately; source-linked README briefs verified through the authenticated connector.",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "donna-workspace",
+      "title": "Unify Donna chat, office blueprint and ownership whiteboard",
+      "ownerId": "design",
+      "status": "done",
+      "priority": "P1",
+      "milestone": "workspace",
+      "evidence": "93renderer assertions; native reference and goal tests",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "global-goals",
+      "title": "Share budgets and checkpoints across bounded goal loops",
+      "ownerId": "rust",
+      "status": "done",
+      "priority": "P1",
+      "milestone": "workspace",
+      "evidence": "35native tests +8job native integration +16global budget tests",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "personal-browser",
+      "title": "Connect the private browser to the desktop workspace",
+      "ownerId": "release",
+      "status": "done",
+      "priority": "P1",
+      "milestone": "workspace",
+      "evidence": "13real HTTP/auth/concurrent-start tests",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    },
+    {
+      "id": "github-versions",
+      "title": "Inspect branches and publish verified text changesets",
+      "ownerId": "github",
+      "status": "done",
+      "priority": "P1",
+      "milestone": "workspace",
+      "evidence": "39GitHub service tests; expected-head/no-force publishing; only main found in live branch audit",
+      "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+    }
+  ]
+}

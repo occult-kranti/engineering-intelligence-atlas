@@ -1,12 +1,30 @@
 # Research Director Desktop Shell
 
+## Current company workspace (v0.3)
+
+The desktop now includes a company and office workspace backed by the Rust `native-core/` executable. It provides a verified public GitHub registration flow, repository inventory, specialist assignments, roadmap state, persistent companies/offices/departments, Donna and shared assistants, an employee lifecycle, a bounded job queue, schedules, cache metadata, knowledge handoffs and an event ledger. The Electron renderer remains in place; a full Tauri migration is a later evaluation.
+
+Build the native executable before launching or running the complete test suite:
+
+```bash
+npm ci
+npm run build:native
+npm run build
+npm test
+npm start
+```
+
+`build:native` requires Rust 1.89+ and uses the committed Cargo lockfile. Packaging includes the matching host binary and company seed files. Company and office state is written under Electron `userData/company/`; no repository files are changed by workspace controls. The GitHub employee checks public repository metadata and its compact branch reference before marking registration complete. Account import creates dedicated companies from actual public GitHub metadata.
+
+The local worker runs one provider job at a time only while the owner enables it or explicitly runs the queue. Cloud jobs require a saved key, an explicit model, positive user-supplied pricing and authorized budget limits. Provider-call reservations survive cancellation and expired leases; estimates remain labeled until reconciled. A persisted employee or schedule is not a claim that a model runs while the desktop is closed. See [the native core protocol](../native-core/README.md) and [the Office contract](src/shared/office.ts).
+
 Independent Electron desktop shell for the Research Director product. It packages
 the app's static atlas for fully offline browsing, connects to the hosted,
 authenticated Director runtime for full cloud-backed projects, and adds
 local-only system/model capabilities (hardware inspection, Python venvs,
 reviewed Hugging Face model downloads).
 
-This project is intentionally separate from `/mnt/agents/output/app` (the web
+This project is intentionally separate from `../site-source` (the web
 app + backend). It only **reads** the app's build output via the sync script.
 
 ## Architecture
@@ -36,14 +54,14 @@ src/
 models.catalog.json      reviewed models (from research/reviewed_models.json)
 models.catalog.schema.json
 SECURITY.md              credential threat model + user responsibilities
-scripts/sync-atlas.mjs   copies ../app/dist (or --src) into resources/atlas/
+scripts/sync-atlas.mjs   copies ../site-source/dist/public (or --src) into resources/atlas/
 tests/                   vitest unit tests (fake executors/providers; no real venvs/downloads/API calls)
 ```
 
 ### Process and bridge model
 
 - The **chrome window** loads `dist/renderer/chrome.html` over `file://` with a
-  preload that exposes the versioned `desktopBridge` (v1). The preload
+  preload that exposes the versioned `desktopBridge` (v3). The preload
   additionally refuses to expose anything on non-`file:` pages.
 - **Remote runtime and offline atlas** run in a `WebContentsView` with **no
   preload**, so remote pages cannot reach any desktop IPC. A local toolbar
@@ -54,7 +72,7 @@ tests/                   vitest unit tests (fake executors/providers; no real ve
   (`python3 --version`, `python -m venv`, `pip install huggingface_hub==<pin>`,
   `nvidia-smi --query-gpu=...`). Static tests enforce all of this.
 
-### The three destinations
+### Destinations
 
 1. **Offline atlas** — packaged static SPA from `resources/atlas/`
    (populate with `npm run sync-atlas`). No network use by this shell.
@@ -141,7 +159,7 @@ tests/                   vitest unit tests (fake executors/providers; no real ve
 ```bash
 npm install                 # deps (Electron binary: see "Electron download" below)
 npm run build               # tsc main/preload + renderer + copy assets
-npm run sync-atlas          # copy ../app/dist into resources/atlas
+npm run sync-atlas          # copy ../site-source/dist/public into resources/atlas
 npm test                    # vitest unit tests
 npm start                   # build + launch Electron
 npm run package:linux       # electron-builder: AppImage + unpacked dir

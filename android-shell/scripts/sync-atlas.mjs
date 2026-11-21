@@ -2,27 +2,33 @@
 /**
  * Sync the Engineering Intelligence Atlas web build into the Android shell.
  *
- * Copies the latest static build from ../app/dist (or ../app/dist/public when
- * that layout is used) into ./www/atlas, and vendors the Capacitor web runtime
+ * Copies the latest static build from ../site-source/dist/public (or ../docs)
+ * into ./www/atlas, and vendors the Capacitor web runtime
  * modules used by the launcher into ./www/vendor.
  *
- * Usage: npm run sync:atlas
+ * Usage: npm run sync:atlas -- [--src <directory>]
  */
 import { cpSync, existsSync, mkdirSync, rmSync, copyFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const appRoot = resolve(root, '..', 'app');
+const srcFlag = process.argv.indexOf('--src');
+if (srcFlag >= 0 && (!process.argv[srcFlag + 1] || process.argv[srcFlag + 1].startsWith('--'))) {
+  throw new Error('--src requires a directory');
+}
+const explicitSource = srcFlag >= 0 ? resolve(process.argv[srcFlag + 1]) : null;
 
 function pickAtlasSource() {
-  const candidates = [join(appRoot, 'dist', 'public'), join(appRoot, 'dist')];
+  const candidates = explicitSource
+    ? [explicitSource]
+    : [resolve(root, '..', 'site-source', 'dist', 'public'), resolve(root, '..', 'docs')];
   for (const dir of candidates) {
     if (existsSync(join(dir, 'index.html'))) return dir;
   }
   throw new Error(
     `No atlas build found. Expected index.html in one of: ${candidates.join(', ')}. ` +
-      'Run the web build in ../app first.',
+      'Run node ../scripts/build-static.mjs first, or pass --src <directory>.',
   );
 }
 

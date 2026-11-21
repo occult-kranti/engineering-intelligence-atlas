@@ -74,6 +74,7 @@ interface JobRecord {
 // ---- v2: vault / providers / projects (structural copies of contract.ts) ----
 
 type ApiProvider = 'openai' | 'anthropic';
+type CredentialProvider = ApiProvider | 'github';
 type ProjectProvider = ApiProvider | 'ollama';
 type ProjectNodeRole = 'director' | 'research' | 'build' | 'review' | 'custom';
 type NodeStatus = 'pending' | 'running' | 'succeeded' | 'failed' | 'skipped';
@@ -85,7 +86,7 @@ interface ProviderCredentialStatus {
 }
 interface VaultStatus {
   encryptionAvailable: boolean;
-  providers: Record<ApiProvider, ProviderCredentialStatus>;
+  providers: Record<ApiProvider, ProviderCredentialStatus> & { github?: ProviderCredentialStatus };
 }
 interface ModelInfo {
   id: string;
@@ -193,8 +194,244 @@ interface ArtifactMeta {
   textSha256: string;
 }
 
+type CompanyTaskStatus = 'todo' | 'in-progress' | 'blocked' | 'done';
+
+interface CompanyRecord {
+  id: string;
+  name: string;
+  repoUrl: string;
+  owner: string;
+  repo: string;
+  defaultBranch: string | null;
+  description: string | null;
+  registeredAt: string | null;
+  lastCheckedAt: string | null;
+  githubStatus: 'unchecked' | 'verified' | 'error';
+  githubError: string | null;
+  stars: number | null;
+  openIssues: number | null;
+  pushedAt: string | null;
+  headSha: string | null;
+}
+
+interface CompanyEmployee {
+  id: string;
+  name: string;
+  role: string;
+  rolePath: string;
+  skillPath: string;
+  status: 'ready' | 'running' | 'blocked';
+  lastResult: string | null;
+}
+
+interface CompanyTask {
+  id: string;
+  title: string;
+  ownerId: string;
+  status: CompanyTaskStatus;
+  priority: 'P0' | 'P1' | 'P2';
+  milestone: string;
+  evidence: string | null;
+  updatedAt: string;
+}
+
+interface CompanyMilestone {
+  id: string;
+  title: string;
+  description: string;
+}
+
+interface CompanyActivity {
+  id: string;
+  at: string;
+  employeeId: string;
+  kind: string;
+  message: string;
+}
+
+interface CompanyRepositoryIndex {
+  root: string;
+  fileCount: number;
+  totalBytes: number;
+  skippedCount: number;
+  truncated: boolean;
+  elapsedMs: number;
+  workers: number;
+  generatedAt: string;
+  /** Metadata only. Files are never loaded as code or executed. */
+  files: Array<{ path: string; bytes: number; kind: string }>;
+}
+
+interface CompanyUsage extends UsageTotals {
+  runCount: number;
+  completedRuns: number;
+  failedRuns: number;
+  source: 'local-project-runs';
+}
+
+interface CompanySnapshot {
+  available: boolean;
+  backend: 'rust' | 'unavailable';
+  error: string | null;
+  company: CompanyRecord | null;
+  employees: CompanyEmployee[];
+  tasks: CompanyTask[];
+  milestones: CompanyMilestone[];
+  activity: CompanyActivity[];
+  usage: CompanyUsage;
+  index: CompanyRepositoryIndex | null;
+}
+
+interface RegisterCompanyRequest { repoUrl: string }
+interface UpdateCompanyTaskRequest { id: string; status: CompanyTaskStatus; evidence?: string }
+
+
+/** Durable office definitions are records, not claims that model processes are running. */
+type OfficeEntityStatus = 'active' | 'paused';
+interface OfficeCompany {
+  id: string; name: string; repoUrl: string | null; status: OfficeEntityStatus;
+  assistantId: string; createdAt: string; source: string;
+  importedAt: string | null; githubStatus: 'unchecked' | 'metadata-reviewed';
+  visibility?: 'public' | 'private' | null; defaultBranch?: string | null;
+}
+interface OfficeLocation {
+  id: string; companyId: string; name: string; status: OfficeEntityStatus; assistantId: string; createdAt: string;
+}
+interface OfficeDepartment {
+  id: string; companyId: string; officeId: string; name: string; status: OfficeEntityStatus; assistantId: string; createdAt: string;
+}
+interface OfficeEmployee {
+  id: string; companyId: string | null; officeId: string | null; departmentId: string | null;
+  name: string; role: string; kind: 'assistant' | 'specialist';
+  status: 'active' | 'paused' | 'fired'; skillPaths: string[]; createdAt: string; updatedAt: string;
+  assignmentKey?: string | null;
+}
+type OfficeJobStatus = 'queued' | 'waiting-budget' | 'running' | 'paused' | 'cancelled' | 'completed' | 'failed' | 'budget-exhausted' | 'needs-review';
+interface OfficeJob {
+  id: string; companyId: string; officeId: string; departmentId: string | null; employeeId: string;
+  goal: string; mode: 'manual' | 'provider'; provider: 'anthropic' | 'openai' | 'ollama'; model: string;
+  authorized: boolean; allowedTools: string[]; dependencies: string[];
+  contextHash: string | null; cacheKey: string | null; promptVersion: string;
+  status: OfficeJobStatus;
+  limits: { maxTokens: number; maxUsd: number; maxMinutes: number };
+  priceRates: { inputUsdPerMillion: number | null; outputUsdPerMillion: number | null };
+  usage: { inputTokens: number; outputTokens: number; costUsd: number };
+  costStatus: 'none' | 'reserved' | 'observed' | 'estimated';
+  reservation: { inputTokens: number; maxOutputTokens: number; costUsd: number } | null;
+  pendingReservation?: { inputTokens: number; maxOutputTokens: number; costUsd: number } | null;
+  usageRecorded: boolean;
+  createdAt: string; updatedAt: string; dueAt: string; startedAt: string | null; finishedAt: string | null;
+  workerId: string | null; leaseToken: string | null; leaseExpiresAt: string | null;
+  artifactUri: string | null; summary: string | null; error: string | null; idempotencyKey: string;
+  goalId?: string | null; goalIteration?: number | null;
+  serviceContractId?: string | null; knowledgeTransferIds?: string[];
+}
+interface OfficeSchedule {
+  id: string; companyId: string; name: string; enabled: boolean; everyMinutes: number;
+  nextRunAt: string; lastEnqueuedAt: string | null; jobTemplate: Record<string, unknown>;
+  lastError?: string | null;
+}
+interface OfficeCacheEntry { key: string; companyId: string; artifactUri: string; bytes: number; createdAt: string; expiresAt: string; contentSha256?: string | null }
+interface OfficeCache { enabled: boolean; maxEntries: number; ttlMinutes: number; entries: OfficeCacheEntry[]; hits: number; misses: number }
+interface OfficeKnowledge { id: string; companyId: string; title: string; summary: string; artifactUri: string; createdAt: string }
+interface OfficeEvent { id: string; at: string; actor: string; action: string; entityId: string; summary: string }
+interface OfficeScope { kind: 'company' | 'office' | 'department' | 'employee'; id: string }
+interface OfficePolicy {
+  approvalMode: 'review' | 'autonomous'; dispatchPaused: boolean;
+  budget: { hardCapUsd: number; hardCapTokens: number | null; warningPercent: number };
+}
+interface OfficeBudget {
+  observedUsd: number; estimatedUsd: number; reservedUsd: number; committedUsd: number; remainingUsd: number;
+  committedTokens: number; remainingTokens: number | null; warning: boolean; atCap: boolean;
+}
+interface OfficeExternalAttempt {
+  attemptId: string; source: string; reservedUsd: number; maxTokens: number;
+  usage: { inputTokens: number; outputTokens: number; costUsd: number };
+  costStatus: 'reserved' | 'observed' | 'estimated'; settled: boolean; createdAt: string; updatedAt: string;
+}
+interface OfficeChatMessage {
+  id: string; role: 'user' | 'assistant' | 'system'; content: string; createdAt: string; source: 'user' | 'local' | 'provider';
+}
+interface OfficeChatThread { id: string; scope: OfficeScope; messages: OfficeChatMessage[] }
+interface OfficeGoalStep { id: string; title: string; employeeId: string; goal: string; dependsOn: string[]; serviceContractId?: string | null; knowledgeTransferIds?: string[] }
+interface OfficeGoalRunSettings {
+  mode: 'manual' | 'provider'; provider: 'anthropic' | 'openai' | 'ollama'; model: string; authorized: boolean;
+  maxTokens: number; maxUsd: number; maxMinutes: number;
+  priceRates: { inputUsdPerMillion: number | null; outputUsdPerMillion: number | null };
+  allowedTools?: string[];
+}
+interface OfficeGoal {
+  id: string; companyId: string; scope: OfficeScope; title: string; description: string;
+  mode: 'plan' | 'execute'; status: 'draft' | 'planned' | 'running' | 'paused' | 'completed' | 'needs-review';
+  maxIterations: number; iteration: number; jobIds: string[]; steps: OfficeGoalStep[]; runSettings: OfficeGoalRunSettings;
+  createdAt: string; updatedAt: string;
+  stopReason?: string | null;
+}
+interface OfficeCheckpoint { id: string; goalId: string; jobId: string | null; iteration: number; summary: string; artifactUri: string | null; createdAt: string }
+interface OfficeRoom { id: string; name: string; departmentId: string | null; x: number; y: number; width: number; height: number }
+interface OfficeDesk { id: string; roomId: string; employeeId: string; x: number; y: number }
+interface OfficeWhiteboard { id: string; roomId: string; ownerEmployeeId: string; title: string; goalIds: string[]; jobIds: string[]; roadmapItemIds?: string[]; x: number; y: number }
+interface OfficeBlueprint { id: string; companyId: string; officeId: string; rooms: OfficeRoom[]; desks: OfficeDesk[]; whiteboards: OfficeWhiteboard[] }
+type PortfolioServiceKey = 'engineering' | 'design-architecture' | 'research-knowledge' | 'security' | 'hackathon' | 'music-arts';
+interface PortfolioGroup { id: string; name: string; description: string; companyIds: string[]; status: OfficeEntityStatus; createdAt: string; updatedAt: string }
+interface PortfolioService { id: string; key: PortfolioServiceKey; name: string; companyId: string; officeId: string; departmentId: string; employeeIds: string[]; status: OfficeEntityStatus; createdAt: string; updatedAt: string }
+interface PortfolioServiceContract {
+  id: string; serviceId: string; recipientCompanyId: string; recipientOfficeId: string | null; recipientDepartmentId: string | null;
+  employeeIds: string[]; allowedTools: string[]; status: 'active' | 'paused' | 'revoked'; createdAt: string; updatedAt: string;
+}
+interface PortfolioKnowledgeTransfer {
+  id: string; sourceCompanyId: string; recipientCompanyId: string; knowledgeId: string;
+  status: 'requested' | 'granted' | 'revoked'; purpose: string; createdAt: string; updatedAt: string;
+}
+interface PortfolioRoadmapItem {
+  id: string; scope: { kind: 'company' | 'group' | 'global'; id: string }; title: string; description: string;
+  ownerEmployeeId: string; departmentId: string | null; serviceContractId: string | null;
+  status: 'planned' | 'in-progress' | 'blocked' | 'done'; dependencies: string[]; goalIds: string[]; jobIds: string[];
+  evidence: string | null; createdAt: string; updatedAt: string;
+}
+interface OfficePortfolio {
+  ceo: { enabled: boolean; title: string; focusGroupId: string | null; sharedServicesCompanyId: string | null; updatedAt: string };
+  groups: PortfolioGroup[]; services: PortfolioService[]; contracts: PortfolioServiceContract[];
+  transfers: PortfolioKnowledgeTransfer[]; roadmap: PortfolioRoadmapItem[];
+  recommendations: Array<{ employeeId: string; serviceId: string; reason: string }>;
+}
+interface OfficeSnapshot {
+  schemaVersion: 1; activeCompanyId: string;
+  companies: OfficeCompany[]; offices: OfficeLocation[]; departments: OfficeDepartment[]; employees: OfficeEmployee[];
+  jobs: OfficeJob[]; schedules: OfficeSchedule[]; cache: OfficeCache; knowledge: OfficeKnowledge[]; events: OfficeEvent[];
+  /** Result metadata from the most recent command; never a provider credential. */
+  lastAction: Record<string, unknown> | null;
+  /** Additive fields are optional for old bridge clients; the native core always migrates them. */
+  policy?: OfficePolicy; budget?: OfficeBudget; externalAttempts?: OfficeExternalAttempt[];
+  chatThreads?: OfficeChatThread[]; goals?: OfficeGoal[]; checkpoints?: OfficeCheckpoint[]; blueprints?: OfficeBlueprint[];
+  portfolio?: OfficePortfolio;
+}
+type OfficeAction = 'create_company' | 'select_company' | 'import_repositories' | 'import_github_account'
+  | 'create_office' | 'create_department' | 'hire_employee' | 'pause_employee' | 'resume_employee' | 'fire_employee'
+  | 'pause_company' | 'resume_company' | 'pause_office' | 'resume_office' | 'pause_department' | 'resume_department'
+  | 'enqueue_job' | 'claim_job' | 'reserve_job' | 'finish_job' | 'complete_job' | 'heartbeat_job' | 'cancel_job' | 'pause_job' | 'resume_job'
+  | 'create_schedule' | 'pause_schedule' | 'resume_schedule' | 'tick_schedules'
+  | 'configure_cache' | 'clear_cache' | 'get_cache' | 'put_cache' | 'add_knowledge'
+  | 'configure_policy' | 'reserve_external' | 'settle_external' | 'approve_job' | 'bootstrap_directors'
+  | 'post_chat' | 'post_assistant_message' | 'create_goal' | 'plan_goal' | 'set_goal_plan' | 'execute_goal' | 'advance_goal'
+  | 'pause_goal' | 'resume_goal' | 'checkpoint_goal' | 'tick_goals' | 'ensure_blueprint' | 'save_blueprint' | 'upsert_room'
+  | 'place_employee' | 'upsert_whiteboard' | 'record_github_activity' | 'github_operation'
+  | 'configure_ceo' | 'upsert_portfolio_group' | 'ensure_shared_services' | 'optimize_portfolio'
+  | 'contract_service' | 'share_knowledge' | 'upsert_roadmap_item' | 'schedule_repository_reviews';
+/** Every action has a fixed Rust-side schema; unknown fields are never executed. */
+interface OfficeCommand { action: OfficeAction; [key: string]: unknown }
+interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: string; code?: string }
+
+interface OfficeWorkerStatus {
+  enabled: boolean; running: boolean; activeJobId: string | null; lastError: string | null;
+  concurrency?: number; activeJobIds?: string[];
+}
+
 interface DesktopBridge {
   version: number;
+  transport?: 'personal-browser' | 'public-preview';
+  openPersonalDashboard?(): Promise<{ok:boolean;url?:string;error?:string}>;
+  importCredentialFile?(provider:CredentialProvider): Promise<{ok:boolean;error?:string;cancelled?:boolean;status?:VaultStatus}>;
   getSystemInfo(): Promise<SystemInfo>;
   getModelCatalog(): Promise<CatalogResult>;
   checkModelRequirements(modelId: string): Promise<RequirementReport>;
@@ -214,8 +451,8 @@ interface DesktopBridge {
   getSettings(): Promise<{ runtimeUrl: string | null }>;
   openExternal(url: string): Promise<{ ok: boolean; error?: string }>;
   getVaultStatus(): Promise<VaultStatus>;
-  setApiKey(provider: ApiProvider, key: string): Promise<{ ok: boolean; error?: string }>;
-  revokeApiKey(provider: ApiProvider): Promise<{ ok: boolean; error?: string }>;
+  setApiKey(provider: CredentialProvider, key: string): Promise<{ ok: boolean; error?: string }>;
+  revokeApiKey(provider: CredentialProvider): Promise<{ ok: boolean; error?: string }>;
   listProviderModels(provider: ProjectProvider): Promise<ListModelsResult>;
   detectOllama(): Promise<OllamaStatus>;
   listProjects(): Promise<Project[]>;
@@ -231,6 +468,16 @@ interface DesktopBridge {
     runId: string,
     nodeId: string,
   ): Promise<{ ok: boolean; text?: string; meta?: ArtifactMeta; error?: string }>;
+  officeSnapshot?(): Promise<OfficeResult>;
+  officeCommand?(req: OfficeCommand): Promise<OfficeResult>;
+  officeWorkerStatus?(): Promise<OfficeWorkerStatus>;
+  setOfficeWorker?(req: { enabled: boolean }): Promise<OfficeWorkerStatus>;
+  runOfficeQueue?(): Promise<OfficeWorkerStatus>;
+  companySnapshot?(): Promise<CompanySnapshot>;
+  registerCompany?(req: RegisterCompanyRequest): Promise<CompanySnapshot>;
+  refreshCompany?(): Promise<CompanySnapshot>;
+  updateCompanyTask?(req: UpdateCompanyTaskRequest): Promise<CompanySnapshot>;
+  indexCompanyRepository?(): Promise<CompanySnapshot>;
   onJobEvent(listener: (job: JobRecord) => void): () => void;
   onModeChanged(listener: (mode: 'launcher' | 'content', url: string | null) => void): () => void;
   onProjectEvent(listener: (run: ProjectRun) => void): () => void;
@@ -273,28 +520,56 @@ function escapeText(s: string): string {
 
 // ---------------------------------------------------------------- toolbar
 
+type ViewName = 'overview' | 'office' | 'projects' | 'team' | 'roadmap' | 'usage' | 'library' | 'models' | 'settings';
+const VIEW_IDS: Record<ViewName, string> = {
+  office: 'office-view', overview: 'launcher-view', projects: 'projects-view', team: 'team-view', roadmap: 'roadmap-view',
+  usage: 'usage-view', library: 'library-view', models: 'system-view', settings: 'settings-view',
+};
+const VIEW_LABELS: Record<ViewName, string> = {
+  overview: 'Overview', office: 'Donna workspace', projects: 'Projects', team: 'Team', roadmap: 'Roadmap',
+  usage: 'Usage & activity', library: 'Research library', models: 'Models & system', settings: 'Settings',
+};
+let activeView: ViewName = 'office';
+let contentMode = false;
+
 function setMode(mode: 'launcher' | 'content', url: string | null): void {
-  $('toolbar').classList.toggle('hidden', mode !== 'content');
-  $('launcher-view').classList.toggle('hidden', mode !== 'launcher');
-  $('system-view').classList.add('hidden');
-  $('projects-view').classList.add('hidden');
-  if (mode === 'content') {
-    $('content-location').textContent = url ?? '';
+  contentMode = mode === 'content';
+  $('toolbar').classList.toggle('hidden', !contentMode);
+  $('workspace-shell').classList.toggle('hidden', contentMode);
+  if (contentMode) {
+    $('content-location').textContent = url ?? 'Offline research atlas';
     const isRemote = url !== null && (url.startsWith('https://') || url.startsWith('http://'));
     $('open-in-browser').classList.toggle('hidden', !isRemote);
-    if (isRemote && url) {
-      $('open-in-browser').onclick = () => void bridge?.openExternal(url);
-    }
+    if (isRemote && url) $('open-in-browser').onclick = () => void bridge?.openExternal(url);
   }
+}
+
+function showView(id: 'launcher-view' | 'system-view' | 'projects-view'): void {
+  navigate(id === 'launcher-view' ? 'overview' : id === 'system-view' ? 'models' : 'projects');
+}
+
+function navigate(view: ViewName, updateHash = true): void {
+  activeView = view;
+  for (const [key, id] of Object.entries(VIEW_IDS)) $(id).classList.toggle('hidden', key !== view);
+  document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
+    const selected = button.dataset.view === view;
+    button.classList.toggle('active', selected);
+    if (selected) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
+  });
+  $('screen-name').textContent = VIEW_LABELS[view];
+  if (updateHash && location.hash !== `#${view}`) history.replaceState(null, '', `#${view}`);
+  if (view === 'office') void safeTask(refreshOffice);
+  if (view === 'projects') void safeTask(refreshProjectsPanel);
+  if (view === 'models') void safeTask(refreshSystemPanel);
+  if (view === 'settings') void safeTask(refreshKeys);
+  if (view === 'usage' || view === 'overview') void safeTask(refreshWorkspace);
+  if (view === 'roadmap') renderRoadmap();
+  if (view === 'library') renderIndex();
+  window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 // ---------------------------------------------------------------- launcher
-
-function showView(id: 'launcher-view' | 'system-view' | 'projects-view'): void {
-  for (const v of ['launcher-view', 'system-view', 'projects-view']) {
-    $(v).classList.toggle('hidden', v !== id);
-  }
-}
 
 function initLauncher(): void {
   $('open-atlas').addEventListener('click', async () => {
@@ -325,14 +600,14 @@ function initLauncher(): void {
 
   $('open-system').addEventListener('click', () => {
     showView('system-view');
-    void refreshSystemPanel();
+    void safeTask(refreshSystemPanel);
   });
 
   $('system-back').addEventListener('click', () => showView('launcher-view'));
 
   $('open-projects').addEventListener('click', () => {
     showView('projects-view');
-    void refreshProjectsPanel();
+    void safeTask(refreshProjectsPanel);
   });
 
   $('projects-back').addEventListener('click', () => showView('launcher-view'));
@@ -555,6 +830,14 @@ function renderJobs(jobs: JobRecord[]): void {
   const tbody = $('jobs-table').querySelector('tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
+  if (jobs.length === 0) {
+    const row = document.createElement('tr');
+    const cell = document.createElement('td');
+    cell.colSpan = 6;
+    cell.className = 'empty-inline';
+    cell.textContent = 'No background jobs. Downloads and environment setup appear here.';
+    row.append(cell); tbody.append(row);
+  }
   for (const job of [...jobs].sort((a, b) => b.createdAt.localeCompare(a.createdAt))) {
     const tr = document.createElement('tr');
     const pct = job.progress === null ? '—' : `${Math.round(job.progress * 100)}%`;
@@ -593,9 +876,10 @@ async function refreshSystemPanel(): Promise<void> {
 
 // ---------------------------------------------------------------- API keys
 
-const KEY_PROVIDERS: { id: ApiProvider; label: string; hint: string }[] = [
+const KEY_PROVIDERS: { id: CredentialProvider; label: string; hint: string }[] = [
   { id: 'openai', label: 'OpenAI', hint: 'sk-…' },
   { id: 'anthropic', label: 'Anthropic', hint: 'sk-ant-…' },
+  { id: 'github', label: 'GitHub', hint: 'github_pat_… or ghp_…' },
 ];
 
 async function refreshKeys(): Promise<void> {
@@ -610,7 +894,7 @@ async function refreshKeys(): Promise<void> {
   const container = $('key-rows');
   container.innerHTML = '';
   for (const p of KEY_PROVIDERS) {
-    const st = status.providers[p.id];
+    const st = status.providers[p.id] || {configured:false,readable:false,updatedAt:null};
     const row = document.createElement('div');
     row.className = 'row wrap key-row';
 
@@ -631,6 +915,7 @@ async function refreshKeys(): Promise<void> {
     input.type = 'password';
     input.placeholder = `Paste ${p.label} API key (${p.hint})`;
     input.autocomplete = 'off';
+    input.setAttribute('aria-label', `${p.label} API key`);
     input.disabled = !status.encryptionAvailable;
     row.append(input);
 
@@ -644,10 +929,21 @@ async function refreshKeys(): Promise<void> {
       input.value = '';
       if (key.trim().length === 0) return;
       const res = await bridge.setApiKey(p.id, key);
-      if (!res.ok) setStatus($('proj-status'), res.error ?? 'Failed to save key.', 'error');
+      if (!res.ok) setStatus($('key-status'), res.error ?? 'Failed to save key.', 'error');
       await refreshKeys();
     };
     row.append(setBtn);
+    const importBtn = document.createElement('button');
+    importBtn.className = 'secondary'; importBtn.type = 'button'; importBtn.textContent = 'Import file';
+    importBtn.disabled = !status.encryptionAvailable || !bridge.importCredentialFile || bridge.transport === 'public-preview';
+    importBtn.onclick = () => workspaceTask(async () => {
+      if (!bridge?.importCredentialFile) throw new Error('Credential file import requires the current desktop app.');
+      const result = await bridge.importCredentialFile(p.id);
+      if(result.cancelled){setStatus($('key-status'),'Credential import cancelled.');return;}
+      if (!result.ok) throw new Error(result.error || 'No credential was imported.');
+      await refreshKeys(); setStatus($('key-status'), `${p.label} credential imported into encrypted storage.`, 'ok');
+    }, 'key-status');
+    row.append(importBtn);
 
     const revokeBtn = document.createElement('button');
     revokeBtn.className = 'danger';
@@ -728,6 +1024,7 @@ function renderSquadEditor(): void {
     head.className = 'row wrap';
 
     const role = document.createElement('select');
+    role.setAttribute('aria-label', `Specialist ${i + 1} role`);
     for (const r of ['director', 'research', 'build', 'review', 'custom'] as ProjectNodeRole[]) {
       const opt = document.createElement('option');
       opt.value = r;
@@ -743,6 +1040,7 @@ function renderSquadEditor(): void {
     const title = document.createElement('input');
     title.type = 'text';
     title.placeholder = 'Title';
+    title.setAttribute('aria-label', `Specialist ${i + 1} title`);
     title.value = draft.title;
     title.oninput = () => {
       draft.title = title.value;
@@ -777,12 +1075,14 @@ function renderSquadEditor(): void {
         .map((d) => ({ ...d, dependsOn: d.dependsOn.filter((d2) => d2 !== i).map((d2) => (d2 > i ? d2 - 1 : d2)) }));
       renderSquadEditor();
     };
+    removeBtn.setAttribute('aria-label', `Remove specialist ${draft.title || i + 1}`);
     head.append(removeBtn);
     card.append(head);
 
     const instructions = document.createElement('textarea');
     instructions.rows = 2;
     instructions.placeholder = 'Instructions for this specialist…';
+    instructions.setAttribute('aria-label', `Specialist ${i + 1} instructions`);
     instructions.value = draft.instructions;
     instructions.oninput = () => {
       draft.instructions = instructions.value;
@@ -835,6 +1135,7 @@ function initProjectForm(): void {
     const select = $('proj-model-select') as HTMLSelectElement;
     select.innerHTML = '';
     select.classList.remove('hidden');
+    $('model-select-label').classList.remove('hidden');
     for (const m of res.models) {
       const opt = document.createElement('option');
       opt.value = m.id;
@@ -888,12 +1189,15 @@ function initProjectForm(): void {
 async function refreshProjectList(): Promise<void> {
   if (!bridge) return;
   const projects = await bridge.listProjects();
+  workspaceProjects = projects;
+  renderOverview();
   const container = $('project-list');
   container.innerHTML = '';
   if (projects.length === 0) {
     const p = document.createElement('p');
     p.className = 'muted';
-    p.textContent = 'No projects yet. Create one above.';
+    p.className = 'empty-inline';
+    p.textContent = 'No projects yet. Open New project below to brief your first team.';
     container.append(p);
     return;
   }
@@ -920,7 +1224,8 @@ async function selectProject(projectId: string): Promise<void> {
   if (!bridge) return;
   currentProject = await bridge.getProject(projectId);
   if (!currentProject) return;
-  $('run-project-name').textContent = `${currentProject.name} (${currentProject.provider} · ${currentProject.model})`;
+  $('run-project-name').textContent = currentProject.name;
+  ($('new-project-details') as HTMLDetailsElement).open = false;
   const runs = await bridge.listRuns(projectId);
   currentRun = runs[0] ?? null;
   renderRunDetail();
@@ -948,6 +1253,12 @@ async function startRun(): Promise<void> {
       outputUsdPerMillion: Number(($('rate-output') as HTMLInputElement).value),
     },
   };
+  if (currentProject.provider !== 'ollama' && (req.priceRates.inputUsdPerMillion <= 0 || req.priceRates.outputUsdPerMillion <= 0)) {
+    setStatus(status, 'Enter positive provider pricing before starting a cloud run so the USD limit can be enforced.', 'error');
+    document.querySelector<HTMLDetailsElement>('.pricing-details')!.open = true;
+    ($('rate-input') as HTMLInputElement).focus();
+    return;
+  }
   const res = await bridge.startRun(req);
   if (!res.ok) {
     setStatus(status, res.error ?? 'Failed to start run.', 'error');
@@ -977,7 +1288,15 @@ function renderRunDetail(): void {
   container.innerHTML = '';
   $('artifact-view').innerHTML = '';
   runControlsSetEnabled(currentRun);
-  if (!currentProject) return;
+  $('run-state-pill').textContent = currentRun?.status ?? (currentProject ? 'Ready to run' : 'No run selected');
+  $('run-state-pill').className = `pill ${currentRun?.status === 'completed' ? 'ok' : currentRun?.status === 'failed' ? 'error' : 'neutral'}`;
+  if (!currentProject) {
+    const note = document.createElement('p');
+    note.className = 'empty-inline';
+    note.textContent = 'Open a project to configure a run and review its artifacts.';
+    container.append(note);
+    return;
+  }
 
   const table = document.createElement('table');
   const thead = document.createElement('thead');
@@ -1065,39 +1384,1066 @@ async function refreshProjectsPanel(): Promise<void> {
   else renderRunDetail();
 }
 
-// ---------------------------------------------------------------- boot
-
-function boot(): void {
-  if (!bridge) {
-    document.body.innerHTML =
-      '<main class="view"><h1>Desktop bridge unavailable</h1><p>This page must run inside the Research Director Desktop shell.</p></main>';
-    return;
+// ---------------------------------------------------------------- company workspace
+let companyState: CompanySnapshot | null = null;
+let workspaceProjects: Project[] = [];
+let workspaceRuns: ProjectRun[] = [];
+let indexVisible = 100;
+let workspaceRefresh: Promise<void> | null = null;
+let toastTimer: ReturnType<typeof setTimeout> | null = null;
+function toast(message: string): void {
+  const el = $('global-status'); el.textContent = message; el.classList.remove('hidden');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.add('hidden'), 6500);
+}
+async function safeTask(task: () => Promise<unknown>): Promise<void> {
+  try { await task(); } catch (error) { toast(error instanceof Error ? error.message : 'The operation could not be completed.'); }
+}
+function number(value: number): string { return new Intl.NumberFormat(undefined, { maximumFractionDigits: 0 }).format(value); }
+function money(value: number): string { return new Intl.NumberFormat(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: value > 0 && value < .01 ? 4 : 2 }).format(value); }
+function dateLabel(value: string | null, includeTime = false): string {
+  if (!value) return 'Not checked'; const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return 'Unknown date';
+  return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', ...(includeTime ? { hour: 'numeric', minute: '2-digit' } as const : {}) }).format(d);
+}
+function textElement<K extends keyof HTMLElementTagNameMap>(tag: K, text: string, className?: string): HTMLElementTagNameMap[K] {
+  const element = document.createElement(tag); element.textContent = text; if (className) element.className = className; return element;
+}
+function noData(container: HTMLElement, message: string): void { container.replaceChildren(textElement('p', message, 'empty-inline')); }
+function nativeUnavailable(): void { toast('Open the installed desktop app to use this action.'); }
+function refreshWorkspace(): Promise<void> {
+  if (workspaceRefresh) return workspaceRefresh;
+  workspaceRefresh = (async () => {
+    if (!bridge) { renderOverview(); renderUsage(); return; }
+    const result = await Promise.allSettled([bridge.companySnapshot ? bridge.companySnapshot() : Promise.resolve(null), bridge.listProjects(), bridge.listRuns()]);
+    const company = result[0]; if (company?.status === 'fulfilled' && company.value) companyState = company.value;
+    if (company?.status === 'rejected') setStatus($('company-status'), 'The company workspace could not be loaded. Refresh to try again.', 'error');
+    const projects = result[1]; if (projects?.status === 'fulfilled') workspaceProjects = projects.value;
+    const runs = result[2]; if (runs?.status === 'fulfilled') workspaceRuns = runs.value;
+    renderCompany(); renderOverview(); renderTeam(); renderRoadmap(); renderUsage(); if (activeView === 'library') renderIndex();
+  })().finally(() => { workspaceRefresh = null; });
+  return workspaceRefresh;
+}
+function renderCompany(): void {
+  const company = companyState?.company; const ready = companyState?.available === true;
+  $('core-label').textContent = workspaceReadOnly() ? 'Starter office preview' : bridge?.transport === 'personal-browser' ? 'Private browser workspace' : ready ? 'Native workspace ready' : bridge ? 'Native core unavailable' : 'Desktop preview';
+  $('core-note').textContent = workspaceReadOnly() ? 'Example state · read only' : bridge?.transport === 'personal-browser' ? 'Connected to your desktop app' : ready ? 'Rust core · local persistence' : bridge ? 'Company actions unavailable' : 'Open the installed desktop app';
+  if (companyState?.error) setStatus($('company-status'), companyState.error, 'error');
+  const label = company?.githubStatus === 'verified' ? 'GitHub verified' : company?.githubStatus === 'error' ? 'Repository check failed' : 'Repository not checked';
+  for (const id of ['company-connection', 'settings-repo-status']) {
+    $(id).textContent = label; $(id).className = `pill ${company?.githubStatus === 'verified' ? 'ok' : company?.githubStatus === 'error' ? 'error' : 'neutral'}`;
   }
-  initLauncher();
-  initVenvForm();
-  initProjectForm();
-  $('refresh-sysinfo').addEventListener('click', () => void bridge.getSystemInfo().then(renderSystemInfo));
-  $('refresh-catalog').addEventListener('click', () => void refreshCatalog());
-  $('refresh-jobs').addEventListener('click', () => void refreshJobs());
-  $('back-to-launcher').addEventListener('click', () => void bridge.backToLauncher());
-  $('ollama-detect').addEventListener('click', () => void detectOllamaUi());
-  $('projects-refresh').addEventListener('click', () => void refreshProjectsPanel());
-  $('run-start').addEventListener('click', () => void startRun());
-  $('run-pause').addEventListener('click', () => void (currentRun && bridge.pauseRun(currentRun.id)));
-  $('run-resume').addEventListener('click', () => void (currentRun && bridge.resumeRun(currentRun.id)));
-  $('run-cancel').addEventListener('click', () => void (currentRun && bridge.cancelRun(currentRun.id)));
-  bridge.onModeChanged((mode, url) => setMode(mode, url));
-  bridge.onJobEvent(() => {
-    if (!$('system-view').classList.contains('hidden')) void refreshJobs();
-  });
-  bridge.onProjectEvent((run) => {
-    if (currentProject && run.projectId === currentProject.id) {
-      currentRun = run;
-      if (!$('projects-view').classList.contains('hidden')) renderRunDetail();
+  if (!company) return;
+  $('sidebar-company').textContent = officeCompany()?.name || company.name; $('sidebar-company').title = officeCompany()?.name || company.name;
+  $('overview-heading').textContent = company.name;
+  $('company-description').textContent = company.description || 'Your repository, specialist team, and next release in one place.';
+  $('repo-display-name').textContent = company.repo; $('repo-display-owner').textContent = company.owner;
+  $('repo-branch').textContent = company.defaultBranch || 'Not checked';
+  $('repo-commit').textContent = company.headSha ? company.headSha.slice(0, 8) : 'Not checked';
+  $('repo-checked').textContent = dateLabel(company.lastCheckedAt);
+  const input = $('company-repo-url') as HTMLInputElement; if (document.activeElement !== input) input.value = company.repoUrl;
+  if (company.githubError) setStatus($('company-status'), company.githubError, 'error');
+}
+function currentTotals(): CompanyUsage {
+  if (workspaceRuns.length > 0 || !companyState) {
+    return workspaceRuns.reduce<CompanyUsage>((sum, run) => ({ inputTokens: sum.inputTokens + run.usage.inputTokens, outputTokens: sum.outputTokens + run.usage.outputTokens, costUsd: sum.costUsd + run.usage.costUsd, runCount: sum.runCount + 1, completedRuns: sum.completedRuns + (run.status === 'completed' ? 1 : 0), failedRuns: sum.failedRuns + (run.status === 'failed' ? 1 : 0), source: 'local-project-runs' }), { inputTokens: 0, outputTokens: 0, costUsd: 0, runCount: 0, completedRuns: 0, failedRuns: 0, source: 'local-project-runs' });
+  }
+  return companyState.usage;
+}
+function renderOverview(): void {
+  const usage = currentTotals();
+  $('metric-projects').textContent = number(workspaceProjects.length); $('nav-project-count').textContent = number(workspaceProjects.length);
+  $('metric-team').textContent = companyState ? number(companyState.employees.length) : '—'; $('nav-team-count').textContent = companyState ? number(companyState.employees.length) : '—';
+  $('metric-completed').textContent = number(usage.completedRuns); $('metric-spend').textContent = money(usage.costUsd);
+  const active = workspaceRuns.filter((r) => r.status === 'running' || r.status === 'paused').length;
+  $('metric-projects-note').textContent = active ? `${active} active run${active === 1 ? '' : 's'}` : workspaceProjects.length ? 'All projects on this device' : 'Ready for your first brief';
+  $('metric-completed-note').textContent = usage.runCount ? `${usage.runCount} total run${usage.runCount === 1 ? '' : 's'}` : 'Local project history';
+  if (companyState?.company?.githubStatus === 'verified') {
+    const next = companyState.tasks.find((t) => t.status === 'in-progress') || companyState.tasks.find((t) => t.status === 'todo');
+    $('focus-title').textContent = next?.title || 'Your next chapter starts here.';
+    $('focus-description').textContent = next ? `Assigned to ${employeeName(next.ownerId)}. Review the milestone, define the evidence, and keep the release moving.` : 'Create a project and give your specialist team a clear outcome to work toward.';
+    $('focus-action').textContent = next ? 'Open roadmap ↗' : 'Create a project ↗';
+  }
+  const container = $('overview-projects'); container.replaceChildren();
+  if (!workspaceProjects.length) {
+    const empty = textElement('div', '', 'empty-state'); empty.append(textElement('span', '+', 'empty-symbol'), textElement('h3', 'Start with a clear goal.'), textElement('p', 'Create a project, choose a model, and give your specialists a brief.'));
+    const button = textElement('button', 'Create first project', 'secondary'); button.type = 'button'; button.onclick = openNewProject; empty.append(button); container.append(empty);
+  } else for (const project of [...workspaceProjects].sort((a,b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3)) {
+    const row = textElement('div', '', 'project-preview-row'); const info = textElement('div', '', 'project-preview-copy');
+    info.append(textElement('strong', project.name), textElement('small', `${project.provider} · ${project.nodes.length} specialists · ${dateLabel(project.updatedAt)}`));
+    const button = textElement('button', '↗', 'text-button'); button.type = 'button'; button.setAttribute('aria-label', `Open ${project.name}`); button.onclick = () => { navigate('projects'); void safeTask(() => selectProject(project.id)); };
+    row.append(textElement('span', '⌑', 'project-preview-icon'), info, button); container.append(row);
+  }
+  const roadmap = $('overview-roadmap'); roadmap.replaceChildren(); const tasks = companyState?.tasks.filter((t) => t.status !== 'done').slice(0, 3) || [];
+  if (!tasks.length) noData(roadmap, companyState ? 'No open work. Your completed milestones are in Roadmap.' : 'Your company’s milestones will appear here.');
+  for (const task of tasks) {
+    const row = textElement('div', '', 'roadmap-item'); const copy = textElement('div', '');
+    copy.append(textElement('h3', task.title), textElement('small', `${task.priority} · ${employeeName(task.ownerId)} · ${task.status.replace('-', ' ')}`));
+    row.append(textElement('span', '', `task-indicator ${task.status}`), copy); roadmap.append(row);
+  }
+  renderActivity($('overview-activity'), 3);
+}
+function employeeName(id: string): string { return companyState?.employees.find((employee) => employee.id === id)?.name || id; }
+function sourceFileUrl(filePath: string): string | null {
+  const company = companyState?.company; if (!company) return null;
+  try {
+    const repo = new URL(company.repoUrl); if (repo.protocol !== 'https:' || repo.hostname !== 'github.com') return null;
+    const parts = filePath.split('/'); if (parts.some((part) => part === '..' || part === '.') || filePath.startsWith('/')) return null;
+    const base = repo.pathname.replace(/\/$/, '').replace(/\.git$/, '');
+    return `https://github.com${base}/blob/${encodeURIComponent(company.defaultBranch || 'main')}/${parts.map(encodeURIComponent).join('/')}`;
+  } catch { return null; }
+}
+function openExternal(url: string | null): void {
+  if (!url) { toast('A repository must be registered first.'); return; } if (!bridge) { nativeUnavailable(); return; }
+  void safeTask(async () => { const result = await bridge.openExternal(url); if (!result.ok) throw new Error(result.error || 'This link could not be opened.'); });
+}
+function renderTeam(): void {
+  const grid = $('team-grid'); grid.replaceChildren(); const employees = companyState?.employees || [];
+  $('team-summary').textContent = `${employees.length} assigned role${employees.length === 1 ? '' : 's'}`;
+  if (!employees.length) { noData(grid, bridge ? 'Team data is unavailable. Check the native workspace in Settings.' : 'Open the desktop app to load the company’s skill-linked team.'); return; }
+  for (const employee of employees) {
+    const card = textElement('article', '', 'employee-card'); const top = textElement('div', '', 'employee-topline');
+    const initials = employee.name.split(/\s+/).map((part) => part[0]).slice(0, 2).join('');
+    top.append(textElement('span', initials, 'employee-avatar'), textElement('span', employee.status === 'ready' ? 'Assigned' : employee.status, `badge ${employee.status === 'blocked' ? 'unknown' : 'ok'}`));
+    card.append(top, textElement('h2', employee.name), textElement('p', employee.role, 'role-name'), textElement('div', employee.skillPath, 'skill-path'), textElement('p', employee.lastResult || 'Ready for a task with a clear outcome and acceptance criteria.', 'employee-result'));
+    const link = textElement('button', 'View skill source ↗', 'text-button'); link.type = 'button'; link.onclick = () => openExternal(sourceFileUrl(employee.skillPath)); card.append(link); grid.append(card);
+  }
+}
+function renderRoadmap(): void {
+  const board = $('roadmap-board'); board.replaceChildren(); const tasks = companyState?.tasks || []; const done = tasks.filter((t) => t.status === 'done').length; const progress = $('roadmap-progress'); progress.replaceChildren();
+  if (tasks.length) {
+    const label = textElement('div', '', 'progress-caption'); label.append(textElement('span', `${done} of ${tasks.length} tasks complete`), textElement('span', `${Math.round(done / tasks.length * 100)}%`));
+    const bar = document.createElement('progress'); bar.max = tasks.length; bar.value = done; bar.setAttribute('aria-label', `${done} of ${tasks.length} roadmap tasks complete`); progress.append(label, bar);
+  }
+  if (!companyState || !companyState.milestones.length) { noData(board, 'The company roadmap will appear when the native workspace loads.'); return; }
+  const filter = ($('roadmap-filter') as HTMLSelectElement).value; let visibleTasks = 0;
+  for (const milestone of companyState.milestones) {
+    const filtered = tasks.filter((task) => task.milestone === milestone.id && (filter === 'all' || task.status === filter));
+    if (!filtered.length && filter !== 'all') continue; visibleTasks += filtered.length;
+    const column = textElement('section', '', 'milestone-column'); const header = textElement('div', '', 'milestone-heading');
+    header.append(textElement('span', `${filtered.length} TASK${filtered.length === 1 ? '' : 'S'}`, 'eyebrow'), textElement('h2', milestone.title), textElement('p', milestone.description)); column.append(header);
+    for (const task of filtered) {
+      const card = textElement('article', '', 'task-card'); const top = textElement('div', '', 'task-topline'); top.append(textElement('span', task.priority, `priority-${task.priority.toLowerCase()}`), textElement('span', task.id));
+      const select = document.createElement('select'); select.setAttribute('aria-label', `Status for ${task.title}`);
+      for (const [value,label] of [['todo','To do'], ['in-progress','In progress'], ['blocked','Blocked'], ['done','Done']]) { const option = textElement('option', label || ''); option.value = value || ''; select.append(option); }
+      select.value = task.status; select.disabled = !companyState.available || !bridge?.updateCompanyTask;
+      const details = document.createElement('details'); details.className = 'task-proof';
+      const evidence = document.createElement('textarea'); evidence.rows = 2; evidence.value = task.evidence || ''; evidence.placeholder = 'Commit, test result, or artifact that demonstrates completion'; evidence.setAttribute('aria-label', `Evidence for ${task.title}`);
+      details.append(textElement('summary', task.evidence ? 'View completion evidence' : 'Add evidence'), evidence);
+      select.onchange = () => {
+        if (!bridge?.updateCompanyTask) return; const status = select.value as CompanyTaskStatus;
+        if (status === 'done' && !evidence.value.trim()) { select.value = task.status; details.open = true; evidence.focus(); setStatus($('roadmap-status'), 'Add completion evidence, then mark the task Done.', 'error'); return; }
+        select.disabled = true;
+        void safeTask(async () => { try {
+          companyState = await bridge.updateCompanyTask!({ id: task.id, status, evidence: evidence.value.trim() || undefined }); if (companyState.error) throw new Error(companyState.error);
+          renderRoadmap(); renderOverview(); renderActivity($('company-activity')); setStatus($('roadmap-status'), 'Task updated.', 'ok');
+        } finally { select.disabled = false; } });
+      };
+      card.append(top, textElement('h3', task.title), textElement('div', employeeName(task.ownerId), 'task-owner'), select, details); column.append(card);
     }
+    if (!filtered.length) column.append(textElement('p', 'No tasks in this milestone.', 'empty-inline')); board.append(column);
+  }
+  if (!visibleTasks && filter !== 'all') noData(board, 'No tasks match this status. Try All work.');
+}
+function renderActivity(container: HTMLElement, limit = 30): void {
+  container.replaceChildren(); const activity = [...(companyState?.activity || [])].sort((a,b) => b.at.localeCompare(a.at)).slice(0, limit);
+  if (!activity.length) { noData(container, 'Repository checks and company changes will appear here.'); return; }
+  for (const event of activity) {
+    const row = textElement('div', '', 'activity-row'); const copy = textElement('div', '', 'activity-copy'); copy.append(textElement('p', event.message), textElement('small', employeeName(event.employeeId)));
+    const time = textElement('time', dateLabel(event.at)); time.dateTime = event.at; time.title = dateLabel(event.at, true); row.append(textElement('span', event.kind.includes('error') ? '!' : '✓', 'activity-dot'), copy, time); container.append(row);
+  }
+}
+function svgElement<K extends keyof SVGElementTagNameMap>(tag: K, attributes: Record<string, string | number>): SVGElementTagNameMap[K] {
+  const element = document.createElementNS('http://www.w3.org/2000/svg', tag); for (const [key,value] of Object.entries(attributes)) element.setAttribute(key, String(value)); return element;
+}
+function renderUsage(): void {
+  const usage = currentTotals(); $('usage-input').textContent = number(usage.inputTokens); $('usage-output').textContent = number(usage.outputTokens); $('usage-runs').textContent = number(usage.runCount); $('usage-cost').textContent = money(usage.costUsd);
+  $('usage-outcomes').textContent = usage.runCount ? `${usage.completedRuns} completed · ${usage.failedRuns} failed` : 'No completed runs yet';
+  const tbody = $('usage-table').querySelector('tbody')!; tbody.replaceChildren();
+  for (const run of [...workspaceRuns].sort((a,b) => b.createdAt.localeCompare(a.createdAt)).slice(0, 100)) {
+    const tr = document.createElement('tr'); const project = workspaceProjects.find((p) => p.id === run.projectId);
+    const name = textElement('button', project?.name || run.projectId.slice(0, 12), 'text-button'); name.type = 'button'; name.onclick = () => { navigate('projects'); void safeTask(() => selectProject(run.projectId)); };
+    const cell = document.createElement('td'); cell.append(name); tr.append(cell, textElement('td', dateLabel(run.createdAt, true)), textElement('td', run.status), textElement('td', number(run.usage.inputTokens + run.usage.outputTokens)), textElement('td', money(run.usage.costUsd))); tbody.append(tr);
+  }
+  if (!workspaceRuns.length) { const tr = document.createElement('tr'); const td = textElement('td', 'Your first project run will appear here.', 'empty-inline'); td.colSpan = 5; tr.append(td); tbody.append(tr); }
+  renderSpendChart(); renderActivity($('company-activity'));
+}
+function renderSpendChart(): void {
+  const container = $('usage-chart'); container.replaceChildren(); const now = new Date(); now.setHours(0,0,0,0);
+  const days = Array.from({ length: 14 }, (_,i) => { const d = new Date(now); d.setDate(d.getDate() - 13 + i); return { date: d, spend: 0 }; });
+  for (const run of workspaceRuns) { const date = new Date(run.createdAt); const day = days.find((d) => d.date.toDateString() === date.toDateString()); if (day) day.spend += run.usage.costUsd; }
+  const maximum = Math.max(.01, ...days.map((d) => d.spend));
+  const svg = svgElement('svg', { viewBox: '0 0 840 220', role: 'img', 'aria-label': 'Daily recorded spending in US dollars, last fourteen days' });
+  for (let i = 0; i < 4; i++) {
+    const y = 20 + i * 52; svg.append(svgElement('line', { x1: 48, x2: 830, y1: y, y2: y, class: 'chart-grid' }));
+    const label = svgElement('text', { x: 2, y: y + 3, class: 'chart-label' }); label.textContent = money(maximum * (1 - i / 3)); svg.append(label);
+  }
+  days.forEach((day, i) => {
+    const x = 57 + i * 55; const h = day.spend / maximum * 156;
+    if (h > 0) { const bar = svgElement('rect', { x, y: 176 - h, width: 27, height: Math.max(h, 1), rx: 3, class: 'chart-bar' }); const title = svgElement('title', {}); title.textContent = `${dateLabel(day.date.toISOString())}: ${money(day.spend)}`; bar.append(title); svg.append(bar); }
+    if (i % 2 === 0 || i === 13) { const label = svgElement('text', { x: x + 13, y: 205, 'text-anchor': 'middle', class: 'chart-label' }); label.textContent = dateLabel(day.date.toISOString()); svg.append(label); }
+  }); container.append(svg);
+  if (!days.some((d) => d.spend > 0)) { const empty = textElement('div', '', 'chart-empty'); empty.append(textElement('strong', workspaceRuns.length ? 'No priced usage in this period.' : 'Your first run is the starting point.'), textElement('span', workspaceRuns.length ? 'Recorded costs depend on the price rates you enter.' : 'Spend will appear here when you run a project.')); container.append(empty); }
+}
+function renderIndex(): void {
+  const index = companyState?.index; const list = $('index-files'); list.replaceChildren(); const more = $('index-show-more'); more.classList.add('hidden');
+  if (!index) { noData(list, companyState?.available ? 'No index yet. Refresh index to scan the linked repository checkout.' : 'Repository indexing requires the desktop native core.'); return; }
+  $('index-summary').textContent = `${number(index.fileCount)} files · ${formatBytes(index.totalBytes)} · ${index.workers} workers · ${Math.round(index.elapsedMs)} ms${index.truncated ? ' · partial inventory' : ''}`;
+  const query = ($('index-search') as HTMLInputElement).value.trim().toLowerCase(); const files = index.files.filter((file) => !query || file.path.toLowerCase().includes(query));
+  for (const file of files.slice(0,indexVisible)) {
+    const row = textElement('div', '', 'file-row'); const path = textElement('button', file.path, 'text-button file-path'); path.type = 'button'; path.onclick = () => openExternal(sourceFileUrl(file.path));
+    row.append(path, textElement('span', file.kind), textElement('span', formatBytes(file.bytes))); list.append(row);
+  }
+  if (!files.length) noData(list, 'No files match this search.');
+  if (files.length > indexVisible) { more.classList.remove('hidden'); more.textContent = `Show more · ${number(files.length - indexVisible)} remaining`; }
+}
+function openNewProject(): void {
+  navigate('projects'); ($('new-project-details') as HTMLDetailsElement).open = true; $('new-project-details').scrollIntoView({ behavior: 'auto', block: 'start' }); ($('proj-name') as HTMLInputElement).focus();
+}
+function initWorkspace(): void {
+  document.querySelectorAll<HTMLButtonElement>('[data-view]').forEach((button) => {
+    const view = button.dataset.view as ViewName; if (!(view in VIEW_IDS)) return;
+    if (button.classList.contains('nav-item')) button.setAttribute('aria-label', VIEW_LABELS[view]); button.addEventListener('click', () => navigate(view));
+  });
+  $('header-new-project').addEventListener('click', openNewProject); document.querySelectorAll<HTMLButtonElement>('[data-new-project]').forEach((button) => button.addEventListener('click', openNewProject));
+  $('workspace-refresh').addEventListener('click', () => void safeTask(refreshWorkspace)); $('usage-refresh').addEventListener('click', () => void safeTask(refreshWorkspace));
+  $('focus-action').addEventListener('click', () => {
+    if (companyState?.company?.githubStatus !== 'verified') { navigate('settings'); ($('company-repo-url') as HTMLInputElement).focus(); }
+    else if (companyState.tasks.some((t) => t.status === 'todo' || t.status === 'in-progress')) navigate('roadmap'); else openNewProject();
+  });
+  $('open-repository').addEventListener('click', () => openExternal(companyState?.company?.repoUrl || ($('company-repo-url') as HTMLInputElement).value));
+  $('roadmap-filter').addEventListener('change', renderRoadmap); $('index-search').addEventListener('input', () => { indexVisible = 100; renderIndex(); }); $('index-show-more').addEventListener('click', () => { indexVisible += 100; renderIndex(); });
+  $('company-form').addEventListener('submit', (event) => {
+    event.preventDefault(); if (!bridge?.registerCompany) { nativeUnavailable(); return; }
+    const button = $('company-register') as HTMLButtonElement; button.disabled = true; setStatus($('company-status'), 'GitHub employee is checking the repository…');
+    void safeTask(async () => { try {
+      companyState = await bridge.registerCompany!({ repoUrl: ($('company-repo-url') as HTMLInputElement).value.trim() }); renderCompany(); renderOverview(); renderTeam(); renderRoadmap(); renderActivity($('company-activity'));
+      if (companyState.error || companyState.company?.githubStatus !== 'verified') setStatus($('company-status'), companyState.error || companyState.company?.githubError || 'Repository verification did not complete.', 'error');
+      else { setStatus($('company-status'), 'Repository verified. Your company workspace is ready.', 'ok'); toast('Company registered and verified by the GitHub employee.'); }
+    } finally { button.disabled = false; } });
+  });
+  $('company-refresh').addEventListener('click', () => {
+    if (!bridge?.refreshCompany) { nativeUnavailable(); return; } const button = $('company-refresh') as HTMLButtonElement; button.disabled = true; setStatus($('company-status'), 'Checking the latest repository metadata…');
+    void safeTask(async () => { try { companyState = await bridge.refreshCompany!(); renderCompany(); renderOverview(); renderActivity($('company-activity')); setStatus($('company-status'), companyState.error || companyState.company?.githubError || 'Repository metadata refreshed.', companyState.error || companyState.company?.githubError ? 'error' : 'ok'); } finally { button.disabled = false; } });
+  });
+  $('index-repository').addEventListener('click', () => {
+    if (!bridge?.indexCompanyRepository) { nativeUnavailable(); return; } const button = $('index-repository') as HTMLButtonElement; button.disabled = true; setStatus($('index-status'), 'Indexing repository metadata…');
+    void safeTask(async () => { try { companyState = await bridge.indexCompanyRepository!(); indexVisible = 100; renderIndex(); renderOverview(); setStatus($('index-status'), companyState.error || (companyState.index ? 'Repository inventory refreshed.' : 'No linked checkout is available for indexing.'), companyState.error || !companyState.index ? 'error' : 'ok'); } finally { button.disabled = false; } });
+  });
+  document.addEventListener('keydown', (event) => {
+    const target = event.target as HTMLElement; if (contentMode || event.ctrlKey || event.metaKey || event.altKey || target.isContentEditable || /INPUT|TEXTAREA|SELECT/.test(target.tagName)) return;
+    const index = Number(event.key) - 1; if (index >= 0 && index < 9 && /^\d$/.test(event.key)) { event.preventDefault(); navigate((Object.keys(VIEW_IDS) as ViewName[])[index]!); }
+  });
+  window.addEventListener('hashchange', () => { const view = location.hash.replace('#', '') as ViewName; if (view in VIEW_IDS) navigate(view, false); });
+}
+// ---------------------------------------------------------------- permanent office control plane
+let officeState: OfficeSnapshot | null = null;
+let officeWorker: OfficeWorkerStatus | null = null;
+let selectedOfficeId = '';
+let selectedDepartmentId = '';
+let officeTab = 'overview';
+let officeRefreshing = false;
+let officePoll: ReturnType<typeof setInterval> | null = null;
+function officeCompany(): OfficeCompany | undefined { return officeState?.companies.find((c) => c.id === officeState?.activeCompanyId) || officeState?.companies[0]; }
+function officeLocation(): OfficeLocation | undefined { return officeState?.offices.find((o) => o.id === selectedOfficeId); }
+function scopedEmployees(): OfficeEmployee[] {
+  const company = officeCompany();
+  return (officeState?.employees || []).filter((e) => e.companyId === null || (e.companyId === company?.id && (!selectedOfficeId || !e.officeId || e.officeId === selectedOfficeId) && (!selectedDepartmentId || !e.departmentId || e.departmentId === selectedDepartmentId)));
+}
+function scopedJobs(): OfficeJob[] { return (officeState?.jobs || []).filter((j) => j.companyId === officeCompany()?.id && (!selectedOfficeId || j.officeId === selectedOfficeId) && (!selectedDepartmentId || j.departmentId === selectedDepartmentId)); }
+function requireOfficeScope(): { companyId: string; officeId: string; departmentId?: string } {
+  const company = officeCompany(); if (!company) throw new Error('Create or select a company first.');
+  if (!selectedOfficeId) throw new Error('Create or select an office first.');
+  return { companyId: company.id, officeId: selectedOfficeId, ...(selectedDepartmentId ? { departmentId: selectedDepartmentId } : {}) };
+}
+async function refreshOffice(): Promise<void> {
+  if (officeRefreshing) return;
+  if (!bridge?.officeSnapshot) { $('office-native-status').textContent = 'Desktop required'; noData($('office-employees'), 'Open the desktop app to load your permanent employees.'); return; }
+  officeRefreshing = true;
+  try {
+    const [state, worker] = await Promise.allSettled([bridge.officeSnapshot(), bridge.officeWorkerStatus ? bridge.officeWorkerStatus() : Promise.resolve(null)]);
+    if (state.status === 'fulfilled' && state.value.ok && state.value.snapshot) {
+      officeState = state.value.snapshot; $('office-native-status').textContent = workspaceReadOnly() ? 'Example workspace · read only' : 'Local state loaded'; $('office-native-status').className = 'pill ok';
+    } else {
+      const error = state.status === 'fulfilled' ? state.value.error : String(state.reason);
+      setStatus($('office-status'), error || 'Office state could not be loaded.', 'error'); $('office-native-status').textContent = 'Workspace unavailable';
+    }
+    if (worker.status === 'fulfilled') officeWorker = worker.value;
+    renderOffice();
+  } finally { officeRefreshing = false; }
+}
+async function performOffice(command: OfficeCommand, success = 'Workspace updated.'): Promise<void> {
+  if (!bridge?.officeCommand) { nativeUnavailable(); return; }
+  const result = await bridge.officeCommand(command);
+  if (!result.ok || !result.snapshot) throw new Error(result.error || 'The workspace change could not be saved.');
+  officeState = result.snapshot; renderOffice(); setStatus($('office-status'), success, 'ok');
+}
+function populateSelect(select: HTMLSelectElement, rows: Array<{ id:string; name:string }>, value: string, empty?: string): void {
+  select.replaceChildren();
+  if (empty) { const option = textElement('option', empty); option.value = ''; select.append(option); }
+  for (const row of rows) { const option = textElement('option', row.name); option.value = row.id; select.append(option); }
+  select.value = value;
+  if (!select.value && !empty && rows[0]) select.value = rows[0].id;
+}
+function renderOfficeScope(): void {
+  if (!officeState) return;
+  const company = officeCompany(); const query = ($('office-company-search') as HTMLInputElement).value.trim().toLowerCase();
+  const companies = officeState.companies.filter((c) => c.id === company?.id || !query || `${c.name} ${c.repoUrl || ''}`.toLowerCase().includes(query)).slice(0,2000);
+  populateSelect($('office-company-select') as HTMLSelectElement, companies, company?.id || '');
+  const offices = officeState.offices.filter((o) => o.companyId === company?.id);
+  if (!offices.some((o) => o.id === selectedOfficeId)) selectedOfficeId = offices[0]?.id || '';
+  populateSelect($('office-office-select') as HTMLSelectElement, offices, selectedOfficeId, offices.length ? undefined : 'Create an office');
+  const departments = officeState.departments.filter((d) => d.officeId === selectedOfficeId);
+  if (!departments.some((d) => d.id === selectedDepartmentId)) selectedDepartmentId = '';
+  populateSelect($('office-department-select') as HTMLSelectElement, departments, selectedDepartmentId, 'All departments');
+  if(company){$('sidebar-company').textContent=company.name;$('sidebar-company').title=company.name;}
+  const scope = officeLocation();
+  $('office-scope-summary').textContent = company ? `${company.name}${scope ? ` / ${scope.name}` : ' · No office selected'}${selectedDepartmentId ? ` / ${departments.find((d) => d.id === selectedDepartmentId)?.name || ''}` : ''}` : 'Create a company to organize your employees.';
+  $('office-scope-state').textContent = company?.status || 'No company';
+  $('office-scope-state').className = `pill ${company?.status === 'active' ? 'ok' : 'neutral'}`;
+  ($('office-pause-company') as HTMLButtonElement).disabled = !company;
+  $('office-pause-company').textContent = company?.status === 'paused' ? 'Resume company' : 'Pause company';
+  ($('office-pause-office') as HTMLButtonElement).disabled = !scope;
+  $('office-pause-office').textContent = scope?.status === 'paused' ? 'Resume office' : 'Pause office';
+  const current = ($('queue-employee') as HTMLSelectElement).value;
+  const contracts=scopedServiceContracts();const contractSelect=$('queue-service-contract') as HTMLSelectElement;populateSelect(contractSelect,contracts.map(contract=>({id:contract.id,name:portfolioState()?.services.find(service=>service.id===contract.serviceId)?.name||'Shared service'})),contractSelect.value,'Company employees');const selectedContract=contracts.find(contract=>contract.id===contractSelect.value);
+  const employees = (selectedContract?(officeState?.employees||[]).filter(employee=>selectedContract.employeeIds.includes(employee.id)):scopedEmployees()).filter((e) => e.status === 'active');
+  populateSelect($('queue-employee') as HTMLSelectElement, employees, current || employees.find((e) => e.id === 'donna')?.id || employees[0]?.id || '');
+}
+function renderWorker(): void {
+  const status = officeWorker;
+  $('worker-status').textContent = !status ? 'Unavailable' : status.running ? 'Processing a job' : status.enabled ? 'Dispatcher enabled' : 'Dispatcher off';
+  $('worker-status').className = `pill ${status?.enabled || status?.running ? 'ok' : 'neutral'}`;
+  $('worker-detail').textContent = status?.activeJobId ? `Active job: ${status.activeJobId}. Stopping dispatch prevents the next job from starting.` : 'Dispatch is opt-in. Due schedules are processed while this desktop app is open.';
+  ($('worker-enable') as HTMLButtonElement).disabled = !bridge?.setOfficeWorker || status?.enabled === true;
+  ($('worker-disable') as HTMLButtonElement).disabled = !bridge?.setOfficeWorker || !status?.enabled;
+  ($('worker-run-once') as HTMLButtonElement).disabled = !bridge?.runOfficeQueue || status?.running === true;
+  if(status?.concurrency)$('worker-detail').textContent=`${status.concurrency} worker slots · ${status.activeJobIds?.length||(status.running?1:0)} active. Global reservations and company scopes bound dispatch. Schedules need the app to stay open.`;
+  if (status?.lastError) setStatus($('worker-result'), status.lastError, 'error');
+}
+function renderOffice(): void {
+  renderOfficeScope(); renderWorker(); renderUnifiedWorkspace(); if (!officeState) return;
+  const employees = scopedEmployees(); const jobs = scopedJobs();
+  $('office-active-employees').textContent = number(employees.filter((e) => e.status === 'active').length);
+  $('office-queued-jobs').textContent = number(jobs.filter((j) => j.status === 'queued' || j.status === 'waiting-budget').length);
+  $('office-running-jobs').textContent = number(jobs.filter((j) => j.status === 'running').length);
+  $('office-completed-jobs').textContent = number(jobs.filter((j) => j.status === 'completed').length);
+  renderOfficeEmployees(); renderOfficeJobs(); renderOfficeSchedules(); renderOfficeMemory(); renderOfficeEvents($('office-recent-events'), 5); renderOfficeEvents($('office-ledger'), 150);
+  $('office-event-count').textContent = `${number(officeState.events.length)} events`;
+  if(workspaceReadOnly()) document.querySelectorAll<HTMLButtonElement>('#office-view form button[type="submit"], #worker-enable, #worker-disable, #worker-run-once, #office-clear-cache, #office-pause-company, #office-pause-office').forEach(button=>button.disabled=true);
+}
+function officeActionButton(label: string, command: OfficeCommand, className = 'secondary'): HTMLButtonElement {
+  const button = textElement('button', label, className); button.type = 'button';
+  button.disabled=workspaceReadOnly();
+  button.onclick = () => { button.disabled = true; void safeTask(async () => { try { await performOffice(command); } finally { button.disabled = false; } }); }; return button;
+}
+function renderOfficeEmployees(): void {
+  const container = $('office-employees'); container.replaceChildren();
+  for (const employee of scopedEmployees().slice(0,300)) {
+    const card = textElement('article', '', 'employee-card');
+    const head = textElement('div', '', 'employee-topline');
+    head.append(textElement('span', employee.name.split(/\s+/).map((p) => p[0]).slice(0,2).join(''), 'employee-avatar'), textElement('span', employee.id === 'donna' ? 'Permanent' : employee.status, `badge ${employee.status === 'active' ? 'ok' : 'unknown'}`));
+    card.append(head, textElement('h2', employee.name), textElement('p', employee.role, 'role-name'));
+    const scope = employee.companyId === null ? 'Shared across all companies' : employee.departmentId ? 'Department employee' : employee.officeId ? 'Office employee' : 'Company assistant';
+    card.append(textElement('p', `${employee.kind === 'assistant' ? 'Assistant' : 'Specialist'} · ${scope}`, 'employee-scope'));
+    if (employee.skillPaths.length) card.append(textElement('div', employee.skillPaths.join('\n'), 'skill-path'));
+    const actions = textElement('div', '', 'employee-actions');
+    if (employee.id === 'donna') actions.append(textElement('span', 'Donna stays available as the CEO assistant.', 'form-help'));
+    else if (employee.status !== 'fired') {
+      actions.append(officeActionButton(employee.status === 'paused' ? 'Resume' : 'Pause', { action: employee.status === 'paused' ? 'resume_employee' : 'pause_employee', employeeId: employee.id }));
+      const retire = officeActionButton('Fire employee', { action: 'fire_employee', employeeId: employee.id }, 'danger');
+      retire.title = 'End the assignment. Historical work remains in the ledger.'; actions.append(retire);
+    } else actions.append(textElement('span', 'Assignment ended. History is retained.', 'form-help'));
+    card.append(actions); container.append(card);
+  }
+  if (!container.children.length) noData(container, 'No employees in this scope. Hire a specialist below.');
+}
+function renderOfficeJobs(): void {
+  const container = $('office-jobs'); container.replaceChildren(); const filter = ($('office-queue-filter') as HTMLSelectElement).value;
+  const jobs = scopedJobs().filter((j) => filter === 'all' || j.status === filter).sort((a,b) => b.createdAt.localeCompare(a.createdAt)).slice(0,100);
+  for (const job of jobs) {
+    const card = textElement('article', '', 'queue-job'); const top = textElement('div', '', 'section-heading');
+    top.append(textElement('span', officeState?.employees.find((e) => e.id === job.employeeId)?.name || job.employeeId, 'eyebrow'), textElement('span', job.status.replaceAll('-', ' '), `badge ${job.status === 'completed' ? 'ok' : job.status === 'failed' || job.status === 'budget-exhausted' ? 'fail' : 'unknown'}`));
+    const meta = textElement('div', '', 'queue-meta'); meta.append(textElement('span', job.mode === 'provider' ? `${job.provider} · ${job.model}` : 'Manual · no model call'), textElement('span', `${number(job.usage.inputTokens + job.usage.outputTokens)} tokens · ${money(job.usage.costUsd)}${job.costStatus && job.costStatus !== 'none' ? ` (${job.costStatus})` : ''}`), textElement('span', dateLabel(job.createdAt,true)));
+    card.append(top, textElement('h3', job.goal), meta);
+    if (job.error) card.append(textElement('p', job.error, 'status error'));
+    if (job.summary) card.append(textElement('p', job.summary, 'muted'));
+    if (job.artifactUri) card.append(textElement('p', job.artifactUri, 'queue-artifact'));
+    const actions = textElement('div', '', 'queue-actions');
+    if (job.status === 'queued' || job.status === 'running' || job.status === 'waiting-budget') actions.append(officeActionButton('Pause', { action:'pause_job', jobId:job.id }));
+    if (job.status === 'paused') actions.append(officeActionButton('Resume', { action:'resume_job', jobId:job.id }));
+    if (['queued','waiting-budget','running','paused'].includes(job.status)) actions.append(officeActionButton('Cancel', { action:'cancel_job', jobId:job.id }, 'danger'));
+    if(job.mode === 'provider' && !job.authorized && !job.startedAt && ['queued','waiting-budget','needs-review'].includes(job.status)) actions.append(officeActionButton('Approve job',{action:'approve_job',jobId:job.id}));
+    if(job.status === 'waiting-budget') actions.append(textElement('span','Global capacity is committed. This job is retained and will wait for available budget.','form-help'));
+    if (job.mode === 'manual' && job.status === 'queued') actions.append(textElement('span', 'Manual task stays in the queue for human review; provider dispatch skips it.', 'form-help'));
+    if (actions.children.length) card.append(actions); container.append(card);
+  }
+  if (!jobs.length) noData(container, 'No matching jobs. Add a task below to begin.');
+}
+function renderOfficeSchedules(): void {
+  const container = $('office-schedules'); container.replaceChildren();
+  const schedules = officeState?.schedules.filter((s) => s.companyId === officeCompany()?.id) || [];
+  for (const schedule of schedules.slice(0,100)) {
+    const card = textElement('article', '', 'queue-job'); const head = textElement('div', '', 'section-heading');
+    head.append(textElement('h3', schedule.name), textElement('span', schedule.enabled ? 'Scheduled' : 'Paused / finished', `badge ${schedule.enabled ? 'ok' : 'unknown'}`));
+    card.append(head, textElement('p', `${dateLabel(schedule.nextRunAt,true)} · ${schedule.everyMinutes ? `Every ${schedule.everyMinutes} minutes` : 'Once'}`, 'muted'), officeActionButton(schedule.enabled ? 'Pause schedule' : 'Resume schedule', { action: schedule.enabled ? 'pause_schedule' : 'resume_schedule', scheduleId:schedule.id })); container.append(card);
+  }
+  if (!schedules.length) noData(container, 'No schedules for this company.');
+}
+function renderOfficeMemory(): void {
+  if (!officeState) return; const entries = officeState.cache.entries.filter((e) => e.companyId === officeCompany()?.id);
+  $('cache-entries').textContent = number(entries.length); $('cache-size').textContent = formatBytes(entries.reduce((total,e) => total + e.bytes,0)); $('cache-hits').textContent = number(officeState.cache.hits); $('cache-misses').textContent = number(officeState.cache.misses);
+  if (!($('office-cache-form').contains(document.activeElement))) {
+    ($('cache-enabled') as HTMLInputElement).checked = officeState.cache.enabled; ($('cache-max-entries') as HTMLInputElement).value = String(officeState.cache.maxEntries); ($('cache-ttl') as HTMLInputElement).value = String(officeState.cache.ttlMinutes);
+  }
+  const container = $('office-knowledge'); container.replaceChildren();
+  for (const note of officeState.knowledge.filter((k) => k.companyId === officeCompany()?.id).slice(-100).reverse()) {
+    const item = textElement('article', '', 'knowledge-note'); item.append(textElement('h3', note.title), textElement('p', note.summary), textElement('small', dateLabel(note.createdAt,true)));
+    if (note.artifactUri) item.append(textElement('div', note.artifactUri, 'queue-artifact')); container.append(item);
+  }
+  if (!container.children.length) noData(container, 'No reviewed knowledge notes for this company yet.');
+}
+function renderOfficeEvents(container: HTMLElement, limit: number): void {
+  container.replaceChildren(); const query = ($('office-ledger-search') as HTMLInputElement).value.trim().toLowerCase();
+  const rows = [...(officeState?.events || [])].filter((e) => container.id !== 'office-ledger' || !query || `${e.action} ${e.summary} ${e.actor} ${e.entityId}`.toLowerCase().includes(query)).sort((a,b) => b.at.localeCompare(a.at)).slice(0,limit);
+  for (const event of rows) {
+    const row = textElement('div', '', 'activity-row'); const copy = textElement('div', '', 'activity-copy'); copy.append(textElement('p', event.summary), textElement('small', `${event.actor} · ${event.action} · ${event.entityId}`));
+    const time = textElement('time', dateLabel(event.at,true)); time.dateTime = event.at; row.append(textElement('span', '·', 'activity-dot'),copy,time); container.append(row);
+  }
+  if (!rows.length) noData(container,'No events match this view.');
+}
+function switchOfficeTab(name: string): void {
+  officeTab = name; ($('office-tools') as HTMLDetailsElement).open = true;
+  document.querySelectorAll<HTMLButtonElement>('[data-office-tab]').forEach((button) => { const selected = button.dataset.officeTab === name; button.classList.toggle('active', selected); button.setAttribute('aria-selected',String(selected)); button.tabIndex = selected ? 0 : -1; });
+  document.querySelectorAll<HTMLElement>('.office-tab-panel').forEach((panel) => panel.classList.toggle('hidden',panel.id !== `office-panel-${name}`));
+}
+function value(id:string):string { return ($(id) as HTMLInputElement).value.trim(); }
+function officeQueueDraft(): Record<string,unknown> {
+  const scope = requireOfficeScope(); const goal = value('queue-goal'); if (!goal) throw new Error('Write a task goal first.');
+  const employeeId = value('queue-employee'); if (!employeeId) throw new Error('Choose an active employee.');
+  const mode = value('queue-mode'); const provider = value('queue-provider'); const model = value('queue-model');
+  const priceRates = { inputUsdPerMillion:Number(value('queue-rate-input')), outputUsdPerMillion:Number(value('queue-rate-output')) };
+  const authorized = ($('queue-authorized') as HTMLInputElement).checked || officeState?.policy?.approvalMode === 'autonomous';
+  if (mode === 'provider' && !authorized) throw new Error('Authorize this provider job before adding it to the queue.');
+  if (mode === 'provider' && !model) throw new Error('Enter a model ID for the provider job.');
+  if (mode === 'provider' && provider !== 'ollama' && (priceRates.inputUsdPerMillion <= 0 || priceRates.outputUsdPerMillion <= 0)) throw new Error('Positive input and output pricing is required for cloud-provider jobs.');
+  const limits = { maxTokens:Number(value('queue-max-tokens')), maxUsd:Number(value('queue-max-usd')), maxMinutes:Number(value('queue-max-minutes')) };
+  if (Object.values(limits).some((n) => !Number.isFinite(n) || n <= 0) || limits.maxUsd > 100) throw new Error('Use positive budget limits with a maximum of $100 per queued job.');
+  return { ...scope,employeeId,goal,mode,provider,model,...(value('queue-service-contract')?{serviceContractId:value('queue-service-contract')}:{}),authorized:mode === 'provider' && authorized,priceRates,...limits,idempotencyKey:crypto.randomUUID() };
+}
+function bindOfficeForm(id:string, callback:()=>Promise<void>): void {
+  $(id).addEventListener('submit',(event) => {
+    event.preventDefault(); const button = (event as SubmitEvent).submitter as HTMLButtonElement | null;
+    if (button) button.disabled = true;
+    void safeTask(async () => { try { await callback(); } finally { if (button) button.disabled = false; } });
   });
 }
+function initOffice(): void {
+  $('office-refresh').addEventListener('click',() => void safeTask(refreshOffice));
+  document.querySelectorAll<HTMLButtonElement>('[data-office-tab]').forEach((button) => {
+    button.onclick = () => switchOfficeTab(button.dataset.officeTab || 'overview');
+    button.addEventListener('keydown',(event) => {
+      const buttons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-office-tab]')); const i = buttons.indexOf(button);
+      if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') { event.preventDefault(); const next = buttons[(i + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length]!; next.click(); next.focus(); }
+    });
+  });
+  document.querySelectorAll<HTMLButtonElement>('[data-open-office-tab]').forEach((button) => button.onclick = () => switchOfficeTab(button.dataset.openOfficeTab || 'overview'));
+  $('office-company-search').addEventListener('input',renderOfficeScope);
+  $('office-company-select').addEventListener('change',() => {
+    if(workspaceReadOnly()&&officeState){officeState.activeCompanyId=value('office-company-select');renderOffice();return;}
+    void safeTask(() => performOffice({action:'select_company',companyId:value('office-company-select')},'Company selected.'));
+  });
+  $('office-office-select').addEventListener('change',() => { selectedOfficeId=value('office-office-select'); selectedDepartmentId=''; renderOffice(); });
+  $('office-department-select').addEventListener('change',() => { selectedDepartmentId=value('office-department-select'); renderOffice(); });
+  $('office-queue-filter').addEventListener('change',renderOfficeJobs); $('office-ledger-search').addEventListener('input',() => renderOfficeEvents($('office-ledger'),150));
+  $('queue-mode').addEventListener('change',() => $('queue-provider-fields').classList.toggle('hidden',value('queue-mode') !== 'provider'));
 
+  $('office-pause-company').addEventListener('click',() => { const company=officeCompany(); if(company) void safeTask(() => performOffice({action:company.status === 'paused' ? 'resume_company':'pause_company',companyId:company.id})); });
+  $('office-pause-office').addEventListener('click',() => { const office=officeLocation(); if(office) void safeTask(() => performOffice({action:office.status === 'paused' ? 'resume_office':'pause_office',officeId:office.id})); });
+  bindOfficeForm('office-create-company',async () => { await performOffice({action:'create_company',name:value('office-new-company-name'),repoUrl:value('office-new-company-repo') || undefined},'Company and shared assistant created.'); ($('office-create-company') as HTMLFormElement).reset(); });
+  bindOfficeForm('office-create-office',async () => { const company=officeCompany(); if(!company) throw new Error('Select a company first.'); await performOffice({action:'create_office',companyId:company.id,name:value('office-new-office-name')},'Office and shared assistant created.'); ($('office-create-office') as HTMLFormElement).reset(); });
+  bindOfficeForm('office-create-department',async () => { const scope=requireOfficeScope(); await performOffice({action:'create_department',officeId:scope.officeId,name:value('office-new-department-name')},'Department and shared assistant created.'); ($('office-create-department') as HTMLFormElement).reset(); });
+  bindOfficeForm('office-hire-form',async () => { await performOffice({action:'hire_employee',...requireOfficeScope(),name:value('hire-name'),role:value('hire-role'),skillPaths:value('hire-skills').split('\n').map((s)=>s.trim()).filter(Boolean)},'Specialist hired.'); ($('office-hire-form') as HTMLFormElement).reset(); });
+  bindOfficeForm('office-queue-form',async () => { await performOffice({action:'enqueue_job',...officeQueueDraft()},'Task queued. It will run only when dispatched.'); });
+  bindOfficeForm('office-schedule-form',async () => {
+    const jobTemplate=officeQueueDraft(); const date=new Date(value('schedule-at')); if(Number.isNaN(date.getTime()) || date.getTime() <= Date.now()) throw new Error('Choose a future first-run time.');
+    await performOffice({action:'create_schedule',companyId:officeCompany()!.id,name:String(jobTemplate.goal).slice(0,100),everyMinutes:Number(value('schedule-repeat')),nextRunAt:date.toISOString(),jobTemplate},'Schedule saved. Local schedules need the desktop app to stay open.'); setStatus($('schedule-status'),'Schedule saved.','ok');
+  });
+  bindOfficeForm('office-cache-form',async () => { await performOffice({action:'configure_cache',enabled:($('cache-enabled') as HTMLInputElement).checked,maxEntries:Number(value('cache-max-entries')),ttlMinutes:Number(value('cache-ttl'))},'Cache policy saved.'); });
+  $('office-clear-cache').addEventListener('click',() => void safeTask(async () => { const company=officeCompany(); if(!company) throw new Error('Select a company first.'); await performOffice({action:'clear_cache',companyId:company.id},'Selected company cache cleared.'); }));
+  bindOfficeForm('office-knowledge-form',async () => { const company=officeCompany(); if(!company) throw new Error('Select a company first.'); await performOffice({action:'add_knowledge',companyId:company.id,title:value('knowledge-title'),summary:value('knowledge-summary'),artifactUri:value('knowledge-artifact')},'Knowledge note saved.'); ($('office-knowledge-form') as HTMLFormElement).reset(); });
+  bindOfficeForm('office-import-form',async () => {
+    if(!bridge?.officeCommand) throw new Error('Public GitHub import is unavailable in this desktop build.');
+    setStatus($('office-import-status'),'Reading public repositories from GitHub…'); const previous=officeState?.companies.length || 0;
+    const result=await bridge.officeCommand({action:'import_github_account',owner:value('office-github-owner'),includePrivate:($('office-import-private') as HTMLInputElement).checked}); if(!result.ok || !result.snapshot) throw new Error(result.error || 'Repository import failed.'); officeState=result.snapshot; renderOffice();
+    setStatus($('office-import-status'),`${number(officeState.companies.length)} companies in the workspace · ${number(Math.max(0,officeState.companies.length-previous))} added. Existing repositories were kept.`,'ok');
+  });
+  for(const [id,enabled] of [['worker-enable',true],['worker-disable',false]] as const) $(id).addEventListener('click',() => void safeTask(async () => {
+    if(!bridge?.setOfficeWorker) throw new Error('The dispatcher is unavailable in this build.'); officeWorker=await bridge.setOfficeWorker({enabled}); renderWorker(); setStatus($('worker-result'),enabled ? 'Dispatcher enabled. Authorized due jobs can now run.' : 'Dispatcher stopped. New jobs will remain queued.','ok');
+  }));
+  $('worker-run-once').addEventListener('click',() => void safeTask(async () => {
+    if(!bridge?.runOfficeQueue) throw new Error('The dispatcher is unavailable in this build.'); const button=$('worker-run-once') as HTMLButtonElement; button.disabled=true;
+    try { officeWorker=await bridge.runOfficeQueue(); renderWorker(); await refreshOffice(); } finally { button.disabled=officeWorker?.running === true; }
+  }));
+  officePoll=setInterval(() => { if(activeView === 'office' && !document.hidden && officeWorker?.enabled) void safeTask(refreshOffice); },5000);
+  window.addEventListener('beforeunload',() => { if(officePoll) clearInterval(officePoll); });
+}
+
+
+// ---------------------------------------------------------------- unified Donna conversation and spatial workspace
+let workspaceTab = 'chat';
+let selectedGoalId = '';
+let selectedRoomId = '';
+let selectedBoardId = '';
+let selectedDeskEmployeeId = '';
+let conversationSignature = '';
+let blueprintLoading = false;
+let spatialSaving = false;
+let spatialOfficeId = '';
+
+function workspaceReadOnly(): boolean { return bridge?.transport === 'public-preview'; }
+function workspaceAvailable(): boolean {
+  return Boolean(officeState?.policy && officeState.chatThreads && officeState.goals && officeState.blueprints);
+}
+function currentBlueprint(): OfficeBlueprint | undefined {
+  return officeState?.blueprints?.find((item) => item.officeId === selectedOfficeId && item.companyId === officeCompany()?.id);
+}
+function workspaceScope(): OfficeScope {
+  const kind = value('chat-scope') as OfficeScope['kind'];
+  if (kind === 'employee') { const id = value('chat-employee'); if (!id) throw new Error('Choose an employee for this conversation.'); return {kind,id}; }
+  if (kind === 'department') { if (!selectedDepartmentId) throw new Error('Select a department above for this conversation.'); return {kind,id:selectedDepartmentId}; }
+  if (kind === 'office') { if (!selectedOfficeId) throw new Error('Select an office above for this conversation.'); return {kind,id:selectedOfficeId}; }
+  const company = officeCompany(); if (!company) throw new Error('Select a company first.'); return {kind:'company',id:company.id};
+}
+function workspaceScopeOrNull(): OfficeScope | null { try { return workspaceScope(); } catch { return null; } }
+function scopeLabel(scope: OfficeScope | null): string {
+  if (!scope) return 'Select a company and conversation scope';
+  const list = scope.kind === 'company' ? officeState?.companies : scope.kind === 'office' ? officeState?.offices : scope.kind === 'department' ? officeState?.departments : officeState?.employees;
+  return `${list?.find((item) => item.id === scope.id)?.name || scope.id} · ${scope.kind}`;
+}
+function scopedGoals(): OfficeGoal[] {
+  const companyId = officeCompany()?.id;
+  const scope = workspaceScopeOrNull();
+  return (officeState?.goals || []).filter((goal) => {
+    if (goal.companyId !== companyId) return false;
+    if (!scope || scope.kind === 'company') return true;
+    if (goal.scope.kind === scope.kind && goal.scope.id === scope.id) return true;
+    if (scope.kind === 'employee') return goal.steps.some((step) => step.employeeId === scope.id);
+    if (scope.kind === 'office' && goal.scope.kind === 'department') return officeState?.departments.some((d) => d.id === goal.scope.id && d.officeId === scope.id);
+    if (goal.scope.kind === 'employee') { const e = officeState?.employees.find((item) => item.id === goal.scope.id); return scope.kind === 'office' ? e?.officeId === scope.id : e?.departmentId === scope.id; }
+    return false;
+  });
+}
+async function workspaceCommand(command: OfficeCommand, message = 'Workspace saved.'): Promise<OfficeSnapshot> {
+  if (workspaceReadOnly()) throw new Error('The starter office preview is read only. Open your private desktop or browser workspace to save changes.');
+  if (!bridge?.officeCommand || !workspaceAvailable()) throw new Error('This action needs the current desktop workspace and native core.');
+  const result = await bridge.officeCommand(command);
+  if (!result.ok || !result.snapshot) throw new Error(result.error || 'The workspace change could not be saved.');
+  officeState = result.snapshot; renderOffice(); setStatus($('workspace-action-status'), message, 'ok');
+  return result.snapshot;
+}
+function workspaceTask(task: () => Promise<void>, statusId = 'workspace-action-status'): void {
+  void task().catch((error: unknown) => setStatus($(statusId), error instanceof Error ? error.message : String(error), 'error'));
+}
+function workspaceForm(id: string, task: () => Promise<void>, statusId: string): void {
+  $(id).addEventListener('submit', (event) => {
+    event.preventDefault(); const button = (event as SubmitEvent).submitter as HTMLButtonElement | null;
+    if (button) button.disabled = true;
+    workspaceTask(async () => { try { await task(); } finally { if (button) button.disabled = !workspaceAvailable() || workspaceReadOnly(); } },statusId);
+  });
+}
+function workspaceButton(label: string, task: () => Promise<void>, kind = 'secondary small'): HTMLButtonElement {
+  const button = textElement('button',label,kind); button.type = 'button';
+  button.disabled=workspaceReadOnly();
+  button.onclick = () => { button.disabled = true; workspaceTask(async () => { try { await task(); } finally { button.disabled = false; } }); };
+  return button;
+}
+function renderWorkspaceControls(): void {
+  const oldEmployee = value('chat-employee');
+  const employees = scopedEmployees().filter((item) => item.status === 'active');
+  populateSelect($('chat-employee') as HTMLSelectElement,employees,oldEmployee || 'donna');
+  const scope = workspaceScopeOrNull(); const employee = officeState?.employees.find((item) => item.id === value('chat-employee'));
+  $('conversation-title').textContent = value('chat-scope') === 'employee' ? employee?.name || 'Donna' : 'Donna';
+  $('conversation-scope').textContent = scopeLabel(scope);
+  const available = workspaceAvailable() && !workspaceReadOnly();
+  for (const id of ['chat-send','room-save','node-save']) ($(id) as HTMLButtonElement).disabled = !available;
+  const policySubmit = $('workspace-policy-form').querySelector<HTMLButtonElement>('button[type="submit"]'); if (policySubmit) policySubmit.disabled = !available;
+  if (!available) {
+    $('workspace-budget-label').textContent = bridge ? 'Workspace upgrade required' : 'Desktop workspace required';
+    $('chat-mode-note').textContent = bridge ? (workspaceReadOnly() ? 'Example workspace · read only. Open your private workspace to save a goal.' : 'Load the current native workspace to save goals and conversations.') : 'This preview shows the workspace. Open the desktop app to save a goal.';
+  } else updateChatMode();
+}
+function renderConversation(): void {
+  const scope = workspaceScopeOrNull();
+  const thread = officeState?.chatThreads?.find((item) => item.scope.kind === scope?.kind && item.scope.id === scope.id);
+  const goals = scopedGoals();
+  const checkpoints = (officeState?.checkpoints || []).filter((item) => item.jobId === null && goals.some((goal) => goal.id === item.goalId));
+  const rows: Array<{id:string;role:string;content:string;createdAt:string;source:string;artifactUri?:string|null}> = [...(thread?.messages || []), ...checkpoints.map((item) => ({id:`checkpoint-${item.id}`,role:'checkpoint',content:item.summary,createdAt:item.createdAt,source:'checkpoint',artifactUri:item.artifactUri}))].sort((a,b) => a.createdAt.localeCompare(b.createdAt)).slice(-120);
+  const signature = JSON.stringify({scope,rows}); if (signature === conversationSignature) return; conversationSignature = signature;
+  const container = $('conversation-messages');
+  if (!rows.length) {
+    if (!container.querySelector('.conversation-empty')) {
+      container.replaceChildren(); const empty = textElement('div','','conversation-empty');
+      empty.append(textElement('span','START WITH AN OUTCOME','eyebrow'),textElement('h2','A shared place to think, plan, and do.'),textElement('p','Give Donna a clear goal. The saved plan and its results will stay connected to the people responsible.'));
+      container.append(empty);
+    }
+    return;
+  }
+  const nearBottom = container.scrollHeight - container.clientHeight - container.scrollTop < 90;
+  container.replaceChildren();
+  for (const message of rows) {
+    const article = textElement('article','',`chat-message ${message.role === 'user' ? 'user' : 'assistant'}`);
+    const header = textElement('div','','chat-message-header');
+    const speaker = message.role === 'user' ? 'You' : message.role === 'checkpoint' ? 'Saved checkpoint' : message.source === 'provider' ? 'Provider result' : 'Donna';
+    const source = message.source === 'user' ? 'Saved brief' : message.source === 'provider' ? 'Provider output' : message.source === 'checkpoint' ? 'Recorded evidence' : 'Local planning';
+    const time = textElement('time',dateLabel(message.createdAt,true)); time.dateTime = message.createdAt;
+    header.append(textElement('strong',speaker),textElement('span',source,'badge'),time);
+    article.append(header,textElement('p',message.content,'chat-message-text'));
+    if (message.artifactUri) article.append(textElement('div',message.artifactUri,'queue-artifact'));
+    container.append(article);
+  }
+  if (nearBottom) container.scrollTop = container.scrollHeight;
+}
+function renderWorkspaceGoals(): void {
+  const container = $('workspace-goals'); if(container.contains(document.activeElement)&&document.activeElement?.matches('input,textarea'))return;container.replaceChildren(); const goals = scopedGoals().slice(-40).reverse();
+  $('workspace-goal-count').textContent = number(goals.length);
+  if (!goals.some((goal) => goal.id === selectedGoalId)) selectedGoalId = goals[0]?.id || '';
+  for (const goal of goals) {
+    const card = textElement('article','',`goal-card${goal.id === selectedGoalId ? ' selected' : ''}`); card.dataset.goalId = goal.id;
+    const goalJobs=(officeState?.jobs||[]).filter(job=>goal.jobIds.includes(job.id));
+    const goalStatus=goal.status==='running'?(goalJobs.some(job=>job.status==='running')?'Executing':goalJobs.some(job=>job.status==='waiting-budget')?'Waiting for budget':'Work queued'):goal.status.replaceAll('-',' ');
+    const head = textElement('div','','row wrap'); head.append(textElement('span',goalStatus,`badge ${goal.status === 'completed' ? 'ok' : goal.status === 'needs-review' ? 'unknown' : ''}`),textElement('span',goal.mode === 'plan' ? 'Local plan' : 'Bounded goal','form-help'));
+    card.append(head,textElement('h3',goal.title),textElement('p',`${goal.steps.length} planned steps · ${goal.jobIds.length} jobs · iteration ${goal.iteration} of ${goal.maxIterations}`));
+    if(goal.stopReason)card.append(textElement('p',`Stopped: ${goal.stopReason.replaceAll('-',' ')}`,'goal-stop-reason'));
+    if (goal.steps.length) {
+      const details = textElement('details','','goal-steps'); const summary = textElement('summary','Plan & ownership'); details.append(summary);
+      for (const [index,step] of goal.steps.entries()) { const name = officeState?.employees.find((e) => e.id === step.employeeId)?.name || step.employeeId; const row = textElement('div','','goal-step'); row.append(textElement('strong',`${index+1}. ${step.title}`),textElement('span',name)); details.append(row); }
+      card.append(details);
+    }
+    const actions = textElement('div','','row wrap');
+    if (goal.status === 'draft') actions.append(workspaceButton('Build local plan',async () => { await workspaceCommand({action:'plan_goal',goalId:goal.id},'Local goal plan saved.'); }));
+    if (goal.mode === 'execute' && ['planned','needs-review'].includes(goal.status) && !goal.jobIds.length) actions.append(workspaceButton(officeState?.policy?.approvalMode === 'review' ? 'Approve & queue' : 'Queue goal',async () => { await workspaceCommand({action:'execute_goal',goalId:goal.id,reviewed:true},'Goal execution requested within its budget.'); }));
+    if (['running','planned','needs-review'].includes(goal.status)) actions.append(workspaceButton('Pause',async () => { await workspaceCommand({action:'pause_goal',goalId:goal.id},'Goal paused.'); },'text-button'));
+    if (goal.status === 'paused') actions.append(workspaceButton('Resume',async () => { await workspaceCommand({action:'resume_goal',goalId:goal.id},'Goal resumed.'); },'text-button'));
+    actions.append(workspaceButton('Map ownership',async () => { selectedGoalId = goal.id; await ensureWorkspaceBlueprint(); switchWorkspaceTab('whiteboard'); resetBoardForm(); ($('node-title') as HTMLInputElement).value = goal.title; ($('node-goal') as HTMLSelectElement).value = goal.id; $('node-title').focus(); },'text-button'));
+    card.append(actions);
+    if(goal.mode==='execute'&&goal.iteration>0&&goal.iteration<goal.maxIterations&&['completed','needs-review'].includes(goal.status)){
+      const details=textElement('details','','goal-steps');details.append(textElement('summary','Request another bounded iteration'));
+      const form=textElement('form','','stack goal-advance');const label=textElement('label','Reason for this iteration','field');const reason=document.createElement('textarea');reason.rows=2;reason.required=true;reason.maxLength=2000;reason.setAttribute('aria-label',`Reason to advance ${goal.title}`);label.append(reason);const submit=textElement('button','Queue next iteration','secondary small');submit.type='submit';submit.disabled=workspaceReadOnly();form.append(label,textElement('p','Uses the same owners, per-job caps, and global budget.','form-help'),submit);
+      form.onsubmit=(event)=>{event.preventDefault();const text=reason.value.trim();if(!text)return;submit.disabled=true;workspaceTask(async()=>{try{await workspaceCommand({action:'advance_goal',goalId:goal.id,reason:text},'Next bounded iteration requested.');}finally{submit.disabled=workspaceReadOnly();}});};details.append(form);card.append(details);
+    }
+    container.append(card);
+  }
+  if (!goals.length) noData(container,'Create a goal to see its plan, owner, and recorded progress here.');
+}
+function renderWorkspacePolicy(): void {
+  const policy = officeState?.policy; const budget = officeState?.budget;
+  if (!policy || !budget) return;
+  const modeLabel = policy.approvalMode === 'review' ? 'Review mode' : 'Autonomous within limits';
+  $('workspace-budget-label').textContent = `${money(budget.remainingUsd)} available · ${modeLabel}`;
+  $('workspace-policy-summary').textContent = `${modeLabel}${policy.dispatchPaused ? ' · Dispatch paused' : ''} · ${money(policy.budget.hardCapUsd)} global cap`;
+  const fraction = Math.max(0,Math.min(1,budget.committedUsd / Math.max(.001,policy.budget.hardCapUsd)));
+  $('global-budget-fill').style.width = `${fraction*100}%`;
+  $('global-budget-meter').setAttribute('aria-label',`${money(budget.committedUsd)} committed out of ${money(policy.budget.hardCapUsd)} global ceiling`);
+  $('global-budget-detail').textContent = `${money(budget.observedUsd)} observed · ${money(budget.estimatedUsd)} conservatively estimated · ${money(budget.reservedUsd)} reserved. ${number(budget.committedTokens)} tokens committed.${budget.remainingTokens === null ? '' : ` ${number(budget.remainingTokens)} tokens available.`}${budget.atCap ? ' Dispatch waits for budget.' : budget.warning ? ' Budget warning threshold reached.' : ''}`;
+  if (!$('workspace-policy-form').contains(document.activeElement)) {
+    ($('workspace-approval-mode') as HTMLSelectElement).value = policy.approvalMode;
+    ($('workspace-global-usd') as HTMLInputElement).value = String(policy.budget.hardCapUsd);
+    ($('workspace-global-tokens') as HTMLInputElement).value = policy.budget.hardCapTokens === null ? '' : String(policy.budget.hardCapTokens);
+    ($('workspace-warning-percent') as HTMLInputElement).value = String(policy.budget.warningPercent);
+    ($('workspace-dispatch-paused') as HTMLInputElement).checked = policy.dispatchPaused;
+  }
+  $('github-reviewed-label').classList.toggle('hidden',policy.approvalMode === 'autonomous');
+  $('chat-authorized').closest('label')?.classList.toggle('hidden',policy.approvalMode === 'autonomous');
+  $('queue-authorized').closest('label')?.classList.toggle('hidden',policy.approvalMode === 'autonomous');
+}
+function appendCanvasGrid(container: HTMLElement): void {
+  const svg = svgElement('svg',{viewBox:'0 0 1000 620',preserveAspectRatio:'none',class:'canvas-grid','aria-hidden':'true'});
+  let fine = ''; let major = ''; for (let x=0;x<=1000;x+=25) (x%100 === 0 ? major += `M${x} 0V620` : fine += `M${x} 0V620`); for (let y=0;y<=620;y+=25) (y%100 === 0 ? major += `M0 ${y}H1000` : fine += `M0 ${y}H1000`);
+  svg.append(svgElement('path',{d:fine}),svgElement('path',{d:major,class:'major-grid'})); container.append(svg);
+}
+function canvasEmpty(container: HTMLElement,title:string,message:string): void {
+  const empty = textElement('div','','canvas-empty'); empty.append(textElement('h3',title),textElement('p',message)); container.append(empty);
+}
+function renderSpatialSelectors(): void {
+  const blueprint = currentBlueprint(); const company = officeCompany();
+  const departments = (officeState?.departments || []).filter((item) => item.officeId === selectedOfficeId);
+  const employees = (officeState?.employees||[]).filter((item) => item.status !== 'fired' && (!item.companyId || item.companyId===company?.id) && (!item.officeId || item.officeId===selectedOfficeId));
+  const goals = (officeState?.goals || []).filter((item) => item.companyId === company?.id);
+  const jobRows = scopedJobs().map((item) => ({id:item.id,name:`${item.status} · ${item.goal.slice(0,55)}`}));
+  for (const [id,rows,empty] of [
+    ['room-department',departments,'Shared office space'],['room-employee',contractedRoomEmployees(value('room-id'),employees),'Choose an employee'],
+    ['node-owner',contractedRoomEmployees(value('node-room'),employees,true),'Choose an owner'],['node-room',blueprint?.rooms || [],'Choose a room'],
+    ['node-goal',goals.map((goal) => ({id:goal.id,name:goal.title})),'No goal linked'],['node-roadmap',(portfolioState()?.roadmap||[]).filter(item=>company&&roadmapInCompany(item,company.id)).map(item=>({id:item.id,name:item.title})),'No portfolio outcome linked'],['node-job',jobRows,'No job linked'],
+  ] as const) { const selected = value(id); populateSelect($(id) as HTMLSelectElement,rows,selected,empty); }
+}
+function resetRoomForm(): void {
+  selectedRoomId = ''; ($('workspace-room-form') as HTMLFormElement).reset();
+  ($('room-id') as HTMLInputElement).value = ''; $('room-inspector-title').textContent = 'A place for each team.'; $('room-inspector-note').textContent = 'Add a shared room or connect it to a department.'; $('room-save').textContent = 'Add room';
+  $('room-people').replaceChildren(); $('workspace-room-assign').classList.add('hidden'); renderSpatialSelectors();
+}
+function selectRoom(room: OfficeRoom,focus = false): void {
+  selectedRoomId = room.id; ($('room-id') as HTMLInputElement).value = room.id; ($('room-name') as HTMLInputElement).value = room.name;
+  ($('room-department') as HTMLSelectElement).value = room.departmentId || ''; ($('room-x') as HTMLInputElement).value = String(Math.round(room.x*100)); ($('room-y') as HTMLInputElement).value = String(Math.round(room.y*100));
+  $('room-inspector-title').textContent = room.name; $('room-inspector-note').textContent = 'Saved room position and employee assignments.'; $('room-save').textContent = 'Save room'; $('workspace-room-assign').classList.remove('hidden');
+  const people = $('room-people'); people.replaceChildren();
+  const assigned = currentBlueprint()?.desks.filter((desk) => desk.roomId === room.id) || [];
+  for (const desk of assigned) { const employee = officeState?.employees.find((item) => item.id === desk.employeeId); if (!employee) continue; const row = textElement('div','','room-person'); row.append(textElement('strong',employee.name),textElement('span',`${employee.role} · ${employee.status}`)); people.append(row); }
+  if (!assigned.length) noData(people,'No employees placed in this room.');
+  document.querySelectorAll<HTMLElement>('.blueprint-room').forEach((card) => card.classList.toggle('selected',card.dataset.roomId === room.id));
+  renderSpatialSelectors();
+  if (focus) $('room-name').focus();
+}
+function spatialPosition(element: HTMLElement,x:number,y:number,width?:number): void { element.style.left = `${Math.max(0,x)*100}%`; element.style.top = `${Math.max(0,y)*620}px`; if (width !== undefined) element.style.width = `${width*100}%`; }
+function wireSpatialMove(handle: HTMLButtonElement,element:HTMLElement,x:number,y:number,maxX:number,maxY:number,save:(x:number,y:number)=>Promise<void>,map = {originX:0,originY:0,scaleX:1,scaleY:1}): void {
+  if(workspaceReadOnly())return;
+  handle.setAttribute('aria-keyshortcuts','ArrowUp ArrowDown ArrowLeft ArrowRight');
+  handle.addEventListener('keydown',(event) => {
+    const delta = event.shiftKey ? .10 : .02; let dx=0; let dy=0;
+    if (event.key === 'ArrowLeft') dx=-delta; else if (event.key === 'ArrowRight') dx=delta; else if (event.key === 'ArrowUp') dy=-delta; else if (event.key === 'ArrowDown') dy=delta; else return;
+    event.preventDefault(); if (spatialSaving) return; spatialSaving=true;
+    workspaceTask(async () => { try { await save(Math.max(0,Math.min(maxX,x+dx)),Math.max(0,Math.min(maxY,y+dy))); } finally { spatialSaving=false; } });
+  });
+  handle.addEventListener('pointerdown',(event) => {
+    if (event.button !== 0 || element.parentElement?.classList.contains('list-mode')) return;
+    const startX=event.clientX; const startY=event.clientY; const parent=element.parentElement; if(!parent) return;
+    const width=parent.clientWidth || 1000; let nextX=x; let nextY=y; let moved=false;
+    handle.setPointerCapture?.(event.pointerId);
+    const move=(e:PointerEvent) => { if(Math.abs(e.clientX-startX)+Math.abs(e.clientY-startY)<5&&!moved)return; moved=true; nextX=Math.max(0,Math.min(maxX,x+(e.clientX-startX)/width/map.scaleX)); nextY=Math.max(0,Math.min(maxY,y+(e.clientY-startY)/620/map.scaleY)); spatialPosition(element,map.originX+nextX*map.scaleX,map.originY+nextY*map.scaleY); };
+    const end=() => { handle.removeEventListener('pointermove',move); handle.removeEventListener('pointerup',end); handle.removeEventListener('pointercancel',cancel); if(moved)workspaceTask(()=>save(nextX,nextY)); };
+    const cancel=() => { handle.removeEventListener('pointermove',move); handle.removeEventListener('pointerup',end); handle.removeEventListener('pointercancel',cancel); spatialPosition(element,map.originX+x*map.scaleX,map.originY+y*map.scaleY); };
+    handle.addEventListener('pointermove',move); handle.addEventListener('pointerup',end,{once:true}); handle.addEventListener('pointercancel',cancel,{once:true});
+  });
+}
+function renderBlueprint(): void {
+  const container=$('office-blueprint'); container.replaceChildren(); const blueprint=currentBlueprint();
+  container.classList.toggle('list-mode',($('blueprint-list-mode') as HTMLInputElement).checked); appendCanvasGrid(container);
+  if (!blueprint?.rooms.length) { canvasEmpty(container,'Room to begin.',workspaceAvailable() ? 'Add a room for a department, then place the people responsible for its work.' : 'Open the desktop workspace to load saved office rooms and employees.'); return; }
+  for (const room of blueprint.rooms.slice(0,80)) {
+    const card=textElement('article','',`blueprint-room${selectedRoomId===room.id?' selected':''}`); card.dataset.roomId=room.id; spatialPosition(card,room.x,room.y,room.width);card.style.minHeight=`${room.height*620}px`;
+    const title=textElement('button',room.name,'blueprint-room-title'); title.type='button'; title.onclick=()=>selectRoom(room);
+    title.setAttribute('aria-label',`${room.name}. Select room; arrow keys move it.`);
+    const department=officeState?.departments.find((d)=>d.id===room.departmentId); card.append(title,textElement('p',department?.name || 'Shared office space','blueprint-room-subtitle'));
+    const occupants=textElement('div','','room-occupants');
+    for(const desk of blueprint.desks.filter((item)=>item.roomId===room.id).slice(0,6)) {
+      const employee=officeState?.employees.find((item)=>item.id===desk.employeeId); if(!employee)continue;
+      const button=textElement('button',employee.name,`room-occupant${selectedDeskEmployeeId===employee.id?' selected':''}`); button.type='button'; button.title=`${employee.role} · ${employee.status}`;
+      button.onclick=()=>{if(employee.companyId&&employee.companyId!==officeCompany()?.id){selectRoom(room);if(portfolioState()?.services.some(service=>service.companyId===officeCompany()?.id&&service.officeId===selectedOfficeId&&service.employeeIds.includes(employee.id))){setStatus($('room-status'),`${employee.name} is a shared specialist whose original company assignment is preserved. Assign recipient work through that company’s active service contract.`);return;}selectedDepartmentId=room.departmentId||'';renderOfficeScope();const contract=scopedServiceContracts().find(item=>item.employeeIds.includes(employee.id));if(!contract){setStatus($('room-status'),'This historical assignment has no active staffing contract.','error');return;}($('queue-service-contract') as HTMLSelectElement).value=contract.id;renderOfficeScope();($('queue-employee') as HTMLSelectElement).value=employee.id;switchOfficeTab('queue');($('queue-composer') as HTMLDetailsElement).open=true;$('queue-composer').scrollIntoView({block:'nearest'});$('queue-goal').focus();return;}selectedDeskEmployeeId=employee.id;selectedDepartmentId=employee.departmentId||'';renderOfficeScope();renderWorkspaceControls();selectRoom(room);($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=employee.id;switchWorkspaceTab('chat');renderUnifiedWorkspace();$('chat-message').focus();}; occupants.append(button);
+    }
+    if(!occupants.children.length)occupants.append(textElement('span','Place an employee','form-help'));
+    const art=svgElement('svg',{viewBox:'0 0 115 54',class:'room-floorplan','aria-hidden':'true'}); art.append(svgElement('rect',{x:10,y:10,width:46,height:26,rx:3}),svgElement('path',{d:'M20 8V4h25v4M20 40v9h25v-9M74 10h30v34H74Z M74 20h30M74 34h30'}));
+    const boards=blueprint.whiteboards.filter((board)=>board.roomId===room.id).length;
+    card.append(occupants,textElement('span',`${boards} ownership ${boards===1?'card':'cards'}`,'room-work-count'),art);
+    wireSpatialMove(title,card,room.x,room.y,1-room.width,1-room.height,async(x,y)=>{await workspaceCommand({action:'upsert_room',officeId:selectedOfficeId,id:room.id,name:room.name,departmentId:room.departmentId,x,y,width:room.width,height:room.height},'Room position saved.'); Array.from(document.querySelectorAll<HTMLElement>('[data-room-id]')).find(item=>item.dataset.roomId===room.id)?.querySelector<HTMLButtonElement>('.blueprint-room-title')?.focus();});
+    container.append(card);
+  }
+  if(selectedRoomId){const room=blueprint.rooms.find((item)=>item.id===selectedRoomId);if(room&&!$('workspace-room-form').contains(document.activeElement))selectRoom(room);}
+}
+function resetBoardForm(): void {
+  selectedBoardId='';($('workspace-node-form') as HTMLFormElement).reset();($('node-id') as HTMLInputElement).value='';$('node-inspector-title').textContent='Work with a clear owner.';$('node-save').textContent='Add card';renderSpatialSelectors();
+  const blueprint=currentBlueprint();if(blueprint?.rooms[0])($('node-room') as HTMLSelectElement).value=selectedRoomId||blueprint.rooms[0].id;
+  if(value('chat-employee'))($('node-owner') as HTMLSelectElement).value=value('chat-employee');
+}
+function selectBoard(board:OfficeWhiteboard):void {
+  selectedBoardId=board.id;($('node-id') as HTMLInputElement).value=board.id;($('node-title') as HTMLInputElement).value=board.title;($('node-owner') as HTMLSelectElement).value=board.ownerEmployeeId;($('node-room') as HTMLSelectElement).value=board.roomId;($('node-goal') as HTMLSelectElement).value=board.goalIds[0]||'';($('node-job') as HTMLSelectElement).value=board.jobIds[0]||'';($('node-roadmap') as HTMLSelectElement).value=board.roadmapItemIds?.[0]||'';($('node-x') as HTMLInputElement).value=String(Math.round(board.x*100));($('node-y') as HTMLInputElement).value=String(Math.round(board.y*100));$('node-inspector-title').textContent=board.title;$('node-save').textContent='Save ownership';
+  document.querySelectorAll<HTMLElement>('.ownership-card').forEach((card)=>card.classList.toggle('selected',card.dataset.boardId===board.id));
+}
+function renderWhiteboard():void {
+  const container=$('workspace-whiteboard');container.replaceChildren();const blueprint=currentBlueprint();container.classList.toggle('list-mode',($('whiteboard-list-mode') as HTMLInputElement).checked);appendCanvasGrid(container);
+  if(!blueprint?.whiteboards.length){canvasEmpty(container,'An owner for every outcome.',workspaceAvailable()?'Add an ownership card and link it to a goal, a room, and the employee responsible.':'Saved ownership appears when the desktop workspace is connected.');return;}
+  const width=container.clientWidth||1000;const lines=svgElement('svg',{viewBox:`0 0 ${width} 620`,preserveAspectRatio:'none',class:'ownership-lines','aria-hidden':'true'});container.append(lines);
+  for(const board of blueprint.whiteboards.slice(0,100)){
+    const room=blueprint.rooms.find((item)=>item.id===board.roomId);if(!room)continue;
+    const employee=officeState?.employees.find((item)=>item.id===board.ownerEmployeeId);const goal=officeState?.goals?.find((item)=>board.goalIds.includes(item.id));const linkedJob=officeState?.jobs.find((item)=>board.jobIds.includes(item.id));const roadmap=portfolioState()?.roadmap.find(item=>board.roadmapItemIds?.includes(item.id));
+    const x=Math.max(0,Math.min(.70,room.x+board.x*room.width*.55));const y=Math.max(0,Math.min(.72,room.y+board.y*room.height*.55));
+    const card=textElement('article','',`ownership-card${selectedBoardId===board.id?' selected':''}`);card.dataset.boardId=board.id;spatialPosition(card,x,y);card.append(textElement('span',linkedJob?'JOB OWNERSHIP':goal?'GOAL OWNERSHIP':roadmap?'ROADMAP OWNERSHIP':'WORK OWNERSHIP','card-type'));
+    const title=textElement('button',board.title,'card-title');title.type='button';title.onclick=()=>selectBoard(board);title.setAttribute('aria-label',`${board.title}. Owned by ${employee?.name||'unknown employee'} in ${room.name}. Arrow keys move the card.`);card.append(title);
+    const status=linkedJob?.status||goal?.status||roadmap?.status||'Assigned';card.append(textElement('span',status.replaceAll('-',' '),`badge ${status==='completed'?'ok':status==='needs-review'||status==='waiting-budget'?'unknown':''}`));
+    const ownership=textElement('div','','card-ownership');ownership.append(textElement('strong',employee?.name||'Employee unavailable'),textElement('span',room.name));if(goal)ownership.append(textElement('span',`Goal: ${goal.title}`));if(roadmap)ownership.append(textElement('span',`Roadmap: ${roadmap.title}`));if(linkedJob?.artifactUri)ownership.append(textElement('span',`Artifact: ${linkedJob.artifactUri}`));card.append(ownership);
+    const desk=blueprint.desks.find((item)=>item.roomId===room.id&&item.employeeId===board.ownerEmployeeId);
+    if(desk){const ax=(room.x+desk.x*room.width)*width;const ay=(room.y+desk.y*room.height)*620;lines.append(svgElement('path',{d:`M${x*width+12} ${y*620+70} C${x*width-20} ${y*620+70} ${ax-20} ${ay} ${ax} ${ay}`}),svgElement('circle',{cx:ax,cy:ay,r:4}));}
+    wireSpatialMove(title,card,board.x,board.y,1,1,async(nextX,nextY)=>{await workspaceCommand({action:'upsert_whiteboard',officeId:selectedOfficeId,...board,x:nextX,y:nextY},'Ownership card position saved.');Array.from(document.querySelectorAll<HTMLElement>('[data-board-id]')).find(item=>item.dataset.boardId===board.id)?.querySelector<HTMLButtonElement>('.card-title')?.focus();},{originX:room.x,originY:room.y,scaleX:room.width*.55,scaleY:room.height*.55});container.append(card);
+  }
+}
+async function ensureWorkspaceBlueprint():Promise<void>{
+  if(!workspaceAvailable()||workspaceReadOnly()||currentBlueprint()||blueprintLoading||!selectedOfficeId)return;blueprintLoading=true;
+  try{await workspaceCommand({action:'ensure_blueprint',officeId:selectedOfficeId},'Office blueprint loaded.');}finally{blueprintLoading=false;}
+}
+function switchWorkspaceTab(name:string):void{
+  if(!['chat','blueprint','whiteboard'].includes(name))return;workspaceTab=name;
+  document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]').forEach((button)=>{const active=button.dataset.workspaceTab===name;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;});
+  document.querySelectorAll<HTMLElement>('.workspace-tab-panel').forEach((panel)=>panel.classList.toggle('hidden',panel.id!==`workspace-panel-${name}`));
+  if(name!=='chat')workspaceTask(ensureWorkspaceBlueprint);renderUnifiedWorkspace();
+}
+function renderUnifiedWorkspace():void{
+  renderWorkspaceControls();renderPortfolio();
+  if(spatialOfficeId!==selectedOfficeId){spatialOfficeId=selectedOfficeId;resetRoomForm();resetBoardForm();}
+  renderWorkspacePolicy();renderConversation();renderWorkspaceGoals();renderSpatialSelectors();renderBlueprint();renderWhiteboard();
+  $('github-repository-label').textContent=officeCompany()?.repoUrl||'Choose a repository company.';
+}
+function updateChatMode():void{
+  const execute=value('chat-goal-mode')==='provider';$('chat-provider-options').classList.toggle('hidden',!execute);$('chat-send').textContent=execute?'Create bounded goal ↑':'Create plan ↑';
+  $('chat-mode-note').textContent=execute?(officeState?.policy?.approvalMode==='autonomous'?'Eligible work can queue automatically within every budget cap.':'The goal is planned first. Approve its plan before provider execution.'):'Save a local brief and plan. No provider request.';
+}
+function boundedUtf8(input:string,maxBytes:number):string{let result='';let size=0;const encoder=new TextEncoder();for(const char of input){const bytes=encoder.encode(char).length;if(size+bytes>maxBytes)break;result+=char;size+=bytes;}return result;}
+function chatRunSettings():OfficeGoalRunSettings{
+  const provider=value('chat-provider') as ProjectProvider;const mode=value('chat-goal-mode')==='provider'?'provider':'manual';
+  const settings:OfficeGoalRunSettings={mode,provider,model:value('chat-model'),authorized:mode==='provider'&&(($('chat-authorized') as HTMLInputElement).checked||officeState?.policy?.approvalMode==='autonomous'),maxTokens:Number(value('chat-max-tokens')),maxUsd:Number(value('chat-max-usd')),maxMinutes:Number(value('chat-max-minutes')),priceRates:{inputUsdPerMillion:Number(value('chat-rate-input')),outputUsdPerMillion:Number(value('chat-rate-output'))}};
+  if(mode==='provider'){
+    if(!settings.authorized)throw new Error('Authorize provider work for this goal before creating it.');if(!settings.model)throw new Error('Choose a model ID for bounded execution.');
+    if(provider!=='ollama'&&(!settings.priceRates.inputUsdPerMillion||settings.priceRates.inputUsdPerMillion<=0||!settings.priceRates.outputUsdPerMillion||settings.priceRates.outputUsdPerMillion<=0))throw new Error('Positive input and output rates are required for cloud execution.');
+  }
+  if(!Number.isInteger(settings.maxTokens)||settings.maxTokens<1||settings.maxTokens>200000||!Number.isFinite(settings.maxUsd)||settings.maxUsd<=0||settings.maxUsd>100||!Number.isFinite(settings.maxMinutes)||settings.maxMinutes<=0||settings.maxMinutes>120)throw new Error('Use positive token, time, and spending limits, with at most $100 per job.');
+  return settings;
+}
+function initUnifiedWorkspace():void{
+  document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]').forEach((button)=>{button.onclick=()=>switchWorkspaceTab(button.dataset.workspaceTab||'chat');button.addEventListener('keydown',(event)=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const buttons=Array.from(document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]'));const i=buttons.indexOf(button);const next=event.key==='Home'?buttons[0]:event.key==='End'?buttons.at(-1):buttons[(i+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length];next?.click();next?.focus();});});
+  document.querySelectorAll<HTMLButtonElement>('[data-open-workspace-tab]').forEach((button)=>button.onclick=()=>switchWorkspaceTab(button.dataset.openWorkspaceTab||'chat'));
+  document.querySelectorAll<HTMLButtonElement>('[data-brief]').forEach((button)=>button.onclick=()=>{($('chat-message') as HTMLTextAreaElement).value=button.dataset.brief||'';$('chat-message').focus();});
+  const newBrief=()=>{setPortfolioOpen(false);navigate('office');switchWorkspaceTab('chat');$('chat-message').focus();};$('header-new-goal').onclick=newBrief;$('brief-donna').onclick=newBrief;
+  $('chat-scope').addEventListener('change',renderUnifiedWorkspace);$('chat-employee').addEventListener('change',renderUnifiedWorkspace);$('chat-goal-mode').addEventListener('change',()=>{updateChatMode();if(value('chat-goal-mode')==='provider')($('chat-provider-options') as HTMLDetailsElement).open=true;});
+  $('chat-message').addEventListener('keydown',(event)=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();($('workspace-chat-form') as HTMLFormElement).requestSubmit();}});
+  workspaceForm('workspace-chat-form',async()=>{
+    const content=value('chat-message');if(!content)throw new Error('Write a goal first.');if(new TextEncoder().encode(content).byteLength>12000)throw new Error('Keep the conversation brief under 12 KB of text.');const scope=workspaceScope();const runSettings=chatRunSettings();const maxIterations=Number(value('chat-max-iterations'));if(!Number.isInteger(maxIterations)||maxIterations<1||maxIterations>10)throw new Error('Choose between one and ten goal iterations.');
+    setStatus($('chat-status'),'Saving your brief and local plan…');await workspaceCommand({action:'post_chat',scope,content},'Brief saved.');
+    const before=new Set((officeState?.goals||[]).map((goal)=>goal.id));const state=await workspaceCommand({action:'create_goal',scope,title:boundedUtf8(content.replace(/\s+/g,' '),120),description:content,mode:runSettings.mode==='provider'?'execute':'plan',maxIterations,runSettings},'Goal saved.');
+    const goal=state.goals?.find((item)=>!before.has(item.id));if(!goal)throw new Error('The brief was saved, but no new goal record was returned. Refresh the workspace to inspect it.');selectedGoalId=goal.id;
+    await workspaceCommand({action:'plan_goal',goalId:goal.id},'Local goal plan saved.');
+    if(runSettings.mode==='provider'&&officeState?.policy?.approvalMode==='autonomous')await workspaceCommand({action:'execute_goal',goalId:goal.id},'Goal queued within the global budget.');
+    ($('chat-message') as HTMLTextAreaElement).value='';setStatus($('chat-status'),runSettings.mode==='provider'&&officeState?.policy?.approvalMode==='review'?'Plan saved. Review ownership, then approve the goal to queue its provider jobs.':'Brief and plan saved.','ok');renderUnifiedWorkspace();
+  },'chat-status');
+  $('workspace-budget-open').onclick=()=>{const details=$('workspace-policy') as HTMLDetailsElement;details.open=!details.open;if(details.open){details.scrollIntoView({block:'nearest'});$('workspace-approval-mode').focus();}};
+  workspaceForm('workspace-policy-form',async()=>{
+    const hardCapUsd=Number(value('workspace-global-usd'));const tokenText=value('workspace-global-tokens');const hardCapTokens=tokenText?Number(tokenText):null;const warningPercent=Number(value('workspace-warning-percent'));
+    if(!Number.isFinite(hardCapUsd)||hardCapUsd<=0||hardCapUsd>100||hardCapTokens!==null&&(!Number.isInteger(hardCapTokens)||hardCapTokens<=0)||!Number.isFinite(warningPercent)||warningPercent<1||warningPercent>100)throw new Error('Set a positive global ceiling up to $100, optional positive token cap, and warning from 1 to 100%.');
+    await workspaceCommand({action:'configure_policy',approvalMode:value('workspace-approval-mode'),dispatchPaused:($('workspace-dispatch-paused') as HTMLInputElement).checked,hardCapUsd,hardCapTokens,warningPercent},'Global policy saved.');setStatus($('workspace-policy-status'),'Global budget and approval mode saved.','ok');
+  },'workspace-policy-status');
+  $('blueprint-add-room').onclick=()=>{resetRoomForm();$('room-name').focus();};$('whiteboard-add-node').onclick=()=>{resetBoardForm();$('node-title').focus();};
+  for(const id of ['blueprint-list-mode','whiteboard-list-mode']){$(id).addEventListener('change',renderUnifiedWorkspace);if(window.innerWidth<650)($(id) as HTMLInputElement).checked=true;}
+  workspaceForm('workspace-room-form',async()=>{
+    const scope=requireOfficeScope();await ensureWorkspaceBlueprint();const name=value('room-name');if(!name)throw new Error('Give this room a name.');const previous=currentBlueprint()?.rooms.find((room)=>room.id===value('room-id'));const x=Number(value('room-x'))/100;const y=Number(value('room-y'))/100;const width=previous?.width||.35;const height=previous?.height||.35;
+    if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||y<0||x>1-width||y>1-height)throw new Error('Place the complete room inside the office plan.');
+    const state=await workspaceCommand({action:'upsert_room',officeId:scope.officeId,id:previous?.id,name,departmentId:value('room-department')||null,x,y,width,height},'Room saved.');const blueprint=state.blueprints?.find((item)=>item.officeId===scope.officeId);const saved=previous?blueprint?.rooms.find((item)=>item.id===previous.id):blueprint?.rooms.find((item)=>item.name===name);if(saved)selectRoom(saved);setStatus($('room-status'),'Room saved in this office.','ok');
+  },'room-status');
+  workspaceForm('workspace-room-assign',async()=>{const roomId=value('room-id');const employeeId=value('room-employee');if(!roomId||!employeeId)throw new Error('Select a room and an employee.');await workspaceCommand({action:'place_employee',officeId:selectedOfficeId,roomId,employeeId,x:.2,y:.65},'Employee placed in the selected room.');const room=currentBlueprint()?.rooms.find((item)=>item.id===roomId);if(room)selectRoom(room);},'room-status');
+  workspaceForm('workspace-node-form',async()=>{
+    const roomId=value('node-room');const ownerEmployeeId=value('node-owner');const title=value('node-title');if(!roomId||!ownerEmployeeId||!title)throw new Error('Give this card a title, owner, and room.');const x=Number(value('node-x'))/100;const y=Number(value('node-y'))/100;if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||x>1||y<0||y>1)throw new Error('Card positions must be between 0 and 100%.');const previous=currentBlueprint()?.whiteboards.find((item)=>item.id===value('node-id'));
+    await workspaceCommand({action:'upsert_whiteboard',officeId:selectedOfficeId,id:previous?.id,roomId,ownerEmployeeId,title,goalIds:value('node-goal')?[value('node-goal')]:[],jobIds:value('node-job')?[value('node-job')]:[],roadmapItemIds:value('node-roadmap')?[value('node-roadmap')]:[],x,y},'Ownership card saved.');setStatus($('node-save-status'),'Ownership saved. Linked execution records keep their own scope and evidence.','ok');
+  },'node-save-status');
+  renderUnifiedWorkspace();
+}
+
+
+// GitHub operations stay within the current company workspace.
+async function githubOperation(operation: string,fields:Record<string,unknown> = {}):Promise<Record<string,unknown>>{
+  const company=officeCompany();if(!company?.repoUrl)throw new Error('Choose a company with a registered GitHub repository.');
+  const state=await workspaceCommand({action:'github_operation',companyId:company.id,operation,...fields},'GitHub operation completed.');
+  const result=state.lastAction?.github;if(!result||typeof result!=='object')throw new Error('GitHub returned no operation result. Refresh before continuing.');return result as Record<string,unknown>;
+}
+function initGitHubTools():void{
+  $('github-refresh-branches').onclick=()=>workspaceTask(async()=>{
+    setStatus($('github-tools-status'),'Reading branch heads from GitHub…');const result=await githubOperation('branches');const branches=Array.isArray(result.branches)?result.branches:[];const container=$('github-branches');container.replaceChildren();
+    for(const raw of branches.slice(0,1000)){if(!raw||typeof raw!=='object')continue;const branch=raw as Record<string,unknown>;if(typeof branch.name!=='string'||typeof branch.sha!=='string')continue;
+      const row=textElement('div','','branch-row');const copy=textElement('div','','branch-copy');copy.append(textElement('strong',branch.name),textElement('code',branch.sha));const button=textElement('button','Use branch','secondary small');button.type='button';button.onclick=()=>{($('github-publish-branch') as HTMLInputElement).value=String(branch.name);($('github-expected-head') as HTMLInputElement).value=String(branch.sha);($('github-head') as HTMLInputElement).value=String(branch.name);};row.append(copy,button);if(branch.protected)row.append(textElement('span','Protected','badge'));container.append(row);
+    }
+    if(!container.children.length)noData(container,'No branches were returned.');setStatus($('github-tools-status'),`${number(branches.length)} branch heads loaded. A protected branch may reject direct publishing.`,'ok');
+  },'github-tools-status');
+  workspaceForm('github-compare-form',async()=>{
+    const result=await githubOperation('compare',{base:value('github-base'),head:value('github-head')});const container=$('github-compare-result');container.replaceChildren();container.append(textElement('h3',`${String(result.status||'Comparison')} · ${String(result.aheadBy??0)} ahead / ${String(result.behindBy??0)} behind`));
+    const files=Array.isArray(result.files)?result.files:[];for(const raw of files.slice(0,300)){if(!raw||typeof raw!=='object')continue;const file=raw as Record<string,unknown>;container.append(textElement('p',`${String(file.path||'Unknown file')} · ${String(file.status||'')} · +${String(file.additions??0)} / −${String(file.deletions??0)}`,'github-file'));}
+    setStatus($('github-tools-status'),`Comparison returned ${number(files.length)} changed files.`,'ok');
+  },'github-tools-status');
+  workspaceForm('github-publish-form',async()=>{
+    const reviewed=($('github-reviewed') as HTMLInputElement).checked;if(officeState?.policy?.approvalMode!=='autonomous'&&!reviewed)throw new Error('Review the changeset and target branch, then select the review checkbox before publishing.');
+    let files:unknown;try{files=JSON.parse(value('github-files'));}catch{throw new Error('The changeset must be a valid JSON array of objects with path and content.');}
+    if(!Array.isArray(files)||files.length<1||files.length>100||files.some((item)=>!item||typeof item.path!=='string'||typeof item.content!=='string'))throw new Error('Use 1 to 100 text files, each with a path and content string.');
+    const expectedHead=value('github-expected-head').toLowerCase();if(!/^[a-f0-9]{40}$/.test(expectedHead))throw new Error('Use the complete current branch head SHA returned by GitHub.');
+    const result=await githubOperation('publish_changes',{branch:value('github-publish-branch'),expectedHead,message:value('github-commit-message'),files,reviewed});
+    setStatus($('github-tools-status'),`Published commit ${String(result.commit||'')} to ${String(result.branch||'the selected branch')}.`,'ok');if(typeof result.commit==='string')($('github-expected-head') as HTMLInputElement).value=result.commit;
+  },'github-tools-status');
+  $('open-personal-dashboard').onclick=()=>workspaceTask(async()=>{if(!bridge?.openPersonalDashboard)throw new Error('Open this control from the installed desktop app to start your private dashboard.');const result=await bridge.openPersonalDashboard();if(!result.ok)throw new Error(result.error||'The private dashboard could not be opened.');setStatus($('personal-dashboard-status'),bridge.transport==='personal-browser'?'You are already using the private dashboard.':'Your private dashboard is open in the browser. Keep the desktop app running.','ok');},'personal-dashboard-status');
+}
+
+
+// ---------------------------------------------------------------- CEO portfolio, using the same saved office and conversation
+let portfolioOpen = false;
+let groupMembers = new Set<string>();
+let contractMembers = new Set<string>();
+let contractPickerService = '';
+function portfolioState():OfficePortfolio|undefined{return officeState?.portfolio;}
+function portfolioCompanies():OfficeCompany[]{return(officeState?.companies||[]).filter(company=>company.id!==portfolioState()?.ceo.sharedServicesCompanyId).sort((a,b)=>a.name.localeCompare(b.name));}
+function portfolioReady():boolean{return workspaceAvailable()&&Boolean(portfolioState());}
+function setPortfolioOpen(open:boolean):void{
+  portfolioOpen=open;$('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open);$('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').textContent=open?'↙':'↗';
+  const label=$('ceo-toggle').querySelector('strong');if(label)label.textContent=open?'Back to company workspace':'CEO office';if(open)renderPortfolio();
+}
+function portfolioNavigation(label:string,companyId:string,tab='chat',kind='text-button',officeId?:string,departmentId?:string):HTMLButtonElement{
+  const button=textElement('button',label,kind);button.type='button';button.onclick=()=>workspaceTask(()=>openPortfolioCompany(companyId,tab,officeId,departmentId),'ceo-status');return button;
+}
+async function openPortfolioCompany(companyId:string,tab='chat',officeId?:string,departmentId?:string):Promise<void>{
+  if(!officeState?.companies.some(company=>company.id===companyId))throw new Error('This company is no longer in the workspace.');
+  if(workspaceReadOnly()){officeState.activeCompanyId=companyId;renderOffice();}else await workspaceCommand({action:'select_company',companyId},'Company selected.');
+  if(officeId)selectedOfficeId=officeId;selectedDepartmentId=departmentId||'';($('chat-scope') as HTMLSelectElement).value=departmentId?'department':officeId?'office':'company';
+  renderOffice();setPortfolioOpen(false);switchWorkspaceTab(tab);$(tab==='chat'?'chat-message':`workspace-tab-${tab}`).focus();
+}
+function scopeCompanies(item:PortfolioRoadmapItem):string[]{
+  if(item.scope.kind==='global')return portfolioCompanies().map(company=>company.id);
+  if(item.scope.kind==='company')return[item.scope.id];
+  return portfolioState()?.groups.find(group=>group.id===item.scope.id)?.companyIds||[];
+}
+function roadmapInCompany(item:PortfolioRoadmapItem,companyId:string):boolean{return item.scope.kind==='global'||scopeCompanies(item).includes(companyId);}
+function roadmapScopeLabel(item:PortfolioRoadmapItem):string{
+  return item.scope.kind==='global'?'Entire portfolio':item.scope.kind==='group'?portfolioState()?.groups.find(group=>group.id===item.scope.id)?.name||'Group unavailable':officeState?.companies.find(company=>company.id===item.scope.id)?.name||'Company unavailable';
+}
+function filteredPortfolioCompanies():OfficeCompany[]{
+  const group=portfolioState()?.groups.find(item=>item.id===value('ceo-roadmap-group'));const companyId=value('ceo-roadmap-company');
+  return portfolioCompanies().filter(company=>(!group||group.companyIds.includes(company.id))&&(!companyId||company.id===companyId));
+}
+function portfolioSelect(id:string,rows:Array<{id:string;name:string}>,empty?:string):void{const select=$(id) as HTMLSelectElement;populateSelect(select,rows,select.value,empty);}
+function renderPortfolioSelectors():void{
+  const portfolio=portfolioState();if(!portfolio)return;const companies=portfolioCompanies();
+  for(const id of ['ceo-roadmap-group','ceo-edit-group','ceo-move-group','ceo-focus-group'])portfolioSelect(id,portfolio.groups,id==='ceo-edit-group'?'Create a group':id==='ceo-focus-group'?'Entire portfolio':id==='ceo-move-group'?'Choose destination':'All groups');
+  const group=portfolio.groups.find(item=>item.id===value('ceo-roadmap-group'));portfolioSelect('ceo-roadmap-company',companies.filter(company=>!group||group.companyIds.includes(company.id)),'All companies');
+  for(const id of ['ceo-move-company','ceo-contract-company'])portfolioSelect(id,companies,id==='ceo-move-company'?'Choose a company':'Choose recipient');
+  const ids=new Set(filteredPortfolioCompanies().map(company=>company.id));portfolioSelect('ceo-roadmap-department',(officeState?.departments||[]).filter(department=>ids.has(department.companyId)).map(department=>({id:department.id,name:`${officeState?.companies.find(company=>company.id===department.companyId)?.name||''} / ${department.name}`})),'All departments');
+  portfolioSelect('ceo-contract-service',portfolio.services,'Choose a shared service');renderContractRecipients();renderRoadmapEditorSelectors();
+}
+function renderPortfolioDirectory():void{
+  const container=$('ceo-directory');container.replaceChildren();const portfolio=portfolioState();if(!portfolio){noData(container,'The CEO portfolio loads from the current native workspace.');return;}
+  const query=value('ceo-company-search').toLowerCase();const companies=portfolioCompanies();const memberships=new Set(portfolio.groups.flatMap(group=>group.companyIds));let rendered=0;
+  const groups:Array<{id:string;name:string;description:string;companyIds:string[];status:string}>=[...portfolio.groups];const ungrouped=companies.filter(company=>!memberships.has(company.id));if(ungrouped.length)groups.push({id:'',name:'Ungrouped projects',description:'Companies awaiting group assignment.',companyIds:ungrouped.map(company=>company.id),status:'active'});
+  for(const group of groups){const groupMatch=group.name.toLowerCase().includes(query);const members=companies.filter(company=>group.companyIds.includes(company.id)&&(!query||groupMatch||`${company.name} ${company.repoUrl||''}`.toLowerCase().includes(query)));if(!members.length&&query)continue;
+    const details=textElement('details','','portfolio-group');details.open=true;const summary=textElement('summary','');summary.append(textElement('span',group.name),textElement('span',String(members.length),'badge'));details.append(summary);
+    const actions=textElement('div','','portfolio-group-tools');if(members[0])actions.append(portfolioNavigation('Open group ↗',members[0].id));if(group.id){const edit=textElement('button','Edit membership','text-button');edit.type='button';edit.onclick=()=>editPortfolioGroup(group.id);actions.append(edit);}details.append(actions);
+    for(const company of members){if(rendered>=240)break;rendered++;const row=textElement('div','',`portfolio-company${officeCompany()?.id===company.id?' selected':''}`);row.dataset.companyId=company.id;row.append(portfolioNavigation(company.name,company.id,'chat','portfolio-company-name'));
+      const contracts=portfolio.contracts.filter(contract=>contract.status==='active'&&contract.recipientCompanyId===company.id);row.append(textElement('small',`${company.visibility==='private'?'Private company':company.status} · ${contracts.length} shared ${contracts.length===1?'contract':'contracts'}`,'portfolio-company-meta'));
+      const links=textElement('div','','portfolio-company-links');links.append(portfolioNavigation('Office',company.id,'blueprint'),portfolioNavigation('Whiteboard',company.id,'whiteboard'));row.append(links);details.append(row);
+    }container.append(details);
+  }
+  const pool=officeState?.companies.find(company=>company.id===portfolio.ceo.sharedServicesCompanyId);if(pool){const row=textElement('div','','portfolio-company');row.append(portfolioNavigation('Shared-services office ↗',pool.id,'blueprint','portfolio-company-name'));container.append(row);}
+  if(!container.children.length)noData(container,'No companies match this search.');if(rendered>=240)container.append(textElement('p','Showing the first 240 matches. Refine the search to locate another company.','form-help'));
+}
+function renderPortfolioRoadmap():void{
+  const container=$('ceo-roadmap');container.replaceChildren();const portfolio=portfolioState();if(!portfolio){noData(container,'Portfolio outcomes are unavailable in this build.');return;}
+  const companies=new Set(filteredPortfolioCompanies().map(company=>company.id));const groupId=value('ceo-roadmap-group');const departmentId=value('ceo-roadmap-department');const status=value('ceo-roadmap-status');
+  const items=portfolio.roadmap.filter(item=>(!departmentId||item.departmentId===departmentId)&&(!status||item.status===status)&&(item.scope.kind==='global'||item.scope.kind==='group'&&item.scope.id===groupId||scopeCompanies(item).some(id=>companies.has(id))));
+  $('ceo-roadmap-summary').textContent=`${items.length} outcomes in view · ${items.filter(item=>item.status==='done').length} complete with evidence`;
+  for(const item of items.slice(0,80)){const article=textElement('article','','portfolio-outcome');article.dataset.roadmapId=item.id;const head=textElement('div','','portfolio-outcome-heading');head.append(textElement('h4',item.title),textElement('span',item.status.replaceAll('-',' '),`badge ${item.status==='done'?'ok':item.status==='blocked'?'unknown':''}`));article.append(head);if(item.description)article.append(textElement('p',item.description));
+    const owner=officeState?.employees.find(employee=>employee.id===item.ownerEmployeeId);const department=officeState?.departments.find(d=>d.id===item.departmentId);article.append(textElement('div',`${roadmapScopeLabel(item)} · ${owner?.name||'Owner unavailable'}${department?` / ${department.name}`:''}${item.serviceContractId?' · shared-service contract':''}`,'outcome-owner'));
+    if(item.evidence)article.append(textElement('p',`Evidence: ${item.evidence}`,'form-help'));
+    const actions=textElement('div','','row wrap');const edit=textElement('button','Edit outcome','text-button');edit.type='button';edit.onclick=()=>editPortfolioRoadmap(item);actions.append(edit);
+    const map=textElement('button','Map ownership ↗','text-button');map.type='button';map.onclick=()=>workspaceTask(()=>mapRoadmapOwnership(item),'ceo-status');actions.append(map);article.append(actions);container.append(article);
+  }
+  if(!items.length)noData(container,'No saved outcomes match these filters. Add one with a scope and accountable owner.');if(items.length>80)container.append(textElement('p','Showing the first 80 matches. Filter by group, company, or department.','form-help'));
+}
+function renderPortfolioServices():void{
+  const container=$('ceo-services');container.replaceChildren();const portfolio=portfolioState();if(!portfolio)return;
+  const symbols:Record<PortfolioServiceKey,string>={engineering:'⌘','design-architecture':'◇','research-knowledge':'∴',security:'□',hackathon:'↗','music-arts':'♫'};
+  for(const service of portfolio.services){const card=textElement('article','','portfolio-service');card.dataset.serviceKey=service.key;const contracts=portfolio.contracts.filter(contract=>contract.serviceId===service.id&&contract.status==='active');const employees=service.employeeIds.map(id=>officeState?.employees.find(employee=>employee.id===id)).filter((employee):employee is OfficeEmployee=>Boolean(employee));
+    card.append(textElement('span',symbols[service.key]||'·','service-symbol'),textElement('h4',service.name),textElement('span',service.status==='active'?'Staffing ready':'Paused','badge'),textElement('p',`${employees.length} shared ${employees.length===1?'specialist':'specialists'} · ${new Set(contracts.map(contract=>contract.recipientCompanyId)).size} recipient companies`),textElement('p',employees.map(employee=>employee.name).join(' · ')||'No employee assigned'));
+    card.append(portfolioNavigation('Open shared department ↗',service.companyId,'blueprint','text-button',service.officeId,service.departmentId));container.append(card);
+  }
+  if(!container.children.length)noData(container,'Prepare the shared-team preset to establish six specialties, including hackathon production and music and arts.');
+}
+function renderPortfolioContracts():void{
+  const container=$('ceo-contracts');container.replaceChildren();const portfolio=portfolioState();if(!portfolio)return;
+  for(const contract of portfolio.contracts.slice(0,100)){const service=portfolio.services.find(item=>item.id===contract.serviceId);const company=officeState?.companies.find(item=>item.id===contract.recipientCompanyId);const card=textElement('article','','portfolio-contract');card.append(textElement('h4',`${service?.name||'Shared service'} → ${company?.name||'Company unavailable'}`),textElement('p',`${contract.employeeIds.length} assigned people · ${contract.status}${contract.recipientDepartmentId?' · department scope':contract.recipientOfficeId?' · office scope':' · company scope'}`));
+    const actions=textElement('div','','row wrap');if(contract.status!=='revoked'){actions.append(workspaceButton(contract.status==='paused'?'Resume contract':'Pause contract',async()=>{await workspaceCommand({action:'contract_service',...contract,status:contract.status==='paused'?'active':'paused'},'Shared-service contract updated.');}));}
+    actions.append(portfolioNavigation('Open recipient ↗',contract.recipientCompanyId));card.append(actions);container.append(card);
+  }
+  if(!container.children.length)noData(container,'No shared-service contracts have been saved.');
+}
+function renderPortfolioMembers():void{
+  const container=$('ceo-group-members');container.replaceChildren();const query=value('ceo-member-search').toLowerCase();const companies=portfolioCompanies().filter(company=>!query||company.name.toLowerCase().includes(query));
+  for(const company of companies.slice(0,150)){const label=textElement('label','','check-label');const input=document.createElement('input');input.type='checkbox';input.value=company.id;input.checked=groupMembers.has(company.id);input.onchange=()=>{if(input.checked)groupMembers.add(company.id);else groupMembers.delete(company.id);};label.append(input,textElement('span',company.name));container.append(label);}if(!companies.length)noData(container,'No company matches.');
+}
+function editPortfolioGroup(id:string):void{
+  const group=portfolioState()?.groups.find(item=>item.id===id);($('ceo-edit-group') as HTMLSelectElement).value=group?.id||'';($('ceo-group-name') as HTMLInputElement).value=group?.name||'';($('ceo-group-description') as HTMLTextAreaElement).value=group?.description||'';groupMembers=new Set(group?.companyIds||[]);renderPortfolioMembers();($('ceo-group-editor') as HTMLDetailsElement).open=true;$('ceo-group-editor').scrollIntoView({block:'nearest'});$('ceo-group-name').focus();
+}
+function renderContractRecipients():void{
+  const companyId=value('ceo-contract-company');const offices=(officeState?.offices||[]).filter(office=>office.companyId===companyId);portfolioSelect('ceo-contract-office',offices,'All recipient offices');const officeId=value('ceo-contract-office');portfolioSelect('ceo-contract-department',(officeState?.departments||[]).filter(department=>department.companyId===companyId&&(!officeId||department.officeId===officeId)),'All recipient departments');
+  const service=portfolioState()?.services.find(item=>item.id===value('ceo-contract-service'));if(contractPickerService!==service?.id){contractPickerService=service?.id||'';contractMembers=new Set(service?.employeeIds||[]);}
+  const container=$('ceo-contract-employees');container.replaceChildren();for(const id of service?.employeeIds||[]){const employee=officeState?.employees.find(item=>item.id===id);if(!employee)continue;const label=textElement('label','','check-label');const input=document.createElement('input');input.type='checkbox';input.value=id;input.checked=contractMembers.has(id);input.onchange=()=>{if(input.checked)contractMembers.add(id);else contractMembers.delete(id);};label.append(input,textElement('span',`${employee.name} · ${employee.role}`));container.append(label);}if(!service)noData(container,'Choose a shared service.');
+}
+function renderRoadmapEditorSelectors():void{
+  const kind=value('ceo-roadmap-scope');const portfolio=portfolioState();const targets=kind==='company'?portfolioCompanies():kind==='group'?portfolio?.groups||[]:[];portfolioSelect('ceo-roadmap-target',targets,kind==='global'?undefined:'Choose a target');$('ceo-roadmap-target-label').classList.toggle('hidden',kind==='global');
+  const companyIds=kind==='company'?[value('ceo-roadmap-target')]:kind==='group'?portfolio?.groups.find(group=>group.id===value('ceo-roadmap-target'))?.companyIds||[]:portfolioCompanies().map(company=>company.id);const allowed=new Set(companyIds);const contracts=(portfolio?.contracts||[]).filter(contract=>contract.status==='active'&&allowed.has(contract.recipientCompanyId));const contracted=new Set(contracts.flatMap(contract=>contract.employeeIds));
+  portfolioSelect('ceo-roadmap-owner',(officeState?.employees||[]).filter(employee=>employee.status!=='fired'&&(!employee.companyId||allowed.has(employee.companyId)||contracted.has(employee.id))).map(employee=>({id:employee.id,name:`${employee.name} · ${employee.role}`})),'Choose an owner');
+  portfolioSelect('ceo-roadmap-owner-department',(officeState?.departments||[]).filter(department=>allowed.has(department.companyId)),'No department');portfolioSelect('ceo-roadmap-contract',contracts.map(contract=>({id:contract.id,name:`${portfolio?.services.find(service=>service.id===contract.serviceId)?.name||'Shared service'} → ${officeState?.companies.find(company=>company.id===contract.recipientCompanyId)?.name||''}`})),'Direct ownership');
+}
+function editPortfolioRoadmap(item?:PortfolioRoadmapItem):void{
+  ($('ceo-roadmap-form') as HTMLFormElement).reset();($('ceo-roadmap-id') as HTMLInputElement).value=item?.id||'';($('ceo-roadmap-title') as HTMLInputElement).value=item?.title||'';($('ceo-roadmap-description') as HTMLTextAreaElement).value=item?.description||'';($('ceo-roadmap-scope') as HTMLSelectElement).value=item?.scope.kind||'global';renderRoadmapEditorSelectors();if(item?.scope.kind!=='global')($('ceo-roadmap-target') as HTMLSelectElement).value=item?.scope.id||'';renderRoadmapEditorSelectors();($('ceo-roadmap-owner') as HTMLSelectElement).value=item?.ownerEmployeeId||'donna';($('ceo-roadmap-owner-department') as HTMLSelectElement).value=item?.departmentId||'';($('ceo-roadmap-contract') as HTMLSelectElement).value=item?.serviceContractId||'';($('ceo-roadmap-edit-status') as HTMLSelectElement).value=item?.status||'planned';($('ceo-roadmap-evidence') as HTMLInputElement).value=item?.evidence||'';($('ceo-roadmap-editor') as HTMLDetailsElement).open=true;$('ceo-roadmap-editor').scrollIntoView({block:'nearest'});$('ceo-roadmap-title').focus();
+}
+async function mapRoadmapOwnership(item:PortfolioRoadmapItem):Promise<void>{
+  const companies=scopeCompanies(item);const companyId=companies.includes(officeCompany()?.id||'')?officeCompany()!.id:companies[0];if(!companyId)throw new Error('Add a company to this roadmap scope before mapping ownership.');
+  await openPortfolioCompany(companyId,'whiteboard');await ensureWorkspaceBlueprint();resetBoardForm();($('node-title') as HTMLInputElement).value=item.title;($('node-owner') as HTMLSelectElement).value=item.ownerEmployeeId;($('node-roadmap') as HTMLSelectElement).value=item.id;$('node-title').focus();setStatus($('node-save-status'),'Choose the room, then save this roadmap ownership card.');
+}
+function optimizeGroups():Array<{id:string;name:string;description:string;companyIds:string[];status:OfficeEntityStatus}>{
+  const portfolio=portfolioState();const companies=portfolioCompanies();const groups=(portfolio?.groups||[]).map(group=>({id:group.id,name:group.name,description:group.description,companyIds:[...group.companyIds],status:group.status}));const assigned=new Set(groups.flatMap(group=>group.companyIds));const missing=companies.filter(company=>!assigned.has(company.id)).map(company=>company.id);
+  if(missing.length){const fallback=groups.find(group=>group.id==='portfolio-ungrouped');if(fallback)fallback.companyIds.push(...missing);else groups.push({id:'portfolio-ungrouped',name:'Ungrouped projects',description:'Imported companies awaiting membership review. No code-similarity inference has been made.',companyIds:missing,status:'active'});}return groups;
+}
+function renderPortfolio():void{
+  const portfolio=portfolioState();const ready=portfolioReady();const companies=portfolioCompanies();const contracts=(portfolio?.contracts||[]).filter(contract=>contract.status==='active');const shared=new Set((portfolio?.services||[]).flatMap(service=>service.employeeIds));const assignments=contracts.reduce((sum,contract)=>sum+contract.employeeIds.length,0);const live=(officeState?.jobs||[]).filter(job=>job.status==='running');const queued=(officeState?.jobs||[]).filter(job=>['queued','waiting-budget'].includes(job.status)&&job.mode==='provider');
+  $('ceo-entry-summary').textContent=ready?`${companies.length} companies · ${portfolio!.groups.length} groups · ${shared.size} shared specialists`:'Companies, shared teams, and the portfolio roadmap';$('ceo-company-count').textContent=number(companies.length);$('ceo-group-count').textContent=`${portfolio?.groups.length||0} portfolio groups`;$('ceo-shared-count').textContent=number(shared.size);$('ceo-reuse-count').textContent=`${assignments} contracted assignments reuse saved employees`;$('ceo-contract-count').textContent=number(contracts.length);$('ceo-running-count').textContent=number(live.length);$('ceo-queued-count').textContent=`${queued.length} queued provider ${queued.length===1?'request':'requests'}`;$('ceo-directory-count').textContent=number(companies.length);
+  $('ceo-operating-state').textContent=!ready?'Current desktop required':portfolio!.ceo.enabled?'Coordination policy enabled':'Coordination policy paused';$('ceo-operating-state').className=`pill ${ready&&portfolio!.ceo.enabled?'ok':'neutral'}`;
+  if(portfolio&&!$('ceo-policy-form').contains(document.activeElement)){($('ceo-policy-title') as HTMLInputElement).value=portfolio.ceo.title;($('ceo-enabled') as HTMLInputElement).checked=portfolio.ceo.enabled;}
+  renderPortfolioSelectors();if(portfolio&&!$('ceo-policy-form').contains(document.activeElement))($('ceo-focus-group') as HTMLSelectElement).value=portfolio.ceo.focusGroupId||'';
+  renderPortfolioDirectory();renderPortfolioRoadmap();renderPortfolioServices();renderPortfolioContracts();renderPortfolioMembers();
+  for(const id of ['ceo-optimize','ceo-ensure-services'])($(id) as HTMLButtonElement).disabled=!ready||workspaceReadOnly();
+  $('ceo-panel').querySelectorAll<HTMLButtonElement>('form button[type="submit"]').forEach(button=>button.disabled=!ready||workspaceReadOnly());
+}
+function initPortfolio():void{
+  $('ceo-toggle').onclick=()=>setPortfolioOpen(!portfolioOpen);$('ceo-company-search').addEventListener('input',renderPortfolioDirectory);$('ceo-member-search').addEventListener('input',renderPortfolioMembers);
+  for(const id of ['ceo-roadmap-group','ceo-roadmap-company','ceo-roadmap-department','ceo-roadmap-status'])$(id).addEventListener('change',()=>{renderPortfolioSelectors();renderPortfolioRoadmap();});
+  for(const id of ['ceo-roadmap-scope','ceo-roadmap-target'])$(id).addEventListener('change',renderRoadmapEditorSelectors);
+  for(const id of ['ceo-contract-service','ceo-contract-company','ceo-contract-office'])$(id).addEventListener('change',renderContractRecipients);
+  $('ceo-edit-group').addEventListener('change',()=>editPortfolioGroup(value('ceo-edit-group')));$('ceo-add-roadmap').onclick=()=>editPortfolioRoadmap();
+  $('ceo-ensure-services').onclick=()=>workspaceTask(async()=>{await workspaceCommand({action:'ensure_shared_services',preset:'standard'},'Shared-service departments and persistent specialist roles prepared. No provider request was made.');},'ceo-status');
+  $('ceo-optimize').onclick=()=>workspaceTask(async()=>{if(!portfolioReady())throw new Error('Load the current native portfolio first.');setPortfolioOpen(true);const groups=optimizeGroups();if(!groups.length)throw new Error('Import or create a company before optimizing the portfolio.');await workspaceCommand({action:'optimize_portfolio',groups,preset:'standard',pauseRedundant:false},'Portfolio membership and shared-service contracts updated. New imports remain in the reviewable Ungrouped projects collection.');setStatus($('ceo-status'),'Shared staffing prepared from saved memberships. This local operation did not call a model.','ok');},'ceo-status');
+  workspaceForm('ceo-group-form',async()=>{if(!portfolioReady())throw new Error('Portfolio support is unavailable.');const previous=portfolioState()?.groups.find(group=>group.id===value('ceo-edit-group'));const name=value('ceo-group-name');if(!name)throw new Error('Give the group a name.');const state=await workspaceCommand({action:'upsert_portfolio_group',id:previous?.id,name,description:value('ceo-group-description'),companyIds:Array.from(groupMembers),status:previous?.status||'active'},'Group membership saved.');const saved=state.portfolio?.groups.find(group=>previous?group.id===previous.id:group.name===name);if(saved)editPortfolioGroup(saved.id);setStatus($('ceo-group-status'),'Group membership saved.','ok');},'ceo-group-status');
+  workspaceForm('ceo-move-company-form',async()=>{const companyId=value('ceo-move-company');const groupId=value('ceo-move-group');if(!companyId||!groupId)throw new Error('Choose a company and destination group.');const groups=(portfolioState()?.groups||[]).map(group=>({id:group.id,name:group.name,description:group.description,status:group.status,companyIds:group.id===groupId?[...new Set([...group.companyIds,companyId])]:group.companyIds.filter(id=>id!==companyId)}));await workspaceCommand({action:'optimize_portfolio',groups,preset:'standard',pauseRedundant:false},'Company group membership and shared contracts updated.');setStatus($('ceo-move-status'),'Company moved and shared teams updated.','ok');},'ceo-move-status');
+  workspaceForm('ceo-contract-form',async()=>{const serviceId=value('ceo-contract-service');const recipientCompanyId=value('ceo-contract-company');if(!serviceId||!recipientCompanyId||!contractMembers.size)throw new Error('Choose a service, recipient, and at least one shared specialist.');const recipientOfficeId=value('ceo-contract-office')||null;const recipientDepartmentId=value('ceo-contract-department')||null;const previous=portfolioState()?.contracts.find(contract=>contract.serviceId===serviceId&&contract.recipientCompanyId===recipientCompanyId&&contract.recipientOfficeId===recipientOfficeId&&contract.recipientDepartmentId===recipientDepartmentId);await workspaceCommand({action:'contract_service',id:previous?.id,serviceId,recipientCompanyId,recipientOfficeId,recipientDepartmentId,employeeIds:Array.from(contractMembers),allowedTools:previous?.allowedTools||[],status:'active'},'Shared-service contract saved.');setStatus($('ceo-contract-status'),'Staffing contract saved with the selected recipient scope.','ok');},'ceo-contract-status');
+  workspaceForm('ceo-roadmap-form',async()=>{const previous=portfolioState()?.roadmap.find(item=>item.id===value('ceo-roadmap-id'));const kind=value('ceo-roadmap-scope') as PortfolioRoadmapItem['scope']['kind'];const id=kind==='global'?'portfolio':value('ceo-roadmap-target');const title=value('ceo-roadmap-title');const ownerEmployeeId=value('ceo-roadmap-owner');const status=value('ceo-roadmap-edit-status');const evidence=value('ceo-roadmap-evidence');if(!id||!title||!ownerEmployeeId)throw new Error('Give the outcome a scope, title, and accountable owner.');if(status==='done'&&!evidence)throw new Error('Add completion evidence before marking a portfolio outcome Done.');await workspaceCommand({action:'upsert_roadmap_item',id:previous?.id,scope:{kind,id},title,description:value('ceo-roadmap-description'),ownerEmployeeId,departmentId:value('ceo-roadmap-owner-department')||null,serviceContractId:value('ceo-roadmap-contract')||null,status,evidence:evidence||null,dependencies:previous?.dependencies||[],goalIds:previous?.goalIds||[],jobIds:previous?.jobIds||[]},'Portfolio roadmap outcome saved.');setStatus($('ceo-roadmap-save-status'),'Outcome, ownership, and evidence saved.','ok');},'ceo-roadmap-save-status');
+  workspaceForm('ceo-policy-form',async()=>{await workspaceCommand({action:'configure_ceo',enabled:($('ceo-enabled') as HTMLInputElement).checked,title:value('ceo-policy-title'),focusGroupId:value('ceo-focus-group')||null},'CEO coordination policy saved.');setStatus($('ceo-status'),'Saved CEO policy. Worker activity remains controlled by the dispatcher and global budgets.','ok');},'ceo-status');
+  workspaceForm('ceo-review-form',async()=>{const companyIds=filteredPortfolioCompanies().map(company=>company.id);if(!companyIds.length)throw new Error('Select at least one company in the portfolio filter.');const provider=value('ceo-review-provider');const model=value('ceo-review-model');const maxUsd=Number(value('ceo-review-usd'));const maxTokens=Number(value('ceo-review-tokens'));const priceRates={inputUsdPerMillion:Number(value('ceo-review-rate-input')),outputUsdPerMillion:Number(value('ceo-review-rate-output'))};if(!model||!Number.isFinite(maxUsd)||maxUsd<=0||maxUsd>100||!Number.isInteger(maxTokens)||maxTokens<1||maxTokens>200000)throw new Error('Use a model, positive token limit, and spend ceiling up to $100.');if(provider!=='ollama'&&(!Number.isFinite(priceRates.inputUsdPerMillion)||!Number.isFinite(priceRates.outputUsdPerMillion)||priceRates.inputUsdPerMillion<=0||priceRates.outputUsdPerMillion<=0))throw new Error('Enter current positive cloud-provider prices.');await workspaceCommand({action:'schedule_repository_reviews',companyIds,everyMinutes:1440,enabled:false,provider,model,maxUsd,maxTokens,priceRates},'Paused recurring repository reviews prepared.');setStatus($('ceo-review-status'),'Daily reviews are prepared and paused. Open a company’s schedules to activate them. Reviews produce proposals; publishing is a separate action.','ok');},'ceo-review-status');
+  $('queue-service-contract').addEventListener('change',renderOfficeScope);$('node-room').addEventListener('change',renderSpatialSelectors);renderPortfolio();
+}
+function contractedRoomEmployees(roomId:string,base:OfficeEmployee[],retainOwner=false):OfficeEmployee[]{
+  const room=currentBlueprint()?.rooms.find(item=>item.id===roomId);const ids=new Set(base.map(employee=>employee.id));
+  for(const service of portfolioState()?.services||[])if(service.companyId===officeCompany()?.id&&service.officeId===selectedOfficeId&&(!room?.departmentId||service.departmentId===room.departmentId))for(const id of service.employeeIds)ids.add(id);
+  for(const contract of portfolioState()?.contracts||[])if(contract.status==='active'&&contract.recipientCompanyId===officeCompany()?.id&&(!contract.recipientOfficeId||contract.recipientOfficeId===selectedOfficeId)&&(!contract.recipientDepartmentId||contract.recipientDepartmentId===room?.departmentId))for(const id of contract.employeeIds)ids.add(id);
+  if(retainOwner){const board=currentBlueprint()?.whiteboards.find(item=>item.id===value('node-id'));if(board)ids.add(board.ownerEmployeeId);}
+  return(officeState?.employees||[]).filter(employee=>ids.has(employee.id)&&employee.status!=='fired');
+}
+function scopedServiceContracts():PortfolioServiceContract[]{return(portfolioState()?.contracts||[]).filter(contract=>contract.status==='active'&&contract.recipientCompanyId===officeCompany()?.id&&(!contract.recipientOfficeId||contract.recipientOfficeId===selectedOfficeId)&&(!contract.recipientDepartmentId||contract.recipientDepartmentId===selectedDepartmentId));}
+
+
+// ---------------------------------------------------------------- boot
+function boot(): void {
+  initWorkspace(); initOffice(); initUnifiedWorkspace(); initGitHubTools(); initPortfolio(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
+  if (!bridge) {
+    $('bridge-notice').classList.remove('hidden'); $('core-label').textContent = 'Desktop preview'; $('core-note').textContent = 'Native actions need the desktop app';
+    noData($('team-grid'), 'Open the desktop app to load your skill-linked team.'); noData($('project-list'), 'Create and save projects in the installed desktop app.'); noData($('key-rows'), 'Provider credentials are managed by the desktop app’s secure storage.');
+  }
+  $('refresh-sysinfo').addEventListener('click', () => bridge ? void safeTask(async () => renderSystemInfo(await bridge.getSystemInfo())) : nativeUnavailable());
+  $('refresh-catalog').addEventListener('click', () => bridge ? void safeTask(refreshCatalog) : nativeUnavailable()); $('refresh-jobs').addEventListener('click', () => bridge ? void safeTask(refreshJobs) : nativeUnavailable());
+  $('back-to-launcher').addEventListener('click', () => void bridge?.backToLauncher()); $('ollama-detect').addEventListener('click', () => bridge ? void safeTask(detectOllamaUi) : nativeUnavailable()); $('projects-refresh').addEventListener('click', () => bridge ? void safeTask(refreshProjectsPanel) : nativeUnavailable());
+  $('run-start').addEventListener('click', () => void safeTask(startRun));
+  $('run-pause').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { const r = await bridge.pauseRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
+  $('run-resume').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { const r = await bridge.resumeRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
+  $('run-cancel').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { const r = await bridge.cancelRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
+  bridge?.onModeChanged((mode, url) => setMode(mode, url)); bridge?.onJobEvent(() => { if (activeView === 'models') void safeTask(refreshJobs); });
+  bridge?.onProjectEvent((run) => {
+    workspaceRuns = [run, ...workspaceRuns.filter((existing) => existing.id !== run.id)];
+    if (currentProject && run.projectId === currentProject.id) { currentRun = run; if (activeView === 'projects') renderRunDetail(); }
+    if (activeView === 'overview') renderOverview(); if (activeView === 'usage') renderUsage();
+  });
+  if (workspaceReadOnly()) {
+    $('bridge-notice').classList.remove('hidden');
+    $('bridge-notice').textContent = 'Starter office preview · data is an example workspace; changes and provider execution require the private desktop/browser workspace.';
+    $('core-label').textContent='Starter office preview';$('core-note').textContent='Example state · read only';
+  } else if (bridge?.transport === 'personal-browser') { $('core-label').textContent='Private browser workspace'; $('core-note').textContent='Connected to your desktop app'; }
+  const route = location.hash.replace('#', '') as ViewName; navigate(route in VIEW_IDS ? route : 'office', false); void safeTask(refreshWorkspace);
+}
 boot();
-
 export {};

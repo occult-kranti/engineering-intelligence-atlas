@@ -1,0 +1,2106 @@
+//! Durable company hierarchy and bounded work queue. Definitions are not processes.
+//! Only trusted adapters perform network/model calls. This module never does.
+use super::{bounded_text, fail, now, safe_id, safe_relative, Company, Employee, Result};
+use serde::{Deserialize, Serialize};
+use serde_json::{json, Value};
+use std::collections::{HashMap, HashSet, VecDeque};
+use time::{format_description::well_known::Rfc3339, Duration, OffsetDateTime};
+use uuid::Uuid;
+#[path = "governance.rs"]
+mod governance;
+pub use governance::*;
+#[path = "portfolio.rs"]
+mod portfolio;
+pub use portfolio::*;
+
+fn id(prefix: &str) -> String {
+    format!("{prefix}-{}", Uuid::new_v4())
+}
+fn timestamp(value: &str) -> Result<OffsetDateTime> {
+    OffsetDateTime::parse(value, &Rfc3339)
+        .map_err(|_| fail("INVALID_INPUT", "Expected an RFC3339 timestamp"))
+}
+fn at(value: OffsetDateTime) -> String {
+    value.format(&Rfc3339).unwrap_or_default()
+}
+fn string(p: &Value, key: &str, max: usize) -> Result<String> {
+    let v = p
+        .get(key)
+        .and_then(Value::as_str)
+        .ok_or_else(|| fail("INVALID_INPUT", format!("Missing {key}")))?;
+    bounded_text(v, max, key)?;
+    Ok(v.into())
+}
+fn opt_string(p: &Value, key: &str, max: usize) -> Result<Option<String>> {
+    match p.get(key) {
+        None | Some(Value::Null) => Ok(None),
+        Some(Value::String(v)) => {
+            bounded_text(v, max, key)?;
+            Ok(Some(v.clone()))
+        }
+        _ => Err(fail("INVALID_INPUT", format!("Invalid {key}"))),
+    }
+}
+fn number(p: &Value, key: &str, min: f64, max: f64) -> Result<f64> {
+    let v = p
+        .get(key)
+        .and_then(Value::as_f64)
+        .ok_or_else(|| fail("INVALID_INPUT", format!("Missing numeric {key}")))?;
+    if !v.is_finite() || v < min || v > max {
+        return Err(fail("INVALID_INPUT", format!("{key} is out of range")));
+    }
+    Ok(v)
+}
+fn integer(p: &Value, key: &str, min: u64, max: u64) -> Result<u64> {
+    let v = p
+        .get(key)
+        .and_then(Value::as_u64)
+        .ok_or_else(|| fail("INVALID_INPUT", format!("Missing integer {key}")))?;
+    if v < min || v > max {
+        return Err(fail("INVALID_INPUT", format!("{key} is out of range")));
+    }
+    Ok(v)
+}
+fn strings(p: &Value, key: &str, max: usize) -> Result<Vec<String>> {
+    match p.get(key) {
+        None | Some(Value::Null) => Ok(vec![]),
+        Some(Value::Array(a)) if a.len() <= max => a
+            .iter()
+            .map(|v| {
+                let s = v
+                    .as_str()
+                    .ok_or_else(|| fail("INVALID_INPUT", format!("Invalid {key}")))?;
+                bounded_text(s, 300, key)?;
+                Ok(s.into())
+            })
+            .collect(),
+        _ => Err(fail("INVALID_INPUT", format!("Invalid {key}"))),
+    }
+}
+fn boolean(p: &Value, key: &str, default: bool) -> Result<bool> {
+    match p.get(key) {
+        None => Ok(default),
+        Some(Value::Bool(v)) => Ok(*v),
+        _ => Err(fail("INVALID_INPUT", format!("Invalid {key}"))),
+    }
+}
+fn canonical_repo(raw: &str) -> Result<String> {
+    let rest = raw
+        .trim_end_matches('/')
+        .strip_prefix("https://github.com/")
+        .ok_or_else(|| {
+            fail(
+                "INVALID_INPUT",
+                "Repository must use https://github.com/owner/repo",
+            )
+        })?;
+    let parts: Vec<_> = rest.split('/').collect();
+    if parts.len() != 2 || !parts.iter().all(|x| safe_id(x)) {
+        return Err(fail("INVALID_INPUT", "Invalid repository URL"));
+    }
+    Ok(format!("https://github.com/{}/{}", parts[0], parts[1]))
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OfficeCompany {
+    pub id: String,
+    pub name: String,
+    pub repo_url: Option<String>,
+    pub status: String,
+    pub assistant_id: String,
+    pub created_at: String,
+    pub source: String,
+    pub imported_at: Option<String>,
+    pub github_status: String,
+    #[serde(default)]
+    pub visibility: Option<String>,
+    #[serde(default)]
+    pub default_branch: Option<String>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Office {
+    pub id: String,
+    pub company_id: String,
+    pub name: String,
+    pub status: String,
+    pub assistant_id: String,
+    pub created_at: String,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Department {
+    pub id: String,
+    pub company_id: String,
+    pub office_id: String,
+    pub name: String,
+    pub status: String,
+    pub assistant_id: String,
+    pub created_at: String,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Staff {
+    pub id: String,
+    pub company_id: Option<String>,
+    pub office_id: Option<String>,
+    pub department_id: Option<String>,
+    pub name: String,
+    pub role: String,
+    pub kind: String,
+    pub status: String,
+    pub skill_paths: Vec<String>,
+    pub created_at: String,
+    pub updated_at: String,
+    #[serde(default)]
+    pub assignment_key: Option<String>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Limits {
+    pub max_tokens: u64,
+    pub max_usd: f64,
+    pub max_minutes: f64,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Rates {
+    pub input_usd_per_million: Option<f64>,
+    pub output_usd_per_million: Option<f64>,
+}
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Usage {
+    pub input_tokens: u64,
+    pub output_tokens: u64,
+    pub cost_usd: f64,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Reservation {
+    pub input_tokens: u64,
+    pub max_output_tokens: u64,
+    pub cost_usd: f64,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Job {
+    pub id: String,
+    pub company_id: String,
+    pub office_id: String,
+    pub department_id: Option<String>,
+    pub employee_id: String,
+    pub goal: String,
+    pub mode: String,
+    pub provider: String,
+    pub model: String,
+    pub authorized: bool,
+    pub allowed_tools: Vec<String>,
+    pub dependencies: Vec<String>,
+    pub context_hash: Option<String>,
+    pub cache_key: Option<String>,
+    pub prompt_version: String,
+    pub status: String,
+    pub limits: Limits,
+    pub price_rates: Rates,
+    pub usage: Usage,
+    pub cost_status: String,
+    pub reservation: Option<Reservation>,
+    #[serde(default)]
+    pub pending_reservation: Option<Reservation>,
+    pub usage_recorded: bool,
+    pub created_at: String,
+    pub updated_at: String,
+    pub due_at: String,
+    pub started_at: Option<String>,
+    pub finished_at: Option<String>,
+    pub worker_id: Option<String>,
+    pub lease_token: Option<String>,
+    pub lease_expires_at: Option<String>,
+    pub artifact_uri: Option<String>,
+    pub summary: Option<String>,
+    pub error: Option<String>,
+    pub idempotency_key: String,
+    #[serde(default)]
+    pub goal_id: Option<String>,
+    #[serde(default)]
+    pub goal_iteration: Option<u64>,
+    #[serde(default)]
+    pub service_contract_id: Option<String>,
+    #[serde(default)]
+    pub knowledge_transfer_ids: Vec<String>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Schedule {
+    pub id: String,
+    pub company_id: String,
+    pub name: String,
+    pub enabled: bool,
+    pub every_minutes: u64,
+    pub next_run_at: String,
+    pub last_enqueued_at: Option<String>,
+    pub job_template: Value,
+    #[serde(default)]
+    pub last_error: Option<String>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CacheEntry {
+    pub key: String,
+    pub company_id: String,
+    pub artifact_uri: String,
+    pub bytes: u64,
+    pub created_at: String,
+    pub expires_at: String,
+    #[serde(default)]
+    pub content_sha256: Option<String>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Cache {
+    pub enabled: bool,
+    pub max_entries: usize,
+    pub ttl_minutes: u64,
+    pub entries: Vec<CacheEntry>,
+    pub hits: u64,
+    pub misses: u64,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Knowledge {
+    pub id: String,
+    pub company_id: String,
+    pub title: String,
+    pub summary: String,
+    pub artifact_uri: String,
+    pub created_at: String,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Event {
+    pub id: String,
+    pub at: String,
+    pub actor: String,
+    pub action: String,
+    pub entity_id: String,
+    pub summary: String,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct OfficeSnapshot {
+    pub schema_version: u32,
+    pub active_company_id: String,
+    pub companies: Vec<OfficeCompany>,
+    pub offices: Vec<Office>,
+    pub departments: Vec<Department>,
+    pub employees: Vec<Staff>,
+    pub jobs: Vec<Job>,
+    pub schedules: Vec<Schedule>,
+    pub cache: Cache,
+    pub knowledge: Vec<Knowledge>,
+    pub events: Vec<Event>,
+    pub last_action: Option<Value>,
+    #[serde(default)]
+    pub policy: Policy,
+    #[serde(default)]
+    pub budget: BudgetSummary,
+    #[serde(default)]
+    pub external_attempts: Vec<ExternalAttempt>,
+    #[serde(default)]
+    pub chat_threads: Vec<ChatThread>,
+    #[serde(default)]
+    pub goals: Vec<Goal>,
+    #[serde(default)]
+    pub checkpoints: Vec<Checkpoint>,
+    #[serde(default)]
+    pub blueprints: Vec<Blueprint>,
+    #[serde(default)]
+    pub portfolio: Portfolio,
+}
+
+impl OfficeSnapshot {
+    pub fn validate(&self) -> Result<()> {
+        if self.schema_version != 1
+            || self.companies.is_empty()
+            || self.companies.len() > 2000
+            || self.offices.len() > 5000
+            || self.departments.len() > 16000
+            || self.employees.len() > 30000
+            || self.jobs.len() > 5000
+            || self.schedules.len() > 1000
+            || self.events.len() > 1000
+            || self.knowledge.len() > 5000
+            || self.cache.entries.len() > 5000
+        {
+            return Err(fail(
+                "OFFICE_STATE_INVALID",
+                "Office state version or collection bounds are invalid",
+            ));
+        }
+        let company_ids: HashSet<_> = self.companies.iter().map(|c| c.id.as_str()).collect();
+        let office_ids: HashSet<_> = self.offices.iter().map(|o| o.id.as_str()).collect();
+        let department_ids: HashSet<_> = self.departments.iter().map(|d| d.id.as_str()).collect();
+        let employee_ids: HashSet<_> = self.employees.iter().map(|e| e.id.as_str()).collect();
+        if company_ids.len() != self.companies.len()
+            || office_ids.len() != self.offices.len()
+            || department_ids.len() != self.departments.len()
+            || employee_ids.len() != self.employees.len()
+            || !employee_ids.contains("donna")
+            || !company_ids.contains(self.active_company_id.as_str())
+        {
+            return Err(fail(
+                "OFFICE_STATE_INVALID",
+                "Duplicate or missing office identities",
+            ));
+        }
+        for company in &self.companies {
+            if !safe_id(&company.id)
+                || !["active", "paused"].contains(&company.status.as_str())
+                || !employee_ids.contains(company.assistant_id.as_str())
+            {
+                return Err(fail("OFFICE_STATE_INVALID", "Invalid company definition"));
+            }
+            if let Some(url) = &company.repo_url {
+                canonical_repo(url)?;
+            }
+            bounded_text(&company.name, 200, "company name")?;
+            if company
+                .visibility
+                .as_ref()
+                .is_some_and(|v| !["public", "private"].contains(&v.as_str()))
+            {
+                return Err(fail(
+                    "OFFICE_STATE_INVALID",
+                    "Invalid repository visibility",
+                ));
+            }
+            if let Some(branch) = &company.default_branch {
+                bounded_text(branch, 250, "default branch")?;
+            }
+        }
+        for office in &self.offices {
+            if !company_ids.contains(office.company_id.as_str())
+                || !["active", "paused"].contains(&office.status.as_str())
+                || !employee_ids.contains(office.assistant_id.as_str())
+            {
+                return Err(fail("OFFICE_STATE_INVALID", "Invalid office scope"));
+            }
+        }
+        for department in &self.departments {
+            if !self
+                .offices
+                .iter()
+                .any(|o| o.id == department.office_id && o.company_id == department.company_id)
+                || !["active", "paused"].contains(&department.status.as_str())
+                || !employee_ids.contains(department.assistant_id.as_str())
+            {
+                return Err(fail("OFFICE_STATE_INVALID", "Invalid department scope"));
+            }
+        }
+        for employee in &self.employees {
+            if !["assistant", "specialist"].contains(&employee.kind.as_str())
+                || !["active", "paused", "fired"].contains(&employee.status.as_str())
+                || employee.skill_paths.len() > 20
+                || employee.skill_paths.iter().any(|p| !safe_relative(p))
+            {
+                return Err(fail("OFFICE_STATE_INVALID", "Invalid employee definition"));
+            }
+            if let Some(company) = &employee.company_id {
+                if !company_ids.contains(company.as_str()) {
+                    return Err(fail("OFFICE_STATE_INVALID", "Employee company is missing"));
+                }
+            } else if employee.id != "donna" {
+                return Err(fail(
+                    "OFFICE_STATE_INVALID",
+                    "Only Donna may have global company scope",
+                ));
+            }
+            if let Some(office) = &employee.office_id {
+                if !self
+                    .offices
+                    .iter()
+                    .any(|o| &o.id == office && Some(&o.company_id) == employee.company_id.as_ref())
+                {
+                    return Err(fail(
+                        "OFFICE_STATE_INVALID",
+                        "Employee office scope is inconsistent",
+                    ));
+                }
+            }
+            if let Some(department) = &employee.department_id {
+                if !self.departments.iter().any(|d| {
+                    &d.id == department
+                        && Some(&d.office_id) == employee.office_id.as_ref()
+                        && Some(&d.company_id) == employee.company_id.as_ref()
+                }) {
+                    return Err(fail(
+                        "OFFICE_STATE_INVALID",
+                        "Employee department scope is inconsistent",
+                    ));
+                }
+            }
+        }
+        let jobs: HashMap<_, _> = self
+            .jobs
+            .iter()
+            .enumerate()
+            .map(|(i, j)| (j.id.as_str(), i))
+            .collect();
+        if jobs.len() != self.jobs.len() {
+            return Err(fail("OFFICE_STATE_INVALID", "Duplicate job identity"));
+        }
+        let mut indegree = vec![0usize; self.jobs.len()];
+        let mut successors = vec![Vec::new(); self.jobs.len()];
+        let mut keys = HashSet::new();
+        for (i, job) in self.jobs.iter().enumerate() {
+            if !safe_id(&job.id)
+                || !company_ids.contains(job.company_id.as_str())
+                || !self
+                    .offices
+                    .iter()
+                    .any(|o| o.id == job.office_id && o.company_id == job.company_id)
+                || !employee_ids.contains(job.employee_id.as_str())
+                || job.dependencies.len() > 100
+                || !["manual", "provider"].contains(&job.mode.as_str())
+                || !["anthropic", "openai", "ollama"].contains(&job.provider.as_str())
+                || ![
+                    "queued",
+                    "waiting-budget",
+                    "running",
+                    "paused",
+                    "cancelled",
+                    "completed",
+                    "failed",
+                    "budget-exhausted",
+                    "needs-review",
+                ]
+                .contains(&job.status.as_str())
+                || !keys.insert((job.company_id.as_str(), job.idempotency_key.as_str()))
+            {
+                return Err(fail(
+                    "OFFICE_STATE_INVALID",
+                    "Invalid job identity, lifecycle or hierarchy",
+                ));
+            }
+            if job.limits.max_tokens == 0
+                || job.limits.max_tokens > 1000000
+                || !job.limits.max_usd.is_finite()
+                || !(0.0..=1000.0).contains(&job.limits.max_usd)
+                || !job.limits.max_minutes.is_finite()
+                || !(0.01..=1440.0).contains(&job.limits.max_minutes)
+                || !job.usage.cost_usd.is_finite()
+                || job.usage.cost_usd < 0.0
+            {
+                return Err(fail("OFFICE_STATE_INVALID", "Invalid job budget or usage"));
+            }
+            if !["none", "reserved", "observed", "estimated"].contains(&job.cost_status.as_str()) {
+                return Err(fail("OFFICE_STATE_INVALID", "Invalid cost evidence class"));
+            }
+            bounded_text(&job.goal, 20000, "goal")?;
+            timestamp(&job.due_at)?;
+            for dependency in &job.dependencies {
+                let parent = *jobs
+                    .get(dependency.as_str())
+                    .ok_or_else(|| fail("OFFICE_STATE_INVALID", "Missing dependency"))?;
+                if self.jobs[parent].company_id != job.company_id {
+                    return Err(fail("OFFICE_STATE_INVALID", "Cross-company dependency"));
+                }
+                indegree[i] += 1;
+                successors[parent].push(i);
+            }
+        }
+        let mut ready: VecDeque<_> = indegree
+            .iter()
+            .enumerate()
+            .filter_map(|(i, n)| if *n == 0 { Some(i) } else { None })
+            .collect();
+        let mut visited = 0;
+        while let Some(i) = ready.pop_front() {
+            visited += 1;
+            for child in &successors[i] {
+                indegree[*child] -= 1;
+                if indegree[*child] == 0 {
+                    ready.push_back(*child);
+                }
+            }
+        }
+        if visited != self.jobs.len() {
+            return Err(fail(
+                "OFFICE_STATE_INVALID",
+                "Job dependency graph contains a cycle",
+            ));
+        }
+        if self.cache.max_entries == 0
+            || self.cache.max_entries > 5000
+            || self.cache.ttl_minutes == 0
+            || self.cache.ttl_minutes > 10080
+        {
+            return Err(fail("OFFICE_STATE_INVALID", "Invalid cache bounds"));
+        }
+        self.validate_governance()?;
+        self.validate_portfolio()?;
+        Ok(())
+    }
+    pub fn seeded(company: &Company, specialists: &[Employee]) -> Result<Self> {
+        let mut state = Self {
+            schema_version: 1,
+            active_company_id: company.id.clone(),
+            companies: vec![],
+            offices: vec![],
+            departments: vec![],
+            employees: vec![],
+            jobs: vec![],
+            schedules: vec![],
+            cache: Cache {
+                enabled: true,
+                max_entries: 100,
+                ttl_minutes: 60,
+                entries: vec![],
+                hits: 0,
+                misses: 0,
+            },
+            knowledge: vec![],
+            events: vec![],
+            last_action: None,
+            policy: Policy::default(),
+            budget: BudgetSummary::default(),
+            external_attempts: vec![],
+            chat_threads: vec![],
+            goals: vec![],
+            checkpoints: vec![],
+            blueprints: vec![],
+            portfolio: Portfolio::default(),
+        };
+        let stamp = now();
+        state.employees.push(Staff {
+            id: "donna".into(),
+            company_id: None,
+            office_id: None,
+            department_id: None,
+            name: "Donna".into(),
+            role: "CEO assistant".into(),
+            kind: "assistant".into(),
+            status: "active".into(),
+            skill_paths: vec!["skills/agent-research-director/SKILL.md".into()],
+            created_at: stamp.clone(),
+            updated_at: stamp,
+            assignment_key: Some("ceo-assistant".into()),
+        });
+        let company_id = state.add_company(
+            &company.name,
+            Some(company.repo_url.clone()),
+            Some(company.id.clone()),
+            false,
+        )?;
+        let office = state
+            .offices
+            .iter()
+            .find(|o| o.company_id == company_id)
+            .unwrap()
+            .id
+            .clone();
+        for employee in specialists {
+            state.add_staff(
+                &company_id,
+                Some(office.clone()),
+                None,
+                &employee.name,
+                &employee.role,
+                "specialist",
+                vec![employee.skill_path.clone()],
+                Some(format!("staff-{}", employee.id)),
+            )?;
+        }
+        state.bootstrap_directors(&company_id)?;
+        state.refresh_budget();
+        state.last_action = None;
+        state.events.clear();
+        Ok(state)
+    }
+    fn log(&mut self, actor: &str, action: &str, entity: &str, summary: String) {
+        self.events.push(Event {
+            id: id("event"),
+            at: now(),
+            actor: actor.into(),
+            action: action.into(),
+            entity_id: entity.into(),
+            summary,
+        });
+        if self.events.len() > 1000 {
+            self.events.drain(..self.events.len() - 1000);
+        }
+    }
+    fn company(&self, company_id: &str) -> Result<&OfficeCompany> {
+        self.companies
+            .iter()
+            .find(|c| c.id == company_id)
+            .ok_or_else(|| fail("NOT_FOUND", "Company not found"))
+    }
+    fn office(&self, office_id: &str) -> Result<&Office> {
+        self.offices
+            .iter()
+            .find(|o| o.id == office_id)
+            .ok_or_else(|| fail("NOT_FOUND", "Office not found"))
+    }
+    fn staff(&self, employee_id: &str) -> Result<&Staff> {
+        self.employees
+            .iter()
+            .find(|e| e.id == employee_id)
+            .ok_or_else(|| fail("NOT_FOUND", "Employee not found"))
+    }
+    fn add_staff(
+        &mut self,
+        company_id: &str,
+        office_id: Option<String>,
+        department_id: Option<String>,
+        name: &str,
+        role: &str,
+        kind: &str,
+        skill_paths: Vec<String>,
+        fixed_id: Option<String>,
+    ) -> Result<String> {
+        self.company(company_id)?;
+        bounded_text(name, 150, "employee name")?;
+        bounded_text(role, 200, "employee role")?;
+        if self.employees.len() >= 30000 {
+            return Err(fail("CAPACITY", "Employee registry reached its limit"));
+        }
+        if let Some(office_id) = &office_id {
+            if self.office(office_id)?.company_id != company_id {
+                return Err(fail("SCOPE_MISMATCH", "Office belongs to another company"));
+            }
+        }
+        if let Some(department_id) = &department_id {
+            let d = self
+                .departments
+                .iter()
+                .find(|d| &d.id == department_id)
+                .ok_or_else(|| fail("NOT_FOUND", "Department not found"))?;
+            if d.company_id != company_id || Some(&d.office_id) != office_id.as_ref() {
+                return Err(fail(
+                    "SCOPE_MISMATCH",
+                    "Department does not belong to this company and office",
+                ));
+            }
+        }
+        if skill_paths.len() > 20
+            || skill_paths.iter().any(|p| {
+                !safe_relative(p) || !p.starts_with("skills/") || !p.ends_with("/SKILL.md")
+            })
+        {
+            return Err(fail(
+                "INVALID_INPUT",
+                "Skills must be repository-relative skills/.../SKILL.md references",
+            ));
+        }
+        let employee_id = fixed_id.unwrap_or_else(|| id("employee"));
+        if self.employees.iter().any(|e| e.id == employee_id) {
+            return Err(fail("DUPLICATE_ID", "Employee id already exists"));
+        }
+        let stamp = now();
+        self.employees.push(Staff {
+            id: employee_id.clone(),
+            company_id: Some(company_id.into()),
+            office_id,
+            department_id,
+            name: name.into(),
+            role: role.into(),
+            kind: kind.into(),
+            status: "active".into(),
+            skill_paths,
+            created_at: stamp.clone(),
+            updated_at: stamp,
+            assignment_key: None,
+        });
+        Ok(employee_id)
+    }
+    fn add_company(
+        &mut self,
+        name: &str,
+        repo: Option<String>,
+        fixed_id: Option<String>,
+        imported: bool,
+    ) -> Result<String> {
+        bounded_text(name, 200, "company name")?;
+        let repo = repo.map(|r| canonical_repo(&r)).transpose()?;
+        if let Some(url) = &repo {
+            if let Some(existing) = self.companies.iter_mut().find(|c| {
+                c.repo_url
+                    .as_ref()
+                    .is_some_and(|x| x.eq_ignore_ascii_case(url))
+            }) {
+                if imported {
+                    existing.github_status = "metadata-reviewed".into();
+                    existing.source = "github-public-api".into();
+                    existing.imported_at = Some(now());
+                }
+                return Ok(existing.id.clone());
+            }
+        }
+        if self.companies.len() >= 2000 {
+            return Err(fail("CAPACITY", "Company registry reached 2000 companies"));
+        }
+        let company_id = fixed_id.unwrap_or_else(|| id("company"));
+        if !safe_id(&company_id) || self.companies.iter().any(|c| c.id == company_id) {
+            return Err(fail(
+                "DUPLICATE_ID",
+                "Company id is invalid or already exists",
+            ));
+        }
+        let stamp = now();
+        self.companies.push(OfficeCompany {
+            id: company_id.clone(),
+            name: name.into(),
+            repo_url: repo,
+            status: "active".into(),
+            assistant_id: String::new(),
+            created_at: stamp.clone(),
+            source: if imported {
+                "github-public-api"
+            } else {
+                "owner"
+            }
+            .into(),
+            imported_at: if imported { Some(stamp) } else { None },
+            github_status: if imported {
+                "metadata-reviewed"
+            } else {
+                "unchecked"
+            }
+            .into(),
+            visibility: if imported {
+                Some("public".into())
+            } else {
+                None
+            },
+            default_branch: None,
+        });
+        let assistant = self.add_staff(
+            &company_id,
+            None,
+            None,
+            "Company assistant",
+            "Shared company assistant",
+            "assistant",
+            vec!["skills/agent-research-director/SKILL.md".into()],
+            None,
+        )?;
+        self.companies
+            .iter_mut()
+            .find(|c| c.id == company_id)
+            .unwrap()
+            .assistant_id = assistant;
+        let office_id = self.add_office(&company_id, "Main office")?;
+        self.add_department(&office_id, "Engineering")?;
+        self.add_department(&office_id, "Research")?;
+        self.log(
+            "donna",
+            "company-created",
+            &company_id,
+            format!("Created {name} with a shared company assistant, office and two departments"),
+        );
+        Ok(company_id)
+    }
+    fn add_office(&mut self, company_id: &str, name: &str) -> Result<String> {
+        self.company(company_id)?;
+        bounded_text(name, 150, "office name")?;
+        if self.offices.len() >= 5000 {
+            return Err(fail("CAPACITY", "Office registry reached its limit"));
+        }
+        let office_id = id("office");
+        self.offices.push(Office {
+            id: office_id.clone(),
+            company_id: company_id.into(),
+            name: name.into(),
+            status: "active".into(),
+            assistant_id: String::new(),
+            created_at: now(),
+        });
+        let assistant = self.add_staff(
+            company_id,
+            Some(office_id.clone()),
+            None,
+            "Office assistant",
+            "Shared office assistant",
+            "assistant",
+            vec!["skills/agent-research-director/SKILL.md".into()],
+            None,
+        )?;
+        self.offices
+            .iter_mut()
+            .find(|o| o.id == office_id)
+            .unwrap()
+            .assistant_id = assistant;
+        Ok(office_id)
+    }
+    fn add_department(&mut self, office_id: &str, name: &str) -> Result<String> {
+        let company_id = self.office(office_id)?.company_id.clone();
+        bounded_text(name, 150, "department name")?;
+        if self.departments.len() >= 16000 {
+            return Err(fail("CAPACITY", "Department registry reached its limit"));
+        }
+        let department_id = id("department");
+        self.departments.push(Department {
+            id: department_id.clone(),
+            company_id: company_id.clone(),
+            office_id: office_id.into(),
+            name: name.into(),
+            status: "active".into(),
+            assistant_id: String::new(),
+            created_at: now(),
+        });
+        let assistant = self.add_staff(
+            &company_id,
+            Some(office_id.into()),
+            Some(department_id.clone()),
+            &format!("{name} assistant"),
+            "Shared department assistant",
+            "assistant",
+            vec!["skills/agent-research-director/SKILL.md".into()],
+            None,
+        )?;
+        self.departments
+            .iter_mut()
+            .find(|d| d.id == department_id)
+            .unwrap()
+            .assistant_id = assistant;
+        Ok(department_id)
+    }
+    fn job_from(&self, p: &Value) -> Result<Job> {
+        let company_id = string(p, "companyId", 100)?;
+        let office_id = string(p, "officeId", 100)?;
+        let department_id = opt_string(p, "departmentId", 100)?;
+        let employee_id = string(p, "employeeId", 100)?;
+        self.company(&company_id)?;
+        if self.office(&office_id)?.company_id != company_id {
+            return Err(fail(
+                "SCOPE_MISMATCH",
+                "Office belongs to a different company",
+            ));
+        }
+        if let Some(department) = &department_id {
+            if !self.departments.iter().any(|d| {
+                &d.id == department && d.office_id == office_id && d.company_id == company_id
+            }) {
+                return Err(fail(
+                    "SCOPE_MISMATCH",
+                    "Department belongs to a different office",
+                ));
+            }
+        }
+        let service_contract_id = opt_string(p, "serviceContractId", 100)?;
+        let knowledge_transfer_ids = strings(p, "knowledgeTransferIds", 50)?;
+        let allowed_tools = strings(p, "allowedTools", 30)?;
+        self.validate_worker_assignment(
+            &company_id,
+            &office_id,
+            department_id.as_deref(),
+            &employee_id,
+            service_contract_id.as_deref(),
+            &allowed_tools,
+        )?;
+        self.validate_knowledge_access(&company_id, &knowledge_transfer_ids)?;
+        let mode = opt_string(p, "mode", 20)?.unwrap_or_else(|| "manual".into());
+        let provider = opt_string(p, "provider", 20)?.unwrap_or_else(|| "anthropic".into());
+        if !["manual", "provider"].contains(&mode.as_str())
+            || !["anthropic", "openai", "ollama"].contains(&provider.as_str())
+        {
+            return Err(fail("INVALID_INPUT", "Invalid execution mode or provider"));
+        }
+        let model = match p.get("model") {
+            None | Some(Value::Null) => String::new(),
+            Some(Value::String(v)) if v.len() <= 200 => v.trim().to_string(),
+            _ => return Err(fail("INVALID_INPUT", "Invalid model id")),
+        };
+        if mode == "provider" && model.is_empty() {
+            return Err(fail(
+                "INVALID_INPUT",
+                "Provider jobs require an explicit model id",
+            ));
+        }
+        let dependencies = strings(p, "dependencies", 100)?;
+        let unique: HashSet<_> = dependencies.iter().collect();
+        if unique.len() != dependencies.len() {
+            return Err(fail("INVALID_INPUT", "Duplicate dependencies"));
+        }
+        for dep in &dependencies {
+            if !self
+                .jobs
+                .iter()
+                .any(|j| &j.id == dep && j.company_id == company_id)
+            {
+                return Err(fail(
+                    "INVALID_DEPENDENCY",
+                    "Dependencies must already exist in this company",
+                ));
+            }
+        }
+        let context_hash = opt_string(p, "contextHash", 128)?;
+        if context_hash
+            .as_ref()
+            .is_some_and(|h| h.len() != 64 || !h.bytes().all(|c| c.is_ascii_hexdigit()))
+        {
+            return Err(fail(
+                "INVALID_INPUT",
+                "contextHash must be a SHA-256 hex digest",
+            ));
+        }
+        let rates = p.get("priceRates").cloned().unwrap_or(Value::Null);
+        let rate = |key: &str| -> Result<Option<f64>> {
+            match rates.get(key) {
+                None | Some(Value::Null) => Ok(None),
+                Some(v) => {
+                    let n = v
+                        .as_f64()
+                        .ok_or_else(|| fail("INVALID_INPUT", "Invalid price rate"))?;
+                    if !n.is_finite() || !(0.0..=100000.0).contains(&n) {
+                        return Err(fail("INVALID_INPUT", "Price rate out of range"));
+                    }
+                    Ok(Some(n))
+                }
+            }
+        };
+        let stamp = now();
+        let due_at = opt_string(p, "dueAt", 80)?.unwrap_or_else(|| stamp.clone());
+        timestamp(&due_at)?;
+        Ok(Job {
+            id: id("job"),
+            company_id,
+            office_id,
+            department_id,
+            employee_id,
+            goal: string(p, "goal", 20000)?,
+            mode,
+            provider,
+            model,
+            authorized: boolean(p, "authorized", false)?,
+            allowed_tools,
+            dependencies,
+            context_hash,
+            cache_key: opt_string(p, "cacheKey", 200)?,
+            prompt_version: opt_string(p, "promptVersion", 100)?.unwrap_or_else(|| "v1".into()),
+            status: "queued".into(),
+            limits: Limits {
+                max_tokens: integer(p, "maxTokens", 1, 1000000)?,
+                max_usd: number(p, "maxUsd", 0.0, 1000.0)?,
+                max_minutes: number(p, "maxMinutes", 0.01, 1440.0)?,
+            },
+            price_rates: Rates {
+                input_usd_per_million: rate("inputUsdPerMillion")?,
+                output_usd_per_million: rate("outputUsdPerMillion")?,
+            },
+            usage: Usage::default(),
+            cost_status: "none".into(),
+            reservation: None,
+            pending_reservation: None,
+            usage_recorded: false,
+            created_at: stamp.clone(),
+            updated_at: stamp,
+            due_at,
+            started_at: None,
+            finished_at: None,
+            worker_id: None,
+            lease_token: None,
+            lease_expires_at: None,
+            artifact_uri: None,
+            summary: None,
+            error: None,
+            idempotency_key: string(p, "idempotencyKey", 200)?,
+            goal_id: None,
+            goal_iteration: None,
+            service_contract_id,
+            knowledge_transfer_ids,
+        })
+    }
+    fn enqueue(&mut self, p: &Value) -> Result<String> {
+        let company_id = string(p, "companyId", 100)?;
+        let key = string(p, "idempotencyKey", 200)?;
+        if let Some(job) = self
+            .jobs
+            .iter()
+            .find(|j| j.company_id == company_id && j.idempotency_key == key)
+        {
+            return Ok(job.id.clone());
+        }
+        if self.jobs.len() >= 5000 {
+            return Err(fail(
+                "CAPACITY",
+                "Queue history reached 5000 jobs; export/archive before adding more",
+            ));
+        }
+        let job = self.job_from(p)?;
+        let job_id = job.id.clone();
+        self.log(
+            "donna",
+            "job-enqueued",
+            &job_id,
+            format!("Queued {} job for {}", job.mode, job.employee_id),
+        );
+        self.jobs.push(job);
+        Ok(job_id)
+    }
+    fn eligible(&self, job: &Job, clock: OffsetDateTime) -> std::result::Result<(), String> {
+        self.governance_allows_dispatch(job)?;
+        self.portfolio_allows_dispatch(job)?;
+        if self
+            .companies
+            .iter()
+            .find(|c| c.id == job.company_id)
+            .is_none_or(|c| c.status != "active")
+        {
+            return Err("Company is paused".into());
+        }
+        if self
+            .offices
+            .iter()
+            .find(|o| o.id == job.office_id)
+            .is_none_or(|o| o.status != "active")
+        {
+            return Err("Office is paused".into());
+        }
+        if job.department_id.as_ref().is_some_and(|d| {
+            self.departments
+                .iter()
+                .find(|x| &x.id == d)
+                .is_none_or(|x| x.status != "active")
+        }) {
+            return Err("Department is paused".into());
+        }
+        if self
+            .employees
+            .iter()
+            .find(|e| e.id == job.employee_id)
+            .is_none_or(|e| e.status != "active")
+        {
+            return Err("Employee is paused or fired".into());
+        }
+        if job.dependencies.iter().any(|d| {
+            self.jobs
+                .iter()
+                .find(|x| &x.id == d)
+                .is_none_or(|x| x.status != "completed")
+        }) {
+            return Err("Waiting for completed dependencies".into());
+        }
+        if timestamp(&job.due_at).map(|t| t > clock).unwrap_or(true) {
+            return Err("Scheduled for a later time".into());
+        }
+        if job.mode == "provider" {
+            if !job.authorized && self.policy.approval_mode != "autonomous" {
+                return Err("Provider dispatch has not been authorized by the owner".into());
+            }
+            if job.provider != "ollama"
+                && (job.limits.max_usd <= 0.0
+                    || job
+                        .price_rates
+                        .input_usd_per_million
+                        .is_none_or(|x| x <= 0.0)
+                    || job
+                        .price_rates
+                        .output_usd_per_million
+                        .is_none_or(|x| x <= 0.0))
+            {
+                return Err(
+                    "Cloud jobs require a positive spend cap and verified price rates".into(),
+                );
+            }
+        }
+        Ok(())
+    }
+    pub fn expire_leases(&mut self) -> bool {
+        let clock = OffsetDateTime::now_utc();
+        let mut expired = vec![];
+        let mut estimates = vec![];
+        let mut blocked = vec![];
+        for job in &mut self.jobs {
+            let stale = job
+                .lease_expires_at
+                .as_ref()
+                .is_some_and(|t| timestamp(t).map(|d| d <= clock).unwrap_or(true));
+            if stale && job.status == "running" {
+                job.status = "needs-review".into();
+                job.error=Some("Worker lease expired; inspect the attempt before any retry to avoid duplicate charges".into());
+                job.updated_at = now();
+                expired.push(job.id.clone());
+            }
+            if stale
+                && ["needs-review", "paused", "cancelled"].contains(&job.status.as_str())
+                && job.cost_status == "reserved"
+                && job.reservation.is_some()
+            {
+                job.cost_status = "estimated".into();
+                job.error=Some("Unsettled provider reservation retained as an estimate; reconcile with billing before retry".into());
+                job.updated_at = now();
+                estimates.push(job.id.clone());
+            }
+        }
+        // New jobs can depend only on earlier, immutable jobs. Propagate terminal
+        // failures in that order without retrying or silently leaving dependents queued.
+        let mut statuses: HashMap<String, String> = self
+            .jobs
+            .iter()
+            .map(|j| (j.id.clone(), j.status.clone()))
+            .collect();
+        for job in &mut self.jobs {
+            if job.status == "queued" || job.status == "waiting-budget" {
+                if let Some(dependency) = job.dependencies.iter().find(|d| {
+                    statuses.get(*d).is_some_and(|s| {
+                        ["failed", "cancelled", "budget-exhausted", "needs-review"]
+                            .contains(&s.as_str())
+                    })
+                }) {
+                    job.status = "needs-review".into();
+                    job.error=Some(format!("Dependency {dependency} did not complete; review the handoff before creating a retry"));
+                    job.updated_at = now();
+                    statuses.insert(job.id.clone(), job.status.clone());
+                    blocked.push(job.id.clone());
+                }
+            }
+        }
+        let changed = !expired.is_empty() || !estimates.is_empty() || !blocked.is_empty();
+        for job in expired {
+            self.log(
+                "system",
+                "lease-expired",
+                &job,
+                "Attempt needs review; it was not automatically retried".into(),
+            );
+        }
+        for job in estimates {
+            self.log("system","reservation-unsettled",&job,"Unsettled reservation is an estimate requiring billing reconciliation; lifecycle state was preserved".into());
+        }
+        for job in blocked {
+            self.log("system","dependency-needs-review",&job,"A terminal prerequisite blocked this job; no downstream provider call was dispatched".into());
+        }
+        changed
+    }
+    pub fn apply(&mut self, p: &Value) -> Result<()> {
+        self.last_action = None;
+        self.expire_leases();
+        let action = string(p, "action", 50)?;
+        if self.apply_governance(&action, p)? {
+            return Ok(());
+        }
+        if self.apply_portfolio(&action, p)? {
+            return Ok(());
+        }
+        match action.as_str() {
+            "create_company" => {
+                let company_id = self.add_company(
+                    &string(p, "name", 200)?,
+                    opt_string(p, "repoUrl", 300)?,
+                    opt_string(p, "id", 100)?,
+                    false,
+                )?;
+                self.active_company_id = company_id.clone();
+                self.bootstrap_directors(&company_id)?;
+                self.last_action = Some(json!({"companyId":company_id}));
+            }
+            "import_repositories" => {
+                let rows = p
+                    .get("repositories")
+                    .and_then(Value::as_array)
+                    .ok_or_else(|| fail("INVALID_INPUT", "repositories must be an array"))?;
+                if rows.len() > 200 {
+                    return Err(fail(
+                        "CAPACITY",
+                        "Import at most 200 repositories per command",
+                    ));
+                }
+                let mut ids = vec![];
+                for row in rows {
+                    let name = string(row, "name", 200)?;
+                    let repo = string(row, "repoUrl", 300)?;
+                    let source = opt_string(row, "source", 50)?
+                        .unwrap_or_else(|| "github-public-api".into());
+                    if !["github-public-api", "github-authenticated-api"].contains(&source.as_str())
+                    {
+                        return Err(fail(
+                            "INVALID_INPUT",
+                            "Unsupported repository metadata source",
+                        ));
+                    }
+                    let visibility =
+                        opt_string(row, "visibility", 20)?.unwrap_or_else(|| "public".into());
+                    if !["public", "private"].contains(&visibility.as_str())
+                        || (visibility == "private" && source != "github-authenticated-api")
+                    {
+                        return Err(fail(
+                            "INVALID_INPUT",
+                            "Private repository metadata requires an authenticated source",
+                        ));
+                    }
+                    let default_branch = opt_string(row, "defaultBranch", 250)?;
+                    let company_id = self.add_company(&name, Some(repo), None, true)?;
+                    let company = self
+                        .companies
+                        .iter_mut()
+                        .find(|c| c.id == company_id)
+                        .unwrap();
+                    company.source = source;
+                    company.visibility = Some(visibility);
+                    company.default_branch = default_branch;
+                    self.bootstrap_directors(&company_id)?;
+                    ids.push(company_id);
+                }
+                if let Some(first) = ids.first() {
+                    self.active_company_id = first.clone();
+                }
+                self.last_action = Some(json!({"companyIds":ids,"imported":rows.len()}));
+            }
+            "select_company" => {
+                let company_id = string(p, "companyId", 100)?;
+                self.company(&company_id)?;
+                self.active_company_id = company_id;
+            }
+            "create_office" => {
+                let company_id = string(p, "companyId", 100)?;
+                let office_id = self.add_office(&company_id, &string(p, "name", 150)?)?;
+                self.log(
+                    "donna",
+                    &action,
+                    &office_id,
+                    "Created office with a shared assistant".into(),
+                );
+                self.last_action = Some(json!({"officeId":office_id}));
+            }
+            "create_department" => {
+                let department_id =
+                    self.add_department(&string(p, "officeId", 100)?, &string(p, "name", 150)?)?;
+                self.log(
+                    "donna",
+                    &action,
+                    &department_id,
+                    "Created department with a shared assistant".into(),
+                );
+                self.last_action = Some(json!({"departmentId":department_id}));
+            }
+            "hire_employee" => {
+                let employee_id = self.add_staff(
+                    &string(p, "companyId", 100)?,
+                    opt_string(p, "officeId", 100)?,
+                    opt_string(p, "departmentId", 100)?,
+                    &string(p, "name", 150)?,
+                    &string(p, "role", 200)?,
+                    "specialist",
+                    strings(p, "skillPaths", 20)?,
+                    None,
+                )?;
+                self.log(
+                    "donna",
+                    &action,
+                    &employee_id,
+                    "Created a persistent employee definition; no model process was started".into(),
+                );
+                self.last_action = Some(json!({"employeeId":employee_id}));
+            }
+            "pause_employee" | "resume_employee" | "fire_employee" => {
+                let employee_id = string(p, "employeeId", 100)?;
+                let employee = self
+                    .employees
+                    .iter_mut()
+                    .find(|e| e.id == employee_id)
+                    .ok_or_else(|| fail("NOT_FOUND", "Employee not found"))?;
+                if employee.id == "donna" && action == "fire_employee" {
+                    return Err(fail(
+                        "PERMANENT_ASSISTANT",
+                        "Donna is a permanent assistant; pause her instead",
+                    ));
+                }
+                if employee.kind == "assistant" && action == "fire_employee" {
+                    return Err(fail(
+                        "PERMANENT_ASSISTANT",
+                        "Shared assistants retain scope ownership; pause instead of firing",
+                    ));
+                }
+                if employee.status == "fired" {
+                    return Err(fail(
+                        "TERMINAL_STATE",
+                        "A fired employee cannot be resumed; hire a new definition",
+                    ));
+                }
+                employee.status = match action.as_str() {
+                    "pause_employee" => "paused",
+                    "resume_employee" => "active",
+                    _ => "fired",
+                }
+                .into();
+                employee.updated_at = now();
+                if action != "resume_employee" {
+                    for job in self.jobs.iter_mut().filter(|j| {
+                        j.employee_id == employee_id
+                            && (j.status == "queued" || j.status == "running")
+                    }) {
+                        job.status = if action == "fire_employee" {
+                            "cancelled"
+                        } else {
+                            "paused"
+                        }
+                        .into();
+                        job.updated_at = now();
+                        job.error=Some("Employee lifecycle change stopped dispatch; in-flight usage remains accountable".into());
+                    }
+                }
+                self.log(
+                    "donna",
+                    &action,
+                    &employee_id,
+                    "Updated employee lifecycle; existing artifacts and usage retained".into(),
+                );
+            }
+            "pause_company" | "resume_company" | "pause_office" | "resume_office"
+            | "pause_department" | "resume_department" => {
+                let status = if action.starts_with("pause") {
+                    "paused"
+                } else {
+                    "active"
+                };
+                let entity;
+                if action.ends_with("company") {
+                    entity = string(p, "companyId", 100)?;
+                    self.companies
+                        .iter_mut()
+                        .find(|c| c.id == entity)
+                        .ok_or_else(|| fail("NOT_FOUND", "Company not found"))?
+                        .status = status.into();
+                } else if action.ends_with("office") {
+                    entity = string(p, "officeId", 100)?;
+                    self.offices
+                        .iter_mut()
+                        .find(|o| o.id == entity)
+                        .ok_or_else(|| fail("NOT_FOUND", "Office not found"))?
+                        .status = status.into();
+                } else {
+                    entity = string(p, "departmentId", 100)?;
+                    self.departments
+                        .iter_mut()
+                        .find(|d| d.id == entity)
+                        .ok_or_else(|| fail("NOT_FOUND", "Department not found"))?
+                        .status = status.into();
+                }
+                if status == "paused" {
+                    for job in &mut self.jobs {
+                        let matches = if action.ends_with("company") {
+                            job.company_id == entity
+                        } else if action.ends_with("office") {
+                            job.office_id == entity
+                        } else {
+                            job.department_id.as_deref() == Some(&entity)
+                        };
+                        if matches && job.status == "running" {
+                            job.status = "paused".into();
+                            job.updated_at = now();
+                            job.error=Some("Parent scope was paused; inspect any in-flight provider attempt before retry".into());
+                        }
+                    }
+                }
+                self.log(
+                    "donna",
+                    &action,
+                    &entity,
+                    format!("Scope is {status}; dispatch checks the entire hierarchy"),
+                );
+            }
+            "enqueue_job" => {
+                let job_id = self.enqueue(p)?;
+                self.last_action = Some(json!({"jobId":job_id}));
+            }
+            "claim_job" => {
+                let worker_id = string(p, "workerId", 150)?;
+                let mode = opt_string(p, "mode", 20)?;
+                if mode
+                    .as_ref()
+                    .is_some_and(|m| !["manual", "provider"].contains(&m.as_str()))
+                {
+                    return Err(fail("INVALID_INPUT", "Unknown worker mode"));
+                }
+                let clock = OffsetDateTime::now_utc();
+                let mut found = None;
+                for i in 0..self.jobs.len() {
+                    if self.jobs[i].status != "queued"
+                        || mode.as_ref().is_some_and(|m| m != &self.jobs[i].mode)
+                    {
+                        continue;
+                    }
+                    match self.eligible(&self.jobs[i], clock) {
+                        Ok(()) => {
+                            found = Some(i);
+                            break;
+                        }
+                        Err(reason) => self.jobs[i].error = Some(reason),
+                    }
+                }
+                if let Some(i) = found {
+                    let job = &mut self.jobs[i];
+                    let lease = id("lease");
+                    let stamp = at(clock);
+                    job.status = "running".into();
+                    job.error = None;
+                    job.started_at = Some(stamp.clone());
+                    job.updated_at = stamp;
+                    job.worker_id = Some(worker_id.clone());
+                    job.lease_token = Some(lease.clone());
+                    job.lease_expires_at = Some(at(clock
+                        + Duration::milliseconds(
+                            (job.limits.max_minutes.min(5.0) * 60000.0) as i64,
+                        )));
+                    let job_id = job.id.clone();
+                    self.last_action = Some(json!({"jobId":job_id,"leaseToken":lease}));
+                    self.log(
+                        &worker_id,
+                        &action,
+                        &job_id,
+                        "Atomically claimed one eligible job; no provider call has occurred".into(),
+                    );
+                } else {
+                    self.last_action = Some(json!({"jobId":null}));
+                }
+            }
+            "reserve_job" => {
+                let job_id = string(p, "jobId", 100)?;
+                let lease = string(p, "leaseToken", 100)?;
+                let input = integer(p, "inputTokens", 0, 1000000)?;
+                let output = integer(p, "maxOutputTokens", 1, 1000000)?;
+                let cost = number(p, "costUsd", 0.0, 1000.0)?;
+                let limits = &self
+                    .jobs
+                    .iter()
+                    .find(|j| j.id == job_id)
+                    .ok_or_else(|| fail("NOT_FOUND", "Job not found"))?
+                    .limits;
+                if input + output > limits.max_tokens || cost > limits.max_usd {
+                    return Err(fail(
+                        "BUDGET_EXHAUSTED",
+                        "Worst-case provider reservation exceeds the job budget",
+                    ));
+                }
+                if !self.admit_job_reservation(&job_id, &lease, cost, input, output)? {
+                    return Ok(());
+                }
+                let job = self
+                    .jobs
+                    .iter_mut()
+                    .find(|j| j.id == job_id)
+                    .ok_or_else(|| fail("NOT_FOUND", "Job not found"))?;
+                if job.status != "running" || job.lease_token.as_deref() != Some(&lease) {
+                    return Err(fail(
+                        "STALE_LEASE",
+                        "Reservation requires the current running lease",
+                    ));
+                }
+                if let Some(existing) = &job.reservation {
+                    if existing.input_tokens != input
+                        || existing.max_output_tokens != output
+                        || (existing.cost_usd - cost).abs() > 1e-9
+                    {
+                        return Err(fail(
+                            "ALREADY_RESERVED",
+                            "This attempt already has a different reservation",
+                        ));
+                    }
+                    self.last_action = Some(json!({"jobId":job_id,"reserved":true}));
+                    return Ok(());
+                }
+                if input + output > job.limits.max_tokens || cost > job.limits.max_usd {
+                    return Err(fail(
+                        "BUDGET_EXHAUSTED",
+                        "Worst-case provider reservation exceeds the job budget",
+                    ));
+                }
+                job.reservation = Some(Reservation {
+                    input_tokens: input,
+                    max_output_tokens: output,
+                    cost_usd: cost,
+                });
+                job.pending_reservation = None;
+                job.usage = Usage {
+                    input_tokens: input,
+                    output_tokens: output,
+                    cost_usd: cost,
+                };
+                job.cost_status = "reserved".into();
+                job.updated_at = now();
+                self.last_action = Some(json!({"jobId":job_id,"reserved":true}));
+                self.log(
+                    "worker",
+                    &action,
+                    &job_id,
+                    "Reserved worst-case tokens and cost before provider dispatch".into(),
+                );
+            }
+            "heartbeat_job" => {
+                let job_id = string(p, "jobId", 100)?;
+                let lease = string(p, "leaseToken", 100)?;
+                let job = self
+                    .jobs
+                    .iter_mut()
+                    .find(|j| j.id == job_id)
+                    .ok_or_else(|| fail("NOT_FOUND", "Job not found"))?;
+                if job.status != "running" || job.lease_token.as_deref() != Some(&lease) {
+                    return Err(fail(
+                        "STALE_LEASE",
+                        "Job is no longer running under this lease",
+                    ));
+                }
+                let clock = OffsetDateTime::now_utc();
+                let deadline = timestamp(job.started_at.as_deref().unwrap_or(""))?
+                    + Duration::milliseconds((job.limits.max_minutes * 60000.0) as i64);
+                job.lease_expires_at = Some(at((clock + Duration::minutes(5)).min(deadline)));
+                self.last_action =
+                    Some(json!({"jobId":job_id,"leaseExpiresAt":job.lease_expires_at}));
+            }
+            "finish_job" | "complete_job" => {
+                let job_id = string(p, "jobId", 100)?;
+                let lease = string(p, "leaseToken", 100)?;
+                let requested = string(p, "status", 30)?;
+                if !["completed", "failed"].contains(&requested.as_str()) {
+                    return Err(fail(
+                        "INVALID_INPUT",
+                        "Finish status must be completed or failed",
+                    ));
+                }
+                let input = integer(p, "inputTokens", 0, 1000000000)?;
+                let output = integer(p, "outputTokens", 0, 1000000000)?;
+                let cost = number(p, "costUsd", 0.0, 1000000.0)?;
+                let cost_status =
+                    opt_string(p, "costStatus", 30)?.unwrap_or_else(|| "observed".into());
+                if !["observed", "estimated"].contains(&cost_status.as_str()) {
+                    return Err(fail(
+                        "INVALID_INPUT",
+                        "costStatus must be observed or estimated",
+                    ));
+                }
+                let artifact =
+                    opt_string(p, "artifactUri", 3000)?.or(opt_string(p, "artifactPath", 3000)?);
+                let summary = opt_string(p, "summary", 4000)?;
+                let error = opt_string(p, "error", 1000)?;
+                let job = self
+                    .jobs
+                    .iter_mut()
+                    .find(|j| j.id == job_id)
+                    .ok_or_else(|| fail("NOT_FOUND", "Job not found"))?;
+                if job.lease_token.as_deref() != Some(&lease) || job.usage_recorded {
+                    return Err(fail(
+                        "STALE_LEASE",
+                        "This attempt cannot be settled twice or with another lease",
+                    ));
+                }
+                let preserve =
+                    ["cancelled", "paused", "needs-review"].contains(&job.status.as_str());
+                if !preserve && job.status != "running" {
+                    return Err(fail("TERMINAL_STATE", "Job is not an unsettled attempt"));
+                }
+                let clock = OffsetDateTime::now_utc();
+                let deadline = timestamp(job.started_at.as_deref().unwrap_or(""))?
+                    + Duration::milliseconds((job.limits.max_minutes * 60000.0) as i64);
+                let over = input + output > job.limits.max_tokens
+                    || cost > job.limits.max_usd
+                    || clock > deadline;
+                job.usage = Usage {
+                    input_tokens: input,
+                    output_tokens: output,
+                    cost_usd: cost,
+                };
+                job.cost_status = cost_status;
+                job.usage_recorded = true;
+                job.artifact_uri = artifact;
+                job.summary = summary;
+                if !preserve {
+                    job.status = if over {
+                        "budget-exhausted".into()
+                    } else {
+                        requested
+                    };
+                    job.error = if over {
+                        Some(
+                            "Observed attempt exceeded its token, cost or elapsed-time budget"
+                                .into(),
+                        )
+                    } else {
+                        error
+                    };
+                }
+                job.updated_at = at(clock);
+                job.finished_at = Some(at(clock));
+                let final_status = job.status.clone();
+                self.last_action = Some(json!({"jobId":job_id,"status":final_status}));
+                self.log("worker","job-settled",&job_id,format!("Usage and artifact recorded; final status {final_status}. A cancellation or pause is never revived."));
+            }
+            "cancel_job" | "pause_job" | "resume_job" => {
+                let job_id = string(p, "jobId", 100)?;
+                let job = self
+                    .jobs
+                    .iter_mut()
+                    .find(|j| j.id == job_id)
+                    .ok_or_else(|| fail("NOT_FOUND", "Job not found"))?;
+                if [
+                    "completed",
+                    "failed",
+                    "cancelled",
+                    "budget-exhausted",
+                    "needs-review",
+                ]
+                .contains(&job.status.as_str())
+                {
+                    return Err(fail("TERMINAL_STATE","Terminal attempts are not retried automatically; create a new authorized job"));
+                }
+                if action == "resume_job" {
+                    if job.status != "paused" {
+                        return Err(fail("INVALID_TRANSITION", "Only a paused job can resume"));
+                    }
+                    if job.started_at.is_some() {
+                        return Err(fail("REVIEW_REQUIRED","A dispatched attempt cannot be resumed as a fresh billed call; inspect its result and enqueue a deliberate retry"));
+                    }
+                    job.status = "queued".into();
+                } else {
+                    job.status = if action == "cancel_job" {
+                        "cancelled"
+                    } else {
+                        "paused"
+                    }
+                    .into();
+                    if action == "cancel_job" {
+                        job.finished_at = Some(now());
+                    }
+                }
+                job.updated_at = now();
+                self.log(
+                    "donna",
+                    &action,
+                    &job_id,
+                    "Dispatch stopped or resumed without erasing usage or artifacts".into(),
+                );
+            }
+            "create_schedule" => {
+                if self.schedules.len() >= 1000 {
+                    return Err(fail("CAPACITY", "Schedule limit reached"));
+                }
+                let company_id = string(p, "companyId", 100)?;
+                self.company(&company_id)?;
+                let mut template = p
+                    .get("jobTemplate")
+                    .filter(|v| v.is_object())
+                    .cloned()
+                    .ok_or_else(|| fail("INVALID_INPUT", "jobTemplate must be an object"))?;
+                template["companyId"] = json!(company_id);
+                template["idempotencyKey"] = json!("schedule-validation");
+                self.job_from(&template)?;
+                let next = string(p, "nextRunAt", 80)?;
+                timestamp(&next)?;
+                let schedule_id = id("schedule");
+                self.schedules.push(Schedule {
+                    id: schedule_id.clone(),
+                    company_id,
+                    name: string(p, "name", 200)?,
+                    enabled: boolean(p, "enabled", true)?,
+                    every_minutes: integer(p, "everyMinutes", 0, 10080)?,
+                    next_run_at: next,
+                    last_enqueued_at: None,
+                    job_template: template,
+                    last_error: None,
+                });
+                self.last_action = Some(json!({"scheduleId":schedule_id}));
+                self.log("donna",&action,&schedule_id,"Saved a schedule; due jobs enqueue when the local worker is enabled or tick_schedules is requested".into());
+            }
+            "pause_schedule" | "resume_schedule" => {
+                let schedule_id = string(p, "scheduleId", 100)?;
+                self.schedules
+                    .iter_mut()
+                    .find(|s| s.id == schedule_id)
+                    .ok_or_else(|| fail("NOT_FOUND", "Schedule not found"))?
+                    .enabled = action == "resume_schedule";
+                self.log(
+                    "donna",
+                    &action,
+                    &schedule_id,
+                    "Updated schedule state".into(),
+                );
+            }
+            "tick_schedules" => {
+                let clock = OffsetDateTime::now_utc();
+                let due: Vec<_> = self
+                    .schedules
+                    .iter()
+                    .filter(|s| {
+                        s.enabled
+                            && timestamp(&s.next_run_at).is_ok_and(|t| t <= clock)
+                            && self
+                                .companies
+                                .iter()
+                                .any(|c| c.id == s.company_id && c.status == "active")
+                    })
+                    .take(100)
+                    .map(|s| s.id.clone())
+                    .collect();
+                let mut jobs = vec![];
+                for schedule_id in due {
+                    let schedule = self
+                        .schedules
+                        .iter()
+                        .find(|s| s.id == schedule_id)
+                        .unwrap()
+                        .clone();
+                    let mut template = schedule.job_template;
+                    template["idempotencyKey"] =
+                        json!(format!("{}:{}", schedule_id, schedule.next_run_at));
+                    template["dueAt"] = json!(at(clock));
+                    match self.enqueue(&template) {
+                        Ok(job_id) => {
+                            jobs.push(job_id);
+                            let schedule = self
+                                .schedules
+                                .iter_mut()
+                                .find(|s| s.id == schedule_id)
+                                .unwrap();
+                            schedule.last_enqueued_at = Some(at(clock));
+                            schedule.last_error = None;
+                            if schedule.every_minutes == 0 {
+                                schedule.enabled = false;
+                            } else {
+                                schedule.next_run_at =
+                                    at(clock + Duration::minutes(schedule.every_minutes as i64));
+                            }
+                        }
+                        Err(error) => {
+                            let schedule = self
+                                .schedules
+                                .iter_mut()
+                                .find(|s| s.id == schedule_id)
+                                .unwrap();
+                            schedule.enabled = false;
+                            schedule.last_error = Some(error.message.clone());
+                            self.log(
+                                "system",
+                                "schedule-needs-review",
+                                &schedule_id,
+                                format!(
+                                    "Disabled invalid schedule: {}. Other due schedules continue.",
+                                    error.message
+                                ),
+                            );
+                        }
+                    }
+                }
+                self.last_action = Some(json!({"enqueuedJobIds":jobs}));
+            }
+            "configure_cache" => {
+                self.cache.enabled = boolean(p, "enabled", self.cache.enabled)?;
+                if p.get("maxEntries").is_some() {
+                    self.cache.max_entries = integer(p, "maxEntries", 1, 5000)? as usize;
+                }
+                if p.get("ttlMinutes").is_some() {
+                    self.cache.ttl_minutes = integer(p, "ttlMinutes", 1, 10080)?;
+                }
+                if self.cache.entries.len() > self.cache.max_entries {
+                    self.cache
+                        .entries
+                        .drain(..self.cache.entries.len() - self.cache.max_entries);
+                }
+                self.log(
+                    "donna",
+                    &action,
+                    "cache",
+                    "Updated bounded cache metadata policy; original artifacts are not deleted"
+                        .into(),
+                );
+            }
+            "clear_cache" => {
+                let company = opt_string(p, "companyId", 100)?;
+                if let Some(company) = &company {
+                    self.company(company)?;
+                }
+                let before = self.cache.entries.len();
+                self.cache
+                    .entries
+                    .retain(|e| company.as_ref().is_some_and(|c| c != &e.company_id));
+                self.last_action = Some(json!({"cleared":before-self.cache.entries.len()}));
+                self.log(
+                    "donna",
+                    &action,
+                    "cache",
+                    "Cleared cache references; original evidence files retained".into(),
+                );
+            }
+            "get_cache" => {
+                let company = string(p, "companyId", 100)?;
+                self.company(&company)?;
+                let key = string(p, "key", 200)?;
+                let clock = OffsetDateTime::now_utc();
+                self.cache
+                    .entries
+                    .retain(|e| timestamp(&e.expires_at).is_ok_and(|t| t > clock));
+                let entry = if self.cache.enabled {
+                    self.cache
+                        .entries
+                        .iter()
+                        .find(|e| e.company_id == company && e.key == key)
+                        .cloned()
+                } else {
+                    None
+                };
+                if entry.is_some() {
+                    self.cache.hits += 1;
+                } else {
+                    self.cache.misses += 1;
+                }
+                self.last_action = Some(json!({"hit":entry.is_some(),"entry":entry}));
+            }
+            "put_cache" => {
+                let company = string(p, "companyId", 100)?;
+                self.company(&company)?;
+                if !self.cache.enabled {
+                    return Err(fail("CACHE_DISABLED", "Cache is disabled"));
+                }
+                let key = string(p, "key", 200)?;
+                let artifact = string(p, "artifactUri", 3000)?;
+                let content_sha256 = opt_string(p, "contentSha256", 64)?;
+                if content_sha256
+                    .as_ref()
+                    .is_some_and(|h| h.len() != 64 || !h.bytes().all(|c| c.is_ascii_hexdigit()))
+                {
+                    return Err(fail(
+                        "INVALID_INPUT",
+                        "Cache contentSha256 must be a SHA-256 hex digest",
+                    ));
+                }
+                let clock = OffsetDateTime::now_utc();
+                self.cache.entries.retain(|e| {
+                    !(e.company_id == company && e.key == key)
+                        && timestamp(&e.expires_at).is_ok_and(|t| t > clock)
+                });
+                self.cache.entries.push(CacheEntry {
+                    key,
+                    company_id: company,
+                    artifact_uri: artifact,
+                    bytes: integer(p, "bytes", 0, 1000000000)?,
+                    created_at: at(clock),
+                    expires_at: at(clock + Duration::minutes(self.cache.ttl_minutes as i64)),
+                    content_sha256,
+                });
+                if self.cache.entries.len() > self.cache.max_entries {
+                    self.cache.entries.remove(0);
+                }
+                self.last_action = Some(json!({"stored":true}));
+            }
+            "add_knowledge" => {
+                let company = string(p, "companyId", 100)?;
+                self.company(&company)?;
+                if self.knowledge.len() >= 5000 {
+                    return Err(fail("CAPACITY", "Knowledge record limit reached"));
+                }
+                let knowledge_id = id("knowledge");
+                self.knowledge.push(Knowledge {
+                    id: knowledge_id.clone(),
+                    company_id: company,
+                    title: string(p, "title", 200)?,
+                    summary: string(p, "summary", 4000)?,
+                    artifact_uri: string(p, "artifactUri", 3000)?,
+                    created_at: now(),
+                });
+                self.last_action = Some(json!({"knowledgeId":knowledge_id}));
+                self.log(
+                    "donna",
+                    &action,
+                    &knowledge_id,
+                    "Stored a concise result summary and evidence reference, not hidden reasoning"
+                        .into(),
+                );
+            }
+            _ => return Err(fail("UNKNOWN_ACTION", "Unsupported office action")),
+        }
+        self.expire_leases();
+        self.sync_goal_checkpoints()?;
+        self.requeue_waiting_admission();
+        self.refresh_budget();
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn office() -> OfficeSnapshot {
+        let c:Company=serde_json::from_value(json!({"id":"engineering-intelligence-atlas","name":"Atlas","repoUrl":"https://github.com/occult-kranti/engineering-intelligence-atlas","owner":"occult-kranti","repo":"engineering-intelligence-atlas","githubStatus":"unchecked"})).unwrap();
+        OfficeSnapshot::seeded(&c, &[]).unwrap()
+    }
+    fn enqueue(s: &mut OfficeSnapshot, key: &str) -> String {
+        let o = s.offices[0].id.clone();
+        s.apply(&json!({"action":"enqueue_job","companyId":s.active_company_id,"officeId":o,"employeeId":"donna","goal":"Review evidence","mode":"manual","provider":"anthropic","model":"","maxTokens":100,"maxUsd":1,"maxMinutes":5,"idempotencyKey":key})).unwrap();
+        s.last_action.as_ref().unwrap()["jobId"]
+            .as_str()
+            .unwrap()
+            .into()
+    }
+    fn claim(s: &mut OfficeSnapshot) -> (String, String) {
+        s.apply(&json!({"action":"claim_job","workerId":"test"}))
+            .unwrap();
+        let result = s.last_action.as_ref().unwrap();
+        (
+            result["jobId"].as_str().unwrap().into(),
+            result["leaseToken"].as_str().unwrap().into(),
+        )
+    }
+    #[test]
+    fn hierarchy_and_idempotent_import() {
+        let mut s = office();
+        assert!(s.employees.iter().any(|e| e.id == "donna"));
+        assert_eq!(s.departments.len(), 2);
+        let count = s.companies.len();
+        let cmd = json!({"action":"import_repositories","repositories":[{"name":"Second","repoUrl":"https://github.com/occult-kranti/second"}]});
+        s.apply(&cmd).unwrap();
+        s.apply(&cmd).unwrap();
+        assert_eq!(s.companies.len(), count + 1);
+        assert_eq!(s.departments.len(), 4);
+    }
+    #[test]
+    fn no_duplicate_enqueue_or_claim() {
+        let mut s = office();
+        let a = enqueue(&mut s, "key");
+        assert_eq!(a, enqueue(&mut s, "key"));
+        let (j, _) = claim(&mut s);
+        assert_eq!(a, j);
+        s.apply(&json!({"action":"claim_job","workerId":"other"}))
+            .unwrap();
+        assert!(s.last_action.unwrap()["jobId"].is_null());
+    }
+    #[test]
+    fn hierarchy_pause_blocks_claim() {
+        let mut s = office();
+        enqueue(&mut s, "key");
+        let c = s.active_company_id.clone();
+        s.apply(&json!({"action":"pause_company","companyId":c}))
+            .unwrap();
+        s.apply(&json!({"action":"claim_job","workerId":"test"}))
+            .unwrap();
+        assert!(s.last_action.as_ref().unwrap()["jobId"].is_null());
+        s.apply(&json!({"action":"resume_company","companyId":c}))
+            .unwrap();
+        assert!(!claim(&mut s).0.is_empty());
+    }
+    #[test]
+    fn cancellation_preserves_reserved_and_observed_usage() {
+        let mut s = office();
+        enqueue(&mut s, "key");
+        let (j, l) = claim(&mut s);
+        s.apply(&json!({"action":"reserve_job","jobId":j,"leaseToken":l,"inputTokens":20,"maxOutputTokens":50,"costUsd":0.5})).unwrap();
+        s.apply(&json!({"action":"cancel_job","jobId":j})).unwrap();
+        assert_eq!(s.jobs[0].cost_status, "reserved");
+        s.apply(&json!({"action":"finish_job","jobId":j,"leaseToken":l,"status":"completed","inputTokens":20,"outputTokens":10,"costUsd":0.2,"artifactUri":"file:///tmp/result.md"})).unwrap();
+        assert_eq!(s.jobs[0].status, "cancelled");
+        assert_eq!(s.jobs[0].usage.cost_usd, 0.2);
+        assert!(s.jobs[0].usage_recorded);
+    }
+    #[test]
+    fn budgets_and_stale_leases_fail_closed() {
+        let mut s = office();
+        enqueue(&mut s, "key");
+        let (j, l) = claim(&mut s);
+        assert_eq!(s.apply(&json!({"action":"reserve_job","jobId":j,"leaseToken":l,"inputTokens":50,"maxOutputTokens":100,"costUsd":0.2})).unwrap_err().code,"BUDGET_EXHAUSTED");
+        assert_eq!(s.apply(&json!({"action":"finish_job","jobId":j,"leaseToken":"fake","status":"completed","inputTokens":0,"outputTokens":0,"costUsd":0})).unwrap_err().code,"STALE_LEASE");
+        s.jobs[0].lease_expires_at = Some("2020-01-01T00:00:00Z".into());
+        s.expire_leases();
+        assert_eq!(s.jobs[0].status, "needs-review");
+        s.apply(&json!({"action":"claim_job","workerId":"test"}))
+            .unwrap();
+        assert!(s.last_action.unwrap()["jobId"].is_null());
+    }
+    #[test]
+    fn dependencies_must_exist_and_stay_inside_company() {
+        let mut s = office();
+        let o = s.offices[0].id.clone();
+        assert_eq!(s.apply(&json!({"action":"enqueue_job","companyId":s.active_company_id,"officeId":o,"employeeId":"donna","goal":"g","maxTokens":100,"maxUsd":0,"maxMinutes":1,"idempotencyKey":"x","dependencies":["missing"]})).unwrap_err().code,"INVALID_DEPENDENCY");
+    }
+    #[test]
+    fn cloud_dispatch_requires_authorization_and_prices() {
+        let mut s = office();
+        enqueue(&mut s, "key");
+        s.jobs[0].mode = "provider".into();
+        s.jobs[0].model = "chosen-model".into();
+        s.apply(&json!({"action":"claim_job","workerId":"test","mode":"provider"}))
+            .unwrap();
+        assert!(s.last_action.unwrap()["jobId"].is_null());
+    }
+    #[test]
+    fn cache_counts_real_lookup_and_clear_preserves_knowledge() {
+        let mut s = office();
+        let c = s.active_company_id.clone();
+        s.apply(&json!({"action":"put_cache","companyId":c,"key":"hash","artifactUri":"file:///result.md","bytes":10})).unwrap();
+        s.apply(&json!({"action":"get_cache","companyId":c,"key":"hash"}))
+            .unwrap();
+        assert_eq!(s.cache.hits, 1);
+        s.apply(&json!({"action":"add_knowledge","companyId":c,"title":"Result","summary":"Evidence summary","artifactUri":"file:///result.md"})).unwrap();
+        s.apply(&json!({"action":"clear_cache","companyId":c}))
+            .unwrap();
+        assert!(s.cache.entries.is_empty());
+        assert_eq!(s.knowledge.len(), 1);
+    }
+    #[test]
+    fn donna_cannot_be_fired() {
+        let mut s = office();
+        assert_eq!(
+            s.apply(&json!({"action":"fire_employee","employeeId":"donna"}))
+                .unwrap_err()
+                .code,
+            "PERMANENT_ASSISTANT"
+        );
+    }
+    #[test]
+    fn expired_cancelled_reservation_becomes_estimate_without_reviving() {
+        let mut s = office();
+        enqueue(&mut s, "reservation");
+        let (j, l) = claim(&mut s);
+        s.apply(&json!({"action":"reserve_job","jobId":j,"leaseToken":l,"inputTokens":20,"maxOutputTokens":50,"costUsd":0.5})).unwrap();
+        s.apply(&json!({"action":"cancel_job","jobId":j})).unwrap();
+        s.jobs[0].lease_expires_at = Some("2020-01-01T00:00:00Z".into());
+        assert!(s.expire_leases());
+        assert_eq!(s.jobs[0].status, "cancelled");
+        assert_eq!(s.jobs[0].cost_status, "estimated");
+        assert_eq!(s.jobs[0].usage.cost_usd, 0.5);
+        assert!(!s.expire_leases());
+    }
+    #[test]
+    fn cancelled_prerequisite_moves_dependents_to_review() {
+        let mut s = office();
+        let parent = enqueue(&mut s, "parent");
+        let child = enqueue(&mut s, "child");
+        s.jobs
+            .iter_mut()
+            .find(|j| j.id == child)
+            .unwrap()
+            .dependencies
+            .push(parent.clone());
+        s.apply(&json!({"action":"cancel_job","jobId":parent}))
+            .unwrap();
+        assert_eq!(
+            s.jobs.iter().find(|j| j.id == child).unwrap().status,
+            "needs-review"
+        );
+        s.apply(&json!({"action":"claim_job","workerId":"test"}))
+            .unwrap();
+        assert!(s.last_action.unwrap()["jobId"].is_null());
+    }
+    #[test]
+    fn invalid_schedule_does_not_roll_back_other_due_schedules() {
+        let mut s = office();
+        let c = s.active_company_id.clone();
+        let o = s.offices[0].id.clone();
+        s.apply(&json!({"action":"hire_employee","companyId":c,"officeId":o,"name":"Temporary employee","role":"Reviewer"})).unwrap();
+        let employee = s.last_action.as_ref().unwrap()["employeeId"]
+            .as_str()
+            .unwrap()
+            .to_string();
+        for (target, name) in [(employee.clone(), "Invalidated"), ("donna".into(), "Valid")] {
+            s.apply(&json!({"action":"create_schedule","companyId":c,"name":name,"everyMinutes":0,"nextRunAt":"2020-01-01T00:00:00Z","jobTemplate":{"companyId":c,"officeId":o,"employeeId":target,"goal":"Review evidence","mode":"manual","maxTokens":100,"maxUsd":0,"maxMinutes":1}})).unwrap();
+        }
+        s.apply(&json!({"action":"fire_employee","employeeId":employee}))
+            .unwrap();
+        s.apply(&json!({"action":"tick_schedules"})).unwrap();
+        assert_eq!(s.jobs.len(), 1);
+        assert_eq!(s.jobs[0].employee_id, "donna");
+        assert!(s.schedules[0].last_error.is_some());
+        assert!(!s.schedules[0].enabled);
+        assert!(s.schedules[1].last_enqueued_at.is_some());
+    }
+}

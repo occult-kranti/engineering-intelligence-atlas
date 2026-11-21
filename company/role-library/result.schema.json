@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Atlas scoped role return",
+  "description": "Review artifact only. This schema does not grant tool authority or settle budgets.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "taskId", "roleKey", "scope", "status", "summary", "payload", "artifacts", "evidence", "checks", "blockers", "handoff"],
+  "properties": {
+    "schemaVersion": {"const": 1},
+    "taskId": {"type": "string", "minLength": 1, "maxLength": 200},
+    "roleKey": {"type": "string", "pattern": "^[a-z]+(?:-[a-z]+)*$"},
+    "scope": {
+      "type": "object", "additionalProperties": false,
+      "required": ["companyId", "sourceRepositoryId", "classification"],
+      "properties": {
+        "companyId": {"type": "string", "minLength": 1},
+        "sourceRepositoryId": {"type": ["string", "null"]},
+        "classification": {"enum": ["private", "public", "synthetic"]}
+      }
+    },
+    "status": {"enum": ["ready", "needs-review", "blocked"]},
+    "summary": {"type": "string", "minLength": 1, "maxLength": 2500},
+    "payload": {"type": "object", "description": "Fields named in the selected role document; validate the task-specific contract before accepting."},
+    "artifacts": {
+      "type": "array", "maxItems": 20,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["ref", "sha256", "kind"],
+        "properties": {
+          "ref": {"type": "string", "minLength": 1},
+          "sha256": {"type": ["string", "null"], "pattern": "^[a-f0-9]{64}$"},
+          "kind": {"enum": ["proposal", "source", "code", "data", "test-receipt", "release-receipt", "creative"]}
+        }
+      }
+    },
+    "evidence": {
+      "type": "array", "maxItems": 30,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["statement", "sourceRef", "status"],
+        "properties": {
+          "statement": {"type": "string", "maxLength": 1500},
+          "sourceRef": {"type": ["string", "null"]},
+          "status": {"enum": ["observed", "source-claim", "inferred", "proposed", "unknown"]}
+        }
+      }
+    },
+    "checks": {
+      "type": "array", "maxItems": 30,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["name", "status", "evidenceRef"],
+        "properties": {
+          "name": {"type": "string"},
+          "status": {"enum": ["passed", "failed", "skipped", "not-run"]},
+          "evidenceRef": {"type": ["string", "null"]}
+        }
+      }
+    },
+    "blockers": {"type": "array", "maxItems": 10, "items": {"type": "string", "maxLength": 1000}},
+    "handoff": {
+      "type": "object", "additionalProperties": false, "required": ["toRole", "nextAction", "dependencyRefs"],
+      "properties": {
+        "toRole": {"type": "string"},
+        "nextAction": {"type": "string", "maxLength": 1500},
+        "dependencyRefs": {"type": "array", "maxItems": 20, "items": {"type": "string"}}
+      }
+    }
+  }
+}

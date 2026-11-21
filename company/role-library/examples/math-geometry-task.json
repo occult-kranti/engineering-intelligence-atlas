@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "math-geometry",
+  "taskId": "demo-math-geometry-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Turn mathematical claims into explicit assumptions, derivations and reproducible checks.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Units and boundary conditions are explicit.",
+    "Degenerate and adversarial cases are checked where relevant.",
+    "The claim matches the method: finite evidence is not promoted to a universal proof."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Check this geometric claim on the stated domain. Derive the condition, test a degenerate case, and return an exact certificate or labeled numerical result with its limits."
+}

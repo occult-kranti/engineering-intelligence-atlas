@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "qa",
+  "taskId": "demo-qa-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Establish whether the delivered behavior satisfies the stated acceptance checks.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "At least one meaningful failure case covers the changed boundary.",
+    "Passed, failed, skipped and unavailable are counted separately.",
+    "A screenshot, typecheck and live integration each support only what they observed."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Review this revision independently. Verify the user-visible outcome and the highest-risk failure case. Return concrete blockers with reproduction, then stop optional testing once the stated risk is resolved."
+}

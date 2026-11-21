@@ -1,7 +1,7 @@
 {
   "name": "research-director-desktop-shell",
   "productName": "Research Director Desktop",
-  "version": "0.2.0",
+  "version": "0.4.0",
   "private": true,
   "description": "Electron desktop shell for the Research Director product: offline atlas, online runtime connection, and local System & Models panel.",
   "main": "dist/main/index.js",
@@ -9,18 +9,21 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.renderer.json && node scripts/copy-renderer-assets.mjs",
+    "build:native": "node scripts/build-native-core.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.renderer.json --noEmit",
     "sync-atlas": "node scripts/sync-atlas.mjs",
-    "start": "npm run build && electron .",
+    "start": "npm run build:native && npm run build && electron .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "package:linux": "npm run build && electron-builder --linux AppImage --linux dir",
-    "package:dir": "npm run build && electron-builder --linux dir"
+    "package:linux": "npm run build:native && npm run build && electron-builder --linux AppImage --linux dir",
+    "package:dir": "npm run build:native && npm run build && electron-builder --linux dir",
+    "test:renderer": "tsc -p tsconfig.renderer.json && node scripts/copy-renderer-assets.mjs && node tests/renderer-behavior.mjs"
   },
   "devDependencies": {
     "@types/node": "^24.0.0",
     "electron": "^45.4.1",
     "electron-builder": "^26.18.0",
+    "jsdom": "31.0.1",
     "typescript": "~5.9.3",
     "vitest": "^4.1.12"
   },

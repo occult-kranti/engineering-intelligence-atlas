@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "hackathon",
+  "taskId": "demo-hackathon-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Demonstrate one useful end-to-end outcome within a fixed time and spending envelope.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "The core scenario can be rerun from its documented starting state.",
+    "Mocks are visible; the demo never fabricates a backend response or live result.",
+    "A final checkpoint preserves the artifact when time or budget expires."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Build the smallest demonstrable slice for this outcome within the supplied caps. Reuse existing components, mark mocks clearly and reserve time for a repeatable walkthrough and handoff."
+}

@@ -1,5 +1,5 @@
 {
-  "name": "my-app",
+  "name": "engineering-intelligence-atlas",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -14,7 +14,14 @@
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "dev:static": "vite --mode static",
+    "build:static": "node ../scripts/build-static.mjs",
+    "check:static": "node ../scripts/check-static.mjs",
+    "check:migrations": "node --import tsx db/check-migrations.ts",
+    "db:seed": "node --import tsx db/seed.ts",
+    "test:browser": "node scripts/browser-check.mjs",
+    "test:static": "node ../scripts/smoke-static.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.143",
@@ -113,6 +120,11 @@
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
     "vite-plugin-pwa": "^2.0.0",
-    "vitest": "^4.0.16"
+    "vitest": "^4.0.16",
+    "tsx": "4.23.15",
+    "playwright": "1.65.1"
+  },
+  "engines": {
+    "node": ">=22.12.0"
   }
 }

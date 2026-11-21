@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "backend",
+  "taskId": "demo-backend-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Implement bounded, owner-scoped application operations with clear failure and retry semantics.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Unauthorized and stale-revision requests fail before side effects.",
+    "Partial success retains its artifact/receipt and does not invent a completed ledger write.",
+    "Payload limits and cancellation are enforced where the operation actually runs."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Implement the supplied operation with owner checks, input bounds and explicit retry semantics. Include stale-state and partial-success behavior, then return the contract and observed verification."
+}

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "engineering",
+  "taskId": "demo-engineering-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Deliver a maintainable vertical change that meets the contract and fits the existing application.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Changes preserve source identities and existing behavior outside scope.",
+    "Tests exercise the risk introduced by the change, including a relevant failure case.",
+    "An unexecuted command is not a passing check; migrations and deployment have their own receipts."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Implement one scoped behavior against the supplied revision. Identify the boundary most likely to fail, verify it with a meaningful check, and return changed paths, evidence and remaining constraints."
+}

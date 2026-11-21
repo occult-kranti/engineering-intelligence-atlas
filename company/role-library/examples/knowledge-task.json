@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "knowledge",
+  "taskId": "demo-knowledge-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Make accepted work easy to find and safely reuse without flattening its provenance or limits.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "The next worker can find the full artifact by reference.",
+    "A changed source/hash invalidates the old exact-context reuse claim.",
+    "Superseded, private, proposed and accepted records remain distinguishable."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Create a compact handoff from these accepted artifacts. Include hashes, source dates, uncertainties and the next action; omit unrelated material and mark superseded conclusions."
+}

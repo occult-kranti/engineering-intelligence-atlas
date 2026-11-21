@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "frontend-extensions",
+  "taskId": "demo-frontend-extensions-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Build accessible interfaces and deliberate, bounded page-to-research workflows.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Capture/export is initiated by the user and restricted to the selected tab.",
+    "Permission, selection limits and excluded fields are visible; private source material stays local.",
+    "Keyboard, focus, reduced motion and narrow layouts are checked without claiming full WCAG certification."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Build an explicit Capture \u2192 Review \u2192 Export flow for selected text. Keep data on the device, record a sanitized source URL and timestamp, and reject restricted pages. Explain what was not captured."
+}

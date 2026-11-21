@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "classification": "public-generic-preset",
+  "identityPolicy": "A parent group changes navigation and shared staffing only. It never renames, merges, deletes, republishes or changes visibility of a source repository.",
+  "taxonomy": ["engineering", "frontend", "backend", "database", "security", "design", "research", "hackathon", "music", "arts"],
+  "serviceKeys": ["engineering", "design-architecture", "research-knowledge", "security", "hackathon", "music-arts"],
+  "groups": [
+    {
+      "key": "control-platform",
+      "name": "Company and developer platforms",
+      "description": "Portfolio coordination, reusable agent infrastructure, development workspaces and delivery tools.",
+      "taxonomy": ["engineering", "backend", "database", "security"],
+      "services": ["engineering", "security", "research-knowledge"]
+    },
+    {
+      "key": "civic-intelligence",
+      "name": "Civic and corporate intelligence",
+      "description": "Source-bearing public-interest registers, corporate data pipelines, graph analysis and reporting interfaces.",
+      "taxonomy": ["research", "database", "backend", "frontend", "security"],
+      "services": ["research-knowledge", "engineering", "security"]
+    },
+    {
+      "key": "learning-games",
+      "name": "Games and learning experiences",
+      "description": "Interactive games, source-backed quizzes, playable prototypes and their production assets.",
+      "taxonomy": ["engineering", "frontend", "backend", "design", "music", "arts"],
+      "services": ["engineering", "design-architecture", "music-arts", "hackathon"]
+    },
+    {
+      "key": "evidence-archives",
+      "name": "Archives and knowledge collections",
+      "description": "Authorized media, transcripts, historical source collections and explicitly scoped discourse analysis.",
+      "taxonomy": ["research", "database", "backend", "security"],
+      "services": ["research-knowledge", "engineering", "security"]
+    },
+    {
+      "key": "scientific-labs",
+      "name": "Scientific and mathematical workbenches",
+      "description": "Reproducible calculations, geometric instruments, research notebooks and evidence-qualified model studies.",
+      "taxonomy": ["research", "engineering", "frontend", "design"],
+      "services": ["research-knowledge", "engineering", "design-architecture"]
+    },
+    {
+      "key": "audio-resonance",
+      "name": "Audio and resonance studies",
+      "description": "Browser sound tools, signal and metrology simulators, and source-led resonance research.",
+      "taxonomy": ["music", "research", "engineering", "arts"],
+      "services": ["music-arts", "engineering", "research-knowledge"]
+    },
+    {
+      "key": "pattern-symbolic",
+      "name": "Calendars, patterns and cultural interpretation",
+      "description": "Calendar calculations, comparative symbolic traditions, pattern analysis and cultural research interfaces.",
+      "taxonomy": ["research", "design", "frontend", "arts"],
+      "services": ["design-architecture", "research-knowledge", "engineering"]
+    },
+    {
+      "key": "personal-tools",
+      "name": "Personal and household tools",
+      "description": "Private local records, practical daily workflows, accessible interfaces and portable user-owned exports.",
+      "taxonomy": ["frontend", "database", "security", "design"],
+      "services": ["engineering", "design-architecture", "security"]
+    }
+  ],
+  "sharedServicePolicy": {
+    "reuseEmployeeIdentity": true,
+    "idleImpliesNoInference": true,
+    "crossCompanyDataRequiresExplicitScope": true,
+    "contractsDescribeDeliverablesNotUnlimitedAuthority": true,
+    "capabilitiesAreDescriptionsUntilEnforcedByRuntime": true
+  }
+}

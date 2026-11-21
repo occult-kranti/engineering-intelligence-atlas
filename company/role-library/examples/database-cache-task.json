@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "database-cache",
+  "taskId": "demo-database-cache-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Keep state durable and scoped while reducing repeated work without hiding cost or stale data.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Cache entries cannot cross owner/company/model/source revisions.",
+    "Concurrent admission is atomic and retains unresolved reservations.",
+    "Migration evidence distinguishes offline consistency from a real database run; indexes match actual query shapes."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Audit the supplied query and cache path. Propose the smallest index or invalidation change, prove tenant/version isolation with a fixture, and label any unmeasured performance expectation."
+}

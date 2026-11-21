@@ -28,6 +28,8 @@ export interface GenerateResult {
   text: string;
   inputTokens: number;
   outputTokens: number;
+  /** Missing or invalid provider usage is not evidence of a free call. */
+  usageObserved?: boolean;
 }
 
 /** Narrow structural view of the AI SDK surface we use (injectable in tests). */
@@ -41,6 +43,7 @@ export interface AiSdkLike {
     maxOutputTokens?: number;
     maxRetries: number;
     abortSignal?: AbortSignal;
+    providerOptions?: Record<string, Record<string, unknown>>;
   }): Promise<{ text: string; usage: { inputTokens?: number; outputTokens?: number } }>;
 }
 
@@ -169,12 +172,16 @@ export async function generateWithProvider(
       prompt: req.prompt,
       maxOutputTokens: req.maxOutputTokens,
       maxRetries: 0, // never auto-retry a billed request
+      ...(provider === 'anthropic' && /^claude-(?:sonnet|opus)-5-5(?:-|$)/.test(req.model)
+        ? { providerOptions: { anthropic: { thinking: { type: 'between_tools' }, effort: 'medium' } } }
+        : {}),
       ...(req.abortSignal !== undefined ? { abortSignal: req.abortSignal } : {}),
     });
     return {
       text: result.text,
       inputTokens: result.usage.inputTokens ?? 0,
       outputTokens: result.usage.outputTokens ?? 0,
+      ...([result.usage.inputTokens, result.usage.outputTokens].every(n => typeof n === 'number' && Number.isSafeInteger(n) && n >= 0) ? {} : { usageObserved: false }),
     };
   } catch (err) {
     throw sanitizeError(err, apiKey);

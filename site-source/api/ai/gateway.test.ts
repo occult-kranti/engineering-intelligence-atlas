@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { describe, expect, it, vi, afterEach } from "vitest";
+import { describe, expect, it, vi, beforeAll, beforeEach, afterEach } from "vitest";
 import { generateText } from "ai";
 import { ArtifactObjectSchema } from "@contracts/artifacts";
 import { AI_ERROR_COPY } from "@contracts/run";
@@ -17,7 +17,8 @@ import { mapAiErr } from "../routers/planning";
  * - no automatic billed retries: a mocked 5xx produces exactly ONE outbound
  *   call (maxRetries: 0);
  * - real smoke: exactly one tiny billed generateText against the provisioned
- *   gateway (skipped when unprovisioned). listModels is read-only/free.
+ *   gateway only when RUN_LIVE_AI_TESTS=1 is explicitly selected. Credentials
+ *   alone never opt a developer or CI runner into a billed call.
  */
 
 const PROVISIONED = !!(
@@ -80,10 +81,18 @@ function captureFetch(impl: (url: string) => Response | Promise<Response>) {
 
 afterEach(() => {
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
 });
 
 describe("gateway attribution + degradation (mocked HTTP capture)", () => {
-  it.skipIf(!PROVISIONED)(
+  beforeEach(() => {
+    vi.resetModules();
+    vi.stubEnv("KIMI_AGENTGW_BASE_URL", "https://gateway.invalid/v1");
+    vi.stubEnv("KIMI_AGENTGW_API_KEY", "fixture-only-gateway-key");
+    vi.stubEnv("APP_ID", "gateway-capture-test");
+  });
+
+  it(
     "generateStructured sends X-Kimi-App-Id === APP_ID and returns structured output",
     async () => {
       const calls = captureFetch(() => completionResponse(VALID_OBJECT));
@@ -107,7 +116,7 @@ describe("gateway attribution + degradation (mocked HTTP capture)", () => {
     },
   );
 
-  it.skipIf(!PROVISIONED)(
+  it(
     "403 access_terminated_error (schema-conforming body) → AiUnavailable → quota copy",
     async () => {
       captureFetch(() =>
@@ -132,7 +141,7 @@ describe("gateway attribution + degradation (mocked HTTP capture)", () => {
     },
   );
 
-  it.skipIf(!PROVISIONED)(
+  it(
     "403 access_terminated_error with non-schema body still maps via responseBody fallback",
     async () => {
       captureFetch(() =>
@@ -152,7 +161,7 @@ describe("gateway attribution + degradation (mocked HTTP capture)", () => {
     },
   );
 
-  it.skipIf(!PROVISIONED)(
+  it(
     "mocked 5xx on a billable call → AiTransient with exactly ONE outbound request (no auto-retry)",
     async () => {
       const calls = captureFetch(() =>
@@ -175,8 +184,13 @@ describe("gateway attribution + degradation (mocked HTTP capture)", () => {
   );
 });
 
-describe("real gateway (provisioned)", () => {
-  it.skipIf(!PROVISIONED)(
+describe.skipIf(process.env.RUN_LIVE_AI_TESTS !== "1")("real gateway (explicit live opt-in)", () => {
+  beforeAll(() => {
+    expect(PROVISIONED, "RUN_LIVE_AI_TESTS requires a provisioned gateway").toBe(true);
+    vi.resetModules();
+  });
+
+  it(
     "listModels returns a live defaultModelId (read-only, excluded from budget accounting)",
     async () => {
       const list = await listGatewayModels(true);
@@ -185,7 +199,7 @@ describe("real gateway (provisioned)", () => {
     },
   );
 
-  it.skipIf(!PROVISIONED)(
+  it(
     "smoke: ONE tiny billed generateText through the attributed factory (maxRetries 0)",
     { timeout: 120_000 },
     async () => {

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "music-arts",
+  "taskId": "demo-music-arts-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Produce original or licensed musical/audio artifacts with clear controls and measurable signal behavior.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "The artifact is reproducible from the stated score/preset and rights are recorded.",
+    "Start, stop, fade and duration behavior are checked; no unexpected background playback.",
+    "Creative interpretation is separate from empirical claims about the listener."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Create a short original musical cue for this interaction. Specify notes and timing, keep playback opt-in with a stop path, and return the score, rights record and measurable signal checks."
+}

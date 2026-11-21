@@ -50,7 +50,7 @@ describe('remote content isolation', () => {
 });
 
 describe('global security posture (static checks)', () => {
-  const sources = ['src/main/index.ts', 'src/main/windows.ts', 'src/main/ipc.ts', 'src/main/systemInfo.ts', 'src/main/venv.ts', 'src/main/downloads.ts', 'src/main/vault.ts', 'src/main/providers.ts', 'src/main/ollama.ts', 'src/main/projects.ts', 'src/main/senderGuard.ts', 'src/preload/index.ts'].map(read);
+  const sources = ['src/main/index.ts', 'src/main/windows.ts', 'src/main/ipc.ts', 'src/main/systemInfo.ts', 'src/main/venv.ts', 'src/main/downloads.ts', 'src/main/vault.ts', 'src/main/providers.ts', 'src/main/ollama.ts', 'src/main/projects.ts', 'src/main/senderGuard.ts', 'src/main/company.ts', 'src/main/office.ts', 'src/main/officeWorker.ts', 'src/preload/index.ts'].map(read);
 
   it('never enables remote module or disables webSecurity', () => {
     for (const src of sources) {
@@ -93,9 +93,10 @@ describe('global security posture (static checks)', () => {
   it('IPC handlers enforce sender validation via the guard wrapper', () => {
     const ipc = read('src/main/ipc.ts');
     // Every handler registration must be wrapped in guard(...).
-    const registrations = ipc.match(/ipcMain\.handle\(CHANNELS\.\w+,/g) ?? [];
-    const guarded = ipc.match(/ipcMain\.handle\(CHANNELS\.\w+, guard\(/g) ?? [];
+    const registrations = ipc.match(/register\(CHANNELS\.\w+,/g) ?? [];
+    const guarded = ipc.match(/register\(CHANNELS\.\w+, guard\(/g) ?? [];
     expect(registrations.length).toBeGreaterThan(0);
     expect(guarded.length).toBe(registrations.length);
+    expect(ipc).toContain('ipcMain.handle(channel, handler)');
   });
 });

@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "id": "demo-source-001",
+  "classification": "synthetic",
+  "source": {
+    "url": "https://example.org/research/method",
+    "title": "Synthetic method record",
+    "retrievedAt": null,
+    "locator": "Example section; no source was fetched",
+    "contentSha256": null
+  },
+  "claim": {
+    "text": "A proposed calculation needs an explicit input domain.",
+    "status": "proposed",
+    "supports": ["demo-question-001"],
+    "limitations": ["This fixture demonstrates a record shape, not a research finding."]
+  },
+  "rights": {"redistribution": "example-only", "fullTextIncluded": false},
+  "derivation": {"activity": "manual-fixture", "inputRefs": [], "agent": "demo-researcher"}
+}

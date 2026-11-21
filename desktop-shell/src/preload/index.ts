@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
+import type { OfficeCommand } from '../shared/office';
 import type {
-  ApiProvider,
+  CredentialProvider,
   CreateProjectRequest,
   CreateVenvRequest,
   DesktopBridge,
@@ -8,8 +9,10 @@ import type {
   JobRecord,
   ProjectProvider,
   ProjectRun,
+  RegisterCompanyRequest,
   ShellMode,
   StartRunRequest,
+  UpdateCompanyTaskRequest,
 } from '../shared/contract';
 
 /**
@@ -29,6 +32,7 @@ import type {
  */
 
 const CHANNELS = {
+  openPersonalDashboard: 'desktop:open-personal-dashboard',
   getSystemInfo: 'desktop:get-system-info',
   getModelCatalog: 'desktop:get-model-catalog',
   checkModelRequirements: 'desktop:check-model-requirements',
@@ -44,6 +48,7 @@ const CHANNELS = {
   getVaultStatus: 'desktop:vault:get-status',
   setApiKey: 'desktop:vault:set-key',
   revokeApiKey: 'desktop:vault:revoke-key',
+  importCredentialFile: 'desktop:vault:import-file',
   listProviderModels: 'desktop:provider:list-models',
   detectOllama: 'desktop:ollama:detect',
   listProjects: 'desktop:projects:list',
@@ -55,6 +60,16 @@ const CHANNELS = {
   cancelRun: 'desktop:projects:run-cancel',
   listRuns: 'desktop:projects:runs',
   readArtifact: 'desktop:projects:read-artifact',
+  companySnapshot: 'desktop:company:snapshot',
+  registerCompany: 'desktop:company:register',
+  refreshCompany: 'desktop:company:refresh',
+  updateCompanyTask: 'desktop:company:update-task',
+  indexCompanyRepository: 'desktop:company:index-repository',
+  officeSnapshot: 'desktop:office:snapshot',
+  officeCommand: 'desktop:office:command',
+  officeWorkerStatus: 'desktop:office:worker-status',
+  setOfficeWorker: 'desktop:office:set-worker',
+  runOfficeQueue: 'desktop:office:run-queue',
   jobEvent: 'desktop:event:job',
   modeChanged: 'desktop:event:mode',
   projectEvent: 'desktop:event:project',
@@ -62,7 +77,8 @@ const CHANNELS = {
 
 if (window.location.protocol === 'file:') {
   const bridge: DesktopBridge = {
-    version: 2,
+    version: 3,
+    openPersonalDashboard: () => ipcRenderer.invoke(CHANNELS.openPersonalDashboard),
     getSystemInfo: () => ipcRenderer.invoke(CHANNELS.getSystemInfo),
     getModelCatalog: () => ipcRenderer.invoke(CHANNELS.getModelCatalog),
     checkModelRequirements: (modelId: string) =>
@@ -77,10 +93,21 @@ if (window.location.protocol === 'file:') {
     getSettings: () => ipcRenderer.invoke(CHANNELS.getSettings),
     openExternal: (url: string) => ipcRenderer.invoke(CHANNELS.openExternal, url),
     getVaultStatus: () => ipcRenderer.invoke(CHANNELS.getVaultStatus),
-    setApiKey: (provider: ApiProvider, key: string) => ipcRenderer.invoke(CHANNELS.setApiKey, provider, key),
-    revokeApiKey: (provider: ApiProvider) => ipcRenderer.invoke(CHANNELS.revokeApiKey, provider),
+    setApiKey: (provider: CredentialProvider, key: string) => ipcRenderer.invoke(CHANNELS.setApiKey, provider, key),
+    revokeApiKey: (provider: CredentialProvider) => ipcRenderer.invoke(CHANNELS.revokeApiKey, provider),
+    importCredentialFile: (provider: CredentialProvider) => ipcRenderer.invoke(CHANNELS.importCredentialFile, provider),
     listProviderModels: (provider: ProjectProvider) => ipcRenderer.invoke(CHANNELS.listProviderModels, provider),
     detectOllama: () => ipcRenderer.invoke(CHANNELS.detectOllama),
+    companySnapshot: () => ipcRenderer.invoke(CHANNELS.companySnapshot),
+    registerCompany: (req: RegisterCompanyRequest) => ipcRenderer.invoke(CHANNELS.registerCompany, req),
+    refreshCompany: () => ipcRenderer.invoke(CHANNELS.refreshCompany),
+    updateCompanyTask: (req: UpdateCompanyTaskRequest) => ipcRenderer.invoke(CHANNELS.updateCompanyTask, req),
+    indexCompanyRepository: () => ipcRenderer.invoke(CHANNELS.indexCompanyRepository),
+    officeSnapshot: () => ipcRenderer.invoke(CHANNELS.officeSnapshot),
+    officeCommand: (request: OfficeCommand) => ipcRenderer.invoke(CHANNELS.officeCommand, request),
+    officeWorkerStatus: () => ipcRenderer.invoke(CHANNELS.officeWorkerStatus),
+    setOfficeWorker: (request: { enabled: boolean }) => ipcRenderer.invoke(CHANNELS.setOfficeWorker, request),
+    runOfficeQueue: () => ipcRenderer.invoke(CHANNELS.runOfficeQueue),
     listProjects: () => ipcRenderer.invoke(CHANNELS.listProjects),
     createProject: (req: CreateProjectRequest) => ipcRenderer.invoke(CHANNELS.createProject, req),
     getProject: (projectId: string) => ipcRenderer.invoke(CHANNELS.getProject, projectId),

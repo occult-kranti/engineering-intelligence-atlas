@@ -1,4 +1,4 @@
-import { ipcMain, type IpcMainInvokeEvent } from 'electron';
+import { ipcMain, dialog, type IpcMainInvokeEvent } from 'electron';
 import path from 'node:path';
 import {
   CHANNELS,
@@ -17,11 +17,15 @@ import { createVenv, VenvError } from './venv';
 import { JobManager } from './jobs';
 import { SettingsStore } from './settings';
 import { openExternalUrl, WindowManager } from './windows';
-import { CredentialVault, isApiProvider } from './vault';
+import { CredentialVault, isApiProvider, isCredentialProvider } from './vault';
+import { importCredentialFromFile } from './credentialImport';
 import { listProviderModels } from './providers';
 import { detectOllama } from './ollama';
 import { ProjectRunner, ProjectStore } from './projects';
 import { isTrustedLocalSender, UntrustedSenderError } from './senderGuard';
+import { CompanyService } from './company';
+import { OfficeService } from './office';
+import type { OfficeWorkerController } from './officeWorker';
 
 export interface IpcContext {
   windowManager: WindowManager;
@@ -30,8 +34,12 @@ export interface IpcContext {
   vault: CredentialVault;
   projectStore: ProjectStore;
   projectRunner: ProjectRunner;
+  companyService: CompanyService;
+  officeService: OfficeService;
+  officeWorker: OfficeWorkerController;
   catalogPath: string;
   userDataPath: string;
+  openPersonalDashboard?: () => Promise<{ ok: boolean; url?: string; error?: string }>;
 }
 
 type Handler = (event: IpcMainInvokeEvent, ...args: any[]) => unknown;
@@ -40,8 +48,16 @@ type Handler = (event: IpcMainInvokeEvent, ...args: any[]) => unknown;
  * Register all desktopBridge IPC handlers. Every handler validates its
  * inputs again in the main process — the renderer is never trusted.
  */
-export function registerIpc(ctx: IpcContext): void {
-  const { windowManager, jobManager, settings, vault, projectStore, projectRunner, catalogPath, userDataPath } = ctx;
+export function registerIpc(ctx: IpcContext): Map<string, (...args: unknown[]) => unknown> {
+  const browserHandlers = new Map<string, (...args: unknown[]) => unknown>();
+  const originalHandlers = new WeakMap<Handler, Handler>();
+  function register(channel: string, handler: Handler): void {
+    ipcMain.handle(channel, handler);
+    const name = Object.entries(CHANNELS).find(([, value]) => value === channel)?.[0];
+    const original = originalHandlers.get(handler);
+    if (name && original) browserHandlers.set(name, (...args) => original(undefined as never, ...args));
+  }
+  const { windowManager, jobManager, settings, vault, projectStore, projectRunner, companyService, officeService, officeWorker, catalogPath, userDataPath } = ctx;
   const modelsRoot = path.join(userDataPath, 'models');
 
   /**
@@ -50,11 +66,13 @@ export function registerIpc(ctx: IpcContext): void {
    * this is defense in depth on top of that.
    */
   function guard(handler: Handler): Handler {
-    return (event: IpcMainInvokeEvent, ...args: unknown[]) => {
+    const protectedHandler = (event: IpcMainInvokeEvent, ...args: unknown[]) => {
       const wc = windowManager.window.isDestroyed() ? null : windowManager.window.webContents;
       if (!isTrustedLocalSender(event, wc)) throw new UntrustedSenderError();
       return handler(event, ...args);
     };
+    originalHandlers.set(protectedHandler, handler);
+    return protectedHandler;
   }
 
   jobManager.on('job', (job: JobRecord) => {
@@ -71,11 +89,27 @@ export function registerIpc(ctx: IpcContext): void {
     }
   });
 
-  ipcMain.handle(CHANNELS.getSystemInfo, guard(() => getSystemInfo(userDataPath)));
+  register(CHANNELS.getSystemInfo, guard(() => getSystemInfo(userDataPath)));
 
-  ipcMain.handle(CHANNELS.getModelCatalog, guard(() => loadCatalog(catalogPath)));
+  register(CHANNELS.companySnapshot, guard(() => companyService.companySnapshot()));
+  register(CHANNELS.registerCompany, guard((_event, request) => companyService.registerCompany(request)));
+  register(CHANNELS.refreshCompany, guard(() => companyService.refreshCompany()));
+  register(CHANNELS.updateCompanyTask, guard((_event, request) => companyService.updateCompanyTask(request)));
+  register(CHANNELS.indexCompanyRepository, guard(() => companyService.indexCompanyRepository()));
+  register(CHANNELS.officeSnapshot, guard(() => officeService.officeSnapshot()));
+  register(CHANNELS.officeCommand, guard((_event, request) => officeService.officeCommand(request)));
+  register(CHANNELS.officeWorkerStatus, guard(() => officeWorker.status()));
+  register(CHANNELS.setOfficeWorker, guard((_event, request: unknown) => {
+    if (!request || typeof request !== 'object' || typeof (request as { enabled?: unknown }).enabled !== 'boolean') {
+      throw new Error('Worker enabled must be a boolean');
+    }
+    return officeWorker.setEnabled((request as { enabled: boolean }).enabled);
+  }));
+  register(CHANNELS.runOfficeQueue, guard(() => officeWorker.runOnce()));
 
-  ipcMain.handle(CHANNELS.checkModelRequirements, guard(async (_event, modelId: unknown) => {
+  register(CHANNELS.getModelCatalog, guard(() => loadCatalog(catalogPath)));
+
+  register(CHANNELS.checkModelRequirements, guard(async (_event, modelId: unknown) => {
     if (typeof modelId !== 'string') throw new Error('modelId must be a string');
     const catalog = loadCatalog(catalogPath);
     const model = findModel(catalog, modelId);
@@ -84,7 +118,7 @@ export function registerIpc(ctx: IpcContext): void {
     return checkModelRequirements(model, sys);
   }));
 
-  ipcMain.handle(CHANNELS.createVenv, guard(async (_event, req: CreateVenvRequest): Promise<CreateVenvResult> => {
+  register(CHANNELS.createVenv, guard(async (_event, req: CreateVenvRequest): Promise<CreateVenvResult> => {
     try {
       if (req?.confirmed !== true) {
         throw new VenvError('Venv creation requires explicit user confirmation.');
@@ -111,7 +145,7 @@ export function registerIpc(ctx: IpcContext): void {
     }
   }));
 
-  ipcMain.handle(CHANNELS.downloadModel, guard(async (_event, req: DownloadModelRequest) => {
+  register(CHANNELS.downloadModel, guard(async (_event, req: DownloadModelRequest) => {
     try {
       if (req?.confirmed !== true) {
         return { ok: false, error: 'Download requires explicit user confirmation.' };
@@ -168,18 +202,18 @@ export function registerIpc(ctx: IpcContext): void {
     }
   }));
 
-  ipcMain.handle(CHANNELS.getJobStatus, guard((_event, jobId?: unknown) => {
+  register(CHANNELS.getJobStatus, guard((_event, jobId?: unknown) => {
     return jobManager.list(typeof jobId === 'string' ? jobId : undefined);
   }));
 
-  ipcMain.handle(CHANNELS.cancelJob, guard((_event, jobId: unknown) => {
+  register(CHANNELS.cancelJob, guard((_event, jobId: unknown) => {
     if (typeof jobId !== 'string') return { ok: false, error: 'jobId must be a string' };
     return jobManager.cancel(jobId);
   }));
 
-  ipcMain.handle(CHANNELS.openOfflineAtlas, guard(() => windowManager.openOfflineAtlas()));
+  register(CHANNELS.openOfflineAtlas, guard(() => windowManager.openOfflineAtlas()));
 
-  ipcMain.handle(CHANNELS.connectRuntime, guard(async (_event, rawUrl: unknown): Promise<ConnectRuntimeResult> => {
+  register(CHANNELS.connectRuntime, guard(async (_event, rawUrl: unknown): Promise<ConnectRuntimeResult> => {
     if (typeof rawUrl !== 'string') return { ok: false, error: 'url must be a string' };
     try {
       const normalized = normalizeRuntimeUrl(rawUrl);
@@ -193,14 +227,14 @@ export function registerIpc(ctx: IpcContext): void {
     }
   }));
 
-  ipcMain.handle(CHANNELS.backToLauncher, guard(() => {
+  register(CHANNELS.backToLauncher, guard(() => {
     windowManager.backToLauncher();
     return { ok: true };
   }));
 
-  ipcMain.handle(CHANNELS.getSettings, guard(() => settings.get()));
+  register(CHANNELS.getSettings, guard(() => settings.get()));
 
-  ipcMain.handle(CHANNELS.openExternal, guard((_event, rawUrl: unknown) => {
+  register(CHANNELS.openExternal, guard((_event, rawUrl: unknown) => {
     if (typeof rawUrl !== 'string') return { ok: false, error: 'url must be a string' };
     return openExternalUrl(rawUrl);
   }));
@@ -209,22 +243,33 @@ export function registerIpc(ctx: IpcContext): void {
   // Key material enters via setApiKey and is NEVER returned by any handler:
   // status exposes configured/readable booleans + timestamps only.
 
-  ipcMain.handle(CHANNELS.getVaultStatus, guard(() => vault.status()));
+  register(CHANNELS.getVaultStatus, guard(() => vault.status()));
 
-  ipcMain.handle(CHANNELS.setApiKey, guard((_event, provider: unknown, key: unknown) => {
-    if (!isApiProvider(provider)) return { ok: false, error: 'unknown provider' };
+  register(CHANNELS.setApiKey, guard((_event, provider: unknown, key: unknown) => {
+    if (!isCredentialProvider(provider)) return { ok: false, error: 'unknown provider' };
     if (typeof key !== 'string') return { ok: false, error: 'key must be a string' };
     return vault.setKey(provider, key);
   }));
 
-  ipcMain.handle(CHANNELS.revokeApiKey, guard((_event, provider: unknown) => {
-    if (!isApiProvider(provider)) return { ok: false, error: 'unknown provider' };
+  register(CHANNELS.revokeApiKey, guard((_event, provider: unknown) => {
+    if (!isCredentialProvider(provider)) return { ok: false, error: 'unknown provider' };
     return vault.revoke(provider);
+  }));
+
+  register(CHANNELS.importCredentialFile, guard(async (_event, provider: unknown) => {
+    if (!isCredentialProvider(provider)) return { ok: false, error: 'Unknown credential provider.' };
+    if (!vault.encryptionAvailable()) return { ok: false, error: 'Unlock an OS-backed keychain before importing a credential.' };
+    const selection = await dialog.showOpenDialog(windowManager.window, {
+      title: `Import ${provider} credential`, properties: ['openFile', 'dontAddToRecent'],
+      filters: [{ name: 'Credential file', extensions: ['txt', 'json', 'env', 'key'] }, { name: 'All files', extensions: ['*'] }],
+    });
+    if (selection.canceled || selection.filePaths.length !== 1) return { ok: false, cancelled: true };
+    return importCredentialFromFile(selection.filePaths[0]!, provider, vault);
   }));
 
   // -------------------------------------------------------------- providers
 
-  ipcMain.handle(CHANNELS.listProviderModels, guard(async (_event, provider: unknown) => {
+  register(CHANNELS.listProviderModels, guard(async (_event, provider: unknown) => {
     try {
       if (provider === 'ollama') {
         const status = await detectOllama();
@@ -242,13 +287,13 @@ export function registerIpc(ctx: IpcContext): void {
     }
   }));
 
-  ipcMain.handle(CHANNELS.detectOllama, guard(() => detectOllama()));
+  register(CHANNELS.detectOllama, guard(() => detectOllama()));
 
   // --------------------------------------------------------------- projects
 
-  ipcMain.handle(CHANNELS.listProjects, guard(() => projectStore.listProjects()));
+  register(CHANNELS.listProjects, guard(() => projectStore.listProjects()));
 
-  ipcMain.handle(CHANNELS.createProject, guard((_event, req: unknown) => {
+  register(CHANNELS.createProject, guard((_event, req: unknown) => {
     try {
       return { ok: true, project: projectStore.createProject(req as never) };
     } catch (err) {
@@ -256,7 +301,7 @@ export function registerIpc(ctx: IpcContext): void {
     }
   }));
 
-  ipcMain.handle(CHANNELS.getProject, guard((_event, projectId: unknown) => {
+  register(CHANNELS.getProject, guard((_event, projectId: unknown) => {
     if (typeof projectId !== 'string') return null;
     try {
       return projectStore.getProject(projectId);
@@ -265,33 +310,33 @@ export function registerIpc(ctx: IpcContext): void {
     }
   }));
 
-  ipcMain.handle(CHANNELS.startRun, guard((_event, req: unknown) => {
+  register(CHANNELS.startRun, guard((_event, req: unknown) => {
     if (typeof req !== 'object' || req === null) return { ok: false, error: 'request must be an object' };
     const r = req as { projectId?: unknown; runBudget?: unknown; priceRates?: unknown };
     if (typeof r.projectId !== 'string') return { ok: false, error: 'projectId must be a string' };
     return projectRunner.start(r.projectId, r.runBudget, r.priceRates);
   }));
 
-  ipcMain.handle(CHANNELS.pauseRun, guard((_event, runId: unknown) => {
+  register(CHANNELS.pauseRun, guard((_event, runId: unknown) => {
     if (typeof runId !== 'string') return { ok: false, error: 'runId must be a string' };
     return projectRunner.pause(runId);
   }));
 
-  ipcMain.handle(CHANNELS.resumeRun, guard((_event, runId: unknown) => {
+  register(CHANNELS.resumeRun, guard((_event, runId: unknown) => {
     if (typeof runId !== 'string') return { ok: false, error: 'runId must be a string' };
     return projectRunner.resume(runId);
   }));
 
-  ipcMain.handle(CHANNELS.cancelRun, guard((_event, runId: unknown) => {
+  register(CHANNELS.cancelRun, guard((_event, runId: unknown) => {
     if (typeof runId !== 'string') return { ok: false, error: 'runId must be a string' };
     return projectRunner.cancel(runId);
   }));
 
-  ipcMain.handle(CHANNELS.listRuns, guard((_event, projectId: unknown) => {
+  register(CHANNELS.listRuns, guard((_event, projectId: unknown) => {
     return projectStore.listRuns(typeof projectId === 'string' ? projectId : undefined);
   }));
 
-  ipcMain.handle(CHANNELS.readArtifact, guard((_event, projectId: unknown, runId: unknown, nodeId: unknown) => {
+  register(CHANNELS.readArtifact, guard((_event, projectId: unknown, runId: unknown, nodeId: unknown) => {
     try {
       if (typeof projectId !== 'string' || typeof runId !== 'string' || typeof nodeId !== 'string') {
         return { ok: false, error: 'projectId, runId and nodeId must be strings' };
@@ -303,4 +348,6 @@ export function registerIpc(ctx: IpcContext): void {
       return { ok: false, error: err instanceof Error ? err.message : String(err) };
     }
   }));
+  register(CHANNELS.openPersonalDashboard, guard(() => ctx.openPersonalDashboard?.() ?? {ok:false,error:'Personal dashboard unavailable.'}));
+  return browserHandlers;
 }

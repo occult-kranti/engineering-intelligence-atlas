@@ -8,6 +8,21 @@ files:
   - models.catalog.json
   - package.json
 extraResources:
+  - from: native
+    to: native
+    filter:
+      - 'atlas-core*'
+      - 'build.json'
+  - from: ../company
+    to: company
+    filter:
+      - 'engineering-intelligence-atlas.json'
+      - 'team.json'
+      - 'roadmap.json'
+      - 'skill-briefs.json'
+      - 'prompts/**'
+      - 'role-library/**'
+      - 'portfolio-presets.json'
   - from: resources/atlas
     to: atlas
     filter:

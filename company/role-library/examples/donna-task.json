@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "donna",
+  "taskId": "demo-donna-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Turn the owner conversation into bounded goals and a clear, continuous account of actual work.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "One owner-facing answer remains coherent across worker handoffs.",
+    "Jobs carry explicit input refs, acceptance checks and bounded tokens/time/cost.",
+    "Skipped, failed, estimated and verified states are distinct; no private reasoning transcript is requested."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Use the accepted goal and supplied ledger. Reuse a suitable employee, issue the smallest useful task packet, and report evidence, blocker and next action. Keep unrelated company material out of the packet."
+}

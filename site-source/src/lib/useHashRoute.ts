@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 
 export const ROUTES = [
+  { id: 'workspace', label: 'Company workspace', hash: '#/workspace' },
+  { id: 'roadmap', label: 'Delivery roadmap', hash: '#/roadmap' },
   { id: 'overview', label: 'Overview', hash: '#/overview' },
   { id: 'roles', label: 'Role Directory', hash: '#/roles' },
   { id: 'library', label: 'Resource & Agent Library', hash: '#/library' },
@@ -18,7 +20,7 @@ const VALID = new Set<string>(ROUTES.map((r) => r.id));
 
 function readHash(): RouteId {
   const raw = window.location.hash.replace(/^#\/?/, '').split('?')[0];
-  return (VALID.has(raw) ? raw : 'overview') as RouteId;
+  return (VALID.has(raw) ? raw : 'workspace') as RouteId;
 }
 
 export function useHashRoute(): [RouteId, (id: RouteId) => void] {

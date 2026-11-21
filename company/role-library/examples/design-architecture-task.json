@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "design-architecture",
+  "taskId": "demo-design-architecture-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Create clear, accessible digital spaces with deliberate visual character and traceable cultural references.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Decorative motifs preserve readability, focus and actionable controls.",
+    "Each historical influence has a precise source and is labeled interpretation.",
+    "Design quality is evaluated by actual use and accessibility; no ancient-style performance claims are made."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Design the supplied workspace around its main task. Select at most two sourced architectural influences, explain the adaptation, and specify accessible states and a narrow-screen layout. Do not infer scientific effects from style."
+}

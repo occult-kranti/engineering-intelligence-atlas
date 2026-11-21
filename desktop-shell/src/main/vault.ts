@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import type { ApiProvider, ProviderCredentialStatus, VaultStatus } from '../shared/contract';
+import type { ApiProvider, CredentialProvider, ProviderCredentialStatus, VaultStatus } from '../shared/contract';
 
 /**
  * OS-backed credential vault.
@@ -19,19 +19,24 @@ import type { ApiProvider, ProviderCredentialStatus, VaultStatus } from '../shar
 
 export interface SafeStorageLike {
   isEncryptionAvailable(): boolean;
+  getSelectedStorageBackend?(): string;
   encryptString(plainText: string): Buffer;
   decryptString(encrypted: Buffer): string;
 }
 
-const PROVIDERS: ApiProvider[] = ['openai', 'anthropic'];
+const PROVIDERS: CredentialProvider[] = ['openai', 'anthropic', 'github'];
 const MAX_KEY_LENGTH = 512;
 
 interface VaultMetaFile {
-  providers: Partial<Record<ApiProvider, { createdAt: string; updatedAt: string }>>;
+  providers: Partial<Record<CredentialProvider, { createdAt: string; updatedAt: string }>>;
 }
 
 export function isApiProvider(value: unknown): value is ApiProvider {
   return value === 'openai' || value === 'anthropic';
+}
+
+export function isCredentialProvider(value: unknown): value is CredentialProvider {
+  return isApiProvider(value) || value === 'github';
 }
 
 /** Validate a candidate key without retaining or logging any part of it. */
@@ -56,7 +61,7 @@ export class CredentialVault {
     this.loadMeta();
   }
 
-  private blobPath(provider: ApiProvider): string {
+  private blobPath(provider: CredentialProvider): string {
     return path.join(this.vaultDir, `${provider}.bin`);
   }
 
@@ -82,7 +87,7 @@ export class CredentialVault {
   /** True only when the OS can actually encrypt right now. */
   encryptionAvailable(): boolean {
     try {
-      return this.safeStorage.isEncryptionAvailable();
+      return this.safeStorage.isEncryptionAvailable() && this.safeStorage.getSelectedStorageBackend?.() !== 'basic_text';
     } catch {
       return false;
     }
@@ -93,8 +98,8 @@ export class CredentialVault {
    * encrypted blob is ever written; the plaintext argument is used in memory
    * for the encrypt call and then dropped (caller clears its own copy).
    */
-  setKey(provider: ApiProvider, key: string): { ok: boolean; error?: string } {
-    if (!isApiProvider(provider)) return { ok: false, error: 'unknown provider' };
+  setKey(provider: CredentialProvider, key: string): { ok: boolean; error?: string } {
+    if (!isCredentialProvider(provider)) return { ok: false, error: 'unknown provider' };
     const shape = validateKeyShape(key);
     if (!shape.ok) return shape;
     if (!this.encryptionAvailable()) {
@@ -131,8 +136,8 @@ export class CredentialVault {
    * never be sent over IPC, logged, or persisted. Returns null when no key is
    * stored, encryption is unavailable, or the blob fails to decrypt (tamper).
    */
-  getKey(provider: ApiProvider): string | null {
-    if (!isApiProvider(provider)) return null;
+  getKey(provider: CredentialProvider): string | null {
+    if (!isCredentialProvider(provider)) return null;
     if (!this.encryptionAvailable()) return null;
     let blob: Buffer;
     try {
@@ -149,8 +154,8 @@ export class CredentialVault {
   }
 
   /** Explicitly remove a stored key. */
-  revoke(provider: ApiProvider): { ok: boolean; error?: string } {
-    if (!isApiProvider(provider)) return { ok: false, error: 'unknown provider' };
+  revoke(provider: CredentialProvider): { ok: boolean; error?: string } {
+    if (!isCredentialProvider(provider)) return { ok: false, error: 'unknown provider' };
     try {
       fs.rmSync(this.blobPath(provider), { force: true });
       delete this.meta.providers[provider];
@@ -161,7 +166,7 @@ export class CredentialVault {
     }
   }
 
-  private providerStatus(provider: ApiProvider): ProviderCredentialStatus {
+  private providerStatus(provider: CredentialProvider): ProviderCredentialStatus {
     const exists = fs.existsSync(this.blobPath(provider));
     if (!exists) return { configured: false, readable: false, updatedAt: null };
     // Probe decryptability without exposing anything.
@@ -180,7 +185,7 @@ export class CredentialVault {
 
   /** Metadata-only status; safe to expose to the renderer. */
   status(): VaultStatus {
-    const providers = {} as Record<ApiProvider, ProviderCredentialStatus>;
+    const providers = {} as Record<CredentialProvider, ProviderCredentialStatus>;
     for (const p of PROVIDERS) providers[p] = this.providerStatus(p);
     return { encryptionAvailable: this.encryptionAvailable(), providers };
   }

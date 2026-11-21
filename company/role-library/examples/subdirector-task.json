@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "subdirector",
+  "taskId": "demo-subdirector-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Deliver a company goal through a small dependency graph with explicit acceptance and escalation.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Every dependent task names the prerequisite artifact or control gate.",
+    "A failed prerequisite blocks dependent dispatch; shared people retain their identity.",
+    "The return contains the deliverable and unresolved issue, not every intermediate conversation."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Plan at most three useful work units for this goal. Name dependencies, owners, per-unit caps and acceptance checks. Reuse the listed shared service employees. Stop if the packet lacks required evidence."
+}

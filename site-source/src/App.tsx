@@ -2,14 +2,16 @@ import { lazy, Suspense } from 'react';
 import { MobileTopbar, SideRail } from '@/components/Chrome';
 import { useHashRoute } from '@/lib/useHashRoute';
 import { useHashPath } from '@/lib/useHashPath';
-import Jobs from '@/views/Jobs';
-import Library from '@/views/Library';
-import Methodology from '@/views/Methodology';
-import Overview from '@/views/Overview';
-import Research from '@/views/Research';
-import Reverse from '@/views/Reverse';
-import Roles from '@/views/Roles';
-import Science from '@/views/Science';
+import Workspace from '@/views/Workspace';
+const Jobs = lazy(() => import('@/views/Jobs'));
+const Library = lazy(() => import('@/views/Library'));
+const Methodology = lazy(() => import('@/views/Methodology'));
+const Overview = lazy(() => import('@/views/Overview'));
+const Research = lazy(() => import('@/views/Research'));
+const Reverse = lazy(() => import('@/views/Reverse'));
+const Roles = lazy(() => import('@/views/Roles'));
+const Science = lazy(() => import('@/views/Science'));
+const StaticDirector = lazy(() => import('@/views/director/StaticDirector'));
 
 // Director runtime is lazy-loaded: the public atlas renders even when the
 // API or this chunk is unavailable.
@@ -28,7 +30,7 @@ export default function App() {
           </div>
         }
       >
-        <Director path={path} />
+        {import.meta.env.MODE === 'static' ? <StaticDirector /> : <Director path={path} />}
       </Suspense>
     );
   }
@@ -45,6 +47,9 @@ export default function App() {
       <div className="flex min-w-0 flex-1 flex-col">
         <MobileTopbar route={route} />
         <main id="main" className="flex-1">
+          <Suspense fallback={<div className="workspace-page" role="status">Opening the research chapter…</div>}>
+          {route === 'workspace' && <Workspace />}
+          {route === 'roadmap' && <Workspace roadmapOnly />}
           {route === 'overview' && <Overview />}
           {route === 'roles' && <Roles />}
           {route === 'library' && <Library />}
@@ -53,6 +58,7 @@ export default function App() {
           {route === 'research' && <Research />}
           {route === 'science' && <Science />}
           {route === 'methodology' && <Methodology />}
+          </Suspense>
         </main>
         <footer className="rule mt-12">
           <div className="mx-auto max-w-5xl px-4 py-8 md:px-8">

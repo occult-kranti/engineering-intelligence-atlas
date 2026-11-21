@@ -15,7 +15,7 @@
  * Idempotent: re-running skips rows that already exist.
  *
  * Usage: npx tsx db/seed.ts
- * Skill source root: $SKILL_SEED_ROOT, default <repo>/.. (the workspace).
+ * Skill source root: $SKILL_SEED_ROOT, default <repository>/skills.
  */
 import "dotenv/config";
 import * as fs from "node:fs";
@@ -36,7 +36,7 @@ import type { SkillManifest } from "../contracts/skill";
 
 const SKILL_SEED_ROOT =
   process.env.SKILL_SEED_ROOT ??
-  path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
+  path.resolve(path.dirname(new URL(import.meta.url).pathname), "../../skills");
 
 /** Curated extended metadata (R2 fields) for the 15 platform skill packages. */
 const SKILL_META: Record<

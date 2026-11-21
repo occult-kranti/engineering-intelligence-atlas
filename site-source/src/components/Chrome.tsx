@@ -1,4 +1,4 @@
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ArrowUpRight, Building2, Map, BookOpen, Users, LibraryBig, BriefcaseBusiness, Code2, FlaskConical, ShieldCheck, Workflow } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { JOBS } from '@/data/jobs';
 import { ROLES } from '@/data/roles';
@@ -10,11 +10,8 @@ import { ROUTES, type RouteId } from '@/lib/useHashRoute';
 function BrandMark({ size = 28 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 28 28" aria-hidden="true" className="shrink-0">
-      <rect width="28" height="28" fill="hsl(40 14% 9%)" />
-      <circle cx="8" cy="8" r="3" fill="hsl(42 78% 45%)" />
-      <circle cx="20" cy="9" r="2.2" fill="hsl(82 22% 50%)" />
-      <circle cx="14" cy="20" r="2.6" fill="hsl(219 46% 52%)" />
-      <path d="M8 8 L20 9 M8 8 L14 20 M20 9 L14 20" stroke="hsl(48 14% 80%)" strokeWidth="1" />
+      <rect width="28" height="28" rx="7" fill="#22674b" />
+      <path d="M7 21 L14 7 L21 21 M10 16 H18" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" fill="none" />
     </svg>
   );
 }
@@ -28,23 +25,23 @@ function ChapterList({
 }) {
   return (
     <ul>
-      {ROUTES.map((r, i) => {
+      {ROUTES.map((r) => {
         const active = route === r.id;
+        const icons = { workspace: Building2, roadmap: Map, overview: BookOpen, roles: Users, library: LibraryBig, jobs: BriefcaseBusiness, reverse: Code2, research: ShieldCheck, science: FlaskConical, methodology: BookOpen, director: Workflow };
+        const Icon = icons[r.id];
         return (
           <li key={r.id}>
             <a
               href={r.hash}
               aria-current={active ? 'page' : undefined}
               onClick={onNavigate}
-              className={`flex min-h-[44px] items-baseline gap-3 border-l-2 px-4 py-2 text-sm transition-colors ${
+              className={`atlas-nav-link flex min-h-[44px] items-center gap-3 border-l-2 px-4 py-2 text-sm transition-colors ${
                 active
                   ? 'border-[hsl(var(--ink))] font-bold text-[hsl(var(--ink))]'
                   : 'border-transparent font-medium text-[hsl(var(--ink-soft))] hover:text-[hsl(var(--ink))]'
               }`}
             >
-              <span className="mono text-xs text-[hsl(var(--ink-soft))]">
-                {String(i + 1).padStart(2, '0')}
-              </span>
+              <Icon size={17} aria-hidden="true" />
               <span>{r.label}</span>
             </a>
           </li>
@@ -83,21 +80,21 @@ function CorpusNote() {
 /** Strict left chapter rail — desktop. */
 export function SideRail({ route }: { route: RouteId }) {
   return (
-    <aside className="sticky top-0 hidden h-screen w-[260px] shrink-0 flex-col overflow-y-auto border-r border-[hsl(var(--line))] bg-[hsl(var(--paper))] lg:flex">
-      <a href="#/overview" className="flex items-center gap-3 px-4 py-5" aria-label="Engineering Intelligence Atlas — overview">
+    <aside className="atlas-sidebar sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col overflow-y-auto border-r border-[hsl(var(--line))] bg-[hsl(var(--paper))] lg:flex">
+      <a href="#/workspace" className="flex items-center gap-3 px-5 py-6" aria-label="Atlas — company workspace">
         <BrandMark />
         <span className="leading-tight">
-          <span className="block text-sm font-extrabold tracking-tight">Engineering</span>
-          <span className="block text-sm font-extrabold tracking-tight">Intelligence Atlas</span>
+          <span className="block text-xl font-extrabold tracking-tight">Atlas<span className="atlas-brand-dot">.</span></span>
+          <span className="block text-[10px] font-medium uppercase tracking-[.14em] text-[hsl(var(--ink-soft))]">Research Director</span>
         </span>
       </a>
-      <p className="px-4 pb-4 text-xs text-[hsl(var(--ink-soft))]">
-        Verified evidence on roles, resources, agents, and hiring.
-      </p>
-      <nav aria-label="Chapters" className="rule pt-2">
+      <div className="atlas-company-chip"><span className="employee-avatar">EI</span><div><strong>Engineering Intelligence</strong><span>Company workspace</span></div></div>
+      <p className="px-5 pt-6 pb-2 text-[10px] uppercase tracking-[.15em] text-[hsl(var(--ink-soft))]">Workspace & research</p>
+      <nav aria-label="Chapters" className="px-2 pt-1">
         <ChapterList route={route} />
       </nav>
       <div className="mt-auto pb-6">
+        <a className="atlas-release-link" href="https://github.com/occult-kranti/engineering-intelligence-atlas/releases/latest" target="_blank" rel="noreferrer">Desktop releases <ArrowUpRight size={15}/></a>
         <CorpusNote />
       </div>
     </aside>
@@ -123,9 +120,9 @@ export function MobileTopbar({ route }: { route: RouteId }) {
   return (
     <div className="sticky top-0 z-40 border-b border-[hsl(var(--line))] bg-[hsl(var(--paper))] lg:hidden">
       <div className="flex items-center justify-between gap-2 px-4 py-2">
-        <a href="#/overview" className="flex min-h-[44px] items-center gap-2" aria-label="Engineering Intelligence Atlas — overview">
+        <a href="#/workspace" className="flex min-h-[44px] items-center gap-2" aria-label="Atlas — company workspace">
           <BrandMark size={24} />
-          <span className="text-sm font-extrabold tracking-tight">Intelligence Atlas</span>
+          <span className="text-sm font-extrabold tracking-tight">Atlas · Research Director</span>
         </a>
         <button
           type="button"

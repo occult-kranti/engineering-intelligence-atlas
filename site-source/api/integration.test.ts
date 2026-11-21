@@ -35,7 +35,9 @@ import { storage } from "./lib/storage";
  * bypass is added anywhere.
  */
 
-const DB_OK = !!process.env.DATABASE_URL;
+// This lifecycle suite writes both a database and provisioned object storage.
+// It is deliberately separate from offline/mocked tests and requires both grants.
+const RUN_LIFECYCLE = process.env.RUN_DATABASE_TESTS === "1" && process.env.RUN_STORAGE_TESTS === "1";
 const SLOW = 420_000; // storage document review can take ~12 s per upload
 
 const stamp = Date.now().toString(36);
@@ -81,8 +83,9 @@ async function expectTrpcCode(p: Promise<unknown>, code: string) {
   await expect(p).rejects.toMatchObject({ code });
 }
 
-describe.skipIf(!DB_OK)("integration: full mock project lifecycle (real DB)", () => {
+describe.skipIf(!RUN_LIFECYCLE)("integration: full mock project lifecycle (real DB + storage)", () => {
   beforeAll(async () => {
+    expect(!!process.env.DATABASE_URL, "Lifecycle tests require DATABASE_URL").toBe(true);
     const db = getDb();
     const [a] = await db
       .insert(users)

@@ -4,10 +4,12 @@
  * strings inline because sandboxed preloads cannot require local modules;
  * tests/contract-sync.test.ts keeps the two copies in sync.
  */
+import type { OfficeCommand, OfficeResult, OfficeWorkerStatus } from './office';
 
-export const BRIDGE_VERSION = 2 as const;
+export const BRIDGE_VERSION = 3 as const;
 
 export const CHANNELS = {
+  openPersonalDashboard: 'desktop:open-personal-dashboard',
   getSystemInfo: 'desktop:get-system-info',
   getModelCatalog: 'desktop:get-model-catalog',
   checkModelRequirements: 'desktop:check-model-requirements',
@@ -24,6 +26,7 @@ export const CHANNELS = {
   getVaultStatus: 'desktop:vault:get-status',
   setApiKey: 'desktop:vault:set-key',
   revokeApiKey: 'desktop:vault:revoke-key',
+  importCredentialFile: 'desktop:vault:import-file',
   // providers (model discovery + Ollama detection)
   listProviderModels: 'desktop:provider:list-models',
   detectOllama: 'desktop:ollama:detect',
@@ -37,6 +40,17 @@ export const CHANNELS = {
   cancelRun: 'desktop:projects:run-cancel',
   listRuns: 'desktop:projects:runs',
   readArtifact: 'desktop:projects:read-artifact',
+  // Company workspace: fixed Rust commands, never arbitrary filesystem access.
+  companySnapshot: 'desktop:company:snapshot',
+  registerCompany: 'desktop:company:register',
+  refreshCompany: 'desktop:company:refresh',
+  updateCompanyTask: 'desktop:company:update-task',
+  indexCompanyRepository: 'desktop:company:index-repository',
+  officeSnapshot: 'desktop:office:snapshot',
+  officeCommand: 'desktop:office:command',
+  officeWorkerStatus: 'desktop:office:worker-status',
+  setOfficeWorker: 'desktop:office:set-worker',
+  runOfficeQueue: 'desktop:office:run-queue',
   // main -> renderer events
   jobEvent: 'desktop:event:job',
   modeChanged: 'desktop:event:mode',
@@ -192,6 +206,7 @@ export interface DesktopSettings {
 // ---------------------------------------------------------------------------
 
 export type ApiProvider = 'openai' | 'anthropic';
+export type CredentialProvider = ApiProvider | 'github';
 
 /** Metadata only. Key material is NEVER exposed over IPC — not even a last4. */
 export interface ProviderCredentialStatus {
@@ -204,7 +219,7 @@ export interface ProviderCredentialStatus {
 export interface VaultStatus {
   /** False when OS safeStorage encryption is unavailable; set-key then fails closed. */
   encryptionAvailable: boolean;
-  providers: Record<ApiProvider, ProviderCredentialStatus>;
+  providers: Record<CredentialProvider, ProviderCredentialStatus>;
 }
 
 export interface ModelInfo {
@@ -344,9 +359,105 @@ export interface ArtifactMeta {
   textSha256: string;
 }
 
+// ---------------------------------------------------------------------------
+// Company workspace (v3, Rust native core)
+// ---------------------------------------------------------------------------
+
+export type CompanyTaskStatus = 'todo' | 'in-progress' | 'blocked' | 'done';
+
+export interface CompanyRecord {
+  id: string;
+  name: string;
+  repoUrl: string;
+  owner: string;
+  repo: string;
+  defaultBranch: string | null;
+  description: string | null;
+  registeredAt: string | null;
+  lastCheckedAt: string | null;
+  githubStatus: 'unchecked' | 'verified' | 'error';
+  githubError: string | null;
+  stars: number | null;
+  openIssues: number | null;
+  pushedAt: string | null;
+  headSha: string | null;
+}
+
+export interface CompanyEmployee {
+  id: string;
+  name: string;
+  role: string;
+  rolePath: string;
+  skillPath: string;
+  status: 'ready' | 'running' | 'blocked';
+  lastResult: string | null;
+}
+
+export interface CompanyTask {
+  id: string;
+  title: string;
+  ownerId: string;
+  status: CompanyTaskStatus;
+  priority: 'P0' | 'P1' | 'P2';
+  milestone: string;
+  evidence: string | null;
+  updatedAt: string;
+}
+
+export interface CompanyMilestone {
+  id: string;
+  title: string;
+  description: string;
+}
+
+export interface CompanyActivity {
+  id: string;
+  at: string;
+  employeeId: string;
+  kind: string;
+  message: string;
+}
+
+export interface CompanyRepositoryIndex {
+  root: string;
+  fileCount: number;
+  totalBytes: number;
+  skippedCount: number;
+  truncated: boolean;
+  elapsedMs: number;
+  workers: number;
+  generatedAt: string;
+  /** Metadata only. Files are never loaded as code or executed. */
+  files: Array<{ path: string; bytes: number; kind: string }>;
+}
+
+export interface CompanyUsage extends UsageTotals {
+  runCount: number;
+  completedRuns: number;
+  failedRuns: number;
+  source: 'local-project-runs';
+}
+
+export interface CompanySnapshot {
+  available: boolean;
+  backend: 'rust' | 'unavailable';
+  error: string | null;
+  company: CompanyRecord | null;
+  employees: CompanyEmployee[];
+  tasks: CompanyTask[];
+  milestones: CompanyMilestone[];
+  activity: CompanyActivity[];
+  usage: CompanyUsage;
+  index: CompanyRepositoryIndex | null;
+}
+
+export interface RegisterCompanyRequest { repoUrl: string }
+export interface UpdateCompanyTaskRequest { id: string; status: CompanyTaskStatus; evidence?: string }
+
 /** The versioned bridge exposed to local file:// launcher content only. */
 export interface DesktopBridge {
   version: typeof BRIDGE_VERSION;
+  openPersonalDashboard(): Promise<{ ok: boolean; url?: string; error?: string }>;
   getSystemInfo(): Promise<SystemInfo>;
   getModelCatalog(): Promise<CatalogResult>;
   checkModelRequirements(modelId: string): Promise<RequirementReport>;
@@ -361,10 +472,21 @@ export interface DesktopBridge {
   openExternal(url: string): Promise<{ ok: boolean; error?: string }>;
   // credential vault: key material flows renderer -> main ONLY, via setApiKey.
   getVaultStatus(): Promise<VaultStatus>;
-  setApiKey(provider: ApiProvider, key: string): Promise<{ ok: boolean; error?: string }>;
-  revokeApiKey(provider: ApiProvider): Promise<{ ok: boolean; error?: string }>;
+  setApiKey(provider: CredentialProvider, key: string): Promise<{ ok: boolean; error?: string }>;
+  revokeApiKey(provider: CredentialProvider): Promise<{ ok: boolean; error?: string }>;
+  importCredentialFile(provider: CredentialProvider): Promise<{ ok: boolean; error?: string; status?: VaultStatus; cancelled?: boolean }>;
   listProviderModels(provider: ProjectProvider): Promise<ListModelsResult>;
   detectOllama(): Promise<OllamaStatus>;
+  companySnapshot(): Promise<CompanySnapshot>;
+  registerCompany(req: RegisterCompanyRequest): Promise<CompanySnapshot>;
+  refreshCompany(): Promise<CompanySnapshot>;
+  updateCompanyTask(req: UpdateCompanyTaskRequest): Promise<CompanySnapshot>;
+  indexCompanyRepository(): Promise<CompanySnapshot>;
+  officeSnapshot(): Promise<OfficeResult>;
+  officeCommand(request: OfficeCommand): Promise<OfficeResult>;
+  officeWorkerStatus(): Promise<OfficeWorkerStatus>;
+  setOfficeWorker(request: { enabled: boolean }): Promise<OfficeWorkerStatus>;
+  runOfficeQueue(): Promise<OfficeWorkerStatus>;
   // local projects
   listProjects(): Promise<Project[]>;
   createProject(req: CreateProjectRequest): Promise<{ ok: boolean; project?: Project; error?: string }>;

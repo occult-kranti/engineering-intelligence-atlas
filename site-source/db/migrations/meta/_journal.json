@@ -15,6 +15,13 @@
       "when": 1795156994147,
       "tag": "0001_fine_klaw",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1795218924634,
+      "tag": "0002_handoff_indexes",
+      "breakpoints": true
     }
   ]
 }

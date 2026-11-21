@@ -6,8 +6,8 @@
  *   node scripts/sync-atlas.mjs [--src <dir>]
  *
  * Default source resolution, relative to this repository:
- *   1. ../app/dist/public   (platform builds that nest static assets — current app layout)
- *   2. ../app/dist          (plain Vite build output)
+ *   1. ../site-source/dist/public (current web build)
+ *   2. ../docs                    (checked-in portable static atlas)
  * Pass --src <dir> to override.
  *
  * The destination resources/atlas/ is deleted and recreated on every run.
@@ -28,7 +28,7 @@ function argValue(flag) {
 const explicit = argValue('--src');
 const candidates = explicit
   ? [path.resolve(explicit)]
-  : [path.join(root, '..', 'app', 'dist', 'public'), path.join(root, '..', 'app', 'dist')];
+  : [path.join(root, '..', 'site-source', 'dist', 'public'), path.join(root, '..', 'docs')];
 
 const source = candidates.find((dir) => fs.existsSync(path.join(dir, 'index.html')));
 if (!source) {

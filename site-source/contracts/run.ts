@@ -80,6 +80,7 @@ export const EVENT_TYPES = [
   "run_state",
   "node_state",
   "node_attempt",
+  "prompt_prepared",
   "artifact_created",
   "artifact_storage_error",
   "approval_requested",
@@ -96,6 +97,11 @@ export type EventType = (typeof EVENT_TYPES)[number];
 export interface UsageRecord {
   promptTokens: number;
   completionTokens: number;
+  cacheReadPromptTokens?: number;
+  cacheWritePromptTokens?: number;
+  cacheBreakdownComplete?: boolean;
+  /** False means accounting is unknown, even if numeric placeholders are zero. */
+  usageReported?: boolean;
   calls: number;
   /**
    * Cost in integer USD micros (1e-6 USD). 0 when the provider does not
@@ -112,6 +118,8 @@ export const PricingRateSchema = z.object({
   model: z.string().min(1).max(200),
   inputUsdPerMillion: z.number().nonnegative().max(10_000),
   outputUsdPerMillion: z.number().nonnegative().max(10_000),
+  cacheReadUsdPerMillion: z.number().nonnegative().max(10_000).optional(),
+  cacheWriteUsdPerMillion: z.number().nonnegative().max(10_000).optional(),
 });
 export type PricingRate = z.infer<typeof PricingRateSchema>;
 

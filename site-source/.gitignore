@@ -30,7 +30,7 @@ dist-ssr
 *.db
 *.sqlite
 *.sqlite3
-db/migrations/*.sql
+# SQL migrations are source history and must be committed with their snapshots.
 # TypeScript cache
 *.tsbuildinfo
 # Build outputs
@@ -39,3 +39,9 @@ build/
 # Test coverage
 coverage/
 .nyc_output/
+.work/
+playwright-report/
+test-results/
+
+# Rebuilt from desktop-shell/src/renderer by scripts/build-static.mjs
+/public/desktop-preview/

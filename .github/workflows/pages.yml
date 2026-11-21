@@ -1,9 +1,13 @@
-name: Deploy static atlas to GitHub Pages
+name: Build and deploy static atlas
 
 on:
   push:
     branches: [main]
     paths:
+      - 'site-source/**'
+      - 'desktop-shell/src/renderer/**'
+      - 'company/**'
+      - 'scripts/**'
       - 'docs/**'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -24,11 +28,34 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v4
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
-      - name: Upload reviewed static atlas
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: site-source/package-lock.json
+      - name: Install locked web dependencies
+        run: npm --prefix site-source ci
+      - name: Check source and migration integrity
+        run: |
+          npm --prefix site-source run check
+          npm --prefix site-source run check:migrations
+      - name: Build portable static atlas from source
+        run: node scripts/build-static.mjs
+      - name: Install browser for Pages smoke test
+        working-directory: site-source
+        run: npx playwright install --with-deps chromium
+      - name: Verify Pages subpath and offline reload
+        run: node scripts/smoke-static.mjs
+      - name: Save every web and desktop workspace screen
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ui-screenshots
+          path: site-source/.work/ui-screenshots
+          if-no-files-found: warn
+      - uses: actions/configure-pages@v5
+      - name: Upload verified client files only
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs

@@ -1,0 +1,163 @@
+name: Verify source and shells
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: site-source/package-lock.json
+      - run: npm ci
+        working-directory: site-source
+      - name: Check, build and test without live service credentials
+        working-directory: site-source
+        run: |
+          npm run check
+          npm run check:migrations
+          npm run build
+          npm test
+
+  mysql-connectors:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: isolated-ci-password
+          MYSQL_DATABASE: atlas_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pisolated-ci-password"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+    env:
+      DATABASE_URL: mysql://root:isolated-ci-password@127.0.0.1:3306/atlas_test
+      RUN_DATABASE_TESTS: '1'
+      RUN_STORAGE_TESTS: '0'
+      RUN_LIVE_AI_TESTS: '0'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: site-source/package-lock.json
+      - run: npm ci
+        working-directory: site-source
+      - name: Apply and seed schema in disposable MySQL
+        working-directory: site-source
+        run: |
+          npm run db:migrate
+          npm run db:seed
+          npm run db:migrate
+      - name: Verify owner scoping and mocked connectors against real MySQL
+        working-directory: site-source
+        run: npx vitest run api/integrations/router.test.ts api/integrations/provider-vault.test.ts
+
+  desktop:
+    runs-on: ubuntu-latest
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: desktop-shell/package-lock.json
+      - name: Select Rust stable
+        run: rustup default stable
+      - name: Verify local portfolio preparation and backup tools
+        run: python3 -m unittest discover -s scripts -p 'test_*.py'
+      - name: Verify native core
+        run: cargo test --locked --manifest-path native-core/Cargo.toml
+      - run: npm ci
+        working-directory: desktop-shell
+      - name: Build native helper, shell and atlas
+        working-directory: desktop-shell
+        run: |
+          npm run build:native
+          npm run build
+          npm run sync-atlas -- --src ../docs
+          npm test
+          npm run test:renderer
+          node ../scripts/smoke-office.mjs
+          node --test ../tools/atlas-mcp.test.mjs
+      - name: Package Linux desktop
+        working-directory: desktop-shell
+        run: npm run package:linux
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-linux
+          path: desktop-shell/release/*.AppImage
+
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: android-shell/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: android-actions/setup-android@v3
+      - name: Install Android SDK target
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - run: npm ci
+        working-directory: android-shell
+      - name: Test launcher and sync the checked-in atlas
+        working-directory: android-shell
+        run: |
+          npm test
+          npm run sync:atlas -- --src ../docs
+          npx cap sync android
+      - name: JVM tests and debug APK
+        working-directory: android-shell/android
+        run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android-debug
+          path: android-shell/android/app/build/outputs/apk/debug/app-debug.apk
+
+  release:
+    needs: [web, mysql-connectors, desktop, android]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: desktop-linux
+          path: release
+      - uses: actions/download-artifact@v4
+        with:
+          name: android-debug
+          path: release/android
+      - name: Publish a new verified version without replacing existing releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_version=$(node -p "require('./desktop-shell/package.json').version")
+          if gh release view "v${release_version}" >/dev/null 2>&1; then
+            echo "Version already published; existing release is preserved."
+          else
+            gh release create "v${release_version}" release/*.AppImage release/android/*.apk --target "$GITHUB_SHA" --title "Atlas ${release_version} — personal agent office" --notes-file project/RELEASE_NOTES.md
+          fi

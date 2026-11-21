@@ -1,0 +1,1986 @@
+{
+  "kind": "isolated-public-starter-example",
+  "company": {
+    "activity": [],
+    "company": {
+      "defaultBranch": null,
+      "description": null,
+      "githubError": null,
+      "githubStatus": "unchecked",
+      "headSha": null,
+      "id": "engineering-intelligence-atlas",
+      "lastCheckedAt": null,
+      "name": "Engineering Intelligence Atlas",
+      "openIssues": null,
+      "owner": "occult-kranti",
+      "pushedAt": null,
+      "registeredAt": null,
+      "repo": "engineering-intelligence-atlas",
+      "repoUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+      "stars": null
+    },
+    "employees": [
+      {
+        "id": "director",
+        "lastResult": null,
+        "name": "Director",
+        "role": "Technical Program Manager",
+        "rolePath": "roles/technical-program-manager/README.md",
+        "skillPath": "skills/agent-research-director/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "github",
+        "lastResult": null,
+        "name": "GitHub employee",
+        "role": "Platform Engineer",
+        "rolePath": "roles/platform-engineer/README.md",
+        "skillPath": "skills/engineering-organization-architect/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "design",
+        "lastResult": null,
+        "name": "Product & interface",
+        "role": "Frontend Engineer",
+        "rolePath": "roles/frontend-engineer/README.md",
+        "skillPath": "skills/engineering-organization-architect/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "rust",
+        "lastResult": null,
+        "name": "Native systems",
+        "role": "Software Solutions Architect",
+        "rolePath": "roles/software-solutions-architect/README.md",
+        "skillPath": "skills/local-model-runtime-engineering/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "release",
+        "lastResult": null,
+        "name": "Build & release",
+        "role": "Devops Ci Cd Engineer",
+        "rolePath": "roles/devops-ci-cd-engineer/README.md",
+        "skillPath": "skills/agent-research-director/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "review",
+        "lastResult": null,
+        "name": "Independent review",
+        "role": "Application Product Security Engineer",
+        "rolePath": "roles/application-product-security-engineer/README.md",
+        "skillPath": "skills/defensive-reverse-engineering/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "science",
+        "lastResult": null,
+        "name": "Scientific research",
+        "role": "Physics Researcher",
+        "rolePath": "scientific-research-library/agents/physics-researcher.md",
+        "skillPath": "skills/physics-research/SKILL.md",
+        "status": "ready"
+      }
+    ],
+    "index": null,
+    "milestones": [
+      {
+        "description": "Register the company and make public, offline and clean-clone builds reproducible.",
+        "id": "foundation",
+        "title": "01 / Reliable foundation"
+      },
+      {
+        "description": "Ship the redesigned desktop, Rust company core, team, roadmap and usage views.",
+        "id": "workspace",
+        "title": "02 / Company workspace"
+      },
+      {
+        "description": "Independent tests, versioned build artifacts, current documentation and deployment checks.",
+        "id": "release",
+        "title": "03 / Verified distribution"
+      },
+      {
+        "description": "Restart recovery, provider lifecycle, native shell evaluation and signed cross-platform releases.",
+        "id": "next",
+        "title": "04 / Durable orchestration"
+      }
+    ],
+    "schemaVersion": 1,
+    "tasks": [
+      {
+        "evidence": null,
+        "id": "github-register",
+        "milestone": "foundation",
+        "ownerId": "github",
+        "priority": "P0",
+        "status": "todo",
+        "title": "Register this repository as the first company",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "scripts/check-static.mjs: portable entry, CSS, PWA and source/output hashes pass",
+        "id": "pages-assets",
+        "milestone": "foundation",
+        "ownerId": "release",
+        "priority": "P0",
+        "status": "done",
+        "title": "Repair Pages and offline asset paths",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "site-source/db/check-migrations.ts: 3 migrations, 54 statements, 19 tables; shell sync scripts repaired",
+        "id": "clean-build",
+        "milestone": "foundation",
+        "ownerId": "release",
+        "priority": "P0",
+        "status": "done",
+        "title": "Repair shell sync paths and database migration packaging",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "native-core: 44 Rust tests and actual JS/Rust goal lifecycle pass",
+        "id": "company-core",
+        "milestone": "workspace",
+        "ownerId": "rust",
+        "priority": "P0",
+        "status": "done",
+        "title": "Build the Rust company state and bounded repository index",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "desktop-shell: strict build +125 interaction checks; published visual review tracked in project/VALIDATION.md",
+        "id": "desktop-design",
+        "milestone": "workspace",
+        "ownerId": "design",
+        "priority": "P0",
+        "status": "done",
+        "title": "Rebuild the desktop workspace and navigation",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "tools/atlas-mcp.test.mjs:15tests pass; live first-company registration completed",
+        "id": "mcp-employee",
+        "milestone": "workspace",
+        "ownerId": "github",
+        "priority": "P1",
+        "status": "done",
+        "title": "Expose company employees through a local MCP server",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "desktop tests: global admission, unknown billing, retained artifacts; project/CLAUDE_USAGE.md",
+        "id": "usage-budget",
+        "milestone": "workspace",
+        "ownerId": "director",
+        "priority": "P1",
+        "status": "done",
+        "title": "Show real run usage and development budget evidence",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "project/VALIDATION.md:328 desktop tests,125 UI assertions,44 Rust tests; Linux AppImage built and provided as a durable download; CI release gates are separate.",
+        "id": "release-tests",
+        "milestone": "release",
+        "ownerId": "review",
+        "priority": "P0",
+        "status": "done",
+        "title": "Verify current builds and publish reproducible artifacts",
+        "updatedAt": "2026-11-21T00:20:24.367730+00:00"
+      },
+      {
+        "evidence": null,
+        "id": "runtime-deploy",
+        "milestone": "next",
+        "ownerId": "release",
+        "priority": "P1",
+        "status": "todo",
+        "title": "Document and validate a supported authenticated hosted runtime",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "android-device",
+        "milestone": "next",
+        "ownerId": "review",
+        "priority": "P1",
+        "status": "todo",
+        "title": "Run Android release checks on an emulator and physical device",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": "Native lost-lease handling and retained billing are implemented; background daemon and multi-host leases remain future work",
+        "id": "restart-recovery",
+        "milestone": "next",
+        "ownerId": "rust",
+        "priority": "P1",
+        "status": "todo",
+        "title": "Extend current lease recovery into an OS worker and distributed runtime",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "tauri-evaluation",
+        "milestone": "next",
+        "ownerId": "rust",
+        "priority": "P2",
+        "status": "todo",
+        "title": "Benchmark a Tauri shell against Electron before replacing it",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "signed-packages",
+        "milestone": "next",
+        "ownerId": "release",
+        "priority": "P2",
+        "status": "todo",
+        "title": "Sign and validate Windows, macOS and Android distributions",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": "Owner-only import receipt retained privately; source-linked README briefs verified through the authenticated connector.",
+        "id": "private-portfolio",
+        "milestone": "workspace",
+        "ownerId": "github",
+        "priority": "P1",
+        "status": "done",
+        "title": "Import all owned GitHub repositories into personal companies",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "93renderer assertions; native reference and goal tests",
+        "id": "donna-workspace",
+        "milestone": "workspace",
+        "ownerId": "design",
+        "priority": "P1",
+        "status": "done",
+        "title": "Unify Donna chat, office blueprint and ownership whiteboard",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "35native tests +8job native integration +16global budget tests",
+        "id": "global-goals",
+        "milestone": "workspace",
+        "ownerId": "rust",
+        "priority": "P1",
+        "status": "done",
+        "title": "Share budgets and checkpoints across bounded goal loops",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "13real HTTP/auth/concurrent-start tests",
+        "id": "personal-browser",
+        "milestone": "workspace",
+        "ownerId": "release",
+        "priority": "P1",
+        "status": "done",
+        "title": "Connect the private browser to the desktop workspace",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      },
+      {
+        "evidence": "39GitHub service tests; expected-head/no-force publishing; only main found in live branch audit",
+        "id": "github-versions",
+        "milestone": "workspace",
+        "ownerId": "github",
+        "priority": "P1",
+        "status": "done",
+        "title": "Inspect branches and publish verified text changesets",
+        "updatedAt": "2026-11-21T00:17:18.135090+00:00"
+      }
+    ]
+  },
+  "office": {
+    "activeCompanyId": "engineering-intelligence-atlas",
+    "blueprints": [
+      {
+        "companyId": "engineering-intelligence-atlas",
+        "desks": [
+          {
+            "employeeId": "employee-5131e471-81ee-4a3d-9a17-54785402a7fa",
+            "id": "desk-5eb10849-ec3a-4efb-8acd-644ef92eb448",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.1,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+            "id": "desk-8b15c11b-ae08-4d87-864f-a2e47021c10b",
+            "roomId": "room-0b47b98c-8dec-46d2-8dd9-c70d362742e8",
+            "x": 0.32,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-4c7c563a-6e20-406f-882f-05289da0e11f",
+            "id": "desk-8672f431-14b7-4ea8-81a7-6b617f9745a2",
+            "roomId": "room-a2a0f887-a254-434c-9fbb-84839bb9c2a9",
+            "x": 0.54,
+            "y": 0.2
+          },
+          {
+            "employeeId": "staff-director",
+            "id": "desk-ba1f90a3-dc19-45a2-99e3-49572fdc6953",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.76,
+            "y": 0.2
+          },
+          {
+            "employeeId": "staff-github",
+            "id": "desk-f22b25a5-3338-44af-ad30-df54fe785cef",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.1,
+            "y": 0.38
+          },
+          {
+            "employeeId": "staff-design",
+            "id": "desk-aa29f143-e7a8-4bd5-9306-3145f253f60b",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.32,
+            "y": 0.38
+          },
+          {
+            "employeeId": "staff-rust",
+            "id": "desk-bee9fcf5-f31a-425d-bce3-bb80958d2ef2",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.54,
+            "y": 0.38
+          },
+          {
+            "employeeId": "staff-release",
+            "id": "desk-9799eb28-ea37-4048-95f8-47b59b7bc02c",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.76,
+            "y": 0.38
+          },
+          {
+            "employeeId": "staff-review",
+            "id": "desk-805d95d0-56b2-4713-ad07-e78d760a4dd2",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.1,
+            "y": 0.56
+          },
+          {
+            "employeeId": "staff-science",
+            "id": "desk-2cda8723-6004-477b-8371-9efd25a4b86f",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.32,
+            "y": 0.56
+          },
+          {
+            "employeeId": "employee-0dc4050e-ec1d-476b-8201-f830a90183e1",
+            "id": "desk-22ca313d-5302-42b0-b458-33e2765015dc",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.54,
+            "y": 0.56
+          },
+          {
+            "employeeId": "employee-d2991300-575b-4bdc-a145-cdcf2ee404f8",
+            "id": "desk-2d6a887c-def5-49eb-aec7-a98e94b80968",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.76,
+            "y": 0.56
+          },
+          {
+            "employeeId": "employee-30372bd4-8996-4c1b-8bca-43ab57787298",
+            "id": "desk-f39e41d2-a5d8-44db-9f67-2e81106289ef",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.1,
+            "y": 0.74
+          },
+          {
+            "employeeId": "employee-ea63a4ac-d999-4e0b-aca4-62a7478b0cab",
+            "id": "desk-f4f140fb-b972-4af3-b454-0e1b82f05d5d",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.32,
+            "y": 0.74
+          },
+          {
+            "employeeId": "employee-47c4daf1-69d0-4ab8-a76b-38780969ea55",
+            "id": "desk-856a8452-5dd9-4fa0-a0bc-2d5a28fb859f",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.54,
+            "y": 0.74
+          },
+          {
+            "employeeId": "employee-27d58fe4-f84c-4328-82af-4d0686563545",
+            "id": "desk-8e421e6a-f2f2-47cc-829a-e34c8b815290",
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "x": 0.76,
+            "y": 0.74
+          }
+        ],
+        "id": "blueprint-3e85525f-00ef-49d1-94a1-12c6733e207a",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "rooms": [
+          {
+            "departmentId": "department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce",
+            "height": 0.94,
+            "id": "room-0b47b98c-8dec-46d2-8dd9-c70d362742e8",
+            "name": "Engineering",
+            "width": 0.3133333333333333,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "departmentId": "department-2718cb94-7600-47d0-bb0b-a3ed36d7054b",
+            "height": 0.94,
+            "id": "room-a2a0f887-a254-434c-9fbb-84839bb9c2a9",
+            "name": "Research",
+            "width": 0.3133333333333333,
+            "x": 0.3333333333333333,
+            "y": 0.0
+          },
+          {
+            "departmentId": null,
+            "height": 0.94,
+            "id": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "name": "Director office",
+            "width": 0.3133333333333333,
+            "x": 0.6666666666666666,
+            "y": 0.0
+          }
+        ],
+        "whiteboards": [
+          {
+            "goalIds": [],
+            "id": "whiteboard-17261178-01c1-4add-9b8d-5da5eea62e90",
+            "jobIds": [],
+            "ownerEmployeeId": "employee-5131e471-81ee-4a3d-9a17-54785402a7fa",
+            "roadmapItemIds": [
+              "example-next-1",
+              "example-next-2",
+              "example-next-3"
+            ],
+            "roomId": "room-20b0e56d-61f8-4b51-abe8-de36f291ebea",
+            "title": "Starter release roadmap",
+            "x": 0.1,
+            "y": 0.05
+          }
+        ]
+      },
+      {
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "desks": [
+          {
+            "employeeId": "employee-3b5851c2-4a98-4fed-8501-094d88f69f1a",
+            "id": "desk-a373f4a1-ab77-439d-9eae-692bc2267553",
+            "roomId": "room-0077a2a1-14ab-46b6-a294-9bbc60de341b",
+            "x": 0.1,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-f993f59d-129d-480c-bb34-713e7ae40c2d",
+            "id": "desk-38f5b66d-fb98-47b8-bec6-41b8d5ded9c2",
+            "roomId": "room-9f903801-b309-43eb-ab41-87e02339b21b",
+            "x": 0.32,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-ea8ca188-6aa7-451d-b82c-60fa33d4c2c2",
+            "id": "desk-48916b58-9cda-4405-a9b3-8a99e8918e79",
+            "roomId": "room-89a033a3-1288-4727-8c8e-d809da69e483",
+            "x": 0.54,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-e50a405f-269a-4b7b-8447-06f4dcd7acd3",
+            "id": "desk-b4baea7e-f5fe-4de8-98da-276386dfbed7",
+            "roomId": "room-0077a2a1-14ab-46b6-a294-9bbc60de341b",
+            "x": 0.76,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-e724ee1b-9c19-4796-aa1c-c4af863cb082",
+            "id": "desk-7d081e6d-62b9-40b9-b606-ecaf627ea369",
+            "roomId": "room-0077a2a1-14ab-46b6-a294-9bbc60de341b",
+            "x": 0.1,
+            "y": 0.38
+          },
+          {
+            "employeeId": "employee-808f8b6d-4c6f-4b9f-9573-307fcf07e2a4",
+            "id": "desk-8a65486b-8e3e-490b-b3f3-d6244383ca5c",
+            "roomId": "room-0077a2a1-14ab-46b6-a294-9bbc60de341b",
+            "x": 0.32,
+            "y": 0.38
+          },
+          {
+            "employeeId": "employee-a6e50f59-6149-4b99-a62d-d09e8826b5e8",
+            "id": "desk-f4079f88-043c-4186-97c7-fd7151e891ce",
+            "roomId": "room-0077a2a1-14ab-46b6-a294-9bbc60de341b",
+            "x": 0.54,
+            "y": 0.38
+          },
+          {
+            "employeeId": "employee-e90b32a5-e1ec-4b11-b885-6cc482f230b5",
+            "id": "desk-f5266979-7738-4cf7-ad57-40705475e1c5",
+            "roomId": "room-0077a2a1-14ab-46b6-a294-9bbc60de341b",
+            "x": 0.76,
+            "y": 0.38
+          },
+          {
+            "employeeId": "employee-d0d057c0-9266-43d2-9879-59c9474be8c4",
+            "id": "desk-79ee031a-104e-4238-9ebe-1c05855df60d",
+            "roomId": "room-0077a2a1-14ab-46b6-a294-9bbc60de341b",
+            "x": 0.1,
+            "y": 0.56
+          }
+        ],
+        "id": "blueprint-1c1b541f-a208-4095-bedb-1b7d43afd697",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "rooms": [
+          {
+            "departmentId": "department-46186676-8bf5-46d4-875d-9eddc0f0bfdb",
+            "height": 0.94,
+            "id": "room-9f903801-b309-43eb-ab41-87e02339b21b",
+            "name": "Engineering",
+            "width": 0.3133333333333333,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "departmentId": "department-7d912941-ae20-4d2c-8e84-fe24128278b9",
+            "height": 0.94,
+            "id": "room-89a033a3-1288-4727-8c8e-d809da69e483",
+            "name": "Research",
+            "width": 0.3133333333333333,
+            "x": 0.3333333333333333,
+            "y": 0.0
+          },
+          {
+            "departmentId": null,
+            "height": 0.94,
+            "id": "room-0077a2a1-14ab-46b6-a294-9bbc60de341b",
+            "name": "Director office",
+            "width": 0.3133333333333333,
+            "x": 0.6666666666666666,
+            "y": 0.0
+          }
+        ],
+        "whiteboards": [
+          {
+            "goalIds": [],
+            "id": "whiteboard-87154813-a74a-43d5-882a-73e7a44bde6f",
+            "jobIds": [],
+            "ownerEmployeeId": "employee-3b5851c2-4a98-4fed-8501-094d88f69f1a",
+            "roadmapItemIds": [],
+            "roomId": "room-0077a2a1-14ab-46b6-a294-9bbc60de341b",
+            "title": "Goals and handoffs",
+            "x": 0.1,
+            "y": 0.05
+          }
+        ]
+      },
+      {
+        "companyId": "atlas-shared-services",
+        "desks": [
+          {
+            "employeeId": "employee-78394e59-99a4-4c86-963c-8185dbeef5ab",
+            "id": "desk-4af7c8bf-bfe6-4a3d-bcb7-bbbeec970186",
+            "roomId": "room-194bf2ab-d7ad-4a3b-8208-6050d4535ff0",
+            "x": 0.1,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-7bf44f95-de3b-457b-901e-394fdb91aad3",
+            "id": "desk-776d133f-9c0f-412b-bc67-8c13f07839d0",
+            "roomId": "room-a955798d-fc72-4210-a107-d39f112fb28d",
+            "x": 0.32,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-b3313ca8-0de8-4968-875b-be4e42772c17",
+            "id": "desk-d1256b44-2844-4e52-bf2c-a8a779fddb0a",
+            "roomId": "room-aa230709-04ad-4dc1-8396-182b5a119e06",
+            "x": 0.54,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-8fbe4e85-378d-4c44-8751-f3d2bfd68d19",
+            "id": "desk-936269e6-9314-43cd-a270-96d0a8954cc7",
+            "roomId": "room-de219040-52e4-4c6c-ba73-122d0056e9ef",
+            "x": 0.76,
+            "y": 0.2
+          },
+          {
+            "employeeId": "employee-db0e6144-7967-41e1-b793-818b4ef16583",
+            "id": "desk-f71644ac-d0dc-4582-8bb6-940104dfc6cb",
+            "roomId": "room-fc9d19e2-85d2-4a36-b787-6b7d114f2e1d",
+            "x": 0.1,
+            "y": 0.38
+          },
+          {
+            "employeeId": "employee-03f8ca59-c6f5-4c18-b172-92e8f2bb930d",
+            "id": "desk-752ed038-07d7-4016-b6ce-cfefc200fe5a",
+            "roomId": "room-ecd7321d-69b0-4f8c-a7a9-b164983e1cd6",
+            "x": 0.32,
+            "y": 0.38
+          },
+          {
+            "employeeId": "employee-2569042a-cb23-4e73-b9fe-85a169b3ca42",
+            "id": "desk-2ddeb5f0-a0f7-4150-91f4-ba1047c91f8e",
+            "roomId": "room-ecd7321d-69b0-4f8c-a7a9-b164983e1cd6",
+            "x": 0.54,
+            "y": 0.38
+          },
+          {
+            "employeeId": "employee-07e87b5b-d267-4e3f-89ba-0267bd3d0adf",
+            "id": "desk-f077845a-689e-4368-9d83-e1a820965e10",
+            "roomId": "room-c6dab349-1595-4baa-8fab-13750a1accd8",
+            "x": 0.76,
+            "y": 0.38
+          },
+          {
+            "employeeId": "employee-921b33fa-5332-4a12-a2cf-cda47e13de1b",
+            "id": "desk-b5b15dc4-8ce9-497c-8867-471639657c45",
+            "roomId": "room-c6dab349-1595-4baa-8fab-13750a1accd8",
+            "x": 0.1,
+            "y": 0.56
+          },
+          {
+            "employeeId": "employee-27d58fe4-f84c-4328-82af-4d0686563545",
+            "id": "desk-3c2d4a4a-bcac-41c3-96b3-c32798c4353e",
+            "roomId": "room-a955798d-fc72-4210-a107-d39f112fb28d",
+            "x": 0.15,
+            "y": 0.25
+          },
+          {
+            "employeeId": "employee-d2991300-575b-4bdc-a145-cdcf2ee404f8",
+            "id": "desk-eb989c7d-82d5-4cfd-98e7-1691771a14d4",
+            "roomId": "room-de219040-52e4-4c6c-ba73-122d0056e9ef",
+            "x": 0.15,
+            "y": 0.25
+          },
+          {
+            "employeeId": "employee-30372bd4-8996-4c1b-8bca-43ab57787298",
+            "id": "desk-2542f73e-d8e4-422c-8c03-d67d52a8bb8c",
+            "roomId": "room-aa230709-04ad-4dc1-8396-182b5a119e06",
+            "x": 0.15,
+            "y": 0.25
+          },
+          {
+            "employeeId": "employee-ea63a4ac-d999-4e0b-aca4-62a7478b0cab",
+            "id": "desk-d7d0d8cb-36a5-4a39-bf27-f5f4374f3fa0",
+            "roomId": "room-fc9d19e2-85d2-4a36-b787-6b7d114f2e1d",
+            "x": 0.15,
+            "y": 0.25
+          }
+        ],
+        "id": "blueprint-196139f8-3b90-4666-8825-df4b4aebd373",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "rooms": [
+          {
+            "departmentId": "department-caf083ad-140a-488d-9904-174b3e2c9b81",
+            "height": 0.3133333333333333,
+            "id": "room-a955798d-fc72-4210-a107-d39f112fb28d",
+            "name": "Engineering",
+            "width": 0.3133333333333333,
+            "x": 0.0,
+            "y": 0.0
+          },
+          {
+            "departmentId": "department-d6371fa6-9725-471e-8065-fe12b1b614aa",
+            "height": 0.3133333333333333,
+            "id": "room-aa230709-04ad-4dc1-8396-182b5a119e06",
+            "name": "Research & Knowledge",
+            "width": 0.3133333333333333,
+            "x": 0.3333333333333333,
+            "y": 0.0
+          },
+          {
+            "departmentId": "department-8685034f-2063-4a21-b5e8-a9abd2b784b3",
+            "height": 0.3133333333333333,
+            "id": "room-de219040-52e4-4c6c-ba73-122d0056e9ef",
+            "name": "Design & Architecture",
+            "width": 0.3133333333333333,
+            "x": 0.6666666666666666,
+            "y": 0.0
+          },
+          {
+            "departmentId": "department-c46df4e9-d748-4bc8-83c9-3e74f6b73ef3",
+            "height": 0.3133333333333333,
+            "id": "room-fc9d19e2-85d2-4a36-b787-6b7d114f2e1d",
+            "name": "Security",
+            "width": 0.3133333333333333,
+            "x": 0.0,
+            "y": 0.3333333333333333
+          },
+          {
+            "departmentId": "department-602eee16-181c-422d-8f78-7374a243a22d",
+            "height": 0.3133333333333333,
+            "id": "room-ecd7321d-69b0-4f8c-a7a9-b164983e1cd6",
+            "name": "Hackathon",
+            "width": 0.3133333333333333,
+            "x": 0.3333333333333333,
+            "y": 0.3333333333333333
+          },
+          {
+            "departmentId": "department-34e1d11a-d67e-4c33-8f9a-a34d4a089d73",
+            "height": 0.3133333333333333,
+            "id": "room-c6dab349-1595-4baa-8fab-13750a1accd8",
+            "name": "Music & Arts",
+            "width": 0.3133333333333333,
+            "x": 0.6666666666666666,
+            "y": 0.3333333333333333
+          },
+          {
+            "departmentId": null,
+            "height": 0.3133333333333333,
+            "id": "room-194bf2ab-d7ad-4a3b-8208-6050d4535ff0",
+            "name": "Director office",
+            "width": 0.3133333333333333,
+            "x": 0.0,
+            "y": 0.6666666666666666
+          }
+        ],
+        "whiteboards": [
+          {
+            "goalIds": [],
+            "id": "whiteboard-d98573eb-cf5c-47c0-a44f-ee5364489189",
+            "jobIds": [],
+            "ownerEmployeeId": "employee-78394e59-99a4-4c86-963c-8185dbeef5ab",
+            "roadmapItemIds": [],
+            "roomId": "room-194bf2ab-d7ad-4a3b-8208-6050d4535ff0",
+            "title": "Goals and handoffs",
+            "x": 0.1,
+            "y": 0.05
+          }
+        ]
+      }
+    ],
+    "budget": {
+      "atCap": false,
+      "committedTokens": 0,
+      "committedUsd": 0.0,
+      "estimatedUsd": 0.0,
+      "observedUsd": 0.0,
+      "remainingTokens": null,
+      "remainingUsd": 10.0,
+      "reservedUsd": 0.0,
+      "warning": false
+    },
+    "cache": {
+      "enabled": true,
+      "entries": [],
+      "hits": 0,
+      "maxEntries": 100,
+      "misses": 0,
+      "ttlMinutes": 60
+    },
+    "chatThreads": [],
+    "checkpoints": [],
+    "companies": [
+      {
+        "assistantId": "employee-6873f003-b02d-4e08-89e9-07407af47ba8",
+        "createdAt": "2026-11-21T00:35:51.78370157Z",
+        "defaultBranch": null,
+        "githubStatus": "unchecked",
+        "id": "engineering-intelligence-atlas",
+        "importedAt": null,
+        "name": "Engineering Intelligence Atlas",
+        "repoUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+        "source": "owner",
+        "status": "active",
+        "visibility": null
+      },
+      {
+        "assistantId": "employee-e34db1f8-4902-47c0-8a44-a90c652abc06",
+        "createdAt": "2026-11-21T00:35:51.791146036Z",
+        "defaultBranch": null,
+        "githubStatus": "unchecked",
+        "id": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "importedAt": null,
+        "name": "Studio \u2014 example project",
+        "repoUrl": null,
+        "source": "owner",
+        "status": "active",
+        "visibility": null
+      },
+      {
+        "assistantId": "employee-8c205e88-2a14-4066-9439-41c0c5ab1ef0",
+        "createdAt": "2026-11-21T00:35:51.798205124Z",
+        "defaultBranch": null,
+        "githubStatus": "unchecked",
+        "id": "atlas-shared-services",
+        "importedAt": null,
+        "name": "Shared Services",
+        "repoUrl": null,
+        "source": "shared-services",
+        "status": "active",
+        "visibility": null
+      }
+    ],
+    "departments": [
+      {
+        "assistantId": "employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783711435Z",
+        "id": "department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce",
+        "name": "Engineering",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-4c7c563a-6e20-406f-882f-05289da0e11f",
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783713107Z",
+        "id": "department-2718cb94-7600-47d0-bb0b-a3ed36d7054b",
+        "name": "Research",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-f993f59d-129d-480c-bb34-713e7ae40c2d",
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791150993Z",
+        "id": "department-46186676-8bf5-46d4-875d-9eddc0f0bfdb",
+        "name": "Engineering",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-ea8ca188-6aa7-451d-b82c-60fa33d4c2c2",
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791152696Z",
+        "id": "department-7d912941-ae20-4d2c-8e84-fe24128278b9",
+        "name": "Research",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-7bf44f95-de3b-457b-901e-394fdb91aad3",
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798212546Z",
+        "id": "department-caf083ad-140a-488d-9904-174b3e2c9b81",
+        "name": "Engineering",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-b3313ca8-0de8-4968-875b-be4e42772c17",
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798214468Z",
+        "id": "department-d6371fa6-9725-471e-8065-fe12b1b614aa",
+        "name": "Research & Knowledge",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-8fbe4e85-378d-4c44-8751-f3d2bfd68d19",
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798219266Z",
+        "id": "department-8685034f-2063-4a21-b5e8-a9abd2b784b3",
+        "name": "Design & Architecture",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-db0e6144-7967-41e1-b793-818b4ef16583",
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798222951Z",
+        "id": "department-c46df4e9-d748-4bc8-83c9-3e74f6b73ef3",
+        "name": "Security",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-03f8ca59-c6f5-4c18-b172-92e8f2bb930d",
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798224634Z",
+        "id": "department-602eee16-181c-422d-8f78-7374a243a22d",
+        "name": "Hackathon",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-07e87b5b-d267-4e3f-89ba-0267bd3d0adf",
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.79822863Z",
+        "id": "department-34e1d11a-d67e-4c33-8f9a-a34d4a089d73",
+        "name": "Music & Arts",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "status": "active"
+      }
+    ],
+    "employees": [
+      {
+        "assignmentKey": "ceo-assistant",
+        "companyId": null,
+        "createdAt": "2026-11-21T00:35:51.783699116Z",
+        "departmentId": null,
+        "id": "donna",
+        "kind": "assistant",
+        "name": "Donna",
+        "officeId": null,
+        "role": "CEO assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783699116Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.78370812Z",
+        "departmentId": null,
+        "id": "employee-6873f003-b02d-4e08-89e9-07407af47ba8",
+        "kind": "assistant",
+        "name": "Company assistant",
+        "officeId": null,
+        "role": "Shared company assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.78370812Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783710233Z",
+        "departmentId": null,
+        "id": "employee-5131e471-81ee-4a3d-9a17-54785402a7fa",
+        "kind": "assistant",
+        "name": "Office assistant",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Shared office assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783710233Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783712296Z",
+        "departmentId": "department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce",
+        "id": "employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+        "kind": "assistant",
+        "name": "Engineering assistant",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783712296Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783713698Z",
+        "departmentId": "department-2718cb94-7600-47d0-bb0b-a3ed36d7054b",
+        "id": "employee-4c7c563a-6e20-406f-882f-05289da0e11f",
+        "kind": "assistant",
+        "name": "Research assistant",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783713698Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783717113Z",
+        "departmentId": null,
+        "id": "staff-director",
+        "kind": "specialist",
+        "name": "Director",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Technical Program Manager",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783717113Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783717704Z",
+        "departmentId": null,
+        "id": "staff-github",
+        "kind": "specialist",
+        "name": "GitHub employee",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Platform Engineer",
+        "skillPaths": [
+          "skills/engineering-organization-architect/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783717704Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783718185Z",
+        "departmentId": null,
+        "id": "staff-design",
+        "kind": "specialist",
+        "name": "Product & interface",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Frontend Engineer",
+        "skillPaths": [
+          "skills/engineering-organization-architect/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783718185Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783718706Z",
+        "departmentId": null,
+        "id": "staff-rust",
+        "kind": "specialist",
+        "name": "Native systems",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Software Solutions Architect",
+        "skillPaths": [
+          "skills/local-model-runtime-engineering/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783718706Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783719206Z",
+        "departmentId": null,
+        "id": "staff-release",
+        "kind": "specialist",
+        "name": "Build & release",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Devops Ci Cd Engineer",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783719206Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783719797Z",
+        "departmentId": null,
+        "id": "staff-review",
+        "kind": "specialist",
+        "name": "Independent review",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Application Product Security Engineer",
+        "skillPaths": [
+          "skills/defensive-reverse-engineering/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783719797Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783720278Z",
+        "departmentId": null,
+        "id": "staff-science",
+        "kind": "specialist",
+        "name": "Scientific research",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Physics Researcher",
+        "skillPaths": [
+          "skills/physics-research/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783720278Z"
+      },
+      {
+        "assignmentKey": "subdirector",
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.78372148Z",
+        "departmentId": null,
+        "id": "employee-0dc4050e-ec1d-476b-8201-f830a90183e1",
+        "kind": "specialist",
+        "name": "Subdirector",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Company subdirector",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.78372148Z"
+      },
+      {
+        "assignmentKey": "blueprint-steward",
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783722391Z",
+        "departmentId": null,
+        "id": "employee-d2991300-575b-4bdc-a145-cdcf2ee404f8",
+        "kind": "specialist",
+        "name": "Blueprint steward",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Office blueprint and ownership steward",
+        "skillPaths": [
+          "skills/engineering-organization-architect/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783722391Z"
+      },
+      {
+        "assignmentKey": "knowledge-curator",
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783724404Z",
+        "departmentId": null,
+        "id": "employee-30372bd4-8996-4c1b-8bca-43ab57787298",
+        "kind": "specialist",
+        "name": "Knowledge curator",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Evidence and knowledge curator",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783724404Z"
+      },
+      {
+        "assignmentKey": "qa-lead",
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783725376Z",
+        "departmentId": null,
+        "id": "employee-ea63a4ac-d999-4e0b-aca4-62a7478b0cab",
+        "kind": "specialist",
+        "name": "QA lead",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Quality and evidence reviewer",
+        "skillPaths": [
+          "skills/defensive-reverse-engineering/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783725376Z"
+      },
+      {
+        "assignmentKey": "github-steward",
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783726037Z",
+        "departmentId": null,
+        "id": "employee-47c4daf1-69d0-4ab8-a76b-38780969ea55",
+        "kind": "specialist",
+        "name": "GitHub steward",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "GitHub repository steward",
+        "skillPaths": [
+          "skills/engineering-organization-architect/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783726037Z"
+      },
+      {
+        "assignmentKey": "code-engineer",
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783728991Z",
+        "departmentId": null,
+        "id": "employee-27d58fe4-f84c-4328-82af-4d0686563545",
+        "kind": "specialist",
+        "name": "Code engineer",
+        "officeId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "role": "Implementation engineer",
+        "skillPaths": [
+          "skills/local-model-runtime-engineering/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.783728991Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791147748Z",
+        "departmentId": null,
+        "id": "employee-e34db1f8-4902-47c0-8a44-a90c652abc06",
+        "kind": "assistant",
+        "name": "Company assistant",
+        "officeId": null,
+        "role": "Shared company assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.791147748Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791149651Z",
+        "departmentId": null,
+        "id": "employee-3b5851c2-4a98-4fed-8501-094d88f69f1a",
+        "kind": "assistant",
+        "name": "Office assistant",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "role": "Shared office assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.791149651Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791152035Z",
+        "departmentId": "department-46186676-8bf5-46d4-875d-9eddc0f0bfdb",
+        "id": "employee-f993f59d-129d-480c-bb34-713e7ae40c2d",
+        "kind": "assistant",
+        "name": "Engineering assistant",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.791152035Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791153266Z",
+        "departmentId": "department-7d912941-ae20-4d2c-8e84-fe24128278b9",
+        "id": "employee-ea8ca188-6aa7-451d-b82c-60fa33d4c2c2",
+        "kind": "assistant",
+        "name": "Research assistant",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.791153266Z"
+      },
+      {
+        "assignmentKey": "subdirector",
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.79115544Z",
+        "departmentId": null,
+        "id": "employee-e50a405f-269a-4b7b-8447-06f4dcd7acd3",
+        "kind": "specialist",
+        "name": "Subdirector",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "role": "Company subdirector",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.79115544Z"
+      },
+      {
+        "assignmentKey": "blueprint-steward",
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791156401Z",
+        "departmentId": null,
+        "id": "employee-e724ee1b-9c19-4796-aa1c-c4af863cb082",
+        "kind": "specialist",
+        "name": "Blueprint steward",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "role": "Office blueprint and ownership steward",
+        "skillPaths": [
+          "skills/engineering-organization-architect/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.791156401Z"
+      },
+      {
+        "assignmentKey": "knowledge-curator",
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791157403Z",
+        "departmentId": null,
+        "id": "employee-808f8b6d-4c6f-4b9f-9573-307fcf07e2a4",
+        "kind": "specialist",
+        "name": "Knowledge curator",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "role": "Evidence and knowledge curator",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.791157403Z"
+      },
+      {
+        "assignmentKey": "qa-lead",
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791158244Z",
+        "departmentId": null,
+        "id": "employee-a6e50f59-6149-4b99-a62d-d09e8826b5e8",
+        "kind": "specialist",
+        "name": "QA lead",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "role": "Quality and evidence reviewer",
+        "skillPaths": [
+          "skills/defensive-reverse-engineering/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.791158244Z"
+      },
+      {
+        "assignmentKey": "github-steward",
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791158975Z",
+        "departmentId": null,
+        "id": "employee-e90b32a5-e1ec-4b11-b885-6cc482f230b5",
+        "kind": "specialist",
+        "name": "GitHub steward",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "role": "GitHub repository steward",
+        "skillPaths": [
+          "skills/engineering-organization-architect/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.791158975Z"
+      },
+      {
+        "assignmentKey": "code-engineer",
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.791159706Z",
+        "departmentId": null,
+        "id": "employee-d0d057c0-9266-43d2-9879-59c9474be8c4",
+        "kind": "specialist",
+        "name": "Code engineer",
+        "officeId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "role": "Implementation engineer",
+        "skillPaths": [
+          "skills/local-model-runtime-engineering/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.791159706Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798209391Z",
+        "departmentId": null,
+        "id": "employee-8c205e88-2a14-4066-9439-41c0c5ab1ef0",
+        "kind": "assistant",
+        "name": "Company assistant",
+        "officeId": null,
+        "role": "Shared company assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798209391Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798211554Z",
+        "departmentId": null,
+        "id": "employee-78394e59-99a4-4c86-963c-8185dbeef5ab",
+        "kind": "assistant",
+        "name": "Office assistant",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "role": "Shared office assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798211554Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798213627Z",
+        "departmentId": "department-caf083ad-140a-488d-9904-174b3e2c9b81",
+        "id": "employee-7bf44f95-de3b-457b-901e-394fdb91aad3",
+        "kind": "assistant",
+        "name": "Engineering assistant",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798213627Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798215149Z",
+        "departmentId": "department-d6371fa6-9725-471e-8065-fe12b1b614aa",
+        "id": "employee-b3313ca8-0de8-4968-875b-be4e42772c17",
+        "kind": "assistant",
+        "name": "Research assistant",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798215149Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798219927Z",
+        "departmentId": "department-8685034f-2063-4a21-b5e8-a9abd2b784b3",
+        "id": "employee-8fbe4e85-378d-4c44-8751-f3d2bfd68d19",
+        "kind": "assistant",
+        "name": "Design & Architecture assistant",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798219927Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798223502Z",
+        "departmentId": "department-c46df4e9-d748-4bc8-83c9-3e74f6b73ef3",
+        "id": "employee-db0e6144-7967-41e1-b793-818b4ef16583",
+        "kind": "assistant",
+        "name": "Security assistant",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798223502Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798225545Z",
+        "departmentId": "department-602eee16-181c-422d-8f78-7374a243a22d",
+        "id": "employee-03f8ca59-c6f5-4c18-b172-92e8f2bb930d",
+        "kind": "assistant",
+        "name": "Hackathon assistant",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798225545Z"
+      },
+      {
+        "assignmentKey": "shared:hackathon",
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798227157Z",
+        "departmentId": "department-602eee16-181c-422d-8f78-7374a243a22d",
+        "id": "employee-2569042a-cb23-4e73-b9fe-85a169b3ca42",
+        "kind": "specialist",
+        "name": "Hackathon",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "role": "Shared hackathon planning and prototype specialist",
+        "skillPaths": [
+          "skills/engineering-organization-architect/SKILL.md",
+          "skills/game-reconstruction-engineering/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798227157Z"
+      },
+      {
+        "assignmentKey": null,
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798229271Z",
+        "departmentId": "department-34e1d11a-d67e-4c33-8f9a-a34d4a089d73",
+        "id": "employee-07e87b5b-d267-4e3f-89ba-0267bd3d0adf",
+        "kind": "assistant",
+        "name": "Music & Arts assistant",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "role": "Shared department assistant",
+        "skillPaths": [
+          "skills/agent-research-director/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798229271Z"
+      },
+      {
+        "assignmentKey": "shared:music-arts",
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798230653Z",
+        "departmentId": "department-34e1d11a-d67e-4c33-8f9a-a34d4a089d73",
+        "id": "employee-921b33fa-5332-4a12-a2cf-cda47e13de1b",
+        "kind": "specialist",
+        "name": "Music & Arts",
+        "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "role": "Shared music, audio and arts specialist",
+        "skillPaths": [
+          "skills/ai-open-model-research/SKILL.md",
+          "skills/spatial-3d-production-engineering/SKILL.md"
+        ],
+        "status": "active",
+        "updatedAt": "2026-11-21T00:35:51.798230653Z"
+      }
+    ],
+    "events": [
+      {
+        "action": "company-created",
+        "actor": "donna",
+        "at": "2026-11-21T00:35:51.791154268Z",
+        "entityId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "id": "event-0e80f9bf-e146-46fa-8829-be7222e33d17",
+        "summary": "Created Studio \u2014 example project with a shared company assistant, office and two departments"
+      },
+      {
+        "action": "company-created",
+        "actor": "donna",
+        "at": "2026-11-21T00:35:51.79821583Z",
+        "entityId": "atlas-shared-services",
+        "id": "event-f7131365-3d4c-41bd-a20a-4e7cb68b3071",
+        "summary": "Created Shared Services with a shared company assistant, office and two departments"
+      },
+      {
+        "action": "optimize_portfolio",
+        "actor": "owner",
+        "at": "2026-11-21T00:35:51.798279676Z",
+        "entityId": "portfolio",
+        "id": "event-e1fdd281-c0a3-4130-860c-5461c81cdf27",
+        "summary": "Prepared shared assignments and explicit contracts without deleting companies, copying worker identities, transferring knowledge or making model requests"
+      },
+      {
+        "action": "configure_ceo",
+        "actor": "owner",
+        "at": "2026-11-21T00:35:51.802360791Z",
+        "entityId": "portfolio",
+        "id": "event-db34c5fb-dbca-43a5-9db6-1c4c7e8de13f",
+        "summary": "Updated CEO portfolio view. Provider approval, tenant access and budget controls were unchanged"
+      },
+      {
+        "action": "upsert_roadmap_item",
+        "actor": "owner",
+        "at": "2026-11-21T00:35:51.807153894Z",
+        "entityId": "example-next-1",
+        "id": "event-b39e24ce-b0ab-49c8-95c0-194a522b0c48",
+        "summary": "Saved owned roadmap progress and dependency references with completion evidence"
+      },
+      {
+        "action": "upsert_roadmap_item",
+        "actor": "owner",
+        "at": "2026-11-21T00:35:51.811275399Z",
+        "entityId": "example-next-2",
+        "id": "event-d7156e0f-01b7-4023-aaf5-9353bde5ead3",
+        "summary": "Saved owned roadmap progress and dependency references with completion evidence"
+      },
+      {
+        "action": "upsert_roadmap_item",
+        "actor": "owner",
+        "at": "2026-11-21T00:35:51.815139613Z",
+        "entityId": "example-next-3",
+        "id": "event-da6acf6a-a6d6-479e-9b22-7bfd65fe3b8d",
+        "summary": "Saved owned roadmap progress and dependency references with completion evidence"
+      }
+    ],
+    "externalAttempts": [],
+    "goals": [],
+    "jobs": [],
+    "knowledge": [],
+    "lastAction": null,
+    "offices": [
+      {
+        "assistantId": "employee-5131e471-81ee-4a3d-9a17-54785402a7fa",
+        "companyId": "engineering-intelligence-atlas",
+        "createdAt": "2026-11-21T00:35:51.783709462Z",
+        "id": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+        "name": "Main office",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-3b5851c2-4a98-4fed-8501-094d88f69f1a",
+        "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+        "createdAt": "2026-11-21T00:35:51.79114885Z",
+        "id": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+        "name": "Main office",
+        "status": "active"
+      },
+      {
+        "assistantId": "employee-78394e59-99a4-4c86-963c-8185dbeef5ab",
+        "companyId": "atlas-shared-services",
+        "createdAt": "2026-11-21T00:35:51.798210442Z",
+        "id": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+        "name": "Main office",
+        "status": "active"
+      }
+    ],
+    "policy": {
+      "approvalMode": "review",
+      "budget": {
+        "hardCapTokens": null,
+        "hardCapUsd": 10.0,
+        "warningPercent": 80.0
+      },
+      "dispatchPaused": false
+    },
+    "portfolio": {
+      "ceo": {
+        "enabled": true,
+        "focusGroupId": "example-products",
+        "sharedServicesCompanyId": "atlas-shared-services",
+        "title": "CEO / Portfolio",
+        "updatedAt": "2026-11-21T00:35:51.802357235Z"
+      },
+      "contracts": [
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798251344Z",
+          "employeeIds": [
+            "employee-27d58fe4-f84c-4328-82af-4d0686563545"
+          ],
+          "id": "contract-16a6d1ed-e6df-4575-86ff-c97b4a99717e",
+          "recipientCompanyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-959d8593-f8e6-44f6-b29f-f1c7cec6aeba",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798251344Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798253747Z",
+          "employeeIds": [
+            "employee-d2991300-575b-4bdc-a145-cdcf2ee404f8"
+          ],
+          "id": "contract-133d740b-6044-4be7-b378-b71e31d89645",
+          "recipientCompanyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-affb4ea2-5fe1-4afd-9fb5-64bd3572099c",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798253747Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798255149Z",
+          "employeeIds": [
+            "employee-30372bd4-8996-4c1b-8bca-43ab57787298"
+          ],
+          "id": "contract-4e37a0ed-d0e9-4a23-b3c3-fb3d35628391",
+          "recipientCompanyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-80e8627f-d5ac-431a-8201-c7993b0ed009",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798255149Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798257663Z",
+          "employeeIds": [
+            "employee-ea63a4ac-d999-4e0b-aca4-62a7478b0cab"
+          ],
+          "id": "contract-e075788a-6acc-4d15-9088-0f3208f55423",
+          "recipientCompanyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-61b9c7a1-1a09-49a6-8ccb-77e9b876473d",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798257663Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798258905Z",
+          "employeeIds": [
+            "employee-2569042a-cb23-4e73-b9fe-85a169b3ca42"
+          ],
+          "id": "contract-f22d989e-c8a8-437f-9738-605a1304690d",
+          "recipientCompanyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-3033078f-ba71-443a-abdb-4340ac2e547b",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798258905Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798260447Z",
+          "employeeIds": [
+            "employee-921b33fa-5332-4a12-a2cf-cda47e13de1b"
+          ],
+          "id": "contract-142137fd-a676-42e9-88be-3e227561b222",
+          "recipientCompanyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-ef1cc044-612e-4945-84cb-4c883d7c03b4",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798260447Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798264794Z",
+          "employeeIds": [
+            "employee-27d58fe4-f84c-4328-82af-4d0686563545"
+          ],
+          "id": "contract-7f0440e9-88c3-42db-8c04-2037602e2211",
+          "recipientCompanyId": "engineering-intelligence-atlas",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-959d8593-f8e6-44f6-b29f-f1c7cec6aeba",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798264794Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798266436Z",
+          "employeeIds": [
+            "employee-d2991300-575b-4bdc-a145-cdcf2ee404f8"
+          ],
+          "id": "contract-741f155f-6ee8-4d5d-b086-f81dca011f59",
+          "recipientCompanyId": "engineering-intelligence-atlas",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-affb4ea2-5fe1-4afd-9fb5-64bd3572099c",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798266436Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798267708Z",
+          "employeeIds": [
+            "employee-30372bd4-8996-4c1b-8bca-43ab57787298"
+          ],
+          "id": "contract-7fb4f4ef-b067-40ab-acba-8d64245e17e8",
+          "recipientCompanyId": "engineering-intelligence-atlas",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-80e8627f-d5ac-431a-8201-c7993b0ed009",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798267708Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798270683Z",
+          "employeeIds": [
+            "employee-ea63a4ac-d999-4e0b-aca4-62a7478b0cab"
+          ],
+          "id": "contract-b3794f8a-35de-4189-a05e-7b0a6ea70850",
+          "recipientCompanyId": "engineering-intelligence-atlas",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-61b9c7a1-1a09-49a6-8ccb-77e9b876473d",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798270683Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798271835Z",
+          "employeeIds": [
+            "employee-2569042a-cb23-4e73-b9fe-85a169b3ca42"
+          ],
+          "id": "contract-d457129d-6278-443d-bed2-cfd3354a84d1",
+          "recipientCompanyId": "engineering-intelligence-atlas",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-3033078f-ba71-443a-abdb-4340ac2e547b",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798271835Z"
+        },
+        {
+          "allowedTools": [],
+          "createdAt": "2026-11-21T00:35:51.798272956Z",
+          "employeeIds": [
+            "employee-921b33fa-5332-4a12-a2cf-cda47e13de1b"
+          ],
+          "id": "contract-aa5ae5c0-4628-4d57-8fbd-6101ec3c74f8",
+          "recipientCompanyId": "engineering-intelligence-atlas",
+          "recipientDepartmentId": null,
+          "recipientOfficeId": null,
+          "serviceId": "service-ef1cc044-612e-4945-84cb-4c883d7c03b4",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798272956Z"
+        }
+      ],
+      "groups": [
+        {
+          "companyIds": [
+            "engineering-intelligence-atlas",
+            "company-ecefdef4-ed98-45af-9349-99c4ee346c2b"
+          ],
+          "createdAt": "2026-11-21T00:35:51.798203722Z",
+          "description": "Public starter example: two independent company records sharing specialists.",
+          "id": "example-products",
+          "name": "Product studio",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798203722Z"
+        }
+      ],
+      "recommendations": [
+        {
+          "employeeId": "employee-e724ee1b-9c19-4796-aa1c-c4af863cb082",
+          "reason": "Idle duplicate specialty can use this shared service; no employee was paused automatically",
+          "serviceId": "service-affb4ea2-5fe1-4afd-9fb5-64bd3572099c"
+        },
+        {
+          "employeeId": "employee-808f8b6d-4c6f-4b9f-9573-307fcf07e2a4",
+          "reason": "Idle duplicate specialty can use this shared service; no employee was paused automatically",
+          "serviceId": "service-80e8627f-d5ac-431a-8201-c7993b0ed009"
+        },
+        {
+          "employeeId": "employee-a6e50f59-6149-4b99-a62d-d09e8826b5e8",
+          "reason": "Idle duplicate specialty can use this shared service; no employee was paused automatically",
+          "serviceId": "service-61b9c7a1-1a09-49a6-8ccb-77e9b876473d"
+        },
+        {
+          "employeeId": "employee-d0d057c0-9266-43d2-9879-59c9474be8c4",
+          "reason": "Idle duplicate specialty can use this shared service; no employee was paused automatically",
+          "serviceId": "service-959d8593-f8e6-44f6-b29f-f1c7cec6aeba"
+        }
+      ],
+      "roadmap": [
+        {
+          "createdAt": "2026-11-21T00:35:51.807148396Z",
+          "departmentId": null,
+          "dependencies": [],
+          "description": "Use Settings to import your owned repositories into the private workspace. This public starter cannot access your account.",
+          "evidence": null,
+          "goalIds": [],
+          "id": "example-next-1",
+          "jobIds": [],
+          "ownerEmployeeId": "donna",
+          "scope": {
+            "id": "engineering-intelligence-atlas",
+            "kind": "company"
+          },
+          "serviceContractId": null,
+          "status": "planned",
+          "title": "Connect a repository",
+          "updatedAt": "2026-11-21T00:35:51.807148396Z"
+        },
+        {
+          "createdAt": "2026-11-21T00:35:51.811267567Z",
+          "departmentId": null,
+          "dependencies": [],
+          "description": "Assign a goal, share only the relevant references, and define acceptance evidence before model execution.",
+          "evidence": null,
+          "goalIds": [],
+          "id": "example-next-2",
+          "jobIds": [],
+          "ownerEmployeeId": "donna",
+          "scope": {
+            "id": "engineering-intelligence-atlas",
+            "kind": "company"
+          },
+          "serviceContractId": null,
+          "status": "planned",
+          "title": "Plan a bounded release",
+          "updatedAt": "2026-11-21T00:35:51.811267567Z"
+        },
+        {
+          "createdAt": "2026-11-21T00:35:51.815133784Z",
+          "departmentId": null,
+          "dependencies": [],
+          "description": "Contract shared design, engineering, research, security, hackathon and music roles without creating duplicate employee identities.",
+          "evidence": null,
+          "goalIds": [],
+          "id": "example-next-3",
+          "jobIds": [],
+          "ownerEmployeeId": "donna",
+          "scope": {
+            "id": "engineering-intelligence-atlas",
+            "kind": "company"
+          },
+          "serviceContractId": null,
+          "status": "planned",
+          "title": "Reuse the specialist team",
+          "updatedAt": "2026-11-21T00:35:51.815133784Z"
+        }
+      ],
+      "schemaVersion": 1,
+      "services": [
+        {
+          "companyId": "atlas-shared-services",
+          "createdAt": "2026-11-21T00:35:51.798217533Z",
+          "departmentId": "department-caf083ad-140a-488d-9904-174b3e2c9b81",
+          "employeeIds": [
+            "employee-27d58fe4-f84c-4328-82af-4d0686563545"
+          ],
+          "id": "service-959d8593-f8e6-44f6-b29f-f1c7cec6aeba",
+          "key": "engineering",
+          "name": "Engineering",
+          "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "retiredEmployeeIds": [],
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798217533Z"
+        },
+        {
+          "companyId": "atlas-shared-services",
+          "createdAt": "2026-11-21T00:35:51.798221108Z",
+          "departmentId": "department-8685034f-2063-4a21-b5e8-a9abd2b784b3",
+          "employeeIds": [
+            "employee-d2991300-575b-4bdc-a145-cdcf2ee404f8"
+          ],
+          "id": "service-affb4ea2-5fe1-4afd-9fb5-64bd3572099c",
+          "key": "design-architecture",
+          "name": "Design & Architecture",
+          "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "retiredEmployeeIds": [],
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798221108Z"
+        },
+        {
+          "companyId": "atlas-shared-services",
+          "createdAt": "2026-11-21T00:35:51.79822221Z",
+          "departmentId": "department-d6371fa6-9725-471e-8065-fe12b1b614aa",
+          "employeeIds": [
+            "employee-30372bd4-8996-4c1b-8bca-43ab57787298"
+          ],
+          "id": "service-80e8627f-d5ac-431a-8201-c7993b0ed009",
+          "key": "research-knowledge",
+          "name": "Research & Knowledge",
+          "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "retiredEmployeeIds": [],
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.79822221Z"
+        },
+        {
+          "companyId": "atlas-shared-services",
+          "createdAt": "2026-11-21T00:35:51.798223963Z",
+          "departmentId": "department-c46df4e9-d748-4bc8-83c9-3e74f6b73ef3",
+          "employeeIds": [
+            "employee-ea63a4ac-d999-4e0b-aca4-62a7478b0cab"
+          ],
+          "id": "service-61b9c7a1-1a09-49a6-8ccb-77e9b876473d",
+          "key": "security",
+          "name": "Security",
+          "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "retiredEmployeeIds": [],
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798223963Z"
+        },
+        {
+          "companyId": "atlas-shared-services",
+          "createdAt": "2026-11-21T00:35:51.798227678Z",
+          "departmentId": "department-602eee16-181c-422d-8f78-7374a243a22d",
+          "employeeIds": [
+            "employee-2569042a-cb23-4e73-b9fe-85a169b3ca42"
+          ],
+          "id": "service-3033078f-ba71-443a-abdb-4340ac2e547b",
+          "key": "hackathon",
+          "name": "Hackathon",
+          "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "retiredEmployeeIds": [],
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798227678Z"
+        },
+        {
+          "companyId": "atlas-shared-services",
+          "createdAt": "2026-11-21T00:35:51.798231053Z",
+          "departmentId": "department-34e1d11a-d67e-4c33-8f9a-a34d4a089d73",
+          "employeeIds": [
+            "employee-921b33fa-5332-4a12-a2cf-cda47e13de1b"
+          ],
+          "id": "service-ef1cc044-612e-4945-84cb-4c883d7c03b4",
+          "key": "music-arts",
+          "name": "Music & Arts",
+          "officeId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "retiredEmployeeIds": [],
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798231053Z"
+        }
+      ],
+      "transfers": []
+    },
+    "schedules": [],
+    "schemaVersion": 1
+  }
+}

@@ -1,5 +1,5 @@
 import "dotenv/config";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createHash } from "node:crypto";
 import { storage } from "./storage";
 
@@ -7,8 +7,9 @@ import { storage } from "./storage";
  * website-storage round-trip (spec §11.2 "Storage"): upload → two independent
  * reads (fileExists/headFile + listFiles) → presigned content match →
  * delete → fileExists false. Uses a clearly labeled integration-test key and
- * always deletes its own object, even on failure. If storage is not
- * provisioned the suite skips honestly instead of faking success.
+ * always deletes its own object, even on failure. RUN_STORAGE_TESTS=1 is an
+ * explicit external-write opt-in. Missing configuration fails an opted-in run;
+ * the default suite reports these tests as skipped, never as successful probes.
  *
  * The end-to-end artifact/export flow itself (server module uploading through
  * the engine and the exports router, presigned download matching the recorded
@@ -22,9 +23,12 @@ const CONTENT =
   `storage round-trip integration test ${stamp}\n` +
   "upload → head/list → presigned match → delete.\n";
 
-let provisioned = true;
-
-describe("object storage round-trip (website-storage)", { timeout: 180_000 }, () => {
+describe.skipIf(process.env.RUN_STORAGE_TESTS !== "1")("object storage round-trip (explicit live opt-in)", { timeout: 180_000 }, () => {
+  beforeAll(() => {
+    for (const name of ["KIMI_AGENTGW_API_KEY", "KIMI_AGENTGW_BASE_URL", "KIMI_STORAGE_RESOURCE_ID"]) {
+      expect(!!process.env[name], `RUN_STORAGE_TESTS requires ${name}`).toBe(true);
+    }
+  });
   it("upload → exists/head → list → presigned match → delete → gone", async () => {
     let savedKey: string | null = null;
     try {
@@ -62,14 +66,6 @@ describe("object storage round-trip (website-storage)", { timeout: 180_000 }, ()
       expect(await storage.deleteFile({ fileKey: savedKey })).toBe(true);
       savedKey = null;
       expect(await storage.fileExists({ fileKey: up.key })).toBe(false);
-    } catch (err) {
-      const code = (err as { code?: string })?.code ?? "";
-      if (code === "STORAGE_NOT_PROVISIONED") {
-        provisioned = false;
-        console.warn("storage not provisioned; round-trip skipped honestly");
-        return;
-      }
-      throw err;
     } finally {
       if (savedKey) {
         await storage.deleteFile({ fileKey: savedKey }).catch(() => false);
@@ -78,7 +74,6 @@ describe("object storage round-trip (website-storage)", { timeout: 180_000 }, ()
   });
 
   it("missing objects report honestly", async () => {
-    if (!provisioned) return;
     expect(
       await storage.fileExists({ fileKey: `${KEY_PREFIX}never-uploaded.md` }),
     ).toBe(false);

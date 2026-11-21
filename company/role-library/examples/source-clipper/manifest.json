@@ -1,0 +1,8 @@
+{
+  "manifest_version": 3,
+  "name": "Atlas Selected Source — Local Example",
+  "version": "0.1.0",
+  "description": "Capture explicitly selected text for a reviewed local JSON export. No upload or background collection.",
+  "permissions": ["activeTab", "scripting"],
+  "action": {"default_popup": "popup.html", "default_title": "Review a selected source"}
+}

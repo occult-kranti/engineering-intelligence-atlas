@@ -14,8 +14,8 @@ import * as path from "node:path";
  * 2. The server bundle boots from a copied `dist/` + `package.json` with NO
  *    node_modules (the platform deploy shape), serves `/`, and returns the
  *    JSON 404 for unregistered /api/* paths.
- * 3. Root index.html exists (version-system requirement); .env carries the
- *    platform-injected KIMI_* keys.
+ * 3. Root index.html and the documented runtime configuration example exist.
+ *    A clean-clone build never requires a private .env file.
  *
  * Requires `npm run build` to have produced dist/ first; fails loudly when
  * dist is missing rather than skipping (this is a release gate).
@@ -72,7 +72,7 @@ describe("secret canary (frontend bundle + sources)", () => {
     const text = bundleText();
     // Model ids are discovered at runtime via listModels(); none may be baked
     // into the client bundle. Check the live default id plus known patterns.
-    if (process.env.KIMI_AGENTGW_API_KEY) {
+    if (process.env.RUN_LIVE_AI_TESTS === "1" && process.env.KIMI_AGENTGW_API_KEY) {
       const { listGatewayModels } = await import("./ai/list-models");
       const list = await listGatewayModels();
       for (const m of list.models) {
@@ -98,11 +98,12 @@ describe("secret canary (frontend bundle + sources)", () => {
 });
 
 describe("deploy shape (spec §11.3)", () => {
-  it("root index.html exists and .env carries platform KIMI_* keys", () => {
+  it("root index.html and a credential-free runtime configuration example exist", () => {
     expect(fs.existsSync(path.join(root, "index.html"))).toBe(true);
-    const envText = fs.readFileSync(path.join(root, ".env"), "utf8");
-    const kimiKeys = envText.split("\n").filter((l) => /^KIMI_/.test(l));
-    expect(kimiKeys.length).toBeGreaterThanOrEqual(2);
+    const envText = fs.readFileSync(path.join(root, ".env.example"), "utf8");
+    for (const name of ["APP_ID", "APP_SECRET", "DATABASE_URL", "KIMI_AUTH_URL", "KIMI_OPEN_URL"]) {
+      expect(envText.split("\n")).toContain(`${name}=`);
+    }
   });
 
   it(
@@ -126,6 +127,13 @@ describe("deploy shape (spec §11.3)", () => {
             ...process.env,
             NODE_ENV: "production",
             PORT: String(port),
+            // Boot/auth-denial assertions need no connected services. These
+            // child-only fixtures never reach a database, provider or OAuth host.
+            APP_ID: "deployment-test-app",
+            APP_SECRET: "deployment-test-secret-not-for-real-use",
+            DATABASE_URL: "mysql://test:test@127.0.0.1:1/unreachable",
+            KIMI_AUTH_URL: "https://oauth.invalid",
+            KIMI_OPEN_URL: "https://api.invalid",
           },
           stdio: ["ignore", "pipe", "pipe"],
         });

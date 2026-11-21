@@ -7,6 +7,7 @@ import {
 } from "./ai-client";
 import { listGatewayModels } from "./list-models";
 import type { ProviderId, UsageRecord } from "@contracts/run";
+import { normalizeProviderUsage, providerPromptCache, type PromptCachePolicy } from "./prompt-cache";
 
 /**
  * ModelProvider seam (spec §8.6, extended per product decision): every model
@@ -41,6 +42,8 @@ export interface StructuredRequest {
    * falls back to the server env key. Gateway/mock ignore this.
    */
   ownerId?: number;
+  /** Enabled only after resolving both cache read/write prices for this model. */
+  cachePolicy?: PromptCachePolicy;
 }
 
 export interface StructuredResponse<T = unknown> {
@@ -117,20 +120,7 @@ async function directAvailability(
   };
 }
 
-function toUsage(raw: unknown): UsageRecord {
-  const u = (raw ?? {}) as Record<string, unknown>;
-  const num = (x: unknown) => (typeof x === "number" && Number.isFinite(x) ? x : 0);
-  // AI SDK 5/6 names (inputTokens/outputTokens) with legacy fallbacks.
-  const prompt = num(u.inputTokens) || num(u.promptTokens);
-  const completion = num(u.outputTokens) || num(u.completionTokens);
-  return {
-    promptTokens: prompt,
-    completionTokens: completion,
-    calls: 1,
-    costUsdMicros: 0, // priced by the engine via owner/env rates, never guessed here
-    simulated: false,
-  };
-}
+const toUsage = normalizeProviderUsage;
 
 // ── Gateway (platform Kimi gateway) ──────────────────────────────
 
@@ -232,7 +222,7 @@ function openaiProvider(): ModelProvider {
         const result = await generateObject({
           model: openai(modelId),
           schema: req.schema,
-          system: req.system,
+          ...providerPromptCache("openai", modelId, req.system, req.ownerId, req.cachePolicy),
           prompt: req.prompt,
           maxOutputTokens: req.maxOutputTokens,
           maxRetries: 0, // billable call: never auto-retry
@@ -297,7 +287,7 @@ function anthropicProvider(): ModelProvider {
         const result = await generateObject({
           model: anthropic(modelId),
           schema: req.schema,
-          system: req.system,
+          ...providerPromptCache("anthropic", modelId, req.system, req.ownerId, req.cachePolicy),
           prompt: req.prompt,
           maxOutputTokens: req.maxOutputTokens,
           maxRetries: 0, // billable call: never auto-retry

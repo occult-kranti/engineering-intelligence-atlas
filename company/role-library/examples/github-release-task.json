@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "github-release",
+  "taskId": "demo-github-release-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Publish the reviewed revision reproducibly, with evidence and a recovery path.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "The selected registered repository is the publication destination.",
+    "A stale head causes no branch update; credentials never enter an artifact or log.",
+    "Release state names whether source, artifact, deployment and live smoke were actually checked."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Prepare a release packet for the exact reviewed revision. Verify relative assets and source/artifact digests; publish only through the granted capability and report each observed stage separately."
+}

@@ -7,7 +7,10 @@ import { VitePWA } from "vite-plugin-pwa"
 import { inspectAttr } from 'kimi-plugin-inspect-react'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ command, mode }) => ({
+  // One portable static bundle: GitHub Pages subpaths, Capacitor and file://.
+  // Hash routing keeps every atlas route relative to this document.
+  base: './',
   plugins: [
     {
       name: "kimi-preview-host",
@@ -17,7 +20,9 @@ export default defineConfig({
         return { server: { allowedHosts: ["3000.proxy.internal"] } };
       },
     },
-    devServer({ entry: "api/boot.ts", exclude: [/^\/(?!api\/).*$/] }),
+    ...(command === 'serve' && mode !== 'static'
+      ? [devServer({ entry: "api/boot.ts", exclude: [/^\/(?!api\/).*$/] })]
+      : []),
     inspectAttr(),
     react(),
     VitePWA({
@@ -79,4 +84,4 @@ export default defineConfig({
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
   },
-});
+}));

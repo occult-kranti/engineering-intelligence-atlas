@@ -13,6 +13,7 @@ import {
   uniqueIndex,
   index,
 } from "drizzle-orm/mysql-core";
+import { sql } from "drizzle-orm";
 import type { DagSpec, RunBudget } from "../contracts/dag";
 import type { SkillManifest, RiskSignal } from "../contracts/skill";
 import type {
@@ -65,6 +66,12 @@ export const registryResources = mysqlTable(
     type: varchar("type", { length: 120 }).notNull(),
     level: varchar("level", { length: 120 }).notNull(),
     url: varchar("url", { length: 1000 }).notNull(),
+    // A full utf8mb4 VARCHAR(1000) index exceeds MySQL's 3072-byte key limit.
+    // Hash the complete URL so long/Unicode paths keep their original content.
+    urlSha256: char("url_sha256", { length: 64 }).generatedAlwaysAs(
+      sql`sha2(\`url\`, 256)`,
+      { mode: "stored" },
+    ),
     purpose: text("purpose").notNull(),
     prereqs: text("prereqs").notNull(),
     access: varchar("access", { length: 255 }).notNull(),
@@ -72,7 +79,7 @@ export const registryResources = mysqlTable(
     caveat: text("caveat").notNull(),
     verified: varchar("verified", { length: 120 }).notNull(),
   },
-  (t) => [uniqueIndex("registry_resources_url_idx").on(t.url)],
+  (t) => [uniqueIndex("registry_resources_url_sha256_idx").on(t.urlSha256)],
 );
 
 // ── Projects & plans ─────────────────────────────────────────────
@@ -307,7 +314,10 @@ export const approvals = mysqlTable(
     decidedAt: timestamp("decided_at"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (t) => [index("approvals_run_idx").on(t.runId)],
+  (t) => [
+    index("approvals_run_idx").on(t.runId),
+    index("approvals_gate_idx").on(t.runId, t.nodeKey, t.kind, t.state),
+  ],
 );
 
 export const artifacts = mysqlTable(
@@ -332,7 +342,10 @@ export const artifacts = mysqlTable(
     reviewedBy: varchar("reviewed_by", { length: 255 }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (t) => [index("artifacts_run_idx").on(t.runId)],
+  (t) => [
+    index("artifacts_run_idx").on(t.runId),
+    index("artifacts_handoff_idx").on(t.runId, t.nodeKey, t.accepted),
+  ],
 );
 
 export const knowledgeDrafts = mysqlTable(
@@ -373,7 +386,10 @@ export const budgetLedger = mysqlTable(
     }).notNull(),
     recordedAt: timestamp("recorded_at").defaultNow().notNull(),
   },
-  (t) => [index("budget_ledger_run_idx").on(t.runId)],
+  (t) => [
+    index("budget_ledger_run_idx").on(t.runId),
+    index("budget_ledger_node_idx").on(t.runId, t.nodeKey),
+  ],
 );
 
 // ── Owner settings (non-secret operator config, e.g. USD pricing rates) ──

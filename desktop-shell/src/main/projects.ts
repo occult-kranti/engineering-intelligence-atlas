@@ -373,12 +373,14 @@ export interface RunnerGenerateRequest {
   prompt: string;
   maxOutputTokens: number;
   abortSignal: AbortSignal;
+  billing?: { inputUsdPerMillion: number; outputUsdPerMillion: number; source: string };
 }
 
 export interface RunnerGenerateResult {
   text: string;
   inputTokens: number;
   outputTokens: number;
+  usageObserved?: boolean;
 }
 
 export type GenerateFn = (req: RunnerGenerateRequest) => Promise<RunnerGenerateResult>;
@@ -444,6 +446,9 @@ export class ProjectRunner extends EventEmitter {
       const priceRates = validatePriceRates(priceRatesRaw);
       const project = this.store.getProject(projectId);
       if (!project) return { ok: false, error: 'unknown project id' };
+      if (project.provider !== 'ollama' && (priceRates.inputUsdPerMillion <= 0 || priceRates.outputUsdPerMillion <= 0)) {
+        return { ok: false, error: 'Cloud runs require positive input and output prices to enforce the USD budget.' };
+      }
       const active = this.store
         .listRuns(project.id)
         .find((r) => r.status === 'running' || r.status === 'paused');
@@ -562,12 +567,15 @@ export class ProjectRunner extends EventEmitter {
     let cancelled = false;
     let anyFailed = false;
 
-    const elapsedMinutes = () => (this.now() - startedMs) / 60000;
+    let pausedMs = 0;
+    const waitForResume = async () => { const began = this.now(); await this.waitIfPaused(control); pausedMs += this.now() - began; };
+    const elapsedMinutes = () => (this.now() - startedMs - pausedMs) / 60000;
     const usedTokens = () => run.usage.inputTokens + run.usage.outputTokens;
     const costOf = (u: UsageTotals) =>
       (u.inputTokens * run.priceRates.inputUsdPerMillion + u.outputTokens * run.priceRates.outputUsdPerMillion) / 1_000_000;
 
-    for (const node of ordered) {
+    for (let nodeIndex = 0; nodeIndex < ordered.length; nodeIndex++) {
+      const node = ordered[nodeIndex]!;
       const state = run.nodeStates[node.id] as RunNodeState;
       if (cancelled || terminated !== null) break;
       if (state.status !== 'pending') continue;
@@ -582,7 +590,7 @@ export class ProjectRunner extends EventEmitter {
       }
 
       // Pause gate (checked between nodes; cancel wins).
-      await this.waitIfPaused(control);
+      await waitForResume();
       if (control.controller.signal.aborted) {
         cancelled = true;
         break;
@@ -598,13 +606,34 @@ export class ProjectRunner extends EventEmitter {
       const minuteAllowance = Math.min(node.budget.maxMinutes, run.runBudget.maxMinutes - elapsedMinutes());
       if (minuteAllowance <= 0) { terminated = 'max-minutes'; break; }
 
+      const prompt = this.buildPrompt(project, node, run);
+      const system = ROLE_PROMPTS[node.role] ?? (ROLE_PROMPTS.custom as string);
+      const reservedInputTokens = Buffer.byteLength(system + prompt, 'utf8') + 256;
+      if (reservedInputTokens >= node.budget.maxTokens) {
+        state.status = 'failed';
+        state.error = 'node max-tokens budget cannot contain the input context';
+        state.finishedAt = new Date().toISOString();
+        anyFailed = true;
+        this.store.appendEvent(run.projectId, run.id, { event: 'node-failed', nodeId: node.id, detail: state.error });
+        this.saveAndEmit(run);
+        continue;
+      }
+      let outputAllowance = Math.floor(tokenAllowance - reservedInputTokens);
+      if (outputAllowance < 1) { terminated = 'max-tokens'; break; }
+      if (project.provider !== 'ollama') {
+        const usdAllowance = Math.min(node.budget.maxUsd, run.runBudget.maxUsd - run.usage.costUsd);
+        const inputReservation = reservedInputTokens * run.priceRates.inputUsdPerMillion / 1_000_000;
+        const affordableOutput = Math.floor((usdAllowance - inputReservation) * 1_000_000 / run.priceRates.outputUsdPerMillion);
+        if (affordableOutput < 1) { terminated = 'max-usd'; break; }
+        outputAllowance = Math.min(outputAllowance, affordableOutput);
+      }
+
       state.status = 'running';
       state.startedAt = new Date().toISOString();
       this.store.appendEvent(run.projectId, run.id, { event: 'node-started', nodeId: node.id });
       this.saveAndEmit(run);
 
-      // Build the prompt from goal + node instructions + dependency outputs.
-      const prompt = this.buildPrompt(project, node, run);
+      // Input and maximum output are reserved before any billable dispatch.
 
       const nodeController = new AbortController();
       const onRunAbort = () => nodeController.abort(control.controller.signal.reason ?? new Error('cancelled'));
@@ -615,17 +644,19 @@ export class ProjectRunner extends EventEmitter {
         const result = await this.generateFn({
           provider: project.provider,
           model: project.model,
-          system: ROLE_PROMPTS[node.role] ?? (ROLE_PROMPTS.custom as string),
+          system,
           prompt,
-          maxOutputTokens: Math.max(1, Math.floor(tokenAllowance)),
+          maxOutputTokens: outputAllowance,
           abortSignal: nodeController.signal,
+          billing: { ...run.priceRates, source: `project:${project.id}` },
         });
         clearTimeout(timer);
         control.controller.signal.removeEventListener('abort', onRunAbort);
 
+        const usageObserved = result.usageObserved !== false && [result.inputTokens, result.outputTokens].every(n => Number.isSafeInteger(n) && n >= 0);
         const usage: UsageTotals = {
-          inputTokens: result.inputTokens,
-          outputTokens: result.outputTokens,
+          inputTokens: usageObserved ? result.inputTokens : reservedInputTokens,
+          outputTokens: usageObserved ? result.outputTokens : outputAllowance,
           costUsd: 0,
         };
         usage.costUsd = costOf(usage);
@@ -648,6 +679,17 @@ export class ProjectRunner extends EventEmitter {
         run.usage.outputTokens += usage.outputTokens;
         run.usage.costUsd = costOf(run.usage);
         run.usage.elapsedSeconds = Math.round(this.now() - startedMs) / 1000;
+
+        if (!usageObserved) {
+          state.status = 'failed';
+          state.error = 'Provider usage is unavailable. Deliverable preserved; conservative reservation retained for reconciliation.';
+          state.finishedAt = new Date().toISOString();
+          anyFailed = true;
+          this.store.appendEvent(run.projectId, run.id, { event: 'node-failed', nodeId: node.id, detail: state.error });
+          this.saveAndEmit(run);
+          // Do not spend again while the cost of the previous request is unknown.
+          break;
+        }
 
         // Per-node budget enforcement (post-call: token/cost truth arrives with usage).
         const nodeTokens = usage.inputTokens + usage.outputTokens;
@@ -688,6 +730,15 @@ export class ProjectRunner extends EventEmitter {
           cancelled = true;
           this.saveAndEmit(run);
           break;
+        }
+        if (err && typeof err === 'object' && 'code' in err && err.code === 'GLOBAL_BUDGET_PAUSED') {
+          state.status = 'pending'; state.startedAt = null; state.error = 'Waiting for global budget; no request was sent.';
+          control.paused = true; run.status = 'paused';
+          this.store.appendEvent(run.projectId, run.id, { event: 'run-paused', detail: state.error });
+          this.saveAndEmit(run);
+          await waitForResume();
+          nodeIndex -= 1;
+          continue;
         }
         const reason = err instanceof Error ? err.message : String(err);
         if (nodeController.signal.aborted && /max-minutes/.test(reason)) {

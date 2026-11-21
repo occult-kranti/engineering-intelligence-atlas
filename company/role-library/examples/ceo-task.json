@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "ceo",
+  "taskId": "demo-ceo-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Choose measurable portfolio outcomes and resolve scope, budget and ownership tradeoffs.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Each active initiative has one accountable owner and observable success checks.",
+    "Allocation totals fit the global ceiling without counting a parent and child allocation as separate spend.",
+    "Rejected and deferred options retain their reasons; unverified claims remain labeled."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Compare the two scoped options. Recommend one within the supplied budget, name the opportunity cost and stop conditions, and return a decision packet. Do not initiate work or invent approval."
+}

@@ -1,0 +1,79 @@
+{
+  "limitUsd": 100,
+  "accountedUsd": 0.629318,
+  "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
+  "calls": [
+    {
+      "number": 1,
+      "model": "claude-sonnet-5-5",
+      "task": "mcp-build-task.txt",
+      "startedAt": "2026-11-20T23:41:05Z",
+      "stopReason": "max_tokens",
+      "inputTokens": 1912,
+      "outputTokens": 14000,
+      "thinkingTokens": 14000,
+      "costUsd": 0.143824,
+      "contribution": "No visible deliverable; output allowance consumed by default model thinking."
+    },
+    {
+      "number": 2,
+      "model": "claude-sonnet-5-5",
+      "task": "mcp-build-task.txt",
+      "startedAt": "2026-11-20T23:43:34Z",
+      "stopReason": "max_tokens",
+      "inputTokens": 1911,
+      "outputTokens": 16000,
+      "thinkingTokens": 0,
+      "costUsd": 0.163822,
+      "contribution": "Complete MCP server recovered from a response with a truncated second file; integrated after independent review and testing."
+    },
+    {
+      "number": 3,
+      "model": "claude-sonnet-5-5",
+      "task": "release-review-task.txt",
+      "startedAt": "2026-11-20T23:51:58Z",
+      "stopReason": "end_turn",
+      "inputTokens": 36998,
+      "outputTokens": 2739,
+      "thinkingTokens": 0,
+      "costUsd": 0.101386,
+      "contribution": "Independent implementation review; concrete findings fixed and unsupported claims rejected after code inspection."
+    },
+    {
+      "number": 4,
+      "model": "claude-sonnet-5-5",
+      "task": "claude-role-loader-task.md",
+      "startedAt": "2026-11-21T00:25:01Z",
+      "stopReason": "end_turn",
+      "inputTokens": 913,
+      "outputTokens": 6816,
+      "thinkingTokens": 0,
+      "costUsd": 0.069986,
+      "contribution": "Complete bounded role-reference loader and tests returned; reviewed, integrated and executed locally (14 loader assertions)."
+    },
+    {
+      "number": 5,
+      "model": "claude-sonnet-5-5",
+      "task": "production-native-worker",
+      "state": "blocked-review-reservation-retained",
+      "inputTokens": null,
+      "outputTokens": null,
+      "costUsd": null,
+      "retainedReservationUsd": 0.15,
+      "contribution": "Automatic approval review blocked the private live validation. No provider response was observed; reservation retained."
+    },
+    {
+      "number": 6,
+      "model": "claude-sonnet-5-5",
+      "task": "synthetic-public-provider-adapter",
+      "state": "completed",
+      "inputTokens": 65,
+      "outputTokens": 17,
+      "costUsd": 0.0003,
+      "retainedReservationUsd": 0,
+      "contribution": "Synthetic public adapter fixture passed with observed usage."
+    }
+  ],
+  "observedUsd": 0.479318,
+  "retainedReservationUsd": 0.15
+}

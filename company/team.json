@@ -1,0 +1,65 @@
+[
+  {
+    "id": "director",
+    "name": "Director",
+    "role": "Technical Program Manager",
+    "rolePath": "roles/technical-program-manager/README.md",
+    "skillPath": "skills/agent-research-director/SKILL.md",
+    "status": "ready",
+    "lastResult": null
+  },
+  {
+    "id": "github",
+    "name": "GitHub employee",
+    "role": "Platform Engineer",
+    "rolePath": "roles/platform-engineer/README.md",
+    "skillPath": "skills/engineering-organization-architect/SKILL.md",
+    "status": "ready",
+    "lastResult": null
+  },
+  {
+    "id": "design",
+    "name": "Product & interface",
+    "role": "Frontend Engineer",
+    "rolePath": "roles/frontend-engineer/README.md",
+    "skillPath": "skills/engineering-organization-architect/SKILL.md",
+    "status": "ready",
+    "lastResult": null
+  },
+  {
+    "id": "rust",
+    "name": "Native systems",
+    "role": "Software Solutions Architect",
+    "rolePath": "roles/software-solutions-architect/README.md",
+    "skillPath": "skills/local-model-runtime-engineering/SKILL.md",
+    "status": "ready",
+    "lastResult": null
+  },
+  {
+    "id": "release",
+    "name": "Build & release",
+    "role": "Devops Ci Cd Engineer",
+    "rolePath": "roles/devops-ci-cd-engineer/README.md",
+    "skillPath": "skills/agent-research-director/SKILL.md",
+    "status": "ready",
+    "lastResult": null
+  },
+  {
+    "id": "review",
+    "name": "Independent review",
+    "role": "Application Product Security Engineer",
+    "rolePath": "roles/application-product-security-engineer/README.md",
+    "skillPath": "skills/defensive-reverse-engineering/SKILL.md",
+    "status": "ready",
+    "lastResult": null
+  },
+  {
+    "id": "science",
+    "name": "Scientific research",
+    "role": "Physics Researcher",
+    "rolePath": "scientific-research-library/agents/physics-researcher.md",
+    "skillPath": "skills/physics-research/SKILL.md",
+    "status": "ready",
+    "lastResult": null
+  }
+]

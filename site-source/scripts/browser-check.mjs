@@ -34,7 +34,7 @@ function note(ok, label, detail = "") {
 }
 
 const browser = await chromium.launch({
-  executablePath: "/usr/bin/chromium",
+  executablePath: process.env.CHROMIUM_PATH || (fs.existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined),
   args: ["--no-sandbox"],
 });
 

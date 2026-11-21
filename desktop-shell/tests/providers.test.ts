@@ -91,11 +91,12 @@ describe('generateWithProvider (AI SDK, injected fake)', () => {
     expect(calls[0]?.system).toBe('sys');
   });
 
-  it('treats missing usage fields as zero, honestly', async () => {
+  it('flags missing usage as unobserved so callers retain their reservation', async () => {
     const { sdk } = makeSdk(async () => ({ text: 'x', usage: {} }));
     const result = await generateWithProvider('anthropic', KEY, { model: 'claude', prompt: 'p', maxOutputTokens: 10 }, sdk);
     expect(result.inputTokens).toBe(0);
     expect(result.outputTokens).toBe(0);
+    expect(result.usageObserved).toBe(false);
   });
 
   it('sanitizes provider errors so keys never leak', async () => {

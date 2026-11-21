@@ -164,16 +164,16 @@ describe('squad run engine', () => {
     expect(everything).not.toContain('apiKey');
   });
 
-  it('terminates on the run max-tokens budget and preserves partial artifacts', async () => {
+  it('refuses dispatch when the run token budget cannot contain the input', async () => {
     const project = makeProject(store);
     const runner = new ProjectRunner(store, simpleGenerate);
     // 30 tokens used by node-1 (10+20); run cap of 25 terminates right after.
     const run = await startAndWait(runner, project.id, { maxTokens: 25, maxMinutes: 30, maxUsd: 10 });
     expect(run.status).toBe('terminated');
     expect(run.terminationReason).toBe('max-tokens');
-    expect(run.nodeStates['node-1']?.status).toBe('succeeded');
+    expect(run.nodeStates['node-1']?.status).toBe('pending');
     expect(run.nodeStates['node-2']?.status).toBe('pending');
-    expect(store.readArtifact(project.id, run.id, 'node-1')).not.toBeNull(); // partial artifact preserved
+    expect(store.readArtifact(project.id, run.id, 'node-1')).toBeNull(); // no billed call was made
   });
 
   it('terminates on the run max-minutes budget (wall clock)', async () => {
@@ -219,14 +219,35 @@ describe('squad run engine', () => {
     expect(run.nodeStates['node-1']?.status).toBe('failed');
     expect(run.nodeStates['node-1']?.error).toMatch(/max-tokens/);
     expect(run.nodeStates['node-2']?.status).toBe('skipped');
-    // The artifact still exists even though the node blew its budget.
+    // No provider dispatch is allowed when the input alone cannot fit.
+    expect(store.readArtifact(project.id, run.id, 'node-1')).toBeNull();
+  });
+
+  it('rejects unknown cloud prices before creating a run', () => {
+    const project = makeProject(store);
+    const runner = new ProjectRunner(store, simpleGenerate);
+    const result = runner.start(project.id, { maxTokens: 10000, maxMinutes: 10, maxUsd: 1 }, { inputUsdPerMillion: 0, outputUsdPerMillion: 0 });
+    expect(result.ok).toBe(false);
+    expect(result.error).toMatch(/prices/);
+    expect(store.listRuns(project.id)).toHaveLength(0);
+  });
+
+  it('preserves evidence if a provider violates the reserved token limit', async () => {
+    const project = store.createProject({ name: 'contract check', goal: 'Review a short brief', provider: 'openai', model: 'test', nodes: [
+      { role: 'research', title: 'R', instructions: 'Review', dependsOn: [], budget: { maxTokens: 2000, maxMinutes: 5, maxUsd: 1 } },
+      { role: 'review', title: 'V', instructions: 'Verify', dependsOn: [0] },
+    ] });
+    const runner = new ProjectRunner(store, async () => ({ text: 'Preserve this partial evidence.', inputTokens: 100, outputTokens: 3000 }));
+    const run = await startAndWait(runner, project.id);
+    expect(run.nodeStates['node-1']?.status).toBe('failed');
+    expect(run.nodeStates['node-2']?.status).toBe('skipped');
     expect(store.readArtifact(project.id, run.id, 'node-1')).not.toBeNull();
   });
 
   it('pauses and resumes between nodes', async () => {
     const project = makeProject(store);
     const runner = new ProjectRunner(store, simpleGenerate);
-    const res = runner.start(project.id, { maxTokens: 100000, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 0, outputUsdPerMillion: 0 });
+    const res = runner.start(project.id, { maxTokens: 100000, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 1, outputUsdPerMillion: 2 });
     expect(res.ok).toBe(true);
     const runId = res.runId as string;
 
@@ -256,7 +277,7 @@ describe('squad run engine', () => {
       });
     };
     const runner = new ProjectRunner(store, hangingAfterFirst);
-    const res = runner.start(project.id, { maxTokens: 100000, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 0, outputUsdPerMillion: 0 });
+    const res = runner.start(project.id, { maxTokens: 100000, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 1, outputUsdPerMillion: 2 });
     const runId = res.runId as string;
     await waitFor(() => store.listRuns(project.id)[0]?.nodeStates['node-2']?.status === 'running');
     expect(runner.cancel(runId).ok).toBe(true);
@@ -273,9 +294,9 @@ describe('squad run engine', () => {
     const hanging: GenerateFn = (req) =>
       new Promise((_r, reject) => req.abortSignal.addEventListener('abort', () => reject(new Error('x'))));
     const runner = new ProjectRunner(store, hanging);
-    const first = runner.start(project.id, { maxTokens: 100, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 0, outputUsdPerMillion: 0 });
+    const first = runner.start(project.id, { maxTokens: 100000, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 1, outputUsdPerMillion: 2 });
     expect(first.ok).toBe(true);
-    const second = runner.start(project.id, { maxTokens: 100, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 0, outputUsdPerMillion: 0 });
+    const second = runner.start(project.id, { maxTokens: 100000, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 1, outputUsdPerMillion: 2 });
     expect(second.ok).toBe(false);
     expect(second.error).toMatch(/active run/);
     runner.cancel(first.runId as string);
@@ -299,7 +320,7 @@ describe('squad run engine', () => {
     const hanging: GenerateFn = (req) =>
       new Promise((_r, reject) => req.abortSignal.addEventListener('abort', () => reject(new Error('x'))));
     const runner1 = new ProjectRunner(store, hanging);
-    const res = runner1.start(project.id, { maxTokens: 100, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 0, outputUsdPerMillion: 0 });
+    const res = runner1.start(project.id, { maxTokens: 100000, maxMinutes: 30, maxUsd: 10 }, { inputUsdPerMillion: 1, outputUsdPerMillion: 2 });
     await waitFor(() => store.listRuns(project.id)[0]?.nodeStates['node-1']?.status === 'running');
     // Simulate process death: new runner over the same store.
     const runner2 = new ProjectRunner(store, hanging);

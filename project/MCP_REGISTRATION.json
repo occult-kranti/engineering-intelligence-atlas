@@ -1,0 +1,269 @@
+{
+  "registered": true,
+  "company": {
+    "defaultBranch": "main",
+    "description": "Research Director, engineering/science resource atlas, agent skill library, desktop and Android shells, and verified research workbooks.",
+    "githubError": null,
+    "githubStatus": "verified",
+    "headSha": "c3a23a945af702ec8c75e823c37a88296a91ba43",
+    "id": "engineering-intelligence-atlas",
+    "lastCheckedAt": "2026-11-20T23:53:11.324Z",
+    "name": "Engineering Intelligence Atlas",
+    "openIssues": 0,
+    "owner": "occult-kranti",
+    "pushedAt": "2026-11-20T16:55:59Z",
+    "registeredAt": "2026-11-20T23:53:11.324Z",
+    "repo": "engineering-intelligence-atlas",
+    "repoUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+    "stars": 0
+  },
+  "snapshot": {
+    "activity": [
+      {
+        "at": "2026-11-20T23:53:11.332693726Z",
+        "employeeId": "github",
+        "id": "event-40-1795218791332694076",
+        "kind": "company-registered",
+        "message": "Verified public GitHub repository occult-kranti/engineering-intelligence-atlas; default branch main"
+      }
+    ],
+    "company": {
+      "defaultBranch": "main",
+      "description": "Research Director, engineering/science resource atlas, agent skill library, desktop and Android shells, and verified research workbooks.",
+      "githubError": null,
+      "githubStatus": "verified",
+      "headSha": "c3a23a945af702ec8c75e823c37a88296a91ba43",
+      "id": "engineering-intelligence-atlas",
+      "lastCheckedAt": "2026-11-20T23:53:11.324Z",
+      "name": "Engineering Intelligence Atlas",
+      "openIssues": 0,
+      "owner": "occult-kranti",
+      "pushedAt": "2026-11-20T16:55:59Z",
+      "registeredAt": "2026-11-20T23:53:11.324Z",
+      "repo": "engineering-intelligence-atlas",
+      "repoUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+      "stars": 0
+    },
+    "employees": [
+      {
+        "id": "director",
+        "lastResult": null,
+        "name": "Director",
+        "role": "Technical Program Manager",
+        "rolePath": "roles/technical-program-manager/README.md",
+        "skillPath": "skills/agent-research-director/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "github",
+        "lastResult": "Verified public GitHub repository occult-kranti/engineering-intelligence-atlas; default branch main",
+        "name": "GitHub employee",
+        "role": "Platform Engineer",
+        "rolePath": "roles/platform-engineer/README.md",
+        "skillPath": "skills/engineering-organization-architect/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "design",
+        "lastResult": null,
+        "name": "Product & interface",
+        "role": "Frontend Engineer",
+        "rolePath": "roles/frontend-engineer/README.md",
+        "skillPath": "skills/engineering-organization-architect/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "rust",
+        "lastResult": null,
+        "name": "Native systems",
+        "role": "Software Solutions Architect",
+        "rolePath": "roles/software-solutions-architect/README.md",
+        "skillPath": "skills/local-model-runtime-engineering/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "release",
+        "lastResult": null,
+        "name": "Build & release",
+        "role": "Devops Ci Cd Engineer",
+        "rolePath": "roles/devops-ci-cd-engineer/README.md",
+        "skillPath": "skills/agent-research-director/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "review",
+        "lastResult": null,
+        "name": "Independent review",
+        "role": "Application Product Security Engineer",
+        "rolePath": "roles/application-product-security-engineer/README.md",
+        "skillPath": "skills/defensive-reverse-engineering/SKILL.md",
+        "status": "ready"
+      },
+      {
+        "id": "science",
+        "lastResult": null,
+        "name": "Scientific research",
+        "role": "Physics Researcher",
+        "rolePath": "scientific-research-library/agents/physics-researcher.md",
+        "skillPath": "skills/physics-research/SKILL.md",
+        "status": "ready"
+      }
+    ],
+    "index": null,
+    "milestones": [
+      {
+        "description": "Register the company and make public, offline and clean-clone builds reproducible.",
+        "id": "foundation",
+        "title": "01 / Reliable foundation"
+      },
+      {
+        "description": "Ship the redesigned desktop, Rust company core, team, roadmap and usage views.",
+        "id": "workspace",
+        "title": "02 / Company workspace"
+      },
+      {
+        "description": "Independent tests, versioned build artifacts, current documentation and deployment checks.",
+        "id": "release",
+        "title": "03 / Verified distribution"
+      },
+      {
+        "description": "Restart recovery, provider lifecycle, native shell evaluation and signed cross-platform releases.",
+        "id": "next",
+        "title": "04 / Durable orchestration"
+      }
+    ],
+    "schemaVersion": 1,
+    "tasks": [
+      {
+        "evidence": "https://github.com/occult-kranti/engineering-intelligence-atlas at 2026-11-20T23:53:11.324Z",
+        "id": "github-register",
+        "milestone": "foundation",
+        "ownerId": "github",
+        "priority": "P0",
+        "status": "done",
+        "title": "Register this repository as the first company",
+        "updatedAt": "2026-11-20T23:53:11.324Z"
+      },
+      {
+        "evidence": null,
+        "id": "pages-assets",
+        "milestone": "foundation",
+        "ownerId": "release",
+        "priority": "P0",
+        "status": "todo",
+        "title": "Repair Pages and offline asset paths",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "clean-build",
+        "milestone": "foundation",
+        "ownerId": "release",
+        "priority": "P0",
+        "status": "todo",
+        "title": "Repair shell sync paths and database migration packaging",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "company-core",
+        "milestone": "workspace",
+        "ownerId": "rust",
+        "priority": "P0",
+        "status": "todo",
+        "title": "Build the Rust company state and bounded repository index",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "desktop-design",
+        "milestone": "workspace",
+        "ownerId": "design",
+        "priority": "P0",
+        "status": "todo",
+        "title": "Rebuild the desktop workspace and navigation",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "mcp-employee",
+        "milestone": "workspace",
+        "ownerId": "github",
+        "priority": "P1",
+        "status": "todo",
+        "title": "Expose company employees through a local MCP server",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "usage-budget",
+        "milestone": "workspace",
+        "ownerId": "director",
+        "priority": "P1",
+        "status": "todo",
+        "title": "Show real run usage and development budget evidence",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "release-tests",
+        "milestone": "release",
+        "ownerId": "review",
+        "priority": "P0",
+        "status": "todo",
+        "title": "Verify current builds and publish reproducible artifacts",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "runtime-deploy",
+        "milestone": "next",
+        "ownerId": "release",
+        "priority": "P1",
+        "status": "todo",
+        "title": "Document and validate a supported authenticated hosted runtime",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "android-device",
+        "milestone": "next",
+        "ownerId": "review",
+        "priority": "P1",
+        "status": "todo",
+        "title": "Run Android release checks on an emulator and physical device",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "restart-recovery",
+        "milestone": "next",
+        "ownerId": "rust",
+        "priority": "P1",
+        "status": "todo",
+        "title": "Add durable run recovery and idempotent provider call records",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "tauri-evaluation",
+        "milestone": "next",
+        "ownerId": "rust",
+        "priority": "P2",
+        "status": "todo",
+        "title": "Benchmark a Tauri shell against Electron before replacing it",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      },
+      {
+        "evidence": null,
+        "id": "signed-packages",
+        "milestone": "next",
+        "ownerId": "release",
+        "priority": "P2",
+        "status": "todo",
+        "title": "Sign and validate Windows, macOS and Android distributions",
+        "updatedAt": "2026-11-20T00:00:00Z"
+      }
+    ]
+  }
+}

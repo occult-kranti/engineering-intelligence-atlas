@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "research-knowledge",
+  "taskId": "demo-research-knowledge-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Answer a scoped question with traceable sources, reproducible transformations and explicit uncertainty.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Every substantive claim resolves to its evidence or is explicitly inferred.",
+    "Records, recordings, editions and people keep their distinct units.",
+    "Negative/null findings and failed acquisition remain visible; a secondary citation is not a source actually read."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Answer this question using the supplied sources and any explicitly permitted lookups. Preserve provenance and counterevidence; return findings, limits and the smallest useful next investigation."
+}

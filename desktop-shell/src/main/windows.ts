@@ -65,10 +65,10 @@ export function createShellWindow(): BrowserWindow {
   const win = new BrowserWindow({
     width: 1280,
     height: 840,
-    minWidth: 900,
+    minWidth: 760,
     minHeight: 600,
     title: 'Research Director Desktop',
-    backgroundColor: '#0f1420',
+    backgroundColor: '#f6f7f4',
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload', 'index.js'),
       contextIsolation: true,

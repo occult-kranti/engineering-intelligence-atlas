@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "intent": "Make a research workspace legible through repeated bays and a clear central reading area.",
+  "influences": [
+    {"tradition": "Roman", "source": "https://colosseo.it/en/area/colosseo/", "adaptation": "Repeated navigation bays and visible circulation; an original interface metaphor."},
+    {"tradition": "Gothic", "source": "https://www.metmuseum.org/essays/gothic-art", "adaptation": "Vertical grouping and light/dark hierarchy; optional decorative framing."},
+    {"tradition": "Indian — selected Hindu temple reference", "source": "https://www.metmuseum.org/essays/hinduism-and-hindu-art", "adaptation": "Layered thresholds and narrative grouping, with region/period specified in a final brief; not a claim about all Indian traditions."},
+    {"tradition": "Egyptian — Temple of Dendur", "source": "https://www.metmuseum.org/essays/temple-of-dendur-architecture-and-ritual", "adaptation": "A deliberate sequence of rooms translated into an information hierarchy."}
+  ],
+  "status": "design-proposal",
+  "performanceClaim": null,
+  "acceptance": ["Task completion remains clear without decoration", "Visible keyboard focus", "Readable contrast", "No essential information encoded only by motif or color"],
+  "assetRights": "References are links; no source images or protected artwork are copied."
+}

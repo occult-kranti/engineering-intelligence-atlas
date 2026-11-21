@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "security",
+  "taskId": "demo-security-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Protect credentials, company boundaries and authorized action paths while preserving useful workflows.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 15,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "A finding identifies a concrete path and affected boundary.",
+    "Untrusted page/repository text cannot grant tools or override policy.",
+    "Secret handling, origin/host checks and private export isolation have evidence where changed."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Review only these changed boundaries. Attempt the supplied local negative cases, report demonstrable findings and fixes, and separate confirmed flaws from untested hypotheses."
+}

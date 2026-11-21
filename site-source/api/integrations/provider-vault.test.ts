@@ -30,13 +30,14 @@ const { users, integrationRecords } = await import("@db/schema");
 const { createRecord } = await import("./store");
 type User = typeof users.$inferSelect;
 
-const DB_OK = !!process.env.DATABASE_URL;
+const DB_OK = process.env.RUN_DATABASE_TESTS === "1";
 const stamp = Date.now().toString(36);
 const VAULT_KEY = `sk-vault-canary-${stamp}`;
 let owner: User;
 
 describe.skipIf(!DB_OK)("provider adapter vault use", () => {
   beforeAll(async () => {
+    expect(process.env.DATABASE_URL, "RUN_DATABASE_TESTS requires an isolated DATABASE_URL").toBeTruthy();
     const db = getDb();
     const unionId = `test-provault-${stamp}`;
     await db.delete(users).where(eq(users.unionId, unionId));
