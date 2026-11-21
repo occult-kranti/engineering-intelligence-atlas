@@ -7,7 +7,7 @@ export type { SceneThread } from './threads.js';
 export type { LRect } from './layout.js';
 
 type RO<T> = { readonly [K in keyof T]: T[K] };
-interface SCompany { id: string; name: string; status: string; repoUrl?: string | null }
+interface SCompany { id: string; name: string; status: string; repoUrl?: string | null; parentCompanyId?: string | null }
 interface SOffice { id: string; companyId: string; name: string; status: string }
 interface SDepartment { id: string; companyId: string; officeId: string; name: string; status: string }
 interface SEmployee { id: string; companyId: string | null; officeId: string | null; departmentId: string | null; name: string; role: string; kind: string; status: string }
@@ -99,6 +99,54 @@ function empty(focus: FreeflowFocus, title: string, warnings: string[]): Freeflo
   return { title, breadcrumbs: [{ label: 'Portfolio', focus: { kind: 'portfolio' } }], focus, bounds: unionBounds([]), nodes: [], threads: [], counts: {}, warnings };
 }
 
+interface CompanyForest { parentOf: Map<string, string>; childrenOf: Map<string, string[]>; warnings: string[] }
+
+/** Defensive, bounded projection of explicit parentCompanyId relationships. Never infers from groups/names. */
+function projectForest(companies: readonly RO<SCompany>[]): CompanyForest {
+  const warnings: string[] = [];
+  const ids = new Set(companies.map((c) => c.id));
+  const seen = new Set<string>();
+  const raw = new Map<string, string>();
+  for (const c of companies) {
+    if (seen.has(c.id)) { warnings.push(`Duplicate company id ${c.id}; first record used.`); continue; }
+    seen.add(c.id);
+    const p = c.parentCompanyId;
+    if (p === undefined || p === null || p === '') continue;
+    if (p === c.id) { warnings.push(`Company ${c.id} names itself as parent; treated as root.`); continue; }
+    if (!ids.has(p)) { warnings.push(`Company ${c.id} references missing parent ${p}; treated as root.`); continue; }
+    raw.set(c.id, p);
+  }
+  const limit = ids.size + 1;
+  const cyclic = new Set<string>();
+  for (const start of [...raw.keys()].sort(cmp)) {
+    let cur: string | undefined = start;
+    const path = new Set<string>();
+    let steps = 0;
+    while (cur !== undefined && steps++ <= limit) {
+      if (path.has(cur)) { for (const x of path) cyclic.add(x); break; }
+      path.add(cur);
+      cur = raw.get(cur);
+    }
+  }
+  const parentOf = new Map<string, string>();
+  for (const [k, v] of raw) {
+    if (cyclic.has(k)) continue;
+    parentOf.set(k, v);
+  }
+  for (const k of [...cyclic].sort(cmp)) warnings.push(`Company ${k} is part of a parent cycle; treated as root.`);
+  const childrenOf = new Map<string, string[]>();
+  for (const [k, v] of [...parentOf].sort((a, b) => cmp(a[0], b[0]))) childrenOf.set(v, [...(childrenOf.get(v) ?? []), k]);
+  return { parentOf, childrenOf, warnings };
+}
+
+function ancestorsOf(forest: CompanyForest, id: string, bound: number): string[] {
+  const out: string[] = [];
+  let cur = forest.parentOf.get(id);
+  let n = 0;
+  while (cur !== undefined && n++ < bound && !out.includes(cur) && cur !== id) { out.push(cur); cur = forest.parentOf.get(cur); }
+  return out.reverse();
+}
+
 const officeNodeId = (cid: string, oid: string) => `office:${cid}:${oid}`;
 const roomNodeId = (cid: string, oid: string, rid: string) => `room:${cid}:${oid}:${rid}`;
 const boardNodeId = (cid: string, oid: string, bid: string) => `board:${cid}:${oid}:${bid}`;
@@ -146,6 +194,9 @@ function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs:
     const key = groupOf.get(c.id)?.id ?? '~ungrouped';
     clusters.set(key, [...(clusters.get(key) ?? []), c]);
   }
+  const forest = projectForest(companies);
+  for (const w of forest.warnings) warnings.push(w);
+  const nameById = new Map(companies.map((c) => [c.id, c.name]));
   const keys = [...clusters.keys()].sort(cmp);
   const packed = packClusters(keys.map((k) => clusters.get(k)!.length), FOLIO_W, FOLIO_H, GAP);
   const shared = snap.portfolio?.ceo?.sharedServicesCompanyId ?? null;
@@ -157,12 +208,14 @@ function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs:
       const cj = jobs.filter((j) => j.companyId === c.id);
       const running = cj.filter((j) => j.status === 'running').length;
       const isShared = c.id === shared;
+      const parentId = forest.parentOf.get(c.id) ?? null;
+      const kids = forest.childrenOf.get(c.id) ?? [];
       nodes.push({
-        id: `folio:${c.id}`, kind: 'folio', entityId: c.id, companyId: c.id, parentId: null,
-        label: c.name, subtitle: [isShared ? 'Shared services' : '', c.status === 'paused' ? 'Paused' : ''].filter(Boolean).join(' · '),
+        id: `folio:${c.id}`, kind: 'folio', entityId: c.id, companyId: c.id, parentId: parentId ? `folio:${parentId}` : null,
+        label: c.name, subtitle: [parentId ? `Subcompany of ${nameById.get(parentId) ?? parentId}` : '', isShared ? 'Shared services' : '', c.status === 'paused' ? 'Paused' : ''].filter(Boolean).join(' · '),
         status: c.status, rect: packed.rects[ki]![i]!,
-        metadata: { groupIds: memberships.get(c.id) ?? [], cluster: k === '~ungrouped' ? null : k, sharedServices: isShared },
-        counts: { employees: emps.length, jobs: cj.length, running, queued: cj.filter((j) => j.status === 'queued').length, offices: (snap.offices ?? []).filter((o) => o.companyId === c.id).length },
+        metadata: { groupIds: memberships.get(c.id) ?? [], cluster: k === '~ungrouped' ? null : k, sharedServices: isShared, parentCompanyId: parentId, parentCompanyName: parentId ? (nameById.get(parentId) ?? parentId) : null, childCompanyIds: kids, childCompanyNames: kids.map((x) => nameById.get(x) ?? x) },
+        counts: { employees: emps.length, jobs: cj.length, running, queued: cj.filter((j) => j.status === 'queued').length, offices: (snap.offices ?? []).filter((o) => o.companyId === c.id).length, subcompanies: kids.length },
       });
     });
   });
@@ -437,7 +490,25 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
   }
   for (const p of [...portals.values()].sort((a, b) => cmp(a.id, b.id))) push(p);
 
-  const crumbs: FreeflowScene['breadcrumbs'] = [{ label: 'Portfolio', focus: { kind: 'portfolio' } }, { label: company.name, focus: { kind: 'company', companyId: cid } }];
+  const allCompanies = byId(snap.companies);
+  const forest = projectForest(allCompanies);
+  for (const w of forest.warnings) warnings.push(w);
+  const cname = new Map(allCompanies.map((c) => [c.id, c.name]));
+  const crumbs: FreeflowScene['breadcrumbs'] = [{ label: 'Portfolio', focus: { kind: 'portfolio' } }];
+  for (const aid of ancestorsOf(forest, cid, allCompanies.length)) crumbs.push({ label: cname.get(aid) ?? aid, focus: { kind: 'company', companyId: aid } });
+  crumbs.push({ label: company.name, focus: { kind: 'company', companyId: cid } });
+  // Organizational navigation portals (parent / direct subcompanies). Navigation only; grants nothing.
+  {
+    const parent = forest.parentOf.get(cid);
+    const kids = forest.childrenOf.get(cid) ?? [];
+    const orgIds = [...(parent ? [parent] : []), ...kids];
+    orgIds.forEach((oid2, idx) => {
+      const role = oid2 === parent ? 'parent' : 'child';
+      const id = `portal:${cid}:${role}:${oid2}`;
+      if (nodeIds.has(id)) return;
+      push({ id, kind: 'reference', entityId: oid2, companyId: oid2, parentId: null, label: cname.get(oid2) ?? oid2, subtitle: role === 'parent' ? 'Parent company (organizational link)' : 'Subcompany (organizational link)', status: 'portal', rect: { x: baseX - 240, y: baseY + (portals.size + idx) * 76 + 400, width: 180, height: 56 }, metadata: { portal: true, role, reference: true, organizational: true, homeCompanyId: oid2 }, counts: {} });
+    });
+  }
   if (!isCompany) {
     const o = offices[0];
     if (o) crumbs.push({ label: o.name, focus: { kind: 'office', companyId: cid, officeId: o.id } });
@@ -461,6 +532,7 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
       fallbacks: nodes.filter((n) => n.kind === 'fallback').length, hiredEmployees: employees.length,
       runningJobs: cj.filter((j) => j.status === 'running').length, recordedCostUsd: costed.reduce((a, j) => a + (j.usage?.costUsd ?? 0), 0),
       unknownCostJobs: cj.length - costed.length,
+      subcompanies: (forest.childrenOf.get(cid) ?? []).length,
     },
     warnings,
   };

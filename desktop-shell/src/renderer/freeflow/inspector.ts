@@ -105,7 +105,11 @@ export function rowsForNode(n: SceneNode, scene: FreeflowScene | null = null): A
     if (sub === 'portal') {
       rows.push(['Navigation', 'Points to another company; it is not staff and grants nothing.']);
       const r = str(m['role']);
-      if (r) rows.push(['Direction', r === 'service' ? 'Service provider' : 'Employment home']);
+      if (r === 'parent' || r === 'child') {
+        rows[0] = ['Kind', 'Organizational company link'];
+        rows.push(['Direction', r === 'parent' ? 'Parent company' : 'Direct subcompany']);
+        rows.push(['Authority', 'Organizational relationship only; not legal ownership, staffing or a service contract.']);
+      } else if (r) rows.push(['Direction', r === 'service' ? 'Service provider' : 'Employment home']);
     } else {
       const kind = str(m['employeeKind']);
       if (kind) rows.push(['Employee kind', kind]);
@@ -129,6 +133,13 @@ export function rowsForNode(n: SceneNode, scene: FreeflowScene | null = null): A
   if (n.kind === 'whiteboard' && n.employeeId) rows.push(['Board owner', nameOf(scene, n.employeeId) ?? 'Unresolved owner']);
   if (m['fallback'] === true) rows.push(['Placement', 'Not saved in a room; shown in the fallback area']);
   if (m['sharedServices'] === true) rows.push(['Portfolio role', 'Shared services company']);
+  if (n.kind === 'folio') {
+    const pn = str(m['parentCompanyName']);
+    rows.push(['Organization', pn ? `Subcompany of ${pn} (organizational relationship; not legal ownership)` : 'Root company']);
+    const kn = str(m['childCompanyNames']);
+    if (kn) rows.push(['Direct subcompanies', kn]);
+    rows.push(['Scope', 'Counts below are this company only; descendants are not included.']);
+  }
   const c = n.counts;
   const parts: string[] = [];
   const add = (k: string, one: string, many: string) => { const v = c[k] ?? 0; if (v > 0) parts.push(`${v} ${v === 1 ? one : many}`); };
@@ -166,7 +177,10 @@ export function actionsForNode(n: SceneNode): InspectorActionSpec[] {
     case 'employee': return [a('chat', 'Ask this employee'), a('jobs', 'Linked jobs'), a('new-job', 'Assign job'), a('ownership', 'Ownership'), a('manage', 'Manage employee')];
     case 'reference': {
       const sub = refSubtype(n);
-      if (sub === 'portal') return [a('services', 'Service contracts'), a('manage', 'Open company')];
+      if (sub === 'portal') {
+        if (n.metadata['organizational'] === true) return [a('manage', n.metadata['role'] === 'parent' ? 'Open parent company' : 'Open subcompany')];
+        return [a('services', 'Service contracts'), a('manage', 'Open company')];
+      }
       if (sub === 'global') return [a('chat', 'Ask this assistant'), a('manage', 'Manage identity')];
       if (sub === 'host') {
         if (isHistorical(n)) return [a('services', 'Service contracts')];
@@ -217,6 +231,7 @@ export function overviewRows(scene: FreeflowScene): Array<[string, string]> {
   add('Employees shown', 'employees');
   add('Contracted staff references', 'references');
   add('Service-host layout references', 'serviceHostReferences');
+  add('Direct subcompanies', 'subcompanies');
   add('Running jobs', 'runningJobs');
   add('Relationship lines', 'threads');
   rows.push(['Hint', 'Select a card, room, employee, board or line to inspect it. Selecting alone changes nothing.']);

@@ -112,6 +112,52 @@ describe('freeflow model', () => {
     expect(none.bounds.width).toBeGreaterThan(0);
   });
 
+  it('projects explicit company hierarchy without inferring from groups', () => {
+    const s: FreeflowSnapshot = {
+      companies: [
+        { id: 'x', name: 'X', status: 'active' },
+        { id: 'c', name: 'C', status: 'active', parentCompanyId: 'b' },
+        { id: 'a', name: 'A', status: 'active' },
+        { id: 'b', name: 'B', status: 'active', parentCompanyId: 'a' },
+      ],
+      portfolio: { groups: [{ id: 'g', name: 'G', companyIds: ['a', 'x'] }] },
+    };
+    const p = buildScene(s, { kind: 'portfolio' });
+    const f = (id: string) => p.nodes.find((n) => n.entityId === id)!;
+    expect(f('a').parentId).toBeNull();
+    expect(f('x').parentId).toBeNull();
+    expect(f('b').parentId).toBe('folio:a');
+    expect(f('c').parentId).toBe('folio:b');
+    expect(f('b').subtitle).toContain('Subcompany of A');
+    expect(f('a').counts.subcompanies).toBe(1);
+    expect(p.nodes.map((n) => n.entityId).sort()).toEqual(['a', 'b', 'c', 'x']);
+    const shuffled = buildScene({ ...s, companies: [...s.companies!].reverse() }, { kind: 'portfolio' });
+    expect(JSON.stringify(shuffled)).toBe(JSON.stringify(p));
+    const cs = buildScene(s, { kind: 'company', companyId: 'c' });
+    expect(cs.breadcrumbs.map((b) => b.label)).toEqual(['Portfolio', 'A', 'B', 'C']);
+    expect(cs.nodes.some((n) => n.id === 'portal:c:parent:b' && n.entityId === 'b')).toBe(true);
+    expect(cs.threads.length).toBe(0);
+    const old = buildScene({ companies: [{ id: 'q', name: 'Q', status: 'active' }] }, { kind: 'portfolio' });
+    expect(old.nodes[0]!.parentId).toBeNull();
+  });
+
+  it('terminates safely on self, dangling, and cyclic parents', () => {
+    const s: FreeflowSnapshot = {
+      companies: [
+        { id: 's', name: 'S', status: 'active', parentCompanyId: 's' },
+        { id: 'd', name: 'D', status: 'active', parentCompanyId: 'ghost' },
+        { id: 'p', name: 'P', status: 'active', parentCompanyId: 'q' },
+        { id: 'q', name: 'Q', status: 'active', parentCompanyId: 'p' },
+      ],
+    };
+    const p = buildScene(s, { kind: 'portfolio' });
+    expect(p.nodes).toHaveLength(4);
+    expect(p.nodes.every((n) => n.parentId === null)).toBe(true);
+    expect(p.warnings.length).toBeGreaterThanOrEqual(4);
+    const c = buildScene(s, { kind: 'company', companyId: 'p' });
+    expect(c.breadcrumbs.map((b) => b.label)).toEqual(['Portfolio', 'P']);
+  });
+
   it('department focus lists only that department', () => {
     const sc = buildScene(fixture(), { kind: 'department', companyId: 'c-b', officeId: 'o-b', departmentId: 'd-b' });
     expect(sc.nodes.some((n) => n.entityId === 'd-b2')).toBe(false);
