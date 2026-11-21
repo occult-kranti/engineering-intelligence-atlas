@@ -69,6 +69,28 @@ async function join(t, who, company, role) {
 }
 async function boot() { const t = setup(); await t.call('/api/collaboration/session', owner); return t; }
 
+// Deterministic race helpers: freeze the clock and hold the first two matching reads until both have captured their row.
+function freezeClock() {
+  const RealDate = globalThis.Date; const clock = RealDate.now();
+  globalThis.Date = class extends RealDate { constructor(...a) { super(...(a.length ? a : [clock])); } static now() { return clock; } };
+  return () => { globalThis.Date = RealDate; };
+}
+function readBarrier(t, match) {
+  const realPrepare = t.DB.prepare.bind(t.DB);
+  const state = { seen: 0 }; let release; const both = new Promise((r) => { release = r; });
+  t.DB.prepare = (sql) => {
+    const stmt = realPrepare(sql);
+    if (match(sql)) {
+      const first = stmt.first.bind(stmt);
+      stmt.first = async () => { const row = await first(); state.seen++; if (state.seen === 2) release(); if (state.seen <= 2) await both; return row; };
+    }
+    return stmt;
+  };
+  return { state, restore: () => { t.DB.prepare = realPrepare; } };
+}
+const MEMBERSHIP_READ = "SELECT * FROM daftar_company_memberships WHERE workspace_id='owner' AND company_id=? AND user_id=?";
+const PROPOSAL_READ = 'SELECT * FROM daftar_task_proposals WHERE id=?';
+
 test('absent subject, wrong origin, legacy path, spoofed actor', async () => {
   const t = await boot();
   assert.equal((await t.call('/api/collaboration/session', null)).status, 401);
@@ -180,34 +202,42 @@ test('membership revoked between precheck and accept batch: no accept event, sta
   t.restore();
 });
 
-test('same-clock concurrent acceptance of two pending invites for existing member: one winner, one ACL increment', async () => {
+test('same-clock concurrent acceptance of two pending invites for existing member: one winner, one ACL increment', { timeout: 20000 }, async () => {
   const t = await boot();
   await join(t, alice, 'c1', 'viewer');
   const t1 = await invite(t, 'c1', 'contributor', alice.email), t2 = await invite(t, 'c1', 'contributor', alice.email);
   const rev0 = t.DB.raw.prepare('SELECT acl_revision r FROM daftar_company_memberships').get().r;
   const before = events(t, 'invitation.accept');
-  const [a, b] = await Promise.all([
-    t.call('/api/collaboration/invitations/accept', alice, 'POST', { token: t1 }),
-    t.call('/api/collaboration/invitations/accept', alice, 'POST', { token: t2 }),
-  ]);
-  assert.deepEqual([a.status, b.status].sort(), [201, 409]);
-  assert.equal(events(t, 'invitation.accept'), before + 1);
-  assert.equal(t.DB.raw.prepare('SELECT acl_revision r FROM daftar_company_memberships').get().r, rev0 + 1);
-  assert.equal(t.DB.raw.prepare("SELECT COUNT(*) n FROM daftar_invitations WHERE status='accepted' AND accepted_by_user_id=?").get(uid(t, alice)).n, 2);
-  assert.equal(t.DB.raw.prepare("SELECT COUNT(*) n FROM daftar_invitations WHERE status='pending'").get().n, 1);
-  t.restore();
+  const resetClock = freezeClock();
+  const barrier = readBarrier(t, (sql) => sql === MEMBERSHIP_READ);
+  try {
+    const [a, b] = await Promise.all([
+      t.call('/api/collaboration/invitations/accept', alice, 'POST', { token: t1 }),
+      t.call('/api/collaboration/invitations/accept', alice, 'POST', { token: t2 }),
+    ]);
+    assert.equal(barrier.state.seen, 2);
+    assert.deepEqual([a.status, b.status].sort(), [201, 409]);
+    assert.equal(events(t, 'invitation.accept'), before + 1);
+    assert.equal(t.DB.raw.prepare('SELECT acl_revision r FROM daftar_company_memberships').get().r, rev0 + 1);
+    assert.equal(t.DB.raw.prepare("SELECT COUNT(*) n FROM daftar_invitations WHERE status='accepted' AND accepted_by_user_id=?").get(uid(t, alice)).n, 2);
+    assert.equal(t.DB.raw.prepare("SELECT COUNT(*) n FROM daftar_invitations WHERE status='pending'").get().n, 1);
+  } finally { barrier.restore(); resetClock(); t.restore(); }
 });
 
-test('concurrent same-key proposal submission: one row, one event, one replay', async () => {
+test('concurrent same-key proposal submission: one row, one event, one replay', { timeout: 20000 }, async () => {
   const t = await boot();
   await join(t, alice, 'c1', 'contributor');
-  const send = () => t.call('/api/collaboration/companies/c1/proposals', alice, 'POST', { brief: 'Same brief', idempotencyKey: 'dup' });
-  const [a, b] = await Promise.all([send(), send()]);
-  assert.deepEqual([a.status, b.status].sort(), [200, 201]);
-  assert.equal([a, b].filter((x) => x.body.replay === true).length, 1);
-  assert.equal(t.DB.raw.prepare('SELECT COUNT(*) n FROM daftar_task_proposals').get().n, 1);
-  assert.equal(events(t, 'proposal.create'), 1);
-  t.restore();
+  const resetClock = freezeClock();
+  const barrier = readBarrier(t, (sql) => sql === PROPOSAL_READ);
+  try {
+    const send = () => t.call('/api/collaboration/companies/c1/proposals', alice, 'POST', { brief: 'Same brief', idempotencyKey: 'dup' });
+    const [a, b] = await Promise.all([send(), send()]);
+    assert.equal(barrier.state.seen >= 2, true);
+    assert.deepEqual([a.status, b.status].sort(), [200, 201]);
+    assert.equal([a, b].filter((x) => x.body.replay === true).length, 1);
+    assert.equal(t.DB.raw.prepare('SELECT COUNT(*) n FROM daftar_task_proposals').get().n, 1);
+    assert.equal(events(t, 'proposal.create'), 1);
+  } finally { barrier.restore(); resetClock(); t.restore(); }
 });
 
 test('repeated membership revoke and concurrent reject add no extra success events', async () => {
@@ -220,11 +250,15 @@ test('repeated membership revoke and concurrent reject add no extra success even
   assert.equal(events(t, 'membership.revoke'), 1);
   await join(t, bob, 'c1', 'contributor');
   const pid = await proposal(t, bob, 'rj');
-  const rej = () => t.call('/api/collaboration/proposals/' + pid + '/decision', owner, 'POST', { decision: 'reject' });
-  const [x, y] = await Promise.all([rej(), rej()]);
-  assert.deepEqual([x.status, y.status].sort(), [200, 409]);
-  assert.equal(events(t, 'proposal.reject'), 1);
-  t.restore();
+  const resetClock = freezeClock();
+  const barrier = readBarrier(t, (sql) => sql === PROPOSAL_READ);
+  try {
+    const rej = () => t.call('/api/collaboration/proposals/' + pid + '/decision', owner, 'POST', { decision: 'reject' });
+    const [x, y] = await Promise.all([rej(), rej()]);
+    assert.equal(barrier.state.seen >= 2, true);
+    assert.deepEqual([x.status, y.status].sort(), [200, 409]);
+    assert.equal(events(t, 'proposal.reject'), 1);
+  } finally { barrier.restore(); resetClock(); t.restore(); }
 });
 
 test('legacy owner-only API denies genuine members; owner remains valid', async () => {
