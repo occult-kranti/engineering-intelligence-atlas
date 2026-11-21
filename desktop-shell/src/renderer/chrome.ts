@@ -3645,7 +3645,7 @@ function initEndlessWorkspace(): void {
   const add=(id:string,title:string,element:HTMLElement,group='Workspace',width=900,height=660)=>{
     const index=panels.length;panels.push({id,title,element,group,rect:{x:-1000+(index%4)*1040,y:1100+Math.floor(index/4)*800,width,height},minWidth:320,minHeight:220});
   };
-  add('donna','Donna · conversation',donna,'Donna',680,720);
+  add('donna','Donna · conversation',donna,'Donna',680,400);
   add('crew','Donna & sub-Donnas',crew,'Donna',800,720);
   add('policy','Budget & autonomy',$('workspace-policy'),'Donna',880,680);
   add('scope','Company & department',scope,'Office',760,510);

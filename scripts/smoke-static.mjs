@@ -328,6 +328,7 @@ try {
     screenshots.push({file:filename,surface:'workspace',route:'first-brief',width:viewport.width,presentation});
     assert(layout.scroll.x===0&&layout.scroll.y===0&&!layout.overflowX,`No scroll or horizontal overflow expected at ${presentation}/${viewport.width}: ${JSON.stringify({scroll:layout.scroll,overflowX:layout.overflowX})}`);
     assert(box&&box.y>=0&&box.y+box.height<=viewport.height,`Donna composer must fit first laptop viewport ${viewport.width}: ${JSON.stringify(box)}`);
+    assert(box&&box.width>=24&&box.height>=24,`Donna send target must remain at least 24px in each screen dimension at ${presentation}/${viewport.width}: ${JSON.stringify(box)}`);
     checked++;
     await context.close();
   }
