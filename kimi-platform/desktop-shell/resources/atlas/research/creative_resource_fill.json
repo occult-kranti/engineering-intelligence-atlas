@@ -1,0 +1,1408 @@
+{
+ "schema_version": "1.0",
+ "artifact": "creative_resource_fill.json",
+ "generated": "2026-11-21",
+ "purpose": "Additive creative integration: civilization art/design research and music theory/audio production resources and role edges from the five creative agent charters + two packaged skills. No standing roles added; no gaps closed; no evaluation tasks added (lab acceptance tests, not a scored ET battery); all 109 depth scores invariant.",
+ "inputs": {
+  "creative_role_resources.json": "1e98aaa3e11b05bc2593c62ef0d8ee2dbc3708796de51c856a303fb9e4b2a884"
+ },
+ "conventions": {
+  "resource_ids": "cr-NNN stable, sorted by (source_pack, url)",
+  "link_ids": "creative edges appended as RL-1684+ by the matrix builder; RL-0001..RL-1683 byte-stable",
+  "task_ids": "no creative evaluation tasks; future ones append at the next available ET-{idx}-N suffix",
+  "url_less_references": "charter resources without canonical URLs stay charter references (charter_references_not_cataloged)",
+  "depth_invariance": "counted edges only where tier attainment is already capped; everything else internal/conditional; all 109 depth scores asserted unchanged"
+ },
+ "summary": {
+  "new_resources": 19,
+  "new_resources_civilization": 7,
+  "new_resources_music": 12,
+  "new_edges": 73,
+  "edges_on_new_resources": 73,
+  "edges_on_existing_resources": 0,
+  "role_evaluation_tasks_added": 0,
+  "charter_references_not_cataloged": 37,
+  "flag_mix": {
+   "core": 15,
+   "internal": 30,
+   "conditional": 28
+  }
+ },
+ "agent_contexts": [
+  "civilization-art-research-director",
+  "geometric-pattern-symmetry-specialist",
+  "music-theory-research-director",
+  "audio-dsp-production-engineer",
+  "creative-rights-reproducibility-editor"
+ ],
+ "resources": [
+  {
+   "name": "Seymour et al. 2023 (Sci Adv eadd1602); Jackson et al. 2017 (Am Min)",
+   "domain": "Pigment & material science",
+   "type": "Paper (Science Advances 2023)",
+   "url": "https://doi.org/10.1126/sciadv.add1602",
+   "level": "Core",
+   "prerequisite": "",
+   "access": "Free (open access)",
+   "license": "CC BY",
+   "purpose": "Seymour et al. 2023 pigment/material evidence for dynastic-Egypt color practice (with Jackson et al. 2017)",
+   "caveat": "Anchored material evidence; not a style claim.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "civilization-art-design-research",
+   "id": "cr-001"
+  },
+  {
+   "name": "Lu & Steinhardt 2007 + Makovicky comment/reply + Cromwell 2015 bias critique",
+   "domain": "Pattern symmetry",
+   "type": "Paper (Science 2007)",
+   "url": "https://doi.org/10.1126/science.1135491",
+   "level": "Core/advanced",
+   "prerequisite": "",
+   "access": "Paid (publisher)",
+   "license": "Publisher terms",
+   "purpose": "Lu & Steinhardt girih quasiperiodicity claim, read with the Makovicky 2007 and Cromwell 2015 counterweights attached",
+   "caveat": "Quasiperiodicity claims ship with both critiques; never as settled.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "civilization-art-design-research",
+   "id": "cr-002"
+  },
+  {
+   "name": "Kaplan & Salesin 2004 (ACM ToG) polygons-in-contact",
+   "domain": "Pattern construction",
+   "type": "Paper (ACM ToG 2004)",
+   "url": "https://doi.org/10.1145/990002.990003",
+   "level": "Core",
+   "prerequisite": "",
+   "access": "Paid (ACM Digital Library)",
+   "license": "Publisher terms",
+   "purpose": "Kaplan & Salesin polygons-in-contact construction for Islamic star patterns (modern method, credited)",
+   "caveat": "Modern construction method; label lab outputs as modern exercises.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "civilization-art-design-research",
+   "id": "cr-003"
+  },
+  {
+   "name": "IIIF Image/Presentation APIs",
+   "domain": "Cultural-heritage APIs",
+   "type": "Specification repository",
+   "url": "https://github.com/IIIF/api",
+   "level": "Core/advanced",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "IIIF specification terms",
+   "purpose": "IIIF Image/Presentation APIs for interoperable museum image delivery and citation",
+   "caveat": "Conditional: adopt only when serving digitized collections.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "civilization-art-design-research",
+   "id": "cr-004"
+  },
+  {
+   "name": "isohedral/tactile (BSD-3-Clause) — 93 IH types",
+   "domain": "Tiling computation",
+   "type": "Library (C++)",
+   "url": "https://github.com/isohedral/tactile",
+   "level": "Foundational",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "BSD-3-Clause",
+   "purpose": "isohedral/tactile: 93 isohedral tiling (IH) types for modern symmetry-classification labs",
+   "caveat": "Modern scholarship/tooling — never retroject IH notation onto historical makers.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "civilization-art-design-research",
+   "id": "cr-005"
+  },
+  {
+   "name": "Met Open Access (CC0) — object-record citation practice",
+   "domain": "Museum open data",
+   "type": "Data repository",
+   "url": "https://github.com/metmuseum/openaccess",
+   "level": "Foundational",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "CC0-1.0",
+   "purpose": "Met collection metadata as CC0: object records carry accession number, credit line, and rights fields",
+   "caveat": "Umbrella CC0 releases do not launder per-item rights; check the rights field per record.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "civilization-art-design-research",
+   "id": "cr-006"
+  },
+  {
+   "name": "Grünbaum 2006 Notices AMS Alhambra challenge + Bodner 2013 census",
+   "domain": "Pattern symmetry",
+   "type": "Paper (AMS Notices 2006)",
+   "url": "https://www.ams.org/notices/200606/comm-grunbaum.pdf",
+   "level": "Core/advanced",
+   "prerequisite": "",
+   "access": "Free PDF",
+   "license": "Author copy (AMS Notices)",
+   "purpose": "Grünbaum's Alhambra symmetry census challenge; contested counts reported as disputes (Müller 11 / Grünbaum–Shephard 13 / Bodner 14 of 17)",
+   "caveat": "Classification verdicts are criteria-relative; state color handling, extension rule, and census.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "civilization-art-design-research",
+   "id": "cr-007"
+  },
+  {
+   "name": "C2PA content credentials",
+   "domain": "Content provenance",
+   "type": "Standard / consortium",
+   "url": "https://c2pa.org/",
+   "level": "Core/advanced",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "C2PA specification terms",
+   "purpose": "C2PA content credentials for signed provenance on creative deliverables",
+   "caveat": "Conditional: adopt when signed provenance is a deliverable requirement.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-008"
+  },
+  {
+   "name": "J. O. Smith CCRMA free DSP texts",
+   "domain": "Audio DSP",
+   "type": "Open textbooks",
+   "url": "https://ccrma.stanford.edu/~jos/",
+   "level": "Foundational",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "Author site terms",
+   "purpose": "J. O. Smith's free CCRMA DSP texts: filters, spectral processing, physical modeling",
+   "caveat": "Foundational DSP; pair with the skill's loudness/evaluation standards before claims.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-009"
+  },
+  {
+   "name": "Creative Commons license suite discipline (CC0/BY/NC/SA/ND)",
+   "domain": "Licensing",
+   "type": "License texts",
+   "url": "https://creativecommons.org/licenses/",
+   "level": "Foundational",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "CC public domain dedication for texts",
+   "purpose": "Creative Commons license suite discipline (CC0/BY/NC/SA/ND) for creative deliverables",
+   "caveat": "A license is a grant with conditions; NC/SA/ND terms bind downstream use.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-010"
+  },
+  {
+   "name": "Web Audio API spec (W3C) + AudioWorklet",
+   "domain": "Audio DSP",
+   "type": "W3C specification",
+   "url": "https://github.com/WebAudio/web-audio-api",
+   "level": "Foundational",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "W3C document license",
+   "purpose": "Web Audio API specification including AudioWorklet for browser synthesis/processing",
+   "caveat": "Spec, not implementation guidance; check current browser behavior.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-011"
+  },
+  {
+   "name": "music21 (BSD-3) for computational verification of analytical claims",
+   "domain": "Computational musicology",
+   "type": "Library (Python)",
+   "url": "https://github.com/cuthbertLab/music21",
+   "level": "Core/advanced",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "BSD-3-Clause",
+   "purpose": "music21 for computational verification of analytical claims (corpus, harmony, counterpoint tooling)",
+   "caveat": "Verification aid, not evidence by itself; cite the underlying sources.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-012"
+  },
+  {
+   "name": "Bridgeport 410 F.3d 792 (6th Cir. 2005) vs VMG Salsoul 824 F.3d 871 (9th Cir. 2016) — unresolved split",
+   "domain": "Sampling case law",
+   "type": "Case law",
+   "url": "https://law.justia.com/cases/federal/appellate-courts/F3/410/792/574458/",
+   "level": "Core",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "Public domain (judicial opinion)",
+   "purpose": "Bridgeport 410 F.3d 792 (6th Cir. 2005) vs VMG Salsoul 824 F.3d 871 (9th Cir. 2016): the sampling circuit split",
+   "caveat": "Unsettled law — report the split, never declare sampling categorically legal or illegal.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-013"
+  },
+  {
+   "name": "MIDI 1.0/2.0 + MPE (midi.org)",
+   "domain": "Music data formats",
+   "type": "Specifications",
+   "url": "https://midi.org/specs",
+   "level": "Foundational",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "MIDI Manufacturers Association terms",
+   "purpose": "MIDI 1.0/2.0 and MPE specifications for note/control interchange",
+   "caveat": "Use current adopted versions; MPE support varies by device/host.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-014"
+  },
+  {
+   "name": "ITU-R BS.1770-5 + EBU R128 loudness delivery",
+   "domain": "Audio loudness",
+   "type": "Standard (EBU R128)",
+   "url": "https://tech.ebu.ch/docs/r/r128.pdf",
+   "level": "Core",
+   "prerequisite": "",
+   "access": "Free PDF",
+   "license": "EBU document terms",
+   "purpose": "EBU R128 / ITU-R BS.1770-5 loudness normalization for delivery",
+   "caveat": "Only tools implementing BS.1770 may make LUFS claims; RMS/peak metrics are not LUFS.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-015"
+  },
+  {
+   "name": "Open Music Theory (CC BY-SA, Vanderbilt)",
+   "domain": "Music theory",
+   "type": "Open textbook",
+   "url": "https://viva.pressbooks.pub/openmusictheory/",
+   "level": "Foundational",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "CC BY-SA",
+   "purpose": "Open Music Theory (Vanderbilt): dated Western common-practice theory reference",
+   "caveat": "One documented tradition, not the physics of music; label conventions as conventions.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-016"
+  },
+  {
+   "name": "Tennessee ELVIS Act 2024 (Pub. Ch. 588)",
+   "domain": "Persona rights",
+   "type": "Statute (Tennessee ELVIS Act 2024, Pub. Ch. 588)",
+   "url": "https://www.capitol.tn.gov/Bills/113/Bill/HB2091.pdf",
+   "level": "Core",
+   "prerequisite": "",
+   "access": "Free PDF",
+   "license": "State publication",
+   "purpose": "Voice/likeness protection statute for AI-era persona uses",
+   "caveat": "One jurisdiction; other states differ — name jurisdiction on every persona claim.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-017"
+  },
+  {
+   "name": "US Copyright Office AI reports (Part 2 Copyrightability Jan 2025; Part 3 training pre-pub 2025); Thaler v. Perlmutter (D.C. Cir. 2025)",
+   "domain": "AI & copyright",
+   "type": "Agency reports",
+   "url": "https://www.copyright.gov/ai/",
+   "level": "Core",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "US government work",
+   "purpose": "US Copyright Office AI reports (Part 2 Copyrightability Jan 2025; Part 3 training) as the registrability baseline",
+   "caveat": "Office reports are guidance, not binding law; AI-training litigation is unresolved.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-018"
+  },
+  {
+   "name": "US two-copyrights model (17 U.S.C. §§102/106/114); MMA 2018 + MLC",
+   "domain": "Music rights",
+   "type": "Statute + service",
+   "url": "https://www.themlc.com/",
+   "level": "Foundational",
+   "prerequisite": "",
+   "access": "Free",
+   "license": "Site terms",
+   "purpose": "US two-copyrights model (17 U.S.C. §§102/106/114), MMA 2018, and the Mechanical Licensing Collective",
+   "caveat": "US-centric baseline; always name jurisdiction; not legal advice.",
+   "evidence": "E3",
+   "verified": "2026-11-21",
+   "source_pack": "music-theory-production-engineering",
+   "id": "cr-019"
+  }
+ ],
+ "edges": [
+  {
+   "role_slug": "architectural-historian-researcher",
+   "url": "https://github.com/metmuseum/openaccess",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-006"
+  },
+  {
+   "role_slug": "architect-architectural-designer",
+   "url": "https://github.com/metmuseum/openaccess",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-006"
+  },
+  {
+   "role_slug": "conservation-architect-built-heritage-specialist",
+   "url": "https://github.com/metmuseum/openaccess",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-006"
+  },
+  {
+   "role_slug": "agent-research-director-orchestration-lead",
+   "url": "https://github.com/metmuseum/openaccess",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-006"
+  },
+  {
+   "role_slug": "architectural-historian-researcher",
+   "url": "https://doi.org/10.1126/sciadv.add1602",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-001"
+  },
+  {
+   "role_slug": "architect-architectural-designer",
+   "url": "https://doi.org/10.1126/sciadv.add1602",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-001"
+  },
+  {
+   "role_slug": "conservation-architect-built-heritage-specialist",
+   "url": "https://doi.org/10.1126/sciadv.add1602",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-001"
+  },
+  {
+   "role_slug": "agent-research-director-orchestration-lead",
+   "url": "https://doi.org/10.1126/sciadv.add1602",
+   "tier": "core",
+   "flag": "internal",
+   "trigger": "",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-001"
+  },
+  {
+   "role_slug": "architectural-historian-researcher",
+   "url": "https://www.ams.org/notices/200606/comm-grunbaum.pdf",
+   "tier": "advanced",
+   "flag": "core",
+   "trigger": "",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-007"
+  },
+  {
+   "role_slug": "architect-architectural-designer",
+   "url": "https://www.ams.org/notices/200606/comm-grunbaum.pdf",
+   "tier": "advanced",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-007"
+  },
+  {
+   "role_slug": "conservation-architect-built-heritage-specialist",
+   "url": "https://www.ams.org/notices/200606/comm-grunbaum.pdf",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-007"
+  },
+  {
+   "role_slug": "agent-research-director-orchestration-lead",
+   "url": "https://www.ams.org/notices/200606/comm-grunbaum.pdf",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-007"
+  },
+  {
+   "role_slug": "architectural-historian-researcher",
+   "url": "https://github.com/IIIF/api",
+   "tier": "advanced",
+   "flag": "conditional",
+   "trigger": "When digitizing or serving museum/image collections through IIIF pipelines",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-004"
+  },
+  {
+   "role_slug": "architect-architectural-designer",
+   "url": "https://github.com/IIIF/api",
+   "tier": "advanced",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-004"
+  },
+  {
+   "role_slug": "conservation-architect-built-heritage-specialist",
+   "url": "https://github.com/IIIF/api",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-004"
+  },
+  {
+   "role_slug": "agent-research-director-orchestration-lead",
+   "url": "https://github.com/IIIF/api",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "civilization-art-research-director",
+   "resource_id": "cr-004"
+  },
+  {
+   "role_slug": "computational-geometer-applied-mathematician",
+   "url": "https://github.com/isohedral/tactile",
+   "tier": "foundational",
+   "flag": "core",
+   "trigger": "",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-005"
+  },
+  {
+   "role_slug": "architectural-geometry-specialist",
+   "url": "https://github.com/isohedral/tactile",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-005"
+  },
+  {
+   "role_slug": "computational-designer-design-technologist",
+   "url": "https://github.com/isohedral/tactile",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-005"
+  },
+  {
+   "role_slug": "geometry-processing-engineer",
+   "url": "https://github.com/isohedral/tactile",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-005"
+  },
+  {
+   "role_slug": "cad-computational-design-engineer",
+   "url": "https://github.com/isohedral/tactile",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-005"
+  },
+  {
+   "role_slug": "computational-geometer-applied-mathematician",
+   "url": "https://doi.org/10.1145/990002.990003",
+   "tier": "core",
+   "flag": "core",
+   "trigger": "",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-003"
+  },
+  {
+   "role_slug": "architectural-geometry-specialist",
+   "url": "https://doi.org/10.1145/990002.990003",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-003"
+  },
+  {
+   "role_slug": "computational-designer-design-technologist",
+   "url": "https://doi.org/10.1145/990002.990003",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-003"
+  },
+  {
+   "role_slug": "geometry-processing-engineer",
+   "url": "https://doi.org/10.1145/990002.990003",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-003"
+  },
+  {
+   "role_slug": "cad-computational-design-engineer",
+   "url": "https://doi.org/10.1145/990002.990003",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-003"
+  },
+  {
+   "role_slug": "computational-geometer-applied-mathematician",
+   "url": "https://doi.org/10.1126/science.1135491",
+   "tier": "advanced",
+   "flag": "core",
+   "trigger": "",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-002"
+  },
+  {
+   "role_slug": "architectural-geometry-specialist",
+   "url": "https://doi.org/10.1126/science.1135491",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-002"
+  },
+  {
+   "role_slug": "computational-designer-design-technologist",
+   "url": "https://doi.org/10.1126/science.1135491",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-002"
+  },
+  {
+   "role_slug": "geometry-processing-engineer",
+   "url": "https://doi.org/10.1126/science.1135491",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-002"
+  },
+  {
+   "role_slug": "cad-computational-design-engineer",
+   "url": "https://doi.org/10.1126/science.1135491",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "geometric-pattern-symmetry-specialist",
+   "resource_id": "cr-002"
+  },
+  {
+   "role_slug": "research-scientist",
+   "url": "https://viva.pressbooks.pub/openmusictheory/",
+   "tier": "foundational",
+   "flag": "core",
+   "trigger": "",
+   "context": "music-theory-research-director",
+   "resource_id": "cr-016"
+  },
+  {
+   "role_slug": "game-creative-director",
+   "url": "https://viva.pressbooks.pub/openmusictheory/",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "music-theory-research-director",
+   "resource_id": "cr-016"
+  },
+  {
+   "role_slug": "technical-writer-documentation-engineer",
+   "url": "https://viva.pressbooks.pub/openmusictheory/",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "music-theory-research-director",
+   "resource_id": "cr-016"
+  },
+  {
+   "role_slug": "research-scientist",
+   "url": "https://github.com/cuthbertLab/music21",
+   "tier": "advanced",
+   "flag": "core",
+   "trigger": "",
+   "context": "music-theory-research-director",
+   "resource_id": "cr-012"
+  },
+  {
+   "role_slug": "game-creative-director",
+   "url": "https://github.com/cuthbertLab/music21",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "music-theory-research-director",
+   "resource_id": "cr-012"
+  },
+  {
+   "role_slug": "technical-writer-documentation-engineer",
+   "url": "https://github.com/cuthbertLab/music21",
+   "tier": "advanced",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "music-theory-research-director",
+   "resource_id": "cr-012"
+  },
+  {
+   "role_slug": "game-audio-designer-programmer",
+   "url": "https://ccrma.stanford.edu/~jos/",
+   "tier": "foundational",
+   "flag": "core",
+   "trigger": "",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-009"
+  },
+  {
+   "role_slug": "research-engineer",
+   "url": "https://ccrma.stanford.edu/~jos/",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-009"
+  },
+  {
+   "role_slug": "technical-artist",
+   "url": "https://ccrma.stanford.edu/~jos/",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-009"
+  },
+  {
+   "role_slug": "game-audio-designer-programmer",
+   "url": "https://github.com/WebAudio/web-audio-api",
+   "tier": "foundational",
+   "flag": "core",
+   "trigger": "",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-011"
+  },
+  {
+   "role_slug": "research-engineer",
+   "url": "https://github.com/WebAudio/web-audio-api",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-011"
+  },
+  {
+   "role_slug": "technical-artist",
+   "url": "https://github.com/WebAudio/web-audio-api",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-011"
+  },
+  {
+   "role_slug": "game-audio-designer-programmer",
+   "url": "https://midi.org/specs",
+   "tier": "foundational",
+   "flag": "core",
+   "trigger": "",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-014"
+  },
+  {
+   "role_slug": "research-engineer",
+   "url": "https://midi.org/specs",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-014"
+  },
+  {
+   "role_slug": "technical-artist",
+   "url": "https://midi.org/specs",
+   "tier": "foundational",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-014"
+  },
+  {
+   "role_slug": "game-audio-designer-programmer",
+   "url": "https://tech.ebu.ch/docs/r/r128.pdf",
+   "tier": "core",
+   "flag": "core",
+   "trigger": "",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-015"
+  },
+  {
+   "role_slug": "research-engineer",
+   "url": "https://tech.ebu.ch/docs/r/r128.pdf",
+   "tier": "core",
+   "flag": "internal",
+   "trigger": "",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-015"
+  },
+  {
+   "role_slug": "technical-artist",
+   "url": "https://tech.ebu.ch/docs/r/r128.pdf",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "audio-dsp-production-engineer",
+   "resource_id": "cr-015"
+  },
+  {
+   "role_slug": "legal-policy-compliance-specialist",
+   "url": "https://www.themlc.com/",
+   "tier": "foundational",
+   "flag": "core",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-019"
+  },
+  {
+   "role_slug": "technical-writer-documentation-engineer",
+   "url": "https://www.themlc.com/",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-019"
+  },
+  {
+   "role_slug": "knowledge-transfer-learning-systems-manager",
+   "url": "https://www.themlc.com/",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-019"
+  },
+  {
+   "role_slug": "brand-communications-designer",
+   "url": "https://www.themlc.com/",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-019"
+  },
+  {
+   "role_slug": "legal-policy-compliance-specialist",
+   "url": "https://creativecommons.org/licenses/",
+   "tier": "foundational",
+   "flag": "core",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-010"
+  },
+  {
+   "role_slug": "technical-writer-documentation-engineer",
+   "url": "https://creativecommons.org/licenses/",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-010"
+  },
+  {
+   "role_slug": "knowledge-transfer-learning-systems-manager",
+   "url": "https://creativecommons.org/licenses/",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-010"
+  },
+  {
+   "role_slug": "brand-communications-designer",
+   "url": "https://creativecommons.org/licenses/",
+   "tier": "foundational",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-010"
+  },
+  {
+   "role_slug": "legal-policy-compliance-specialist",
+   "url": "https://law.justia.com/cases/federal/appellate-courts/F3/410/792/574458/",
+   "tier": "core",
+   "flag": "core",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-013"
+  },
+  {
+   "role_slug": "technical-writer-documentation-engineer",
+   "url": "https://law.justia.com/cases/federal/appellate-courts/F3/410/792/574458/",
+   "tier": "core",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-013"
+  },
+  {
+   "role_slug": "knowledge-transfer-learning-systems-manager",
+   "url": "https://law.justia.com/cases/federal/appellate-courts/F3/410/792/574458/",
+   "tier": "core",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-013"
+  },
+  {
+   "role_slug": "brand-communications-designer",
+   "url": "https://law.justia.com/cases/federal/appellate-courts/F3/410/792/574458/",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-013"
+  },
+  {
+   "role_slug": "legal-policy-compliance-specialist",
+   "url": "https://www.capitol.tn.gov/Bills/113/Bill/HB2091.pdf",
+   "tier": "core",
+   "flag": "core",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-017"
+  },
+  {
+   "role_slug": "technical-writer-documentation-engineer",
+   "url": "https://www.capitol.tn.gov/Bills/113/Bill/HB2091.pdf",
+   "tier": "core",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-017"
+  },
+  {
+   "role_slug": "knowledge-transfer-learning-systems-manager",
+   "url": "https://www.capitol.tn.gov/Bills/113/Bill/HB2091.pdf",
+   "tier": "core",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-017"
+  },
+  {
+   "role_slug": "brand-communications-designer",
+   "url": "https://www.capitol.tn.gov/Bills/113/Bill/HB2091.pdf",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-017"
+  },
+  {
+   "role_slug": "legal-policy-compliance-specialist",
+   "url": "https://www.copyright.gov/ai/",
+   "tier": "core",
+   "flag": "core",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-018"
+  },
+  {
+   "role_slug": "technical-writer-documentation-engineer",
+   "url": "https://www.copyright.gov/ai/",
+   "tier": "core",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-018"
+  },
+  {
+   "role_slug": "knowledge-transfer-learning-systems-manager",
+   "url": "https://www.copyright.gov/ai/",
+   "tier": "core",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-018"
+  },
+  {
+   "role_slug": "brand-communications-designer",
+   "url": "https://www.copyright.gov/ai/",
+   "tier": "core",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-018"
+  },
+  {
+   "role_slug": "legal-policy-compliance-specialist",
+   "url": "https://c2pa.org/",
+   "tier": "advanced",
+   "flag": "conditional",
+   "trigger": "When content-credential signing is adopted for deliverable provenance",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-008"
+  },
+  {
+   "role_slug": "technical-writer-documentation-engineer",
+   "url": "https://c2pa.org/",
+   "tier": "advanced",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-008"
+  },
+  {
+   "role_slug": "knowledge-transfer-learning-systems-manager",
+   "url": "https://c2pa.org/",
+   "tier": "advanced",
+   "flag": "internal",
+   "trigger": "",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-008"
+  },
+  {
+   "role_slug": "brand-communications-designer",
+   "url": "https://c2pa.org/",
+   "tier": "advanced",
+   "flag": "conditional",
+   "trigger": "Creative-depth track active for this charter (see the civilization-art-design-research / music-theory-production-engineering skills)",
+   "context": "creative-rights-reproducibility-editor",
+   "resource_id": "cr-008"
+  }
+ ],
+ "role_evaluation_tasks": [],
+ "charter_references_not_cataloged": [
+  {
+   "context": "civilization-art-research-director",
+   "skill": "civilization-art-design-research",
+   "tier": "foundational",
+   "name": "Schattschneider, 'The Plane Symmetry Groups' (AMM 1978)",
+   "type": "paper",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "civilization-art-research-director",
+   "skill": "civilization-art-design-research",
+   "tier": "foundational",
+   "name": "Washburn & Crowe, Symmetries of Culture (1988)",
+   "type": "book",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "civilization-art-research-director",
+   "skill": "civilization-art-design-research",
+   "tier": "foundational",
+   "name": "Vitruvius, De architectura (Granger/Rowland translations)",
+   "type": "primary text",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "civilization-art-research-director",
+   "skill": "civilization-art-design-research",
+   "tier": "core",
+   "name": "Robins, Proportion and Style in Ancient Egyptian Art (1994)",
+   "type": "book",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "civilization-art-research-director",
+   "skill": "civilization-art-design-research",
+   "tier": "core",
+   "name": "Shelby, Gothic Design Techniques (1977) + Speculum 1972",
+   "type": "book+paper",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "civilization-art-research-director",
+   "skill": "civilization-art-design-research",
+   "tier": "core",
+   "name": "Hardy, Indian Temple Architecture (1995); Desai, Khajuraho (1996); Koch, Mughal Architecture (1991)",
+   "type": "books",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "civilization-art-research-director",
+   "skill": "civilization-art-design-research",
+   "tier": "core",
+   "name": "Necipoğlu, The Topkapı Scroll (1995)",
+   "type": "book",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "civilization-art-research-director",
+   "skill": "civilization-art-design-research",
+   "tier": "advanced",
+   "name": "Grünbaum & Shephard, Tilings and Patterns (1987)",
+   "type": "reference book",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "civilization-art-research-director",
+   "skill": "civilization-art-design-research",
+   "tier": "advanced",
+   "name": "Markowsky 1992 golden-ratio audit + mathematics-research safety note",
+   "type": "paper",
+   "flag": "core",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "geometric-pattern-symmetry-specialist",
+   "skill": "civilization-art-design-research",
+   "tier": "foundational",
+   "name": "Fedorov/Pólya classification via Schattschneider 1978 flowchart",
+   "type": "paper",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "geometric-pattern-symmetry-specialist",
+   "skill": "civilization-art-design-research",
+   "tier": "core",
+   "name": "Roriczer 1486 + Shelby 1977 transcription",
+   "type": "primary+secondary",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "geometric-pattern-symmetry-specialist",
+   "skill": "civilization-art-design-research",
+   "tier": "core",
+   "name": "Bork, The Geometry of Creation (2011); Ackerman 1949 Milan debate",
+   "type": "book+paper",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "geometric-pattern-symmetry-specialist",
+   "skill": "civilization-art-design-research",
+   "tier": "core",
+   "name": "paper.js (MIT) + OpenSCAD (GPL-2.0+CGAL exception) + FreeCAD (LGPL-2.1) lab substrate",
+   "type": "repositories",
+   "flag": "core",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "geometric-pattern-symmetry-specialist",
+   "skill": "civilization-art-design-research",
+   "tier": "advanced",
+   "name": "Grünbaum & Shephard 1987 (incidence symbols, color groups)",
+   "type": "reference book",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "geometric-pattern-symmetry-specialist",
+   "skill": "civilization-art-design-research",
+   "tier": "advanced",
+   "name": "antiprism (MIT-similar) polyhedral symmetry toolkit",
+   "type": "repository",
+   "flag": "conditional",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "foundational",
+   "name": "Fux/Mann, The Study of Counterpoint; Jeppesen 1939",
+   "type": "books",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "foundational",
+   "name": "cents math: 1200·log2 ratios (numeric discipline note)",
+   "type": "reference",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "Barbour, Tuning and Temperament (1951); Sethares (2005)",
+   "type": "books",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "Kuttner 1975 Zhu Zaiyu priority (Ethnomusicology 19/2)",
+   "type": "paper",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "London, Hearing in Time (2012); Toussaint 2005/2019 + Demaine et al. 2009",
+   "type": "book+papers",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "Agawu 1995 (Northern Ewe + 'invention' critique); Arom 1991; Locke 1998",
+   "type": "books+paper",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "Sumarsam 1995; Tenzer 1991/2000; Kunst 1973 (Java/Bali distinct)",
+   "type": "books",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "Bakhle, Two Men and Music (2005) — required before any 'Indian classical' framing",
+   "type": "book",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "Marcus 2007; Racy 2003; al-Urmawi Kitab al-Adwar (13th c.) for maqam",
+   "type": "books+primary",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "music-theory-research-director",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "surge-synthesizer/tuning-library (MIT) — Scala format practice",
+   "type": "repository",
+   "flag": "conditional",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "audio-dsp-production-engineer",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "Zölzer DAFX (2011); Reiss & McPherson (2014); Pirkle (2019)",
+   "type": "books",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "audio-dsp-production-engineer",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "Tone.js (MIT); Csound (LGPL-2.1); SuperCollider (GPL-3.0) — license-differentiated engines",
+   "type": "repositories",
+   "flag": "core",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "audio-dsp-production-engineer",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "MusicXML 4.x (w3c/musicxml); MEI; SMuFL; VexFlow (MIT); MuseScore (GPL-3+font exception)",
+   "type": "standards+repos",
+   "flag": "core",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "audio-dsp-production-engineer",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "librosa (ISC) vs Essentia (AGPL-3.0) vs pedalboard (GPL-3.0) selection matrix",
+   "type": "repositories",
+   "flag": "core",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "audio-dsp-production-engineer",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "mir_eval (MIT) metric definitions (Raffel et al. 2014)",
+   "type": "repository+paper",
+   "flag": "core",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "audio-dsp-production-engineer",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "ITU-R BS.1116-3 / BS.1534-3 MUSHRA / PEAQ BS.1387; ViSQOL v3",
+   "type": "standards",
+   "flag": "conditional",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "audio-dsp-production-engineer",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "Sturm 2014 GTZAN faults — before any genre-classification claim",
+   "type": "paper",
+   "flag": "conditional",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "creative-rights-reproducibility-editor",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "Newton v. Diamond 388 F.3d 1189 (2004); Campbell v. Acuff-Rose 510 U.S. 569 (1994)",
+   "type": "case law",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "creative-rights-reproducibility-editor",
+   "skill": "music-theory-production-engineering",
+   "tier": "core",
+   "name": "Midler v. Ford 849 F.2d 460 (1988); Waits v. Frito-Lay 978 F.2d 1093 (1992)",
+   "type": "case law",
+   "flag": "core",
+   "evidence": "E2",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "creative-rights-reproducibility-editor",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "EU AI Act 2024/1689 transparency timeline",
+   "type": "regulation",
+   "flag": "conditional",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "creative-rights-reproducibility-editor",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "Repo license postures (both repo-case files) as dependency register",
+   "type": "data",
+   "flag": "core",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  },
+  {
+   "context": "creative-rights-reproducibility-editor",
+   "skill": "music-theory-production-engineering",
+   "tier": "advanced",
+   "name": "NO FAKES Act status tracker — introduced, not enacted (2026-11-21); never cite as law",
+   "type": "bill tracking",
+   "flag": "core",
+   "evidence": "E3",
+   "note": "Charter reference without a canonical public URL; carried in the skill references/report, excluded from the resource catalog."
+  }
+ ],
+ "skill_mappings": {
+  "civilization-art-design-research": {
+   "consumer_roles": [
+    "cad-computational-design-engineer",
+    "architect-architectural-designer",
+    "conservation-architect-built-heritage-specialist",
+    "computational-designer-design-technologist",
+    "architectural-geometry-specialist",
+    "architectural-historian-researcher",
+    "geometry-processing-engineer",
+    "computational-geometer-applied-mathematician",
+    "agent-research-director-orchestration-lead"
+   ],
+   "primary_consumers_note": "87 (architectural-historian-researcher) and 89 (computational-geometer-applied-mathematician) primary via the civilization-art-research-director / geometric-pattern-symmetry-specialist charters; internal/conditional supports 82, 83, 91, 86, 84, 88, 74",
+   "added": "2026-11-21 (creative integration)"
+  },
+  "music-theory-production-engineering": {
+   "consumer_roles": [
+    "technical-writer-documentation-engineer",
+    "research-scientist",
+    "research-engineer",
+    "game-creative-director",
+    "technical-artist",
+    "game-audio-designer-programmer",
+    "brand-communications-designer",
+    "legal-policy-compliance-specialist",
+    "knowledge-transfer-learning-systems-manager"
+   ],
+   "primary_consumers_note": "63 (game-audio-designer-programmer) and 103 (legal-policy-compliance-specialist) primary via the audio-dsp-production-engineer / creative-rights-reproducibility-editor charters; 18 (research-scientist) primary support via music-theory-research-director; internal/conditional supports 19, 62, 17, 53, 108, 100",
+   "added": "2026-11-21 (creative integration)"
+  }
+ }
+}

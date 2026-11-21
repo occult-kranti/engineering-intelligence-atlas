@@ -1,0 +1,384 @@
+{
+  "contractVersion": 1,
+  "description": "Golden fixture for the Phase 0 shared enterprise/CEO contract. Loaded byte-identically by web (app/contracts) and desktop (desktop-shell/src/shared) tests.",
+  "input": {
+    "preset": "creative_technology_group",
+    "programId": "ctg-2026",
+    "name": "Creative Technology Group",
+    "mission": "Operate a creative technology group: software, AI & cybersecurity, civilization design, and music production line companies sharing seven disciplinary service departments.",
+    "budget": {
+      "maxTokens": 4000000,
+      "maxCalls": 300,
+      "maxMinutes": 360,
+      "maxCostUsdMicros": 250000000
+    },
+    "availableSkillIds": [
+      "mathematics-research",
+      "computational-geometry-engineering",
+      "architecture-database-backend-engineering",
+      "defensive-reverse-engineering",
+      "ai-research-frontier",
+      "ai-open-model-research",
+      "ui-ux-research-design-engineering",
+      "spatial-3d-production-engineering",
+      "civilization-art-design-research"
+    ],
+    "maxReplans": 2,
+    "maxConcurrentRuns": 4
+  },
+  "canonicalBlueprint": "{\"budget\":{\"maxCalls\":300,\"maxCostUsdMicros\":250000000,\"maxMinutes\":360,\"maxTokens\":4000000},\"companies\":[{\"capacityShare\":25,\"disciplines\":[\"ai-research\",\"cybersecurity\",\"mathematics\"],\"key\":\"ai-cyber\",\"kind\":\"line\",\"mission\":\"Advance AI research and defensive security with mathematical rigor.\",\"name\":\"AI & Cybersecurity Line Company\"},{\"capacityShare\":15,\"disciplines\":[\"design\",\"mathematics\"],\"key\":\"civilization-design\",\"kind\":\"line\",\"mission\":\"Research and design artifacts, systems, and narratives for civilization-scale problems.\",\"name\":\"Civilization Design Line Company\"},{\"capacityShare\":15,\"disciplines\":[\"design\",\"music-production\"],\"key\":\"music\",\"kind\":\"line\",\"mission\":\"Produce music and audio works grounded in theory and production engineering.\",\"name\":\"Music Production Line Company\"},{\"capacityShare\":15,\"disciplines\":[\"ai-research\",\"backend-engineering\",\"computational-geometry\",\"cybersecurity\",\"design\",\"mathematics\",\"music-production\"],\"key\":\"shared-services\",\"kind\":\"shared-services\",\"mission\":\"Provide shared disciplinary departments under contract to the line companies.\",\"name\":\"Shared Services Company\"},{\"capacityShare\":30,\"disciplines\":[\"backend-engineering\",\"computational-geometry\"],\"key\":\"software\",\"kind\":\"line\",\"mission\":\"Design, build, and verify software systems and geometric engines.\",\"name\":\"Software Line Company\"}],\"contractVersion\":1,\"contracts\":[{\"capacityShare\":0.3333333333333333,\"companyKey\":\"ai-cyber\",\"departmentKey\":\"svc-ai-research\",\"discipline\":\"ai-research\",\"key\":\"ai-cyber--svc-ai-research\",\"skillPin\":{\"sha256\":null,\"skillId\":\"ai-research-frontier\",\"version\":\"0.0.0\"},\"staffed\":true,\"status\":\"proposed\",\"version\":1},{\"capacityShare\":0.3333333333333333,\"companyKey\":\"ai-cyber\",\"departmentKey\":\"svc-cybersecurity\",\"discipline\":\"cybersecurity\",\"key\":\"ai-cyber--svc-cybersecurity\",\"skillPin\":{\"sha256\":null,\"skillId\":\"defensive-reverse-engineering\",\"version\":\"0.0.0\"},\"staffed\":true,\"status\":\"proposed\",\"version\":1},{\"capacityShare\":0.3333333333333333,\"companyKey\":\"ai-cyber\",\"departmentKey\":\"svc-mathematics\",\"discipline\":\"mathematics\",\"key\":\"ai-cyber--svc-mathematics\",\"skillPin\":{\"sha256\":null,\"skillId\":\"mathematics-research\",\"version\":\"0.0.0\"},\"staffed\":true,\"status\":\"proposed\",\"version\":1},{\"capacityShare\":0.5,\"companyKey\":\"civilization-design\",\"departmentKey\":\"svc-design\",\"discipline\":\"design\",\"key\":\"civilization-design--svc-design\",\"skillPin\":{\"sha256\":null,\"skillId\":\"civilization-art-design-research\",\"version\":\"0.0.0\"},\"staffed\":true,\"status\":\"proposed\",\"version\":1},{\"capacityShare\":0.5,\"companyKey\":\"civilization-design\",\"departmentKey\":\"svc-mathematics\",\"discipline\":\"mathematics\",\"key\":\"civilization-design--svc-mathematics\",\"skillPin\":{\"sha256\":null,\"skillId\":\"mathematics-research\",\"version\":\"0.0.0\"},\"staffed\":true,\"status\":\"proposed\",\"version\":1},{\"capacityShare\":0.5,\"companyKey\":\"music\",\"departmentKey\":\"svc-design\",\"discipline\":\"design\",\"key\":\"music--svc-design\",\"skillPin\":{\"sha256\":null,\"skillId\":\"civilization-art-design-research\",\"version\":\"0.0.0\"},\"staffed\":true,\"status\":\"proposed\",\"version\":1},{\"capacityShare\":0.5,\"companyKey\":\"music\",\"departmentKey\":\"svc-music-production\",\"discipline\":\"music-production\",\"key\":\"music--svc-music-production\",\"skillPin\":{\"sha256\":null,\"skillId\":\"music-theory-production-engineering\",\"version\":\"0.0.0\"},\"staffed\":false,\"status\":\"proposed\",\"version\":1},{\"capacityShare\":0.5,\"companyKey\":\"software\",\"departmentKey\":\"svc-backend-engineering\",\"discipline\":\"backend-engineering\",\"key\":\"software--svc-backend-engineering\",\"skillPin\":{\"sha256\":null,\"skillId\":\"architecture-database-backend-engineering\",\"version\":\"0.0.0\"},\"staffed\":true,\"status\":\"proposed\",\"version\":1},{\"capacityShare\":0.5,\"companyKey\":\"software\",\"departmentKey\":\"svc-computational-geometry\",\"discipline\":\"computational-geometry\",\"key\":\"software--svc-computational-geometry\",\"skillPin\":{\"sha256\":null,\"skillId\":\"computational-geometry-engineering\",\"version\":\"0.0.0\"},\"staffed\":true,\"status\":\"proposed\",\"version\":1}],\"departments\":[{\"companyKey\":\"shared-services\",\"discipline\":\"ai-research\",\"key\":\"svc-ai-research\",\"name\":\"AI Research Shared Service\"},{\"companyKey\":\"shared-services\",\"discipline\":\"backend-engineering\",\"key\":\"svc-backend-engineering\",\"name\":\"Backend Engineering Shared Service\"},{\"companyKey\":\"shared-services\",\"discipline\":\"computational-geometry\",\"key\":\"svc-computational-geometry\",\"name\":\"Computational Geometry Shared Service\"},{\"companyKey\":\"shared-services\",\"discipline\":\"cybersecurity\",\"key\":\"svc-cybersecurity\",\"name\":\"Cybersecurity Shared Service\"},{\"companyKey\":\"shared-services\",\"discipline\":\"design\",\"key\":\"svc-design\",\"name\":\"Design Shared Service\"},{\"companyKey\":\"shared-services\",\"discipline\":\"mathematics\",\"key\":\"svc-mathematics\",\"name\":\"Mathematics Shared Service\"},{\"companyKey\":\"shared-services\",\"discipline\":\"music-production\",\"key\":\"svc-music-production\",\"name\":\"Music Production Shared Service\"}],\"maxConcurrentRuns\":4,\"maxReplans\":2,\"mission\":\"Operate a creative technology group: software, AI & cybersecurity, civilization design, and music production line companies sharing seven disciplinary service departments.\",\"name\":\"Creative Technology Group\",\"preset\":\"creative_technology_group\",\"programId\":\"ctg-2026\"}",
+  "blueprintHash": "ca3c7f2825790a8289e81b41b272600966069c6ea06d9365ff753f22fe9b50be",
+  "partition": {
+    "requests": [
+      {
+        "companyKey": "ai-cyber",
+        "capacityShare": 25,
+        "active": true
+      },
+      {
+        "companyKey": "civilization-design",
+        "capacityShare": 15,
+        "active": true
+      },
+      {
+        "companyKey": "music",
+        "capacityShare": 15,
+        "active": false
+      },
+      {
+        "companyKey": "shared-services",
+        "capacityShare": 15,
+        "active": true
+      },
+      {
+        "companyKey": "software",
+        "capacityShare": 30,
+        "active": true
+      }
+    ],
+    "result": {
+      "envelope": {
+        "maxTokens": 4000000,
+        "maxCalls": 300,
+        "maxMinutes": 360,
+        "maxCostUsdMicros": 250000000
+      },
+      "partitions": [
+        {
+          "companyKey": "ai-cyber",
+          "active": true,
+          "capacityShare": 25,
+          "reservation": {
+            "maxTokens": 1176471,
+            "maxCalls": 88,
+            "maxMinutes": 105.882,
+            "maxCostUsdMicros": 73529412
+          }
+        },
+        {
+          "companyKey": "civilization-design",
+          "active": true,
+          "capacityShare": 15,
+          "reservation": {
+            "maxTokens": 705882,
+            "maxCalls": 53,
+            "maxMinutes": 63.53,
+            "maxCostUsdMicros": 44117647
+          }
+        },
+        {
+          "companyKey": "music",
+          "active": false,
+          "capacityShare": 15,
+          "reservation": {
+            "maxTokens": 0,
+            "maxCalls": 0,
+            "maxMinutes": 0,
+            "maxCostUsdMicros": 0
+          }
+        },
+        {
+          "companyKey": "shared-services",
+          "active": true,
+          "capacityShare": 15,
+          "reservation": {
+            "maxTokens": 705882,
+            "maxCalls": 53,
+            "maxMinutes": 63.529,
+            "maxCostUsdMicros": 44117647
+          }
+        },
+        {
+          "companyKey": "software",
+          "active": true,
+          "capacityShare": 30,
+          "reservation": {
+            "maxTokens": 1411765,
+            "maxCalls": 106,
+            "maxMinutes": 127.059,
+            "maxCostUsdMicros": 88235294
+          }
+        }
+      ],
+      "totals": {
+        "maxTokens": 4000000,
+        "maxCalls": 300,
+        "maxMinutes": 360,
+        "maxCostUsdMicros": 250000000
+      },
+      "withinEnvelope": true
+    }
+  },
+  "view": {
+    "nodeCount": 21,
+    "edgeCount": 25,
+    "companyCount": 5,
+    "departmentCount": 7,
+    "contractCount": 9,
+    "containsEdgeCount": 16,
+    "servesEdgeCount": 9
+  },
+  "actions": {
+    "count": 12,
+    "ids": [
+      "blueprint.apply",
+      "contract.decide",
+      "contract.release",
+      "program.start",
+      "program.pause",
+      "program.resume",
+      "program.cancel",
+      "worker.reassign",
+      "worker.capacity",
+      "worker.suspend",
+      "memory.promote",
+      "memory.revoke"
+    ]
+  },
+  "stewards": {
+    "names": [
+      "blueprint-ops",
+      "roadmap-cartographer",
+      "evidence-ledger-steward",
+      "cache-budget-steward"
+    ],
+    "providerCalls": false,
+    "authority": "propose-only"
+  },
+  "samples": {
+    "workLedger": [
+      {
+        "seq": 1,
+        "ts": 1763260800000,
+        "enterpriseId": "ctg-2026",
+        "companyKey": "civilization-design",
+        "projectId": "proj-0001",
+        "officeId": "office-main",
+        "roomId": "design",
+        "workerId": "worker-0007",
+        "nodeKey": "svc-design",
+        "runId": "run-0001",
+        "attempt": 1,
+        "kind": "assignment",
+        "status": "assigned",
+        "intendedAsk": "Survey civilization-scale design precedents and return a research-brief.",
+        "promptSha256": null,
+        "returnedSummary": "",
+        "artifactRef": null,
+        "usage": null,
+        "skillRef": "civilization-art-design-research"
+      },
+      {
+        "seq": 2,
+        "ts": 1763260830000,
+        "enterpriseId": "ctg-2026",
+        "companyKey": "civilization-design",
+        "projectId": "proj-0001",
+        "officeId": "office-main",
+        "roomId": "design",
+        "workerId": "worker-0007",
+        "nodeKey": "svc-design",
+        "runId": "run-0001",
+        "attempt": 1,
+        "kind": "prompt_started",
+        "status": "running",
+        "intendedAsk": "Survey civilization-scale design precedents and return a research-brief.",
+        "promptSha256": "f52d6a1cb34cdff4fa823c535135d61a796f6c207e69057f72227d5c58b25d17",
+        "returnedSummary": "",
+        "artifactRef": null,
+        "usage": null,
+        "skillRef": "civilization-art-design-research"
+      },
+      {
+        "seq": 3,
+        "ts": 1763261160000,
+        "enterpriseId": "ctg-2026",
+        "companyKey": "civilization-design",
+        "projectId": "proj-0001",
+        "officeId": "office-main",
+        "roomId": "design",
+        "workerId": "worker-0007",
+        "nodeKey": "svc-design",
+        "runId": "run-0001",
+        "attempt": 1,
+        "kind": "artifact",
+        "status": "succeeded",
+        "intendedAsk": "Survey civilization-scale design precedents and return a research-brief.",
+        "promptSha256": "f52d6a1cb34cdff4fa823c535135d61a796f6c207e69057f72227d5c58b25d17",
+        "returnedSummary": "Extractive survey summary copied from the artifact body.",
+        "artifactRef": {
+          "artifactId": "art-0001",
+          "runId": "run-0001",
+          "nodeKey": "svc-design",
+          "attempt": 1,
+          "kind": "research-brief",
+          "title": "Civilization design survey",
+          "summary": "Extractive survey summary copied from the artifact body.",
+          "contentSha256": "9108c266b55bb8aed473311d72dc0afef682d64bdde36c9dedbb8df458a7dee7"
+        },
+        "usage": {
+          "inputTokens": 12400,
+          "outputTokens": 3100,
+          "costUsdMicros": 415000
+        },
+        "skillRef": "civilization-art-design-research"
+      }
+    ],
+    "handoffManifest": {
+      "from": {
+        "workerId": "worker-0007",
+        "nodeKey": "svc-design",
+        "companyKey": "civilization-design",
+        "departmentKey": "svc-design"
+      },
+      "to": {
+        "workerId": "worker-0011",
+        "nodeKey": "svc-music-production",
+        "companyKey": "music",
+        "departmentKey": "svc-music-production"
+      },
+      "summary": "Extractive handoff summary: design survey findings relevant to the music line company.",
+      "contentSha256": "9108c266b55bb8aed473311d72dc0afef682d64bdde36c9dedbb8df458a7dee7",
+      "truncation": {
+        "truncated": false,
+        "originalLength": 60,
+        "keptLength": 60
+      },
+      "provenance": {
+        "sourceLedgerSeq": 3,
+        "sourceArtifactRef": {
+          "artifactId": "art-0001",
+          "runId": "run-0001",
+          "nodeKey": "svc-design",
+          "attempt": 1,
+          "kind": "research-brief",
+          "title": "Civilization design survey",
+          "summary": "Extractive survey summary copied from the artifact body.",
+          "contentSha256": "9108c266b55bb8aed473311d72dc0afef682d64bdde36c9dedbb8df458a7dee7"
+        },
+        "derivedBy": "system"
+      }
+    },
+    "timelineIndex": [
+      {
+        "seq": 1,
+        "ts": 1763260800000,
+        "kind": "assignment",
+        "enterpriseId": "ctg-2026",
+        "companyKey": "civilization-design",
+        "workerId": "worker-0007",
+        "nodeKey": "svc-design",
+        "runId": "run-0001",
+        "ledgerSeq": 1,
+        "artifactRef": null
+      },
+      {
+        "seq": 2,
+        "ts": 1763260830000,
+        "kind": "prompt_started",
+        "enterpriseId": "ctg-2026",
+        "companyKey": "civilization-design",
+        "workerId": "worker-0007",
+        "nodeKey": "svc-design",
+        "runId": "run-0001",
+        "ledgerSeq": 2,
+        "artifactRef": null
+      },
+      {
+        "seq": 3,
+        "ts": 1763261160000,
+        "kind": "artifact",
+        "enterpriseId": "ctg-2026",
+        "companyKey": "civilization-design",
+        "workerId": "worker-0007",
+        "nodeKey": "svc-design",
+        "runId": "run-0001",
+        "ledgerSeq": 3,
+        "artifactRef": {
+          "artifactId": "art-0001",
+          "runId": "run-0001",
+          "nodeKey": "svc-design",
+          "attempt": 1,
+          "kind": "research-brief",
+          "title": "Civilization design survey",
+          "summary": "Extractive survey summary copied from the artifact body.",
+          "contentSha256": "9108c266b55bb8aed473311d72dc0afef682d64bdde36c9dedbb8df458a7dee7"
+        }
+      }
+    ],
+    "stewardRecommendations": [
+      {
+        "steward": "evidence-ledger-steward",
+        "kind": "ledger",
+        "derivedBy": "system",
+        "providerCalls": false,
+        "summary": "Ledger seq 3 produced a verified artifact; candidate for company-scope memory promotion (by reference).",
+        "refs": [
+          {
+            "artifactId": "art-0001",
+            "runId": "run-0001",
+            "nodeKey": "svc-design",
+            "attempt": 1,
+            "kind": "research-brief",
+            "title": "Civilization design survey",
+            "summary": "Extractive survey summary copied from the artifact body.",
+            "contentSha256": "9108c266b55bb8aed473311d72dc0afef682d64bdde36c9dedbb8df458a7dee7"
+          }
+        ],
+        "ledgerSeq": 3,
+        "actionId": "memory.promote"
+      },
+      {
+        "steward": "blueprint-ops",
+        "kind": "handoff",
+        "derivedBy": "system",
+        "providerCalls": false,
+        "summary": "Design survey overlaps the music line company's design discipline; propose a handoff to svc-music-production.",
+        "refs": [
+          {
+            "artifactId": "art-0001",
+            "runId": "run-0001",
+            "nodeKey": "svc-design",
+            "attempt": 1,
+            "kind": "research-brief",
+            "title": "Civilization design survey",
+            "summary": "Extractive survey summary copied from the artifact body.",
+            "contentSha256": "9108c266b55bb8aed473311d72dc0afef682d64bdde36c9dedbb8df458a7dee7"
+          }
+        ],
+        "ledgerSeq": 3,
+        "actionId": null
+      },
+      {
+        "steward": "cache-budget-steward",
+        "kind": "budget",
+        "derivedBy": "system",
+        "providerCalls": false,
+        "summary": "music company is inactive in the current partition; its envelope share can be reallocated to active companies.",
+        "refs": [],
+        "ledgerSeq": null,
+        "actionId": "worker.capacity"
+      }
+    ]
+  }
+}

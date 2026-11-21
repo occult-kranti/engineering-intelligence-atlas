@@ -1,0 +1,140 @@
+{
+  "contractVersion": 1,
+  "description": "Offline study-queue cases mirroring buildStudyQueue: first occurrence wins on duplicate refs, content-derived ids (sha256 of the ref), capped at STUDY_QUEUE_CAP=32, every item a provider-free draft.",
+  "cases": [
+    {
+      "name": "golden dedupe sample from the shared fixture",
+      "input": {
+        "skillId": "ai-research-frontier",
+        "goal": "Close the frontier-model evaluation gap",
+        "evaluation": "ET-117",
+        "resources": [
+          {
+            "ref": "https://arxiv.org/abs/2305.00001",
+            "topic": "frontier survey"
+          },
+          {
+            "ref": "https://arxiv.org/abs/2305.00002",
+            "topic": "eval harness"
+          },
+          {
+            "ref": "https://arxiv.org/abs/2305.00001",
+            "topic": "duplicate ref"
+          },
+          {
+            "ref": "https://example.org/blog/evals",
+            "topic": "eval blog"
+          },
+          {
+            "ref": "https://arxiv.org/abs/2305.00003",
+            "topic": "benchmarks"
+          },
+          {
+            "ref": "https://example.org/blog/evals",
+            "topic": "duplicate blog"
+          }
+        ]
+      },
+      "expected": [
+        {
+          "id": "ai-research-frontier:650c93b18f3f",
+          "skillId": "ai-research-frontier",
+          "resourceRef": "https://arxiv.org/abs/2305.00001",
+          "topic": "frontier survey",
+          "goal": "Close the frontier-model evaluation gap",
+          "evaluation": "ET-117",
+          "status": "draft",
+          "providerCalls": false
+        },
+        {
+          "id": "ai-research-frontier:539f386d6e5e",
+          "skillId": "ai-research-frontier",
+          "resourceRef": "https://arxiv.org/abs/2305.00002",
+          "topic": "eval harness",
+          "goal": "Close the frontier-model evaluation gap",
+          "evaluation": "ET-117",
+          "status": "draft",
+          "providerCalls": false
+        },
+        {
+          "id": "ai-research-frontier:de980d507e58",
+          "skillId": "ai-research-frontier",
+          "resourceRef": "https://example.org/blog/evals",
+          "topic": "eval blog",
+          "goal": "Close the frontier-model evaluation gap",
+          "evaluation": "ET-117",
+          "status": "draft",
+          "providerCalls": false
+        },
+        {
+          "id": "ai-research-frontier:abaeea5ac47b",
+          "skillId": "ai-research-frontier",
+          "resourceRef": "https://arxiv.org/abs/2305.00003",
+          "topic": "benchmarks",
+          "goal": "Close the frontier-model evaluation gap",
+          "evaluation": "ET-117",
+          "status": "draft",
+          "providerCalls": false
+        }
+      ]
+    },
+    {
+      "name": "cap bounds the queue",
+      "input": {
+        "skillId": "ai-research-frontier",
+        "goal": "Close the frontier-model evaluation gap",
+        "evaluation": "ET-117",
+        "resources": [
+          {
+            "ref": "https://arxiv.org/abs/2305.00001",
+            "topic": "frontier survey"
+          },
+          {
+            "ref": "https://arxiv.org/abs/2305.00002",
+            "topic": "eval harness"
+          },
+          {
+            "ref": "https://arxiv.org/abs/2305.00001",
+            "topic": "duplicate ref"
+          },
+          {
+            "ref": "https://example.org/blog/evals",
+            "topic": "eval blog"
+          },
+          {
+            "ref": "https://arxiv.org/abs/2305.00003",
+            "topic": "benchmarks"
+          },
+          {
+            "ref": "https://example.org/blog/evals",
+            "topic": "duplicate blog"
+          }
+        ],
+        "cap": 2
+      },
+      "expected": [
+        {
+          "id": "ai-research-frontier:650c93b18f3f",
+          "skillId": "ai-research-frontier",
+          "resourceRef": "https://arxiv.org/abs/2305.00001",
+          "topic": "frontier survey",
+          "goal": "Close the frontier-model evaluation gap",
+          "evaluation": "ET-117",
+          "status": "draft",
+          "providerCalls": false
+        },
+        {
+          "id": "ai-research-frontier:539f386d6e5e",
+          "skillId": "ai-research-frontier",
+          "resourceRef": "https://arxiv.org/abs/2305.00002",
+          "topic": "eval harness",
+          "goal": "Close the frontier-model evaluation gap",
+          "evaluation": "ET-117",
+          "status": "draft",
+          "providerCalls": false
+        }
+      ]
+    }
+  ],
+  "invariant": "Study drafts never make provider or paid calls (providerCalls is always false); enqueueing is the low-risk study.enqueue action."
+}

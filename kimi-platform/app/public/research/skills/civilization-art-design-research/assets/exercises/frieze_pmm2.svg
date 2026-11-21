@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="340" height="150" viewBox="0 0 340 150">
+<!--
+Frieze pattern pmm2: modern exercise. Recognition protocol per Schattschneider (1978); field protocol per Washburn & Crowe (1988). Criteria: uncolored pattern; idealized infinite extension along the translation axis; group symbol is modern notation, never attributed to historical makers.
+MODERN EXERCISE - generated teaching artifact; not a historical artifact and not a reconstruction claim.
+Generator: scripts/pattern_svg_generator.py (civilization-art-design-research skill); deterministic, stdlib only.
+-->
+<rect x="0" y="0" width="340" height="150" fill="white"/>
+<polygon points="18,52 40,52 22,24" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="82,52 60,52 78,24" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="18,28 40,28 22,56" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="82,28 60,28 78,56" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="98,52 120,52 102,24" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="162,52 140,52 158,24" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="98,28 120,28 102,56" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="162,28 140,28 158,56" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="178,52 200,52 182,24" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="242,52 220,52 238,24" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="178,28 200,28 182,56" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="242,28 220,28 238,56" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="258,52 280,52 262,24" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="322,52 300,52 318,24" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="258,28 280,28 262,56" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<polygon points="322,28 300,28 318,56" fill="#8a2be2" fill-opacity="0.25" stroke="#222222" stroke-width="1.5"/>
+<line x1="10" y1="40" x2="330" y2="40" stroke="#b0b0b0" stroke-width="0.8" stroke-dasharray="4,3"/>
+<line x1="10" y1="10" x2="10" y2="70" stroke="#dddddd" stroke-width="0.8"/>
+<line x1="90" y1="10" x2="90" y2="70" stroke="#dddddd" stroke-width="0.8"/>
+<line x1="170" y1="10" x2="170" y2="70" stroke="#dddddd" stroke-width="0.8"/>
+<line x1="250" y1="10" x2="250" y2="70" stroke="#dddddd" stroke-width="0.8"/>
+<line x1="330" y1="10" x2="330" y2="70" stroke="#dddddd" stroke-width="0.8"/>
+<text x="8" y="126" font-family="monospace" font-size="10" fill="#555555" text-anchor="start">Frieze pattern pmm2: modern exercise. Recognition protocol per Schattschneider (1978); field protocol per Washburn &amp; Crowe (1988). Criteria: uncolored pattern; idealized infinite extension along the translation axis; group symbol is modern notation, never attributed to historical makers.</text>
+<text x="8" y="140" font-family="monospace" font-size="10" fill="#555555" text-anchor="start">MODERN EXERCISE - generated teaching artifact; not a historical artifact and not a reconstruction claim.</text>
+</svg>

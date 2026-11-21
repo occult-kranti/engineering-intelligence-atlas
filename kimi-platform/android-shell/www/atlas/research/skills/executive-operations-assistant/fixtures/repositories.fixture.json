@@ -1,0 +1,330 @@
+{
+  "contractVersion": 1,
+  "description": "Offline repository routing vectors derived from the shared assistant-operations fixture (app/contracts/assistant-operations.fixture.json). Covers UI/React, AI/security, backend/db, design/geometry, music/audio, unknown, unlicensed, archived, private, and new-domain cases. Expected values match routeRepository in the shared contract exactly.",
+  "invariants": [
+    "Only confirmed public metadata is routed; private/internal repos are always quarantined.",
+    "Archived upstream repos are quarantined read-only; any best-effort route is recorded read-only and never redistributed.",
+    "No license (or a non-allowlisted license) forces readOnly=true and redistributionAllowed=false.",
+    "proposed_new_structure carries confidence 0.25 and null company/department/discipline/skill: new structures are explicit human-approved proposals, never automatic.",
+    "Assignments come only from the seven declared routing rules; no automatic companies, departments, roles, or skills are ever created.",
+    "Every plan is a proposal pinned to url + commitSha; applying it requires the repository.assign or repository.propose_structure approval gate."
+  ],
+  "vectors": [
+    {
+      "id": "ui-react",
+      "metadata": {
+        "url": "https://github.com/acme/ui-kit",
+        "owner": "acme",
+        "name": "ui-kit",
+        "description": "Accessible React UI component library with Tailwind themes",
+        "language": "TypeScript",
+        "topics": [
+          "react",
+          "ui",
+          "component",
+          "css",
+          "design-system"
+        ],
+        "license": "mit",
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "02c3ca5493f1e5ad4e50996131e364cce38826e4",
+        "visibility": "public"
+      },
+      "expected": {
+        "sampleId": "ui-react",
+        "status": "assigned",
+        "companyKey": "civilization-design",
+        "departmentKey": "svc-design",
+        "discipline": "design",
+        "skillId": "ui-ux-research-design-engineering",
+        "confidence": 0.9,
+        "readOnly": false,
+        "redistributionAllowed": true
+      }
+    },
+    {
+      "id": "ml-security",
+      "metadata": {
+        "url": "https://github.com/acme/llm-redteam",
+        "owner": "acme",
+        "name": "llm-redteam",
+        "description": "Red-team harness for LLM vulnerability research",
+        "language": "Python",
+        "topics": [
+          "security",
+          "llm",
+          "red-team",
+          "machine-learning"
+        ],
+        "license": "apache-2.0",
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "2b52b3787908d7bdd2653e1d0ff03b9203618fa5",
+        "visibility": "public"
+      },
+      "expected": {
+        "sampleId": "ml-security",
+        "status": "assigned",
+        "companyKey": "ai-cyber",
+        "departmentKey": "svc-cybersecurity",
+        "discipline": "cybersecurity",
+        "skillId": "defensive-reverse-engineering",
+        "confidence": 0.85,
+        "readOnly": false,
+        "redistributionAllowed": true
+      }
+    },
+    {
+      "id": "backend-database",
+      "metadata": {
+        "url": "https://github.com/acme/ledgerdb",
+        "owner": "acme",
+        "name": "ledgerdb",
+        "description": "Postgres-backed ledger API server with an ORM layer",
+        "language": "Go",
+        "topics": [
+          "postgres",
+          "database",
+          "api",
+          "orm"
+        ],
+        "license": "mit",
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "8c82827fb419dd97ffbd8d1d7d978a28920eeb72",
+        "visibility": "public"
+      },
+      "expected": {
+        "sampleId": "backend-database",
+        "status": "assigned",
+        "companyKey": "software",
+        "departmentKey": "svc-backend-engineering",
+        "discipline": "backend-engineering",
+        "skillId": "architecture-database-backend-engineering",
+        "confidence": 0.9,
+        "readOnly": false,
+        "redistributionAllowed": true
+      }
+    },
+    {
+      "id": "geometry-design",
+      "metadata": {
+        "url": "https://github.com/acme/geom-kernels",
+        "owner": "acme",
+        "name": "geom-kernels",
+        "description": "Computational geometry kernels for design tools: meshes, triangulation",
+        "language": "Rust",
+        "topics": [
+          "geometry",
+          "mesh",
+          "cad"
+        ],
+        "license": "bsd-3-clause",
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "368cbe4ba5296857bc718a12c1e6c672cbd145a3",
+        "visibility": "public"
+      },
+      "expected": {
+        "sampleId": "geometry-design",
+        "status": "assigned",
+        "companyKey": "software",
+        "departmentKey": "svc-computational-geometry",
+        "discipline": "computational-geometry",
+        "skillId": "computational-geometry-engineering",
+        "confidence": 0.9,
+        "readOnly": false,
+        "redistributionAllowed": true
+      }
+    },
+    {
+      "id": "audio-music",
+      "metadata": {
+        "url": "https://github.com/acme/midi-lab",
+        "owner": "acme",
+        "name": "midi-lab",
+        "description": "MIDI synthesizer and audio DSP workbench",
+        "language": "C++",
+        "topics": [
+          "audio",
+          "midi",
+          "synthesizer"
+        ],
+        "license": "gpl-3.0",
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "c28b94734ef1c23bf9d93a55a33af0d3c6fbc0ac",
+        "visibility": "public"
+      },
+      "expected": {
+        "sampleId": "audio-music",
+        "status": "assigned",
+        "companyKey": "music",
+        "departmentKey": "svc-music-production",
+        "discipline": "music-production",
+        "skillId": "music-theory-production-engineering",
+        "confidence": 0.9,
+        "readOnly": true,
+        "redistributionAllowed": false
+      }
+    },
+    {
+      "id": "unknown",
+      "metadata": {
+        "url": "https://github.com/acme/sourdough-notes",
+        "owner": "acme",
+        "name": "sourdough-notes",
+        "description": "Personal baking notes and recipes",
+        "language": null,
+        "topics": [
+          "cooking",
+          "recipes"
+        ],
+        "license": null,
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "50d8b4a941c26b89482c94ab324b5a274f9ced66",
+        "visibility": "public"
+      },
+      "expected": {
+        "sampleId": "unknown",
+        "status": "quarantined",
+        "companyKey": null,
+        "departmentKey": null,
+        "discipline": null,
+        "skillId": null,
+        "confidence": 0,
+        "readOnly": true,
+        "redistributionAllowed": false
+      }
+    },
+    {
+      "id": "robotics-new-domain",
+      "metadata": {
+        "url": "https://github.com/acme/rover-control",
+        "owner": "acme",
+        "name": "rover-control",
+        "description": "Autonomous rover control firmware",
+        "language": "C",
+        "topics": [
+          "robotics",
+          "autonomous",
+          "hardware"
+        ],
+        "license": "mit",
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "891e0758a720ba896499299c80f27c7a8675b6e1",
+        "visibility": "public"
+      },
+      "expected": {
+        "sampleId": "robotics-new-domain",
+        "status": "proposed_new_structure",
+        "companyKey": null,
+        "departmentKey": null,
+        "discipline": null,
+        "skillId": null,
+        "confidence": 0.25,
+        "readOnly": true,
+        "redistributionAllowed": false
+      }
+    },
+    {
+      "id": "archived-ui-kit",
+      "metadata": {
+        "url": "https://github.com/seed/case-9",
+        "owner": "seed",
+        "name": "case-9",
+        "description": "Accessible React UI component library with Tailwind themes",
+        "language": "TypeScript",
+        "topics": [
+          "react",
+          "ui",
+          "component",
+          "css",
+          "photography"
+        ],
+        "license": "mit",
+        "archived": true,
+        "defaultBranch": "main",
+        "commitSha": "d8e5a8b1bae519c7356e7fa61bf5cecc24ced5ee",
+        "visibility": "public"
+      },
+      "expected": {
+        "sampleId": "archived-ui-kit",
+        "status": "quarantined",
+        "companyKey": "civilization-design",
+        "departmentKey": "svc-design",
+        "discipline": "design",
+        "skillId": "ui-ux-research-design-engineering",
+        "confidence": 0.9,
+        "readOnly": true,
+        "redistributionAllowed": false
+      }
+    },
+    {
+      "id": "unlicensed-geometry",
+      "metadata": {
+        "url": "https://github.com/seed/case-10",
+        "owner": "seed",
+        "name": "case-10",
+        "description": "seeded case 10 derived from geom-kernels",
+        "language": "TypeScript",
+        "topics": [
+          "geometry",
+          "astronomy"
+        ],
+        "license": null,
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "2cc8e8570ef755d5be90606d4efa2bc3d4b35204",
+        "visibility": "public"
+      },
+      "expected": {
+        "sampleId": "unlicensed-geometry",
+        "status": "assigned",
+        "companyKey": "software",
+        "departmentKey": "svc-computational-geometry",
+        "discipline": "computational-geometry",
+        "skillId": "computational-geometry-engineering",
+        "confidence": 0.55,
+        "readOnly": true,
+        "redistributionAllowed": false
+      }
+    },
+    {
+      "id": "private-ledgerdb",
+      "metadata": {
+        "url": "https://github.com/seed/case-19",
+        "owner": "seed",
+        "name": "case-19",
+        "description": "Postgres-backed ledger API server with an ORM layer",
+        "language": "Go",
+        "topics": [
+          "postgres",
+          "database",
+          "api",
+          "orm",
+          "gardening"
+        ],
+        "license": "mit",
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "f9ad4fb3adb940022ef4b61d45dfa1d5e723ab6c",
+        "visibility": "private"
+      },
+      "expected": {
+        "sampleId": "private-ledgerdb",
+        "status": "quarantined",
+        "companyKey": null,
+        "departmentKey": null,
+        "discipline": null,
+        "skillId": null,
+        "confidence": 0,
+        "readOnly": true,
+        "redistributionAllowed": false
+      }
+    }
+  ]
+}

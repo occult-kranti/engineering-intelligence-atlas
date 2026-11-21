@@ -1,0 +1,761 @@
+{
+  "schema_version": "1.0",
+  "created_at": "2026-11-20T07:25:40.488932+00:00",
+  "root": "/mnt/agents/output/engineering-intelligence-atlas-repository/skills",
+  "skill_count": 15,
+  "skills": [
+    {
+      "path": "agent-research-director",
+      "name_reported": "agent-research-director",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 6130,
+          "sha256": "08f4c7621550ddd97f15cc996cc00b9c63b9220e89c0ce17f3896f43506fccdb"
+        },
+        {
+          "path": "references/evaluation_and_research.md",
+          "bytes": 3792,
+          "sha256": "219535ec4e45becc39fee901c7f450f42d2b1e070804dc752a4c36ee22805d6c"
+        },
+        {
+          "path": "references/registry_and_contracts.md",
+          "bytes": 4491,
+          "sha256": "5c6c47f7f4250b9954d2ad0d03c791063f8d4d91cd1729e8c0af146d3e58a64b"
+        },
+        {
+          "path": "scripts/skill_registry_audit.py",
+          "bytes": 4965,
+          "sha256": "90ffae85b2db2d4b6c5616e25a58f2daa78ecd57c0656a018fd0c568be351547"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "requests."
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "urllib"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "socket."
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "subprocess"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "os.environ"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "api_key"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "token"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "secret"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "credential"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "eval("
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "exec("
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "rm -rf"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "sudo "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "chmod "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "docker "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "podman "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "curl "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "wget "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "upload"
+        }
+      ],
+      "review_required": true
+    },
+    {
+      "path": "ai-open-model-research",
+      "name_reported": "ai-open-model-research",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 8020,
+          "sha256": "7e3f6e0db939dd8cff99d0f16027639d6075896415d68782153b1d8b9a5b2116"
+        },
+        {
+          "path": "references/evaluation.md",
+          "bytes": 8076,
+          "sha256": "cd690af14221795110c9c78523c65ccaa3c0cd7a61a5fe3ed06cf51e57b11ea2"
+        },
+        {
+          "path": "references/hardware_safety.md",
+          "bytes": 8525,
+          "sha256": "d5294b8f62353b52e00c900b89f58048669b7e67cbcd28b97bc3fa436114f043"
+        },
+        {
+          "path": "references/licensing_openness.md",
+          "bytes": 7915,
+          "sha256": "d08f0aaa460f8b83f7aa81599f1ec303c539e03fa06d6ef246cac013411d9a6c"
+        },
+        {
+          "path": "references/modality_map.md",
+          "bytes": 14803,
+          "sha256": "b5e23e1893260081097f614f5193a65426b0f0f266500a8130f1000d75637370"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "architecture-and-built-heritage-research",
+      "name_reported": "architecture-and-built-heritage-research",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 5599,
+          "sha256": "28e458697ea82e6d0143e7fe68033e204ce57aeefcd4aeb47ddcb30416ad8476"
+        },
+        {
+          "path": "references/conservation_and_delivery.md",
+          "bytes": 2517,
+          "sha256": "2c39cd54dbf8eafde84d750f7ebe70095adc7af469c436839c4df24001cb6e60"
+        },
+        {
+          "path": "references/traditions_and_sources.md",
+          "bytes": 3747,
+          "sha256": "3415cd4541015ed7536e91e3b26e98b55e3b663da093c5536fa6107bc439ea84"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "biology-research",
+      "name_reported": "biology-research",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 5957,
+          "sha256": "077b690e0e216387889e719cdfd03a2cee9b7433113e8880bfc51f79e4553d88"
+        },
+        {
+          "path": "references/domain_map.md",
+          "bytes": 11563,
+          "sha256": "ebb5684a1cba1849fe281e52fb5b289cb14dab6f9fe7082cdab9b88a450120dd"
+        },
+        {
+          "path": "references/evaluation.md",
+          "bytes": 2903,
+          "sha256": "cd5d641512b8d17c2761cfcdbc1150eeb960bf015653bb7b50a4d0539e90facc"
+        },
+        {
+          "path": "references/resources.md",
+          "bytes": 3558,
+          "sha256": "d18410ccf0390be15b25e68dbcda95796faf56cf8fc820242ea2912b2d87efb6"
+        },
+        {
+          "path": "references/safety.md",
+          "bytes": 3497,
+          "sha256": "aa8e57941b4c3376ee69dc01f0e48ed3bd26d1847bb08703964784eb60c0b1bc"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "chemistry-research",
+      "name_reported": "chemistry-research",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 6939,
+          "sha256": "39b359c3a1e66bed96f5f4d94c68df638ec0794c21446a3f987f10178ec5be76"
+        },
+        {
+          "path": "references/domain_map.md",
+          "bytes": 6210,
+          "sha256": "fb69fb279fbc4a353b494e74eb0ed5925c7ae310128515afdc1a2ca2306cc03d"
+        },
+        {
+          "path": "references/evaluation.md",
+          "bytes": 8474,
+          "sha256": "3486eebb4cf2acbc1e665eaeb172ff861e881aefdacd187438abec91e1ce1b7a"
+        },
+        {
+          "path": "references/resources.md",
+          "bytes": 10589,
+          "sha256": "15cd9b9bc9725ce3025e595847fd8011378c1dde95fd3f0be72e9d2834ac3af9"
+        },
+        {
+          "path": "references/safety.md",
+          "bytes": 5527,
+          "sha256": "6f15989997d4f7a47ec757d2d130e8ff14b902498c00ce5bf01cb42ad4328963"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "computational-geometry-engineering",
+      "name_reported": "computational-geometry-engineering",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 4951,
+          "sha256": "b8c010435bc591fc4d97ddbf90d560d034ff876264254af7889bfba2cdffbce4"
+        },
+        {
+          "path": "references/methods_and_resources.md",
+          "bytes": 3918,
+          "sha256": "1a83eb8716d7ef4f95c3f8cb21145729e0251605e9164541632497029dcbe728"
+        },
+        {
+          "path": "references/validation_contract.md",
+          "bytes": 2211,
+          "sha256": "13b1f075537ba3091b0a5ce82c46bc7c6cb1ff6d59ea7032c89d9561bd5e9cea"
+        },
+        {
+          "path": "scripts/mesh_audit.py",
+          "bytes": 4143,
+          "sha256": "5f9ee0909e34e0612d273cd65839871b003a21124e10ac4f26434c2e3cd70273"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "defensive-reverse-engineering",
+      "name_reported": "defensive-reverse-engineering",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 6676,
+          "sha256": "18ace834e5fd45c963b513800646b5f7d6eb00c3242c5ab7ffc3fe7f21d26b9a"
+        },
+        {
+          "path": "references/authorization_and_evidence.md",
+          "bytes": 3182,
+          "sha256": "2ef864f08c4d749a45750c4798fddb505d236e7420da0fba97e7152818ba96cc"
+        },
+        {
+          "path": "references/reporting.md",
+          "bytes": 2559,
+          "sha256": "2ee4e9db9d3ba410c14094b91d2c0e6c9c17847c5e8c99db1fd23df0ed9a7a94"
+        },
+        {
+          "path": "references/tool_matrix.md",
+          "bytes": 4186,
+          "sha256": "421091bccd827b563174b7aa1ccfaa164aa054915bf9e3024051e448eb86061e"
+        },
+        {
+          "path": "scripts/intake_and_hash.py",
+          "bytes": 3685,
+          "sha256": "4f6d39997c57d482a07876b07e879dadb7b823d64dffa034a5e4c28d428331dd"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [
+        {
+          "file": "scripts/intake_and_hash.py",
+          "line": 24,
+          "signal": "upload"
+        },
+        {
+          "file": "scripts/intake_and_hash.py",
+          "line": 70,
+          "signal": "upload"
+        }
+      ],
+      "review_required": true
+    },
+    {
+      "path": "engineering-job-market-intelligence",
+      "name_reported": "engineering-job-market-intelligence",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 5811,
+          "sha256": "c5defdef5b33d32b58e8d9480c5b2e89114014f5e5caa67503fbb419642dac73"
+        },
+        {
+          "path": "references/analysis_and_reporting.md",
+          "bytes": 2696,
+          "sha256": "bf09ae4cd6c74d70bf69bdaa794899a2cab98d5c2eb8e25e0f0f079c3a38c4ef"
+        },
+        {
+          "path": "references/schema.md",
+          "bytes": 2478,
+          "sha256": "11cb9cc841047d47501c5e4a835837a9a0b1a2f763abb306996358c96e154cee"
+        },
+        {
+          "path": "references/source_policies.md",
+          "bytes": 3175,
+          "sha256": "ec96b97392df2b428629131f349ff8b537f04c2846b54bf4039751de5a9637fa"
+        },
+        {
+          "path": "scripts/public_jobs_snapshot.py",
+          "bytes": 18619,
+          "sha256": "c7389dc96f1a60080a90c0a28650b1d3d76e0cc37c64a69f68b1c64abc2522fb"
+        },
+        {
+          "path": "scripts/snapshot_diff.py",
+          "bytes": 7543,
+          "sha256": "886dd0cb9419752f8057f336036f5da997cd2d24f8a755d857ed69cdec686c69"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [
+        {
+          "file": "scripts/public_jobs_snapshot.py",
+          "line": 17,
+          "signal": "urllib"
+        },
+        {
+          "file": "scripts/public_jobs_snapshot.py",
+          "line": 20,
+          "signal": "urllib"
+        },
+        {
+          "file": "scripts/public_jobs_snapshot.py",
+          "line": 24,
+          "signal": "requests."
+        },
+        {
+          "file": "scripts/public_jobs_snapshot.py",
+          "line": 25,
+          "signal": "urllib"
+        },
+        {
+          "file": "scripts/public_jobs_snapshot.py",
+          "line": 89,
+          "signal": "eval("
+        },
+        {
+          "file": "scripts/public_jobs_snapshot.py",
+          "line": 167,
+          "signal": "requests."
+        },
+        {
+          "file": "scripts/public_jobs_snapshot.py",
+          "line": 184,
+          "signal": "urllib"
+        },
+        {
+          "file": "scripts/public_jobs_snapshot.py",
+          "line": 189,
+          "signal": "requests."
+        }
+      ],
+      "review_required": true
+    },
+    {
+      "path": "engineering-organization-architect",
+      "name_reported": "engineering-organization-architect",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 5812,
+          "sha256": "cf3bb7d6c42d0f6ac8d15776a7c30e9eb76fa5fa065c8c8cc653bf6d1003d070"
+        },
+        {
+          "path": "references/governance_and_metrics.md",
+          "bytes": 3281,
+          "sha256": "45b0d7c24609e2d9790879539f01f036237d4425a6a8f19875f33a92428fa120"
+        },
+        {
+          "path": "references/levels_and_hiring.md",
+          "bytes": 4360,
+          "sha256": "5bc6deadbb8dfc31e5cce15f96da59dbf3bd0e34ab3b66ee810a6adfc0497387"
+        },
+        {
+          "path": "references/organization_model.md",
+          "bytes": 5294,
+          "sha256": "8a97f30fe02eaaf626c499e954b5b946cac9a57d9193e59dca2d21711f79daa2"
+        },
+        {
+          "path": "references/role_charters.md",
+          "bytes": 60365,
+          "sha256": "9ea0e195ef74a59dc3c71e7b1cbe91217932600192d7f68a5ec326c5f461641d"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "game-reconstruction-engineering",
+      "name_reported": "game-reconstruction-engineering",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 10499,
+          "sha256": "a1e974d76edcbff9a8f00a9e0f71a34bdd9f159c196a08b83031d90a23e1b052"
+        },
+        {
+          "path": "references/authorization_and_rights.md",
+          "bytes": 4336,
+          "sha256": "55f0c4b6a17a79cea517f92e7bef45580d4cd7e72a1e5953d00111487151a1d8"
+        },
+        {
+          "path": "references/gates_and_orchestration.md",
+          "bytes": 7731,
+          "sha256": "5e8276ebcd76bbcdfc9c1fdce4417850e49f28d4d71bd79a3fd3d3203e5ac8e5"
+        },
+        {
+          "path": "references/methods_and_tools.md",
+          "bytes": 4941,
+          "sha256": "f19be0966a6e89eb28c48a0bdd1cb8eed6744c5c0a06283024f0fdcb84d30943"
+        },
+        {
+          "path": "references/provenance_forks_and_builds.md",
+          "bytes": 4816,
+          "sha256": "5dc674ee374508c50396189e7cfe166cad4e39882626582bde9ed3bf38edd33b"
+        },
+        {
+          "path": "scripts/intake_and_hash.py",
+          "bytes": 3685,
+          "sha256": "4f6d39997c57d482a07876b07e879dadb7b823d64dffa034a5e4c28d428331dd"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [
+        {
+          "file": "scripts/intake_and_hash.py",
+          "line": 24,
+          "signal": "upload"
+        },
+        {
+          "file": "scripts/intake_and_hash.py",
+          "line": 70,
+          "signal": "upload"
+        }
+      ],
+      "review_required": true
+    },
+    {
+      "path": "local-model-runtime-engineering",
+      "name_reported": "local-model-runtime-engineering",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 12021,
+          "sha256": "299c4887bdb5d8a0b3f52b6ab6182a1f1fe1e6ad2b5d18d812b11f52284e849b"
+        },
+        {
+          "path": "references/model_selection.md",
+          "bytes": 9444,
+          "sha256": "e4f83157ef7760992f38a762d533ee2ad46dca71fb98bcbe250d84893284eea3"
+        },
+        {
+          "path": "references/runtime_selection.md",
+          "bytes": 8689,
+          "sha256": "ee9448a426a6f1accc22c122e32215741936ddbe7e633225ea397ae9456bbe3e"
+        },
+        {
+          "path": "references/safety_and_validation.md",
+          "bytes": 12973,
+          "sha256": "3a5cd934aaaa64af84392bd3d27209cde822df170612e894f6ec8249e172f5b2"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "mathematics-research",
+      "name_reported": "mathematics-research",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 5233,
+          "sha256": "ef2c38fdfbc4bcc4ef86b854045659594a18f32a47c1fc6cb1b80ddb7ba7b039"
+        },
+        {
+          "path": "references/domain_map.md",
+          "bytes": 9895,
+          "sha256": "0925cbb3720ab96e010e92d369554d0e85f632c7f38eb0e4de530970742aee78"
+        },
+        {
+          "path": "references/evaluation.md",
+          "bytes": 2896,
+          "sha256": "013ff5acf2af5d2d144cfef6d1c37ef6588fa7058ef87bbcc39878182c539495"
+        },
+        {
+          "path": "references/resources.md",
+          "bytes": 5269,
+          "sha256": "fd8710085a29a4f1fa1be07ed1e2f600430a5ca30ab59b1a47b3568b30be9798"
+        },
+        {
+          "path": "references/safety.md",
+          "bytes": 5278,
+          "sha256": "6a92f25920acc38b7133fa5e37f6fb61af5798456198f1d08576356aa4044c92"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "physics-research",
+      "name_reported": "physics-research",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 6861,
+          "sha256": "c5d9fadf6f0fd22c700fd504853114ddab0e50d2dcba778a7ac2900e1493b0e3"
+        },
+        {
+          "path": "references/domain_map.md",
+          "bytes": 14436,
+          "sha256": "4eefe186f1e601fc854957a91570dd762c3cb13ce5263b65cb640afc3bcaca07"
+        },
+        {
+          "path": "references/evaluation.md",
+          "bytes": 8474,
+          "sha256": "ba506ea20db7a52672372eb0f7a943d60d1fcf8864245af19f4b5ea60d5de7be"
+        },
+        {
+          "path": "references/measurement_safety.md",
+          "bytes": 7949,
+          "sha256": "1c6c3b93d927aaa6db381611ca0d1bbceb3c3bd87df3d29b79731048bb7a1b64"
+        },
+        {
+          "path": "references/resources.md",
+          "bytes": 6136,
+          "sha256": "3b7fa522f4b3eaa0d7d28d9bb0758e0e38c52c468047d0af00fce72104db9f2a"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "science-history-research",
+      "name_reported": "science-history-research",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 6034,
+          "sha256": "91b76401874747a3cc39529ec910eac1f6f741ddba019f46e89c71d1cf6d1823"
+        },
+        {
+          "path": "references/case_audits.md",
+          "bytes": 18731,
+          "sha256": "175069a6332df04b779d1c2b45e5f2c6de17ae11fa20fc970a69acb715c05513"
+        },
+        {
+          "path": "references/evaluation.md",
+          "bytes": 3612,
+          "sha256": "fe8ab52aee849e220adeda280116de5b3e240ff2346ee550fc113466c5e64831"
+        },
+        {
+          "path": "references/evidence_and_provenance.md",
+          "bytes": 6752,
+          "sha256": "205a2f5e6f0a670131aaabd3d2052d3c60f9ee379867da44dd154f47028955e1"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    },
+    {
+      "path": "spatial-3d-production-engineering",
+      "name_reported": "spatial-3d-production-engineering",
+      "frontmatter_fields": [
+        "description",
+        "name"
+      ],
+      "required_metadata_present": true,
+      "name_matches_directory": true,
+      "files": [
+        {
+          "path": "SKILL.md",
+          "bytes": 5783,
+          "sha256": "e5c98705a8c04c23e02b9d1006b34c5a1e9e6b549f731c3dcdb1909f2368dc8b"
+        },
+        {
+          "path": "references/terminology_and_tools.md",
+          "bytes": 4123,
+          "sha256": "2c46a8cdfb056e0fd4d5695a4fd89d11e7fd26f1cf5176659c6061aa69daad58"
+        },
+        {
+          "path": "references/validation_and_safety.md",
+          "bytes": 3160,
+          "sha256": "be905559f2ed9ef77e7967fab9b10b736b4de0f01e1bac0d3111f629b3d42b04"
+        }
+      ],
+      "license_or_notice_files": [],
+      "config_or_hook_files": [],
+      "review_signals": [],
+      "review_required": true
+    }
+  ],
+  "summary": {
+    "skills_requiring_review": 15,
+    "symlinks_flagged": 0
+  },
+  "limitations": [
+    "Static inventory and keyword signals only",
+    "Not a malware scan, license opinion, sandbox, or safety certification",
+    "Review full instructions, scripts, dependencies, manifests, network/data effects, and hashes before activation"
+  ]
+}

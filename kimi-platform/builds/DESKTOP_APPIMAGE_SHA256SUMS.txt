@@ -1,0 +1,1 @@
+f7917febfadae42291b8bdf7d4f761b63d3c92ae77977146c4edfc5ddcbac74d  release/research-director-desktop-0.6.0-x86_64.AppImage

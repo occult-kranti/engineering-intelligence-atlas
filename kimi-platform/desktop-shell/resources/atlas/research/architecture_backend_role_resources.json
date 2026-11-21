@@ -1,0 +1,569 @@
+{
+  "schema_version": "1.0",
+  "title": "Role-to-resource mapping: architecture / database / backend panel",
+  "verified_at": "2026-11-20",
+  "baseline_note": "Versions/licenses verified 2026-11-20; re-verify time-sensitive facts (releases, licenses, course terms) at use.",
+  "existing_role_slugs_source": "/mnt/agents/output/role_capability_matrix.json (109-role catalog)",
+  "existing_skills_source": "/mnt/agents/output/skill_registry_audit_2026-11-20T153000Z.json (16 skills)",
+  "proposed_skill": {
+    "name": "architecture-database-backend-engineering",
+    "structure": {
+      "SKILL.md": "router + workflow + hard boundaries + composition protocol",
+      "references": [
+        "architecture_tradeoffs.md",
+        "distributed_systems.md",
+        "storage_and_query_engines.md",
+        "backend_platform_operations.md",
+        "failure_modes.md",
+        "repo_cases.md",
+        "labs_and_evaluation.md"
+      ]
+    },
+    "rationale": "one evidence base, three role contexts; matches existing single-purpose skill convention",
+    "research_source": "./architecture_database_backend_research.md"
+  },
+  "roles": [
+    {
+      "slug": "software-architecture-principal",
+      "charter": "scientific-research-library/agents/software-architecture-principal.md",
+      "mission": "Own architecture decisions and their evidence: quality-attribute trade-offs, domain boundaries, ADRs, and architecture governance.",
+      "core_competencies": [
+        "architecture style selection with explicit trade-offs",
+        "DDD strategic design (bounded contexts, context maps)",
+        "ADR writing and fitness functions",
+        "API contract design and versioning",
+        "consistency/availability decision-making (CAP/PACELC fluency)",
+        "reading production systems for precedent (repo cases)",
+        "license/lifecycle risk assessment of dependencies"
+      ],
+      "resources": [
+        {
+          "title": "Designing Data-Intensive Applications (Kleppmann, 2017; check 2nd ed. drafts)",
+          "url": "https://dataintensive.net/",
+          "evidence": "canonical text; cross-check versioned claims against official docs",
+          "tier": "O",
+          "extract": "consistency/replication/stream decision frameworks",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Fundamentals of Software Architecture + Building Evolutionary Architectures 2e (Richards/Ford/Parsons/Kua)",
+          "url": "https://www.oreilly.com/library/view/fundamentals-of-software/9781663728357/",
+          "evidence": "trade-off-first architecture method; fitness functions",
+          "tier": "O",
+          "extract": "architecture-as-decision-discipline",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "C4 model",
+          "url": "https://c4model.com/",
+          "evidence": "diagramming standard",
+          "tier": "O",
+          "extract": "communicable architecture at four zoom levels",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "arc42",
+          "url": "https://arc42.org/",
+          "evidence": "documentation template",
+          "tier": "O",
+          "extract": "complete architecture doc structure",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "ADR organization",
+          "url": "https://adr.github.io/",
+          "evidence": "decision-record practice",
+          "tier": "O",
+          "extract": "immutable decision logging",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "AWS Well-Architected Framework",
+          "url": "https://docs.aws.amazon.com/wellarchitected/latest/framework/welcome.html",
+          "evidence": "six-pillar review framework",
+          "tier": "O",
+          "extract": "review checklists and pillar trade-offs",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Helland, Data on the Outside vs Data on the Inside (2005)",
+          "url": "https://www.ics.uci.edu/~cs223/papers/cidr05.pdf",
+          "evidence": "inside/outside data duality",
+          "tier": "O",
+          "extract": "why events/APIs are immutable and versioned",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Microservices pattern catalog (microservices.io)",
+          "url": "https://microservices.io/patterns/",
+          "evidence": "pattern catalog with forces/consequences",
+          "tier": "O",
+          "extract": "outbox, saga, API composition, CQRS mechanics",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Martin Fowler's architecture writing",
+          "url": "https://martinfowler.com/architecture/",
+          "evidence": "curated essays (monolith-first, strangler, publishing)",
+          "tier": "O",
+          "extract": "incremental architecture evolution",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Repo case studies (license/lifecycle column)",
+          "url": "./architecture_backend_repo_cases.json",
+          "evidence": "23 pinned cases",
+          "tier": "O",
+          "extract": "precedent reading + license-risk method",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "ISO/IEC/IEEE 42010:2022 — Systems and software engineering: Architecture description",
+          "url": "https://www.iso.org/standard/74393.html",
+          "evidence": "international standard; scope statement verified on iso.org 2026-11-21",
+          "tier": "O",
+          "extract": "governs architecture *descriptions* (AD/ADF/ADL/viewpoints/model kinds) — NOT an architecting process, notation, tool, or recording medium; C4/arc42 may be *used* but no 42010 conformance claim without an explicit mapping",
+          "accessed": "2026-11-21"
+        },
+        {
+          "title": "ISO/IEC/IEEE 42030:2019 — Architecture evaluation",
+          "url": "https://www.iso.org/standard/73436.html",
+          "evidence": "international standard; scope statement verified on iso.org 2026-11-21",
+          "tier": "O",
+          "extract": "how to organize and record an architecture evaluation: stakeholders, concerns, evaluation framework, risks/opportunities, decision support — the evaluation complement to 42010 descriptions",
+          "accessed": "2026-11-21"
+        },
+        {
+          "title": "SEI ATAM: Method for Architecture Evaluation (CMU/SEI-2000-TR-004, Kazman/Klein/Clements 2000)",
+          "url": "https://resources.sei.cmu.edu/library/asset-view.cfm?assetid=5177",
+          "evidence": "SEI technical report; canonical quality-attribute trade-off analysis method",
+          "tier": "O",
+          "extract": "scenario-driven evaluation: utility tree, architectural approaches, sensitivity points, trade-off points, risks/non-risks",
+          "accessed": "2026-11-21"
+        },
+        {
+          "title": "SFIA 9 — Solution architecture (ARCH)",
+          "url": "https://sfia-online.org/en/sfia-9/skills/solution-architecture",
+          "evidence": "stable SFIA 9 skill definition page, verified live 2026-11-21",
+          "tier": "O",
+          "extract": "level-anchored competency language for architecture responsibility (L4-L6) — aligns specialist work to the standing-role catalog",
+          "accessed": "2026-11-21"
+        },
+        {
+          "title": "SFIA 9 — Software design (SWDN)",
+          "url": "https://sfia-online.org/en/sfia-9/skills/software-design",
+          "evidence": "stable SFIA 9 skill definition page, verified live 2026-11-21",
+          "tier": "O",
+          "extract": "design views for stakeholder concerns, trade-off evaluation, review discipline at levels 2-6",
+          "accessed": "2026-11-21"
+        }
+      ],
+      "labs": [
+        "ADR set for a monolith-vs-microservices decision with fitness functions (eval 1)",
+        "context map + bounded-context exercise on a messy domain",
+        "API contract versioning drill (additive-only evolution + sunset policy)",
+        "license/lifecycle audit (eval 6)",
+        "reverse-architecture lab 15 (eShop: arc42+C4+ADRs, ISO 42010 description checklist, ATAM scenarios)"
+      ],
+      "failure_modes_focus": [
+        "resume-driven design",
+        "distributed monolith",
+        "event schema rot",
+        "premature microservices",
+        "unrecorded decisions decaying into archaeology"
+      ],
+      "linked_role_slugs": [
+        "software-solutions-architect",
+        "staff-principal-engineer",
+        "technical-program-manager",
+        "product-manager"
+      ],
+      "linked_skills": [
+        "engineering-organization-architect",
+        "computational-geometry-engineering",
+        "agent-research-director"
+      ]
+    },
+    {
+      "slug": "database-systems-engineer",
+      "charter": "scientific-research-library/agents/database-systems-engineer.md",
+      "mission": "Design, evaluate, and reason about database internals and data systems: storage engines, query processing, transactions, replication, consensus — from source and papers, with benchmarks and fault injection.",
+      "core_competencies": [
+        "B-tree vs LSM storage-engine engineering (WAL, buffer pool, compaction)",
+        "isolation levels as anomaly sets; MVCC/2PL/SSI/OCC",
+        "query optimizer mechanics (Cascades/Volcano, statistics, cardinalities)",
+        "distributed consensus (Raft) and replication topologies",
+        "sharding and rebalancing design",
+        "transaction-isolation and consistency verification (Jepsen-style, deterministic simulation)",
+        "reading engine source at path/commit level"
+      ],
+      "resources": [
+        {
+          "title": "CMU 15-445/645 Database Systems (Pavlo)",
+          "url": "https://15445.courses.cs.cmu.edu/",
+          "evidence": "active course, Fall 2026 site live; BusTub projects",
+          "tier": "O",
+          "extract": "buffer pool, B+tree, execution, concurrency control — by building",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "CMU 15-721 Advanced Database Systems",
+          "url": "https://15721.courses.cs.cmu.edu/",
+          "evidence": "graduate paper-driven course",
+          "tier": "O",
+          "extract": "in-memory OLTP, MVCC variants, vectorization, research frontiers",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "MIT 6.5840 Distributed Systems",
+          "url": "https://pdos.csail.mit.edu/6.824/",
+          "evidence": "Raft labs with hostile harness",
+          "tier": "O",
+          "extract": "consensus under partitions, by building",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Database Internals (Petrov, 2019)",
+          "url": "https://www.databass.dev/",
+          "evidence": "storage+distributed internals text",
+          "tier": "O",
+          "extract": "B-tree/LSM and distributed algorithms vocabulary",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Architecture of a Database System (Hellerstein/Stonebraker/Hamilton 2007)",
+          "url": "http://db.cs.berkeley.edu/papers/fntdb07-architecture.pdf",
+          "evidence": "the DBMS architecture map paper",
+          "tier": "O",
+          "extract": "component architecture that still matches Postgres source",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Raft paper + Ongaro dissertation",
+          "url": "https://raft.github.io/raft.pdf",
+          "evidence": "consensus reference",
+          "tier": "O",
+          "extract": "election restriction §5.4, joint consensus, then etcd-io/raft deltas",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "ARIES (Mohan et al. 1992)",
+          "url": "https://cs.stanford.edu/~chrismre/cs345/rl/aries.pdf",
+          "evidence": "recovery reference",
+          "tier": "O",
+          "extract": "WAL/redo/undo; pairs with CMU lectures 20-21",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Jepsen analyses",
+          "url": "https://jepsen.io/analyses",
+          "evidence": "independent consistency verification",
+          "tier": "O",
+          "extract": "how vendor claims fail under partitions",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Hermitage isolation test suite",
+          "url": "https://github.com/ept/hermitage",
+          "evidence": "anomaly-per-level test matrix",
+          "tier": "O",
+          "extract": "what each isolation level actually forbids per database",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "FoundationDB SIGMOD 2021 paper + simulation docs",
+          "url": "https://apple.github.io/foundationdb/testing.html",
+          "evidence": "deterministic simulation testing doctrine",
+          "tier": "O",
+          "extract": "the gold standard for distributed correctness confidence",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "SQLite testing documentation",
+          "url": "https://sqlite.org/testing.html",
+          "evidence": "testing culture reference",
+          "tier": "O",
+          "extract": "100% branch coverage, fuzzing, anomaly injection as a bar",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Use The Index, Luke",
+          "url": "https://use-the-index-luke.com/",
+          "evidence": "indexing/pagination reference",
+          "tier": "O",
+          "extract": "composite/partial indexes, keyset pagination",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Repo cases: postgres, sqlite, duckdb, rocksdb, etcd(-raft), tikv, cockroachdb, clickhouse, foundationdb, cassandra",
+          "url": "./architecture_backend_repo_cases.json",
+          "evidence": "pinned production codebases",
+          "tier": "O",
+          "extract": "source-grounded internals study",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "SFIA 9 — Database design (DBDS)",
+          "url": "https://sfia-online.org/en/sfia-9/skills/database-design",
+          "evidence": "stable SFIA 9 skill definition page, verified live 2026-11-21",
+          "tier": "O",
+          "extract": "physical/logical database design competency language incl. scalability, performance, availability, recovery requirements",
+          "accessed": "2026-11-21"
+        },
+        {
+          "title": "SFIA 9 — Database administration (DBAD)",
+          "url": "https://sfia-online.org/en/sfia-9/skills/database-administration",
+          "evidence": "SFIA 9 skill (listed in SFIA 9 DevOps view); verify page at use",
+          "tier": "C",
+          "extract": "operational complement: installing, configuring, monitoring, maintaining databases — pairs with PITR/tuning labs 16-17",
+          "accessed": "2026-11-21"
+        }
+      ],
+      "labs": [
+        "BusTub P1-P4 (labs 1-4)",
+        "EXPLAIN ANALYZE cardinality-failure diagnosis (lab 5)",
+        "LSM vs B-tree bake-off (lab 6)",
+        "MIT 6.5840 labs 2-4 (labs 7-8)",
+        "Jepsen-lite reproduction (lab 9)",
+        "deterministic simulation design doc (lab 10)",
+        "PostgreSQL PITR lab 16 (pg_basebackup + WAL replay; restore row counts/checksums; measured RTO/RPO)",
+        "PostgreSQL pgbench tuning lab 17 (three before/after runs; EXPLAIN ANALYZE + pg_stat_statements evidence)"
+      ],
+      "failure_modes_focus": [
+        "write skew under SI",
+        "phantoms under row locks",
+        "VACUUM bloat/XID wraparound",
+        "LSM compaction stalls",
+        "split brain without fencing",
+        "stale leader reads",
+        "shard rebalance storms",
+        "replication-lag RYOW violations"
+      ],
+      "linked_role_slugs": [
+        "database-engineer-dba",
+        "data-engineer",
+        "backend-engineer",
+        "performance-engineer",
+        "staff-principal-engineer"
+      ],
+      "linked_skills": [
+        "defensive-reverse-engineering",
+        "local-model-runtime-engineering",
+        "agent-research-director"
+      ]
+    },
+    {
+      "slug": "backend-platform-staff-engineer",
+      "charter": "scientific-research-library/agents/backend-platform-staff-engineer.md",
+      "mission": "Build and operate production backend services and the platform beneath them: APIs, queues, caches, resilience, observability, performance, security, migrations, and cloud operations — at staff scope (multi-team leverage, incident leadership, standards).",
+      "core_competencies": [
+        "production API design and evolution",
+        "caching strategies and their failure modes",
+        "queue/stream topology (Kafka 4.x KRaft, NATS, outbox/inbox)",
+        "resilience patterns (timeouts, retries+jitter, circuit breakers, bulkheads, load shedding)",
+        "SLO engineering and observability (OTel, RED/USE, burn rates)",
+        "performance analysis (Little's law, percentiles, coordinated omission)",
+        "backend security (OWASP API, OIDC/OAuth2.1, secrets, supply chain)",
+        "zero-downtime migration and deployment practice",
+        "Kubernetes/cloud platform operation and cost awareness"
+      ],
+      "resources": [
+        {
+          "title": "Google SRE Book + Workbook",
+          "url": "https://sre.google/books/",
+          "evidence": "SLO/on-call/overload canon",
+          "tier": "O",
+          "extract": "error budgets, burn-rate alerting, postmortem culture",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Release It! 2nd ed. (Nygard, 2018)",
+          "url": "https://pragprog.com/titles/mnee2/release-it-second-edition/",
+          "evidence": "stability patterns/anti-patterns",
+          "tier": "O",
+          "extract": "circuit breaker, bulkhead, fail fast, capacity",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "OpenTelemetry docs",
+          "url": "https://opentelemetry.io/docs/",
+          "evidence": "instrumentation standard",
+          "tier": "O",
+          "extract": "traces/metrics/logs + semantic conventions",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Kafka documentation (design + replication + KRaft)",
+          "url": "https://kafka.apache.org/documentation/",
+          "evidence": "4.x KRaft-only since 4.0 (2025-03-18); current 4.4",
+          "tier": "O",
+          "extract": "ISR/HW replication, idempotent producer, share groups",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "KIP-500 / KIP-98 / KIP-932",
+          "url": "https://cwiki.apache.org/confluence/display/KAFKA/Kafka+Improvement+Proposals",
+          "evidence": "design-history primary sources",
+          "tier": "O",
+          "extract": "how major infra migrations are reasoned and staged",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "NATS docs (JetStream)",
+          "url": "https://docs.nats.io/",
+          "evidence": "messaging alternative, v2.15.x",
+          "tier": "O",
+          "extract": "queue-vs-log decision axis",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "AWS caching strategies whitepaper",
+          "url": "https://docs.aws.amazon.com/whitepapers/latest/database-caching-strategies-using-redis/caching-patterns.html",
+          "evidence": "cache pattern catalog",
+          "tier": "O",
+          "extract": "cache-aside etc. + invalidation honesty",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Exponential Backoff and Jitter (AWS Architecture Blog)",
+          "url": "https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/",
+          "evidence": "retry discipline",
+          "tier": "O",
+          "extract": "full jitter math, retry storm prevention",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "OWASP API Security Top 10 (2023) + ASVS",
+          "url": "https://owasp.org/www-project-api-security/",
+          "evidence": "backend security checklist",
+          "tier": "O",
+          "extract": "BOLA/IDOR and authZ verification",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "OAuth 2.1 / OIDC",
+          "url": "https://oauth.net/2.1/",
+          "evidence": "current auth framework (PKCE everywhere)",
+          "tier": "O",
+          "extract": "modern token architecture",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "PostgreSQL docs (isolation, DDL, vacuum)",
+          "url": "https://www.postgresql.org/docs/current/",
+          "evidence": "18.x current",
+          "tier": "O",
+          "extract": "operational truth for the default OLTP database",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Testcontainers",
+          "url": "https://testcontainers.com/",
+          "evidence": "integration testing against real services",
+          "tier": "O",
+          "extract": "tests that test reality, not mocks",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "The Log (Kreps)",
+          "url": "https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying",
+          "evidence": "streaming worldview essay",
+          "tier": "O",
+          "extract": "log as unifying abstraction",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Brendan Gregg's performance resources",
+          "url": "https://www.brendangregg.com/",
+          "evidence": "USE method, flamegraphs, bpftrace",
+          "tier": "O",
+          "extract": "evidence-based performance method",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "How NOT to Measure Latency (Gil Tene)",
+          "url": "https://www.infoq.com/presentations/latency-response-time/",
+          "evidence": "coordinated omission",
+          "tier": "O",
+          "extract": "benchmark honesty",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Etsy Debriefing Facilitation Guide + SRE postmortem culture",
+          "url": "https://extfiles.etsy.com/DebriefingFacilitationGuide.pdf",
+          "evidence": "blameless incident review",
+          "tier": "O",
+          "extract": "incident learning mechanics",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "Repo cases: kafka, nats, valkey, redis, vitess, scylladb, redpanda (archived — lifecycle case)",
+          "url": "./architecture_backend_repo_cases.json",
+          "evidence": "pinned infrastructure codebases",
+          "tier": "O",
+          "extract": "infrastructure precedent + lifecycle vigilance",
+          "accessed": "2026-11-20"
+        },
+        {
+          "title": "SFIA 9 — Programming/software development (PROG)",
+          "url": "https://sfia-online.org/en/sfia-9/skills/programming-software-development",
+          "evidence": "stable SFIA 9 skill definition page, verified live 2026-11-21",
+          "tier": "O",
+          "extract": "level-anchored competency language for backend implementation responsibility",
+          "accessed": "2026-11-21"
+        },
+        {
+          "title": "SFIA 9 — Software design (SWDN)",
+          "url": "https://sfia-online.org/en/sfia-9/skills/software-design",
+          "evidence": "stable SFIA 9 skill definition page, verified live 2026-11-21",
+          "tier": "O",
+          "extract": "design views and trade-off evaluation for service/component design",
+          "accessed": "2026-11-21"
+        },
+        {
+          "title": "SFIA 9 — Non-functional testing (NFTS, new in SFIA 9)",
+          "url": "https://sfia-online.org/en/sfia-9/skills/non-functional-testing",
+          "evidence": "stable SFIA 9 skill definition page, verified live 2026-11-21",
+          "tier": "O",
+          "extract": "performance/security/scalability/reliability test design — the competency frame for the load/failure evidence in labs 11, 14, 15, 17",
+          "accessed": "2026-11-21"
+        }
+      ],
+      "labs": [
+        "production-shaped service lab 11 (API+outbox+OTel+SLO)",
+        "cache failure drills (lab 12)",
+        "zero-downtime migration rehearsal (lab 13)",
+        "chaos game day (lab 14)",
+        "measurable backend contract/load/failure/trace evidence portion of reverse-architecture lab 15 (three repeated load runs; p50/p95/p99, throughput/error/CPU/memory)"
+      ],
+      "failure_modes_focus": [
+        "retry storms",
+        "dual-write divergence",
+        "cache avalanche/penetration/hot-key",
+        "connection-pool exhaustion",
+        "unbounded queues (Little's law)",
+        "lock-timeout-less migrations",
+        "coordinated-omission benchmarks",
+        "cert expiry",
+        "PII in logs"
+      ],
+      "linked_role_slugs": [
+        "backend-engineer",
+        "api-integration-engineer",
+        "platform-engineer",
+        "site-reliability-engineer",
+        "devops-ci-cd-engineer",
+        "cloud-infrastructure-engineer",
+        "security-architect",
+        "performance-engineer",
+        "staff-principal-engineer"
+      ],
+      "linked_skills": [
+        "local-model-runtime-engineering",
+        "computational-geometry-engineering",
+        "agent-research-director"
+      ]
+    }
+  ],
+  "shared_evaluation_tasks": "see architecture_database_backend_research.md §25 (9 scored tasks)"
+}

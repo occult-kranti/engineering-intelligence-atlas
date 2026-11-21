@@ -1,0 +1,1514 @@
+{
+ "schema_version": "1.0",
+ "artifact": "resource_gap_fill",
+ "generated": "2026-11-20",
+ "purpose": "Close the P0/P1 resource gaps identified in role_capability_depth_audit.md (§5.2) for role_resource_matrix_seed.json. Additive only: no app, workbook, repository, or seed files were modified.",
+ "inputs": [
+  "role_capability_depth_audit.md (§5.2 gap table, §7 link-evidence conventions)",
+  "role_resource_matrix_seed.json (role slugs, flag/tier definitions, evaluation_tasks, scoring_rules)"
+ ],
+ "conventions": {
+  "flags": "core | internal | conditional — same semantics as seed flag_definitions",
+  "tiers": "foundational | core | advanced — same semantics as seed tier_definitions",
+  "evidence": "E3 = HTTP 200/202 in the 2026-11-20 probe; E2 = blocked (403/SSL/timeout, bot-wall class) or Google-domain SSL interception — recheck-not-replace per audit §7",
+  "supports_eval_tasks": "task_type values from each role's evaluation_tasks block in the seed: portfolio_artifact | scenario_simulation | senior_scope_defense"
+ },
+ "gap_closure_summary": [
+  {
+   "gap": "P0 mobile development (mobile-engineer)",
+   "entries": 8,
+   "ids": [
+    "mob-android-docs",
+    "mob-android-arch",
+    "mob-android-compose-course",
+    "mob-apple-dev-docs",
+    "mob-apple-hig",
+    "mob-swift-book",
+    "mob-flutter-docs",
+    "mob-react-native-docs"
+   ]
+  },
+  {
+   "gap": "P0 identity/IAM standards (iam-identity-engineer)",
+   "entries": 10,
+   "ids": [
+    "iam-rfc6749",
+    "iam-rfc9700",
+    "iam-oidc-core",
+    "iam-saml-core",
+    "iam-webauthn",
+    "iam-fido-specs",
+    "iam-rfc7644",
+    "iam-keycloak-docs",
+    "iam-nist-800-63-4",
+    "iam-oauth-net"
+   ]
+  },
+  {
+   "gap": "P1 privacy/PETs & privacy law (privacy-engineer, legal-policy-compliance-specialist)",
+   "entries": 5,
+   "ids": [
+    "priv-nist-privacy-framework",
+    "priv-dwork-roth-dp",
+    "priv-opendp",
+    "priv-gdpr",
+    "priv-privacy-engineering-book"
+   ]
+  },
+  {
+   "gap": "P1 SecOps tooling layer (detection-engineer, soc-security-analyst, threat-intelligence-analyst, vulnerability-management-engineer)",
+   "entries": 8,
+   "ids": [
+    "secops-sigma",
+    "secops-attack",
+    "secops-misp",
+    "secops-cvss40",
+    "secops-epss",
+    "secops-cisa-kev",
+    "secops-mitre-11-strategies",
+    "secops-elastic-security"
+   ]
+  },
+  {
+   "gap": "P1 cloud security / CNAPP-CSPM layer (cloud-security-engineer)",
+   "entries": 5,
+   "ids": [
+    "cloud-aws-wa-security",
+    "cloud-ms-security-benchmark",
+    "cloud-gcp-arch-security",
+    "cloud-cis-benchmarks",
+    "cloud-csa-ccm"
+   ]
+  },
+  {
+   "gap": "P1 game audio (game-audio-designer-programmer)",
+   "entries": 4,
+   "ids": [
+    "audio-fmod-docs",
+    "audio-wwise-docs",
+    "audio-dsp-guide",
+    "audio-game-audio-tutorial"
+   ]
+  },
+  {
+   "gap": "P1 finance for engineering companies (finance-operations-analyst)",
+   "entries": 5,
+   "ids": [
+    "fin-financial-intelligence",
+    "fin-accountingcoach",
+    "fin-saas-metrics",
+    "fin-finops-framework",
+    "fin-venture-deals"
+   ]
+  },
+  {
+   "gap": "P1 GRC crosswalks (security-grc-compliance-engineer)",
+   "entries": 5,
+   "ids": [
+    "grc-iso-27001",
+    "grc-aicpa-tsc",
+    "grc-nist-800-53r5",
+    "grc-scf",
+    "grc-nist-csf-olir"
+   ]
+  }
+ ],
+ "deferred_gaps_not_addressed": "P2/P3 gaps from audit §5.2 remain open by design: GTM crafts (support/CS/sales/talent/brand/social), CI-system & cloud-provider practitioner docs (30/31), building codes (architect), CAE theory textbook (90), AM feedstock/NDT (71-73), narrative tooling (58), rigging (80), psychometrics (94). The NIST AI 600-1 stale-link fix and re-probe of the 76 unchecked URLs are separate action-queue items (audit §10, items 3).",
+ "resources": [
+  {
+   "id": "mob-android-docs",
+   "name": "Android Developers Documentation",
+   "domain": "Mobile development (Android)",
+   "type": "Official documentation",
+   "url": "https://developer.android.com/docs",
+   "level": "All levels (foundational ramp to advanced API reference)",
+   "prerequisite": "Kotlin or Java basics",
+   "access": "Free",
+   "license": "Docs CC-BY 3.0; code samples Apache-2.0",
+   "caveat": "Google property; HTTPS blocked from probe sandbox (SSL interception) — official Google domain, treat as E2 recheck-not-replace",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: Mobile Engineer had zero mobile-development resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "mobile-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mob-android-arch",
+   "name": "Guide to App Architecture (Android)",
+   "domain": "Mobile development (Android)",
+   "type": "Official architecture guide",
+   "url": "https://developer.android.com/topic/architecture",
+   "level": "Core",
+   "prerequisite": "Android/Kotlin fundamentals",
+   "access": "Free",
+   "license": "CC-BY 3.0",
+   "caveat": "Architecture guidance presumes Jetpack/Compose stack; older View-system apps need adaptation",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: Mobile Engineer had zero mobile-development resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "mobile-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mob-android-compose-course",
+   "name": "Android Basics with Compose (official course)",
+   "domain": "Mobile development (Android)",
+   "type": "Official course/codelabs",
+   "url": "https://developer.android.com/courses",
+   "level": "Foundational",
+   "prerequisite": "None (intro programming helpful)",
+   "access": "Free",
+   "license": "CC-BY 3.0",
+   "caveat": "Beginner track; experienced hires should jump to architecture guide",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: Mobile Engineer had zero mobile-development resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "mobile-engineer",
+     "flag": "core",
+     "tier": "foundational",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mob-apple-dev-docs",
+   "name": "Apple Developer Documentation (Swift, SwiftUI, UIKit, Xcode)",
+   "domain": "Mobile development (iOS)",
+   "type": "Official documentation",
+   "url": "https://developer.apple.com/documentation/",
+   "level": "All levels (foundational to advanced API reference)",
+   "prerequisite": "Swift basics",
+   "access": "Free (some content requires Apple Developer account)",
+   "license": "Apple documentation terms",
+   "caveat": "Reference-style; pair with HIG and Swift book for a learning path",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: Mobile Engineer had zero mobile-development resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "mobile-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mob-apple-hig",
+   "name": "Apple Human Interface Guidelines",
+   "domain": "Mobile development (iOS)",
+   "type": "Official design guidelines",
+   "url": "https://developer.apple.com/design/human-interface-guidelines",
+   "level": "Core",
+   "prerequisite": "None",
+   "access": "Free",
+   "license": "Apple documentation terms",
+   "caveat": "Design guidance, not implementation; consumed jointly with Product Design",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: Mobile Engineer had zero mobile-development resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "mobile-engineer",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "scenario_simulation",
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mob-swift-book",
+   "name": "The Swift Programming Language (official book)",
+   "domain": "Mobile development (iOS)",
+   "type": "Official language book",
+   "url": "https://docs.swift.org/swift-book/documentation/the-swift-programming-language/",
+   "level": "Foundational",
+   "prerequisite": "Intro programming",
+   "access": "Free (web; also in Apple Books)",
+   "license": "Apache-2.0 with CC-BY 4.0 docs (Swift.org open source)",
+   "caveat": "Language-only; does not cover SwiftUI/UIKit app structure",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: Mobile Engineer had zero mobile-development resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "mobile-engineer",
+     "flag": "core",
+     "tier": "foundational",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mob-flutter-docs",
+   "name": "Flutter Documentation",
+   "domain": "Mobile development (cross-platform)",
+   "type": "Official documentation",
+   "url": "https://docs.flutter.dev/",
+   "level": "Core",
+   "prerequisite": "Dart basics (linked from docs)",
+   "access": "Free",
+   "license": "BSD-3-Clause (framework); docs CC-BY 4.0",
+   "caveat": "Cross-platform track; use when charter's cross-platform trigger (Flutter) is active",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: Mobile Engineer had zero mobile-development resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "mobile-engineer",
+     "flag": "conditional",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "mob-react-native-docs",
+   "name": "React Native Documentation",
+   "domain": "Mobile development (cross-platform)",
+   "type": "Official documentation",
+   "url": "https://reactnative.dev/docs/getting-started",
+   "level": "Core",
+   "prerequisite": "React/JavaScript",
+   "access": "Free",
+   "license": "MIT (framework); docs CC-BY 4.0",
+   "caveat": "Cross-platform track; alternative to Flutter — adopt one per charter trigger, not both",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: Mobile Engineer had zero mobile-development resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "mobile-engineer",
+     "flag": "conditional",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-rfc6749",
+   "name": "RFC 6749 — The OAuth 2.0 Authorization Framework",
+   "domain": "Identity standards (OAuth)",
+   "type": "Standard (IETF)",
+   "url": "https://www.rfc-editor.org/rfc/rfc6749.html",
+   "level": "Core",
+   "prerequisite": "HTTP, web application basics",
+   "access": "Free",
+   "license": "IETF Trust (TLP)",
+   "caveat": "Base framework only; must be read with RFC 9700 (security BCP) — legacy flows (implicit, ROPC) deprecated by BCP",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-rfc9700",
+   "name": "RFC 9700 — OAuth 2.0 Security Best Current Practice",
+   "domain": "Identity standards (OAuth)",
+   "type": "Standard (IETF BCP)",
+   "url": "https://www.rfc-editor.org/rfc/rfc9700.html",
+   "level": "Advanced",
+   "prerequisite": "RFC 6749",
+   "access": "Free",
+   "license": "IETF Trust (TLP)",
+   "caveat": "Published 2025; supersedes RFC 6819 threat-model guidance — cite this, not older OAuth security docs",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "scenario_simulation",
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-oidc-core",
+   "name": "OpenID Connect Core 1.0",
+   "domain": "Identity standards (OIDC)",
+   "type": "Standard (OpenID Foundation)",
+   "url": "https://openid.net/specs/openid-connect-core-1_0.html",
+   "level": "Core",
+   "prerequisite": "OAuth 2.0 (RFC 6749)",
+   "access": "Free",
+   "license": "OpenID Foundation spec license",
+   "caveat": "Authentication layer over OAuth; errata-set 2 is the current text",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-saml-core",
+   "name": "SAML V2.0 Core (OASIS Standard)",
+   "domain": "Identity standards (SAML)",
+   "type": "Standard (OASIS)",
+   "url": "https://docs.oasis-open.org/security/saml/v2.0/saml-core-2.0-os.pdf",
+   "level": "Core",
+   "prerequisite": "XML, enterprise SSO concepts",
+   "access": "Free",
+   "license": "OASIS specification license",
+   "caveat": "Enterprise/federation-heavy; use for workforce SSO and B2B federation where OIDC is not viable",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-webauthn",
+   "name": "W3C Web Authentication (WebAuthn) Level 2",
+   "domain": "Identity standards (WebAuthn/passkeys)",
+   "type": "Standard (W3C Recommendation)",
+   "url": "https://www.w3.org/TR/webauthn-2/",
+   "level": "Advanced",
+   "prerequisite": "OIDC/OAuth flows, browser APIs",
+   "access": "Free",
+   "license": "W3C Document License",
+   "caveat": "W3C site bot-walled the probe (403) — recheck-not-replace; Level 3 WD exists for new features (passkey sync)",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-fido-specs",
+   "name": "FIDO Alliance Specifications (FIDO2 / CTAP)",
+   "domain": "Identity standards (FIDO)",
+   "type": "Standard body specification index",
+   "url": "https://fidoalliance.org/specifications/",
+   "level": "Advanced",
+   "prerequisite": "WebAuthn",
+   "access": "Free (public downloads)",
+   "license": "FIDO Alliance specification terms",
+   "caveat": "Site bot-walled the probe (403) — recheck-not-replace; CTAP pairs with WebAuthn for authenticator-level work",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-rfc7644",
+   "name": "RFC 7644 / 7643 — SCIM 2.0 Protocol and Schema",
+   "domain": "Identity standards (SCIM)",
+   "type": "Standard (IETF)",
+   "url": "https://www.rfc-editor.org/rfc/rfc7644.html",
+   "level": "Core",
+   "prerequisite": "REST/JSON, identity lifecycle concepts",
+   "access": "Free",
+   "license": "IETF Trust (TLP)",
+   "caveat": "Provisioning/deprovisioning only; pair 7644 (protocol) with 7643 (schema)",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-keycloak-docs",
+   "name": "Keycloak Documentation (open-source IAM)",
+   "domain": "Identity platforms (Keycloak)",
+   "type": "Official documentation",
+   "url": "https://www.keycloak.org/documentation",
+   "level": "Core",
+   "prerequisite": "OAuth/OIDC concepts",
+   "access": "Free",
+   "license": "Apache-2.0",
+   "caveat": "Reference IdP for hands-on evaluation tasks; version-specific server guides under docs/latest",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-nist-800-63-4",
+   "name": "NIST SP 800-63-4 Digital Identity Guidelines",
+   "domain": "Identity assurance",
+   "type": "Government guideline",
+   "url": "https://csrc.nist.gov/pubs/sp/800/63/4/final",
+   "level": "Advanced / Reference",
+   "prerequisite": "Identity lifecycle fundamentals",
+   "access": "Free",
+   "license": "US Government work (public domain)",
+   "caveat": "Finalized 2025 (supersedes 800-63-3); assurance levels (IAL/AAL/FAL) frame the high-assurance access senior scope",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "senior_scope_defense"
+     ]
+    },
+    {
+     "role_slug": "security-grc-compliance-engineer",
+     "flag": "internal",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "iam-oauth-net",
+   "name": "OAuth 2.0 Simplified (oauth.net)",
+   "domain": "Identity standards (OAuth)",
+   "type": "Community guide (spec-author maintained)",
+   "url": "https://oauth.net/2/",
+   "level": "Foundational",
+   "prerequisite": "None",
+   "access": "Free",
+   "license": "Site content terms (Aaron Parecki / Okta)",
+   "caveat": "Entry ramp before the RFCs; maintained by an OAuth spec contributor but not itself a standard",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P0: IAM Engineer had no OAuth/OIDC/SAML resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "iam-identity-engineer",
+     "flag": "core",
+     "tier": "foundational",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "priv-nist-privacy-framework",
+   "name": "NIST Privacy Framework 1.0",
+   "domain": "Privacy engineering",
+   "type": "Risk framework",
+   "url": "https://www.nist.gov/privacy-framework",
+   "level": "Core",
+   "prerequisite": "Privacy program basics",
+   "access": "Free",
+   "license": "US Government work (public domain)",
+   "caveat": "Framework-level; pair with GDPR text for legal obligations and OpenDP for technical PETs",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Privacy Engineer & Legal shared zero privacy-law/PET resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "privacy-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "senior_scope_defense"
+     ]
+    },
+    {
+     "role_slug": "legal-policy-compliance-specialist",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "priv-dwork-roth-dp",
+   "name": "The Algorithmic Foundations of Differential Privacy (Dwork & Roth)",
+   "domain": "Privacy-enhancing technologies",
+   "type": "Book (author-posted free PDF)",
+   "url": "https://www.cis.upenn.edu/~aaroth/Papers/privacybook.pdf",
+   "level": "Advanced",
+   "prerequisite": "Probability, algorithms",
+   "access": "Free (author-posted PDF)",
+   "license": "Copyright NOW Publishers; PDF posted by authors with permission",
+   "caveat": "Theory-dense (2014); does not cover deployment tooling — pair with OpenDP",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Privacy Engineer & Legal shared zero privacy-law/PET resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "privacy-engineer",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "priv-opendp",
+   "name": "OpenDP Project (differential privacy library & docs)",
+   "domain": "Privacy-enhancing technologies",
+   "type": "Tool/documentation",
+   "url": "https://opendp.org/",
+   "level": "Core",
+   "prerequisite": "Python, basic statistics",
+   "access": "Free",
+   "license": "MIT",
+   "caveat": "Harvard/Microsoft-backed reference implementation; deployment caveats (privacy budget, curator trust) documented in its papers",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Privacy Engineer & Legal shared zero privacy-law/PET resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "privacy-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "priv-gdpr",
+   "name": "GDPR — Regulation (EU) 2016/679 (official consolidated text)",
+   "domain": "Privacy law",
+   "type": "Regulation (EUR-Lex official)",
+   "url": "https://eur-lex.europa.eu/eli/reg/2016/679/oj",
+   "level": "Core",
+   "prerequisite": "None",
+   "access": "Free",
+   "license": "EU public documents reuse policy",
+   "caveat": "Legal text, not engineering guidance; engineers consume via privacy-by-design articles (25, 32, 35)",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Privacy Engineer & Legal shared zero privacy-law/PET resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "legal-policy-compliance-specialist",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    },
+    {
+     "role_slug": "privacy-engineer",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "priv-privacy-engineering-book",
+   "name": "Privacy Engineering (Bhajaria, Manning)",
+   "domain": "Privacy engineering",
+   "type": "Book/course",
+   "url": "https://www.manning.com/books/privacy-engineering",
+   "level": "Core",
+   "prerequisite": "Data systems experience",
+   "access": "Paid (print/ebook; MEAP)",
+   "license": "Manning commercial license",
+   "caveat": "Practitioner playbook (data classification, minimization, governance); complements, not duplicates, NIST framework",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Privacy Engineer & Legal shared zero privacy-law/PET resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "privacy-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "secops-sigma",
+   "name": "Sigma Detection Rule Format Specification (SigmaHQ)",
+   "domain": "Detection engineering",
+   "type": "Open specification/rule format",
+   "url": "https://github.com/SigmaHQ/sigma-specification",
+   "level": "Core",
+   "prerequisite": "Log analysis, SIEM query basics",
+   "access": "Free",
+   "license": "DRL 1.1 (Detection Rule License)",
+   "caveat": "Vendor-neutral detection-as-code; rules require backend conversion (e.g., via pySigma) per SIEM",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: SecOps tooling layer (detection-lifecycle) absent (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "detection-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    },
+    {
+     "role_slug": "soc-security-analyst",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "secops-attack",
+   "name": "MITRE ATT&CK Knowledge Base",
+   "domain": "Threat-informed defense",
+   "type": "Knowledge base/framework",
+   "url": "https://attack.mitre.org/",
+   "level": "Core",
+   "prerequisite": "Security operations fundamentals",
+   "access": "Free",
+   "license": "MITRE terms of use (free with attribution)",
+   "caveat": "Tactic/technique taxonomy; not a detection format — pair with Sigma for authoring",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: SecOps tooling layer (ATT&CK mapping) absent (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "detection-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    },
+    {
+     "role_slug": "soc-security-analyst",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "scenario_simulation"
+     ]
+    },
+    {
+     "role_slug": "threat-intelligence-analyst",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "secops-misp",
+   "name": "MISP — Open Source Threat Intelligence Platform (docs & project)",
+   "domain": "Threat intelligence",
+   "type": "Tool/documentation",
+   "url": "https://www.misp-project.org/",
+   "level": "Core",
+   "prerequisite": "Threat intel concepts, REST basics",
+   "access": "Free",
+   "license": "AGPL-3.0",
+   "caveat": "Self-hosted sharing platform; galaxy/taxonomy model needs governance before production sharing",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: SecOps tooling layer (MISP) absent (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "threat-intelligence-analyst",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    },
+    {
+     "role_slug": "soc-security-analyst",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "secops-cvss40",
+   "name": "CVSS v4.0 Specification (FIRST)",
+   "domain": "Vulnerability management",
+   "type": "Standard (FIRST)",
+   "url": "https://www.first.org/cvss/v4.0/specification-document",
+   "level": "Core",
+   "prerequisite": "Vulnerability assessment basics",
+   "access": "Free",
+   "license": "FIRST specification license (free with attribution)",
+   "caveat": "Severity scoring only — must be combined with exploitability signals (EPSS, KEV) for prioritization",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: SecOps tooling layer (CVSS) absent (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "vulnerability-management-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "secops-epss",
+   "name": "EPSS — Exploit Prediction Scoring System (FIRST)",
+   "domain": "Vulnerability management",
+   "type": "Model/API documentation",
+   "url": "https://www.first.org/epss/",
+   "level": "Core",
+   "prerequisite": "CVSS basics, statistics literacy",
+   "access": "Free (API + data downloads)",
+   "license": "FIRST terms (free with attribution)",
+   "caveat": "Probabilistic exploit likelihood; model versions update — pin version in SLAs",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: SecOps tooling layer (EPSS) absent (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "vulnerability-management-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "secops-cisa-kev",
+   "name": "CISA Known Exploited Vulnerabilities (KEV) Catalog",
+   "domain": "Vulnerability management",
+   "type": "Government catalog",
+   "url": "https://www.cisa.gov/known-exploited-vulnerabilities-catalog",
+   "level": "Core",
+   "prerequisite": "CVE familiarity",
+   "access": "Free",
+   "license": "US Government work (public domain)",
+   "caveat": "CISA bot-walled the probe (403) — recheck-not-replace; US-centric mandatory-remediation list, supplement with EPSS",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: SecOps tooling layer (KEV) absent (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "vulnerability-management-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "scenario_simulation"
+     ]
+    },
+    {
+     "role_slug": "soc-security-analyst",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "secops-mitre-11-strategies",
+   "name": "11 Strategies of a World-Class Cybersecurity Operations Center (MITRE)",
+   "domain": "Security operations",
+   "type": "Book/guide (free PDF)",
+   "url": "https://www.mitre.org/publications/technical-papers/11-strategies-of-a-world-class-cybersecurity-operations-center",
+   "level": "Advanced",
+   "prerequisite": "SOC operations experience",
+   "access": "Free (PDF)",
+   "license": "MITRE (free with attribution)",
+   "caveat": "MITRE bot-walled the probe (403) — recheck-not-replace; org/strategy-level, not tool tutorial",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: SecOps tooling layer (SOC operating model) absent (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "soc-security-analyst",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "secops-elastic-security",
+   "name": "Elastic Security Documentation (SIEM & detections)",
+   "domain": "SIEM/SOAR tooling",
+   "type": "Official documentation",
+   "url": "https://www.elastic.co/docs/solutions/security",
+   "level": "Core",
+   "prerequisite": "Elasticsearch basics, log pipelines",
+   "access": "Free (docs); product free tier + commercial",
+   "license": "Elastic License 2.0 / SSPL (product)",
+   "caveat": "Vendor-specific; chosen as representative SIEM reference — detection concepts transfer via Sigma",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: SecOps tooling layer (SIEM/SOAR) absent (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "soc-security-analyst",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    },
+    {
+     "role_slug": "detection-engineer",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cloud-aws-wa-security",
+   "name": "AWS Well-Architected Framework — Security Pillar",
+   "domain": "Cloud security",
+   "type": "Official framework/documentation",
+   "url": "https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html",
+   "level": "Core",
+   "prerequisite": "AWS fundamentals, IAM concepts",
+   "access": "Free",
+   "license": "AWS documentation terms (CC-BY-SA sample code)",
+   "caveat": "AWS-specific; use alongside CIS Benchmarks for auditable controls",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Cloud Security Engineer lacked provider-security/CNAPP resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "cloud-security-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cloud-ms-security-benchmark",
+   "name": "Microsoft Cloud Security Benchmark (Azure/M365)",
+   "domain": "Cloud security",
+   "type": "Official security baseline",
+   "url": "https://learn.microsoft.com/en-us/security/benchmark/azure/",
+   "level": "Core",
+   "prerequisite": "Azure fundamentals",
+   "access": "Free",
+   "license": "CC-BY 4.0 (Microsoft Learn)",
+   "caveat": "Control-mapped (CIS/NIST/PCI) — doubles as a crosswalk source for multi-cloud estates",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Cloud Security Engineer lacked provider-security/CNAPP resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "cloud-security-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    },
+    {
+     "role_slug": "security-grc-compliance-engineer",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cloud-gcp-arch-security",
+   "name": "Google Cloud Architecture Framework — Security, Privacy & Compliance",
+   "domain": "Cloud security",
+   "type": "Official framework/documentation",
+   "url": "https://cloud.google.com/architecture/framework/security",
+   "level": "Core",
+   "prerequisite": "GCP fundamentals",
+   "access": "Free",
+   "license": "CC-BY 4.0",
+   "caveat": "Google property; HTTPS blocked from probe sandbox (SSL interception) — E2 recheck-not-replace",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Cloud Security Engineer lacked provider-security/CNAPP resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "cloud-security-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cloud-cis-benchmarks",
+   "name": "CIS Benchmarks (hardening configuration standards)",
+   "domain": "Cloud security / hardening",
+   "type": "Benchmark standards",
+   "url": "https://www.cisecurity.org/cis-benchmarks",
+   "level": "Core",
+   "prerequisite": "OS/cloud service administration",
+   "access": "Free with registration (PDF)",
+   "license": "CIS non-commercial use license",
+   "caveat": "Registration gate; redistribution restricted — CSPM/CNAPP tools often embed CIS checks under license",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Cloud Security Engineer lacked CNAPP/CSPM-layer resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "cloud-security-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    },
+    {
+     "role_slug": "security-grc-compliance-engineer",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "cloud-csa-ccm",
+   "name": "CSA Cloud Controls Matrix (CCM v4)",
+   "domain": "Cloud security / GRC",
+   "type": "Controls framework",
+   "url": "https://cloudsecurityalliance.org/research/cloud-controls-matrix",
+   "level": "Advanced",
+   "prerequisite": "Security control frameworks (ISO 27001/NIST)",
+   "access": "Free with registration",
+   "license": "CSA (free with attribution; commercial tool use licensed)",
+   "caveat": "CSA site bot-walled the probe (403) — recheck-not-replace; maps to ISO 27001/NIST/PCI, bridging cloud security and GRC",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Cloud Security Engineer lacked CNAPP/CSPM-layer resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "cloud-security-engineer",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "senior_scope_defense"
+     ]
+    },
+    {
+     "role_slug": "security-grc-compliance-engineer",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "audio-fmod-docs",
+   "name": "FMOD Studio & Engine Documentation",
+   "domain": "Game audio middleware",
+   "type": "Official documentation",
+   "url": "https://www.fmod.com/docs/",
+   "level": "Core",
+   "prerequisite": "DAW basics, one game engine (Unity or Unreal)",
+   "access": "Free (docs)",
+   "license": "FMOD EULA (free below revenue threshold; commercial license above)",
+   "caveat": "Proprietary middleware; docs cover both authoring (Studio) and runtime API integration",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Game Audio role had no FMOD/Wwise/DSP resource (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "game-audio-designer-programmer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "audio-wwise-docs",
+   "name": "Wwise Documentation & Learning (Audiokinetic)",
+   "domain": "Game audio middleware",
+   "type": "Official documentation/courses",
+   "url": "https://www.audiokinetic.com/en/library/",
+   "level": "Core",
+   "prerequisite": "DAW basics, one game engine",
+   "access": "Free (docs + Wwise-101 course)",
+   "license": "Audiokinetic license tiers (free non-commercial/trial; commercial per title)",
+   "caveat": "Proprietary middleware; Wwise-101 certification path is the canonical ramp; probe returned 202 (Akamai accepted) — treat as verified",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Game Audio role had no FMOD/Wwise/DSP resource (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "game-audio-designer-programmer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "audio-dsp-guide",
+   "name": "The Scientist and Engineer's Guide to Digital Signal Processing (Smith)",
+   "domain": "Digital signal processing",
+   "type": "Book (free full text online)",
+   "url": "https://www.dspguide.com/",
+   "level": "Core",
+   "prerequisite": "Algebra; basic calculus helpful",
+   "access": "Free (full text online)",
+   "license": "Author-granted free personal use; not open-licensed — do not redistribute",
+   "caveat": "General DSP, not game-specific; covers filters/convolution/FFT needed for the audio-programming half of the charter. Blocked in shell probe; verified live via web fetch",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Game Audio role had no FMOD/Wwise/DSP resource (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "game-audio-designer-programmer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "audio-game-audio-tutorial",
+   "name": "The Game Audio Tutorial (Stevens & Raybould, Routledge/Focal Press)",
+   "domain": "Game audio craft",
+   "type": "Book (publisher page)",
+   "url": "https://www.taylorfrancis.com/books/mono/10.4324/9780240817279/game-audio-tutorial-dave-raybould-richard-stevens",
+   "level": "Core",
+   "prerequisite": "Basic DAW skills",
+   "access": "Paid (print/ebook)",
+   "license": "Routledge commercial license",
+   "caveat": "2011 UDK-based examples are engine-dated; interactive-music/implementation principles remain standard pedagogy. Publisher page bot-walled the probe (403) — recheck-not-replace",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Game Audio role had no FMOD/Wwise/DSP resource (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "game-audio-designer-programmer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin-financial-intelligence",
+   "name": "Financial Intelligence, Revised Edition (Berman & Knight, HBR Press)",
+   "domain": "Finance fundamentals",
+   "type": "Book",
+   "url": "https://store.hbr.org/product/financial-intelligence-revised-edition/10580",
+   "level": "Core",
+   "prerequisite": "None",
+   "access": "Paid (print/ebook)",
+   "license": "HBR commercial license",
+   "caveat": "Manager-level financial statements/ratios; not engineering-specific — the foundational literacy layer. HBR store returned 202 (accepted) on probe",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Finance/Operations had no accounting/FP&A/unit-economics resource (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "finance-operations-analyst",
+     "flag": "core",
+     "tier": "foundational",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin-accountingcoach",
+   "name": "AccountingCoach (accounting basics)",
+   "domain": "Accounting fundamentals",
+   "type": "Course/reference (free)",
+   "url": "https://www.accountingcoach.com/",
+   "level": "Foundational",
+   "prerequisite": "None",
+   "access": "Free (ad-supported; PRO tier paid)",
+   "license": "Site terms (free explanations; PRO materials paid)",
+   "caveat": "Intro bookkeeping/debits-credits; sufficient for reading statements, not CPA depth",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Finance/Operations had no accounting/FP&A/unit-economics resource (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "finance-operations-analyst",
+     "flag": "core",
+     "tier": "foundational",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin-saas-metrics",
+   "name": "SaaS Metrics 2.0 (David Skok, forEntrepreneurs)",
+   "domain": "Unit economics / SaaS metrics",
+   "type": "Practitioner guide (free)",
+   "url": "https://www.forentrepreneurs.com/saas-metrics-2/",
+   "level": "Core",
+   "prerequisite": "Financial Intelligence-level literacy",
+   "access": "Free",
+   "license": "Site terms (free with attribution)",
+   "caveat": "Practitioner canon (CAC/LTV/churn), not a formal standard; site bot-walled the probe (403) — recheck-not-replace",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Finance/Operations had no accounting/FP&A/unit-economics resource (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "finance-operations-analyst",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin-finops-framework",
+   "name": "FinOps Framework (FinOps Foundation / Linux Foundation)",
+   "domain": "Cloud cost / FinOps",
+   "type": "Open framework",
+   "url": "https://www.finops.org/framework/",
+   "level": "Core",
+   "prerequisite": "Cloud billing basics",
+   "access": "Free",
+   "license": "CC-BY 4.0",
+   "caveat": "Engineering-company-specific cost discipline (cloud/unit costs); site bot-walled the probe (403) — recheck-not-replace",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Finance/Operations had no accounting/FP&A/unit-economics resource (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "finance-operations-analyst",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "scenario_simulation",
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "fin-venture-deals",
+   "name": "Venture Deals: Be Smarter Than Your Lawyer and Venture Capitalist (Feld & Mendelson, Wiley)",
+   "domain": "Startup/venture finance",
+   "type": "Book",
+   "url": "https://www.wiley.com/en-us/Venture+Deals%3A+Be+Smarter+Than+Your+Lawyer+and+Venture+Capitalist%2C+4th+Edition-p-9781119594826",
+   "level": "Advanced",
+   "prerequisite": "Financial Intelligence-level literacy",
+   "access": "Paid (print/ebook)",
+   "license": "Wiley commercial license",
+   "caveat": "Fundraising/term-sheet economics of engineering companies; strategic layer for allocation decisions",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Finance/Operations had no accounting/FP&A/unit-economics resource (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "finance-operations-analyst",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "senior_scope_defense"
+     ]
+    },
+    {
+     "role_slug": "chief-technology-officer-vp-engineering",
+     "flag": "internal",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "grc-iso-27001",
+   "name": "ISO/IEC 27001:2022 Information Security Management",
+   "domain": "GRC / ISMS",
+   "type": "Standard (ISO/IEC)",
+   "url": "https://www.iso.org/standard/27001",
+   "level": "Core",
+   "prerequisite": "Risk management basics",
+   "access": "Paid (standard purchase)",
+   "license": "ISO copyright (paid standard)",
+   "caveat": "Paid standard — the iso.org page is the canonical citation; ISO site bot-walled the probe (403) — recheck-not-replace",
+   "evidence": "E2",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Security GRC lacked ISO 27001/SOC 2 crosswalk resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "security-grc-compliance-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    },
+    {
+     "role_slug": "legal-policy-compliance-specialist",
+     "flag": "internal",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "grc-aicpa-tsc",
+   "name": "AICPA Trust Services Criteria (SOC 2) — 2017, revised 2022",
+   "domain": "GRC / SOC 2",
+   "type": "Criteria (AICPA official)",
+   "url": "https://us.aicpa.org/interestareas/frc/assuranceadvisoryservices/trustdataintegritytaskforce",
+   "level": "Core",
+   "prerequisite": "Security control concepts",
+   "access": "Free (PDF download)",
+   "license": "AICPA (free with attribution)",
+   "caveat": "Criteria + points of focus; auditor-facing — pair with ISO 27001 for control mapping work",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Security GRC lacked ISO 27001/SOC 2 crosswalk resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "security-grc-compliance-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "grc-nist-800-53r5",
+   "name": "NIST SP 800-53 Rev 5 Security and Privacy Controls",
+   "domain": "GRC / control catalog",
+   "type": "Government control catalog",
+   "url": "https://csrc.nist.gov/pubs/sp/800/53/r5/upd1/final",
+   "level": "Advanced / Reference",
+   "prerequisite": "Control framework basics",
+   "access": "Free",
+   "license": "US Government work (public domain)",
+   "caveat": "Canonical control source for crosswalks; includes privacy control families used with the NIST Privacy Framework",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Security GRC lacked ISO 27001/SOC 2 crosswalk resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "security-grc-compliance-engineer",
+     "flag": "core",
+     "tier": "advanced",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "senior_scope_defense"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "grc-scf",
+   "name": "Secure Controls Framework (SCF)",
+   "domain": "GRC / unified controls",
+   "type": "Open controls framework & crosswalk",
+   "url": "https://www.securecontrolsframework.com/",
+   "level": "Core",
+   "prerequisite": "At least one source framework (ISO 27001, SOC 2, or NIST 800-53)",
+   "access": "Free (registration for download)",
+   "license": "SCF license (free with attribution; no resale)",
+   "caveat": "Maintained common-control crosswalk across 100+ frameworks — the practical ISO↔SOC2↔NIST mapping tool",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Security GRC lacked ISO 27001/SOC 2 crosswalk resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "security-grc-compliance-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact",
+      "scenario_simulation"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "grc-nist-csf-olir",
+   "name": "NIST CSF 2.0 Informative References & OLIR Crosswalks",
+   "domain": "GRC / framework mapping",
+   "type": "Government mapping repository",
+   "url": "https://www.nist.gov/cyberframework/informative-references",
+   "level": "Core",
+   "prerequisite": "NIST CSF 2.0 (already core for the role)",
+   "access": "Free",
+   "license": "US Government work (public domain)",
+   "caveat": "Machine-readable OLIR mappings (incl. ISO 27001) — authoritative crosswalk inputs for the control-map eval task",
+   "evidence": "E3",
+   "verified": "2026-11-20",
+   "addresses_gap": "P1: Security GRC lacked ISO 27001/SOC 2 crosswalk resources (audit §5.2)",
+   "role_links": [
+    {
+     "role_slug": "security-grc-compliance-engineer",
+     "flag": "core",
+     "tier": "core",
+     "supports_eval_tasks": [
+      "portfolio_artifact"
+     ]
+    }
+   ]
+  }
+ ]
+}

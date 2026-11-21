@@ -1,0 +1,143 @@
+{
+  "schema_version": "1.0",
+  "generated": "2026-11-20",
+  "generator": "ui_ux_theory_implementation_research.md + ui_ux_repo_cases.json (2026-11-20); extends role_resource_matrix_seed.json for the proposed non-game UI/UX capability",
+  "parent_matrix": "/mnt/agents/output/role_resource_matrix_seed.json",
+  "flag_definitions": {
+    "core": "Directly required to produce this role's accountable outputs; depth expected at hiring + on the job.",
+    "internal": "Shared cross-functional capability the role must consume/contribute to interface with peers; working literacy, not depth.",
+    "conditional": "Required only when the stated trigger is true; not part of baseline hiring bar."
+  },
+  "tier_definitions": {
+    "foundational": "Entry ramp / literacy for the role.",
+    "core": "Working-depth material for the charter.",
+    "advanced": "Senior/specialist depth (reference, staff+, governance)."
+  },
+  "evidence_levels": {
+    "E3": "URL probed live or repository verified via GitHub API on 2026-11-20.",
+    "E2": "Authoritative source, not re-probed this pass (books, papers, ISO paywalled standards); bibliographic details verified.",
+    "E1": "Curator-attested from parent matrix (2026-11-20), not independently re-fetched."
+  },
+  "existing_role_slugs_referenced": [
+    "product-manager", "frontend-engineer", "mobile-engineer", "data-scientist",
+    "technical-writer-documentation-engineer", "brand-communications-designer",
+    "product-psychology-behavioral-design-lead", "behavioral-research-psychologist",
+    "game-ui-ux-designer", "player-games-user-researcher", "3d-ui-ux-spatial-interaction-designer",
+    "qa-analyst-quality-engineer", "ai-llm-application-engineer",
+    "legal-policy-compliance-specialist", "privacy-engineer"
+  ],
+  "existing_skills_referenced": [
+    "agent-research-director", "spatial-3d-production-engineering",
+    "engineering-organization-architect", "ai-research-frontier"
+  ],
+  "proposed_skill": {
+    "name": "ui-ux-research-design-engineering",
+    "status": "PROPOSED (structure in ui_ux_theory_implementation_research.md section 17.3); not yet created in skills/",
+    "description": "Plan, design, and evaluate user interfaces with evidence: UX research methods and metrics, WCAG 2.2/ARIA/APG accessibility engineering, design tokens and systems, visual hierarchy, prototyping at declared fidelity, motion with reduced-motion fallbacks, data-viz perception, dark-pattern and research ethics gates. Never presents draft standards (WCAG 3.0, ARIA 1.3, APCA) as requirements, automated scores as conformance, or opinions as user evidence."
+  },
+  "proposed_role": {
+    "id": "product-designer-ux-researcher",
+    "name": "Product Designer / UX Researcher (non-game software)",
+    "status": "PROPOSED - confirmed as the only genuine taxonomy gap in role_resource_matrix_seed.json new_role_candidates (2026-11-20)",
+    "function": "Product & design",
+    "mission": "Own problem framing, interaction quality, evidence of usability, and design coherence for non-game software",
+    "required_capabilities": ["Interaction/visual design", "UX research methods", "prototyping", "accessibility (WCAG 2.2/ARIA)", "writing", "design systems"],
+    "senior_scope": "Sets cross-product design-system and research strategy; raises evidence quality",
+    "interfaces": ["product-manager", "frontend-engineer", "mobile-engineer", "data-scientist", "brand-communications-designer", "technical-writer-documentation-engineer", "qa-analyst-quality-engineer", "legal-policy-compliance-specialist", "privacy-engineer"],
+    "charter_source": "https://www.w3.org/WAI/planning/arrm/",
+    "split_triggers": [
+      "Split Designer vs Researcher when research cadence exceeds ~2 studies/month sustained",
+      "Split a dedicated Design-Systems seat when >2 products consume one system"
+    ],
+    "agent_instantiation": "Three specialist charters share this role's territory: product-ux-research-lead, design-systems-accessibility-engineer, interaction-prototyping-evaluation-specialist (scientific-research-library/agents/)",
+    "resources": {
+      "foundational": [
+        {"name": "The Design of Everyday Things (revised)", "domain": "UI/UX craft", "type": "Book", "url": "https://jnd.org/the-design-of-everyday-things-revised-and-expanded-edition/", "flag": "core", "catalog_level": "Foundational/core", "prerequisite": "None", "access": "Paid book", "evidence": "E2"},
+        {"name": "Don't Make Me Think, Revisited", "domain": "UI/UX craft", "type": "Book", "url": "https://sensible.com/dont-make-me-think/", "flag": "core", "catalog_level": "Foundational", "prerequisite": "None", "access": "Paid book", "evidence": "E2"},
+        {"name": "NN/g Ten Usability Heuristics", "domain": "UX research", "type": "Reference", "url": "https://www.nngroup.com/articles/ten-usability-heuristics/", "flag": "core", "catalog_level": "Foundational/core", "prerequisite": "Design basics", "access": "Free article", "evidence": "E3"},
+        {"name": "Laws of UX", "domain": "UI/UX craft", "type": "Reference", "url": "https://lawsofux.com/", "flag": "core", "catalog_level": "Foundational/core", "prerequisite": "Basic design", "access": "Free", "evidence": "E3"},
+        {"name": "WCAG 2.2 (W3C Recommendation; ISO/IEC 40500:2025)", "domain": "Accessibility", "type": "W3C Recommendation", "url": "https://www.w3.org/TR/WCAG22/", "flag": "core", "catalog_level": "All professional levels", "prerequisite": "Web/content basics", "access": "Free", "evidence": "E3"},
+        {"name": "The A11Y Project Checklist", "domain": "Accessibility", "type": "Community reference", "url": "https://www.a11yproject.com/checklist/", "flag": "core", "catalog_level": "Foundational/core", "prerequisite": "HTML basics", "access": "Free", "evidence": "E3"},
+        {"name": "Microsoft Inclusive 101 Guidebook (Persona Spectrum)", "domain": "Inclusive design", "type": "Method guide", "url": "https://inclusive.microsoft.design/articles/inclusive-101-guidebook", "flag": "core", "catalog_level": "Foundational/core", "prerequisite": "None", "access": "Free", "evidence": "E3"},
+        {"name": "W3C WAI: Older Users and Web Accessibility (WAI-AGE)", "domain": "Inclusive design", "type": "W3C guidance", "url": "https://www.w3.org/WAI/older-users/", "flag": "core", "catalog_level": "Foundational/core", "prerequisite": "WCAG basics", "access": "Free", "evidence": "E3"},
+        {"name": "Deceptive Design (Brignull taxonomy)", "domain": "Design & research ethics", "type": "Taxonomy/reference", "url": "https://www.deceptive.design/", "flag": "internal", "catalog_level": "All professional levels", "prerequisite": "Design/product basics", "access": "Free", "evidence": "E3"},
+        {"name": "MDN Learn Web Development", "domain": "Frontend & web", "type": "Curriculum/reference", "url": "https://developer.mozilla.org/en-US/docs/Learn_web_development", "flag": "internal", "catalog_level": "Foundational/core", "prerequisite": "None", "access": "Free", "evidence": "E3"}
+      ],
+      "core": [
+        {"name": "About Face: The Essentials of Interaction Design (4th ed.)", "domain": "UI/UX craft", "type": "Book", "url": "https://www.wiley.com/en-us/About+Face%3A+The+Essentials+of+Interaction+Design%2C+4th+Edition-p-9781118766576", "flag": "core", "catalog_level": "Core", "prerequisite": "Design basics", "access": "Paid book", "evidence": "E2"},
+        {"name": "Interaction Design: Beyond Human-Computer Interaction (5th ed., Preece/Rogers/Sharp)", "domain": "HCI theory", "type": "Textbook", "url": "https://id-book.com/", "flag": "core", "catalog_level": "Core", "prerequisite": "None", "access": "Paid book", "evidence": "E2"},
+        {"name": "NN/g Which UX Research Methods", "domain": "UX research", "type": "Method guide", "url": "https://www.nngroup.com/articles/which-ux-research-methods/", "flag": "core", "catalog_level": "Core", "prerequisite": "Research basics", "access": "Free article", "evidence": "E3"},
+        {"name": "ISO 9241-11:2018 (usability definitions) & ISO 9241-210:2019 (human-centred design)", "domain": "UX research", "type": "ISO standard", "url": "https://www.iso.org/standard/63500.html", "flag": "core", "catalog_level": "Core", "prerequisite": "Research basics", "access": "Paid standard", "evidence": "E2"},
+        {"name": "Measuring the User Experience (Tullis & Albert) / SUS norms (Sauro & Lewis)", "domain": "UX research", "type": "Book + benchmark papers", "url": "https://measuringu.com/", "flag": "core", "catalog_level": "Core", "prerequisite": "Basic statistics", "access": "Paid book; free articles", "evidence": "E2"},
+        {"name": "SUS primary source: Brooke (1996) in Usability Evaluation in Industry", "domain": "UX research", "type": "Book chapter (instrument)", "url": "https://www.researchgate.net/publication/228593520_SUS_A_quick_and_dirty_usability_scale", "flag": "core", "catalog_level": "Core", "prerequisite": "Research basics", "access": "Chapter; summaries free", "evidence": "E2"},
+        {"name": "UMUX-LITE primary source: Lewis, Utesch & Maher (CHI 2013)", "domain": "UX research", "type": "Paper (instrument)", "url": "https://doi.org/10.1145/2470654.2481287", "flag": "core", "catalog_level": "Core", "prerequisite": "Research basics", "access": "Paywalled", "evidence": "E2"},
+        {"name": "NASA-TLX primary source: Hart & Staveland (1988), Human Mental Workload", "domain": "UX research", "type": "Book chapter (instrument)", "url": "https://ntrs.nasa.gov/citations/20000021488", "flag": "internal", "catalog_level": "Core", "prerequisite": "Research basics", "access": "Free (NASA NTRS)", "evidence": "E3"},
+        {"name": "Fitts (1954) / Hick (1952) & Hyman (1953) / Accot & Zhai steering law (CHI 1997)", "domain": "HCI theory", "type": "Papers", "url": "https://doi.org/10.1145/248624.248638", "flag": "internal", "catalog_level": "Core", "prerequisite": "HCI basics", "access": "Paywalled", "evidence": "E2"},
+        {"name": "NVDA screen reader (manual AT testing)", "domain": "Accessibility", "type": "Tool (GPL-2.0-or-later w/ exceptions)", "url": "https://github.com/nvaccess/nvda", "flag": "core", "catalog_level": "Core", "prerequisite": "Accessibility basics", "access": "Free", "evidence": "E3"},
+        {"name": "pa11y / pa11y-ci (batch a11y scanning)", "domain": "Accessibility", "type": "Tool (LGPL-3.0-only)", "url": "https://github.com/pa11y/pa11y", "flag": "conditional", "catalog_level": "Core", "prerequisite": "CI basics", "access": "Free", "evidence": "E3", "trigger": "CLI/service-based batch scanning preferred over embedded engine"},
+        {"name": "RealWorld (realworld-apps/realworld) shared-spec app", "domain": "Evaluation tooling", "type": "Repository (MIT)", "url": "https://github.com/realworld-apps/realworld", "flag": "conditional", "catalog_level": "Core", "prerequisite": "Web dev basics", "access": "Free", "evidence": "E3", "trigger": "Stack-independent E2E/usability lab substrate; canonical URL - not gothinkster alias"},
+        {"name": "BackstopJS + pixelmatch (visual regression)", "domain": "Evaluation tooling", "type": "Tools (MIT / ISC)", "url": "https://github.com/garris/BackstopJS", "flag": "conditional", "catalog_level": "Core", "prerequisite": "Testing basics", "access": "Free", "evidence": "E3", "trigger": "Design-system visual release gating"},
+        {"name": "7GUIs benchmark tasks", "domain": "Prototyping", "type": "Benchmark spec (no license - cite only)", "url": "https://github.com/eugenkiss/7guis", "flag": "conditional", "catalog_level": "Advanced", "prerequisite": "Interaction programming", "access": "Read/cite; no code reuse", "evidence": "E3", "trigger": "Interaction-fidelity prototyping exercises and framework comparison"},
+        {"name": "usability.gov (ARCHIVED - historical reference only)", "domain": "UX research", "type": "Archived government resource", "url": "https://www.usability.gov/", "flag": "conditional", "catalog_level": "Foundational", "prerequisite": "None", "access": "Free (frozen archive)", "evidence": "E3", "trigger": "Historical methods reference only; do NOT cite as live guidance - prefer W3C WAI, NN/g, Digital.gov"},
+        {"name": "Information Architecture: For the Web and Beyond (4th ed., Rosenfeld/Morville/Arango)", "domain": "Information architecture", "type": "Book", "url": "https://www.oreilly.com/library/view/information-architecture-4th/9781491913529/", "flag": "core", "catalog_level": "Core", "prerequisite": "None", "access": "Paid book", "evidence": "E2"},
+        {"name": "WAI-ARIA Authoring Practices Guide (APG)", "domain": "Accessibility", "type": "Patterns/guide", "url": "https://www.w3.org/WAI/ARIA/apg/", "flag": "core", "catalog_level": "Core/advanced", "prerequisite": "HTML/CSS/JS + WCAG basics", "access": "Free", "evidence": "E3"},
+        {"name": "W3C ARRM (Accessibility Roles and Responsibilities Mapping)", "domain": "Accessibility", "type": "Responsibility framework", "url": "https://www.w3.org/WAI/planning/arrm/", "flag": "core", "catalog_level": "Core", "prerequisite": "WCAG basics", "access": "Free", "evidence": "E3"},
+        {"name": "axe-core", "domain": "Accessibility", "type": "Repository/tool", "url": "https://github.com/dequelabs/axe-core", "flag": "core", "catalog_level": "Core", "prerequisite": "JavaScript + accessibility", "access": "Free (MPL-2.0)", "evidence": "E3"},
+        {"name": "DTCG Design Tokens Format Module 2025.10", "domain": "Design systems", "type": "Specification (W3C CG report)", "url": "https://www.designtokens.org/TR/2025.10/", "flag": "core", "catalog_level": "Core", "prerequisite": "Design-system basics", "access": "Free", "evidence": "E3"},
+        {"name": "Atomic Design (Brad Frost)", "domain": "Design systems", "type": "Book/method", "url": "https://atomicdesign.bradfrost.com/", "flag": "core", "catalog_level": "Core", "prerequisite": "Component basics", "access": "Free online", "evidence": "E2"},
+        {"name": "Cognitive load theory: Sweller, van Merrienboer & Paas (2019) 'Cognitive Architecture and Instructional Design: 20 Years Later'", "domain": "Cognitive evidence", "type": "Paper", "url": "https://doi.org/10.1007/s10648-019-09465-5", "flag": "core", "catalog_level": "Core", "prerequisite": "Psychology basics", "access": "Paywalled; summaries free", "evidence": "E2"},
+        {"name": "Cowan (2001) 'The magical number 4 in short-term memory' (BBS 24:1)", "domain": "Cognitive evidence", "type": "Paper", "url": "https://doi.org/10.1017/S0140525X01003922", "flag": "internal", "catalog_level": "Core", "prerequisite": "Psychology basics", "access": "Paywalled", "evidence": "E2"},
+        {"name": "FTC 'Bringing Dark Patterns to Light' (2022) + Gray et al. dark-pattern ontology (2024)", "domain": "Design & research ethics", "type": "Regulator report + paper", "url": "https://www.ftc.gov/reports/bringing-dark-patterns-light", "flag": "core", "catalog_level": "Core", "prerequisite": "Design/product basics", "access": "Free", "evidence": "E3"},
+        {"name": "Radix UI Primitives", "domain": "Design systems", "type": "Repository/library", "url": "https://github.com/radix-ui/primitives", "flag": "conditional", "catalog_level": "Core", "prerequisite": "React", "access": "Free (MIT)", "evidence": "E3", "trigger": "React product building custom components"},
+        {"name": "React Aria / React Spectrum", "domain": "Design systems", "type": "Repository/library", "url": "https://github.com/adobe/react-spectrum", "flag": "conditional", "catalog_level": "Core", "prerequisite": "React", "access": "Free (Apache-2.0)", "evidence": "E3", "trigger": "Complex widgets or internationalized products"},
+        {"name": "Ariakit", "domain": "Design systems", "type": "Repository/library", "url": "https://github.com/ariakit/ariakit", "flag": "conditional", "catalog_level": "Core", "prerequisite": "React or Solid", "access": "Free (MIT)", "evidence": "E3", "trigger": "Store-based headless components; Solid stack"},
+        {"name": "Storybook", "domain": "Design systems", "type": "Tool", "url": "https://storybook.js.org/", "flag": "conditional", "catalog_level": "Core", "prerequisite": "Component framework", "access": "Free (MIT)", "evidence": "E3", "trigger": "Design-system or UI-kit ownership"},
+        {"name": "Playwright + @axe-core/playwright", "domain": "Accessibility", "type": "Tool", "url": "https://playwright.dev/", "flag": "conditional", "catalog_level": "Core", "prerequisite": "Testing basics", "access": "Free (Apache-2.0)", "evidence": "E3", "trigger": "CI accessibility gating"}
+      ],
+      "advanced": [
+        {"name": "Designing with the Mind in Mind (3rd ed., Jeff Johnson)", "domain": "Cognitive evidence", "type": "Book", "url": "https://www.elsevier.com/books/designing-with-the-mind-in-mind/johnson/978-0-12-818202-4", "flag": "core", "catalog_level": "Core/advanced", "prerequisite": "Design basics", "access": "Paid book", "evidence": "E2"},
+        {"name": "Information Visualization: Perception for Design (4th ed., Colin Ware)", "domain": "Data visualization", "type": "Book", "url": "https://www.elsevier.com/books/information-visualization/ware/978-0-12-812875-6", "flag": "core", "catalog_level": "Advanced", "prerequisite": "Viz basics", "access": "Paid book", "evidence": "E2"},
+        {"name": "Visualization Analysis and Design (Munzner, 2014) + Nested Model (TVCG 2009)", "domain": "Data visualization", "type": "Book + paper", "url": "https://www.cs.ubc.ca/~tmm/vadbook/", "flag": "core", "catalog_level": "Advanced", "prerequisite": "Viz basics", "access": "Paid book; paper free", "evidence": "E2"},
+        {"name": "Cleveland & McGill (1984) 'Graphical Perception' JASA 79(387) + Heer & Bostock (2010) CHI replication", "domain": "Data visualization", "type": "Papers", "url": "https://doi.org/10.1080/01621459.1984.10478080", "flag": "core", "catalog_level": "Advanced", "prerequisite": "Statistics basics", "access": "Paywalled; replication open", "evidence": "E2"},
+        {"name": "The Visual Display of Quantitative Information (Tufte) + Information Dashboard Design (Few)", "domain": "Data visualization", "type": "Books", "url": "https://www.edwardtufte.com/tufte/books_vdqi", "flag": "internal", "catalog_level": "Advanced", "prerequisite": "Viz basics", "access": "Paid books", "evidence": "E2"},
+        {"name": "Inclusive Components (Heydon Pickering)", "domain": "Accessibility", "type": "Book/patterns", "url": "https://inclusive-components.design/", "flag": "core", "catalog_level": "Core/advanced", "prerequisite": "HTML/CSS/JS", "access": "Free articles; paid book", "evidence": "E3"},
+        {"name": "Every Layout (Pickering & Bell)", "domain": "UI/UX craft", "type": "Book/course", "url": "https://every-layout.dev/", "flag": "core", "catalog_level": "Core/advanced", "prerequisite": "CSS", "access": "Paid", "evidence": "E2"},
+        {"name": "The Elements of Typographic Style (Bringhurst) + Thinking with Type (Lupton)", "domain": "Visual design", "type": "Books", "url": "https://thinkingwithtype.com/", "flag": "internal", "catalog_level": "Advanced", "prerequisite": "Design basics", "access": "Paid books", "evidence": "E2"},
+        {"name": "Rocket Surgery Made Easy (Krug) + Observing the User Experience (3rd ed.)", "domain": "UX research", "type": "Books", "url": "https://sensible.com/rocket-surgery-made-easy/", "flag": "core", "catalog_level": "Core/advanced", "prerequisite": "Research basics", "access": "Paid books", "evidence": "E2"},
+        {"name": "Houde & Hill (1997) 'What do Prototypes Prototype?' + Dow et al. (2010) parallel prototyping", "domain": "Prototyping", "type": "Papers", "url": "https://doi.org/10.1016/B978-0-08-051574-8.50014-9", "flag": "core", "catalog_level": "Advanced", "prerequisite": "Design process basics", "access": "Paywalled", "evidence": "E2"},
+        {"name": "Designing Interface Animation (Val Head)", "domain": "Motion", "type": "Book", "url": "https://rosenfeldmedia.com/books/designing-interface-animation/", "flag": "internal", "catalog_level": "Advanced", "prerequisite": "CSS/JS animation", "access": "Paid book", "evidence": "E2"},
+        {"name": "WebXR Device API (Candidate Recommendation Draft)", "domain": "Spatial/3D UI", "type": "W3C specification", "url": "https://www.w3.org/TR/webxr/", "flag": "conditional", "catalog_level": "Advanced", "prerequisite": "3D/web graphics", "access": "Free", "evidence": "E3", "trigger": "XR or spatial-UI scope (interface with 3d-ui-ux-spatial-interaction-designer + spatial-3d-production-engineering skill)"},
+        {"name": "Mismatch (Kat Holmes, 2020)", "domain": "Inclusive design", "type": "Book", "url": "https://www.katholmes.design/mismatch", "flag": "internal", "catalog_level": "Advanced", "prerequisite": "Inclusive design basics", "access": "Paid book", "evidence": "E2"},
+        {"name": "Penpot (open-source design tool)", "domain": "Design tooling", "type": "Repository/tool", "url": "https://github.com/penpot/penpot", "flag": "conditional", "catalog_level": "Core/advanced", "prerequisite": "Design tooling", "access": "Free (MPL-2.0)", "evidence": "E3", "trigger": "Open-source/self-hosted design pipeline requirement"}
+      ]
+    }
+  },
+  "agent_charter_resource_focus": {
+    "product-ux-research-lead": {
+      "core": ["NN/g Which UX Research Methods", "ISO 9241-11/-210", "Measuring the User Experience / SUS norms", "Rocket Surgery Made Easy + Observing the User Experience", "Information Architecture (polar bear book)", "FTC dark patterns + research ethics", "W3C WAI older users", "Microsoft Inclusive 101"],
+      "internal": ["WCAG 2.2", "About Face", "Don't Make Me Think", "Deceptive Design", "Mismatch"],
+      "conditional": [
+        {"name": "WebXR Device API", "trigger": "XR research scope"},
+        {"name": "D3/ECharts repo cases", "trigger": "analytics/dashboard research"}
+      ]
+    },
+    "design-systems-accessibility-engineer": {
+      "core": ["WCAG 2.2", "WAI-ARIA 1.2 + APG", "W3C ARRM", "DTCG 2025.10", "axe-core", "Inclusive Components", "Radix/React Aria/Ariakit repo cases", "Style Dictionary", "Storybook", "Every Layout", "Atomic Design"],
+      "internal": ["The A11Y Project", "Microsoft Inclusive 101", "MDN Learn", "Design of Everyday Things"],
+      "conditional": [
+        {"name": "Penpot", "trigger": "open/self-hosted design pipeline"},
+        {"name": "Floating UI", "trigger": "overlay-heavy component set"},
+        {"name": "Playwright + axe CI", "trigger": "release gating ownership"}
+      ]
+    },
+    "interaction-prototyping-evaluation-specialist": {
+      "core": ["Don't Make Me Think", "NN/g heuristics + heuristic evaluation", "Houde & Hill prototypes paper", "Designing Interface Animation", "Cleveland & McGill + Heer & Bostock", "Munzner nested model", "Laws of UX", "Fitts/Hick/steering law corpus", "Designing with the Mind in Mind"],
+      "internal": ["Information Architecture book", "SUS/SEQ metrics", "Storybook", "Floating UI"],
+      "conditional": [
+        {"name": "WebXR Device API + spatial-3d-production-engineering skill", "trigger": "spatial/XR prototype"},
+        {"name": "D3/ECharts", "trigger": "data-viz interaction prototype"},
+        {"name": "Playwright", "trigger": "behavioral test automation"}
+      ]
+    }
+  }
+}

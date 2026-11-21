@@ -1,0 +1,12 @@
+src/
+tests/
+node_modules/
+*.tgz
+*.log
+.env
+.env.*
+tsconfig.json
+tsconfig.build.json
+vitest.config.ts
+.git/
+.gitignore

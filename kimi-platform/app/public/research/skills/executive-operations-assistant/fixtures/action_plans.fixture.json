@@ -1,0 +1,734 @@
+{
+  "contractVersion": 1,
+  "description": "Offline action-proposal validation cases mirroring validateAssistantAction. Validators must enforce: payload hash integrity, policy-derived risk/approval, actor scope coverage, forbidden payload keys, drain+preserve on fire/archive, human approval, and explicit confirmation of every gate (gates are non-bypassable). Also covers queue reorder semantics, cache invalidation receipts, repository intake credential rules, company/department lifecycles, and the emergency.stop exclusion (final shared fixture sections).",
+  "cases": [
+    {
+      "name": "approved fire with drain+preserve and all gates",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-fire-w17",
+        "scope": "company",
+        "actor": "donna",
+        "action": "worker.fire",
+        "payload": {
+          "workerKey": "w-17",
+          "drain": true,
+          "preserveArtifacts": true,
+          "reason": "contract complete"
+        },
+        "risk": "high",
+        "payloadHash": "1b8a28071bc1825b0b64c92291e1412c8e57e0d1b810ab30090108ba5157d471",
+        "expectedVersion": 3,
+        "requiresApproval": true,
+        "status": "proposed",
+        "proposedAt": 1732000000000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": {
+        "approved": true,
+        "confirmedGates": [
+          "high-risk",
+          "plan-approval"
+        ]
+      },
+      "expect": {
+        "ok": true,
+        "code": null
+      },
+      "note": "Golden sample from the shared fixture; executor may proceed at expectedVersion 3."
+    },
+    {
+      "name": "low-risk queue.add needs no approval",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-queue-add-1",
+        "scope": "department",
+        "actor": "department-coordinator",
+        "action": "queue.add",
+        "payload": {
+          "queueKey": "q-design",
+          "itemRef": "art-42",
+          "position": "tail"
+        },
+        "risk": "low",
+        "payloadHash": "962a896ba96e526a883eaecfc08814eb97f03cd4bd37494440fc2278c21c2806",
+        "expectedVersion": 7,
+        "requiresApproval": false,
+        "status": "proposed",
+        "proposedAt": 1732000001000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": null,
+      "expect": {
+        "ok": true,
+        "code": null
+      },
+      "note": ""
+    },
+    {
+      "name": "fire without approval context",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-fire-w17",
+        "scope": "company",
+        "actor": "donna",
+        "action": "worker.fire",
+        "payload": {
+          "workerKey": "w-17",
+          "drain": true,
+          "preserveArtifacts": true,
+          "reason": "contract complete"
+        },
+        "risk": "high",
+        "payloadHash": "1b8a28071bc1825b0b64c92291e1412c8e57e0d1b810ab30090108ba5157d471",
+        "expectedVersion": 3,
+        "requiresApproval": true,
+        "status": "proposed",
+        "proposedAt": 1732000000000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": null,
+      "expect": {
+        "ok": false,
+        "code": "approval-required"
+      },
+      "note": ""
+    },
+    {
+      "name": "fire missing the high-risk gate",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-fire-w17",
+        "scope": "company",
+        "actor": "donna",
+        "action": "worker.fire",
+        "payload": {
+          "workerKey": "w-17",
+          "drain": true,
+          "preserveArtifacts": true,
+          "reason": "contract complete"
+        },
+        "risk": "high",
+        "payloadHash": "1b8a28071bc1825b0b64c92291e1412c8e57e0d1b810ab30090108ba5157d471",
+        "expectedVersion": 3,
+        "requiresApproval": true,
+        "status": "proposed",
+        "proposedAt": 1732000000000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": {
+        "approved": true,
+        "confirmedGates": [
+          "plan-approval"
+        ]
+      },
+      "expect": {
+        "ok": false,
+        "code": "gate-not-confirmed"
+      },
+      "note": ""
+    },
+    {
+      "name": "tampered payload hash",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-fire-w17",
+        "scope": "company",
+        "actor": "donna",
+        "action": "worker.fire",
+        "payload": {
+          "workerKey": "w-17",
+          "drain": true,
+          "preserveArtifacts": true,
+          "reason": "contract complete"
+        },
+        "risk": "high",
+        "payloadHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "expectedVersion": 3,
+        "requiresApproval": true,
+        "status": "proposed",
+        "proposedAt": 1732000000000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": null,
+      "expect": {
+        "ok": false,
+        "code": "payload-hash-mismatch"
+      },
+      "note": ""
+    },
+    {
+      "name": "forbidden side-effect payload key",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-bad-1",
+        "scope": "company",
+        "actor": "donna",
+        "action": "queue.add",
+        "payload": {
+          "queueKey": "q-1",
+          "command": "rm -rf /"
+        },
+        "risk": "low",
+        "payloadHash": "e707c6060e1a05c6452ac1abba787fb771ade7f36a33037677c816e86fbe96c9",
+        "expectedVersion": 1,
+        "requiresApproval": false,
+        "status": "proposed",
+        "proposedAt": 1732000002000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": null,
+      "expect": {
+        "ok": false,
+        "code": "forbidden-side-effect"
+      },
+      "note": ""
+    },
+    {
+      "name": "fire without drain/preserve",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-fire-bad",
+        "scope": "company",
+        "actor": "donna",
+        "action": "worker.fire",
+        "payload": {
+          "workerKey": "w-17"
+        },
+        "risk": "high",
+        "payloadHash": "e3dfea699bc0547337c2e3c30e94f1a3d56c0609e83c57931f42547f45e3a5d3",
+        "expectedVersion": 3,
+        "requiresApproval": true,
+        "status": "proposed",
+        "proposedAt": 1732000003000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": {
+        "approved": true,
+        "confirmedGates": [
+          "high-risk",
+          "plan-approval"
+        ]
+      },
+      "expect": {
+        "ok": false,
+        "code": "drain-preserve-required"
+      },
+      "note": ""
+    },
+    {
+      "name": "department coordinator cannot act at company scope",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-scope",
+        "scope": "company",
+        "actor": "department-coordinator",
+        "action": "company.pause",
+        "payload": {
+          "companyKey": "software"
+        },
+        "risk": "medium",
+        "payloadHash": "66a0fdd00a6e7188fdd7cbf4f7d89f31f3a9cad4688509142c4ce3467748a47f",
+        "expectedVersion": 2,
+        "requiresApproval": true,
+        "status": "proposed",
+        "proposedAt": 1732000004000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": {
+        "approved": true,
+        "confirmedGates": [
+          "plan-approval"
+        ]
+      },
+      "expect": {
+        "ok": false,
+        "code": "scope-violation"
+      },
+      "note": ""
+    },
+    {
+      "name": "tampered risk field",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-fire-w17",
+        "scope": "company",
+        "actor": "donna",
+        "action": "worker.fire",
+        "payload": {
+          "workerKey": "w-17",
+          "drain": true,
+          "preserveArtifacts": true,
+          "reason": "contract complete"
+        },
+        "risk": "low",
+        "payloadHash": "1b8a28071bc1825b0b64c92291e1412c8e57e0d1b810ab30090108ba5157d471",
+        "expectedVersion": 3,
+        "requiresApproval": false,
+        "status": "proposed",
+        "proposedAt": 1732000000000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": null,
+      "expect": {
+        "ok": false,
+        "code": "policy-mismatch"
+      },
+      "note": ""
+    },
+    {
+      "name": "action outside the closed set",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-fire-w17",
+        "scope": "company",
+        "actor": "donna",
+        "action": "worker.promote",
+        "payload": {
+          "workerKey": "w-17",
+          "drain": true,
+          "preserveArtifacts": true,
+          "reason": "contract complete"
+        },
+        "risk": "high",
+        "payloadHash": "1b8a28071bc1825b0b64c92291e1412c8e57e0d1b810ab30090108ba5157d471",
+        "expectedVersion": 3,
+        "requiresApproval": true,
+        "status": "proposed",
+        "proposedAt": 1732000000000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": null,
+      "expect": {
+        "ok": false,
+        "code": "unknown-action"
+      },
+      "note": ""
+    },
+    {
+      "name": "repository.import approved through credentials+external-writes+high-risk",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-import-1",
+        "scope": "enterprise",
+        "actor": "repository-integration-steward",
+        "action": "repository.import",
+        "payload": {
+          "url": "https://github.com/acme/ui-kit",
+          "commitSha": "02c3ca5493f1e5ad4e50996131e364cce38826e4"
+        },
+        "risk": "high",
+        "payloadHash": "98e7fa647820a3e8cfa3dc99524ef7967d6e09f3a4767455b294f368352699ee",
+        "expectedVersion": 5,
+        "requiresApproval": true,
+        "status": "proposed",
+        "proposedAt": 1732000005000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": {
+        "approved": true,
+        "confirmedGates": [
+          "external-writes",
+          "credentials",
+          "high-risk"
+        ]
+      },
+      "expect": {
+        "ok": true,
+        "code": null
+      },
+      "note": ""
+    },
+    {
+      "name": "unsupported contract version",
+      "proposal": {
+        "contractVersion": 2,
+        "id": "prop-fire-w17",
+        "scope": "company",
+        "actor": "donna",
+        "action": "worker.fire",
+        "payload": {
+          "workerKey": "w-17",
+          "drain": true,
+          "preserveArtifacts": true,
+          "reason": "contract complete"
+        },
+        "risk": "high",
+        "payloadHash": "1b8a28071bc1825b0b64c92291e1412c8e57e0d1b810ab30090108ba5157d471",
+        "expectedVersion": 3,
+        "requiresApproval": true,
+        "status": "proposed",
+        "proposedAt": 1732000000000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": null,
+      "expect": {
+        "ok": false,
+        "code": "unsupported-version"
+      },
+      "note": ""
+    },
+    {
+      "name": "emergency stop never travels through the proposal pipeline",
+      "proposal": {
+        "contractVersion": 1,
+        "id": "prop-stop-1",
+        "scope": "enterprise",
+        "actor": "donna",
+        "action": "emergency.stop",
+        "payload": {
+          "workerKey": "w-1"
+        },
+        "risk": "low",
+        "payloadHash": "c56df994b49ea1b380c198a9e673c11dcd61fa755760f91806a971354616c826",
+        "expectedVersion": 1,
+        "requiresApproval": false,
+        "status": "proposed",
+        "proposedAt": 1732000006000,
+        "decidedAt": null,
+        "executedAt": null,
+        "resultSummary": ""
+      },
+      "approval": {
+        "approved": true,
+        "confirmedGates": [
+          "plan-approval",
+          "credentials",
+          "external-writes",
+          "code-execution",
+          "physical-action",
+          "high-risk",
+          "live-provider-confirmation"
+        ]
+      },
+      "expect": {
+        "ok": false,
+        "code": "unknown-action"
+      },
+      "note": "Emergency stop is intentionally absent from ASSISTANT_ACTIONS: it is ungated, immediate, and never an assistant proposal."
+    }
+  ],
+  "queueReorder": {
+    "description": "Mirror of reorderQueueItems: named ids first (in order), remaining items keep relative order (position asc, tie-break by id), positions re-assigned densely 1..n; unknown/duplicate ids and mixed queues are contract errors.",
+    "queue": {
+      "contractVersion": 1,
+      "id": "queue-software",
+      "scope": "company",
+      "scopeKey": "software",
+      "version": 1
+    },
+    "cases": [
+      {
+        "name": "golden reorder from the shared fixture",
+        "items": [
+          {
+            "contractVersion": 1,
+            "id": "qi-1",
+            "queueId": "queue-software",
+            "itemKind": "company-run",
+            "refId": "run-11",
+            "title": "Software weekly run",
+            "position": 1,
+            "status": "queued",
+            "payloadHash": "a9eed50adb923e06b00a8e1dea80418b869f94603cd00c1056495976fe2b0af7",
+            "version": 1
+          },
+          {
+            "contractVersion": 1,
+            "id": "qi-2",
+            "queueId": "queue-software",
+            "itemKind": "study",
+            "refId": "study-7",
+            "title": "Frontend eval study",
+            "position": 2,
+            "status": "queued",
+            "payloadHash": "9395f7b649ed1114362dafa69d187a6af688cf470f9a02ef00e3d1df355ea7e2",
+            "version": 1
+          },
+          {
+            "contractVersion": 1,
+            "id": "qi-3",
+            "queueId": "queue-software",
+            "itemKind": "repository-triage",
+            "refId": "https://github.com/acme/ui-kit",
+            "title": "Triage ui-kit",
+            "position": 3,
+            "status": "queued",
+            "payloadHash": "5b545ae7f9d876a03f624e93c0deb2317c7f344d6fa1dd748d3d29157d90d857",
+            "version": 1
+          }
+        ],
+        "orderedIds": [
+          "qi-3",
+          "qi-1"
+        ],
+        "expected": [
+          {
+            "contractVersion": 1,
+            "id": "qi-3",
+            "queueId": "queue-software",
+            "itemKind": "repository-triage",
+            "refId": "https://github.com/acme/ui-kit",
+            "title": "Triage ui-kit",
+            "position": 1,
+            "status": "queued",
+            "payloadHash": "5b545ae7f9d876a03f624e93c0deb2317c7f344d6fa1dd748d3d29157d90d857",
+            "version": 1
+          },
+          {
+            "contractVersion": 1,
+            "id": "qi-1",
+            "queueId": "queue-software",
+            "itemKind": "company-run",
+            "refId": "run-11",
+            "title": "Software weekly run",
+            "position": 2,
+            "status": "queued",
+            "payloadHash": "a9eed50adb923e06b00a8e1dea80418b869f94603cd00c1056495976fe2b0af7",
+            "version": 1
+          },
+          {
+            "contractVersion": 1,
+            "id": "qi-2",
+            "queueId": "queue-software",
+            "itemKind": "study",
+            "refId": "study-7",
+            "title": "Frontend eval study",
+            "position": 3,
+            "status": "queued",
+            "payloadHash": "9395f7b649ed1114362dafa69d187a6af688cf470f9a02ef00e3d1df355ea7e2",
+            "version": 1
+          }
+        ]
+      },
+      {
+        "name": "unknown id rejected",
+        "items": [
+          {
+            "contractVersion": 1,
+            "id": "qi-1",
+            "queueId": "queue-software",
+            "itemKind": "company-run",
+            "refId": "run-11",
+            "title": "Software weekly run",
+            "position": 1,
+            "status": "queued",
+            "payloadHash": "a9eed50adb923e06b00a8e1dea80418b869f94603cd00c1056495976fe2b0af7",
+            "version": 1
+          },
+          {
+            "contractVersion": 1,
+            "id": "qi-2",
+            "queueId": "queue-software",
+            "itemKind": "study",
+            "refId": "study-7",
+            "title": "Frontend eval study",
+            "position": 2,
+            "status": "queued",
+            "payloadHash": "9395f7b649ed1114362dafa69d187a6af688cf470f9a02ef00e3d1df355ea7e2",
+            "version": 1
+          },
+          {
+            "contractVersion": 1,
+            "id": "qi-3",
+            "queueId": "queue-software",
+            "itemKind": "repository-triage",
+            "refId": "https://github.com/acme/ui-kit",
+            "title": "Triage ui-kit",
+            "position": 3,
+            "status": "queued",
+            "payloadHash": "5b545ae7f9d876a03f624e93c0deb2317c7f344d6fa1dd748d3d29157d90d857",
+            "version": 1
+          }
+        ],
+        "orderedIds": [
+          "qi-9"
+        ],
+        "expectError": "unknown-item"
+      },
+      {
+        "name": "duplicate id rejected",
+        "items": [
+          {
+            "contractVersion": 1,
+            "id": "qi-1",
+            "queueId": "queue-software",
+            "itemKind": "company-run",
+            "refId": "run-11",
+            "title": "Software weekly run",
+            "position": 1,
+            "status": "queued",
+            "payloadHash": "a9eed50adb923e06b00a8e1dea80418b869f94603cd00c1056495976fe2b0af7",
+            "version": 1
+          },
+          {
+            "contractVersion": 1,
+            "id": "qi-2",
+            "queueId": "queue-software",
+            "itemKind": "study",
+            "refId": "study-7",
+            "title": "Frontend eval study",
+            "position": 2,
+            "status": "queued",
+            "payloadHash": "9395f7b649ed1114362dafa69d187a6af688cf470f9a02ef00e3d1df355ea7e2",
+            "version": 1
+          },
+          {
+            "contractVersion": 1,
+            "id": "qi-3",
+            "queueId": "queue-software",
+            "itemKind": "repository-triage",
+            "refId": "https://github.com/acme/ui-kit",
+            "title": "Triage ui-kit",
+            "position": 3,
+            "status": "queued",
+            "payloadHash": "5b545ae7f9d876a03f624e93c0deb2317c7f344d6fa1dd748d3d29157d90d857",
+            "version": 1
+          }
+        ],
+        "orderedIds": [
+          "qi-1",
+          "qi-1"
+        ],
+        "expectError": "duplicate-item"
+      }
+    ]
+  },
+  "cacheInvalidation": {
+    "namespaces": [
+      "skill-excerpts",
+      "blueprint",
+      "snapshot",
+      "repository-metadata"
+    ],
+    "description": "cache.invalidate receipt: counts only, never content. Namespace is explicit; scopeKey is an enterprise key (owner-scoped).",
+    "cases": [
+      {
+        "name": "golden report from the shared fixture",
+        "input": {
+          "namespace": "snapshot",
+          "scopeKey": "software",
+          "removedKeys": 4,
+          "invalidatedAt": 1732000001000
+        },
+        "expected": {
+          "contractVersion": 1,
+          "namespace": "snapshot",
+          "scopeKey": "software",
+          "removedKeys": 4,
+          "invalidatedAt": 1732000001000
+        }
+      },
+      {
+        "name": "unknown namespace rejected",
+        "input": {
+          "namespace": "secrets",
+          "scopeKey": "software",
+          "removedKeys": 4,
+          "invalidatedAt": 1732000001000
+        },
+        "expectError": "invalid-shape"
+      }
+    ]
+  },
+  "repositoryIntake": {
+    "modes": [
+      "public-anonymous",
+      "credentialed-approved"
+    ],
+    "description": "Intake-mode credential rules enforced in code: public-anonymous forbids credentials; credentialed-approved requires a vault credential record and an approved repository.import proposal.",
+    "cases": [
+      {
+        "name": "public anonymous intake",
+        "request": {
+          "contractVersion": 1,
+          "url": "https://github.com/acme/ui-kit",
+          "intakeMode": "public-anonymous",
+          "credentialRecordId": null
+        },
+        "expect": {
+          "ok": true
+        }
+      },
+      {
+        "name": "credentialed intake with vault record",
+        "request": {
+          "contractVersion": 1,
+          "url": "https://github.com/acme/private-kit",
+          "intakeMode": "credentialed-approved",
+          "credentialRecordId": 42
+        },
+        "expect": {
+          "ok": true
+        }
+      },
+      {
+        "name": "credentialed intake without vault record",
+        "request": {
+          "contractVersion": 1,
+          "url": "https://github.com/acme/private-kit",
+          "intakeMode": "credentialed-approved",
+          "credentialRecordId": null
+        },
+        "expect": {
+          "ok": false,
+          "code": "credentials-required"
+        }
+      },
+      {
+        "name": "public intake must not use credentials",
+        "request": {
+          "contractVersion": 1,
+          "url": "https://github.com/acme/ui-kit",
+          "intakeMode": "public-anonymous",
+          "credentialRecordId": 7
+        },
+        "expect": {
+          "ok": false,
+          "code": "credential-not-permitted"
+        }
+      }
+    ]
+  },
+  "lifecycles": {
+    "company": [
+      "active",
+      "paused",
+      "archived"
+    ],
+    "department": [
+      "active",
+      "paused",
+      "archived"
+    ]
+  },
+  "emergencyStop": {
+    "actionId": "emergency.stop",
+    "inActionSet": false,
+    "note": "Emergency stop is intentionally absent from ASSISTANT_ACTIONS: it is ungated, immediate, and never an assistant proposal."
+  }
+}

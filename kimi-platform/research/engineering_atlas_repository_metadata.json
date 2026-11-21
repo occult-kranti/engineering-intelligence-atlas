@@ -1,0 +1,14 @@
+{
+  "url": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+  "owner": "occult-kranti",
+  "name": "engineering-intelligence-atlas",
+  "description": "Research Director, engineering/science resource atlas, agent skill library, desktop and Android shells, and verified research workbooks.",
+  "language": "TypeScript",
+  "topics": [],
+  "licenseSpdx": null,
+  "archived": false,
+  "defaultBranch": "main",
+  "commitSha": "c3a23a945af702ec8c75e823c37a88296a91ba43",
+  "visibility": "public",
+  "retrievedAt": "2026-11-20T23:13:57.710148+00:00"
+}

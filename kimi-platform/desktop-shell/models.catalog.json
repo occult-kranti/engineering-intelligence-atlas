@@ -1,0 +1,476 @@
+{
+  "$schema": "./models.catalog.schema.json",
+  "version": 1,
+  "description": "Reviewed local-model catalog for the Research Director Desktop shell. Populated from research/reviewed_models.json (verified 2026-11-20 against the HF Hub API; see that file for verification rules and caveats). Only entries with availability 'available' can be downloaded; 'unavailable' (gated) and 'quarantined' (remote-code) entries are reference-only and have download/run disabled.",
+  "models": [
+    {
+      "id": "qwen3-coder-30b-a3b-instruct-q4_k_m",
+      "family": "qwen3-coder",
+      "task": "text-generation",
+      "name": "Qwen3-Coder-30B-A3B-Instruct (GGUF Q4_K_M)",
+      "repoId": "ggml-org/Qwen3-Coder-30B-A3B-Instruct-GGUF",
+      "revision": "ef85c7f175f00be8af4e1de0c14e59ce7e5d0db3",
+      "format": "GGUF",
+      "quantization": "Q4_K_M",
+      "sizeBytes": 17988419552,
+      "sizeScope": "single-file",
+      "files": [
+        {
+          "path": "Qwen3-Coder-30B-A3B-Instruct-Q4_K_M.gguf",
+          "sizeBytes": 17988419552,
+          "sha256": "f6050b4da22869aa3fb9d94bb3314e9fc5a027d4741c1f97761c387d6b2b2335"
+        }
+      ],
+      "minRamBytes": 17988419552,
+      "minVramBytes": null,
+      "license": "apache-2.0",
+      "licenseUrl": "https://huggingface.co/Qwen/Qwen3-Coder-30B-A3B-Instruct/blob/main/LICENSE",
+      "sourceUrl": "https://huggingface.co/ggml-org/Qwen3-Coder-30B-A3B-Instruct-GGUF/tree/ef85c7f175f00be8af4e1de0c14e59ce7e5d0db3",
+      "runtime": "llama.cpp (and GGUF-compatible frontends: llama-server, Ollama, LM Studio)",
+      "remoteCodeRequired": false,
+      "availability": "available",
+      "notes": "30B-total / 3B-active MoE (48 layers, 128 routed experts, 8 active), 262,144-token context. Single 17,988,419,552-byte (16.75 GiB) file; that size is the hard memory floor - add headroom for context/KV cache. Fits desktop machines with >=32 GB total RAM+VRAM."
+    },
+    {
+      "id": "qwen3-8b-q4_k_m",
+      "family": "qwen3",
+      "task": "text-generation",
+      "name": "Qwen3-8B (GGUF Q4_K_M)",
+      "repoId": "Qwen/Qwen3-8B-GGUF",
+      "revision": "7c41481f57cb95916b40956ab2f0b139b296d974",
+      "format": "GGUF",
+      "quantization": "Q4_K_M",
+      "sizeBytes": 5027783488,
+      "sizeScope": "single-file",
+      "files": [
+        {
+          "path": "Qwen3-8B-Q4_K_M.gguf",
+          "sizeBytes": 5027783488,
+          "sha256": "d98cdcbd03e17ce47681435b5150e34c1417f50b5c0019dd560e4882c5745785"
+        }
+      ],
+      "minRamBytes": 5027783488,
+      "minVramBytes": null,
+      "license": "apache-2.0",
+      "licenseUrl": "https://huggingface.co/Qwen/Qwen3-8B-GGUF/blob/main/LICENSE",
+      "sourceUrl": "https://huggingface.co/Qwen/Qwen3-8B-GGUF/tree/7c41481f57cb95916b40956ab2f0b139b296d974",
+      "runtime": "llama.cpp (and GGUF-compatible frontends: llama-server, Ollama, LM Studio)",
+      "remoteCodeRequired": false,
+      "availability": "available",
+      "notes": "8.2B-parameter dense model, 32,768-token native context (131,072 with YaRN). Single 5,027,783,488-byte (4.68 GiB) file is the memory floor; comfortable on desktops with >=8-16 GB RAM."
+    },
+    {
+      "id": "qwen3-coder-next-q4_k_m",
+      "family": "qwen3-next",
+      "task": "text-generation",
+      "name": "Qwen3-Coder-Next (GGUF Q4_K_M)",
+      "repoId": "Qwen/Qwen3-Coder-Next-GGUF",
+      "revision": "b82fb7382639d97b38fa7672e526c760c2fb358e",
+      "format": "GGUF",
+      "quantization": "Q4_K_M",
+      "sizeBytes": 48410992032,
+      "sizeScope": "complete-quantization-set (Q4_K_M is split into 4 GGUF shards; all 4 required)",
+      "files": [
+        {
+          "path": "Qwen3-Coder-Next-Q4_K_M/Qwen3-Coder-Next-Q4_K_M-00001-of-00004.gguf",
+          "sizeBytes": 15524827040,
+          "sha256": "6bcfc9f9c37901eeb92172e2ab871224dab36a453d263bcb2547f737409534da"
+        },
+        {
+          "path": "Qwen3-Coder-Next-Q4_K_M/Qwen3-Coder-Next-Q4_K_M-00002-of-00004.gguf",
+          "sizeBytes": 14872168352,
+          "sha256": "817def0691ee9d08bf3dc4444be7aed29c9e52091e8fa9d97901ce7e7f6f01d3"
+        },
+        {
+          "path": "Qwen3-Coder-Next-Q4_K_M/Qwen3-Coder-Next-Q4_K_M-00003-of-00004.gguf",
+          "sizeBytes": 14503294496,
+          "sha256": "23aa634d47dca9b4ca3ea249384e6f01951b24c83cdc076f37f6f43d6c99883f"
+        },
+        {
+          "path": "Qwen3-Coder-Next-Q4_K_M/Qwen3-Coder-Next-Q4_K_M-00004-of-00004.gguf",
+          "sizeBytes": 3510702144,
+          "sha256": "249c768cc5f130dc731567d6edcbdacc48e14dec9e02c5dbe2b2185d2c5bdb2b"
+        }
+      ],
+      "minRamBytes": 48410992032,
+      "minVramBytes": null,
+      "license": "apache-2.0",
+      "licenseUrl": "https://huggingface.co/Qwen/Qwen3-Coder-Next-GGUF (license declared in card metadata)",
+      "sourceUrl": "https://huggingface.co/Qwen/Qwen3-Coder-Next-GGUF/tree/b82fb7382639d97b38fa7672e526c760c2fb358e",
+      "runtime": "llama.cpp, very recent build (hybrid Gated-DeltaNet 'qwen3-next' architecture; card: 'we follow the latest version of llama.cpp')",
+      "remoteCodeRequired": false,
+      "availability": "available",
+      "notes": "80B-total / 3B-active hybrid MoE, 262,144-token native context. The 4-shard Q4_K_M set totals 48,410,992,032 bytes (45.09 GiB) - the memory floor; practical only on high-RAM desktops (>=64 GB RAM or equivalent unified memory/VRAM)."
+    },
+    {
+      "id": "foundation-sec-8b-reasoning",
+      "family": "llama-3.1",
+      "task": "text-generation",
+      "name": "Foundation-Sec-8B-Reasoning (Llama-3.1-FoundationAI-SecurityLLM-8B-Reasoning)",
+      "repoId": "fdtn-ai/Foundation-Sec-8B-Reasoning",
+      "revision": "63c930c82d7646226d33502bec5870019738400e",
+      "format": "safetensors (bf16)",
+      "quantization": null,
+      "sizeBytes": 16078180729,
+      "sizeScope": "complete-required-set (4 safetensors weight shards + index + config + generation_config + tokenizer files; README/LICENSE/NOTICE excluded)",
+      "files": [
+        {
+          "path": "config.json",
+          "sizeBytes": 938,
+          "sha256": null
+        },
+        {
+          "path": "generation_config.json",
+          "sizeBytes": 260,
+          "sha256": null
+        },
+        {
+          "path": "model-00001-of-00004.safetensors",
+          "sizeBytes": 4943283072,
+          "sha256": "51f7069dfb046809ee1370eccea47c14063efb8e54d5eaf4d1b4cc7337b688da"
+        },
+        {
+          "path": "model-00002-of-00004.safetensors",
+          "sizeBytes": 4991413968,
+          "sha256": "272b260e54e985bb9b31c1cd3cc4e2369cc42a7959ba347c0d1adaf2eb55ab97"
+        },
+        {
+          "path": "model-00003-of-00004.safetensors",
+          "sizeBytes": 4968548944,
+          "sha256": "7b8349ce9f38173e36f0f86843309c948bac43f0e5ee8b042f4aa9e0d05f2f62"
+        },
+        {
+          "path": "model-00004-of-00004.safetensors",
+          "sizeBytes": 1157638072,
+          "sha256": "42f13e3105f0fdd3048218d2b343230cdb2342a374b3b5fb345b39c4f4e59021"
+        },
+        {
+          "path": "model.safetensors.index.json",
+          "sizeBytes": 23950,
+          "sha256": null
+        },
+        {
+          "path": "special_tokens_map.json",
+          "sizeBytes": 710,
+          "sha256": null
+        },
+        {
+          "path": "tokenizer.json",
+          "sizeBytes": 17213681,
+          "sha256": "88fb81f6493ea9017c2b2e25c95beab7b8d961a9aac5c6a5a5b5a01dc7be902d"
+        },
+        {
+          "path": "tokenizer_config.json",
+          "sizeBytes": 57134,
+          "sha256": null
+        }
+      ],
+      "minRamBytes": 16060884056,
+      "minVramBytes": null,
+      "license": "other: Meta Llama 3.1 Community License (base model) + Apache-2.0 (Cisco modifications) - see NOTICE.md",
+      "licenseUrl": "https://huggingface.co/fdtn-ai/Foundation-Sec-8B-Reasoning/blob/main/NOTICE.md",
+      "sourceUrl": "https://huggingface.co/fdtn-ai/Foundation-Sec-8B-Reasoning/tree/63c930c82d7646226d33502bec5870019738400e",
+      "runtime": "transformers >=4.51.3 (AutoModelForCausalLM), vLLM; standard LlamaForCausalLM architecture so llama.cpp-compatible after GGUF conversion",
+      "remoteCodeRequired": false,
+      "availability": "available",
+      "notes": "8B dense Llama-3.1-architecture model in bf16; weight shards total 16,060,884,056 bytes (14.96 GiB) - the memory floor at full precision. Cybersecurity-specialized; card states it may underperform on general tasks."
+    },
+    {
+      "id": "triposr",
+      "family": "triposr",
+      "task": "image-to-3d",
+      "name": "TripoSR",
+      "repoId": "stabilityai/TripoSR",
+      "revision": "5b521936b01fbe1890f6f9baed0254ab6351c04a",
+      "format": "PyTorch checkpoint (.ckpt)",
+      "quantization": null,
+      "sizeBytes": 1677247729,
+      "sizeScope": "complete-required-set (model.ckpt weights + config.yaml; repo also contains demo videos not required for inference)",
+      "files": [
+        {
+          "path": "config.yaml",
+          "sizeBytes": 987,
+          "sha256": null
+        },
+        {
+          "path": "model.ckpt",
+          "sizeBytes": 1677246742,
+          "sha256": "429e2c6b22a0923967459de24d67f05962b235f79cde6b032aa7ed2ffcd970ee"
+        }
+      ],
+      "minRamBytes": 1677246742,
+      "minVramBytes": null,
+      "license": "mit",
+      "licenseUrl": "https://github.com/VAST-AI-Research/TripoSR/blob/main/LICENSE",
+      "sourceUrl": "https://huggingface.co/stabilityai/TripoSR/tree/5b521936b01fbe1890f6f9baed0254ab6351c04a",
+      "runtime": "Official 'tsr' package from github.com/VAST-AI-Research/TripoSR (PyTorch); HF repo ships weights + config only",
+      "remoteCodeRequired": true,
+      "availability": "quarantined",
+      "notes": "Single 1,677,246,742-byte (1.56 GiB) checkpoint is the memory floor; no official inference VRAM figure is published (card states only training hardware: 22 nodes x 8x A100 40GB). Publisher advertises <0.5 s generation on an NVIDIA A100.",
+      "availabilityNote": "Quarantined, research-only: the HF repo ships weights + config only and inference requires the external 'tsr' package (remote code, PyTorch pickle checkpoint). This shell never executes remote code, so download and run are disabled. Entry kept for reference; all metadata verified."
+    },
+    {
+      "id": "flux1-schnell",
+      "family": "flux",
+      "task": "text-to-image",
+      "name": "FLUX.1-schnell",
+      "repoId": "black-forest-labs/FLUX.1-schnell",
+      "revision": "169573f54945f633efbe126a40a5676b4228363c",
+      "format": "safetensors (bf16)",
+      "quantization": null,
+      "sizeBytes": 33725923002,
+      "sizeScope": "complete-required-set (diffusers pipeline layout: model_index.json, scheduler, transformer/ 3 shards + index, text_encoder, text_encoder_2 2 shards + index, vae, tokenizers; excludes redundant single-file flux1-schnell.safetensors/ae.safetensors, README and preview image)",
+      "files": [
+        {
+          "path": "model_index.json",
+          "sizeBytes": 536,
+          "sha256": null
+        },
+        {
+          "path": "scheduler/scheduler_config.json",
+          "sizeBytes": 274,
+          "sha256": null
+        },
+        {
+          "path": "text_encoder/config.json",
+          "sizeBytes": 613,
+          "sha256": null
+        },
+        {
+          "path": "text_encoder/model.safetensors",
+          "sizeBytes": 246144352,
+          "sha256": null
+        },
+        {
+          "path": "text_encoder_2/config.json",
+          "sizeBytes": 782,
+          "sha256": null
+        },
+        {
+          "path": "text_encoder_2/model-00001-of-00002.safetensors",
+          "sizeBytes": 4994582224,
+          "sha256": null
+        },
+        {
+          "path": "text_encoder_2/model-00002-of-00002.safetensors",
+          "sizeBytes": 4530066360,
+          "sha256": null
+        },
+        {
+          "path": "text_encoder_2/model.safetensors.index.json",
+          "sizeBytes": 19885,
+          "sha256": null
+        },
+        {
+          "path": "tokenizer/merges.txt",
+          "sizeBytes": 524619,
+          "sha256": null
+        },
+        {
+          "path": "tokenizer/special_tokens_map.json",
+          "sizeBytes": 588,
+          "sha256": null
+        },
+        {
+          "path": "tokenizer/tokenizer_config.json",
+          "sizeBytes": 705,
+          "sha256": null
+        },
+        {
+          "path": "tokenizer/vocab.json",
+          "sizeBytes": 1059962,
+          "sha256": null
+        },
+        {
+          "path": "tokenizer_2/special_tokens_map.json",
+          "sizeBytes": 2543,
+          "sha256": null
+        },
+        {
+          "path": "tokenizer_2/spiece.model",
+          "sizeBytes": 791656,
+          "sha256": null
+        },
+        {
+          "path": "tokenizer_2/tokenizer.json",
+          "sizeBytes": 2424235,
+          "sha256": null
+        },
+        {
+          "path": "tokenizer_2/tokenizer_config.json",
+          "sizeBytes": 20817,
+          "sha256": null
+        },
+        {
+          "path": "transformer/config.json",
+          "sizeBytes": 321,
+          "sha256": null
+        },
+        {
+          "path": "transformer/diffusion_pytorch_model-00001-of-00003.safetensors",
+          "sizeBytes": 9962580296,
+          "sha256": null
+        },
+        {
+          "path": "transformer/diffusion_pytorch_model-00002-of-00003.safetensors",
+          "sizeBytes": 9949328904,
+          "sha256": null
+        },
+        {
+          "path": "transformer/diffusion_pytorch_model-00003-of-00003.safetensors",
+          "sizeBytes": 3870584832,
+          "sha256": null
+        },
+        {
+          "path": "transformer/diffusion_pytorch_model.safetensors.index.json",
+          "sizeBytes": 120822,
+          "sha256": null
+        },
+        {
+          "path": "vae/config.json",
+          "sizeBytes": 774,
+          "sha256": null
+        },
+        {
+          "path": "vae/diffusion_pytorch_model.safetensors",
+          "sizeBytes": 167666902,
+          "sha256": null
+        }
+      ],
+      "minRamBytes": null,
+      "minVramBytes": null,
+      "license": "apache-2.0",
+      "licenseUrl": "https://github.com/black-forest-labs/flux/blob/main/LICENSE",
+      "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell/tree/169573f54945f633efbe126a40a5676b4228363c",
+      "runtime": "diffusers (FluxPipeline); single-file flux1-schnell.safetensors (23,782,506,688 bytes, also in repo) suits ComfyUI-style loaders",
+      "remoteCodeRequired": false,
+      "availability": "unavailable",
+      "notes": "Diffusers-layout weight set totals 33,725,923,002 bytes (31.4 GiB): DiT transformer 23.78 GB (3 shards) + T5-XXL text_encoder_2 9.52 GB + CLIP text_encoder 0.25 GB + VAE 0.17 GB. No official min VRAM figure is published; diffusers supports fp16/offload but requirements vary - not derivable, hence null.",
+      "availabilityNote": "Gated Hugging Face repo (gated: 'auto'): anonymous download is impossible; the user must log in with a Hugging Face account and accept the access terms, and HF does not publish per-file SHA-256 hashes to anonymous clients. One-click install is disabled in this shell; obtain access through your own HF account and review the license first."
+    },
+    {
+      "id": "trellis-2-4b",
+      "family": "trellis",
+      "task": "image-to-3d",
+      "name": "TRELLIS.2-4B",
+      "repoId": "microsoft/TRELLIS.2-4B",
+      "revision": "af44b45f2e35a493886929c6d786e563ec68364d",
+      "format": "safetensors (bf16/fp16)",
+      "quantization": null,
+      "sizeBytes": 16237477108,
+      "sizeScope": "complete-required-set for this repo (14 safetensors checkpoints + their JSON configs + pipeline.json + texturing_pipeline.json; README/.gitattributes excluded). NOTE: pipeline.json additionally references one checkpoint from microsoft/TRELLIS-image-large - see caveats.",
+      "files": [
+        {
+          "path": "ckpts/shape_dec_next_dc_f16c32_fp16.json",
+          "sizeBytes": 678,
+          "sha256": null
+        },
+        {
+          "path": "ckpts/shape_dec_next_dc_f16c32_fp16.safetensors",
+          "sizeBytes": 948490494,
+          "sha256": "e3b718d3e43e4f8780e9a24ac6fff231811a67e3b058e336e10fe654c911d581"
+        },
+        {
+          "path": "ckpts/shape_enc_next_dc_f16c32_fp16.json",
+          "sizeBytes": 653,
+          "sha256": null
+        },
+        {
+          "path": "ckpts/shape_enc_next_dc_f16c32_fp16.safetensors",
+          "sizeBytes": 708797208,
+          "sha256": "f37c5ff5b983b68e9946060000f09bc131f3e84318a2c8b7430a81e4b4636c41"
+        },
+        {
+          "path": "ckpts/slat_flow_img2shape_dit_1_3B_1024_bf16.json",
+          "sizeBytes": 458,
+          "sha256": null
+        },
+        {
+          "path": "ckpts/slat_flow_img2shape_dit_1_3B_1024_bf16.safetensors",
+          "sizeBytes": 2584574424,
+          "sha256": "07cd0596f634c5adc1890023d16023afc5eed02fb84b22bb23aff5bf0030fbbd"
+        },
+        {
+          "path": "ckpts/slat_flow_img2shape_dit_1_3B_512_bf16.json",
+          "sizeBytes": 458,
+          "sha256": null
+        },
+        {
+          "path": "ckpts/slat_flow_img2shape_dit_1_3B_512_bf16.safetensors",
+          "sizeBytes": 2584574424,
+          "sha256": "ec5e0917ef9b7e25ad51dffc7d19687a42019871f94239f2fa7f86264c55b70f"
+        },
+        {
+          "path": "ckpts/slat_flow_imgshape2tex_dit_1_3B_1024_bf16.json",
+          "sizeBytes": 458,
+          "sha256": null
+        },
+        {
+          "path": "ckpts/slat_flow_imgshape2tex_dit_1_3B_1024_bf16.safetensors",
+          "sizeBytes": 2584672728,
+          "sha256": "580401269059a339b8318ab9ced459a13ba63391721c83a6c383198c29e77686"
+        },
+        {
+          "path": "ckpts/slat_flow_imgshape2tex_dit_1_3B_512_bf16.json",
+          "sizeBytes": 458,
+          "sha256": null
+        },
+        {
+          "path": "ckpts/slat_flow_imgshape2tex_dit_1_3B_512_bf16.safetensors",
+          "sizeBytes": 2584672728,
+          "sha256": "8371aa1c5d13be79dcd5ddfd2cf3835e902e204dc34427169a1c702828e1a94d"
+        },
+        {
+          "path": "ckpts/ss_flow_img_dit_1_3B_64_bf16.json",
+          "sizeBytes": 467,
+          "sha256": null
+        },
+        {
+          "path": "ckpts/ss_flow_img_dit_1_3B_64_bf16.safetensors",
+          "sizeBytes": 2584426920,
+          "sha256": "ca01377c485bec418076d38ee80166d32dc776d744f2553b835cba1e97a7abf6"
+        },
+        {
+          "path": "ckpts/tex_dec_next_dc_f16c32_fp16.json",
+          "sizeBytes": 705,
+          "sha256": null
+        },
+        {
+          "path": "ckpts/tex_dec_next_dc_f16c32_fp16.safetensors",
+          "sizeBytes": 948458812,
+          "sha256": "97ea69addea2ecd9312910f5f548234665eef51c088386180b7cd5b258645e3c"
+        },
+        {
+          "path": "ckpts/tex_enc_next_dc_f16c32_fp16.json",
+          "sizeBytes": 676,
+          "sha256": null
+        },
+        {
+          "path": "ckpts/tex_enc_next_dc_f16c32_fp16.safetensors",
+          "sizeBytes": 708797208,
+          "sha256": "dd109f75f84b90fa411554ed6b0e4a87f430841163156fc0ebda2ebdc4752493"
+        },
+        {
+          "path": "pipeline.json",
+          "sizeBytes": 4186,
+          "sha256": null
+        },
+        {
+          "path": "texturing_pipeline.json",
+          "sizeBytes": 2965,
+          "sha256": null
+        }
+      ],
+      "minRamBytes": null,
+      "minVramBytes": 24000000000,
+      "license": "mit",
+      "licenseUrl": "https://github.com/microsoft/TRELLIS.2/blob/main/LICENSE",
+      "sourceUrl": "https://huggingface.co/microsoft/TRELLIS.2-4B/tree/af44b45f2e35a493886929c6d786e563ec68364d",
+      "runtime": "Official 'trellis2' Python package from github.com/microsoft/TRELLIS.2 (PyTorch + custom CUDA extensions compiled against CUDA toolkit, 12.4 recommended)",
+      "remoteCodeRequired": true,
+      "availability": "quarantined",
+      "notes": "OFFICIAL card statement: 'An NVIDIA GPU with at least 24GB of memory is necessary' (encoded as 24 x 10^9 bytes; 24 GiB = 25,769,803,776 bytes). Linux only ('currently tested only on Linux'); verified by publisher on A100/H100. CUDA toolkit needed to compile packages; Conda + Python >=3.8 recommended. H100 inference: ~3 s at 512^3, ~17 s at 1024^3, ~60 s at 1536^3.",
+      "availabilityNote": "Quarantined, research-only: runtime is the external 'trellis2' package with custom CUDA extensions (remote code), which this shell never executes; download and run are disabled. Entry retained for verified metadata reference. Note the default pipeline also needs a checkpoint from microsoft/TRELLIS-image-large."
+    }
+  ]
+}

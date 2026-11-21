@@ -1,0 +1,158 @@
+{
+  "retrievedAt": "2026-11-20T23:13:57.710148+00:00",
+  "metadata": {
+    "url": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+    "owner": "occult-kranti",
+    "name": "engineering-intelligence-atlas",
+    "description": "Research Director, engineering/science resource atlas, agent skill library, desktop and Android shells, and verified research workbooks.",
+    "language": "TypeScript",
+    "topics": [],
+    "license": null,
+    "archived": false,
+    "defaultBranch": "main",
+    "commitSha": "c3a23a945af702ec8c75e823c37a88296a91ba43",
+    "visibility": "public"
+  },
+  "assignment": {
+    "contractVersion": 1,
+    "url": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+    "commitSha": "c3a23a945af702ec8c75e823c37a88296a91ba43",
+    "status": "quarantined",
+    "companyKey": null,
+    "departmentKey": null,
+    "discipline": null,
+    "skillId": null,
+    "confidence": 0,
+    "rationale": "no declared routing rule matched; quarantined for human triage (no invented companies, departments, or roles)",
+    "readOnly": true,
+    "redistributionAllowed": false,
+    "notes": [
+      "proposal only: no automatic import, clone, or role creation",
+      "no license declared: read-only; redistribution forbidden"
+    ]
+  },
+  "company": {
+    "key": "engineering-intelligence-atlas",
+    "name": "Engineering Intelligence Atlas",
+    "kind": "line",
+    "mission": "Optimize, redesign, verify and maintain the Research Director desktop, web platform, VS Code companion and research repository."
+  },
+  "departments": [
+    {
+      "key": "atlas-backend",
+      "name": "Atlas Backend & Database",
+      "discipline": "backend-engineering",
+      "skillId": "architecture-database-backend-engineering"
+    },
+    {
+      "key": "atlas-ai-research",
+      "name": "Atlas AI Research",
+      "discipline": "ai-research",
+      "skillId": "ai-research-frontier"
+    },
+    {
+      "key": "atlas-cybersecurity",
+      "name": "Atlas Cybersecurity",
+      "discipline": "cybersecurity",
+      "skillId": "defensive-reverse-engineering"
+    },
+    {
+      "key": "atlas-design",
+      "name": "Atlas Design & UX",
+      "discipline": "design",
+      "skillId": "ui-ux-research-design-engineering"
+    }
+  ],
+  "proposal": {
+    "contractVersion": 1,
+    "id": "atlas-repository-company-v1",
+    "scope": "enterprise",
+    "actor": "repository-integration-steward",
+    "action": "repository.propose_structure",
+    "payload": {
+      "repository": {
+        "url": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+        "owner": "occult-kranti",
+        "name": "engineering-intelligence-atlas",
+        "description": "Research Director, engineering/science resource atlas, agent skill library, desktop and Android shells, and verified research workbooks.",
+        "language": "TypeScript",
+        "topics": [],
+        "license": null,
+        "archived": false,
+        "defaultBranch": "main",
+        "commitSha": "c3a23a945af702ec8c75e823c37a88296a91ba43",
+        "visibility": "public"
+      },
+      "assignment": {
+        "contractVersion": 1,
+        "url": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+        "commitSha": "c3a23a945af702ec8c75e823c37a88296a91ba43",
+        "status": "quarantined",
+        "companyKey": null,
+        "departmentKey": null,
+        "discipline": null,
+        "skillId": null,
+        "confidence": 0,
+        "rationale": "no declared routing rule matched; quarantined for human triage (no invented companies, departments, or roles)",
+        "readOnly": true,
+        "redistributionAllowed": false,
+        "notes": [
+          "proposal only: no automatic import, clone, or role creation",
+          "no license declared: read-only; redistribution forbidden"
+        ]
+      },
+      "company": {
+        "key": "engineering-intelligence-atlas",
+        "name": "Engineering Intelligence Atlas",
+        "kind": "line",
+        "mission": "Optimize, redesign, verify and maintain the Research Director desktop, web platform, VS Code companion and research repository."
+      },
+      "departments": [
+        {
+          "key": "atlas-backend",
+          "name": "Atlas Backend & Database",
+          "discipline": "backend-engineering",
+          "skillId": "architecture-database-backend-engineering"
+        },
+        {
+          "key": "atlas-ai-research",
+          "name": "Atlas AI Research",
+          "discipline": "ai-research",
+          "skillId": "ai-research-frontier"
+        },
+        {
+          "key": "atlas-cybersecurity",
+          "name": "Atlas Cybersecurity",
+          "discipline": "cybersecurity",
+          "skillId": "defensive-reverse-engineering"
+        },
+        {
+          "key": "atlas-design",
+          "name": "Atlas Design & UX",
+          "discipline": "design",
+          "skillId": "ui-ux-research-design-engineering"
+        }
+      ],
+      "knowledgeTransfer": {
+        "ownerRole": "knowledge-transfer-learning-systems-manager",
+        "handoff": "docs/HANDOFFS.md",
+        "studySkills": [
+          "architecture-database-backend-engineering",
+          "ui-ux-research-design-engineering",
+          "ai-research-frontier",
+          "executive-operations-assistant"
+        ],
+        "preserveArtifacts": true
+      }
+    },
+    "risk": "high",
+    "payloadHash": "5f168a42c5fd4c642d0027b9db07fcf386945cab0c1939379ea54895d52a47c0",
+    "expectedVersion": 1,
+    "requiresApproval": true,
+    "status": "proposed",
+    "proposedAt": 1795245300000,
+    "decidedAt": null,
+    "executedAt": null,
+    "resultSummary": ""
+  }
+}

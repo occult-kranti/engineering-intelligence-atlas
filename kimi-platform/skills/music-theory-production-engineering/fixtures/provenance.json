@@ -1,0 +1,54 @@
+{
+ "schema_version": "1.0",
+ "rights_holder": "Skill author (generated artifacts); released CC0-1.0",
+ "license": {
+  "spdx": "CC0-1.0",
+  "url": "https://creativecommons.org/publicdomain/zero/1.0/"
+ },
+ "generator": "scripts/generate_fixtures.py (Python stdlib only, deterministic)",
+ "generated": "2026-11-21",
+ "ai_involvement": "Fixtures synthesized by a deterministic script; no external model output, no third-party recordings or samples.",
+ "note": "These fixtures are original generated artifacts. They are NOT recordings, NOT excerpts, and carry no sampling/persona rights issues. Re-run of the generator on the same parameters reproduces identical bytes; hashes below are the regression record.",
+ "assets": [
+  {
+   "file": "species_counterpoint_exercise.musicxml",
+   "description": "Original 16-bar two-voice counterpoint-style fixture (whole notes, C major, imperfect consonances). Generated, not transcribed; not a graded exercise.",
+   "sha256": "0b2e5fa9cf810031ffbddcaca8e3fc69252293f013f4fb5feb4f1f6cde9f53a2",
+   "source": "generated in-repo",
+   "retrieval_date": "2026-11-21",
+   "permission_scope": "unrestricted (CC0-1.0)",
+   "attribution": "not required (CC0); cite the skill if convenient",
+   "alterations_allowed": true
+  },
+  {
+   "file": "melody_c_major.mid",
+   "description": "Original 8-note C-major arpeggio melody as SMF format 0 (96 tpq, 120 BPM). MIDI note numbering convention: middle C = 60.",
+   "sha256": "caa1f8731c4d10d7cb64ca4f60b6b95ce76ef84a744ef020d06601b427586eac",
+   "source": "generated in-repo",
+   "retrieval_date": "2026-11-21",
+   "permission_scope": "unrestricted (CC0-1.0)",
+   "attribution": "not required (CC0); cite the skill if convenient",
+   "alterations_allowed": true
+  },
+  {
+   "file": "sine_440_mono_16bit_8k.wav",
+   "description": "Synthesized 440 Hz sine, 0.25 s, 8000 Hz, 16-bit PCM mono, amplitude 0.5 FS. Synthesis, not a recording of anything.",
+   "sha256": "8032f807a754cffa859935e2f157901654124ea7c00673d0144df282b96708de",
+   "source": "generated in-repo",
+   "retrieval_date": "2026-11-21",
+   "permission_scope": "unrestricted (CC0-1.0)",
+   "attribution": "not required (CC0); cite the skill if convenient",
+   "alterations_allowed": true
+  },
+  {
+   "file": "dc_offset_8k.wav",
+   "description": "Synthesized 220 Hz sine amplitude 0.2 FS plus deliberate +0.1 FS DC offset, 0.25 s, 8000 Hz — negative/DC test fixture for wav_metrics.py.",
+   "sha256": "c0f2d2cfd9dbb58f6a4687edd4c67713a6f35bcc44f0e77886ce7e716f84e429",
+   "source": "generated in-repo",
+   "retrieval_date": "2026-11-21",
+   "permission_scope": "unrestricted (CC0-1.0)",
+   "attribution": "not required (CC0); cite the skill if convenient",
+   "alterations_allowed": true
+  }
+ ]
+}

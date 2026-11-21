@@ -1,0 +1,261 @@
+{
+  "contractVersion": 1,
+  "description": "Offline assistant-job schedule cases mirroring scheduleNextRun. Bounds: interval clamped to [60_000 ms, 30 days]; at most one run is ever due (missed intervals skip forward in one step \u2014 no missed-run storms); maxRuns is a hard terminator; disabled jobs never run.",
+  "jobPolicies": {
+    "ledger_refresh": {
+      "effect": "refresh-ledger",
+      "providerCalls": false,
+      "paidCalls": false,
+      "executesProposals": false
+    },
+    "cache_refresh": {
+      "effect": "refresh-cache",
+      "providerCalls": false,
+      "paidCalls": false,
+      "executesProposals": false
+    },
+    "program_pump_mock": {
+      "effect": "pump-approved-mock",
+      "providerCalls": false,
+      "paidCalls": false,
+      "executesProposals": false
+    },
+    "repository_sync": {
+      "effect": "propose-repository-drift",
+      "providerCalls": false,
+      "paidCalls": false,
+      "executesProposals": false
+    },
+    "study_plan": {
+      "effect": "create-study-drafts",
+      "providerCalls": false,
+      "paidCalls": false,
+      "executesProposals": false
+    }
+  },
+  "jobPolicyInvariant": "Every assistant job kind is deterministic and free: providerCalls=false, paidCalls=false, executesProposals=false. Live/billed provider work is only ever a human-approved program.pump proposal.",
+  "cases": [
+    {
+      "name": "one-time pending fires once even when late",
+      "job": {
+        "contractVersion": 1,
+        "id": "job-once",
+        "scope": "office",
+        "kind": "ledger_refresh",
+        "schedule": {
+          "type": "one-time",
+          "runAt": 1000
+        },
+        "enabled": true,
+        "nextRunAt": 1000,
+        "lastRunAt": null,
+        "runCount": 0,
+        "maxRuns": 1,
+        "budget": {
+          "maxTokens": 0,
+          "maxCalls": 0,
+          "maxMinutes": 0,
+          "maxCostUsdMicros": 0
+        },
+        "version": 1
+      },
+      "now": 5000,
+      "expectedNextRun": 1000
+    },
+    {
+      "name": "one-time already run is done",
+      "job": {
+        "contractVersion": 1,
+        "id": "job-once",
+        "scope": "office",
+        "kind": "ledger_refresh",
+        "schedule": {
+          "type": "one-time",
+          "runAt": 1000
+        },
+        "enabled": true,
+        "nextRunAt": 1000,
+        "lastRunAt": 1000,
+        "runCount": 1,
+        "maxRuns": 1,
+        "budget": {
+          "maxTokens": 0,
+          "maxCalls": 0,
+          "maxMinutes": 0,
+          "maxCostUsdMicros": 0
+        },
+        "version": 1
+      },
+      "now": 5000,
+      "expectedNextRun": null
+    },
+    {
+      "name": "interval skips missed runs (no storm)",
+      "job": {
+        "contractVersion": 1,
+        "id": "job-hourly",
+        "scope": "enterprise",
+        "kind": "cache_refresh",
+        "schedule": {
+          "type": "interval",
+          "intervalMs": 3600000,
+          "anchorAt": 0
+        },
+        "enabled": true,
+        "nextRunAt": 0,
+        "lastRunAt": null,
+        "runCount": 0,
+        "maxRuns": null,
+        "budget": {
+          "maxTokens": 0,
+          "maxCalls": 0,
+          "maxMinutes": 0,
+          "maxCostUsdMicros": 0
+        },
+        "version": 1
+      },
+      "now": 10000000,
+      "expectedNextRun": 10800000
+    },
+    {
+      "name": "interval after lastRun skips forward",
+      "job": {
+        "contractVersion": 1,
+        "id": "job-hourly",
+        "scope": "enterprise",
+        "kind": "cache_refresh",
+        "schedule": {
+          "type": "interval",
+          "intervalMs": 3600000,
+          "anchorAt": 0
+        },
+        "enabled": true,
+        "nextRunAt": 0,
+        "lastRunAt": 3600000,
+        "runCount": 1,
+        "maxRuns": null,
+        "budget": {
+          "maxTokens": 0,
+          "maxCalls": 0,
+          "maxMinutes": 0,
+          "maxCostUsdMicros": 0
+        },
+        "version": 1
+      },
+      "now": 100000000,
+      "expectedNextRun": 100800000
+    },
+    {
+      "name": "disabled job never runs",
+      "job": {
+        "contractVersion": 1,
+        "id": "job-off",
+        "scope": "company",
+        "kind": "study_plan",
+        "schedule": {
+          "type": "interval",
+          "intervalMs": 3600000,
+          "anchorAt": 0
+        },
+        "enabled": false,
+        "nextRunAt": 0,
+        "lastRunAt": null,
+        "runCount": 0,
+        "maxRuns": null,
+        "budget": {
+          "maxTokens": 0,
+          "maxCalls": 0,
+          "maxMinutes": 0,
+          "maxCostUsdMicros": 0
+        },
+        "version": 1
+      },
+      "now": 10000000,
+      "expectedNextRun": null
+    },
+    {
+      "name": "maxRuns is a hard terminator",
+      "job": {
+        "contractVersion": 1,
+        "id": "job-capped",
+        "scope": "department",
+        "kind": "repository_sync",
+        "schedule": {
+          "type": "interval",
+          "intervalMs": 3600000,
+          "anchorAt": 0
+        },
+        "enabled": true,
+        "nextRunAt": 0,
+        "lastRunAt": 3600000,
+        "runCount": 2,
+        "maxRuns": 2,
+        "budget": {
+          "maxTokens": 0,
+          "maxCalls": 0,
+          "maxMinutes": 0,
+          "maxCostUsdMicros": 0
+        },
+        "version": 1
+      },
+      "now": 10000000,
+      "expectedNextRun": null
+    },
+    {
+      "name": "tiny interval is clamped to the minimum bound",
+      "job": {
+        "contractVersion": 1,
+        "id": "job-fast",
+        "scope": "office",
+        "kind": "program_pump_mock",
+        "schedule": {
+          "type": "interval",
+          "intervalMs": 1000,
+          "anchorAt": 0
+        },
+        "enabled": true,
+        "nextRunAt": 0,
+        "lastRunAt": null,
+        "runCount": 0,
+        "maxRuns": null,
+        "budget": {
+          "maxTokens": 0,
+          "maxCalls": 0,
+          "maxMinutes": 0,
+          "maxCostUsdMicros": 0
+        },
+        "version": 1
+      },
+      "now": 1000,
+      "expectedNextRun": 60000
+    },
+    {
+      "name": "future anchor waits for the anchor",
+      "job": {
+        "contractVersion": 1,
+        "id": "job-future",
+        "scope": "enterprise",
+        "kind": "ledger_refresh",
+        "schedule": {
+          "type": "interval",
+          "intervalMs": 60000,
+          "anchorAt": 1000000
+        },
+        "enabled": true,
+        "nextRunAt": 1000000,
+        "lastRunAt": null,
+        "runCount": 0,
+        "maxRuns": null,
+        "budget": {
+          "maxTokens": 0,
+          "maxCalls": 0,
+          "maxMinutes": 0,
+          "maxCostUsdMicros": 0
+        },
+        "version": 1
+      },
+      "now": 500,
+      "expectedNextRun": 1000000
+    }
+  ]
+}

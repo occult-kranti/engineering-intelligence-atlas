@@ -1,0 +1,107 @@
+{
+ "schema": "civilization-art-design-research/symmetry-known-vectors 1.0",
+ "scope_note": "Known vectors for scripts/symmetry_validator.py. These verify finite point sets against STATED transformations within declared tolerances. They are NOT wallpaper-group classification cases; classification follows the Schattschneider 1978 / Washburn-Crowe 1988 protocol with declared criteria (see references/symmetry_and_proportion.md). Coordinates are exact decimals; tolerance is declared per vector.",
+ "vectors": [
+  {
+   "name": "square vertices under 90-degree rotation about centroid",
+   "kind": "invariance",
+   "points": [[0, 0], [2, 0], [2, 2], [0, 2]],
+   "transformation": {"type": "rotation", "center": [1, 1], "angle_deg": 90},
+   "tolerance": 1e-9,
+   "expected": true
+  },
+  {
+   "name": "square vertices under 45-degree rotation about centroid (known false)",
+   "kind": "invariance",
+   "points": [[0, 0], [2, 0], [2, 2], [0, 2]],
+   "transformation": {"type": "rotation", "center": [1, 1], "angle_deg": 45},
+   "tolerance": 1e-9,
+   "expected": false
+  },
+  {
+   "name": "rectangle vertices under reflection across vertical midline",
+   "kind": "invariance",
+   "points": [[0, 0], [4, 0], [4, 1], [0, 1]],
+   "transformation": {"type": "reflection", "axis_point": [2, 0], "axis_dir": [0, 1]},
+   "tolerance": 1e-9,
+   "expected": true
+  },
+  {
+   "name": "scalene triangle under reflection across vertical midline (known false)",
+   "kind": "invariance",
+   "points": [[8, 42], [30, 42], [12, 14]],
+   "transformation": {"type": "reflection", "axis_point": [20, 0], "axis_dir": [0, 1]},
+   "tolerance": 1e-9,
+   "expected": false
+  },
+  {
+   "name": "equilateral triangle vertices under 120-degree rotation about centroid",
+   "kind": "invariance",
+   "points": [[0, 0], [1, 0], [0.5, 0.8660254037844386]],
+   "transformation": {"type": "rotation", "center": [0.5, 0.28867513459481287], "angle_deg": 120},
+   "tolerance": 1e-9,
+   "expected": true
+  },
+  {
+   "name": "frieze motif cell maps to adjacent cell under translation (p111 recipe)",
+   "kind": "cell_consistency",
+   "points": [[8, 42], [30, 42], [12, 14]],
+   "transformation": {"type": "translation", "vector": [80, 0]},
+   "target_points": [[88, 42], [110, 42], [92, 14]],
+   "tolerance": 1e-9,
+   "expected": true
+  },
+  {
+   "name": "frieze motif cell under translation, perturbed copy beyond tolerance (known false)",
+   "kind": "cell_consistency",
+   "points": [[8, 42], [30, 42], [12, 14]],
+   "transformation": {"type": "translation", "vector": [80, 0]},
+   "target_points": [[88.5, 42], [110, 42], [92, 14]],
+   "tolerance": 0.1,
+   "expected": false
+  },
+  {
+   "name": "glide reflection maps motif onto its glide partner (p1g1 recipe)",
+   "kind": "cell_consistency",
+   "points": [[8, 42], [30, 42], [12, 14]],
+   "transformation": {"type": "glide", "axis_point": [0, 30], "axis_dir": [1, 0], "glide_vector": [40, 0]},
+   "target_points": [[48, 18], [70, 18], [52, 46]],
+   "tolerance": 1e-9,
+   "expected": true
+  },
+  {
+   "name": "reflection across strip midline maps motif onto its vertical partner (pm11 recipe)",
+   "kind": "cell_consistency",
+   "points": [[8, 42], [30, 42], [12, 14]],
+   "transformation": {"type": "reflection", "axis_point": [0, 30], "axis_dir": [1, 0]},
+   "target_points": [[8, 18], [30, 18], [12, 46]],
+   "tolerance": 1e-9,
+   "expected": true
+  },
+  {
+   "name": "half-turn about cell center maps motif onto its rotated partner (p112 recipe)",
+   "kind": "cell_consistency",
+   "points": [[8, 42], [30, 42], [12, 14]],
+   "transformation": {"type": "rotation", "center": [40, 30], "angle_deg": 180},
+   "target_points": [[72, 18], [50, 18], [68, 46]],
+   "tolerance": 1e-9,
+   "expected": true
+  },
+  {
+   "name": "regular pentagon vertices under 72-degree rotation about centroid",
+   "kind": "invariance",
+   "points": [[1, 0], [0.30901699437494745, 0.9510565162951535], [-0.8090169943749473, 0.5877852522924732], [-0.8090169943749476, -0.587785252292473], [0.30901699437494723, -0.9510565162951536]],
+   "transformation": {"type": "rotation", "center": [0, 0], "angle_deg": 72},
+   "tolerance": 1e-9,
+   "expected": true
+  },
+  {
+   "name": "regular pentagon vertices under 60-degree rotation (known false - crystallographic restriction reminder)",
+   "kind": "invariance",
+   "points": [[1, 0], [0.30901699437494745, 0.9510565162951535], [-0.8090169943749473, 0.5877852522924732], [-0.8090169943749476, -0.587785252292473], [0.30901699437494723, -0.9510565162951536]],
+   "transformation": {"type": "rotation", "center": [0, 0], "angle_deg": 60},
+   "tolerance": 1e-9,
+   "expected": false
+  }
+ ]
+}

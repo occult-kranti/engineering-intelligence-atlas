@@ -1,0 +1,1571 @@
+{
+  "dataset_name": "frontier_nlp_agents_papers",
+  "created_utc": "2026-11-20",
+  "verification_date": "2026-11-20",
+  "record_count": 33,
+  "scope_note": "High-value NLP, LLM, agent, RAG, reasoning, evaluation, prompt-optimization, alignment, interpretability, multilingual, and efficient-LM literature, emphasizing 2025–2026 while retaining seminal earlier work. Venue status is recorded conservatively; no claim of universal state-of-the-art is made.",
+  "status_definitions": {
+    "peer-reviewed": "The cited venue/proceedings/journal version was peer-reviewed; arXiv may also exist as an open version.",
+    "accepted-not-published": "Accepted to a venue but final proceedings/pagination were not verified.",
+    "arr-under-review": "Submitted through ACL Rolling Review and not verified as accepted.",
+    "preprint": "Public preprint or technical report; no peer-reviewed venue is claimed."
+  },
+  "papers": [
+    {
+      "id": "deepseek-r1-2025",
+      "title": "DeepSeek-R1 incentivizes reasoning in LLMs through reinforcement learning",
+      "authors": "DeepSeek-AI et al.",
+      "year": 2025,
+      "venue": "Nature 645, 633–638",
+      "status": "peer-reviewed",
+      "paper_url": "https://doi.org/10.1038/s41586-025-09422-z",
+      "identifiers": {
+        "doi": "10.1038/s41586-025-09422-z",
+        "arxiv": "2501.12948"
+      },
+      "code_url": "https://github.com/deepseek-ai/DeepSeek-R1",
+      "data_url": "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+      "license_access": "Open arXiv version; Nature page may have access controls. Official repository and model artifacts are public; repository states MIT licensing for code/model materials, with third-party bases subject to their terms.",
+      "topics": [
+        "LLMs",
+        "reasoning",
+        "reinforcement learning",
+        "distillation",
+        "agents"
+      ],
+      "methods": [
+        "pure RL (R1-Zero)",
+        "multi-stage RL and supervised fine-tuning",
+        "rule-based verifiable rewards",
+        "distillation to smaller dense models"
+      ],
+      "datasets_benchmarks": [
+        "MATH-500",
+        "AIME 2024",
+        "GPQA Diamond",
+        "LiveCodeBench",
+        "Codeforces",
+        "MMLU"
+      ],
+      "main_contribution": "Shows that large-scale RL with verifiable rewards can elicit long chain-of-thought behaviors without starting from human-written reasoning traces, and packages the resulting reasoning behavior through distillation.",
+      "limitations": [
+        "Most gains are on verifiable math/code/STEM tasks",
+        "long reasoning raises inference cost",
+        "reasoning can mix languages or be hard to audit",
+        "safety, factuality, and open-ended tasks require separate treatment"
+      ],
+      "why_it_matters_to_senior_researcher": "It is the clearest frontier reference for reasoning-centric RL, distillation, and compute allocation, and a baseline against which newer reasoning agents and efficient-reasoning claims should be checked.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "Nature DOI page",
+        "arXiv API",
+        "official DeepSeek-R1 repository"
+      ]
+    },
+    {
+      "id": "olmo2-2025",
+      "title": "2 OLMo 2 Furious",
+      "authors": "Team OLMo, Pete Walsh, Luca Soldaini, Dirk Groeneveld, et al.",
+      "year": 2025,
+      "venue": "Conference on Language Modeling (COLM)",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=2ezugTT9kU",
+      "identifiers": {
+        "openreview": "2ezugTT9kU",
+        "arxiv": "2501.00656"
+      },
+      "code_url": "https://github.com/allenai/OLMo",
+      "data_url": null,
+      "license_access": "OpenReview and arXiv are open. OLMo releases weights, data, code, recipes, logs, and checkpoints; users must follow the licenses attached to each released artifact and any third-party data.",
+      "topics": [
+        "LLMs",
+        "open models",
+        "pretraining",
+        "post-training",
+        "efficient language models"
+      ],
+      "methods": [
+        "dense decoder-only LMs",
+        "training-stability changes",
+        "late-stage curriculum with Dolmino Mix 1124",
+        "instruction tuning",
+        "RLVR"
+      ],
+      "datasets_benchmarks": [
+        "OLMo 2 7B/13B/32B",
+        "Dolmino Mix 1124",
+        "OLMo 2-Instruct",
+        "standard capability and post-training evaluations"
+      ],
+      "main_contribution": "Provides an unusually complete open replication package for a modern LM family, including full training data, recipes, logs, and intermediate checkpoints.",
+      "limitations": [
+        "Does not expose every decision behind proprietary comparators",
+        "largest released scale remains below frontier closed models",
+        "data and evaluations are still English-heavy",
+        "full replication requires substantial compute"
+      ],
+      "why_it_matters_to_senior_researcher": "It turns model-development claims into inspectable artifacts, enabling work on data curation, annealing, RLVR, scaling, and reproducibility that closed reports cannot support.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "COLM OpenReview page",
+        "arXiv API",
+        "AllenAI OLMo repository"
+      ]
+    },
+    {
+      "id": "tulu3-2025",
+      "title": "Tulu 3: Pushing Frontiers in Open Language Model Post-Training",
+      "authors": "Nathan Lambert, Jacob Morrison, Valentina Pyatkin, Shengyi Huang, Hamish Ivison, Faeze Brahman, et al.",
+      "year": 2025,
+      "venue": "Conference on Language Modeling (COLM)",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=i1uGbfHHpH",
+      "identifiers": {
+        "openreview": "i1uGbfHHpH",
+        "arxiv": "2411.15124"
+      },
+      "code_url": "https://github.com/allenai/open-instruct",
+      "data_url": null,
+      "license_access": "OpenReview and arXiv are open. Code, model weights, datasets, and recipes are public, but the Llama base models and individual datasets carry their own licenses and use restrictions.",
+      "topics": [
+        "LLMs",
+        "post-training",
+        "alignment",
+        "RLHF/RLVR",
+        "evaluation"
+      ],
+      "methods": [
+        "supervised fine-tuning",
+        "Direct Preference Optimization",
+        "Reinforcement Learning with Verifiable Rewards",
+        "data curation and decontamination",
+        "development/unseen evaluation split"
+      ],
+      "datasets_benchmarks": [
+        "Tulu 3 8B/70B/405B",
+        "core-skill instruction mixtures",
+        "multi-task development and held-out evaluations"
+      ],
+      "main_contribution": "Documents a complete, permissively inspectable post-training stack and reports negative as well as positive recipe outcomes rather than only a final model leaderboard.",
+      "limitations": [
+        "Built on Llama 3.1 base-model terms",
+        "post-training data and benchmarks remain English-centric",
+        "synthetic-data quality and benchmark decontamination are not fully solved",
+        "recipe transfer to other bases is not guaranteed"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a practical reference implementation for modern SFT→preference→verifiable-reward post-training and a useful audit trail for claims about RLVR and open alignment.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "COLM OpenReview page",
+        "arXiv API",
+        "AllenAI open-instruct repository"
+      ]
+    },
+    {
+      "id": "qwen3-2025",
+      "title": "Qwen3 Technical Report",
+      "authors": "An Yang, Anfeng Li, Baosong Yang, Beichen Zhang, Binyuan Hui, et al.",
+      "year": 2025,
+      "venue": "arXiv",
+      "status": "preprint",
+      "paper_url": "https://arxiv.org/abs/2505.09388",
+      "identifiers": {
+        "arxiv": "2505.09388"
+      },
+      "code_url": "https://github.com/QwenLM/Qwen3",
+      "data_url": "https://huggingface.co/Qwen",
+      "license_access": "arXiv is open. The report states that Qwen3 models are publicly accessible under Apache-2.0; individual deployment integrations may add separate terms.",
+      "topics": [
+        "LLMs",
+        "multilingual NLP",
+        "reasoning",
+        "mixture of experts",
+        "efficient language models",
+        "agents"
+      ],
+      "methods": [
+        "dense and MoE models",
+        "unified thinking/non-thinking modes",
+        "thinking budgets",
+        "distillation from flagship models",
+        "multilingual post-training"
+      ],
+      "datasets_benchmarks": [
+        "Qwen3 0.6B–235B-A22B",
+        "119 languages and dialects",
+        "math, code, agent, and multilingual evaluations"
+      ],
+      "main_contribution": "Combines hybrid controllable reasoning, a broad dense/MoE model ladder, and expanded multilingual coverage in one publicly usable model family.",
+      "limitations": [
+        "Technical-report preprint rather than peer-reviewed proceedings",
+        "training corpus and data-governance details are not fully open",
+        "reported benchmark results are not universal across deployments",
+        "long thinking remains costly"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a strong current reference for open-weight multilingual reasoning models and for studying when thinking budgets help or merely add latency.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "arXiv abstract and API",
+        "official Qwen3 repository",
+        "Qwen Hugging Face organization"
+      ]
+    },
+    {
+      "id": "rag-neurips-2020",
+      "title": "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks",
+      "authors": "Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir Karpukhin, Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim Rocktäschel, Sebastian Riedel, and Douwe Kiela",
+      "year": 2020,
+      "venue": "NeurIPS",
+      "status": "peer-reviewed",
+      "paper_url": "https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html",
+      "identifiers": {
+        "arxiv": "2005.11401"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "Conference page and arXiv are open. No single official paper repository was identified in the verified sources; downstream implementations have separate licenses.",
+      "topics": [
+        "RAG",
+        "retrieval",
+        "question answering",
+        "knowledge-intensive NLP",
+        "LLMs"
+      ],
+      "methods": [
+        "dense passage retrieval",
+        "BART seq2seq generation",
+        "RAG-Sequence",
+        "RAG-Token",
+        "non-parametric memory"
+      ],
+      "datasets_benchmarks": [
+        "Natural Questions",
+        "TriviaQA",
+        "WebQuestions",
+        "Wikipedia index",
+        "MS MARCO-derived generation tasks"
+      ],
+      "main_contribution": "Established the canonical retrieve-and-generate architecture in which a differentiable neural retriever supplies explicit evidence to a generative model.",
+      "limitations": [
+        "Retrieval errors propagate into generation",
+        "the index can become stale",
+        "passage-level evidence does not guarantee faithful attribution",
+        "retrieval adds latency and system complexity"
+      ],
+      "why_it_matters_to_senior_researcher": "Nearly every modern RAG, agentic-search, grounding, and provenance system inherits its assumptions; it remains the baseline for evaluating whether newer retrieval actually helps.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "NeurIPS proceedings page",
+        "arXiv API"
+      ]
+    },
+    {
+      "id": "self-rag-2024",
+      "title": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection",
+      "authors": "Akari Asai, Zeqiu Wu, Yizhong Wang, Avirup Sil, and Hannaneh Hajishirzi",
+      "year": 2024,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=hSyW5go0v8",
+      "identifiers": {
+        "openreview": "hSyW5go0v8",
+        "arxiv": "2310.11511"
+      },
+      "code_url": "https://github.com/AkariAsai/self-rag",
+      "data_url": null,
+      "license_access": "OpenReview, arXiv, and the official GitHub repository are public; check the repository for its current license and model/data terms.",
+      "topics": [
+        "RAG",
+        "self-reflection",
+        "factuality",
+        "adaptive retrieval",
+        "LLMs"
+      ],
+      "methods": [
+        "reflection tokens",
+        "adaptive on-demand retrieval",
+        "critic-guided generation",
+        "supervised training of a single LM"
+      ],
+      "datasets_benchmarks": [
+        "open-domain QA",
+        "reasoning",
+        "fact verification",
+        "long-form generation with citation quality"
+      ],
+      "main_contribution": "Moves RAG from fixed top-k retrieval to learned decisions about when to retrieve, how to use passages, and how to critique generated evidence use.",
+      "limitations": [
+        "Requires training with special reflection tokens",
+        "depends on retriever and evidence quality",
+        "self-critique is not a proof of factuality",
+        "adds pipeline and decoding complexity"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a central bridge between classical RAG and agentic self-checking systems and provides ablations needed to separate retrieval gains from critique gains.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR OpenReview page",
+        "arXiv API",
+        "official Self-RAG repository"
+      ]
+    },
+    {
+      "id": "inference-scaling-2025",
+      "title": "Inference Scaling Laws: An Empirical Analysis of Compute-Optimal Inference for Problem-Solving with Language Models",
+      "authors": "Yangzhen Wu, Zhiqing Sun, Shanda Li, Sean Welleck, and Yiming Yang",
+      "year": 2025,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=VNmc3GV0cI",
+      "identifiers": {
+        "openreview": "VNmc3GV0cI",
+        "arxiv": "2408.00724"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "OpenReview and arXiv are open; no official artifact URL was verified in the reviewed sources.",
+      "topics": [
+        "reasoning",
+        "test-time scaling",
+        "efficient language models",
+        "evaluation"
+      ],
+      "methods": [
+        "majority voting",
+        "best-of-n",
+        "weighted voting",
+        "tree search",
+        "compute-optimal inference analysis"
+      ],
+      "datasets_benchmarks": [
+        "MATH",
+        "Llemma 7B/34B",
+        "multiple inference-compute budgets"
+      ],
+      "main_contribution": "Quantifies when spending compute on search and voting can beat spending it on parameters, and frames inference choices as cost-performance scaling laws.",
+      "limitations": [
+        "Evidence is concentrated in mathematical problem solving",
+        "exact gains depend on verifier/search quality and hardware accounting",
+        "results do not establish universal scaling exponents",
+        "open-ended generation is largely out of scope"
+      ],
+      "why_it_matters_to_senior_researcher": "It gives senior researchers a principled way to compare larger models against cheaper models with stronger decoding, rather than treating parameter count as the only scaling axis.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR OpenReview page",
+        "arXiv API"
+      ]
+    },
+    {
+      "id": "s1-2025",
+      "title": "s1: Simple test-time scaling",
+      "authors": "Niklas Muennighoff, Zitong Yang, Weijia Shi, Xiang Lisa Li, Li Fei-Fei, Hannaneh Hajishirzi, Luke Zettlemoyer, Percy Liang, Emmanuel Candès, and Tatsunori Hashimoto",
+      "year": 2025,
+      "venue": "EMNLP",
+      "status": "peer-reviewed",
+      "paper_url": "https://aclanthology.org/2025.emnlp-main.1025/",
+      "identifiers": {
+        "doi": "10.18653/v1/2025.emnlp-main.1025",
+        "anthology": "2025.emnlp-main.1025"
+      },
+      "code_url": "https://github.com/simplescaling/s1",
+      "data_url": "https://github.com/simplescaling/s1",
+      "license_access": "ACL Anthology and the official s1 repository are public; repository materials are described by the authors as open-source, with the base model subject to its own license.",
+      "topics": [
+        "reasoning",
+        "test-time scaling",
+        "data curation",
+        "efficient language models"
+      ],
+      "methods": [
+        "1,000-example reasoning-trace SFT",
+        "budget forcing",
+        "Wait-token continuation",
+        "early termination control"
+      ],
+      "datasets_benchmarks": [
+        "s1K",
+        "MATH",
+        "AIME24",
+        "Qwen2.5-32B-Instruct"
+      ],
+      "main_contribution": "Shows that careful data selection plus explicit control of thinking length can produce strong test-time scaling behavior with very little supervised reasoning data.",
+      "limitations": [
+        "Focused on competition-style mathematics",
+        "depends on a strong instruction-tuned base",
+        "budget forcing can be brittle",
+        "does not address all safety or factuality risks of longer traces"
+      ],
+      "why_it_matters_to_senior_researcher": "It is an unusually reproducible minimal intervention for studying test-time compute and is a useful foil to opaque large-scale reasoning-model recipes.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ACL Anthology page",
+        "official s1 repository"
+      ]
+    },
+    {
+      "id": "illusion-thinking-2025",
+      "title": "The Illusion of Thinking: Understanding the Strengths and Limitations of Reasoning Models via the Lens of Problem Complexity",
+      "authors": "Parshin Shojaee, Iman Mirzadeh, Keivan Alizadeh, Maxwell Horton, Samy Bengio, and Mehrdad Farajtabar",
+      "year": 2025,
+      "venue": "NeurIPS",
+      "status": "peer-reviewed",
+      "paper_url": "https://arxiv.org/abs/2506.06941",
+      "identifiers": {
+        "arxiv": "2506.06941"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "arXiv is open; no official code/data URL was identified in the verified record. The arXiv comment records the NeurIPS 2025 camera-ready status.",
+      "topics": [
+        "reasoning",
+        "evaluation",
+        "large reasoning models",
+        "problem complexity"
+      ],
+      "methods": [
+        "controllable puzzle environments",
+        "complexity sweeps",
+        "reasoning-trace analysis",
+        "equal-inference-compute comparisons"
+      ],
+      "datasets_benchmarks": [
+        "controllable puzzle suites",
+        "large reasoning models and matched standard LLMs"
+      ],
+      "main_contribution": "Separates final-answer accuracy from reasoning behavior and documents regimes in which reasoning effort rises, plateaus, and then collapses as problem complexity increases.",
+      "limitations": [
+        "Puzzle environments do not span the full ecology of real reasoning",
+        "trace analysis depends on tokenizer/logging choices",
+        "results should not be generalized into a universal claim that reasoning models cannot reason",
+        "external replication is important"
+      ],
+      "why_it_matters_to_senior_researcher": "It warns against leaderboard-only evaluation of reasoning and provides a controlled methodology for stress-testing whether models execute algorithms or merely mimic traces.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "NeurIPS status recorded in arXiv comment",
+        "arXiv abstract and API"
+      ]
+    },
+    {
+      "id": "react-2023",
+      "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+      "authors": "Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan, and Yuan Cao",
+      "year": 2023,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=WE_vluYUL-X",
+      "identifiers": {
+        "openreview": "WE_vluYUL-X",
+        "arxiv": "2210.03629"
+      },
+      "code_url": "https://github.com/ysymyth/ReAct",
+      "data_url": "https://react-lm.github.io/",
+      "license_access": "OpenReview, project page, and code are public; check the repository for current license terms.",
+      "topics": [
+        "agents",
+        "reasoning",
+        "tool use",
+        "question answering",
+        "interactive decision making"
+      ],
+      "methods": [
+        "interleaved reasoning traces and actions",
+        "few-shot prompting",
+        "environment feedback",
+        "trajectory-level inspection"
+      ],
+      "datasets_benchmarks": [
+        "HotpotQA",
+        "FEVER",
+        "ALFWorld",
+        "WebShop"
+      ],
+      "main_contribution": "Established the now-standard agent loop in which natural-language reasoning guides actions and observations update subsequent reasoning.",
+      "limitations": [
+        "Prompt-sensitive",
+        "reasoning traces can rationalize wrong actions",
+        "tool/API errors can compound",
+        "not itself a trained policy or guarantee of grounded behavior"
+      ],
+      "why_it_matters_to_senior_researcher": "It is the seminal design pattern behind contemporary tool-using and web agents and remains a necessary baseline before claiming that a new agent architecture is better.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR OpenReview page",
+        "arXiv API",
+        "official ReAct project/code"
+      ]
+    },
+    {
+      "id": "swe-bench-2024",
+      "title": "SWE-bench: Can Language Models Resolve Real-World GitHub Issues?",
+      "authors": "Carlos E. Jimenez, John Yang, Alexander Wettig, Shunyu Yao, Kexin Pei, Ofir Press, and Karthik Narasimhan",
+      "year": 2024,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=VTF8yNQM66",
+      "identifiers": {
+        "openreview": "VTF8yNQM66",
+        "arxiv": "2310.06770"
+      },
+      "code_url": "https://github.com/princeton-nlp/SWE-bench",
+      "data_url": "https://www.swebench.com/",
+      "license_access": "OpenReview, arXiv, project site, code, and benchmark are public; repository and dataset licenses are stated on the official project pages.",
+      "topics": [
+        "agents",
+        "software engineering",
+        "evaluation",
+        "LLMs",
+        "long context"
+      ],
+      "methods": [
+        "repository-level issue resolution",
+        "execution-based tests",
+        "patch generation",
+        "real GitHub issue mining"
+      ],
+      "datasets_benchmarks": [
+        "SWE-bench (2,294 issues)",
+        "12 Python repositories",
+        "SWE-bench Lite/Verified derivatives"
+      ],
+      "main_contribution": "Introduced a realistic, execution-grounded benchmark for resolving actual repository issues rather than isolated code-completion prompts.",
+      "limitations": [
+        "Python and repository-selection bias",
+        "public issues create contamination risk",
+        "unit tests do not capture all correctness or maintainability concerns",
+        "leaderboard scores depend heavily on scaffold and compute"
+      ],
+      "why_it_matters_to_senior_researcher": "It is the reference point for agentic software engineering and forces claims about coding agents to confront repository state, tests, and reproducibility.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR OpenReview page",
+        "arXiv API",
+        "official SWE-bench project/repository"
+      ]
+    },
+    {
+      "id": "swe-agent-2024",
+      "title": "SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering",
+      "authors": "John Yang, Carlos E. Jimenez, Alexander Wettig, Kilian Lieret, Shunyu Yao, Karthik Narasimhan, and Ofir Press",
+      "year": 2024,
+      "venue": "NeurIPS",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=mXpq6ut8J3",
+      "identifiers": {
+        "openreview": "mXpq6ut8J3",
+        "arxiv": "2405.15793"
+      },
+      "code_url": "https://github.com/SWE-agent/SWE-agent",
+      "data_url": "https://swe-agent.com/",
+      "license_access": "OpenReview, arXiv, project site, and code are public; check the repository for the current license.",
+      "topics": [
+        "agents",
+        "software engineering",
+        "tool use",
+        "agent-computer interfaces",
+        "LLMs"
+      ],
+      "methods": [
+        "custom agent-computer interface",
+        "repository navigation",
+        "file editing",
+        "test execution",
+        "feedback-driven action loops"
+      ],
+      "datasets_benchmarks": [
+        "SWE-bench",
+        "HumanEvalFix"
+      ],
+      "main_contribution": "Demonstrates that interface design—what actions, observations, and editing affordances an LM sees—can materially change software-agent performance independent of model choice.",
+      "limitations": [
+        "Early results are far below later heavily engineered systems",
+        "ACI benefits can be benchmark- and model-specific",
+        "interactive execution is expensive",
+        "security and sandboxing remain deployment concerns"
+      ],
+      "why_it_matters_to_senior_researcher": "It reframes agent progress as a joint model-plus-interface problem and provides an extensible open platform for controlled ACI ablations.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "NeurIPS OpenReview page",
+        "arXiv API",
+        "official SWE-agent repository"
+      ]
+    },
+    {
+      "id": "osworld-2024",
+      "title": "OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments",
+      "authors": "Tianbao Xie, Danyang Zhang, Jixuan Chen, Xiaochuan Li, Siheng Zhao, Ruisheng Cao, Toh Jing Hua, Zhoujun Cheng, et al.",
+      "year": 2024,
+      "venue": "NeurIPS Datasets and Benchmarks",
+      "status": "peer-reviewed",
+      "paper_url": "https://arxiv.org/abs/2404.07972",
+      "identifiers": {
+        "arxiv": "2404.07972"
+      },
+      "code_url": "https://github.com/xlang-ai/OSWorld",
+      "data_url": "https://os-world.github.io/",
+      "license_access": "arXiv, project site, code, environment, baselines, and data are public; check the repository for current license and VM/software terms.",
+      "topics": [
+        "agents",
+        "multimodal NLP",
+        "computer use",
+        "evaluation",
+        "GUI grounding"
+      ],
+      "methods": [
+        "real operating-system environments",
+        "execution-based evaluation",
+        "multimodal observation",
+        "task setup and reset scripts"
+      ],
+      "datasets_benchmarks": [
+        "OSWorld (369 tasks)",
+        "Ubuntu, Windows, macOS",
+        "real web and desktop applications"
+      ],
+      "main_contribution": "Moves agent evaluation from static web traces to live desktop environments with realistic files, applications, cross-application workflows, and executable success checks.",
+      "limitations": [
+        "Environment setup and maintenance are substantial",
+        "GUI and software versions can drift",
+        "369 tasks remain a sample of computer work",
+        "sandboxed scores may not transfer to unrestricted desktops"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a standard stress test for generalist computer-use agents and exposes grounding and operational-knowledge failures hidden by text-only benchmarks.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "NeurIPS 2024 proceedings/OpenReview listing",
+        "arXiv API",
+        "official OSWorld project/repository"
+      ]
+    },
+    {
+      "id": "tau-bench-2025",
+      "title": "τ-bench: A Benchmark for Tool-Agent-User Interaction in Real-World Domains",
+      "authors": "Shunyu Yao, Noah Shinn, Pedram Razavi, and Karthik Narasimhan",
+      "year": 2025,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=roNSXZpUDN",
+      "identifiers": {
+        "openreview": "roNSXZpUDN",
+        "arxiv": "2406.12045"
+      },
+      "code_url": "https://github.com/sierra-research/tau-bench",
+      "data_url": null,
+      "license_access": "OpenReview, arXiv, and the official repository are public; check the repository for current license terms.",
+      "topics": [
+        "agents",
+        "tool use",
+        "dialogue",
+        "evaluation",
+        "reliability"
+      ],
+      "methods": [
+        "simulated users",
+        "domain-specific API tools",
+        "policy adherence",
+        "database-state comparison",
+        "pass^k reliability"
+      ],
+      "datasets_benchmarks": [
+        "τ-bench airline",
+        "τ-bench retail",
+        "multi-turn tool-agent-user conversations"
+      ],
+      "main_contribution": "Evaluates whether agents follow domain rules and interact reliably with users over repeated trials, rather than whether one sampled trajectory happens to succeed.",
+      "limitations": [
+        "Only a small number of domains",
+        "simulated users and APIs differ from production systems",
+        "database-state equivalence may miss some process harms",
+        "closed-model results age quickly"
+      ],
+      "why_it_matters_to_senior_researcher": "It supplies the reliability metric and conversational policy setting that single-shot tool benchmarks lack, making agent variance and rule violations measurable.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR OpenReview page",
+        "arXiv API",
+        "official τ-bench repository"
+      ]
+    },
+    {
+      "id": "agentcompany-2025",
+      "title": "TheAgentCompany: Benchmarking LLM Agents on Consequential Real World Tasks",
+      "authors": "Frank F. Xu, Yufan Song, Boxuan Li, Yuxuan Tang, Kritanjali Jain, Mengxue Bao, Zora Z. Wang, Xuhui Zhou, et al.",
+      "year": 2025,
+      "venue": "NeurIPS Datasets and Benchmarks",
+      "status": "peer-reviewed",
+      "paper_url": "https://arxiv.org/abs/2412.14161",
+      "identifiers": {
+        "arxiv": "2412.14161"
+      },
+      "code_url": "https://github.com/TheAgentCompany/TheAgentCompany",
+      "data_url": "https://the-agent-company.com/",
+      "license_access": "arXiv, project site, code, data, environment, and experiments are public; check the repository for current license and third-party service terms.",
+      "topics": [
+        "agents",
+        "work automation",
+        "web agents",
+        "software agents",
+        "evaluation"
+      ],
+      "methods": [
+        "self-contained company sandbox",
+        "web browsing",
+        "coding and program execution",
+        "coworker communication",
+        "consequential task checks"
+      ],
+      "datasets_benchmarks": [
+        "TheAgentCompany task suite",
+        "internal websites and company data",
+        "closed- and open-weight baseline agents"
+      ],
+      "main_contribution": "Creates a workplace-like environment in which agents must combine browsing, coding, communication, and state changes to complete economically meaningful tasks.",
+      "limitations": [
+        "Sandbox realism is still limited",
+        "environment and service maintenance affect reproducibility",
+        "task completion does not measure all workplace judgment or safety",
+        "results are sensitive to scaffold and model version"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a useful bridge from toy web tasks to consequential digital work and clarifies how far current agents are from autonomous long-horizon professional execution.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "NeurIPS 2025 listing",
+        "arXiv API",
+        "official TheAgentCompany project/repository"
+      ]
+    },
+    {
+      "id": "workforceagent-r1-2026",
+      "title": "WorkForceAgent-R1: Incentivizing Reasoning Capability in LLM-based Web Agents via Reinforcement Learning",
+      "authors": "Yuchen Zhuang, Di Jin, Jiaao Chen, Wenqi Shi, Hanrui Wang, and Chao Zhang",
+      "year": 2026,
+      "venue": "Findings of EACL",
+      "status": "peer-reviewed",
+      "paper_url": "https://aclanthology.org/2026.findings-eacl.3/",
+      "identifiers": {
+        "doi": "10.18653/v1/2026.findings-eacl.3",
+        "anthology": "2026.findings-eacl.3",
+        "arxiv": "2505.22942"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "ACL Anthology and arXiv are open; no official code or data release was identified on the verified Anthology record.",
+      "topics": [
+        "agents",
+        "web agents",
+        "reinforcement learning",
+        "reasoning",
+        "enterprise workflows"
+      ],
+      "methods": [
+        "R1-style rule-based RL",
+        "format and action-correctness rewards",
+        "single-step reasoning and planning",
+        "web-navigation policies"
+      ],
+      "datasets_benchmarks": [
+        "WorkArena",
+        "business-oriented web-navigation tasks"
+      ],
+      "main_contribution": "Applies verifiable-reward RL directly to web-agent action selection, targeting reasoning and robustness without extensive expert demonstrations.",
+      "limitations": [
+        "Evaluation is centered on WorkArena",
+        "rule rewards can encourage format compliance without deep task understanding",
+        "comparisons to proprietary agents are time-sensitive",
+        "no official artifact was verified"
+      ],
+      "why_it_matters_to_senior_researcher": "It connects the DeepSeek-R1 style of verifiable RL to operational web agents, an important step beyond prompting-only agent loops.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ACL Anthology page",
+        "arXiv API"
+      ]
+    },
+    {
+      "id": "ai-agents-matter-2025",
+      "title": "AI Agents That Matter",
+      "authors": "Sayash Kapoor, Benedikt Stroebl, Zachary S. Siegel, Nitya Nadgir, and Arvind Narayanan",
+      "year": 2025,
+      "venue": "Transactions on Machine Learning Research (TMLR)",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=Zy4uFzMviZ",
+      "identifiers": {
+        "openreview": "Zy4uFzMviZ",
+        "arxiv": "2407.01502"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "OpenReview and arXiv are open; no official artifact URL was identified in the verified record.",
+      "topics": [
+        "agents",
+        "evaluation",
+        "benchmarking",
+        "cost-aware AI",
+        "reproducibility"
+      ],
+      "methods": [
+        "accuracy-cost Pareto analysis",
+        "benchmark auditing",
+        "holdout design",
+        "overfitting analysis",
+        "evaluation-standard recommendations"
+      ],
+      "datasets_benchmarks": [
+        "analysis of contemporary agent benchmarks and evaluation practices"
+      ],
+      "main_contribution": "Shows how optimizing accuracy alone can produce needlessly costly agents and how weak holdouts and inconsistent protocols create misleading conclusions.",
+      "limitations": [
+        "Primarily a methodological and empirical critique rather than a new agent",
+        "recommendations require community adoption",
+        "cost accounting depends on deployment context"
+      ],
+      "why_it_matters_to_senior_researcher": "It is required reading before publishing or deploying agent claims because it changes the unit of progress from isolated accuracy to reproducible cost-adjusted usefulness.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "TMLR OpenReview page",
+        "arXiv API"
+      ]
+    },
+    {
+      "id": "mmlu-prox-2025",
+      "title": "MMLU-ProX: A Multilingual Benchmark for Advanced Large Language Model Evaluation",
+      "authors": "Weihao Xuan, Rui Yang, Heli Qi, Qingcheng Zeng, Yunze Xiao, Aosong Feng, Dairui Liu, Yun Xing, et al.",
+      "year": 2025,
+      "venue": "EMNLP",
+      "status": "peer-reviewed",
+      "paper_url": "https://arxiv.org/abs/2503.10497",
+      "identifiers": {
+        "arxiv": "2503.10497"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "arXiv is open; no official code/data URL was verified in the reviewed sources. Benchmark use may require accepting dataset terms supplied by the authors.",
+      "topics": [
+        "evaluation",
+        "multilingual NLP",
+        "LLMs",
+        "cross-lingual reasoning"
+      ],
+      "methods": [
+        "parallel translation and expert review",
+        "29-language benchmark construction",
+        "cross-lingual comparisons",
+        "lite evaluation split"
+      ],
+      "datasets_benchmarks": [
+        "MMLU-ProX (11,829 questions per language)",
+        "MMLU-ProX Lite (658 questions per language)",
+        "36 evaluated LLMs"
+      ],
+      "main_contribution": "Provides parallel advanced-reasoning questions across 29 languages, enabling more direct separation of language capability from task difficulty.",
+      "limitations": [
+        "Translation and terminology artifacts remain possible",
+        "multiple-choice format does not measure generation quality",
+        "subject coverage inherits MMLU-Pro choices",
+        "public pretraining contamination is difficult to exclude"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a strong current diagnostic for multilingual equity and for checking whether English reasoning gains transfer to lower-resource languages.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "EMNLP 2025 acceptance source",
+        "arXiv abstract and API"
+      ]
+    },
+    {
+      "id": "dspy-2024",
+      "title": "DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines",
+      "authors": "Omar Khattab, Arnav Singhvi, Paridhi Maheshwari, Zhiyuan Zhang, Keshav Santhanam, Sri Vardhamanan, Saiful Haq, Ashutosh Sharma, et al.",
+      "year": 2024,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://arxiv.org/abs/2310.03714",
+      "identifiers": {
+        "arxiv": "2310.03714"
+      },
+      "code_url": "https://github.com/stanfordnlp/dspy",
+      "data_url": null,
+      "license_access": "arXiv and official code are public; the repository carries its own open-source license and evolving APIs.",
+      "topics": [
+        "prompt optimization",
+        "compound AI systems",
+        "agents",
+        "RAG",
+        "programming models"
+      ],
+      "methods": [
+        "declarative LM modules",
+        "text-transformation graphs",
+        "automatic prompt/demonstration compilation",
+        "metric-driven pipeline optimization"
+      ],
+      "datasets_benchmarks": [
+        "math word problems",
+        "multi-hop retrieval",
+        "complex QA",
+        "agent-loop case studies"
+      ],
+      "main_contribution": "Replaces hand-written prompt strings with composable programs and a compiler that optimizes prompts, demonstrations, and pipeline choices against explicit metrics.",
+      "limitations": [
+        "Optimization can overfit the selected metric and dev set",
+        "search/compilation adds API and compute cost",
+        "program correctness and safety still require engineering controls",
+        "framework abstractions evolve quickly"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a foundational system-level treatment of prompts as optimizable program parameters and underlies much current work on automated agent/pipeline construction.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR 2024 acceptance source",
+        "arXiv API",
+        "official DSPy repository"
+      ]
+    },
+    {
+      "id": "opro-2024",
+      "title": "Large Language Models as Optimizers",
+      "authors": "Chengrun Yang, Xuezhi Wang, Yifeng Lu, Hanxiao Liu, Quoc V. Le, Denny Zhou, and Xinyun Chen",
+      "year": 2024,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=92gvk82DE-",
+      "identifiers": {
+        "openreview": "92gvk82DE-",
+        "arxiv": "2309.03409"
+      },
+      "code_url": "https://github.com/google-deepmind/opro",
+      "data_url": null,
+      "license_access": "OpenReview, arXiv, and official code are public; check the repository for current license terms.",
+      "topics": [
+        "prompt optimization",
+        "black-box optimization",
+        "LLMs",
+        "reasoning"
+      ],
+      "methods": [
+        "Optimization by PROmpting (OPRO)",
+        "iterative candidate generation",
+        "natural-language optimization traces",
+        "task-metric feedback"
+      ],
+      "datasets_benchmarks": [
+        "linear regression",
+        "traveling-salesman problems",
+        "GSM8K",
+        "BIG-Bench Hard"
+      ],
+      "main_contribution": "Shows that an LLM can act as a black-box optimizer by reading previous candidate solutions and scores, including optimizing instructions for downstream tasks.",
+      "limitations": [
+        "Evaluation calls can be expensive",
+        "search can settle in local optima",
+        "results vary by optimizer model, task, and initialization",
+        "does not provide gradient-style convergence guarantees"
+      ],
+      "why_it_matters_to_senior_researcher": "It formalized LLM-in-the-loop optimization in a simple, reproducible way and remains a baseline for newer reflective and evolutionary prompt optimizers.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR OpenReview page",
+        "arXiv API",
+        "official OPRO repository"
+      ]
+    },
+    {
+      "id": "textgrad-2025",
+      "title": "Optimizing generative AI by backpropagating language model feedback",
+      "authors": "Mert Yuksekgonul, Federico Bianchi, Joseph Boen, Sheng Liu, Zhi Huang, Carlos Guestrin, and James Zou",
+      "year": 2025,
+      "venue": "Nature",
+      "status": "peer-reviewed",
+      "paper_url": "https://doi.org/10.1038/s41586-025-08661-4",
+      "identifiers": {
+        "doi": "10.1038/s41586-025-08661-4",
+        "arxiv": "2406.07496",
+        "alternate_title": "TextGrad: Automatic \"Differentiation\" via Text"
+      },
+      "code_url": "https://github.com/zou-group/textgrad",
+      "data_url": null,
+      "license_access": "The arXiv version and official code are open; the Nature page may have access controls. Check the repository for current license terms.",
+      "topics": [
+        "prompt optimization",
+        "compound AI systems",
+        "automatic differentiation",
+        "agents",
+        "scientific AI"
+      ],
+      "methods": [
+        "textual gradients",
+        "natural-language feedback backpropagation",
+        "computation graphs",
+        "component-wise optimization"
+      ],
+      "datasets_benchmarks": [
+        "GPQA",
+        "LeetCode-Hard",
+        "molecule optimization",
+        "radiotherapy treatment planning",
+        "prompt optimization"
+      ],
+      "main_contribution": "Generalizes prompt tuning into an autograd-like framework in which LLM feedback propagates through multiple components of a compound AI system.",
+      "limitations": [
+        "Textual feedback can be noisy or non-faithful",
+        "credit assignment through long graphs is difficult",
+        "API calls and evaluator quality drive cost and variance",
+        "domain demos require expert validation"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a key conceptual step from single-prompt search to end-to-end optimization of heterogeneous LLM programs, agents, and scientific pipelines.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "Nature DOI page",
+        "arXiv API",
+        "official TextGrad repository"
+      ]
+    },
+    {
+      "id": "gepa-2026",
+      "title": "GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning",
+      "authors": "Lakshya A. Agrawal, Shangyin Tan, Dilara Soylu, Noah Ziems, Rishi Khare, Krista Opsahl-Ong, Arnav Singhvi, Herumb Shandilya, et al.",
+      "year": 2026,
+      "venue": "ICLR (Oral)",
+      "status": "peer-reviewed",
+      "paper_url": "https://arxiv.org/abs/2507.19457",
+      "identifiers": {
+        "arxiv": "2507.19457"
+      },
+      "code_url": "https://github.com/gepa-ai/gepa",
+      "data_url": null,
+      "license_access": "arXiv and official code are public; the arXiv comment records acceptance to ICLR 2026 as an oral. Check the repository for current license terms.",
+      "topics": [
+        "prompt optimization",
+        "agents",
+        "reflective learning",
+        "evolutionary search",
+        "LLM programs"
+      ],
+      "methods": [
+        "natural-language reflection",
+        "genetic/Pareto prompt evolution",
+        "trajectory diagnosis",
+        "prompt updates from trial and error"
+      ],
+      "datasets_benchmarks": [
+        "six benchmark tasks",
+        "AIME-2025",
+        "code optimization",
+        "GRPO and MIPROv2 comparisons"
+      ],
+      "main_contribution": "Uses rich textual feedback from rollouts to evolve prompts and maintain a Pareto frontier of complementary prompt candidates with far fewer rollouts than scalar-reward RL in the reported setting.",
+      "limitations": [
+        "Comparisons depend on task, evaluator, rollout budget, and base model",
+        "prompt evolution can overfit development metrics",
+        "natural-language reflection may preserve evaluator biases",
+        "does not supersede RL for all policy-learning problems"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a leading 2026 method for treating agent trajectories as interpretable training signal and is directly relevant to optimizing complex multi-prompt systems.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR 2026 acceptance recorded in arXiv comment",
+        "arXiv API",
+        "official GEPA repository"
+      ]
+    },
+    {
+      "id": "dpo-2023",
+      "title": "Direct Preference Optimization: Your Language Model is Secretly a Reward Model",
+      "authors": "Rafael Rafailov, Archit Sharma, Eric Mitchell, Stefano Ermon, Christopher D. Manning, and Chelsea Finn",
+      "year": 2023,
+      "venue": "NeurIPS",
+      "status": "peer-reviewed",
+      "paper_url": "https://arxiv.org/abs/2305.18290",
+      "identifiers": {
+        "arxiv": "2305.18290"
+      },
+      "code_url": "https://github.com/eric-mitchell/direct-preference-optimization",
+      "data_url": null,
+      "license_access": "arXiv and the authors implementation are public; check the repository for current license terms.",
+      "topics": [
+        "alignment",
+        "preference learning",
+        "RLHF",
+        "LLMs"
+      ],
+      "methods": [
+        "closed-form reward-policy parameterization",
+        "binary preference classification loss",
+        "KL-constrained policy optimization without explicit RL"
+      ],
+      "datasets_benchmarks": [
+        "sentiment control",
+        "summarization",
+        "single-turn dialogue",
+        "preference datasets"
+      ],
+      "main_contribution": "Derives a stable supervised objective for preference alignment that removes the explicit reward-model and online-RL stages used by conventional RLHF.",
+      "limitations": [
+        "Offline preferences can be unrepresentative or noisy",
+        "KL and data choices still matter",
+        "preference optimization can exploit evaluator biases",
+        "does not by itself solve safety, truthfulness, or pluralistic values"
+      ],
+      "why_it_matters_to_senior_researcher": "DPO is now a standard post-training primitive and a baseline for nearly every new preference-optimization or alignment method.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "NeurIPS 2023 proceedings listing",
+        "arXiv API",
+        "author implementation"
+      ]
+    },
+    {
+      "id": "shallow-safety-2025",
+      "title": "Safety Alignment Should Be Made More Than Just a Few Tokens Deep",
+      "authors": "Xiangyu Qi, Ashwinee Panda, Kaifeng Lyu, Xiao Ma, Subhrajit Roy, Ahmad Beirami, Prateek Mittal, and Peter Henderson",
+      "year": 2025,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=6QJ4W1mE0u",
+      "identifiers": {
+        "openreview": "6QJ4W1mE0u",
+        "arxiv": "2406.05946"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "OpenReview and arXiv are open; no official code/data URL was identified in the verified record.",
+      "topics": [
+        "alignment",
+        "safety",
+        "jailbreaks",
+        "fine-tuning attacks",
+        "interpretability"
+      ],
+      "methods": [
+        "shallow-alignment diagnosis",
+        "prefilling and adversarial-suffix analysis",
+        "fine-tuning attack analysis",
+        "regularized fine-tuning objective"
+      ],
+      "datasets_benchmarks": [
+        "multiple aligned LLMs",
+        "adversarial suffix attacks",
+        "prefilling attacks",
+        "decoding attacks",
+        "fine-tuning attacks"
+      ],
+      "main_contribution": "Unifies several jailbreak and fine-tuning vulnerabilities as symptoms of alignment concentrated in the earliest output tokens and explores deeper, more persistent safety behavior.",
+      "limitations": [
+        "Does not provide a complete defense",
+        "attack and defense results are model- and dataset-specific",
+        "regularization may trade off utility",
+        "safety depth is difficult to measure independently of behavior"
+      ],
+      "why_it_matters_to_senior_researcher": "It gives alignment researchers a concrete mechanistic failure mode to measure and attack, rather than treating jailbreaks as unrelated benchmark anomalies.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR OpenReview page",
+        "arXiv API"
+      ]
+    },
+    {
+      "id": "any-depth-alignment-2026",
+      "title": "Any-Depth Alignment: Unlocking Innate Safety Alignment of LLMs to Any-Depth",
+      "authors": "Jianhui Li et al.",
+      "year": 2026,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=0fuYOuJyzl",
+      "identifiers": {
+        "openreview": "0fuYOuJyzl"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "OpenReview is public. No official code/data URL was verified in the reviewed sources; author list is abbreviated here and the OpenReview page is canonical.",
+      "topics": [
+        "alignment",
+        "safety",
+        "robustness",
+        "LLMs"
+      ],
+      "methods": [
+        "any-depth safety alignment",
+        "refusal-behavior analysis",
+        "depth-sensitive training"
+      ],
+      "datasets_benchmarks": [
+        "safety-alignment and jailbreak evaluations reported in the paper"
+      ],
+      "main_contribution": "Extends the shallow-safety critique by developing alignment intended to remain active beyond the first few generated tokens.",
+      "limitations": [
+        "OpenReview metadata was used because no separate artifact was verified",
+        "defense coverage and utility trade-offs require replication",
+        "does not eliminate adaptive jailbreak risk"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a current 2026 follow-on to the shallow-alignment literature and helps test whether depth-targeted training produces durable safety rather than another narrow patch.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR 2026 OpenReview page",
+        "official conference listing"
+      ]
+    },
+    {
+      "id": "sae-features-2024",
+      "title": "Sparse Autoencoders Find Highly Interpretable Features in Language Models",
+      "authors": "Hoagy Cunningham, Aidan Ewart, Logan Riggs, Robert Huben, and Lee Sharkey",
+      "year": 2024,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=76eOTne6DI",
+      "identifiers": {
+        "openreview": "76eOTne6DI",
+        "arxiv": "2309.08600"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "OpenReview and arXiv are open; no official code/data URL was identified in the verified record.",
+      "topics": [
+        "interpretability",
+        "mechanistic interpretability",
+        "sparse autoencoders",
+        "LLMs"
+      ],
+      "methods": [
+        "overcomplete sparse autoencoders",
+        "activation reconstruction",
+        "monosemantic-feature discovery",
+        "causal feature analysis"
+      ],
+      "datasets_benchmarks": [
+        "language-model activations",
+        "indirect-object-identification task",
+        "automated interpretability evaluations"
+      ],
+      "main_contribution": "Demonstrates that sparse autoencoders can recover more monosemantic, causally relevant features than neuron directions, making superposition empirically tractable.",
+      "limitations": [
+        "Feature dictionaries can be incomplete or split/merge concepts",
+        "automated interpretability labels are imperfect",
+        "scaling to frontier models and full circuits remains difficult",
+        "reconstruction fidelity does not guarantee causal completeness"
+      ],
+      "why_it_matters_to_senior_researcher": "It catalyzed the modern SAE research program and remains a baseline for judging newer transcoders, temporal SAEs, and feature-circuit methods.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR OpenReview page",
+        "arXiv API"
+      ]
+    },
+    {
+      "id": "patchscopes-2024",
+      "title": "Patchscopes: A Unifying Framework for Inspecting Hidden Representations of Language Models",
+      "authors": "Asma Ghandeharioun, Avi Caciularu, Adam Pearce, Lucas Dixon, and Mor Geva",
+      "year": 2024,
+      "venue": "ICML (PMLR 235)",
+      "status": "peer-reviewed",
+      "paper_url": "https://proceedings.mlr.press/v235/ghandeharioun24a.html",
+      "identifiers": {
+        "pmlr": "v235/ghandeharioun24a",
+        "arxiv": "2401.06102"
+      },
+      "code_url": "https://github.com/google-research/google-research/tree/master/patchscopes",
+      "data_url": null,
+      "license_access": "PMLR and arXiv are open; the Google Research code path is public, with repository-level license terms.",
+      "topics": [
+        "interpretability",
+        "hidden representations",
+        "mechanistic interpretability",
+        "LLMs"
+      ],
+      "methods": [
+        "representation patching",
+        "natural-language inspection",
+        "vocabulary-space projection",
+        "cross-model explanation"
+      ],
+      "datasets_benchmarks": [
+        "multi-hop reasoning",
+        "early-layer representation inspection",
+        "representation verbalization case studies"
+      ],
+      "main_contribution": "Unifies multiple activation-inspection methods as instances of patching hidden representations into model contexts and lets models verbalize what those representations encode.",
+      "limitations": [
+        "Generated explanations can be unfaithful",
+        "results depend on the explainer model and prompt",
+        "natural-language descriptions are not complete causal accounts",
+        "method can inherit model biases"
+      ],
+      "why_it_matters_to_senior_researcher": "It provides a flexible experimental interface for representation analysis and complements, but does not replace, causal circuit methods.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "PMLR paper page",
+        "arXiv API",
+        "official Patchscopes code path"
+      ]
+    },
+    {
+      "id": "transcoders-2024",
+      "title": "Transcoders Find Interpretable LLM Feature Circuits",
+      "authors": "Jacob Dunefsky, Philippe Chlenski, and Neel Nanda",
+      "year": 2024,
+      "venue": "NeurIPS",
+      "status": "peer-reviewed",
+      "paper_url": "https://arxiv.org/abs/2406.11944",
+      "identifiers": {
+        "arxiv": "2406.11944"
+      },
+      "code_url": "https://github.com/jacobdunefsky/transcoder_circuits/",
+      "data_url": null,
+      "license_access": "arXiv and the official repository are public; check the repository for current license terms.",
+      "topics": [
+        "interpretability",
+        "mechanistic interpretability",
+        "sparse circuits",
+        "LLMs"
+      ],
+      "methods": [
+        "transcoders",
+        "sparse MLP approximation",
+        "weights-based circuit analysis",
+        "input-dependent and input-invariant factorization"
+      ],
+      "datasets_benchmarks": [
+        "120M, 410M, and 1.4B parameter language models",
+        "GPT-2 small greater-than circuit"
+      ],
+      "main_contribution": "Approximates dense MLP layers with wider sparsely activating layers to make fine-grained, weights-based circuit analysis through MLPs tractable.",
+      "limitations": [
+        "Approximation error can alter circuits",
+        "experiments are limited to relatively small models",
+        "feature interpretability remains partly subjective",
+        "circuit extraction can still miss global behavior"
+      ],
+      "why_it_matters_to_senior_researcher": "It addresses a major bottleneck left by SAEs—MLP nonlinearity—and offers a concrete path from interpretable features to interpretable circuits.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "NeurIPS 2024 status recorded in arXiv comment",
+        "arXiv API",
+        "official transcoder repository"
+      ]
+    },
+    {
+      "id": "temporal-sae-2026",
+      "title": "Temporal Sparse Autoencoders: Leveraging Sequential Nature of Language for More Interpretable AI",
+      "authors": "William Brandon et al.",
+      "year": 2026,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=bojVI4l9Kn",
+      "identifiers": {
+        "openreview": "bojVI4l9Kn"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "OpenReview is public. No official code/data URL was verified in the reviewed sources; author list is abbreviated here and the OpenReview page is canonical.",
+      "topics": [
+        "interpretability",
+        "sparse autoencoders",
+        "sequence modeling",
+        "LLMs"
+      ],
+      "methods": [
+        "temporal sparse autoencoders",
+        "sequence-context-aware feature learning",
+        "interpretability diagnostics"
+      ],
+      "datasets_benchmarks": [
+        "sequential language-model activations and interpretability evaluations reported in the paper"
+      ],
+      "main_contribution": "Extends SAEs beyond token-local activation dictionaries by exploiting sequential context, aiming to recover features that reflect linguistic dynamics.",
+      "limitations": [
+        "Early 2026 method requiring independent replication",
+        "additional temporal structure increases training and analysis complexity",
+        "causal usefulness over standard SAEs must be established task by task"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a current direction for making interpretability methods respect context and sequence rather than treating activations as isolated vectors.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR 2026 OpenReview page",
+        "official conference listing"
+      ]
+    },
+    {
+      "id": "aya-2024",
+      "title": "Aya Model: An Instruction Finetuned Open-Access Multilingual Language Model",
+      "authors": "Ahmet Üstün, Viraat Aryabumi, Zheng-Xin Yong, Wei-Yin Ko, Daniel D’souza, Gbemileke Onilude, Neel Bhandari, Shivalika Singh, et al.",
+      "year": 2024,
+      "venue": "ACL (Best Paper Award)",
+      "status": "peer-reviewed",
+      "paper_url": "https://aclanthology.org/2024.acl-long.845/",
+      "identifiers": {
+        "doi": "10.18653/v1/2024.acl-long.845",
+        "anthology": "2024.acl-long.845",
+        "arxiv": "2402.07827"
+      },
+      "code_url": "https://github.com/cohere-ai/aya",
+      "data_url": "https://huggingface.co/datasets/CohereForAI/aya_dataset",
+      "license_access": "ACL Anthology, arXiv, code, dataset, and model pages are public; model and dataset use are governed by the licenses on their Cohere-for-AI artifact pages.",
+      "topics": [
+        "multilingual NLP",
+        "instruction tuning",
+        "LLMs",
+        "evaluation",
+        "safety"
+      ],
+      "methods": [
+        "massively multilingual instruction fine-tuning",
+        "data-mixture ablations",
+        "data pruning",
+        "toxicity/bias/safety analysis",
+        "human evaluation"
+      ],
+      "datasets_benchmarks": [
+        "Aya dataset",
+        "Aya model",
+        "101 instruction languages",
+        "evaluation across 99 languages"
+      ],
+      "main_contribution": "Provides an open-access multilingual instruction model and a broad evaluation suite, with explicit attention to lower-resource languages and safety.",
+      "limitations": [
+        "Coverage and quality remain uneven across languages",
+        "translated or synthetic instruction data can carry artifacts",
+        "safety analysis does not eliminate language-specific harms",
+        "base-model and dataset licenses constrain reuse"
+      ],
+      "why_it_matters_to_senior_researcher": "It is a reference point for multilingual inclusion and a reminder that post-training recipes and safety conclusions do not automatically transfer across languages.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ACL Anthology page",
+        "arXiv page",
+        "official Aya repository/dataset"
+      ]
+    },
+    {
+      "id": "long-cot-multilingual-2026",
+      "title": "Long Chain-of-Thought Reasoning Across Languages",
+      "authors": "Jiashun Jin et al.",
+      "year": 2026,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=3mmxhL6Alj",
+      "identifiers": {
+        "openreview": "3mmxhL6Alj"
+      },
+      "code_url": null,
+      "data_url": null,
+      "license_access": "OpenReview is public. No official code/data URL was verified in the reviewed sources; author list is abbreviated here and the OpenReview page is canonical.",
+      "topics": [
+        "multilingual NLP",
+        "reasoning",
+        "long chain-of-thought",
+        "cross-lingual transfer",
+        "LLMs"
+      ],
+      "methods": [
+        "long chain-of-thought transfer",
+        "multilingual reasoning training",
+        "cross-language evaluation"
+      ],
+      "datasets_benchmarks": [
+        "multilingual reasoning evaluations reported in the paper"
+      ],
+      "main_contribution": "Studies how long-form reasoning behavior can be induced or transferred beyond English, addressing the English bias of many reasoning-model recipes.",
+      "limitations": [
+        "OpenReview metadata was used because no separate artifact was verified",
+        "language and domain coverage require scrutiny",
+        "long traces increase inference cost and can hide translation or reasoning errors"
+      ],
+      "why_it_matters_to_senior_researcher": "It is directly relevant to making reasoning models globally useful and to separating multilingual language understanding from reasoning-trace language.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR 2026 OpenReview page",
+        "official conference listing"
+      ]
+    },
+    {
+      "id": "olmoe-2025",
+      "title": "OLMoE: Open Mixture-of-Experts Language Models",
+      "authors": "Niklas Muennighoff, Luca Soldaini, Dirk Groeneveld, Kyle Lo, Jacob Morrison, Sewon Min, Weijia Shi, Pete Walsh, et al.",
+      "year": 2025,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=9aZzvW5lIa",
+      "identifiers": {
+        "openreview": "9aZzvW5lIa",
+        "arxiv": "2409.02060"
+      },
+      "code_url": "https://github.com/allenai/OLMoE",
+      "data_url": null,
+      "license_access": "OpenReview, arXiv, code, weights, data, and logs are public; users must follow the licenses attached to each OLMoE artifact and third-party data.",
+      "topics": [
+        "efficient language models",
+        "mixture of experts",
+        "open models",
+        "pretraining",
+        "routing"
+      ],
+      "methods": [
+        "sparse MoE",
+        "1B active / 7B total parameters",
+        "routing analysis",
+        "open pretraining on 5T tokens",
+        "instruction adaptation"
+      ],
+      "datasets_benchmarks": [
+        "OLMoE-1B-7B",
+        "OLMoE-1B-7B-Instruct",
+        "MoE training and routing ablations"
+      ],
+      "main_contribution": "Releases a complete open MoE stack at a compute-relevant active-parameter scale, including weights, training data, code, and logs.",
+      "limitations": [
+        "Single principal scale limits scaling conclusions",
+        "routing specialization and load balance remain active research issues",
+        "performance depends on total memory as well as active compute",
+        "language/domain coverage follows the released corpus"
+      ],
+      "why_it_matters_to_senior_researcher": "It is an unusually transparent testbed for MoE routing, efficiency, and pretraining decisions that proprietary MoE reports do not expose.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR OpenReview page",
+        "arXiv API",
+        "official OLMoE repository"
+      ]
+    },
+    {
+      "id": "fast-dllm-2026",
+      "title": "Fast-dLLM: Training-free Acceleration of Diffusion LLM by Enabling KV Cache and Parallel Decoding",
+      "authors": "Chengyue Wu et al.",
+      "year": 2026,
+      "venue": "ICLR",
+      "status": "peer-reviewed",
+      "paper_url": "https://openreview.net/forum?id=4P8xYUQhOb",
+      "identifiers": {
+        "openreview": "4P8xYUQhOb"
+      },
+      "code_url": "https://github.com/NVlabs/Fast-dLLM",
+      "data_url": null,
+      "license_access": "OpenReview and the official repository are public; check the repository for current license terms. Author list is abbreviated here and OpenReview is canonical.",
+      "topics": [
+        "efficient language models",
+        "diffusion language models",
+        "inference acceleration",
+        "parallel decoding",
+        "KV cache"
+      ],
+      "methods": [
+        "training-free acceleration",
+        "KV-cache reuse",
+        "parallel decoding",
+        "diffusion-LM inference engineering"
+      ],
+      "datasets_benchmarks": [
+        "diffusion LLM inference benchmarks reported in the paper"
+      ],
+      "main_contribution": "Adapts KV caching and parallel decoding ideas to diffusion language models without retraining, targeting a key latency bottleneck in this emerging model class.",
+      "limitations": [
+        "Specific to diffusion-style LMs rather than standard autoregressive models",
+        "speed-quality trade-offs depend on hardware and decoding settings",
+        "broader task and safety effects need replication"
+      ],
+      "why_it_matters_to_senior_researcher": "It is an important efficiency paper for researchers tracking alternatives to autoregressive decoding and the systems work needed to make them practical.",
+      "verification_date": "2026-11-20",
+      "verification_sources": [
+        "ICLR 2026 OpenReview page",
+        "official Fast-dLLM repository"
+      ]
+    }
+  ]
+}

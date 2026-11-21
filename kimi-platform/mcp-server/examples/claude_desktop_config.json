@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "research-director": {
+      "command": "npx",
+      "args": ["-y", "research-director-mcp@0.1.0"],
+      "env": {
+        "RESEARCH_DIRECTOR_PAIRING_TOKEN": "<PASTE_PAIRING_TOKEN_HERE>",
+        "RESEARCH_DIRECTOR_COMPANION_URL": "http://127.0.0.1:4319"
+      }
+    }
+  }
+}

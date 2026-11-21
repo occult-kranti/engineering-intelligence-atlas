@@ -1,0 +1,55 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1795150057742,
+      "tag": "0000_bizarre_squirrel_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1795156994147,
+      "tag": "0001_fine_klaw",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1795192187232,
+      "tag": "0002_control_plane",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1795196490587,
+      "tag": "0003_role_resource_matrix",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1795199855449,
+      "tag": "0004_autonomy_office",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1795211363202,
+      "tag": "0005_sparkling_multiple_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1795215307268,
+      "tag": "0006_assistant",
+      "breakpoints": true
+    }
+  ]
+}

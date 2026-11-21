@@ -1,0 +1,646 @@
+{
+  "schema_version": "1.0",
+  "title": "Architecture / database / backend repository case studies",
+  "verified_at": "2026-11-20 (eshop case added and verified 2026-11-21)",
+  "verification_method": "GitHub REST API (license, archived flag, default branch HEAD SHA, tags, latest release) + official project sites/docs; no cloning or execution. SHAs are 12-char prefixes of full SHAs at fetch time (full SHA recorded for eshop).",
+  "evidence_legend": {
+    "O": "official docs / direct API observation",
+    "V": "vendor-reported",
+    "C": "community/course material"
+  },
+  "license_warning": "License state is point-in-time and per-version-band (see redis). Always re-verify before redistribution or derivative use.",
+  "cases": [
+    {
+      "id": "postgres",
+      "repo": "postgres/postgres",
+      "url": "https://github.com/postgres/postgres",
+      "mirror_of": "https://git.postgresql.org/gitweb/?p=postgresql.git",
+      "license": "PostgreSQL License (permissive, MIT-like)",
+      "license_note": "GitHub API reports NOASSERTION because the license is the project's own PostgreSQL License; OSI-approved.",
+      "lifecycle": "active; major release annually, 5-year support per major. PostgreSQL 18 GA 2025-09-25 (async I/O, UUIDv7, virtual generated columns); current minor 18.6 (2026-08-13); 19 GA planned 2026-11-19.",
+      "latest_release": {
+        "tag": "REL_18_6",
+        "date": "2026-08-13",
+        "source": "postgresql.org release notes / pgpedia"
+      },
+      "pinned": {
+        "branch": "master",
+        "sha_prefix": "72146c7db157",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "src/backend/access/nbtree/README": "B+tree (nbtree) invariants, Lehman-Yao high-key/right-link concurrency design — the best B-tree concurrency doc in any codebase",
+        "src/backend/optimizer/": "cost-based optimizer: path generation, join search (geqo + dynamic programming), cost model",
+        "src/backend/access/heap/": "heapam: MVCC tuple visibility (HOT updates, hint bits)",
+        "src/backend/access/transam/": "WAL (xlog), MVCC snapshots, transaction status (CLOG), SSI (predicate locking)",
+        "src/backend/replication/": "physical streaming + logical replication slots/decoding",
+        "src/bin/pg_waldump/": "inspect WAL records — pairs with ARIES study",
+        "src/backend/storage/buffer/": "clock-sweep buffer pool",
+        "src/backend/storage/async/": "new in PG18: asynchronous I/O subsystem",
+        "doc/src/sgml/mvcc.sgml": "MVCC chapter source: transaction isolation, visibility rules, SSI — the normative operational semantics doc",
+        "doc/src/sgml/monitoring.sgml": "monitoring chapter source: statistics collector, pg_stat_* views, progress reporting — the observability surface",
+        "doc/src/sgml/pgstatstatements.sgml": "pg_stat_statements reference: normalized-query execution statistics — the tuning evidence source",
+        "doc/src/sgml/ref/pgbench.sgml": "pgbench reference: built-in repeatable load generator for before/after tuning runs",
+        "doc/src/sgml/ref/pg_basebackup.sgml": "pg_basebackup reference: physical base backup underpinning PITR (restore + WAL replay to a recovery target)"
+      },
+      "learn": "Full modular DBMS internals: storage, MVCC+VACUUM, WAL recovery, cost-based optimization, extensibility (index AMs, hooks, FDWs), SSI serializable.",
+      "cannot_learn": "Managed-service operational tuning (RDS/CloudSQL parameter folklore), which lives outside source.",
+      "category": "production-oltp",
+      "evidence": "[O] GitHub API + postgresql.org verified 2026-11-20"
+    },
+    {
+      "id": "sqlite",
+      "repo": "sqlite/sqlite (mirror)",
+      "url": "https://github.com/sqlite/sqlite",
+      "mirror_of": "https://sqlite.org/src",
+      "license": "public domain (blessing in lieu of copyright); NOASSERTION in API",
+      "lifecycle": "extremely active; version-3.54.1 tag observed 2026-11-20",
+      "latest_release": {
+        "tag": "version-3.54.1",
+        "date": "2026-11-20",
+        "source": "repo tags"
+      },
+      "pinned": {
+        "branch": "master",
+        "sha_prefix": "476e16ed1c9c",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "src/btree.c": "single-file B+tree with overflow pages, freelist, balance_deeper — the canonical readable B-tree",
+        "src/wal.c": "WAL mode: readers don't block writers; wal-index shared-memory protocol",
+        "src/pager.c": "rollback journal + page cache; atomic commit across journal/WAL",
+        "src/vdbe.c": "register-based bytecode VM (contrast with Postgres tree-walking and DuckDB vectorized)",
+        "test/": "public subset of the test culture; full story at sqlite.org/testing.html (TH3 100% branch coverage, fuzzing, power-failure injection)"
+      },
+      "learn": "How to build the most-deployed, most-tested storage engine: simplicity, file-format stability (since 3.0, 2004), testing as engineering center.",
+      "cannot_learn": "Concurrency beyond single-writer; client-server concerns — by design absent.",
+      "category": "production-embedded-oltp",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "duckdb",
+      "repo": "duckdb/duckdb",
+      "url": "https://github.com/duckdb/duckdb",
+      "license": "MIT",
+      "lifecycle": "active; v2.0.1 bugfix released 2026-11-20 (v2.0.0 same month); DuckDB Foundation + Labs governance",
+      "latest_release": {
+        "tag": "v2.0.1",
+        "date": "2026-11-20",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "main",
+        "sha_prefix": "87d96b7773a1",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "src/execution/": "push-based vectorized execution; morsel-driven parallelism",
+        "src/optimizer/": "rule + join-order optimization (dynamic programming with DPsize/DPhyp)",
+        "src/storage/": "single-file columnar storage, MVCC for OLAP, compression (FSST, dictionary, RLE)",
+        "src/common/vector.cpp": "the vector abstraction (flat/constant/dictionary/sequence)",
+        "extension/": "official extension model (parquet, httpfs, iceberg) — study for clean engine extensibility"
+      },
+      "learn": "Vectorized execution, late materialization, compression-aware storage, embeddable OLAP architecture; cleanest modern C++ analytics codebase.",
+      "cannot_learn": "Distributed execution (single-node by design); concurrency control for heavy write workloads.",
+      "category": "production-embedded-olap",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "rocksdb",
+      "repo": "meta/rocksdb",
+      "url": "https://github.com/meta/rocksdb",
+      "repo_note": "facebook/rocksdb returns HTTP 301 -> meta/rocksdb (verified 2026-11-20)",
+      "license": "dual Apache-2.0 OR GPL-2.0 (GitHub detects GPL-2.0; LICENSE.Apache + COPYING present)",
+      "lifecycle": "active; numbered releases cut from main (v11.13.2 released 2026-11-04); consumed via version pins by downstream (TiKV, MyRocks, Kafka Streams, CockroachDB lineage)",
+      "latest_release": {
+        "tag": "v11.13.2",
+        "date": "2026-11-04",
+        "source": "GitHub releases API (verified 2026-11-20; release notes dated 2026-10-28)"
+      },
+      "pinned": {
+        "branch": "main",
+        "sha_prefix": "d9e2ee415828",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "db/compaction/": "leveled vs universal (tiered) compaction, subcompactions, compaction job scheduling",
+        "db/db_impl_write.cc": "write pipeline: WAL, memtable queue, write-stall conditions",
+        "table/": "block-based SSTable format, Bloom/ribbon filters, block cache",
+        "include/rocksdb/options.h": "the full tunable surface — read as 'the LSM decision space'",
+        "db/write_stall.cc": "stall conditions (memtable count, L0 files, pending compaction bytes) — the LSM failure signature"
+      },
+      "learn": "LSM engineering at production depth: compaction policy trade-offs, write stalls, WAL, column families as independent LSM instances.",
+      "cannot_learn": "Distributed anything (single-node library); the replication story is always the embedding system's.",
+      "category": "production-storage-engine",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "etcd",
+      "repo": "etcd-io/etcd",
+      "url": "https://github.com/etcd-io/etcd",
+      "license": "Apache-2.0; CNCF Graduated",
+      "lifecycle": "active; v3.7.4 released 2026-11-19; v3.8.0-alpha.0 tag present",
+      "latest_release": {
+        "tag": "v3.7.4",
+        "date": "2026-11-19",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "main",
+        "sha_prefix": "f872eb465ed3",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "raft/": "(library, also standalone etcd-io/raft) Raft state machine: election safety, log matching, learners, pre-vote",
+        "server/storage/mvcc/": "MVCC key-value layer over bbolt: revisions, watchable store",
+        "server/storage/backend/": "bbolt (B+tree mmap) backend + defragmentation (compaction of freelist)",
+        "server/etcdserver/api/v3rpc/": "gRPC service surface: linearizable vs serializable read flags made explicit",
+        "server/lease/": "lease TTLs attached to keys — session-primitive construction"
+      },
+      "learn": "Minimal correct-by-construction distributed KV: Raft + MVCC + watch; how Kubernetes metadata works; the linearizable-read cost question made API-visible.",
+      "cannot_learn": "Query engines, rich data models — intentionally absent.",
+      "category": "production-coordination-kv",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "etcd-raft",
+      "repo": "etcd-io/raft",
+      "url": "https://github.com/etcd-io/raft",
+      "license": "Apache-2.0",
+      "lifecycle": "active library; v3.7.0 (2026-06-23)",
+      "latest_release": {
+        "tag": "v3.7.0",
+        "date": "2026-06-23",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "main",
+        "sha_prefix": "ae830f4a15a0",
+        "commit_date": "2026-11-19"
+      },
+      "key_paths": {
+        "raft.go": "core state machine loop: MsgHup/MsgVote/MsgAppend/MsgHeartbeat handling",
+        "tracker/": "replication progress tracking, flow control (probe/replicate/snapshot states)",
+        "log.go + unstable.go + storage.go": "the log-storage interface contract every Raft app must implement",
+        "confchange/": "joint-consensus membership changes (the §6 machinery Ongaro's thesis specifies)"
+      },
+      "learn": "The reference Raft: paper-to-code delta (pre-vote, check-quorum leases, learners) and the storage/applied-index interface discipline.",
+      "cannot_learn": "Nothing about MVCC/watch/client semantics — it's a consensus library only.",
+      "category": "production-consensus-library",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "kafka",
+      "repo": "apache/kafka",
+      "url": "https://github.com/apache/kafka",
+      "license": "Apache-2.0 (core); Confluent add-ons separately under Confluent Community License (source-available)",
+      "lifecycle": "active; 4.4 current (2026-10-22); KRaft-only since 4.0 (2025-03-18, ZooKeeper removed, KIP-500); 3.9 bridge release archived; community supports ~latest 3 minors (4.2-4.4)",
+      "latest_release": {
+        "tag": "4.4.0",
+        "date": "2026-10-22",
+        "source": "kafka.apache.org/downloads"
+      },
+      "pinned": {
+        "branch": "trunk",
+        "sha_prefix": "dc9f1f42828f",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "core/src/main/scala/kafka/log/UnifiedLog.scala": "the log: append, fetch, high watermark, log-end-offset semantics",
+        "core/src/main/scala/kafka/cluster/Partition.scala": "ISR management, leader epoch, replica fetcher — replication correctness core",
+        "raft/": "KRaft: Kafka's Raft implementation (KIP-500) for __cluster_metadata",
+        "clients/src/main/java/org/apache/kafka/clients/producer/internals/": "idempotent producer + transactions (KIP-98)",
+        "core/src/main/scala/kafka/server/share/": "share groups (KIP-932) — queue semantics on the log; DLQs in 4.4 (KIP-1191)",
+        "storage/": "log segments, tiered storage (KIP-405)"
+      },
+      "learn": "Log-centric replication (ISR/HW vs quorum consensus — deliberately different trade), sequential-I/O + zero-copy performance model, exactly-once *within* Kafka, a multi-year dependency-removal migration done right (ZK->KRaft).",
+      "cannot_learn": "End-to-end exactly-once into external systems (requires outbox/2-phase patterns outside Kafka).",
+      "category": "production-event-log",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "nats",
+      "repo": "nats-io/nats-server",
+      "url": "https://github.com/nats-io/nats-server",
+      "license": "Apache-2.0; CNCF",
+      "lifecycle": "active; v2.15.3 (2026-11-11)",
+      "latest_release": {
+        "tag": "v2.15.3",
+        "date": "2026-11-11",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "main",
+        "sha_prefix": "a0385c9af342",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "server/": "core NATS: subject-based pub/sub, at-most-once, leaf nodes, gateways, superclusters",
+        "server/jetstream*.go": "JetStream: streams/consumers, at-least-once, dedup, per-stream Raft groups",
+        "server/raft.go": "NATS's own Raft for JetStream metadata and stream replication",
+        "server/kv.go": "KV and object store built *on* streams — composition case study"
+      },
+      "learn": "Minimal-core messaging with persistence layered on top; per-asset Raft groups vs Kafka's partition-leader model; request-reply over pub/sub.",
+      "cannot_learn": "Long-retention replay economics (JetStream is a queueing stream, not a commit-log platform).",
+      "category": "production-messaging",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "redis",
+      "repo": "redis/redis",
+      "url": "https://github.com/redis/redis",
+      "license": "tri-license RSALv2 OR SSPLv1 OR AGPLv3 (Redis 8+); BSD-3-Clause for <=7.2; RSALv2/SSPLv1 only for 7.4-7.8",
+      "license_note": "Timeline verified: BSD until 2024-03-20 (7.4 -> RSALv2/SSPLv1, non-OSI); AGPLv3 added 2025-05-01 with Redis 8 (redis.io/legal/licenses). The license file's own git history (commits #13157, #13997) is itself a case study.",
+      "lifecycle": "active; 8.10.3 (2026-10-26); Redis Stack modules folded into core 8.0; vector sets added",
+      "latest_release": {
+        "tag": "8.10.3",
+        "date": "2026-10-26",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "unstable",
+        "sha_prefix": "fd7710ca2bf6",
+        "commit_date": "2026-11-19"
+      },
+      "key_paths": {
+        "src/server.c": "single-threaded event loop (ae/epoll) + the main loop structure",
+        "src/t_string.c, t_hash.c, t_zset.c, t_list.c": "data-type implementations incl. encoding switches (listpack/quicklist/skiplist)",
+        "src/expire.c + evict.c": "lazy+active expiry, LRU/LFU eviction approximations",
+        "src/aof.c + rdb.c + replication.c": "durability and async replication — and why failover can lose acknowledged writes",
+        "src/cluster.c": "gossip-based cluster, hash slots (16384), no consensus — compare with etcd raft"
+      },
+      "learn": "Data-structure server engineering, event-loop I/O, memory-efficiency encodings, pragmatic durability trade-offs; *plus* the industry's most instructive license/lifecycle history.",
+      "cannot_learn": "Strong consistency/failover correctness (async replication by design); cluster mode is AP-ish.",
+      "category": "production-cache-datastore",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "valkey",
+      "repo": "valkey-io/valkey",
+      "url": "https://github.com/valkey-io/valkey",
+      "license": "BSD-3-Clause; Linux Foundation",
+      "lifecycle": "active fork of Redis 7.2.4 (2024-03-28); 9.2.0 released 2026-11-19; AWS/Google/Oracle-backed; diverging (multi-threaded I/O since 8.0)",
+      "latest_release": {
+        "tag": "9.2.0",
+        "date": "2026-11-19",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "unstable",
+        "sha_prefix": "6c11c7fb22d2",
+        "commit_date": "2026-11-19"
+      },
+      "key_paths": {
+        "src/": "same layout as redis/redis at fork point — diff vs redis 8.x to study *divergence as a research method*",
+        "src/io_threads.c": "multi-threaded I/O (the headline divergence)",
+        "src/cluster*.c": "cluster-bus improvements (slot migration, dual-channel replication)"
+      },
+      "learn": "Fork governance done well (TSC with no single-vendor control); how quickly two compatible codebases diverge; drop-in compatibility is version-bounded, not a promise.",
+      "cannot_learn": "Redis 8-only features (vector sets, folded modules) — absent or module-form.",
+      "category": "production-cache-datastore",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "tikv",
+      "repo": "tikv/tikv",
+      "url": "https://github.com/tikv/tikv",
+      "license": "Apache-2.0; CNCF Graduated",
+      "lifecycle": "active; v7.5.8 (2026-09-17)",
+      "latest_release": {
+        "tag": "v7.5.8",
+        "date": "2026-09-17",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "master",
+        "sha_prefix": "4d5e1a0968d7",
+        "commit_date": "2026-11-18"
+      },
+      "key_paths": {
+        "components/raftstore/": "per-region Raft groups: dynamic region split/merge, leader transfer, conf change",
+        "src/storage/txn/": "Percolator-style 2PC transactions (prewrite/commit, lock CF, write CF) over MVCC keys",
+        "components/pd_client/": "PD (Placement Driver) client: global TSO (timestamp oracle), region routing",
+        "components/engine_rocks/": "RocksDB column families: default/lock/write/raft — LSM used as the region substrate"
+      },
+      "learn": "How to build a distributed transactional KV from Raft-per-range + MVCC + a global timestamp oracle; Rust systems discipline (error handling, zero-cost abstractions).",
+      "cannot_learn": "SQL layer (that's TiDB); multi-raft at this scale has known operational complexity (many Raft groups per node).",
+      "category": "production-distributed-kv",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "vitess",
+      "repo": "vitessio/vitess",
+      "url": "https://github.com/vitessio/vitess",
+      "license": "Apache-2.0; CNCF Graduated",
+      "lifecycle": "active; v24.0.5 (2026-10-13)",
+      "latest_release": {
+        "tag": "v24.0.5",
+        "date": "2026-10-13",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "main",
+        "sha_prefix": "61d5d099d263",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "go/vt/vtgate/": "stateless query router: vschema, shard routing, scatter-gather",
+        "go/vt/vttablet/": "per-MySQL-instance agent: connection pooling, query serving, filtered replication",
+        "go/vt/vreplication/": "VReplication: online re-sharding, materialize, and move-tables flows",
+        "go/vt/topo/": "topology service on etcd/ZooKeeper — metadata separation"
+      },
+      "learn": "Directory-based sharding with *online* re-sharding as a first-class operation; how YouTube-scale MySQL was horizontalized without changing MySQL.",
+      "cannot_learn": "Storage-engine internals (delegated to MySQL/InnoDB by design).",
+      "category": "production-sharding-middleware",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "cockroachdb",
+      "repo": "cockroachdb/cockroach",
+      "url": "https://github.com/cockroachdb/cockroach",
+      "license": "Cockroach Enterprise License (BSL lineage) for current versions; free for orgs <$10M revenue; Core edition retired from 24.3 (2024-11) — GitHub reports NOASSERTION",
+      "lifecycle": "active; v26.2.12 tag observed 2026-11-20; license change 2024-08/11 is a case study in 'free tier retirement'",
+      "latest_release": {
+        "tag": "v26.2.12",
+        "date": "2026-11",
+        "source": "repo tags"
+      },
+      "pinned": {
+        "branch": "master",
+        "sha_prefix": "d30c905fff79",
+        "commit_date": "2026-09-23"
+      },
+      "key_paths": {
+        "pkg/kv/kvserver/": "range Raft groups, leaseholders, range splits/rebalances, closed timestamps for follower reads",
+        "pkg/sql/opt/": "Cascades-style cost-based optimizer (memo, norm rules, xform exploration) — the most readable Cascades in production Go",
+        "pkg/kv/kvserver/txnwait/": "transaction wait queues, uncertainty intervals (HLC-based serializable SQL)",
+        "pkg/storage/": "Pebble (their Go LSM, RocksDB-lineage) integration"
+      },
+      "learn": "Serializable-by-default distributed SQL; HLC timestamp uncertainty management; Cascades optimizer in production; follower reads via closed timestamps.",
+      "cannot_learn": "License no longer permits unrestricted study-to-production reuse; check current terms before any derivative use.",
+      "category": "production-distributed-sql",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "clickhouse",
+      "repo": "ClickHouse/ClickHouse",
+      "url": "https://github.com/ClickHouse/ClickHouse",
+      "license": "Apache-2.0",
+      "lifecycle": "very active; v26.9.34.16-stable released 2026-11-20",
+      "latest_release": {
+        "tag": "v26.9.34.16-stable",
+        "date": "2026-11-20",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "master",
+        "sha_prefix": "ae802c1359c4",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "src/Storages/MergeTree/": "MergeTree family: parts, merges, sparse primary index (marks + granules — not a B-tree!), projections, materialized views",
+        "src/Processors/": "pull/push processor pipeline with ports; vectorized chunks",
+        "src/Columns/ + src/DataTypes/": "columnar memory layout, low-cardinality dictionaries, compression codecs",
+        "src/Interpreters/": "query analysis/execution; two-stage aggregation across shards"
+      },
+      "learn": "Columnar OLAP at maximum throughput: sparse indexing (sort key + granule skipping instead of point indexes), late materialization, aggressive special-case data types.",
+      "cannot_learn": "OLTP semantics — updates/deletes are mutations (async rewrites), not row transactions.",
+      "category": "production-olap",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "foundationdb",
+      "repo": "apple/foundationdb",
+      "url": "https://github.com/apple/foundationdb",
+      "license": "Apache-2.0",
+      "lifecycle": "active; 7.4.8 (2026-09-24)",
+      "latest_release": {
+        "tag": "7.4.8",
+        "date": "2026-09-24",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "main",
+        "sha_prefix": "01e21f62f758",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "fdbrpc/ + flow/": "the Flow actor-model futures runtime — what makes deterministic simulation possible",
+        "fdbserver/": "role-separated processes: master, proxies (commit + GRV), resolvers, transaction logs, storage servers",
+        "fdbserver/simulation/": "the simulator: single-threaded deterministic world with injected faults — read before believing 'we test distributed failures'",
+        "documentation/sphinx/source/testing.rst": "the testing doctrine (simulation-first, 'bugs are found in simulation or they are found in production')"
+      },
+      "learn": "The strictest correctness culture in open-source databases: role separation for scalability, deterministic simulation as the primary test method (SIGMOD 2021 paper pairs perfectly).",
+      "cannot_learn": "Record-layer features (documents/SQL live in layers, separate repos); 5-second transaction limit design constraint.",
+      "category": "production-distributed-kv",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "hashicorp-raft",
+      "repo": "hashicorp/raft",
+      "url": "https://github.com/hashicorp/raft",
+      "license": "MPL-2.0 (library stayed MPL through HashiCorp's 2023 BSL relicensing of products; IBM closed HashiCorp acquisition 2025-02-27)",
+      "lifecycle": "maintenance-active; v1.8.0 (2026-09-16)",
+      "latest_release": {
+        "tag": "v1.8.0",
+        "date": "2026-09-16",
+        "source": "GitHub releases API"
+      },
+      "pinned": {
+        "branch": "main",
+        "sha_prefix": "a5b469295ddc",
+        "commit_date": "2026-10-12"
+      },
+      "key_paths": {
+        "raft.go": "alternate production Raft API: FSM interface, Apply futures, stable/log store interfaces",
+        "snapshot.go": "FSM snapshot/restore protocol (the persistence contract etcd's storage interface mirrors)",
+        "replication.go": "pipeline replication to followers"
+      },
+      "learn": "A second production Raft vocabulary (FSM/Apply/Barrier) — useful to compare with etcd-io/raft's Storage/Ready API; both passed years of production at Consul/Vault and etcd/Kubernetes.",
+      "cannot_learn": "License nuance matters: library MPL, but surrounding HashiCorp products are BSL — don't generalize.",
+      "category": "production-consensus-library",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "mongodb",
+      "repo": "mongodb/mongo",
+      "url": "https://github.com/mongodb/mongo",
+      "license": "SSPL-1.0 (source-available, NOT OSI-approved) since 2018-10 — the original cloud-provider defensive license",
+      "lifecycle": "active; 8.x line",
+      "latest_release": {
+        "tag": "8.x line",
+        "date": "2026-11-20",
+        "source": "repo activity"
+      },
+      "pinned": {
+        "branch": "master",
+        "sha_prefix": "f80cfec9d44c",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "src/mongo/db/storage/wiredtiger/": "WiredTiger integration: B-tree/LSM-hybrid engine, document-level concurrency, checkpoints",
+        "src/mongo/db/repl/": "replica-set elections (Raft-like since 3.2), oplog application, rollback",
+        "src/mongo/s/": "mongos sharding router, chunk migration, balancer"
+      },
+      "learn": "Document-model storage engine integration, majority-commit-point semantics, the SSPL licensing origin story.",
+      "cannot_learn": "SSPL restricts offering-as-service; code reading is fine, reuse is encumbered.",
+      "category": "production-document-db",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "cassandra",
+      "repo": "apache/cassandra",
+      "url": "https://github.com/apache/cassandra",
+      "license": "Apache-2.0",
+      "lifecycle": "active; 5.x line (5.0 added Accord consensus for transactions)",
+      "latest_release": {
+        "tag": "5.x line, trunk active",
+        "date": "2026-11-20",
+        "source": "repo activity"
+      },
+      "pinned": {
+        "branch": "trunk",
+        "sha_prefix": "45c325a01bff",
+        "commit_date": "2026-11-20"
+      },
+      "key_paths": {
+        "src/java/org/apache/cassandra/dht/": "token ring, vnodes, replication strategies",
+        "src/java/org/apache/cassandra/gms/": "gossip + phi-accrual failure detector",
+        "src/java/org/apache/cassandra/db/": "memtable/SSTable/compaction (LSM), read repair, Merkle anti-entropy",
+        "src/java/org/apache/cassandra/accord/": "Accord: leaderless generalized consensus for strict-serializable transactions (5.0)"
+      },
+      "learn": "The Dynamo paper industrialized: leaderless quorum design and its operational costs (repair, tombstones, hinted handoff); Accord shows the pendulum swinging back to consensus for transactions.",
+      "cannot_learn": "Strong-consistency-by-default patterns (available since 5.0 but opt-in).",
+      "category": "production-leaderless-kv",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "scylladb",
+      "repo": "scylladb/scylladb",
+      "url": "https://github.com/scylladb/scylladb",
+      "license": "AGPL-3.0 (core; enterprise features under source-available terms) — NOASSERTION in API",
+      "lifecycle": "active; rolling releases",
+      "latest_release": {
+        "tag": "rolling",
+        "date": "2026-11-20",
+        "source": "repo activity"
+      },
+      "pinned": {
+        "branch": "master",
+        "sha_prefix": "(fetch at use time)",
+        "commit_date": "n/a"
+      },
+      "key_paths": {
+        "seastar (separate repo: scylladb/seastar)": "shard-per-core futures runtime: no locks, explicit cross-shard messaging",
+        "replica/ + service/": "Cassandra-compatible model rebuilt on seastar; tablets (dynamic range splitting) replacing vnodes"
+      },
+      "learn": "Shard-per-core architecture as the alternative to thread-pool+locks; cost: every data structure must be sharded — study the *cost* side honestly.",
+      "cannot_learn": "General-purpose applicability; seastar imposes a whole-program paradigm.",
+      "category": "production-leaderless-kv",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "eshop",
+      "repo": "dotnet/eShop",
+      "url": "https://github.com/dotnet/eShop",
+      "license": "MIT",
+      "lifecycle": "active; default branch main; last push 2026-11-19. Microsoft-maintained .NET reference application (microservices-style e-commerce: API gateways, Basket/Catalog/Ordering services, event bus, functional tests).",
+      "latest_release": {
+        "tag": "n/a (no release line; legacy framework tags such as 'dotnet8' are historical markers, not releases — do not cite as a release)",
+        "date": "2026-11-21",
+        "source": "GitHub API (releases empty; tags legacy)"
+      },
+      "pinned": {
+        "branch": "main",
+        "sha_prefix": "ab10e4c68fd2",
+        "full_sha": "ab10e4c68fd26369578ebfb3fd1ccf3b867d0444",
+        "commit_date": "2026-11-19"
+      },
+      "key_paths": {
+        "src/Basket.API/Program.cs": "service composition root: dependency injection, Redis basket store wiring, gRPC/HTTP endpoints, health checks",
+        "src/Catalog.API/Program.cs": "catalog service wiring: EF Core/Npgsql, integration events, minimal-API style endpoint mapping",
+        "tests/Catalog.FunctionalTests/CatalogApiTests.cs": "functional API tests against a real service host — contract-test shape for microservices",
+        "tests/Basket.FunctionalTests/RedisBasketRepositoryTests.cs": "repository tests against Redis — data-store behavior verification pattern"
+      },
+      "learn": "A pinned, permissively-licensed (MIT) reference implementation for reverse-architecture exercises: reconstruct arc42 + C4 views + ADRs from code at this commit, and study .NET microservice composition (composition roots, integration events, functional test layout) as *reference* practice — it is a reference app, not a hardened production system.",
+      "cannot_learn": "Production hardening at scale (rate limiting, authZ depth, multi-region DR, capacity tuning); release versioning practice (no release line); treat as reference/educational code, never as production evidence.",
+      "category": "reference-application",
+      "evidence": "[O] GitHub API verified 2026-11-21 (default branch main, HEAD ab10e4c68fd26369578ebfb3fd1ccf3b867d0444, MIT license, not archived)"
+    },
+    {
+      "id": "redpanda-archived",
+      "repo": "redpanda-data/redpanda",
+      "url": "https://github.com/redpanda-data/redpanda",
+      "license": "(was BSL-1.1 core + Apache-2.0 parts)",
+      "lifecycle": "**ARCHIVED 2026-11-12** (GitHub archived flag verified 2026-11-20); org remains active on redpanda-connect, console, seastar forks — core repo status must be re-verified before any citation",
+      "latest_release": {
+        "tag": "n/a — archived",
+        "date": "2026-11-12",
+        "source": "GitHub API archived flag"
+      },
+      "pinned": {
+        "branch": "n/a",
+        "sha_prefix": "n/a",
+        "commit_date": "2026-11-12 (last push)"
+      },
+      "key_paths": {},
+      "learn": "Lifecycle vigilance: a flagship repo can go archived; always check the archived flag, last-push date, and org activity before treating a repo as the current source of truth.",
+      "cannot_learn": "Current Redpanda development (moved); historical code only.",
+      "category": "lifecycle-case-study",
+      "evidence": "[O] 2026-11-20"
+    },
+    {
+      "id": "bustub",
+      "repo": "cmu-db/bustub",
+      "url": "https://github.com/cmu-db/bustub",
+      "license": "MIT",
+      "lifecycle": "active per-semester (CMU 15-445/645); course site 15445.courses.cs.cmu.edu (Fall 2026 live at 2026-11-20)",
+      "latest_release": {
+        "tag": "n/a (semester branches)",
+        "date": "2026-11-20",
+        "source": "course site"
+      },
+      "pinned": {
+        "branch": "master",
+        "sha_prefix": "(pin at use time)",
+        "commit_date": "n/a"
+      },
+      "key_paths": {
+        "src/buffer/": "P1 buffer pool manager (LRU-K/clock)",
+        "src/storage/index/b_plus_tree.cpp": "P2 B+tree with latch crabbing",
+        "src/execution/": "P3 volcano executors",
+        "src/concurrency/": "P4 lock manager, deadlock detection"
+      },
+      "learn": "Component boundaries of a disk-oriented DBMS with a grading harness — the fastest path to 'I have built the four core pieces'.",
+      "cannot_learn": "Production hardening: crash recovery robustness, on-disk compatibility, real workloads. Educational system — never cite as production evidence.",
+      "category": "educational-dbms",
+      "evidence": "[O] course site 2026-11-20"
+    },
+    {
+      "id": "mit-65840-labs",
+      "repo": "MIT PDOS 6.824/6.5840 labs",
+      "url": "https://pdos.csail.mit.edu/6.824/",
+      "license": "course materials (lab skeletons via course git)",
+      "lifecycle": "offered annually (renumbered 6.5840); four Go labs: MapReduce, Raft, fault-tolerant KV, sharded KV",
+      "latest_release": {
+        "tag": "2025/2026 term",
+        "date": "2026-11-20",
+        "source": "course site"
+      },
+      "pinned": {
+        "branch": "n/a",
+        "sha_prefix": "n/a",
+        "commit_date": "n/a"
+      },
+      "key_paths": {
+        "src/raft/": "lab 2: the election-restriction, log-matching, and persistence tests are the curriculum",
+        "src/kvraft/": "lab 3: duplicate detection, snapshotting",
+        "src/shardkv/": "lab 4: shard migration over Raft groups"
+      },
+      "learn": "Consensus under a hostile harness (partitions, crashes, unreliable RPC) — the standard hands-on distributed-systems education.",
+      "cannot_learn": "Production operational concerns (metrics, rolling upgrades, multi-DC).",
+      "category": "educational-distributed-systems",
+      "evidence": "[O] course site 2026-11-20"
+    }
+  ]
+}

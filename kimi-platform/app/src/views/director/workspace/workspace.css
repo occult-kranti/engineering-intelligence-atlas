@@ -1,0 +1,421 @@
+/**
+ * Director command workspace — scoped styles. Everything is namespaced under
+ * `.dw` so the public atlas and the shared tokens in src/index.css are
+ * untouched. Identity is preserved: same tokens, chips, kicker, mono,
+ * panel-dark; only zone layout and the older-adult type floor are additive.
+ */
+
+.dw {
+  /* Older-adult floor: operational text never below 12px; base is 13px. */
+  font-size: 13px;
+  color: hsl(var(--ink));
+}
+
+.dw .chip {
+  font-size: 12px;
+  line-height: 22px;
+}
+
+.dw kbd,
+.dw-kbd {
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px;
+  border: 1px solid hsl(var(--line));
+  border-bottom-width: 2px;
+  padding: 0 5px;
+  background: hsl(var(--paper-raised));
+  color: hsl(var(--ink-soft));
+}
+
+/* ── Shell grid ── */
+
+.dw-shell {
+  display: grid;
+  min-height: 100vh;
+  grid-template-columns: 296px minmax(0, 1fr) 400px;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    'top top top'
+    'rail center right'
+    'deck deck deck'
+    'status status status';
+}
+
+.dw-topbar {
+  grid-area: top;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 16px;
+  border-bottom: 1px solid hsl(var(--line));
+  background: hsl(var(--paper-raised));
+}
+
+.dw-rail {
+  grid-area: rail;
+  border-right: 1px solid hsl(var(--line));
+  padding: 18px 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.dw-center {
+  grid-area: center;
+  padding: 16px 20px 20px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dw-right {
+  grid-area: right;
+  border-left: 1px solid hsl(var(--line));
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.dw-deck {
+  grid-area: deck;
+}
+
+.dw-statusbar {
+  grid-area: status;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  min-height: 30px;
+  padding: 3px 16px;
+  background: hsl(var(--ink));
+  color: hsl(48 14% 75%);
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 12px;
+}
+
+/* ── Flow stepper ── */
+
+.dw-step {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  width: 100%;
+  text-align: left;
+  padding: 8px 6px 8px 8px;
+  border-bottom: 1px solid hsl(var(--line));
+  border-left: 3px solid transparent;
+  min-height: 44px;
+  background: transparent;
+}
+
+.dw-step .dw-step-num {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  color: hsl(var(--ink-soft));
+  width: 22px;
+  flex: none;
+}
+
+.dw-step .dw-step-name {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dw-step .dw-step-sub {
+  font-size: 12px;
+  color: hsl(var(--ink-soft));
+  margin-top: 1px;
+}
+
+.dw-step[data-active='true'] {
+  background: hsl(var(--paper-raised));
+  border-left-color: hsl(var(--ink));
+}
+
+.dw-step[data-active='true'] .dw-step-name {
+  font-weight: 800;
+}
+
+.dw-step[data-attention='true'] {
+  border-left-color: hsl(var(--mustard));
+  background: hsl(var(--mustard) / 0.06);
+}
+
+/* ── Rail mini meters + lease box ── */
+
+.dw-minimeter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.dw-minimeter .lbl {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: hsl(var(--ink-soft));
+  width: 60px;
+  flex: none;
+}
+
+.dw-minimeter .track {
+  flex: 1;
+  height: 5px;
+  background: hsl(var(--line));
+}
+
+.dw-minimeter .track > * {
+  display: block;
+  height: 5px;
+  background: hsl(var(--mustard));
+}
+
+.dw-minimeter[data-exhausted='true'] .track > * {
+  background: hsl(var(--alert));
+}
+
+.dw-minimeter .val {
+  font-family: ui-monospace, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.dw-leasebox {
+  border: 1px dashed hsl(var(--line));
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: hsl(var(--ink-soft));
+}
+
+/* ── Approvals inbox ── */
+
+.dw-approvals {
+  border-bottom: 1px solid hsl(var(--line));
+  padding: 12px 14px;
+  background: hsl(var(--mustard) / 0.05);
+}
+
+.dw-approval-card {
+  margin-top: 8px;
+  border: 1px solid hsl(var(--mustard) / 0.55);
+  background: hsl(var(--paper-raised));
+  padding: 8px 12px;
+}
+
+.dw-approval-card[data-focused='true'] {
+  outline: 2px solid hsl(var(--cornflower));
+  outline-offset: 2px;
+}
+
+/* ── Queue table ── */
+
+.dw-queue {
+  flex: 1;
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.dw-queue-row[data-focused='true'] {
+  outline: 2px solid hsl(var(--cornflower));
+  outline-offset: -2px;
+}
+
+/* ── Operations deck (dark) ── */
+
+.dw-deck-inner {
+  background: hsl(var(--dark));
+  color: hsl(var(--dark-ink));
+  border-top: 2px solid hsl(var(--ink));
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1.2fr) minmax(0, 1fr) 320px;
+}
+
+.dw-deck-col {
+  border-right: 1px solid hsl(40 8% 24%);
+  padding: 12px 14px;
+  min-width: 0;
+}
+
+.dw-deck-col:last-child {
+  border-right: 0;
+}
+
+.dw-deck-kicker {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: hsl(42 78% 55%);
+}
+
+.dw-deck .chip {
+  border-color: hsl(40 8% 30%);
+  color: hsl(var(--dark-ink-soft));
+}
+
+.dw-deck-meter {
+  margin-top: 8px;
+}
+
+.dw-deck-meter .lbl {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: hsl(var(--dark-ink-soft));
+}
+
+.dw-deck-meter .lbl b {
+  color: hsl(var(--dark-ink));
+  font-family: ui-monospace, Menlo, monospace;
+  font-variant-numeric: tabular-nums;
+  font-weight: 500;
+}
+
+.dw-deck-meter .track {
+  height: 5px;
+  background: hsl(40 8% 24%);
+  margin-top: 3px;
+}
+
+.dw-deck-meter .track > div {
+  height: 5px;
+  background: hsl(42 78% 55%);
+}
+
+.dw-deck-meter[data-exhausted='true'] .track > div {
+  background: hsl(8 62% 55%);
+}
+
+.dw-console {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: hsl(48 14% 80%);
+}
+
+.dw-console .seq {
+  color: hsl(42 78% 55%);
+}
+
+.dw-console .warn {
+  color: hsl(42 78% 62%);
+}
+
+/* ── Notices ── */
+
+.dw-notice {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  border: 1px solid hsl(var(--mustard) / 0.7);
+  background: hsl(var(--paper-raised));
+  padding: 9px 12px;
+}
+
+.dw-notice[data-severity='alert'] {
+  border-color: hsl(var(--alert) / 0.7);
+}
+
+/* ── Mobile bottom section nav ── */
+
+.dw-bottomnav {
+  display: none;
+}
+
+/* ── Responsive ── */
+
+@media (max-width: 1279px) {
+  .dw-shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'top'
+      'rail'
+      'center'
+      'right'
+      'deck'
+      'status';
+  }
+  .dw-rail {
+    border-right: 0;
+    border-bottom: 1px solid hsl(var(--line));
+  }
+  .dw-right {
+    border-left: 0;
+    border-top: 1px solid hsl(var(--line));
+  }
+  .dw-deck-inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .dw-deck-col:nth-child(2n) {
+    border-right: 0;
+  }
+  .dw-deck-col {
+    border-bottom: 1px solid hsl(40 8% 24%);
+  }
+}
+
+@media (max-width: 767px) {
+  .dw-shell {
+    padding-bottom: 56px; /* room for the bottom section nav */
+  }
+  .dw-center {
+    padding: 12px 12px 16px;
+  }
+  .dw-rail .dw-rail-collapsible {
+    display: none;
+  }
+  .dw-deck-inner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .dw-deck-col {
+    border-right: 0;
+  }
+  .dw-bottomnav {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    border-top: 1px solid hsl(var(--line));
+    background: hsl(var(--paper-raised));
+  }
+  .dw-bottomnav .dw-step {
+    flex: 1;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    text-align: center;
+    border-bottom: 0;
+    border-left: 0;
+    border-top: 3px solid transparent;
+    padding: 6px 2px;
+  }
+  .dw-bottomnav .dw-step[data-active='true'] {
+    border-top-color: hsl(var(--ink));
+    border-left-color: transparent;
+  }
+  .dw-bottomnav .dw-step[data-attention='true'] {
+    border-top-color: hsl(var(--mustard));
+  }
+  .dw-bottomnav .dw-step-sub {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dw * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

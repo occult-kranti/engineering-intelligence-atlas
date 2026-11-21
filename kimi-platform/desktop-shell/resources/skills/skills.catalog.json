@@ -1,0 +1,380 @@
+{
+  "version": 1,
+  "generatedBy": "scripts/build-skills-catalog.mjs",
+  "skills": [
+    {
+      "id": "agent-research-director",
+      "name": "agent-research-director",
+      "description": "Act as a team leader for multi-agent research and engineering work: plan and decompose goals, route progressive-disclosure skills, dispatch bounded specialists, enforce delegation contracts and evidence gates, resolve conflicts, control cost, loops, and termination, audit skill provenance, security, and licenses, and evaluate multi-agent value. Use for agent swarms, skill registries, research panels, cross-disciplinary deliverables, and safe skill, prompt, and tool composition.",
+      "role": "operations",
+      "keywords": [
+        "brief",
+        "delegation",
+        "director",
+        "orchestration",
+        "planning",
+        "research",
+        "squad"
+      ],
+      "sha256": "08f4c7621550ddd97f15cc996cc00b9c63b9220e89c0ce17f3896f43506fccdb",
+      "path": "agent-research-director/SKILL.md"
+    },
+    {
+      "id": "ai-open-model-research",
+      "name": "ai-open-model-research",
+      "description": "Research the open-weight and open-source AI model landscape with evidence labels, license literacy, and hardware honesty. Use when an agent must survey or compare open models across language/coding, multimodal and media (image, video, ASR, TTS, OCR, GUI agents), scientific domains (math, physics, weather, materials, chemistry, proteins, genomics, single-cell, medical, discovery agents), or 3D/embodied/security/edge; classify openness across the O0-O7 spectrum; produce verified download records (pinned revision, exact bytes, LFS hashes); appraise vendor-reported versus independently measured be",
+      "role": "research",
+      "keywords": [
+        "ai",
+        "evaluation",
+        "inference",
+        "license",
+        "llm",
+        "local",
+        "model",
+        "open",
+        "weights"
+      ],
+      "sha256": "7e3f6e0db939dd8cff99d0f16027639d6075896415d68782153b1d8b9a5b2116",
+      "path": "ai-open-model-research/SKILL.md"
+    },
+    {
+      "id": "ai-research-frontier",
+      "name": "ai-research-frontier",
+      "description": "Direct and execute frontier AI research from question to camera-ready paper. Use when framing research questions and novelty claims; searching and verifying literature across NLP/LLM/agents, data science/ML, and multimodal/scientific AI against official venues (ACL Anthology, OpenReview, PMLR, NeurIPS/ICLR, ACM), Scholar, DOI, and arXiv records; distinguishing peer-reviewed, accepted-not-published, ARR-under-review, preprint, and vendor-benchmark status; building claim-evidence maps and topic networks; auditing baselines, statistics, and reproducibility packages; checking code/data/model licen",
+      "role": "research",
+      "keywords": [
+        "ai",
+        "benchmark",
+        "citation",
+        "literature",
+        "novelty",
+        "paper",
+        "peer-review",
+        "reproducibility",
+        "research",
+        "venue"
+      ],
+      "sha256": "daf38ee60c31df1bf076f815c2802d3c6f3ff6024388f2abb0ef266bd520dd31",
+      "path": "ai-research-frontier/SKILL.md"
+    },
+    {
+      "id": "architecture-and-built-heritage-research",
+      "name": "architecture-and-built-heritage-research",
+      "description": "Research and design architecture across modern/contemporary, classical Greek/Roman, ancient Indian, Egyptian, historical Chinese, and other traditions with computational-design, BIM, geometry, conservation, and provenance discipline. Use for architectural role/resource research, tradition-specific design analysis, parametric/openBIM workflows, heritage documentation, cultural review, and architecture-agent outputs. Avoids pseudohistory, homogenization, and unlicensed professional engineering claims.",
+      "role": "architecture",
+      "keywords": [
+        "architecture",
+        "building",
+        "conservation",
+        "design",
+        "heritage",
+        "history",
+        "urban"
+      ],
+      "sha256": "28e458697ea82e6d0143e7fe68033e204ce57aeefcd4aeb47ddcb30416ad8476",
+      "path": "architecture-and-built-heritage-research/SKILL.md"
+    },
+    {
+      "id": "architecture-database-backend-engineering",
+      "name": "architecture-database-backend-engineering",
+      "description": "Evidence-grounded software architecture, database internals, and backend/platform engineering. Use for architecture decisions and ADRs, quality-attribute trade-off analysis, domain modeling and API contracts, consensus/replication/sharding design, transaction isolation and consistency reasoning, storage-engine and query-optimizer analysis (B-tree/LSM, EXPLAIN), caching/queues/resilience/SLO/performance/security/migration/cloud operations, repository case-study reading at pinned commits, license/lifecycle dependency audits, failure-mode review, and the bundled implementation labs and scored eva",
+      "role": "architecture",
+      "keywords": [
+        "api",
+        "architecture",
+        "backend",
+        "database",
+        "scalability",
+        "schema",
+        "sql",
+        "system"
+      ],
+      "sha256": "017c9260f4805ba45decc4506f04b815c42e88cf8bbcc3772ad1c41cc0c9267d",
+      "path": "architecture-database-backend-engineering/SKILL.md"
+    },
+    {
+      "id": "biology-research",
+      "name": "biology-research",
+      "description": "Conduct source-grounded, dry-lab-first biology research across the discipline map from molecular/cell biology and genomics to ecology, neuroscience, and reproducible research practice. Use for literature-grounded questions, computational analysis design (sequence analysis, omics pipelines, phylogenetics, statistics), database retrieval with version/access-date recording, evidence appraisal, and evaluation of AI-in-biology claims. Enforces mandatory safety boundaries — no pathogen enhancement, no screening evasion, no clinical interpretation, and no hazardous wet-lab protocols.",
+      "role": "research",
+      "keywords": [
+        "biology",
+        "cell",
+        "ecology",
+        "evolution",
+        "genomics",
+        "laboratory",
+        "protein"
+      ],
+      "sha256": "077b690e0e216387889e719cdfd03a2cee9b7433113e8880bfc51f79e4553d88",
+      "path": "biology-research/SKILL.md"
+    },
+    {
+      "id": "chemistry-research",
+      "name": "chemistry-research",
+      "description": "Conduct source-grounded, safety-aware chemistry research across the 12-area domain map from general, organic, inorganic, physical, analytical, theoretical, and computational chemistry to biochemistry, materials, polymers, environmental, and medicinal chemistry. Use for provenance-traced answers with units and uncertainty, IUPAC nomenclature and identifier resolution (InChI, InChIKey, SMILES, CAS RN), database retrieval with version and access-date recording, open-source computational chemistry workflow design, evidence appraisal, and myth/hallucination checking of chemical claims. Enforces non",
+      "role": "research",
+      "keywords": [
+        "chemistry",
+        "materials",
+        "molecule",
+        "reaction",
+        "spectroscopy",
+        "synthesis"
+      ],
+      "sha256": "39b359c3a1e66bed96f5f4d94c68df638ec0794c21446a3f987f10178ec5be76",
+      "path": "chemistry-research/SKILL.md"
+    },
+    {
+      "id": "civilization-art-design-research",
+      "name": "civilization-art-design-research",
+      "description": "Source-grounded art, ornament, pattern, calligraphy, color, material, and proportion research across named regions, periods, and communities (Roman late Republic–High Empire; Gothic lodges and manuals; five anchored Indian cases; dynastic Egypt; Nasrid Granada; Timurid/Turkmen pattern scrolls; Abbasid/Ifriqiyan calligraphy; Classic Maya Palenque; Asante adinkra; Djenné adobe; Inca Cusco). Use when a task needs anchored tradition case files with evidence tiers, frieze/wallpaper symmetry-group classification under declared criteria (color handling explicit, disputed censuses reported as disputes",
+      "role": "design",
+      "keywords": [
+        "art",
+        "civilization",
+        "design",
+        "heritage",
+        "history",
+        "museum",
+        "ornament",
+        "pattern",
+        "symmetry"
+      ],
+      "sha256": "5389897303a881b058cfae079e159b295eb11338c74af54b66c2c3a88bfda1e0",
+      "path": "civilization-art-design-research/SKILL.md"
+    },
+    {
+      "id": "computational-geometry-engineering",
+      "name": "computational-geometry-engineering",
+      "description": "Apply rigorous mathematics and computational geometry to meshes, CAD, graphics, architecture, BIM, 3D printing, robotics, and spatial systems. Use for algorithm selection, geometric proofs, topology/manifold analysis, robust predicates, tolerances, units/coordinate systems, numerical stability, geometric optimization, mesh audit, and reproducible geometry-engineering reports.",
+      "role": "engineering",
+      "keywords": [
+        "algorithm",
+        "cad",
+        "computational",
+        "engineering",
+        "geometry",
+        "mesh",
+        "spatial"
+      ],
+      "sha256": "b8c010435bc591fc4d97ddbf90d560d034ff876264254af7889bfba2cdffbce4",
+      "path": "computational-geometry-engineering/SKILL.md"
+    },
+    {
+      "id": "defensive-reverse-engineering",
+      "name": "defensive-reverse-engineering",
+      "description": "Perform authorized, evidence-preserving defensive reverse engineering and analysis of binaries, firmware, mobile apps, protocols, and malware for interoperability, vulnerability research, incident response, detection engineering, and CTF/lab learning. Use for static/dynamic analysis planning, safe tool selection across Ghidra/rizin/radare2/JADX/angr/Frida and forensics tools, malware triage, chain-of-custody records, IOC/capability reporting, and sandboxed analysis workflows. Requires clear authorization or a deliberately provided lab/CTF target; does not support unauthorized access, credentia",
+      "role": "engineering",
+      "keywords": [
+        "binary",
+        "defensive",
+        "engineering",
+        "malware",
+        "reverse",
+        "security",
+        "vulnerability"
+      ],
+      "sha256": "18ace834e5fd45c963b513800646b5f7d6eb00c3242c5ab7ffc3fe7f21d26b9a",
+      "path": "defensive-reverse-engineering/SKILL.md"
+    },
+    {
+      "id": "engineering-job-market-intelligence",
+      "name": "engineering-job-market-intelligence",
+      "description": "Collect, normalize, audit, compare, and analyze public engineering and product-careers postings for AI/ML, cybersecurity, frontend/backend/full-stack, UI/UX, research, game design/development, data, platform/SRE, quality, and technical program roles. Use for official-careers data sweeps, reusable job snapshot creation, role-requirement extraction, skill-frequency analysis, first-seen/last-seen tracking, and hiring-market research with explicit provenance and crawl limitations.",
+      "role": "data",
+      "keywords": [
+        "data",
+        "engineering",
+        "hiring",
+        "intelligence",
+        "job",
+        "market",
+        "salary",
+        "trends"
+      ],
+      "sha256": "c5defdef5b33d32b58e8d9480c5b2e89114014f5e5caa67503fbb419642dac73",
+      "path": "engineering-job-market-intelligence/SKILL.md"
+    },
+    {
+      "id": "engineering-organization-architect",
+      "name": "engineering-organization-architect",
+      "description": "Design and audit complete engineering, AI/data, cybersecurity, product-design, research, quality, platform/SRE, and game-development organizations. Use when creating role taxonomies, job descriptions, skill matrices, seniority ladders, team topologies, RACI/interfaces, hiring scorecards, staffing roadmaps, delivery governance, or learning plans for a software/AI/game company. Suitable for startup-through-enterprise reference models; does not claim knowledge of confidential company org charts.",
+      "role": "operations",
+      "keywords": [
+        "architecture",
+        "engineering",
+        "management",
+        "organization",
+        "process",
+        "structure",
+        "team"
+      ],
+      "sha256": "cf3bb7d6c42d0f6ac8d15776a7c30e9eb76fa5fa065c8c8cc653bf6d1003d070",
+      "path": "engineering-organization-architect/SKILL.md"
+    },
+    {
+      "id": "executive-operations-assistant",
+      "name": "executive-operations-assistant",
+      "description": "Operate the enterprise executive-assistant layer: Donna (CEO executive assistant above the Director runtime), the shared company/department operations assistants, and the permanent repository-integration steward. Use for typed action proposals through non-bypassable approval gates (queues, hiring/pause/resume/fire with drain-and-preserve, bounded schedules, cache invalidation, repository routing, study queues, knowledge handoffs), deterministic schedule/validation checks, Donna-style prompting with guided action summaries and no raw chain-of-thought, and safe public-repository intake without c",
+      "role": "operations",
+      "keywords": [
+        "approval",
+        "assistant",
+        "executive",
+        "operations",
+        "proposal",
+        "queue",
+        "repository",
+        "schedule",
+        "steward"
+      ],
+      "sha256": "062a4f58d01613617499edb9a1f19dd61bd2720ee7cd2679fb75683f522ee94c",
+      "path": "executive-operations-assistant/SKILL.md"
+    },
+    {
+      "id": "game-reconstruction-engineering",
+      "name": "game-reconstruction-engineering",
+      "description": "Plan and execute authorized, evidence-preserving game reverse engineering and reconstruction — matching decompilation, disassembly, static recompilation, source ports, and engine remakes/reimplementations. Use for clean-room project setup, ROM/asset rights handling, RE toolchain selection (Ghidra/IDA-class, objdiff, decomp-permuter, N64Recomp/XenonRecomp/ReXGlue-class, RenderDoc-class graphics debugging, asset extractors), fork/identity and provenance analysis of reconstruction projects, reproducible build verification, and human-gated release. Requires a written authorization record; never st",
+      "role": "engineering",
+      "keywords": [
+        "assets",
+        "engine",
+        "engineering",
+        "game",
+        "reconstruction",
+        "remake",
+        "reverse"
+      ],
+      "sha256": "a1e974d76edcbff9a8f00a9e0f71a34bdd9f159c196a08b83031d90a23e1b052",
+      "path": "game-reconstruction-engineering/SKILL.md"
+    },
+    {
+      "id": "local-model-runtime-engineering",
+      "name": "local-model-runtime-engineering",
+      "description": "Engineer local open-weight model setups on a user's machine. Use when an agent must inspect laptop/desktop CPU, RAM, GPU, VRAM, or storage; select an open-weight model (LLM, coding, image, 3D, gaming/NPC, or cybersecurity) for an actual task; create a virtual environment; download, pin, and hash-verify model files; serve models through llama.cpp, Ollama, LM Studio, Jan, GPT4All, LocalAI, KoboldCpp, ComfyUI, or similar local runtimes; or connect local inference to a director/agent node. Covers authorization and consent gates, license/provenance verification, pinned-revision downloads with hash ",
+      "role": "engineering",
+      "keywords": [
+        "engineering",
+        "gguf",
+        "inference",
+        "llama",
+        "local",
+        "model",
+        "quantization",
+        "runtime"
+      ],
+      "sha256": "299c4887bdb5d8a0b3f52b6ab6182a1f1fe1e6ad2b5d18d812b11f52284e849b",
+      "path": "local-model-runtime-engineering/SKILL.md"
+    },
+    {
+      "id": "mathematics-research",
+      "name": "mathematics-research",
+      "description": "Conduct source-grounded mathematics research, computation, proof drafting, and formal verification across the 19-area discipline map (foundations through modeling). Use for answering or checking mathematical claims, exact/symbolic/numeric computation, proof audits and Lean/Rocq/Isabelle/Metamath formalization, benchmark-aware self-evaluation, and history-of-mathematics questions such as Fibonacci, Liber Abaci, and golden-ratio myth checking. Labels every statement by epistemic status and refuses to present folklore, near-miss floating-point evidence, or unverified AI proofs as established resu",
+      "role": "research",
+      "keywords": [
+        "algebra",
+        "analysis",
+        "mathematics",
+        "number",
+        "proof",
+        "theorem",
+        "topology"
+      ],
+      "sha256": "ef2c38fdfbc4bcc4ef86b854045659594a18f32a47c1fc6cb1b80ddb7ba7b039",
+      "path": "mathematics-research/SKILL.md"
+    },
+    {
+      "id": "music-theory-production-engineering",
+      "name": "music-theory-production-engineering",
+      "description": "Source-grounded music theory, audio production, and rights engineering. Use for tuning/temperament questions in ratios and cents with priority accuracy (Zhu Zaiyu 1584, Stevin independent); dated Western harmony/counterpoint/rhythm/form/timbre; culturally specific theory (Hindustani raga/tala, Carnatic, maqam, Javanese/Balinese gamelan, Northern Ewe rhythm) in named community context with anti-homogenization critique; notation/MIDI/MEI/MusicXML/SMuFL encoding; DSP/synthesis/DAW engineering with license-aware tool choice; MIR and reproducible evaluation (mir_eval-cited metrics, BS.1770/EBU R128",
+      "role": "engineering",
+      "keywords": [
+        "audio",
+        "dsp",
+        "loudness",
+        "midi",
+        "music",
+        "production",
+        "provenance",
+        "rights",
+        "theory",
+        "tuning"
+      ],
+      "sha256": "5726ade7936e46336be5cfeb49258ececb4b535488a9d0f66bcd677789150b05",
+      "path": "music-theory-production-engineering/SKILL.md"
+    },
+    {
+      "id": "physics-research",
+      "name": "physics-research",
+      "description": "Conduct evidence-backed, dimensionally consistent physics research, calculation, and literature review across classical mechanics, electromagnetism, thermodynamics, optics, relativity, quantum mechanics and QFT, atomic/nuclear/particle, condensed matter, fluids, plasma, astrophysics, and computational/experimental physics. Use for answering or checking physics claims, deriving and verifying formulas with SI units and uncertainty, searching primary literature and curated data (arXiv, INSPIRE-HEP, NASA ADS, NIST CODATA, PDG, NNDC), verifying simulations and experiments, and auditing exceptional ",
+      "role": "research",
+      "keywords": [
+        "experiment",
+        "measurement",
+        "particle",
+        "physics",
+        "quantum",
+        "relativity"
+      ],
+      "sha256": "c5d9fadf6f0fd22c700fd504853114ddab0e50d2dcba778a7ac2900e1493b0e3",
+      "path": "physics-research/SKILL.md"
+    },
+    {
+      "id": "science-history-research",
+      "name": "science-history-research",
+      "description": "Research and audit the history of science and invention with primary-source discipline. Use for questions about scientific priority and attribution, manuscripts, patents, editions, and archival provenance; for verifying or debunking famous quotations and inventor/discoverer myths (Isaac Newton, Nikola Tesla, Fibonacci/Liber Abaci and Indian priority, golden-ratio folklore); and for building dated evidence matrices that separate the primary record from later legend. Enforces an archive-first workflow, citation and quotation controls, A/B/C/D/X confidence labels, and a standing ban on pseudohist",
+      "role": "research",
+      "keywords": [
+        "archive",
+        "historiography",
+        "history",
+        "primary",
+        "provenance",
+        "science",
+        "sources"
+      ],
+      "sha256": "91b76401874747a3cc39529ec910eac1f6f741ddba019f46e89c71d1cf6d1823",
+      "path": "science-history-research/SKILL.md"
+    },
+    {
+      "id": "spatial-3d-production-engineering",
+      "name": "spatial-3d-production-engineering",
+      "description": "Design and audit 3D-content, Blender, spatial UI/UX, real-time/XR, animation/simulation, CAD, slicing, firmware, and additive-manufacturing workflows. Use for 3D-modeling and printing role design, resource/tool selection, mesh/glTF/USD validation, DfAM and process planning, 4D/5D terminology disambiguation, accessibility fallbacks, and human-gated physical-production handoffs. Does not treat visual assets or watertight meshes as manufacturing certification.",
+      "role": "design",
+      "keywords": [
+        "3d",
+        "assets",
+        "modeling",
+        "pipeline",
+        "production",
+        "rendering",
+        "scene",
+        "spatial"
+      ],
+      "sha256": "e5c98705a8c04c23e02b9d1006b34c5a1e9e6b549f731c3dcdb1909f2368dc8b",
+      "path": "spatial-3d-production-engineering/SKILL.md"
+    },
+    {
+      "id": "ui-ux-research-design-engineering",
+      "name": "ui-ux-research-design-engineering",
+      "description": "Plan, design, and evaluate user interfaces with evidence. Use for product design, UX research, design-system and accessibility work in non-game software: UX research methods and metrics (SUS/UMUX-LITE/SEQ, tree tests), WCAG 2.2/ARIA/APG accessibility engineering and conformance evidence, design tokens (DTCG) and systems, visual hierarchy/typography/color, prototyping at declared fidelity, motion with reduced-motion fallbacks, data-viz perception, dark-pattern and research-ethics gates, repository case studies, and the bundled recreated-project labs and scored evaluation tasks. Never presents d",
+      "role": "design",
+      "keywords": [
+        "accessibility",
+        "design",
+        "interface",
+        "prototype",
+        "research",
+        "ui",
+        "usability",
+        "user",
+        "ux",
+        "wcag"
+      ],
+      "sha256": "9ad965738bf4eef529bb970d7b0bc6706045ccf74778ea4dc9ae0fbca201ef83",
+      "path": "ui-ux-research-design-engineering/SKILL.md"
+    }
+  ]
+}

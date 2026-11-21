@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "generated": "2026-11-21",
+  "purpose": "Read-only repository case studies for the proposed civilization-art-design-research skill and its three design-side charters. Records what each repo demonstrates, verified license posture, pinned commit, lifecycle, and implementation lessons. No code was downloaded or executed; inspection via GitHub API (license endpoint + raw LICENSE/COPYING file reads + commit listing) on 2026-11-21.",
+  "verification": "License verified by reading the LICENSE/COPYING file contents (file SHA recorded) and/or GitHub's license-detection API on 2026-11-21. 'NOASSERTION' means GitHub's classifier could not match the text — the human-read finding is given. Pinned commit = default-branch HEAD at inspection time; cite repos as URL + SHA.",
+  "cases": [
+    {
+      "id": "met-openaccess",
+      "name": "metmuseum/openaccess",
+      "url": "https://github.com/metmuseum/openaccess",
+      "category": "museum-open-data",
+      "license": {"spdx": "CC0-1.0", "how_verified": "LICENSE file read (file SHA 670154e3538863b2d9891fd5483160fbdfc89164)", "verified": "2026-11-21"},
+      "pinned_commit": {"sha": "15d35b4b1f7f87baa8d42cc24481f68f76817d20", "date": "2026-11-16"},
+      "lifecycle": {"status": "active — automated 'Open Access csv' data commits", "created": null, "note": "collection CSV refreshed by Met production service"},
+      "demonstrates": "A major museum publishing its collection metadata as CC0 data: every object record carries accession number, credit line, and rights field. Anchor fixture for the provenance lab (L6) and for Robins-canon figure lab (L3) image sourcing.",
+      "implementation_lessons": [
+        "CC0 applies to the metadata and to designated open-access images; the per-record 'Rights and Reproduction' field still controls individual works — always read the record, never assume.",
+        "Data snapshots are moving: pin the CSV commit SHA in any research artifact that cites object records.",
+        "Accession number + objectURL is the citation unit; images may additionally carry photographer/museum policy terms."
+      ]
+    },
+    {
+      "id": "smithsonian-openaccess",
+      "name": "Smithsonian/OpenAccess",
+      "url": "https://github.com/Smithsonian/OpenAccess",
+      "category": "museum-open-data",
+      "license": {"spdx": "CC0-1.0", "how_verified": "GitHub license API (CC0-1.0)", "verified": "2026-11-21"},
+      "pinned_commit": {"sha": "c2ac3e2a671755e03e1ec439ad7b9b0020636281", "date": "2021-12-21"},
+      "lifecycle": {"status": "static README/metadata hub — underlying data releases live on Smithsonian's S3 infrastructure, not in this repo", "created": null},
+      "demonstrates": "CC0 release at federal-institution scale (4.5M+ images/data), with usage guidance that still requests attribution and flags third-party rights in some assets.",
+      "implementation_lessons": [
+        "Repo stillness is not dataset stillness: check the live metadata API/bulk data date, not the GitHub README, for currency.",
+        "Smithsonian's own usage terms ask users to verify per-item rights for content not created by the Smithsonian — a CC0 umbrella does not launder embedded third-party rights.",
+        "Good negative-example for lifecycle checks: an unmaintained-looking repo can front a maintained dataset."
+      ]
+    },
+    {
+      "id": "iiif-api",
+      "name": "IIIF/api",
+      "url": "https://github.com/IIIF/api",
+      "category": "standards-source",
+      "license": {"spdx": "no repo-level LICENSE file (verified at root listing 2026-11-21); IIIF specifications are published under open terms on iiif.io — record per-specification notice when excerpting", "how_verified": "root directory listing — no LICENSE/COPYING file", "verified": "2026-11-21"},
+      "pinned_commit": {"sha": "3fc309ca29ce933dff2751530d751ca1dff9ee40", "date": "2026-11-18"},
+      "lifecycle": {"status": "active — community-driven spec development (Image API, Presentation API)", "created": null},
+      "demonstrates": "Interoperable image delivery for cultural heritage: deep-zoom pixels (Image API) and object structure/annotations (Presentation API) as inspectable, versioned specifications; the standard plumbing for museum-image labs.",
+      "implementation_lessons": [
+        "Cite IIIF specs by API name + version (e.g., Image API 3.0); manifests are JSON-LD and validate against published schemas.",
+        "Absence of a LICENSE file is itself a finding: record it, then check the consortium site terms before republishing spec text.",
+        "info.json capability introspection lets tooling adapt to what a given server supports — don't hardcode server behavior."
+      ]
+    },
+    {
+      "id": "isohedral-tactile",
+      "name": "isohedral/tactile",
+      "url": "https://github.com/isohedral/tactile",
+      "category": "geometry-library",
+      "license": {"spdx": "BSD-3-Clause", "how_verified": "LICENSE file read (file SHA 45638b0de185ce7d01fd482b50c21a376ad076ec)", "verified": "2026-11-21"},
+      "pinned_commit": {"sha": "52f40460e30cc3f4313d7b3fb24aa8f14b79c88e", "date": "2022-06-17"},
+      "lifecycle": {"status": "stable/dormant — last default-branch commit 2022; author Craig S. Kaplan's research continues via papers and other ports (tactile-python/tactile-rs/tactile-cs forks observed in search, not inspected)", "created": null},
+      "demonstrates": "Reference implementation of the 93 isohedral tiling types (Grünbaum–Shephard incidence symbols): the computation backbone for modern tiling labs; also Kaplan's own attribution practice for pattern-generation research.",
+      "implementation_lessons": [
+        "Dormant + permissive license = safe to pin and read; treat algorithmic claims against the Grünbaum–Shephard reference, not against the repo.",
+        "The IH-type system is a modern classification (1987); teaching materials must not attribute it to historical pattern-makers.",
+        "BSD-3-Clause requires retaining the notice — put it in the lab's NOTICE file, not just a comment."
+      ]
+    },
+    {
+      "id": "paperjs",
+      "name": "paperjs/paper.js",
+      "url": "https://github.com/paperjs/paper.js",
+      "category": "vector-graphics-library",
+      "license": {"spdx": "MIT (GitHub: NOASSERTION due to custom preamble; LICENSE.txt is verbatim MIT text)", "how_verified": "LICENSE.txt read (file SHA 84e905d812d93807dbcc0e370b5706ecca0fe4dc)", "verified": "2026-11-21"},
+      "pinned_commit": {"sha": "0d1446a1bb040e3c87533b28bcc384d87663587b", "date": "2026-11-04"},
+      "lifecycle": {"status": "active", "created": null},
+      "demonstrates": "Scriptable vector graphics with boolean path operations and SVG import/export — the practical substrate for browser-side ornament/pattern labs without a server.",
+      "implementation_lessons": [
+        "NOASSERTION is not a license problem by itself: read the file; here it is verbatim MIT with a preamble.",
+        "Boolean path ops are floating-point: lab acceptance tests need tolerance declarations (coordinate with computational-geometry-engineering).",
+        "SVG export preserves authored structure only if the author structures groups/ids deliberately — teach semantic grouping in pattern labs."
+      ]
+    },
+    {
+      "id": "openscad",
+      "name": "openscad/openscad",
+      "url": "https://github.com/openscad/openscad",
+      "category": "programmatic-cad",
+      "license": {"spdx": "GPL-2.0-only with explicit CGAL linking exception (COPYING preamble)", "how_verified": "COPYING file read (file SHA 627c964a841a48896bf9c779e7b051dd3cbfd2d7)", "verified": "2026-11-21"},
+      "pinned_commit": {"sha": "2e1a89ac8e5488e7f19c367af2df61faeceb5880", "date": "2026-11-20"},
+      "lifecycle": {"status": "active", "created": null},
+      "demonstrates": "Code-as-CAD: fully parametric, diff-able solid models — the right host for Roriczer/stepwell construction labs where every geometric step must be inspectable text.",
+      "implementation_lessons": [
+        "GPL-2.0 covers the application; user .scad models are user works (running output), but bundling OpenSCAD into a distributed product triggers copyleft — record this distinction in delivery reviews.",
+        "CGAL dependency explains the linking exception; downstream license audits must include transitive libraries.",
+        "Deterministic CSG makes it ideal for 'construction closes within declared tolerance' acceptance tests (lab L4)."
+      ]
+    },
+    {
+      "id": "freecad",
+      "name": "FreeCAD/FreeCAD",
+      "url": "https://github.com/FreeCAD/FreeCAD",
+      "category": "parametric-cad",
+      "license": {"spdx": "LGPL-2.1 (top-level LICENSE; per-module details vary)", "how_verified": "LICENSE file read (file SHA bc0390e98c98f2ad3ab7decdb82b4d57d7f850d4)", "verified": "2026-11-21"},
+      "pinned_commit": {"sha": "33a22d8bb12b2cfe39a9fee4b230d51667125562", "date": "2026-11-20"},
+      "lifecycle": {"status": "active — large multi-workbench project (note: repo contains AGENTS.md and AI_POLICY.md; agent-authored contributions are policy-governed)", "created": null},
+      "demonstrates": "Full parametric B-rep CAD (Open CASCADE kernel) with Python console: constraint-sketch workflows for the documented-procedure labs; also a governance example (published AI-contribution policy).",
+      "implementation_lessons": [
+        "LGPL-2.1 permits linking but modified-library distribution carries source obligations; plugin authors stay permissive, core contributors follow the project license.",
+        "FreeCAD files (.FCStd) are zip containers — provenance labs can inspect document.xml for parameter history.",
+        "Its AGENTS.md/AI_POLICY.md is a model citation when drafting agent-contribution rules for creative toolchains."
+      ]
+    },
+    {
+      "id": "antiprism",
+      "name": "antiprism/antiprism",
+      "url": "https://github.com/antiprism/antiprism",
+      "category": "geometry-toolkit",
+      "license": {"spdx": "NOASSERTION — Debian-format COPYING declares 'MIT-and-similar, permissive with attribution' for the bulk of files; check per-file notes", "how_verified": "COPYING file read via license API", "verified": "2026-11-21"},
+      "pinned_commit": {"sha": "7805b34d3f8860857fb9ac10a1917d1bf4c7888d", "date": "2024-08-27"},
+      "lifecycle": {"status": "maintenance mode (last default-branch commit 2024-08)", "created": null},
+      "demonstrates": "Command-line polyhedron/off-file toolkit (uniform polyhedra, symmetry operations, geodesics) — useful for ornament-to-solid exercises and for teaching polyhedral symmetry beyond the plane groups.",
+      "implementation_lessons": [
+        "Debian-format copyright files encode per-file license variation — audit at file granularity before excerpting.",
+        "Maintenance-mode CLI tools are stable fixtures: pin the commit, record build-toolchain versions if ever compiled.",
+        "OFF is a teachable minimal mesh format; conversions to it must declare handedness/units (coordinate with computational-geometry-engineering)."
+      ]
+    }
+  ]
+}

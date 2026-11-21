@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Network security policy for the Research Director shell.
+
+  - Cleartext (HTTP) traffic is DISABLED app-wide by default.
+  - Narrow debug/development exception: loopback targets only, so a developer
+    can point the runtime screen at a local server
+    (localhost / 127.0.0.0/8 / the Android emulator host alias 10.0.2.2).
+    No other host can ever use cleartext, and release builds should delete the
+    domain-config below entirely.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="false">127.0.0.1</domain>
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+</network-security-config>

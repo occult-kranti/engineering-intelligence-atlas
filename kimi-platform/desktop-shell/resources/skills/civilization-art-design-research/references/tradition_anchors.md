@@ -1,0 +1,69 @@
+# Tradition Anchors
+
+Anchored case files. Every case names region, date range, and community; every claim carries an evidence tier: (a) surviving fabric/measured survey, (b) contemporary texts/inscriptions/scrolls/drawings, (c) documented craft practice, (d) later interpretation/revival, (e) contested/popular. Tiers (d)–(e) are labeled and never carry a verdict alone. New traditions enter only through this same anchoring method — never by analogy.
+
+Contents: Roman world · Gothic · Five Indian cases · Dynastic Egypt · Nasrid Alhambra · Timurid/Turkmen scrolls · Abbasid/Ifriqiyan calligraphy · Classic Maya Palenque · Asante adinkra & Djenné adobe · Inca Cusco.
+
+## Roman world (Italian peninsula and western provinces, late Republic–High Empire, c. 100 BCE–200 CE)
+
+- **Textual layer (b):** Vitruvius, *De architectura* (c. 30–20 BCE) — the only surviving Greco-Roman architectural treatise (Loeb/Granger or Rowland translation). Books III–IV: documented proportional rules for temples; Book VII: pigments and wall-painting (Egyptian blue manufacture at Pozzuoli, 7.11). Treat Vitruvius as one Augustan-era author, not "the Roman method."
+- **Materials evidence (a):** *Opus caementicium* — Seymour et al., "Hot mixing…," *Science Advances* 9(1) (2023) eadd1602 (lime clasts as self-healing reservoirs; the authors explicitly contrast Vitruvius's slaked-lime account — ancient text vs. material evidence is the lesson). Marine concrete: Jackson et al., *American Mineralogist* 102(7) (2017): 1435–1450. A December 2025 *Nature Communications* study of an unfinished Pompeii site (79 CE) gave direct workshop confirmation of dry pre-mixed quicklime practice — cite as confirmation that evidence routes can overturn text-based assumptions; young, track for replication.
+- **Proportion as documented practice (a/c):** Mark Wilson Jones, *Principles of Roman Architecture* (Yale, 2000) — survey-based argument for whole-number modular and √2-type (ad quadratum-type) relationships in Roman foot modules; explicitly distinguished from golden-ratio claims. Pantheon (Hadrianic, c. 118–125 CE, Rome): coffer/oculus survey in Rabun Taylor, *Roman Builders* (Cambridge, 2003); Lise Hetland's "Hadrian's Pantheon" thesis (2007) is a live dispute — present as one.
+- **Ornament and color:** Pompeian wall-painting "styles" are Mau's 1882 typology — a modern classification (d); teach it as such. Pigment evidence (a): Roman Egyptian blue (synthetic CaCuSi₄O₁₀) via Getty Conservation Institute pigment studies and Giovanni Verri's VIL imaging; later craft-text anchors (b, later period): Cennino Cennini, *Il Libro dell'Arte* (c. 1400); Theophilus Presbyter, *De diversis artibus* (12th c.).
+- **Failure modes to reject:** "Romans invented concrete and we lost the recipe forever"; Pantheon golden-ratio assertions (Markowsky audit); Renaissance codification of the orders presented as unchanged Roman practice.
+
+## Gothic (Latin Christian Europe, c. 1140–1500, named sites)
+
+- **Anchors:** Saint-Denis chevet under Abbot Suger (1140–44, Île-de-France); Chartres rebuild (from 1194, diocese of Chartres; cobalt-rich glazing); Cologne (begun 1248, Rhineland lodge tradition); Regensburg lodge (Roriczer).
+- **Documented design practice — strongest tier (b):** the portfolio of Villard de Honnecourt (c. 1225–35, Paris, BnF MS fr. 19093; Picard lodge context — lodge teaching aids, not construction documents); Mathes Roriczer, *Büchlein von der Fialen Gerechtigkeit* (Regensburg, 1486) — earliest printed lodge manual, explicit ad quadratum rotation-of-squares procedure for pinnacle elevation (implemented as lab L4); surviving full-scale parchment plans, e.g., Strasbourg Plan B (13th c.). Synthesis: Lonnie R. Shelby, *Gothic Design Techniques* (Southern Illinois UP, 1977) and "The Geometrical Knowledge of Mediaeval Master Masons," *Speculum* 47 (1972): 395–421.
+- **The ad quadratum / ad triangulum debate is the honesty model:** James S. Ackerman, "'Ars Sine Scientia Nihil Est'…Milan," *Art Bulletin* 31 (1949): 84–111 — a documented 1390s dispute between Lombard masters and northern consultants over square- vs. triangle-based elevation rules. Proportional systems were argued, plural, and recorded — never a single secret canon.
+- **Modern structural analysis (label modern):** Robert Bork, *The Geometry of Creation* (Ashgate, 2011) reconstructs draft sequences from measured plans; Robert Mark's photoelastic modeling (*Experiments in Gothic Structure*, MIT Press, 1982).
+- **Color/material:** grisaille vs. full-color glazing economics; silver-stain (early 14th c.); Roy Newton & Sandra Davison, *Conservation of Glass* (1989). Panofsky's scholasticism analogy (1951) is a famous but contested reading (d).
+- **Failure modes:** "cathedrals encode the golden ratio/π" (no lodge document shows this; Bork shows documented quadrature/triangulation instead); pan-European uniformity (rayonnant vs. perpendicular vs. Sondergotik differ regionally).
+
+## Five anchored Indian cases (deliberately not "Indian architecture")
+
+1. **Chola Thanjavur:** Brihadisvara (Rajarajesvara) temple, Thanjavur, Tamil Nadu — consecrated 1010 CE, patron Rajaraja I Chola. The temple's own inscription corpus is a primary source (b) for patronage, endowments, personnel; axial granite vimana (a). Sources: Archaeological Survey of India (asi.nic.in); George Michell, *The Hindu Temple* (1977). Evidence here is epigraphic and material (distinct from the arch skill's Śulba/Vastu route).
+2. **Hoysala Karnataka:** Chennakesava temple, Belur (commissioned 1117 CE by Vishnuvardhana) and Hoysaleswara temple, Halebidu (c. 1120–1160; master mason Ketamalla named in inscription). Stellate platform geometry, lathe-finished chloritic-schist pillars, horizontal frieze banding (a) — a strong frieze-group teaching case (most registers classify as translation-based pm-family patterns; classify with criteria, don't gush). Source: Adam Hardy, *Indian Temple Architecture: Form and Transformation* (1995) — aedicule-accretion model of Karnata-Dravida composition; ASI records.
+3. **Early-medieval Rajasthan:** Chand Baori stepwell, Abhaneri, Dausa district (c. 8th–9th c. CE, Nikumbha/Chahamana-period context; **dating debated — say so**). ~3,500 steps in double-flight zigzag geometry; ideal transformation-geometry case requiring no mystical claims (lab L5). Sources: Morna Livingston, *Steps to Water* (Princeton Architectural Press, 2002); ASI.
+4. **Chandela Khajuraho, Madhya Pradesh:** Western Group, Kandariya Mahadeva temple (c. 1025–1050, patron Vidyadhara). Nagara superstructure geometry in sandstone; the erotic panels are a minority of the sculptural program — reject the popular framing that reduces the site to them. Source: Devangana Desai, *The Religious Imagery of Khajuraho* (1996); ASI.
+5. **Mughal Agra/Delhi (1526–1707, Timurid-descended court):** Humayun's Tomb, Delhi (c. 1569–1572; architect Mirak Mirza Ghiyas, a Persian émigré; hasht bihisht ninefold plan); Tomb of I'timad-ud-Daulah, Agra (1622–1628; patron Nur Jahan; the pietra-dura transition case); Taj Mahal, Agra (1632–1653; Ustad Ahmad Lahori; charbagh; documented pietra-dura stone types). Source: Ebba Koch, *Mughal Architecture* (1991) and *The Complete Taj Mahal* (2006). Anti-claim: no primary evidence supports "Taj golden ratio" assertions; documented practice is grid-and-module planning per Koch's plan analyses.
+- **Textual layer with dating honesty:** Mānasāra and Mayamata śilpaśāstras (dating contested; treat as compiled practice texts, not a single timeless "vastu science"); Stella Kramrisch, *The Hindu Temple* (1946) — classic but interpretive (d); Michael W. Meister's morphological essays for philological method.
+
+## Dynastic Egypt (c. 2686–332 BCE; ornament, color, canon)
+
+- **The proportion canon is the cleanest documented-practice case in world art (b/a):** Gay Robins, *Proportion and Style in Ancient Egyptian Art* (University of Texas Press, 1994) — square grid: 18 squares hairline-to-sole for standing figures (Old/Middle Kingdom), 21 squares in the Third Intermediate/Late periods; the Amarna period (Akhenaten, c. 1353–1336 BCE) shows documented grid-based change with elongated forms. Grids survive on unfinished reliefs — primary evidence, not inference (implemented as lab L3).
+- **Materials/color (a):** Egyptian blue (synthetic calcium copper tetrasilicate; first documented synthetic pigment, from the 4th Dynasty); faience. Chemistry: Heinz Berke, *Chemical Society Reviews* 36 (2007): 15–30. Identification data: Gettens & Stout, *Painting Materials: A Short Encyclopaedia* (1942; Dover).
+- **Anchors:** Giza (4th Dynasty, c. 2580–2500 BCE — Digital Giza, giza.fas.harvard.edu; reuse the arch skill's hub, don't duplicate); Deir el-Bahari, Hatshepsut (18th Dynasty, c. 1470 BCE); Amarna (Sculptor Thutmose's studio finds, 1912 Borchardt excavation — provenance history matters); Tutankhamun (KV62, 1922 Carter) as material-culture density case.
+- **Math-in-practice:** Corinna Rossi, *Architecture and Mathematics in Ancient Egypt* (Cambridge, 2004) — documented whole-number slopes (seked) and modular planning, against esoteric readings.
+- **Calligraphy:** hieroglyphic signs as a calligraphic system with registers and orientation conventions; James P. Allen, *Middle Egyptian* (3rd ed., Cambridge, 2014). "Hieroglyphs as magical signs" readings are later (Horapollo) or modern-mystical layers (d/e).
+
+## Nasrid Alhambra, Granada (14th c.; patrons Yusuf I, Muhammad V) — the symmetry-group honesty case
+
+- Census history (the dispute is the content; see symmetry_and_proportion.md for criteria protocol): Edith Müller (1944 Zürich dissertation) classified 11 of 17; Grünbaum, Grünbaum & Shephard, *Computers & Mathematics with Applications* 12B (1986): 641–653 — at most 13; Pérez-Gómez (1987) claimed the missing four; Grünbaum, *Notices of the AMS* 53(6) (2006): 670–673 challenged loose classification and color-symmetry handling; B. Lynn Bodner, *Bridges 2013*: 225–232 reports 14 under explicit criteria.
+- **Rule:** "the Alhambra contains all 17 wallpaper groups" is contested; any classification output states criteria and cites which census it follows.
+
+## Timurid/Turkmen pattern scrolls and girih geometry
+
+- **Primary evidence (b):** Topkapı Scroll, Topkapı Palace Museum Library MS H.1956 (15th–16th c. compilations) — Gülru Necipoğlu, *The Topkapı Scroll* (Getty, 1995): designers transmitted girih (strapwork) and muqarnas as annotated 2D projections.
+- **Quasiperiodicity dispute (mandatory counterweights):** Lu & Steinhardt, *Science* 315 (2007): 1106–1110 — girih-tile reconstruction of Darb-i Imam (Isfahan, 1453) as near-quasicrystalline; Makovicky's comment and the authors' reply, *Science* 318 (2007): 1383; Peter R. Cromwell, "Cognitive Bias and Claims of Quasiperiodicity in Traditional Islamic Patterns," *Mathematical Intelligencer* 37(4) (2015): 30–44. The claim is disputed; present it with the dispute.
+- **Modern construction (credited):** Kaplan & Salesin, "Islamic Star Patterns in Absolute Geometry," *ACM ToG* 23(2) (2004): 97–119 — polygons-in-contact (PIC), the modern algorithm of lab L2; inspired by Hankin (1925) and the scroll record, credited as such.
+
+## Abbasid/Ifriqiyan calligraphy as documented proportion
+
+- Ibn Muqla (d. 940 CE, Baghdad, Abbasid vizier-calligrapher) is credited in the tradition with al-khatt al-mansub ("proportioned script"): letterforms measured in rhombic nib-dots, alif and circle as module — documented via later manuals (b/c); Yasser Tabbaa, "The Transformation of Arabic Writing: Part I," *Ars Orientalis* 21 (1991): 119–148.
+- Object anchor: the "Blue Quran" (9th–10th c., gold Kufic on indigo-dyed vellum, Aghlabid/Fatimid Ifriqiyan milieu, likely Qayrawan; dispersed folios — provenance caution); Jonathan Bloom, "The Blue Koran…" (1989).
+- **Rule:** name script style (Kufic variants, naskh, thuluth…), region, date, and support; numerological "sacred geometry of letters" content is out.
+
+## Classic Maya, Palenque (Chiapas, Mexico; 7th c. CE, reign of K'inich Janaab' Pakal, 615–683)
+
+- Temple of the Inscriptions (completed c. 683), Pakal's sarcophagus lid; glyphic calligraphy + modeled stucco + painted relief (a/b). Sources: Martin & Grube, *Chronicle of the Maya Kings and Queens* (2nd ed., 2008); Schele & Miller, *The Blood of Kings* (1986); Mesoweb and FAMSI primary-image archives. The Dresden Codex is the surviving screenfold anchor for calendrics — no "Maya predicted 2012" content, ever.
+
+## Asante adinkra and Djenné adobe (Ghana and Mali, community-named)
+
+- **Adinkra:** Asante peoples, Ghana; Ntonso village (Kumasi region) documented production community; carved calabash stamps, bark dye; named motifs with documented meanings (Gye Nyame, Sankofa). Source: R. S. Rattray, *Religion and Art in Ashanti* (Oxford, 1927 — colonial-era; pair with modern Akan-symbolism scholarship and British Museum/Met records). Production is living and commercial; no "ancient secret symbols" framing.
+- **Great Mosque of Djenné, Mali:** Sudano-Sahelian adobe; **the current building dates to 1907** (colonial-era reconstruction on the earlier site — "13th-century mosque" is wrong for the standing structure); the annual *crépissage* community replastering is the living-practice anchor (c). Source: Trevor Marchand, *The Masons of Djenné* (2009); UNESCO World Heritage listing (1988, Old Towns of Djenné ensemble).
+
+## Inca Cusco (15th c., reign of Pachacuti and successors)
+
+- Ashlar masonry of Sacsayhuamán and Cusco walls: polygonal coursed stonework documented by replication experiment (c). Source: Jean-Pierre Protzen, *Inca Architecture and Construction at Ollantaytambo* (Oxford, 1993) and joint-fitting replication studies; Susan Niles, *The Shape of Inca History* (1999) on Cusco as royal design. Reject "impossible precision = lost technology" framing; Protzen shows a documented feasible method.

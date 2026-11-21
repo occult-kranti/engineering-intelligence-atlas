@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#211d17" />
+    <meta
+      name="description"
+      content="Project mode — run a small text-only research squad on-device using your own OpenAI or Anthropic API key, stored in the Android Keystore."
+    />
+    <title>Research Director — Project Mode</title>
+    <link rel="stylesheet" href="./launcher.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "@capacitor/core": "./vendor/capacitor-core.js",
+          "@capacitor/preferences": "./vendor/capacitor-preferences.js"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <main class="shell" id="top">
+      <header class="masthead">
+        <p class="kicker">Research Director · <a href="./index.html">Launcher</a></p>
+        <h1 class="title">Project Mode</h1>
+        <p class="lede">
+          Run a small text-only squad (Director → Research → Build → Review) against a goal,
+          using your own API key. Keys are encrypted with the Android Keystore and used only
+          by native HTTPS calls to api.openai.com / api.anthropic.com.
+        </p>
+      </header>
+
+      <section class="card" aria-labelledby="keys-heading">
+        <h2 id="keys-heading">API keys</h2>
+        <p class="help">
+          Keys are written once to native code, encrypted with AES/GCM via the Android
+          Keystore, and only the ciphertext is kept in app-private storage. They never enter
+          WebView storage, logs, or events. Status is a boolean only.
+        </p>
+        <p class="status" id="native-status" role="status" aria-live="polite"></p>
+
+        <div class="keyrow" data-provider="openai">
+          <h3>OpenAI <span class="badge" data-role="key-badge">checking…</span></h3>
+          <div class="row wrap">
+            <input type="password" data-role="key-input" autocomplete="off" spellcheck="false"
+              placeholder="Paste OpenAI API key" aria-label="OpenAI API key" />
+            <button class="btn btn-primary" data-role="key-save" type="button">Save key</button>
+            <button class="btn" data-role="key-test" type="button">Test connection</button>
+            <button class="btn btn-ghost" data-role="key-delete" type="button">Delete key</button>
+          </div>
+          <p class="status" data-role="key-status" role="status" aria-live="polite"></p>
+        </div>
+
+        <div class="keyrow" data-provider="anthropic">
+          <h3>Anthropic <span class="badge" data-role="key-badge">checking…</span></h3>
+          <div class="row wrap">
+            <input type="password" data-role="key-input" autocomplete="off" spellcheck="false"
+              placeholder="Paste Anthropic API key" aria-label="Anthropic API key" />
+            <button class="btn btn-primary" data-role="key-save" type="button">Save key</button>
+            <button class="btn" data-role="key-test" type="button">Test connection</button>
+            <button class="btn btn-ghost" data-role="key-delete" type="button">Delete key</button>
+          </div>
+          <p class="status" data-role="key-status" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="settings-heading">
+        <h2 id="settings-heading">Model &amp; budgets</h2>
+        <form id="settings-form" novalidate>
+          <div class="row wrap">
+            <label class="field-label">Provider
+              <select id="set-provider">
+                <option value="">—</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+              </select>
+            </label>
+            <label class="field-label grow">Model ID
+              <input id="set-model" type="text" list="model-list" spellcheck="false"
+                placeholder="Load models live, or type an exact model ID" />
+              <datalist id="model-list"></datalist>
+            </label>
+            <button class="btn" id="load-models" type="button">Load models</button>
+          </div>
+          <p class="help">
+            Model IDs come from live discovery on your provider account or from an ID you type
+            yourself — the app ships no built-in model list.
+          </p>
+          <div class="row wrap">
+            <label class="field-label">Price: USD / 1M input tokens
+              <input id="set-price-in" type="number" min="0" step="0.01" inputmode="decimal" />
+            </label>
+            <label class="field-label">Price: USD / 1M output tokens
+              <input id="set-price-out" type="number" min="0" step="0.01" inputmode="decimal" />
+            </label>
+          </div>
+          <div class="row wrap">
+            <label class="field-label">Max tokens / run
+              <input id="set-max-tokens" type="number" min="0" step="1000" inputmode="numeric" />
+            </label>
+            <label class="field-label">Max minutes / run
+              <input id="set-max-minutes" type="number" min="0" step="1" inputmode="numeric" />
+            </label>
+            <label class="field-label">Max USD / run
+              <input id="set-max-usd" type="number" min="0" step="0.05" inputmode="decimal" />
+            </label>
+            <label class="field-label">Max output tokens / call
+              <input id="set-max-output" type="number" min="1" max="4096" step="64" inputmode="numeric" />
+            </label>
+          </div>
+          <p class="help">
+            Rates are yours to set from your provider's pricing page; 0 disables cost budgeting.
+            Run caps are checked before every node; output tokens per call are hard-capped at
+            4096 by native code. Budgets stop a run — they do not retroactively undo provider
+            charges for calls already made.
+          </p>
+          <button class="btn btn-primary" type="submit">Save settings</button>
+          <p class="status" id="settings-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="new-heading">
+        <h2 id="new-heading">New project</h2>
+        <form id="project-form" novalidate>
+          <label class="field-label" for="goal">Goal</label>
+          <textarea id="goal" rows="3" maxlength="4000"
+            placeholder="e.g. Assess the maturity of RISC-V toolchains for production firmware"></textarea>
+          <fieldset class="squad">
+            <legend>Squad (runs in order; editable)</legend>
+            <div id="squad-editor"></div>
+          </fieldset>
+          <div class="row wrap">
+            <label class="field-label">Max tokens
+              <input id="b-max-tokens" type="number" min="0" step="1000" inputmode="numeric" />
+            </label>
+            <label class="field-label">Max minutes
+              <input id="b-max-minutes" type="number" min="0" step="1" inputmode="numeric" />
+            </label>
+            <label class="field-label">Max USD
+              <input id="b-max-usd" type="number" min="0" step="0.05" inputmode="decimal" />
+            </label>
+          </div>
+          <p class="help">Per-run caps (0 = follow your settings defaults; blank = settings default).</p>
+          <button class="btn btn-primary" type="submit">Create project</button>
+          <p class="status" id="project-status" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="projects-heading">
+        <h2 id="projects-heading">Projects</h2>
+        <div id="project-list"><p class="help">No projects yet.</p></div>
+      </section>
+
+      <section class="card" id="run-card" hidden aria-labelledby="run-heading">
+        <h2 id="run-heading">Run</h2>
+        <p id="run-goal" class="lede"></p>
+        <div class="row wrap">
+          <button class="btn btn-primary" id="run-start" type="button">Run</button>
+          <button class="btn" id="run-pause" type="button">Pause</button>
+          <button class="btn" id="run-resume" type="button">Resume</button>
+          <button class="btn btn-ghost" id="run-cancel" type="button">Cancel</button>
+        </div>
+        <p class="status" id="run-status" role="status" aria-live="polite"></p>
+        <p class="help" id="run-usage"></p>
+        <ol id="node-list" class="nodes"></ol>
+        <details>
+          <summary>Event log</summary>
+          <pre id="event-log" class="log"></pre>
+        </details>
+        <div id="artifact-list"></div>
+      </section>
+
+      <section class="card card-quiet" aria-labelledby="limits-heading">
+        <h2 id="limits-heading">Security &amp; limitations</h2>
+        <ul class="notes">
+          <li>Keys are AES-256/GCM encrypted with a non-exportable Android Keystore key;
+            only ciphertext is stored, in app-private preferences.</li>
+          <li>Known limits: the key is not bound to your lock screen (no biometric prompt on
+            use); on a rooted device or compromised OS, an attacker may be able to use or
+            extract decrypted secrets. A device lock and up-to-date OS are required for
+            meaningful protection.</li>
+          <li>Project mode is text-only: no code execution, no repository writes, no tools.
+            Provider calls are billable; there are no automatic retries.</li>
+          <li>Deleting a key is explicit and immediate. Uninstalling the app destroys the
+            Keystore key and all ciphertexts.</li>
+        </ul>
+      </section>
+
+      <footer class="footer">
+        <p>Research Director Android shell · project mode · <a href="./index.html">back to launcher</a></p>
+      </footer>
+    </main>
+    <script type="module" src="./js/project-ui.js"></script>
+  </body>
+</html>

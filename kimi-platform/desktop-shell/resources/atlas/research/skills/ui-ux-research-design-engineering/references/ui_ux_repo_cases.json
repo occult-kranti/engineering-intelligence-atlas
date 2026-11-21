@@ -1,0 +1,422 @@
+{
+  "schema_version": "1.0",
+  "generated": "2026-11-20",
+  "purpose": "Read-only repository case studies for the UI/UX specialist capability (three charters + proposed skill ui_ux-research-design-engineering). Records what each repo demonstrates, license/lifecycle posture, and implementation lessons. No code was executed; all inspection via GitHub API/primary docs on 2026-11-20.",
+  "verification": "License SPDX and lifecycle fields verified via GitHub API (repos/{owner}/{repo}, /releases/latest, /contents) on 2026-11-20. NOASSERTION means a custom license GitHub cannot classify (for W3C repos: W3C Document/Software licenses) - read the LICENSE file before excerpting.",
+  "cases": [
+    {
+      "id": "w3c-wcag",
+      "name": "w3c/wcag",
+      "url": "https://github.com/w3c/wcag",
+      "category": "standards-source",
+      "license": {"spdx": "NOASSERTION (W3C Document License)", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2013-05-09", "pushed_at": "2026-11-20", "status": "active", "open_issues": 486},
+      "demonstrates": "WCAG 2.x normative text (guidelines + success criteria) maintained as a versioned repo; Understanding/Techniques live in sibling repos. The standard itself is inspectable infrastructure - every conformance claim can be pinned to exact criterion text and version.",
+      "implementation_lessons": [
+        "Quote criteria by number + version + URL; never paraphrase normative text in audit reports.",
+        "WCAG 2.2 retired 4.1.1 Parsing - audit templates must be version-aware.",
+        "Techniques are informative; conformance is against success criteria only."
+      ]
+    },
+    {
+      "id": "w3c-aria",
+      "name": "w3c/aria",
+      "url": "https://github.com/w3c/aria",
+      "category": "standards-source",
+      "license": {"spdx": "NOASSERTION (W3C Document License)", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2014-03-26", "pushed_at": "2026-11-20", "status": "active", "open_issues": 526},
+      "demonstrates": "ARIA 1.3 Working Draft development in the open (new roles suggestion/comment/mark, aria-description, braille attributes, aria-notify). Companion specs (Core-AAM, AccName, HTML-AAM) show the pipeline from markup to platform accessibility APIs.",
+      "implementation_lessons": [
+        "ARIA 1.2 (Rec 2023-06) is the production baseline; 1.3 features must not be cited as requirements and need real-AT testing before use.",
+        "Accessible Name Computation explains divergent screen-reader output: aria-label overrides content; empty alt ('') differs from missing alt.",
+        "Spec issues are public - support matrices (a11ysupport.io) beat spec-reading for deployment decisions."
+      ]
+    },
+    {
+      "id": "w3c-aria-practices",
+      "name": "w3c/wai-aria-practices (APG)",
+      "url": "https://github.com/w3c/wai-aria-practices",
+      "category": "standards-source",
+      "license": {"spdx": "W3C Software License (GitHub: none detected)", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2020-12-18", "pushed_at": "2026-11-19", "status": "active", "open_issues": 65},
+      "demonstrates": "The pattern unit of accessible UI: each pattern = role structure + states/properties + full keyboard interaction script + working example + regression tests. ~30 patterns (dialog, combobox, tabs, menu, grid, treeview, carousel, disclosure...).",
+      "implementation_lessons": [
+        "ARIA supplies semantics, zero behavior: the APG keyboard script (arrow keys, Home/End, Enter/Space, Escape, roving tabindex) is the author's obligation and the top hand-rolled-widget failure.",
+        "W3C's own caveat: example code demonstrates the spec; it is not production-hardened. Re-test with NVDA/JAWS/VoiceOver before shipping copies.",
+        "Where a vetted library (Radix/React Aria/Ariakit) implements the pattern, prefer it over hand-rolling."
+      ]
+    },
+    {
+      "id": "w3c-wai-website",
+      "name": "w3c/wai-website",
+      "url": "https://github.com/w3c/wai-website",
+      "category": "standards-source",
+      "license": {"spdx": "NOASSERTION (W3C licenses, mixed)", "verified": "2026-11-20"},
+      "lifecycle": {"pushed_at": "2026-11-20", "status": "active"},
+      "demonstrates": "Docs-as-code production of WAI guidance: ARRM (role/responsibility mapping), tutorials, older-users resources, curricula. Shows accessibility guidance maintained with the same PR/review discipline as code.",
+      "implementation_lessons": [
+        "ARRM is the governance bridge: decompose WCAG into designer/developer/content/QA checkpoints instead of assigning 'accessibility' to one person.",
+        "Treat accessibility documentation as versioned artifacts with review, not wiki folklore."
+      ]
+    },
+    {
+      "id": "design-tokens-community-group",
+      "name": "design-tokens/community-group (DTCG)",
+      "url": "https://github.com/design-tokens/community-group",
+      "category": "standards-source",
+      "license": {"spdx": "NOASSERTION (W3C Community CLA for spec text)", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2019-06-21", "pushed_at": "2026-11-01", "status": "active", "stable_release": "2025.10 (2025-10-28: Format, Color, Resolver modules)"},
+      "demonstrates": "Vendor-neutral design-token interchange: $value/$type/$description, groups, {alias} references, resolver-based theming. First stable version after 5 years of drafts; reference implementations Style Dictionary, Tokens Studio, Terrazzo; adopted by Figma, Penpot, Sketch, Framer.",
+      "implementation_lessons": [
+        "It is a W3C Community Group Final Report, NOT a W3C standard - say 'DTCG 2025.10', never 'the W3C token standard'.",
+        "Version tokens by module date (2025.10) so tool support claims are checkable; tool support is still partial (e.g., Style Dictionary v5 support in progress).",
+        "Three-tier architecture (primitive -> semantic -> component) makes theming/dark-mode/high-contrast an alias swap, not a rebuild."
+      ]
+    },
+    {
+      "id": "radix-primitives",
+      "name": "radix-ui/primitives",
+      "url": "https://github.com/radix-ui/primitives",
+      "category": "headless-components",
+      "license": {"spdx": "MIT (copyright WorkOS 2022)", "verified": "2026-11-20"},
+      "lifecycle": {"pushed_at": "2026-11-20 (monorepo active)", "status": "active"},
+      "demonstrates": "59 single-responsibility packages: interaction behaviors (focus-scope, roving-focus, dismissable-layer, focus-guards, portal, presence, announce) packaged separately from the visible components (dialog, select, menu). Accessibility behavior as composable, unstyled primitives - consumers bring their own tokens/CSS.",
+      "implementation_lessons": [
+        "The existence of dedicated focus/roving/dismissable packages shows where hand-rolled widgets fail: keyboard navigation, focus trapping, outside-click dismissal, portal layering.",
+        "Unstyled primitives are the dominant fix for the WebAIM finding that pages with ARIA average more errors than pages without - adopt encoded behavior, restyle freely.",
+        "Per-primitive versioning lets consumers pin risk; monorepo discipline keeps 59 packages coherent."
+      ]
+    },
+    {
+      "id": "react-spectrum",
+      "name": "adobe/react-spectrum (React Aria)",
+      "url": "https://github.com/adobe/react-spectrum",
+      "category": "headless-components",
+      "license": {"spdx": "Apache-2.0 (copyright Adobe 2019; patent grant)", "verified": "2026-11-20"},
+      "lifecycle": {"latest_release": "react-aria-components@1.22.0 (2026-10-09)", "status": "very active"},
+      "demonstrates": "Layered architecture across 12 package groups: @react-aria (behavior hooks incl. keyboard/pointer/screen-reader quirks), @react-stately (state machines), @react-spectrum (styled Adobe skin), @internationalized (dates, numbers, collation, RTL), react-aria-components (unstyled composition layer).",
+      "implementation_lessons": [
+        "Separate behavior, state, presentation, and internationalization - each is independently testable and replaceable.",
+        "i18n is an infrastructure layer (@internationalized), not a per-component afterthought: RTL, calendars, number formats must be designed into primitives.",
+        "Behavior hooks absorb browser/AT quirks (Safari VO, touch vs. pointer) that product teams rediscover expensively."
+      ]
+    },
+    {
+      "id": "ariakit",
+      "name": "ariakit/ariakit",
+      "url": "https://github.com/ariakit/ariakit",
+      "category": "headless-components",
+      "license": {"spdx": "MIT (per packages/ariakit-react/package.json license field)", "verified": "2026-11-20"},
+      "lifecycle": {"latest_release": "@ariakit/react-components@0.7.2 (2026-11-08)", "status": "active"},
+      "demonstrates": "Store-based headless components shipped for both React and Solid from shared store packages (15 packages: ariakit-store + react/solid bindings + tailwind integration). Framework-portable state stores with controlled/uncontrolled duality.",
+      "implementation_lessons": [
+        "Component state can be framework-agnostic (plain stores) with thin framework bindings - reuse logic across React/Solid instead of re-implementing per framework.",
+        "0.x semver signals API evolution: pin versions and read changelogs before upgrading in a design system."
+      ]
+    },
+    {
+      "id": "floating-ui",
+      "name": "floating-ui/floating-ui",
+      "url": "https://github.com/floating-ui/floating-ui",
+      "category": "positioning-infrastructure",
+      "license": {"spdx": "MIT (Floating UI contributors 2021)", "verified": "2026-11-20"},
+      "lifecycle": {"status": "active (monorepo, per-package releases e.g. @floating-ui/vue@2.0.1 2026-07-11)"},
+      "demonstrates": "Positioning solved once, correctly: platform-agnostic `core` compute -> `dom` binding -> framework packages (react, vue, react-native, utils, devtools). Middleware pipeline (offset, flip, shift, arrow, autoUpdate, size, hide) composes collision handling.",
+      "implementation_lessons": [
+        "Overlay geometry (tooltips, popovers, menus) is a solved subproblem - hand-rolled positioning fails on viewports, scroll containers, and RTL; delegate to the core+middleware model.",
+        "Core logic with no DOM dependency is testable in isolation and portable to canvas/native."
+      ]
+    },
+    {
+      "id": "storybook",
+      "name": "storybookjs/storybook",
+      "url": "https://github.com/storybookjs/storybook",
+      "category": "design-system-tooling",
+      "license": {"spdx": "MIT", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2016-03-18", "latest_release": "v10.6.8 (2026-11-20)", "status": "very active"},
+      "demonstrates": "The story as the unit of design-system work: documentation, visual review, interaction tests, and the a11y addon (axe-core per story) all target the same artifact. Framework-agnostic workshop; controls/args make component states enumerable.",
+      "implementation_lessons": [
+        "Stories force explicit states (default/hover/focus/disabled/loading/error/empty/overflow/RTL) - the states teams forget in specs become the story matrix.",
+        "Accessibility testing belongs in the component dev loop (axe per story), not as a pre-release audit.",
+        "A published Storybook is living documentation and the design/engineering contract surface."
+      ]
+    },
+    {
+      "id": "d3",
+      "name": "d3/d3",
+      "url": "https://github.com/d3/d3",
+      "category": "data-visualization",
+      "license": {"spdx": "ISC", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2010-09-27", "latest_release": "v7.9.2 (2026-11-03)", "status": "active"},
+      "demonstrates": "Visualization as data joins + scales + selections + generators - a grammar of graphics at DOM level rather than chart templates. Maximal expressiveness; the author owns every perceptual and accessibility decision.",
+      "implementation_lessons": [
+        "Scales encode the Cleveland-McGill decision: choosing a linear position scale vs. an arc is choosing the accuracy tier of the reading.",
+        "D3 gives no accessibility by default: SVG title/desc, role=img, tabular fallback, and keyboard interaction are author responsibilities - pair with an explicit a11y checklist.",
+        "Low-level power means low-level failure modes: transition junk, non-semantic SVG, and unlabeled axes are common in the wild."
+      ]
+    },
+    {
+      "id": "echarts",
+      "name": "apache/echarts",
+      "url": "https://github.com/apache/echarts",
+      "category": "data-visualization",
+      "license": {"spdx": "Apache-2.0 (Apache incubation graduate)", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2013-04-03", "latest_release": "6.1.0 (2026-05-19)", "status": "active"},
+      "demonstrates": "Declarative option-object charting with a built-in accessibility surface (`aria` component: generated chart descriptions, decal patterns for color-independent encoding) - contrast with D3's build-everything model.",
+      "implementation_lessons": [
+        "Batteries-included viz can ship a11y features (decals, auto-descriptions) - evaluate whether generated descriptions actually state findings or just restate structure.",
+        "Declarative configs are diffable/testable design artifacts; theme objects act like token sets for charts."
+      ]
+    },
+    {
+      "id": "playwright",
+      "name": "microsoft/playwright",
+      "url": "https://github.com/microsoft/playwright",
+      "category": "evaluation-tooling",
+      "license": {"spdx": "Apache-2.0", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2019-11-15", "latest_release": "v1.65.1 (2026-11-13)", "status": "very active"},
+      "demonstrates": "Cross-browser automation whose recommended locators (getByRole, getByLabel, getByText) mirror the accessibility tree - test ergonomics that push teams toward correct ARIA semantics. Traces/videos/screenshots as evidence artifacts.",
+      "implementation_lessons": [
+        "Role-based locators make tests assert semantics, not CSS hooks - a test suite becomes an executable accessibility contract.",
+        "Pair with @axe-core/playwright for per-page rule checks inside real flows (login, checkout), which static scans cannot reach.",
+        "Automated checks still cover only the mechanical ~30-40% of WCAG issues; keep manual keyboard/AT passes in the release gate."
+      ]
+    },
+    {
+      "id": "axe-core",
+      "name": "dequelabs/axe-core",
+      "url": "https://github.com/dequelabs/axe-core",
+      "category": "evaluation-tooling",
+      "license": {"spdx": "MPL-2.0 (file-level copyleft)", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2015-06-10", "latest_release": "v4.14.1 (2026-11-16)", "status": "very active", "default_branch": "develop"},
+      "demonstrates": "WCAG compiled into executable checks: 155 rule files under lib/rules, check implementations under lib/checks, and standards data (aria-roles, aria-attrs, html-elms, dpub/graphics roles, css-colors) under lib/standards. Rules tagged to WCAG criteria/levels; engineered for zero false positives on reported violations.",
+      "implementation_lessons": [
+        "The rule->criterion tag mapping is the audit trail: every automated finding can cite the SC it tests.",
+        "LICENSE is MPL-2.0 WITH the Exhibit B 'Incompatible With Secondary Licenses' notice (verified 2026-11-20): embedding is fine and modification triggers file-level source disclosure, and Exhibit B means axe-core files cannot be combined into a GPL-licensed work - wrap, don't fork, for product use.",
+        "'Needs review' vs 'violation' distinction in results encodes the automated/manual boundary honestly."
+      ]
+    },
+    {
+      "id": "pa11y",
+      "name": "pa11y/pa11y",
+      "url": "https://github.com/pa11y/pa11y",
+      "category": "evaluation-tooling",
+      "license": {"spdx": "LGPL-3.0-only (GitHub: LGPL-3.0)", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2013-03-05", "pushed_at": "2026-11-16", "status": "active"},
+      "demonstrates": "CLI/CI-first accessibility testing (HTML_CodeSniffer engine) with pa11y-ci, pa11y-dashboard, and pa11y-webservice companions. Demonstrates the batch/CI reporting model as a complement to axe-core's embedded engine model; LGPL-3.0-only licensing (link/dynamically load rather than embed into proprietary source without compliance review).",
+      "implementation_lessons": [
+        "Runner choice is a license + workflow decision, not just accuracy: axe (MPL-2.0+Exhibit B, embedded), pa11y (LGPL-3.0-only, CLI/service) have different obligations.",
+        "Two engines produce non-identical counts - report engine + version + rule set with every metric, and triage disagreements manually.",
+        "CLI/CI tools test URLs, not flows - authenticated/multi-step journeys still need Playwright-style drivers."
+      ]
+    },
+    {
+      "id": "nvda-screen-reader",
+      "name": "nvaccess/nvda",
+      "url": "https://github.com/nvaccess/nvda",
+      "category": "assistive-technology",
+      "license": {"spdx": "GPL-2.0-or-later WITH two exceptions (Non-GPL Components in Plugins and Drivers; Microsoft Distributable Code) - copying.txt", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2015-11-10", "pushed_at": "2026-11-20", "status": "very active", "lang": "Python"},
+      "demonstrates": "The free, open-source Windows screen reader used in manual accessibility testing. Copying.txt is the authoritative license (GPL-2.0+ with plugin/driver and Microsoft-code exceptions) - an example of reading the project's own license file rather than trusting the GitHub API (which returns NOASSERTION).",
+      "implementation_lessons": [
+        "Manual AT testing is part of the conformance method, not optional: pair NVDA (Windows) + VoiceOver (macOS/iOS) + keyboard-only passes; automated engines cannot judge announcement quality.",
+        "GPL-2.0-or-later with exceptions: fine to use as a test tool; do not embed or link NVDA code into proprietary products without legal review.",
+        "Speech-viewer and log output make AT sessions recordable evidence artifacts for audit trails."
+      ]
+    },
+    {
+      "id": "realworld",
+      "name": "realworld-apps/realworld (canonical; formerly gothinkster/realworld)",
+      "url": "https://github.com/realworld-apps/realworld",
+      "category": "educational-community",
+      "license": {"spdx": "MIT (Thinkster 2021 / c4ffein 2026; GitHub API returns NOASSERTION - LICENSE verified directly)", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2016-02-26 (as gothinkster/realworld; org moved to realworld-apps)", "pushed_at": "2026-11-20", "status": "active", "lang": "TypeScript"},
+      "demonstrates": "'The mother of all demo apps': one full-stack spec (Conduit) implemented across many frontend/backend stacks, with a shared spec (specs/) that includes API contract and E2E test expectations. Demonstrates a shared acceptance suite: the same observable behavior tested against independent implementations.",
+      "implementation_lessons": [
+        "Canonical URL is realworld-apps/realworld - the gothinkster/realworld link is the legacy alias; pin canonical identity + commit SHA like any external dependency.",
+        "Shared E2E specs decouple behavior claims from stack: usability/a11y E2E suites (axe runs, keyboard scripts, target-size probes) can ride on the same pattern.",
+        "A realistic CRUD app is a better usability-lab substrate than toy demos: real auth, forms, feed pagination, and error states."
+      ]
+    },
+    {
+      "id": "pixelmatch",
+      "name": "mapbox/pixelmatch",
+      "url": "https://github.com/mapbox/pixelmatch",
+      "category": "evaluation-tooling",
+      "license": {"spdx": "ISC", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2015-10-13", "pushed_at": "2026-10-06", "status": "active"},
+      "demonstrates": "The smallest correct visual-regression primitive: anti-aliasing-aware pixel diffing with a perceptual threshold, used inside larger VRT stacks. Demonstrates that 'looks broken' is measurable (diff pixel count + threshold) but never sufficient - diffs need human triage for meaning.",
+      "implementation_lessons": [
+        "Visual regression metrics: report diff-pixel count, threshold, and viewport matrix; a threshold is a design decision, not a default.",
+        "Pixel diffs detect change, not regressions - pair with intentional-change baselines and human review of flagged screenshots."
+      ]
+    },
+    {
+      "id": "backstopjs",
+      "name": "garris/BackstopJS",
+      "url": "https://github.com/garris/BackstopJS",
+      "category": "evaluation-tooling",
+      "license": {"spdx": "MIT", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2014-10-15", "pushed_at": "2026-10-10", "status": "active"},
+      "demonstrates": "Config-driven visual regression testing across viewport scenarios (headless Chromium): scenario matrices (selectors, viewports, interactions) with approve/report workflow. Demonstrates VRT as a reviewable design-system release gate.",
+      "implementation_lessons": [
+        "Scenario config = the design system's explicit state matrix (viewport x component state); drift in coverage is visible in the config.",
+        "Approval workflow encodes human sign-off on visual change - the tool proposes, the human approves baselines."
+      ]
+    },
+    {
+      "id": "7guis",
+      "name": "eugenkiss/7guis",
+      "url": "https://github.com/eugenkiss/7guis",
+      "category": "educational-community",
+      "license": {"spdx": "NONE (no license file - all rights reserved; cite/link only, do not copy code)", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2014-03-20", "pushed_at": "2023-09-23", "status": "reference/complete (benchmark, low maintenance by design)"},
+      "demonstrates": "7GUIs: seven benchmark GUI programming tasks (counter, temperature converter, flight booker, timer, CRUD, circle drawer, cells) that isolate interaction-state challenges (undo/redo, validation, bidirectional data flow, layout constraints) from framework noise. A task spec for comparing implementations and for prototyping-lab exercises.",
+      "implementation_lessons": [
+        "Interaction complexity is separable from visual design: the same seven tasks expose state-management and focus/keyboard weaknesses regardless of styling.",
+        "No license file means all-rights-reserved by default: reference and re-implement from the task descriptions; never vendor the code.",
+        "Low commit activity is healthy for a frozen benchmark - lifecycle must be judged against artifact type."
+      ]
+    },
+    {
+      "id": "penpot",
+      "name": "penpot/penpot",
+      "url": "https://github.com/penpot/penpot",
+      "category": "design-tooling",
+      "license": {"spdx": "MPL-2.0", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2015-12-29", "latest_release": "2.19.3 (2026-11-18)", "status": "very active", "stack": "Clojure/ClojureScript + Rust (render-wasm)"},
+      "demonstrates": "The open-source design & prototyping tool: SVG-native document model (designs are inspectable markup, not proprietary blobs), self-hostable, token support aligned with DTCG, plugin system, MCP surface, WebGL renderer (render-wasm) for performance.",
+      "implementation_lessons": [
+        "An open document model (SVG) makes design files diffable, scriptable, and agent-readable - the open alternative to proprietary handoff.",
+        "Self-hosting matters for regulated teams evaluating design tooling; MPL allows commercial self-host use with file-level copyleft.",
+        "Penpot + DTCG tokens + Style Dictionary + headless components = fully open design-to-code pipeline."
+      ]
+    },
+    {
+      "id": "style-dictionary",
+      "name": "style-dictionary/style-dictionary",
+      "url": "https://github.com/style-dictionary/style-dictionary",
+      "category": "design-system-tooling",
+      "license": {"spdx": "Apache-2.0", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2016-11-29", "pushed_at": "2026-11-03", "status": "active", "note": "repo moved from amzn/ org to style-dictionary/ org - update references; API redirect confirmed 2026-11-20"},
+      "demonstrates": "Token build pipeline: DTCG JSON in -> platform outputs (CSS custom properties, Swift, Kotlin, JS) via transform chains. Tokens as compiled artifacts with one source of truth.",
+      "implementation_lessons": [
+        "Treat token changes as versioned commits with CI build + visual regression on generated output, not manual handoff.",
+        "DTCG support is still completing in v5 - verify the specific token types a version supports before committing a taxonomy.",
+        "Org moves break deep links: pin dependency + documentation URLs and re-verify periodically."
+      ]
+    },
+    {
+      "id": "govuk-frontend",
+      "name": "alphagov/govuk-frontend",
+      "url": "https://github.com/alphagov/govuk-frontend",
+      "category": "public-design-system",
+      "license": {"spdx": "MIT", "verified": "2026-11-20"},
+      "lifecycle": {"created": "2016-09-14", "pushed_at": "2026-11-20", "status": "active"},
+      "demonstrates": "Public-sector design system: Nunjucks components behind research-backed service patterns (GOV.UK Service Manual: 'ask one thing per page', 'check answers', error-message writing standards). Accessibility engineered for the broadest public including low digital literacy.",
+      "implementation_lessons": [
+        "Patterns (how to ask for a thing, how to write an error) outlive components - ship pattern guidance, not just a component library.",
+        "Plain language is an accessibility feature: GDS treats content design as part of the component contract.",
+        "Services used by everyone must work with no assumptions about device, bandwidth, or expertise - the extreme-case test bed."
+      ]
+    },
+    {
+      "id": "a11yproject",
+      "name": "a11yproject/a11yproject.com",
+      "url": "https://github.com/a11yproject/a11yproject.com",
+      "category": "educational-community",
+      "license": {"spdx": "Apache-2.0", "verified": "2026-11-20"},
+      "lifecycle": {"pushed_at": "2026-11-09", "status": "active"},
+      "demonstrates": "Community-maintained, plain-language operationalization of WCAG (checklist + how-tos + myths). Demonstrates translating normative criteria into daily development tasks for non-specialists.",
+      "implementation_lessons": [
+        "A curated checklist is an on-ramp, not conformance - always map checklist items back to SC numbers.",
+        "Community resources need maintenance governance (review dates on posts) to avoid stale technique advice."
+      ]
+    },
+    {
+      "id": "mdn-content",
+      "name": "mdn/content",
+      "url": "https://github.com/mdn/content",
+      "category": "educational-community",
+      "license": {"spdx": "NOASSERTION (CC-BY-SA 2.5 for content, CC0 for code samples)", "verified": "2026-11-20"},
+      "lifecycle": {"pushed_at": "2026-11-20", "status": "very active"},
+      "demonstrates": "14,000+ pages of web platform docs including the definitive ARIA/HTML attribute and CSS references; docs-as-code with public review.",
+      "implementation_lessons": [
+        "MDN is the reference layer between specs (what's normative) and tutorials (what's expedient) - cite it for API behavior, W3C for requirements.",
+        "Content license (CC-BY-SA) differs from code-sample license (CC0) - attribution rules differ per reuse type."
+      ]
+    }
+  ],
+  "recreated_project_labs": [
+    {
+      "id": "lab-apg-dialog",
+      "title": "Recreate the APG modal dialog from scratch, then replace it with Radix/React Aria",
+      "source_repos": ["w3c/wai-aria-practices", "radix-ui/primitives", "adobe/react-spectrum"],
+      "task": "Hand-build the APG dialog pattern (focus trap, Escape, aria-modal, restore focus), test with keyboard + one screen reader, enumerate failures; then swap in a vetted primitive and diff the behavior list.",
+      "evaluates": "Understanding that ARIA adds no behavior; where focus management fails; why vetted primitives win."
+    },
+    {
+      "id": "lab-token-pipeline",
+      "title": "Recreate a three-tier DTCG 2025.10 token pipeline",
+      "source_repos": ["design-tokens/community-group", "style-dictionary/style-dictionary", "penpot/penpot"],
+      "task": "Author primitive->semantic->component tokens with aliases; build to CSS via Style Dictionary; implement dark + high-contrast themes as resolver/alias swaps only; verify all text pairs pass 4.5:1 with the contrast script.",
+      "evaluates": "Token tiering, theming without rebuilds, contrast-in-the-token-layer."
+    },
+    {
+      "id": "lab-govuk-form-pattern",
+      "title": "Recreate a GOV.UK-style form flow",
+      "source_repos": ["alphagov/govuk-frontend"],
+      "task": "Build one-thing-per-page flow with check-answers and error summary; write error messages to GDS standards; run axe + keyboard + 200% zoom + 320px reflow; then attempt the same flow as a single dense page and compare task times in a 5-user hallway test.",
+      "evaluates": "Pattern vs. component thinking; plain language; measured (not asserted) usability."
+    },
+    {
+      "id": "lab-cleveland-mcgill",
+      "title": "Recreate the Cleveland-McGill / Heer-Bostock judgment experiment",
+      "source_repos": ["d3/d3", "apache/echarts"],
+      "task": "Render the same dataset as bar (position/length), pie (angle), and bubble (area) charts; run 10 colleagues through 12 comparison questions; measure error rates per encoding; publish the mini-study with method + raw data.",
+      "evaluates": "Evidence-based encoding choice; running a tiny controlled study honestly (n, method, limits)."
+    },
+    {
+      "id": "lab-a11y-ci",
+      "title": "Recreate an accessibility CI gate",
+      "source_repos": ["dequelabs/axe-core", "microsoft/playwright", "storybookjs/storybook"],
+      "task": "Wire axe-core into Playwright (role-locator tests through a real flow) and into Storybook (a11y addon); record rule IDs -> WCAG SC mapping; document which manual checks (focus order, alt quality, AT pass) remain outside the gate.",
+      "evaluates": "Executable accessibility contracts; honest automated/manual split."
+    },
+    {
+      "id": "lab-reduced-motion",
+      "title": "Recreate a motion system with reduced-motion parity",
+      "source_repos": ["radix-ui/primitives", "floating-ui/floating-ui"],
+      "task": "Prototype transitions (drawer, toast, list reorder, route change) with 200-500ms transform/opacity motion; implement prefers-reduced-motion fallbacks that replace travel/scale with fades while keeping feedback semantics; verify 2.2.2 pause control on anything auto-moving >5s.",
+      "evaluates": "Reduce-not-remove; CSS vs. JS motion guard paths; vestibular-safe feedback."
+    },
+    {
+      "id": "lab-dual-engine-a11y-metrics",
+      "title": "Recreate a dual-engine accessibility scan with comparable metrics",
+      "source_repos": ["dequelabs/axe-core", "pa11y/pa11y", "realworld-apps/realworld"],
+      "task": "Run axe-core (via @axe-core/playwright) and pa11y against the same RealWorld (Conduit) routes. Metrics to record: engine+version, violations per rule ID mapped to WCAG 2.2 SC, 'needs review' counts, route coverage, and a manually triaged disagreement table (engine A flags / engine B silent and vice versa). Deliverable includes the explicit statement of what neither engine can judge (reading order, alt-text quality, focus logic) and a 10-minute NVDA keyboard pass log.",
+      "evaluates": "Engine/version reporting discipline; automated-vs-manual boundary honesty; WCAG 2.2 (not 3.0) criterion mapping."
+    },
+    {
+      "id": "lab-visual-regression-gate",
+      "title": "Recreate a visual-regression release gate with measurable thresholds",
+      "source_repos": ["mapbox/pixelmatch", "garris/BackstopJS", "storybookjs/storybook"],
+      "task": "Build a BackstopJS scenario matrix (3 viewports x component states incl. focus/error/loading) over a Storybook; justify the pixelmatch threshold; produce a run report with diff-pixel counts and before/after screenshots; run a human approval round and record which diffs were accepted as intentional vs. fixed as regressions.",
+      "evaluates": "Thresholds as decisions; human-in-the-loop baseline approval; state-matrix coverage."
+    },
+    {
+      "id": "lab-realworld-shared-e2e",
+      "title": "Recreate the RealWorld shared-spec pattern for UX behavior",
+      "source_repos": ["realworld-apps/realworld", "microsoft/playwright", "dequelabs/axe-core"],
+      "task": "Take the RealWorld spec's shared expectations and extend them with a UX-behavior layer: role-based locators for every interactive element, tab-order script for the auth flow, target-size probe (24px WCAG 2.5.8 floor vs. 44pt Apple / 48dp Android commitments), and per-route axe runs. Run the identical suite against two different stack implementations and compare behavior deltas, not code.",
+      "evaluates": "Stack-independent behavior verification; role-locator accessibility contracts; measured target-size compliance."
+    },
+    {
+      "id": "lab-7guis-benchmark",
+      "title": "Recreate two 7GUIs tasks and measure interaction quality",
+      "source_repos": ["eugenkiss/7guis", "radix-ui/primitives"],
+      "task": "Implement CRUD and Circle Drawer from the 7GUIs task descriptions (no code copying - repo has no license): full keyboard operation, undo/redo with focus restoration, validation with accessible error messages. Metrics: keystroke-level model (KLM) prediction vs. measured expert task time, error counts, and a 5-participant hallway test with task success + SEQ per task.",
+      "evaluates": "Interaction-state correctness (undo/focus/validation); KLM-vs-measured calibration; honest small-n reporting."
+    }
+  ]
+}

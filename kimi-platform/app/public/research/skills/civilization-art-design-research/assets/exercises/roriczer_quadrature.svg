@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460" height="360" viewBox="0 0 460 360">
+<!--
+Documented-procedure exercise: ad quadratum (rotation of squares) after Mathes Roriczer, Buechlein von der Fialen Gerechtigkeit (Regensburg, 1486); facsimile/transcription in Shelby, Gothic Design Techniques (1977). Steps: (1) draw the outer square; (2) mark midpoints of its sides; (3) join the midpoints to form the rotated inner square; (4) repeat. Each rotated square's area is half its predecessor; vertices are computed geometrically (exact closure by construction, not measured from a monument).
+MODERN EXERCISE - generated teaching artifact; not a historical artifact and not a reconstruction claim.
+Generator: scripts/pattern_svg_generator.py (civilization-art-design-research skill); deterministic, stdlib only.
+-->
+<rect x="0" y="0" width="460" height="360" fill="white"/>
+<polygon points="20,20 260,20 260,260 20,260" fill="none" stroke="#222222" stroke-width="2.0"/>
+<text x="20" y="14" font-family="monospace" font-size="10" fill="#222222" text-anchor="start">step 1: outer square</text>
+<polygon points="140,20 260,140 140,260 20,140" fill="none" stroke="#8a2be2" stroke-width="1.4"/>
+<text x="144" y="16" font-family="monospace" font-size="9" fill="#8a2be2" text-anchor="start">step 2: rotate square</text>
+<polygon points="200,80 200,200 80,200 80,80" fill="none" stroke="#8a2be2" stroke-width="1.4"/>
+<text x="204" y="76" font-family="monospace" font-size="9" fill="#8a2be2" text-anchor="start">step 3: rotate square</text>
+<polygon points="200,140 140,200 80,140 140,80" fill="none" stroke="#8a2be2" stroke-width="1.4"/>
+<text x="204" y="136" font-family="monospace" font-size="9" fill="#8a2be2" text-anchor="start">step 4: rotate square</text>
+<polygon points="170,170 110,170 110,110 170,110" fill="none" stroke="#8a2be2" stroke-width="1.4"/>
+<text x="174" y="166" font-family="monospace" font-size="9" fill="#8a2be2" text-anchor="start">step 5: rotate square</text>
+<line x1="20" y1="20" x2="260" y2="260" stroke="#b0b0b0" stroke-width="0.8" stroke-dasharray="3,3"/>
+<line x1="260" y1="20" x2="20" y2="260" stroke="#b0b0b0" stroke-width="0.8" stroke-dasharray="3,3"/>
+<text x="20" y="284" font-family="monospace" font-size="10" fill="#222222" text-anchor="start">area ratio outer:innermost = 1:0.062 (exact: each rotation halves the area)</text>
+<text x="8" y="336" font-family="monospace" font-size="10" fill="#555555" text-anchor="start">Documented-procedure exercise: ad quadratum (rotation of squares) after Mathes Roriczer, Buechlein von der Fialen Gerechtigkeit (Regensburg, 1486); facsimile/transcription in Shelby, Gothic Design Techniques (1977). Steps: (1) draw the outer square; (2) mark midpoints of its sides; (3) join the midpoints to form the rotated inner square; (4) repeat. Each rotated square's area is half its predecessor; vertices are computed geometrically (exact closure by construction, not measured from a monument).</text>
+<text x="8" y="350" font-family="monospace" font-size="10" fill="#555555" text-anchor="start">MODERN EXERCISE - generated teaching artifact; not a historical artifact and not a reconstruction claim.</text>
+</svg>

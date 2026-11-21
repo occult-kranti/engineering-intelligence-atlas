@@ -1,0 +1,59 @@
+{
+ "schema_version": "1.0",
+ "artifact": "assistant_skill_mapping.json",
+ "generated": "2026-11-21",
+ "purpose": "Skill-pack mapping for the 21st package, executive-operations-assistant (Donna CEO executive assistant, shared company/department operations assistants, permanent repository-integration steward). Mapping ONLY: no new resources, no new role-resource links, no new evaluation tasks, no new standing roles, no new role candidates, no gaps closed. All 109 depth scores invariant by construction (no edges are added, so no tier counts, shared-literacy sets, stale penalties, or gap penalties can move).",
+ "inputs": {
+  "skill_package": "executive-operations-assistant/SKILL.md (+ packaged executive-operations-assistant.skill)",
+  "charters": [
+   "scientific-research-library/agents/donna-ceo-operations-assistant.md",
+   "scientific-research-library/agents/shared-department-operations-assistant.md",
+   "scientific-research-library/agents/repository-integration-knowledge-engineer.md"
+  ],
+  "design_basis": "donna_assistant_prompt_research.md + assistant-operations.fixture.json (golden contract fixture, contractVersion 1)"
+ },
+ "conventions": {
+  "no_new_resources": "the assistant layer consumes the existing 436-resource catalog through its mapped roles; the contract fixture and skill scripts are code/data artifacts, not learning resources",
+  "no_new_edges_or_tasks": "RL/ET byte ranges untouched: RL-0001..RL-1756 and all ET ids byte-stable; the packages carry offline verifier scripts (scripts/run_tests.py), not a scored ET battery",
+  "contexts_not_roles": "donna-ceo-operations-assistant, shared-department-operations-assistant, and repository-integration-knowledge-engineer are digital-employee / operating contexts mapped onto EXISTING role definitions (contract mappedRoleIds); they hire no person, inflate no org chart, and gain no authority beyond the declared gates",
+  "depth_invariance": "asserted by .work/merge_assistant_fill.py against the gap-fill baseline (mean 87.3, 93 >= 70, 16 < 70)"
+ },
+ "summary": {
+  "new_skill_mappings": 1,
+  "skill_mappings_total": 21,
+  "new_resources": 0,
+  "new_edges": 0,
+  "role_evaluation_tasks_added": 0,
+  "gaps_closed": 0,
+  "new_standing_roles": 0
+ },
+ "agent_contexts": [
+  "donna-ceo-operations-assistant",
+  "shared-department-operations-assistant",
+  "repository-integration-knowledge-engineer"
+ ],
+ "skill_mappings": {
+  "executive-operations-assistant": {
+   "consumer_roles": [
+    "agent-research-director-orchestration-lead",
+    "knowledge-transfer-learning-systems-manager",
+    "api-integration-engineer"
+   ],
+   "primary_consumers_note": "91, 108 primary (Donna + shared company/department assistants draw orchestration/handoff context); 12 for the repository-integration steward (contract mappedRoleIds)",
+   "context_role_edges": {
+    "donna-ceo-operations-assistant": [
+     "agent-research-director-orchestration-lead",
+     "knowledge-transfer-learning-systems-manager"
+    ],
+    "shared-department-operations-assistant": [
+     "agent-research-director-orchestration-lead",
+     "knowledge-transfer-learning-systems-manager"
+    ],
+    "repository-integration-knowledge-engineer": [
+     "api-integration-engineer",
+     "knowledge-transfer-learning-systems-manager"
+    ]
+   }
+  }
+ }
+}

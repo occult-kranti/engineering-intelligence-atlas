@@ -1,0 +1,147 @@
+{
+ "schema_version": "1.0",
+ "generated": "2026-11-21",
+ "purpose": "Context-to-role routing for the civilization-art-design-research skill. Contexts consume existing role slugs only; no new standing roles are created (parent matrix's only approved gap is product-designer-ux-researcher). Charters are research/specialist compositions under the agent-research-director.",
+ "sanitization": "Absolute workspace paths and parent-matrix internals from creative_role_resources.json removed; resource reading lists live in the skill references, not here.",
+ "existing_role_slugs_allowed": [
+  "architectural-historian-researcher",
+  "architect-architectural-designer",
+  "architectural-geometry-specialist",
+  "conservation-architect-built-heritage-specialist",
+  "computational-geometer-applied-mathematician",
+  "computational-designer-design-technologist",
+  "cad-computational-design-engineer",
+  "geometry-processing-engineer",
+  "brand-communications-designer",
+  "technical-artist",
+  "blender-3d-designer",
+  "game-audio-designer-programmer",
+  "game-creative-director",
+  "legal-policy-compliance-specialist",
+  "research-scientist",
+  "research-engineer",
+  "technical-writer-documentation-engineer",
+  "agent-research-director-orchestration-lead",
+  "knowledge-transfer-learning-systems-manager"
+ ],
+ "existing_skills_referenced": [
+  "architecture-and-built-heritage-research",
+  "computational-geometry-engineering",
+  "mathematics-research",
+  "spatial-3d-production-engineering",
+  "science-history-research",
+  "agent-research-director"
+ ],
+ "contexts": [
+  {
+   "context": "civilization-art-research-director",
+   "mission_summary": "Direct multi-source art/design evidence syntheses with geography/date/community anchoring and evidence tiers.",
+   "proposed_skill": "civilization-art-design-research",
+   "maps_to_existing_role_slugs": [
+    "architectural-historian-researcher",
+    "architect-architectural-designer",
+    "conservation-architect-built-heritage-specialist",
+    "agent-research-director-orchestration-lead"
+   ],
+   "conditional_triggers": [
+    {
+     "trigger": "conservation/intervention framing appears",
+     "route": "defer to conservation-architect-built-heritage-specialist + architecture skill conservation reference"
+    },
+    {
+     "trigger": "tradition outside the anchored set",
+     "route": "build equivalent anchored case (geography/date/community/tier) before any claim"
+    },
+    {
+     "trigger": "legal/rights question on images",
+     "route": "creative-rights-reproducibility-editor gate"
+    }
+   ],
+   "sample_lab_fixtures": [
+    "L1 symmetry classification kit",
+    "L3 Robins-canon figure lab",
+    "L6 museum open-access provenance lab"
+   ],
+   "measurable_evaluations": [
+    "Evidence-tier labeling audit: 100% of tradition claims carry geography+date+community+tier; sample of 20 claims, 0 violations",
+    "Folklore tripwire: seeded golden-ratio/pseudohistory claims must be caught and replaced with sourced corrections (10/10)",
+    "Source quality: ≥80% of load-bearing citations resolve to primary/peer-reviewed/museum records"
+   ]
+  },
+  {
+   "context": "geometric-pattern-symmetry-specialist",
+   "mission_summary": "Classify patterns under declared criteria; implement documented-procedure constructions and credited modern pattern algorithms as labeled labs.",
+   "proposed_skill": "civilization-art-design-research",
+   "maps_to_existing_role_slugs": [
+    "computational-geometer-applied-mathematician",
+    "architectural-geometry-specialist",
+    "computational-designer-design-technologist",
+    "geometry-processing-engineer",
+    "cad-computational-design-engineer"
+   ],
+   "conditional_triggers": [
+    {
+     "trigger": "mesh/manifold or tolerance question",
+     "route": "computational-geometry-engineering skill (robust predicates, units)"
+    },
+    {
+     "trigger": "quasiperiodicity claim",
+     "route": "must carry Cromwell 2015 + Makovicky counterweights or be downgraded"
+    },
+    {
+     "trigger": "physical fabrication",
+     "route": "spatial-3d-production-engineering release gates"
+    }
+   ],
+   "sample_lab_fixtures": [
+    "L1 wallpaper/frieze kit (10-pattern test, ≥9 correct)",
+    "L2 girih SVG generator (tile-match test)",
+    "L4 Roriczer pinnacle (closure within declared tolerance)",
+    "L5 stepwell transformation study"
+   ],
+   "measurable_evaluations": [
+    "Classification agreement: ≥90% match with reference census on a 20-pattern benchmark under declared criteria",
+    "Criteria disclosure: 100% of outputs state color-handling and extension rule",
+    "Modern-method credit: 100% of lab outputs name the modern algorithm author vs. documented historical procedure"
+   ]
+  },
+  {
+   "context": "creative-rights-reproducibility-editor",
+   "mission_summary": "Gate creative deliverables on rights, licensing, provenance, and reproducibility; report unsettled law as unsettled.",
+   "proposed_skill": "music-theory-production-engineering (also serves civilization-art-design-research outputs)",
+   "maps_to_existing_role_slugs": [
+    "legal-policy-compliance-specialist",
+    "technical-writer-documentation-engineer",
+    "knowledge-transfer-learning-systems-manager",
+    "brand-communications-designer"
+   ],
+   "conditional_triggers": [
+    {
+     "trigger": "any sampled recording in a deliverable",
+     "route": "composition+master clearance plan; circuit-split risk statement; counsel referral"
+    },
+    {
+     "trigger": "voice/likeness emulation (incl. AI)",
+     "route": "persona-rights review (ELVIS Act, Midler/Waits); block on unauthorized simulation"
+    },
+    {
+     "trigger": "AI-generated content",
+     "route": "disclosure + tool terms check + registrability caveat (USCO Part 2)"
+    },
+    {
+     "trigger": "museum image reuse",
+     "route": "per-record rights field, not umbrella CC0 assumption"
+    }
+   ],
+   "sample_lab_fixtures": [
+    "M7 rights-clearance simulation",
+    "L6 provenance card acceptance test"
+   ],
+   "measurable_evaluations": [
+    "Provenance completeness: 100% of deliverable assets have {source, rights holder, license+version, scope, attribution} records",
+    "Unsettled-law labeling: seeded 'X seconds is safe' / 'NO FAKES is law' / 'AI output is registrable' claims 100% caught",
+    "SPDX register: 100% of dependencies listed with license + product-use decision; AGPL/GPL items have explicit architecture note"
+   ]
+  }
+ ]
+}

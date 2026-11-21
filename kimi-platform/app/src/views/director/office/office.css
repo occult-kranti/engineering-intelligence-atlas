@@ -1,0 +1,119 @@
+/* Office Blueprint & Ownership Whiteboard — the drafting-ink treatment
+ * inside the atlas editorial system. Palette is unchanged tokens only:
+ * cornflower hairlines at low alpha = blueprint ink. */
+
+.ob-stage {
+  position: relative;
+  background-image:
+    linear-gradient(hsl(var(--cornflower) / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--cornflower) / 0.07) 1px, transparent 1px),
+    linear-gradient(hsl(var(--cornflower) / 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--cornflower) / 0.13) 1px, transparent 1px);
+  background-size:
+    20px 20px,
+    20px 20px,
+    80px 80px,
+    80px 80px;
+}
+
+.ob-room {
+  border: 1px solid hsl(var(--cornflower) / 0.45);
+  background: hsl(var(--paper-raised));
+}
+.ob-room[data-health="strained"] {
+  border-color: hsl(var(--mustard) / 0.6);
+}
+.ob-room[data-health="degraded"] {
+  border-color: hsl(var(--alert) / 0.6);
+}
+.ob-room[data-drop="eligible"] {
+  border: 2px dashed hsl(var(--cornflower));
+}
+.ob-room[data-drop="blocked"] {
+  border: 2px dashed hsl(var(--alert));
+}
+.ob-room[data-selected="true"] {
+  outline: 2px solid hsl(var(--cornflower));
+  outline-offset: 1px;
+}
+.ob-room-head {
+  border-bottom: 2px solid hsl(var(--ink));
+}
+.ob-room-dark {
+  border: 1px solid hsl(var(--cornflower) / 0.4);
+}
+
+.ob-agent {
+  border: 1px solid hsl(var(--ink) / 0.18);
+  background: hsl(var(--paper));
+}
+.ob-agent[data-status="suspended"] {
+  border-style: dashed;
+  color: hsl(var(--ink-soft));
+}
+
+.ob-bench {
+  border: 1px dashed hsl(var(--ink) / 0.35);
+  background: hsl(var(--paper) / 0.6);
+}
+
+.ob-meter-track {
+  height: 6px;
+  background: hsl(var(--ink) / 0.1);
+}
+.ob-meter-fill {
+  height: 100%;
+  background: hsl(var(--cornflower));
+}
+.ob-meter-fill[data-tone="storage"] {
+  background: hsl(var(--sage));
+}
+.ob-meter-fill[data-over="true"] {
+  background: hsl(var(--alert));
+}
+
+/* Whiteboard */
+.wb-canvas {
+  position: relative;
+  overflow: auto;
+  min-height: 420px;
+  background-image:
+    linear-gradient(hsl(var(--cornflower) / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--cornflower) / 0.06) 1px, transparent 1px);
+  background-size:
+    24px 24px,
+    24px 24px;
+}
+.wb-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  border: 1px solid hsl(var(--ink));
+  background: hsl(var(--paper-raised));
+  text-align: left;
+}
+.wb-node[data-kind="note"] {
+  border-style: dashed;
+  background: hsl(var(--mustard) / 0.12);
+}
+.wb-node[data-selected="true"] {
+  outline: 2px solid hsl(var(--cornflower));
+  outline-offset: 2px;
+}
+.wb-node[data-locked="true"] {
+  opacity: 0.85;
+}
+.wb-hatch {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    transparent 0 6px,
+    hsl(var(--ink) / 0.06) 6px 12px
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-room,
+  .wb-node,
+  .ob-agent {
+    transition: none !important;
+  }
+}

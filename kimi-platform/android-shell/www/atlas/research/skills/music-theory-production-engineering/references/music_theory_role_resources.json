@@ -1,0 +1,406 @@
+{
+ "schema_version": "1.0",
+ "generated": "2026-11-21",
+ "source": "creative_role_resources.json (2026-11-21), sanitized extract for the music-theory-production-engineering skill: three specialist charter contexts + proposed skill record. Original also covers the companion civilization-art-design-research skill.",
+ "flag_definitions": {
+  "core": "Directly required to produce this context's accountable outputs.",
+  "internal": "Shared cross-functional capability consumed/contributed at interfaces.",
+  "conditional": "Required only when the stated trigger is true."
+ },
+ "tier_definitions": {
+  "foundational": "Entry ramp / literacy.",
+  "core": "Working-depth material for the charter.",
+  "advanced": "Senior/specialist depth (reference, governance)."
+ },
+ "evidence_levels": {
+  "E3": "URL probed live or repository verified via GitHub API on 2026-11-21.",
+  "E2": "Authoritative source not re-probed this pass (books, papers, paywalled standards); bibliographic details verified.",
+  "E1": "Curator-attested from parent matrix, not re-fetched."
+ },
+ "proposed_skill": {
+  "id": "music-theory-production-engineering",
+  "status": "PROPOSED — structure below; not packaged. Fixed id for CEO preset cross-reference.",
+  "description": "Music theory and audio production with numeric and provenance discipline: acoustics/psychoacoustics (ISO 226:2023, ITU-R BS.1770, EBU R128), tuning/temperament in ratios/cents with priority accuracy (Zhu Zaiyu 1584), dated Western harmony/counterpoint/rhythm/form/timbre, culturally specific theory (Hindustani, Carnatic, maqam, Javanese/Balinese gamelan, Northern Ewe rhythm) only in named contexts with anti-homogenization critique, notation/MIDI/MEI/MusicXML/SMuFL, DSP/synthesis/DAW engineering with license-aware tool choice, MIR with mir_eval-cited metrics, and rights gates for sampling/voice/likeness/AI content (Bridgeport–VMG Salsoul split, ELVIS Act, USCO AI reports).",
+  "proposed_structure": {
+   "SKILL.md": "workflow (theory route→numeric discipline→cultural-context gate→production route→evaluation→rights gate→output contract §20) + hard gates",
+   "references/theory_foundations.md": "research doc §§11–13 and §15 with sources",
+   "references/culturally_specific_theory.md": "research doc §14 cases with required critiques (Bakhle, Agawu, per-gamelan tuning)",
+   "references/dsp_and_formats.md": "research doc §16 + repo-case license postures",
+   "references/evaluation_and_rights.md": "research doc §§17–18 and lab set M1–M7 (§19): listening-test standards, reproducibility contract, rights/provenance gates",
+   "references/modern_labs.md": "labs M1–M7 with acceptance tests"
+  }
+ },
+ "charter_files": {
+  "location": "scientific-research-library/agents/ (outside this skill; do not modify from here)",
+  "files": [
+   "music-theory-research-director.md",
+   "audio-dsp-production-engineer.md",
+   "creative-rights-reproducibility-editor.md"
+  ],
+  "status": "Reference role charters for organization design; specialist compositions under agent-research-director; not standing org roles."
+ },
+ "agent_contexts": [
+  {
+   "context": "music-theory-research-director",
+   "mission_summary": "Direct theory-grounded research: numeric tuning, dated harmony/counterpoint/rhythm/form, culturally specific theory with anti-homogenization critique.",
+   "proposed_skill": "music-theory-production-engineering",
+   "maps_to_existing_role_slugs": [
+    "research-scientist",
+    "game-creative-director",
+    "technical-writer-documentation-engineer"
+   ],
+   "resources": {
+    "foundational": [
+     {
+      "name": "Open Music Theory (CC BY-SA, Vanderbilt)",
+      "type": "open textbook",
+      "url": "https://viva.pressbooks.pub/openmusictheory/",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "Fux/Mann, The Study of Counterpoint; Jeppesen 1939",
+      "type": "books",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "cents math: 1200·log2 ratios (numeric discipline note)",
+      "type": "reference",
+      "flag": "core",
+      "evidence": "E2"
+     }
+    ],
+    "core": [
+     {
+      "name": "Barbour, Tuning and Temperament (1951); Sethares (2005)",
+      "type": "books",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "Kuttner 1975 Zhu Zaiyu priority (Ethnomusicology 19/2)",
+      "type": "paper",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "London, Hearing in Time (2012); Toussaint 2005/2019 + Demaine et al. 2009",
+      "type": "book+papers",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "Agawu 1995 (Northern Ewe + 'invention' critique); Arom 1991; Locke 1998",
+      "type": "books+paper",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "Sumarsam 1995; Tenzer 1991/2000; Kunst 1973 (Java/Bali distinct)",
+      "type": "books",
+      "flag": "core",
+      "evidence": "E2"
+     }
+    ],
+    "advanced": [
+     {
+      "name": "Bakhle, Two Men and Music (2005) — required before any 'Indian classical' framing",
+      "type": "book",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "Marcus 2007; Racy 2003; al-Urmawi Kitab al-Adwar (13th c.) for maqam",
+      "type": "books+primary",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "music21 (BSD-3) for computational verification of analytical claims",
+      "type": "repository",
+      "url": "https://github.com/cuthbertLab/music21",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "surge-synthesizer/tuning-library (MIT) — Scala format practice",
+      "type": "repository",
+      "flag": "conditional",
+      "trigger": "microtonal deliverables",
+      "evidence": "E3"
+     }
+    ]
+   },
+   "conditional_triggers": [
+    {
+     "trigger": "'universal' or 'natural' music-theory claim",
+     "route": "fail review; require named tradition + source"
+    },
+    {
+     "trigger": "culturally specific theory outside anchored cases",
+     "route": "tradition-internal or peer-reviewed sources required; add Bakhle/Agawu-style critique check"
+    },
+    {
+     "trigger": "Bach temperament / historical tuning claim",
+     "route": "hypothesis label mandatory (Barnes 1979; no surviving instruction)"
+    }
+   ],
+   "sample_lab_fixtures": [
+    "M1 temperament comparator",
+    "M3 notation round-trip",
+    "M4 Euclidean/tala study"
+   ],
+   "measurable_evaluations": [
+    "Numeric accuracy: all interval statements within 0.1 cent of reference computation",
+    "Context anchoring: 100% of culturally specific claims carry region/community + named source; homogenization phrases (list defined in skill) = automatic fail",
+    "Priority accuracy: Zhu Zaiyu 1584 and Stevin independence correctly stated in tuning histories (5/5 seeded checks)"
+   ]
+  },
+  {
+   "context": "audio-dsp-production-engineer",
+   "mission_summary": "Build and evaluate synthesis/DSP/notation pipelines with license-aware tool selection and reproducible audio evaluation.",
+   "proposed_skill": "music-theory-production-engineering",
+   "maps_to_existing_role_slugs": [
+    "game-audio-designer-programmer",
+    "research-engineer",
+    "technical-artist"
+   ],
+   "resources": {
+    "foundational": [
+     {
+      "name": "J. O. Smith CCRMA free DSP texts",
+      "type": "open texts",
+      "url": "https://ccrma.stanford.edu/~jos/",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "Web Audio API spec (W3C) + AudioWorklet",
+      "type": "standard",
+      "url": "https://github.com/WebAudio/web-audio-api",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "MIDI 1.0/2.0 + MPE (midi.org)",
+      "type": "standards",
+      "url": "https://midi.org/specs",
+      "flag": "core",
+      "evidence": "E3"
+     }
+    ],
+    "core": [
+     {
+      "name": "Zölzer DAFX (2011); Reiss & McPherson (2014); Pirkle (2019)",
+      "type": "books",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "Tone.js (MIT); Csound (LGPL-2.1); SuperCollider (GPL-3.0) — license-differentiated engines",
+      "type": "repositories",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "MusicXML 4.x (w3c/musicxml); MEI; SMuFL; VexFlow (MIT); MuseScore (GPL-3+font exception)",
+      "type": "standards+repos",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "ITU-R BS.1770-5 + EBU R128 loudness delivery",
+      "type": "standards",
+      "url": "https://tech.ebu.ch/docs/r/r128.pdf",
+      "flag": "core",
+      "evidence": "E3"
+     }
+    ],
+    "advanced": [
+     {
+      "name": "librosa (ISC) vs Essentia (AGPL-3.0) vs pedalboard (GPL-3.0) selection matrix",
+      "type": "repositories",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "mir_eval (MIT) metric definitions (Raffel et al. 2014)",
+      "type": "repository+paper",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "ITU-R BS.1116-3 / BS.1534-3 MUSHRA / PEAQ BS.1387; ViSQOL v3",
+      "type": "standards",
+      "flag": "conditional",
+      "trigger": "perceptual quality claims",
+      "evidence": "E3"
+     },
+     {
+      "name": "Sturm 2014 GTZAN faults — before any genre-classification claim",
+      "type": "paper",
+      "flag": "conditional",
+      "trigger": "MIR classification deliverables",
+      "evidence": "E2"
+     }
+    ]
+   },
+   "conditional_triggers": [
+    {
+     "trigger": "copyleft engine in a distributed/closed product",
+     "route": "license architecture review with legal-policy-compliance-specialist (AGPL network-use clause for Essentia)"
+    },
+    {
+     "trigger": "human listening test",
+     "route": "consent protocol + BS.1534/1116 method + CI reporting mandatory"
+    },
+    {
+     "trigger": "dataset use",
+     "route": "license card per dataset (MAESTRO CC BY-NC-SA blocks commercial use)"
+    }
+   ],
+   "sample_lab_fixtures": [
+    "M2 Web Audio synth etude",
+    "M5 MIR mini-benchmark",
+    "M6 loudness/QC pipeline"
+   ],
+   "measurable_evaluations": [
+    "Reproducibility: artifact rebuild from pinned spec (tools/versions/seeds/sr) matches within declared bit/tolerance policy",
+    "Loudness: BS.1770 report within ±0.5 LU of target; true peak ≤ −1 dBTP",
+    "License posture: 100% of code/data dependencies carry recorded SPDX + product-use decision"
+   ]
+  },
+  {
+   "context": "creative-rights-reproducibility-editor",
+   "mission_summary": "Gate creative deliverables on rights, licensing, provenance, and reproducibility; report unsettled law as unsettled.",
+   "proposed_skill": "music-theory-production-engineering (also serves civilization-art-design-research outputs)",
+   "maps_to_existing_role_slugs": [
+    "legal-policy-compliance-specialist",
+    "technical-writer-documentation-engineer",
+    "knowledge-transfer-learning-systems-manager",
+    "brand-communications-designer"
+   ],
+   "resources": {
+    "foundational": [
+     {
+      "name": "US two-copyrights model (17 U.S.C. §§102/106/114); MMA 2018 + MLC",
+      "type": "statute+service",
+      "url": "https://www.themlc.com/",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "Creative Commons license suite discipline (CC0/BY/NC/SA/ND)",
+      "type": "licenses",
+      "url": "https://creativecommons.org/licenses/",
+      "flag": "core",
+      "evidence": "E3"
+     }
+    ],
+    "core": [
+     {
+      "name": "Bridgeport 410 F.3d 792 (6th Cir. 2005) vs VMG Salsoul 824 F.3d 871 (9th Cir. 2016) — unresolved split",
+      "type": "case law",
+      "url": "https://law.justia.com/cases/federal/appellate-courts/F3/410/792/574458/",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "Newton v. Diamond 388 F.3d 1189 (2004); Campbell v. Acuff-Rose 510 U.S. 569 (1994)",
+      "type": "case law",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "Tennessee ELVIS Act 2024 (Pub. Ch. 588)",
+      "type": "statute",
+      "url": "https://www.capitol.tn.gov/Bills/113/Bill/HB2091.pdf",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "Midler v. Ford 849 F.2d 460 (1988); Waits v. Frito-Lay 978 F.2d 1093 (1992)",
+      "type": "case law",
+      "flag": "core",
+      "evidence": "E2"
+     },
+     {
+      "name": "US Copyright Office AI reports (Part 2 Copyrightability Jan 2025; Part 3 training pre-pub 2025); Thaler v. Perlmutter (D.C. Cir. 2025)",
+      "type": "agency+case",
+      "url": "https://www.copyright.gov/ai/",
+      "flag": "core",
+      "evidence": "E3"
+     }
+    ],
+    "advanced": [
+     {
+      "name": "C2PA content credentials",
+      "type": "standard",
+      "url": "https://c2pa.org/",
+      "flag": "conditional",
+      "trigger": "provenance attestation in shipped media",
+      "evidence": "E3"
+     },
+     {
+      "name": "EU AI Act 2024/1689 transparency timeline",
+      "type": "regulation",
+      "flag": "conditional",
+      "trigger": "EU distribution",
+      "evidence": "E3"
+     },
+     {
+      "name": "Repo license postures (both repo-case files) as dependency register",
+      "type": "data",
+      "flag": "core",
+      "evidence": "E3"
+     },
+     {
+      "name": "NO FAKES Act status tracker — introduced, not enacted (2026-11-21); never cite as law",
+      "type": "bill tracking",
+      "flag": "core",
+      "evidence": "E3"
+     }
+    ]
+   },
+   "conditional_triggers": [
+    {
+     "trigger": "any sampled recording in a deliverable",
+     "route": "composition+master clearance plan; circuit-split risk statement; counsel referral"
+    },
+    {
+     "trigger": "voice/likeness emulation (incl. AI)",
+     "route": "persona-rights review (ELVIS Act, Midler/Waits); block on unauthorized simulation"
+    },
+    {
+     "trigger": "AI-generated content",
+     "route": "disclosure + tool terms check + registrability caveat (USCO Part 2)"
+    },
+    {
+     "trigger": "museum image reuse",
+     "route": "per-record rights field, not umbrella CC0 assumption"
+    }
+   ],
+   "sample_lab_fixtures": [
+    "M7 rights-clearance simulation",
+    "L6 provenance card acceptance test"
+   ],
+   "measurable_evaluations": [
+    "Provenance completeness: 100% of deliverable assets have {source, rights holder, license+version, scope, attribution} records",
+    "Unsettled-law labeling: seeded 'X seconds is safe' / 'NO FAKES is law' / 'AI output is registrable' claims 100% caught",
+    "SPDX register: 100% of dependencies listed with license + product-use decision; AGPL/GPL items have explicit architecture note"
+   ]
+  }
+ ],
+ "existing_role_slugs_referenced": [
+  "brand-communications-designer",
+  "game-audio-designer-programmer",
+  "game-creative-director",
+  "knowledge-transfer-learning-systems-manager",
+  "legal-policy-compliance-specialist",
+  "research-engineer",
+  "research-scientist",
+  "technical-artist",
+  "technical-writer-documentation-engineer"
+ ]
+}

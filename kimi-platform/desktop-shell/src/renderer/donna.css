@@ -1,0 +1,190 @@
+/* v0.6 Donna / shared-assistant drawer.
+   Reuses the chrome.css tokens; motion is transform/opacity only and gated
+   by the same prefers-reduced-motion rule. Layout targets 1440×900 primary
+   with a fully usable 900×600 fallback (drawer ≤ 92vw, internal scroll). */
+
+.donna-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(600px, 92vw);
+  background: var(--panel);
+  border-left: 1px solid var(--line-strong);
+  box-shadow: -8px 0 24px rgba(0, 0, 0, 0.45);
+  padding: 14px 16px 20px;
+  overflow-y: auto;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transform: translateX(0);
+  opacity: 1;
+  transition: transform var(--dur-standard) var(--ease-out), opacity var(--dur-standard) var(--ease-out);
+}
+
+.donna-drawer.hidden {
+  display: none;
+}
+
+.donna-head {
+  justify-content: space-between;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 8px;
+}
+
+.donna-head h3 { margin: 0; }
+
+.donna-scope {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.donna-scope select,
+.donna-scope input,
+.donna-form input,
+.donna-form select,
+.donna-form textarea {
+  background: var(--panel-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font: inherit;
+}
+
+.donna-scope-meta { margin: 0; font-size: 12px; }
+
+.donna-agents h4,
+.donna-inbox h4,
+.donna-section h4 { margin: 4px 0; }
+
+.donna-agent-list,
+.donna-agent-children {
+  list-style: none;
+  margin: 4px 0;
+  padding-left: 10px;
+}
+
+.donna-agent-children { padding-left: 18px; border-left: 1px dashed var(--line); }
+.donna-agent { font-size: 13px; margin: 3px 0; }
+
+.donna-tabs { gap: 6px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+
+.donna-tab.selected {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-color: var(--accent-strong);
+}
+
+.donna-inbox {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.donna-proposal {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 8px 0;
+  background: var(--panel);
+}
+
+.donna-proposal-approved { border-color: var(--accent-strong); }
+.donna-proposal-executed { opacity: 0.75; }
+.donna-proposal-rejected,
+.donna-proposal-cancelled,
+.donna-proposal-failed { opacity: 0.6; }
+
+.donna-payload {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
+  background: var(--panel-2);
+  border-radius: 6px;
+  padding: 6px 8px;
+  margin: 6px 0;
+}
+
+.donna-proposal-actions { gap: 8px; margin-top: 6px; }
+
+.donna-gates { gap: 10px; margin: 6px 0; font-size: 12px; }
+.donna-gate { display: inline-flex; align-items: center; gap: 4px; color: var(--warn); }
+
+.donna-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 10px 0;
+}
+
+.donna-form h5 { flex-basis: 100%; margin: 0; }
+
+.donna-queue,
+.donna-job,
+.donna-repo,
+.donna-transfer,
+.donna-seat,
+.donna-lifecycle-row {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  margin: 8px 0;
+  background: var(--panel-2);
+}
+
+.donna-queue-items { margin: 6px 0; padding-left: 8px; list-style: none; }
+.donna-queue-items li { gap: 8px; padding: 2px 0; }
+
+.donna-chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 40vh;
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: var(--panel-2);
+}
+
+.donna-chat-msg { font-size: 13px; }
+.donna-chat-msg.assistant { border-left: 2px solid var(--accent-strong); padding-left: 8px; }
+.donna-chat-msg.user { border-left: 2px solid var(--line-strong); padding-left: 8px; }
+
+.donna-pending { color: var(--warn); font-style: italic; }
+
+.donna-prompt-preview pre {
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
+  max-height: 30vh;
+  overflow-y: auto;
+  background: var(--panel-2);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.donna-events { font-size: 12px; }
+.donna-events ul { padding-left: 16px; }
+
+.donna-repo-preview { border-color: var(--accent-strong); }
+
+/* 900×600 fallback: drawer takes most of the width, chat log shrinks. */
+@media (max-width: 980px) {
+  .donna-drawer { width: min(560px, 94vw); padding: 10px 12px 14px; }
+  .donna-chat-log { max-height: 30vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .donna-drawer { transition: none; }
+}

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Research Director</string>
+    <string name="title_activity_main">Research Director</string>
+    <string name="package_name">com.researchdirector.shell</string>
+    <string name="custom_url_scheme">com.researchdirector.shell</string>
+</resources>

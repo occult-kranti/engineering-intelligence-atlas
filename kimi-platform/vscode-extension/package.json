@@ -1,0 +1,233 @@
+{
+  "name": "research-director-companion",
+  "displayName": "Research Director Companion",
+  "description": "VS Code companion for Research Director Desktop: pair over loopback, chat, office projects, runs, approvals and artifacts.",
+  "version": "0.4.0",
+  "publisher": "research-director",
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onView:researchDirector.chat",
+    "onView:researchDirector.projects",
+    "onView:researchDirector.runs"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "research-director",
+          "title": "Research Director",
+          "icon": "media/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "research-director": [
+        {
+          "type": "webview",
+          "id": "researchDirector.chat",
+          "name": "Chat",
+          "contextualTitle": "Research Director Chat"
+        },
+        {
+          "id": "researchDirector.projects",
+          "name": "Office Projects"
+        },
+        {
+          "id": "researchDirector.runs",
+          "name": "Runs"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "research-director.pair",
+        "title": "Pair with Desktop",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.disconnect",
+        "title": "Disconnect",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.refresh",
+        "title": "Refresh",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.newGoal",
+        "title": "New Goal (Office Project)",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.run.start",
+        "title": "Start Run",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.run.pause",
+        "title": "Pause Run",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.run.resume",
+        "title": "Resume Run",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.run.recover",
+        "title": "Recover Run",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.run.cancel",
+        "title": "Cancel Run",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.approval.approve",
+        "title": "Approve",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.approval.reject",
+        "title": "Reject",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.artifact.open",
+        "title": "Open Artifact",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.artifact.diff",
+        "title": "Diff Artifact",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.artifact.apply",
+        "title": "Apply Artifact to Workspace",
+        "category": "Research Director"
+      },
+      {
+        "command": "research-director.askAboutSelection",
+        "title": "Ask Director about Selection",
+        "category": "Research Director"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "research-director.pair",
+          "when": "view == researchDirector.projects",
+          "group": "navigation@1"
+        },
+        {
+          "command": "research-director.disconnect",
+          "when": "view == researchDirector.projects",
+          "group": "navigation@2"
+        },
+        {
+          "command": "research-director.refresh",
+          "when": "view == researchDirector.projects",
+          "group": "navigation@3"
+        },
+        {
+          "command": "research-director.newGoal",
+          "when": "view == researchDirector.projects",
+          "group": "navigation@0"
+        },
+        {
+          "command": "research-director.refresh",
+          "when": "view == researchDirector.runs",
+          "group": "navigation@1"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "research-director.run.start",
+          "when": "view == researchDirector.projects && viewItem == project",
+          "group": "run@1"
+        },
+        {
+          "command": "research-director.run.pause",
+          "when": "view == researchDirector.runs && viewItem == run-running",
+          "group": "run@1"
+        },
+        {
+          "command": "research-director.run.resume",
+          "when": "view == researchDirector.runs && viewItem == run-paused",
+          "group": "run@1"
+        },
+        {
+          "command": "research-director.run.recover",
+          "when": "view == researchDirector.runs && viewItem == run-interrupted",
+          "group": "run@1"
+        },
+        {
+          "command": "research-director.run.cancel",
+          "when": "view == researchDirector.runs && viewItem =~ /^run-(running|paused|waiting-approval)$/",
+          "group": "run@2"
+        },
+        {
+          "command": "research-director.approval.approve",
+          "when": "view == researchDirector.runs && viewItem == approval-pending",
+          "group": "approval@1"
+        },
+        {
+          "command": "research-director.approval.reject",
+          "when": "view == researchDirector.runs && viewItem == approval-pending",
+          "group": "approval@2"
+        },
+        {
+          "command": "research-director.artifact.open",
+          "when": "view == researchDirector.runs && viewItem == artifact",
+          "group": "artifact@1"
+        },
+        {
+          "command": "research-director.artifact.diff",
+          "when": "view == researchDirector.runs && viewItem == artifact",
+          "group": "artifact@2"
+        },
+        {
+          "command": "research-director.artifact.apply",
+          "when": "view == researchDirector.runs && viewItem == artifact",
+          "group": "artifact@3"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "research-director.askAboutSelection",
+          "group": "research-director@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "research-director.askAboutSelection"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "build": "node build.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "package": "node build.mjs && vsce package --no-dependencies --out ../releases/"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.9.2",
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.12"
+  }
+}

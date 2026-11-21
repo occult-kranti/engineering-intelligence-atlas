@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Research Director Desktop</title>
+    <link rel="stylesheet" href="./chrome.css" />
+    <link rel="stylesheet" href="./donna.css" />
+  </head>
+  <body>
+    <header id="toolbar" class="toolbar hidden">
+      <button id="back-to-launcher" type="button">← Back to launcher</button>
+      <span id="content-location" class="content-location"></span>
+      <button id="open-in-browser" type="button" class="hidden">Open in browser</button>
+    </header>
+
+    <main id="launcher-view" class="view">
+      <h1>Research Director Desktop</h1>
+      <p class="subtitle">Choose where to work. Nothing leaves this device unless you choose the online runtime.</p>
+
+      <section class="cards">
+        <article class="card">
+          <h2>Offline Atlas</h2>
+          <p>
+            Browse the packaged static atlas build. Runs entirely on this device — no network, no account,
+            no telemetry from this shell.
+          </p>
+          <button id="open-atlas" type="button">Open offline atlas</button>
+          <p id="atlas-status" class="status"></p>
+        </article>
+
+        <article class="card">
+          <h2>Connect to Online Runtime</h2>
+          <p>
+            Open the authenticated Director for full cloud-backed projects. Requires HTTPS (or localhost HTTP
+            for development). Your session and credentials stay inside the runtime site; this shell stores
+            <strong>only the URL</strong>, never tokens.
+          </p>
+          <form id="connect-form">
+            <input id="runtime-url" type="text" placeholder="https://director.example.com" autocomplete="off" />
+            <button type="submit">Connect</button>
+          </form>
+          <p id="connect-status" class="status"></p>
+        </article>
+
+        <article class="card">
+          <h2>System &amp; Models</h2>
+          <p>
+            Inspect this machine, create isolated Python environments, and download reviewed local models.
+            Everything in this panel is local-only; downloads come only from the reviewed catalog over HTTPS.
+          </p>
+          <button id="open-system" type="button">Open System &amp; Models</button>
+        </article>
+
+        <article class="card">
+          <h2>Local Projects</h2>
+          <p>
+            Run text-only specialist squads (Director / Research / Build / Review) on your own OpenAI or
+            Anthropic key — or a local Ollama — with hard token, time, and dollar budgets. Keys stay
+            encrypted in your OS keychain; prompts go only to the provider you choose.
+          </p>
+          <button id="open-projects" type="button">Open Local Projects</button>
+        </article>
+
+        <article class="card">
+          <h2>CEO Portfolio <span class="badge neutral">v0.5</span></h2>
+          <p>
+            Run a whole creative technology group: an approved, hash-pinned blueprint materializes 5 company
+            offices (real Local Projects) sharing 7 service departments with 9 contract seats — one envelope
+            budget, one concurrency semaphore (default 2, max 4), approvals, partitions, contracts, memory,
+            and a token-free work ledger in a single surface.
+          </p>
+          <button id="open-ceo" type="button">Open CEO Portfolio</button>
+        </article>
+      </section>
+
+      <footer class="privacy">
+        <h3>Privacy &amp; billing</h3>
+        <ul>
+          <li><strong>Offline atlas &amp; System &amp; Models:</strong> fully local. No data leaves your device; no charges.</li>
+          <li>
+            <strong>Online runtime:</strong> your projects, prompts, and files are processed by the hosted Director
+            service under its own terms; usage may be billed by that service. The desktop shell never sees your
+            credentials.
+          </li>
+          <li>
+            <strong>Model downloads:</strong> files are fetched from Hugging Face over HTTPS into this device only.
+            Models are never executed by this shell.
+          </li>
+          <li><strong>Job log:</strong> local JSONL log of downloads/venvs under the app data directory. No secrets.</li>
+          <li>
+            <strong>Local Projects:</strong> prompts and generated text go directly from this device to the
+            provider you select (OpenAI / Anthropic) or to your local Ollama. Providers bill your own key per
+            their terms. Your budgets (tokens / minutes / USD) are hard stops. API keys are stored only as
+            OS-keychain-encrypted blobs under the app data directory and are never displayed or logged.
+          </li>
+        </ul>
+      </footer>
+    </main>
+
+    <main id="projects-view" class="view hidden office">
+      <header class="office-header">
+        <button id="projects-back" type="button" class="secondary">← Launcher</button>
+        <h1 class="office-heading">Office</h1>
+        <label class="rail-label" for="project-rail">Project</label>
+        <select id="project-rail" aria-label="Select project"></select>
+        <button id="project-new" type="button">New Project</button>
+        <span id="project-status" class="rail-status" role="status"></span>
+        <label class="motion-toggle" title="Skip all non-essential animation (in addition to the OS setting)">
+          <input id="reduce-motion-toggle" type="checkbox" />
+          Reduce motion
+        </label>
+        <nav class="office-tabs" role="tablist" aria-label="Project areas">
+          <button type="button" role="tab" id="tab-office" aria-selected="true" aria-controls="panel-office">Office</button>
+          <button type="button" role="tab" id="tab-roadmap" aria-selected="false" aria-controls="panel-roadmap">Roadmap</button>
+          <button type="button" role="tab" id="tab-runs" aria-selected="false" aria-controls="panel-runs">Runs</button>
+          <button type="button" role="tab" id="tab-skills" aria-selected="false" aria-controls="panel-skills">Skills</button>
+          <button type="button" role="tab" id="tab-connections" aria-selected="false" aria-controls="panel-connections">Connections</button>
+          <button type="button" role="tab" id="tab-ceo" aria-selected="false" tabindex="0" aria-controls="panel-ceo">CEO</button>
+        </nav>
+      </header>
+
+      <div class="office-body">
+        <section id="panel-office" role="tabpanel" aria-labelledby="tab-office" class="office-panel office-panel-canvas">
+          <div class="canvas-wrap">
+            <div class="canvas-controls">
+              <button id="canvas-zoom-in" type="button" class="secondary" aria-label="Zoom in">+</button>
+              <button id="canvas-zoom-out" type="button" class="secondary" aria-label="Zoom out">−</button>
+              <span class="canvas-pan-group" role="group" aria-label="Pan the floor plan">
+                <button id="canvas-pan-up" type="button" class="secondary" aria-label="Pan up">↑</button>
+                <button id="canvas-pan-left" type="button" class="secondary" aria-label="Pan left">←</button>
+                <button id="canvas-pan-right" type="button" class="secondary" aria-label="Pan right">→</button>
+                <button id="canvas-pan-down" type="button" class="secondary" aria-label="Pan down">↓</button>
+              </span>
+              <button id="canvas-reset" type="button" class="secondary">Reset view</button>
+              <button id="sitemap-toggle" type="button" class="secondary" aria-expanded="false" aria-controls="office-sitemap">Sitemap</button>
+            </div>
+            <div id="office-canvas-viewport" class="canvas-viewport" tabindex="0" aria-label="Office floor plan. Drag to pan, scroll to zoom, or use arrow keys to pan and plus/minus to zoom. Desks are buttons; activate one to inspect it.">
+              <div id="office-canvas-world" class="canvas-world"></div>
+            </div>
+          </div>
+          <aside id="office-sitemap" class="sitemap hidden" aria-label="Office sitemap, list view of the same rooms and desks"></aside>
+        </section>
+
+        <section id="panel-roadmap" role="tabpanel" aria-labelledby="tab-roadmap" class="office-panel" hidden>
+          <div class="roadmap-grid">
+            <div id="roadmap-svg-wrap" class="roadmap-svg-wrap panel"></div>
+            <div id="roadmap-list-wrap" class="panel"></div>
+          </div>
+        </section>
+
+        <section id="panel-runs" role="tabpanel" aria-labelledby="tab-runs" class="office-panel" hidden>
+          <div class="runs-grid">
+            <div class="panel">
+              <h2>Run controls</h2>
+              <div class="stack" id="run-config">
+                <div class="row wrap">
+                  <label>Run max tokens <input id="run-max-tokens" type="number" min="1" value="20000" /></label>
+                  <label>Run max minutes <input id="run-max-minutes" type="number" min="0.1" step="0.1" value="10" /></label>
+                  <label>Run max USD <input id="run-max-usd" type="number" min="0.0001" step="0.01" value="1" /></label>
+                </div>
+                <div class="row wrap">
+                  <label>Input $ / 1M tokens <input id="rate-input" type="number" min="0" step="0.01" value="0" /></label>
+                  <label>Output $ / 1M tokens <input id="rate-output" type="number" min="0" step="0.01" value="0" /></label>
+                </div>
+                <p class="muted">
+                  Price rates are yours: enter the rates from your provider's pricing page. With 0 rates the USD
+                  budget never triggers. Budgets are hard stops; partial artifacts are always preserved.
+                </p>
+                <div class="row wrap">
+                  <button id="run-start" type="button">Run</button>
+                  <button id="run-pause" type="button" class="secondary">Pause</button>
+                  <button id="run-resume" type="button" class="secondary">Resume</button>
+                  <button id="run-cancel" type="button" class="danger">Cancel</button>
+                  <button id="run-recover" type="button" class="hidden">Recover interrupted run</button>
+                </div>
+                <div id="run-status"></div>
+                <div id="run-recover-note"></div>
+              </div>
+              <div id="run-live"></div>
+            </div>
+            <div class="panel">
+              <h2>Run history</h2>
+              <div id="runs-list" class="stack"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-skills" role="tabpanel" aria-labelledby="tab-skills" class="office-panel" hidden>
+          <div class="skills-grid">
+            <div class="panel">
+              <div class="row space-between">
+                <h2>Bundled skill registry</h2>
+                <button id="skills-reload" type="button" class="secondary">Reload</button>
+              </div>
+              <input id="skills-search" type="text" placeholder="Search skills by name, description, or tag…" autocomplete="off" />
+              <div id="skills-status"></div>
+              <div id="skills-list" class="stack"></div>
+            </div>
+            <div class="panel">
+              <h2>Hire for the goal</h2>
+              <p class="muted">
+                Matches bundled skills to the selected project's goal. Applying creates a hire approval pinned
+                to the exact plan hash — skills are attached only after you approve it in the Approvals tab.
+              </p>
+              <div id="hire-note"></div>
+              <div class="row wrap">
+                <button id="hire-preview-btn" type="button" class="secondary">Preview hires for this project</button>
+              </div>
+              <div id="hire-preview-list" class="stack"></div>
+              <label class="confirm">
+                <input id="hire-confirm" type="checkbox" />
+                I approve adding the previewed hires to the selected project.
+              </label>
+              <button id="hire-apply-btn" type="button" disabled>Apply hires</button>
+              <div id="hire-status"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-connections" role="tabpanel" aria-labelledby="tab-connections" class="office-panel" hidden>
+          <div class="connections-grid">
+            <div class="panel">
+              <h2>API keys</h2>
+              <p class="muted">
+                Keys are encrypted with your OS keychain (Electron safeStorage) and stored only as encrypted
+                blobs under the app data directory. They are never shown again after entry (not even a last4)
+                and never appear in logs, events, or artifacts. Revoke deletes the encrypted blob.
+              </p>
+              <p id="vault-warning" class="status error hidden"></p>
+              <div id="key-rows"></div>
+              <div id="conn-status"></div>
+            </div>
+            <div class="panel">
+              <h2>Live model discovery</h2>
+              <div class="row wrap">
+                <label>Provider
+                  <select id="conn-provider">
+                    <option value="openai">OpenAI</option>
+                    <option value="anthropic">Anthropic</option>
+                    <option value="ollama">Ollama (local)</option>
+                  </select>
+                </label>
+                <button id="conn-list-models" type="button" class="secondary">List models (live)</button>
+                <select id="conn-model-select" class="hidden" aria-label="Discovered models"></select>
+              </div>
+              <div id="conn-models-status"></div>
+            </div>
+            <div class="panel">
+              <h2>Ollama (optional, local only)</h2>
+              <p class="muted">
+                Detects an Ollama server you already started at <code>http://127.0.0.1:11434</code>. This shell
+                never installs or starts Ollama, never pulls models, and never contacts remote Ollama hosts.
+              </p>
+              <button id="ollama-detect" type="button" class="secondary">Detect Ollama</button>
+              <div id="ollama-status"></div>
+              <div id="ollama-models" class="row wrap"></div>
+            </div>
+            <div id="companion-slot"></div>
+            <div class="panel">
+              <h2>Hosted runtime</h2>
+              <p class="muted">
+                The hosted Director runtime is a separate service with its own terms and billing. This shell
+                stores <strong>only the URL</strong>, never tokens.
+              </p>
+              <div class="row wrap">
+                <input id="conn-runtime-url" type="text" placeholder="https://director.example.com" autocomplete="off" />
+                <button id="conn-runtime-connect" type="button">Connect</button>
+              </div>
+              <div id="conn-runtime-status"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="panel-ceo" role="tabpanel" aria-labelledby="tab-ceo" class="office-panel office-panel-ceo" hidden>
+          <div id="ceo-root"></div>
+        </section>
+      </div>
+
+      <section id="office-inspector" class="inspector" aria-label="Inspector">
+        <div class="inspector-bar">
+          <nav class="inspector-tabs" role="tablist" aria-label="Inspector panels">
+            <button type="button" role="tab" id="insp-tab-chat" aria-selected="false" aria-controls="insp-panel-chat">Chat</button>
+            <button type="button" role="tab" id="insp-tab-timeline" aria-selected="true" aria-controls="insp-panel-timeline">Timeline</button>
+            <button type="button" role="tab" id="insp-tab-approvals" aria-selected="false" aria-controls="insp-panel-approvals">
+              Approvals <span id="approvals-count" class="badge neutral hidden" aria-label="0 pending approvals"></span>
+            </button>
+            <button type="button" role="tab" id="insp-tab-artifacts" aria-selected="false" aria-controls="insp-panel-artifacts">Artifacts</button>
+            <button type="button" role="tab" id="insp-tab-node" aria-selected="false" aria-controls="insp-panel-node">Node</button>
+          </nav>
+          <button id="inspector-toggle" type="button" class="secondary" aria-expanded="true" aria-controls="inspector-body">Collapse inspector</button>
+        </div>
+        <div id="inspector-body" class="inspector-body">
+          <div class="inspector-body-inner">
+            <section id="insp-panel-chat" role="tabpanel" aria-labelledby="insp-tab-chat" hidden></section>
+            <section id="insp-panel-timeline" role="tabpanel" aria-labelledby="insp-tab-timeline"></section>
+            <section id="insp-panel-approvals" role="tabpanel" aria-labelledby="insp-tab-approvals" hidden></section>
+            <section id="insp-panel-artifacts" role="tabpanel" aria-labelledby="insp-tab-artifacts" hidden></section>
+            <section id="insp-panel-node" role="tabpanel" aria-labelledby="insp-tab-node" hidden></section>
+          </div>
+        </div>
+      </section>
+
+      <div id="new-project-dialog" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="np-title">
+        <div class="modal">
+          <h2 id="np-title">New Project</h2>
+          <form id="project-form" class="stack">
+            <input id="np-name" type="text" placeholder="Project name" autocomplete="off" required />
+            <textarea id="np-goal" rows="3" placeholder="Goal (text only)…" required></textarea>
+            <textarea id="np-success-criteria" rows="3" placeholder="Measurable success criteria, one per line…"></textarea>
+            <div class="row wrap">
+              <label>Template
+                <select id="np-template">
+                  <option value="office">Office hierarchy (Director → Sub-Directors → workers)</option>
+                  <option value="standard">Standard squad (Director → Research → Build → Review)</option>
+                </select>
+              </label>
+              <label>Provider
+                <select id="np-provider">
+                  <option value="openai">OpenAI</option>
+                  <option value="anthropic">Anthropic</option>
+                  <option value="ollama">Ollama (local)</option>
+                </select>
+              </label>
+              <button id="np-list-models" type="button" class="secondary">List models (live)</button>
+              <select id="np-model-select" class="hidden" aria-label="Discovered models"></select>
+              <input id="np-model" type="text" placeholder="model id" autocomplete="off" required />
+            </div>
+            <div id="np-preview" class="panel"></div>
+            <fieldset class="np-fieldset">
+              <legend>Bounded loop policy</legend>
+              <div class="row wrap">
+                <label>Max iterations (1–5) <input id="np-loop-max-iterations" type="number" min="1" max="5" value="3" /></label>
+                <label>No-progress limit (1–5) <input id="np-loop-no-progress" type="number" min="1" max="5" value="2" /></label>
+              </div>
+            </fieldset>
+            <p class="muted">
+              Run budgets (tokens / minutes / USD) and price rates are set per run in the Runs tab after the
+              project is created. Worker budgets are generated with the hierarchy.
+            </p>
+            <div class="row wrap">
+              <button type="submit">Create project</button>
+              <button type="button" id="np-cancel" class="secondary">Cancel</button>
+            </div>
+          </form>
+          <div id="proj-status"></div>
+        </div>
+      </div>
+    </main>
+
+    <main id="system-view" class="view hidden">
+      <div class="row space-between">
+        <h1>System &amp; Models</h1>
+        <button id="system-back" type="button">← Back to launcher</button>
+      </div>
+
+      <section class="panel">
+        <div class="row space-between">
+          <h2>System information</h2>
+          <button id="refresh-sysinfo" type="button">Refresh</button>
+        </div>
+        <div id="sysinfo" class="kv"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Virtual environments</h2>
+        <p class="muted">
+          Creates an isolated Python venv under the app data directory (<code>userData/venvs/&lt;name&gt;</code>)
+          using the detected Python 3. The shell never activates environments and never runs repo or model code.
+        </p>
+        <form id="venv-form" class="stack">
+          <input id="venv-name" type="text" placeholder="venv name (e.g. hf-tools)" autocomplete="off" />
+          <label><input id="venv-install-hf" type="checkbox" /> Install pinned <code>huggingface_hub</code> tool</label>
+          <label class="confirm">
+            <input id="venv-confirm" type="checkbox" />
+            I confirm creating this virtual environment on my device.
+          </label>
+          <button type="submit">Create venv</button>
+        </form>
+        <p id="venv-status" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <div class="row space-between">
+          <h2>Model catalog (reviewed)</h2>
+          <button id="refresh-catalog" type="button">Refresh</button>
+        </div>
+        <p class="muted">
+          Only models reviewed into <code>models.catalog.json</code> appear here. Downloads require your
+          confirmation, are pinned to a commit, land under <code>userData/models</code>, and are never executed.
+        </p>
+        <div id="catalog"></div>
+        <p id="catalog-status" class="status"></p>
+      </section>
+
+      <section class="panel">
+        <div class="row space-between">
+          <h2>Jobs</h2>
+          <button id="refresh-jobs" type="button">Refresh</button>
+        </div>
+        <table id="jobs-table">
+          <thead>
+            <tr><th>Job</th><th>Kind</th><th>Status</th><th>Progress</th><th>Detail</th><th></th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+    </main>
+
+    <div id="live-summary" class="visually-hidden" role="status" aria-live="polite"></div>
+    <div id="overlay-root"></div>
+
+    <script src="./vendor/panzoom/panzoom.min.js"></script>
+    <script type="module" src="./chrome.js"></script>
+  </body>
+</html>
