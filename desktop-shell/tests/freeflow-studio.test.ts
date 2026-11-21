@@ -111,6 +111,43 @@ describe('freeflow studio (mounted)', () => {
     expect(ctl.dataset.active).toBe('true');
   });
 
+  it('room shows its name and the actual department label, updating in place', () => {
+    const mk = (deptId: string | null, deptName: string, deptCo = 'c1', deptOffice = 'o1'): FreeflowSnapshot => ({
+      companies: [{ id: 'c1', name: 'Co', status: 'active' }],
+      offices: [{ id: 'o1', companyId: 'c1', name: 'HQ', status: 'active' }],
+      departments: [{ id: 'd1', companyId: deptCo, officeId: deptOffice, name: deptName, status: 'active' }, { id: 'd2', companyId: 'c1', officeId: 'o1', name: 'Design department', status: 'active' }],
+      employees: [], jobs: [],
+      blueprints: [{ id: 'bp', companyId: 'c1', officeId: 'o1', rooms: [{ id: 'r1', name: 'Quiet planning room', departmentId: deptId, x: 0, y: 0, width: 0.5, height: 0.5 }], desks: [], whiteboards: [] }],
+    });
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    dom.setGeometry(host, { width: 1200, height: 800, left: 0, top: 0 });
+    const sr: SceneRenderer = mountScene(host, {});
+    cleanups.push(() => sr.destroy());
+    const focus = { kind: 'company', companyId: 'c1' } as const;
+    const room = () => host.querySelector('[data-node-id="room:c1:o1:r1"]') as HTMLElement;
+    const tag = () => room().querySelector('.ff-segment-tag')?.textContent;
+    const title = () => room().querySelector('.ff-node-title')?.textContent;
+    sr.update(buildScene(mk('d1', 'Research department'), focus));
+    expect(title()).toBe('Quiet planning room');
+    expect(tag()).toBe('Research department');
+    const el0 = room();
+    sr.select('room:c1:o1:r1');
+    sr.update(buildScene(mk(null, 'Research department'), focus));
+    expect(room()).toBe(el0);
+    expect(tag()).toBe('Unassigned department');
+    expect(title()).toBe('Quiet planning room');
+    sr.update(buildScene(mk('d2', 'Research department'), focus));
+    expect(tag()).toBe('Design department');
+    sr.update(buildScene(mk('d1', 'Renamed department'), focus));
+    expect(tag()).toBe('Renamed department');
+    sr.update(buildScene(mk('d1', 'Foreign department', 'other', 'o1'), focus));
+    expect(tag()).toBe('Department unavailable');
+    expect(room().classList.contains('is-selected')).toBe(true);
+    const css = String(require('node:fs').readFileSync(require('node:path').resolve(__dirname, '../src/renderer/freeflow.css'), 'utf8'));
+    expect(/\.ff-node--room \.ff-node-title\s*\{[^}]*display:\s*none/.test(css)).toBe(false);
+  });
+
   it('mounted scene honors node and thread budgets and reports full counts', () => {
     const snap = dense(300);
     const scene = buildScene(snap, { kind: 'company', companyId: 'c1' });

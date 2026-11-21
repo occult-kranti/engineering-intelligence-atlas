@@ -362,7 +362,7 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
       for (const r of rooms) {
         const rect = mapRoom(r, origin, norm);
         roomRect.set(r.id, rect);
-        push({ id: roomNodeId(cid, o.id, r.id), kind: 'room', entityId: r.id, companyId: cid, officeId: o.id, departmentId: r.departmentId ?? undefined, roomId: r.id, parentId: oid, label: r.name, subtitle: 'Room', status: 'saved', rect, metadata: {}, counts: { desks: bp.desks.filter((d) => d.roomId === r.id).length, whiteboards: bp.whiteboards.filter((w) => w.roomId === r.id).length } });
+        push({ id: roomNodeId(cid, o.id, r.id), kind: 'room', entityId: r.id, companyId: cid, officeId: o.id, departmentId: r.departmentId ?? undefined, roomId: r.id, parentId: oid, label: r.name, subtitle: 'Room', status: 'saved', rect, metadata: { assignment: (() => { if (!r.departmentId) return 'Unassigned department'; const dd = depts.find((x) => x.id === r.departmentId && x.officeId === o.id); return dd ? String(dd.name).slice(0, 80) : 'Department unavailable'; })() }, counts: { desks: bp.desks.filter((d) => d.roomId === r.id).length, whiteboards: bp.whiteboards.filter((w) => w.roomId === r.id).length } });
       }
       for (const d of [...bp.desks].sort((a, b) => cmp(a.id, b.id))) {
         const room = roomRect.get(d.roomId);

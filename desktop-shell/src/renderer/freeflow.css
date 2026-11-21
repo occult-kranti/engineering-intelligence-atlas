@@ -162,8 +162,8 @@ body.ff-canvas-mode #donna-dock-toggle { bottom: 16px; }
 .ff-node--seat:hover .ff-node-paper, .ff-node--seat.is-selected .ff-node-paper { border-color: var(--accent); }
 .ff-node--seat .ff-node-title { font-size: 16px; }
 .ff-segment-tag { position: absolute; left: 8px; top: 4px; padding: 1px 8px; border: 1px solid var(--brand-gold); border-radius: 3px; background: var(--surface); color: var(--ink); font-size: 12px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase; }
-.ff-node--room .ff-node-paper { border-top: 4px solid var(--brand-gold); padding-top: 26px; }
-.ff-node--room .ff-node-title { display: none; }
+.ff-node--room .ff-node-paper { border-top: 4px solid var(--brand-gold); padding-top: 34px; }
+.ff-node--room .ff-node-title { display: block; margin-top: 2px; }
 .ff-inspector-actions button:disabled::before { content: ''; display: inline-block; width: 8px; height: 6px; margin-right: 6px; border: 2px solid currentColor; border-radius: 2px; vertical-align: -1px; }
 .ff-inspector-actions button:disabled { border-style: solid; }
 .ff-inspector-note { color: var(--ink); font-size: 12px; }

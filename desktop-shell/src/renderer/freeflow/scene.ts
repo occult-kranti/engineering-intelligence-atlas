@@ -171,7 +171,8 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   e.tabIndex = tabStop ? 0 : -1;
   const paper = e.firstElementChild as HTMLElement;
   const hk = heatOf(n);
-  const key = `${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}`;
+  const assign = typeof n.metadata['assignment'] === 'string' ? (n.metadata['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department');
+  const key = `${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}`;
   if (e.dataset.sig === key) return;
   e.dataset.sig = key;
   paper.replaceChildren(detailSvg(n, lod));
@@ -183,9 +184,8 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
     e.classList.add('ff-node--seat');
   }
   if ((n.kind === 'room' || n.kind === 'office') && n.kind === 'room') {
-    const dept = n.departmentId ? n.label : 'Unassigned department';
-    const tag = el('div', 'ff-segment-tag', dept);
-    tag.setAttribute('aria-hidden', 'true');
+    const tag = el('div', 'ff-segment-tag', assign);
+    tag.setAttribute('aria-label', `Department: ${assign}`);
     paper.appendChild(tag);
   }
   const title = el('div', 'ff-node-title', n.label);
