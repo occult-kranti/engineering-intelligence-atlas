@@ -2326,7 +2326,7 @@ function initUnifiedWorkspace():void{
   document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]').forEach((button)=>{button.onclick=()=>switchWorkspaceTab(button.dataset.workspaceTab||'chat');button.addEventListener('keydown',(event)=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const buttons=Array.from(document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]'));const i=buttons.indexOf(button);const next=event.key==='Home'?buttons[0]:event.key==='End'?buttons.at(-1):buttons[(i+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length];next?.click();next?.focus();});});
   document.querySelectorAll<HTMLButtonElement>('[data-open-workspace-tab]').forEach((button)=>button.onclick=()=>switchWorkspaceTab(button.dataset.openWorkspaceTab||'chat'));
   document.querySelectorAll<HTMLButtonElement>('[data-brief]').forEach((button)=>button.onclick=()=>{($('chat-message') as HTMLTextAreaElement).value=button.dataset.brief||'';$('chat-message').focus();});
-  const newBrief=()=>{setPortfolioOpen(false);navigate('office');switchWorkspaceTab('chat');$('chat-message').focus();};$('header-new-goal').onclick=newBrief;$('brief-donna').onclick=newBrief;
+  const newBrief=()=>{setPortfolioOpen(false);navigate('office');switchWorkspaceTab('chat');$('chat-message').focus();};$('header-new-goal').onclick=()=>{if(document.body.classList.contains('ff-canvas-mode')){const f=ffFocus;const ctx:StudioActionContext=f.kind==='portfolio'?{}:{companyId:f.companyId,...('officeId' in f&&f.officeId?{officeId:f.officeId}:{}),...(f.kind==='department'?{departmentId:f.departmentId}:{})};ffAction('new-goal' as unknown as StudioActionKind,ctx);}else newBrief();};$('brief-donna').onclick=newBrief;
   $('chat-scope').addEventListener('change',renderUnifiedWorkspace);$('chat-employee').addEventListener('change',renderUnifiedWorkspace);$('chat-goal-mode').addEventListener('change',()=>{updateChatMode();if(value('chat-goal-mode')==='provider')($('chat-provider-options') as HTMLDetailsElement).open=true;});
   $('chat-message').addEventListener('keydown',(event)=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();($('workspace-chat-form') as HTMLFormElement).requestSubmit();}});
   workspaceForm('workspace-chat-form',async()=>{
@@ -3020,12 +3020,31 @@ async function ffRunScopeIntent(intent: FfScopeIntent): Promise<void> {
   ffRefresh();
 }
 /** Awaitable entry point: resolves after this intent (or a newer one) has been settled. */
-function ffTransitionScope(focus: FreeflowFocus, operations: boolean | null = null): Promise<void> {
-  const intent: FfScopeIntent = { focus: { ...focus } as FreeflowFocus, operations, token: ++ffScopeSeq };
+function ffFocusMatches(a: FreeflowFocus, b: FreeflowFocus): boolean {
+  if (a.kind !== b.kind) return false;
+  if (a.kind === 'portfolio') return true;
+  if (b.kind === 'portfolio') return false;
+  if (a.companyId !== b.companyId) return false;
+  const ao = 'officeId' in a ? a.officeId : undefined; const bo = 'officeId' in b ? b.officeId : undefined;
+  if (ao !== bo) return false;
+  const ad = a.kind === 'department' ? a.departmentId : undefined; const bd = b.kind === 'department' ? b.departmentId : undefined;
+  return ad === bd;
+}
+/** Resolves true only when this intent is still the latest and the confirmed final scope equals the requested focus. */
+function ffTransitionScope(focus: FreeflowFocus, operations: boolean | null = null): Promise<boolean> {
+  const requested = { ...focus } as FreeflowFocus;
+  const intent: FfScopeIntent = { focus: requested, operations, token: ++ffScopeSeq };
   ffScopeChain = ffScopeChain.then(() => ffRunScopeIntent(intent)).catch((error: unknown) => {
     toast(error instanceof Error ? error.message : 'The company scope could not be changed.');
   });
-  return ffScopeChain;
+  return ffScopeChain.then(() => {
+    if (intent.token !== ffScopeSeq) return false;
+    if (!ffFocusMatches(ffFocus, requested)) return false;
+    if (requested.kind !== 'portfolio' && officeState?.activeCompanyId !== requested.companyId) return false;
+    if (requested.kind === 'company' && selectedDepartmentId) return false;
+    if (requested.kind === 'department' && selectedDepartmentId !== requested.departmentId) return false;
+    return true;
+  });
 }
 function ffNavigate(focus: FreeflowFocus): void {
   void ffTransitionScope(focus, null);
@@ -3039,32 +3058,101 @@ function ffOpenPanel(selector: string, focusId: string): void {
   void selector;
 }
 function ffShowOps(): void { ffOperations = true; ffSetNav('operations'); ffApplyMode(); }
+function ffActionFocus(ctx: StudioActionContext): FreeflowFocus | null {
+  const companyId = ctx.companyId || officeState?.activeCompanyId; if (!companyId) return null;
+  const departmentId = ctx.departmentId; const officeId = ctx.officeId || (departmentId ? officeState?.departments.find((d) => d.id === departmentId)?.officeId : undefined);
+  if (departmentId && officeId) return { kind: 'department', companyId, officeId, departmentId };
+  if (officeId) return { kind: 'office', companyId, officeId };
+  return { kind: 'company', companyId };
+}
+function ffActionFocusStillCurrent(focus: FreeflowFocus): boolean {
+  return ffFocusMatches(ffFocus, focus) && officeState?.activeCompanyId === (focus.kind === 'portfolio' ? '' : focus.companyId);
+}
 function ffAction(action: StudioActionKind, ctx: StudioActionContext): void {
-  if (ctx.companyId && officeState?.companies.some((c) => c.id === ctx.companyId) && officeState.activeCompanyId !== ctx.companyId) {
-    if (workspaceReadOnly()) officeState.activeCompanyId = ctx.companyId; else void safeTask(() => performOffice({ action: 'select_company', companyId: ctx.companyId! }));
+  const scopeBound: StudioActionKind[] = ['chat', 'new-job', 'ownership', 'jobs', 'manage', 'hire', 'new-office', 'new-department', 'roadmap', 'whiteboard', 'services'];
+  if (action === 'new-goal' as unknown as StudioActionKind || scopeBound.includes(action) && (ctx.companyId || ctx.officeId || ctx.departmentId)) {
+    const focus = ffActionFocus(ctx);
+    if (!focus) { setStatus($('workspace-action-status'), 'Choose a company first.', 'error'); return; }
+    void ffTransitionScope(focus, null).then((ok) => {
+      if (!ok || !ffActionFocusStillCurrent(focus)) return;
+      ffActionConfirmed(action, ctx);
+    });
+    return;
   }
-  if (ctx.officeId) selectedOfficeId = ctx.officeId;
-  if (ctx.departmentId) selectedDepartmentId = ctx.departmentId;
-  renderOffice();
+  ffActionConfirmed(action, ctx);
+}
+function ffRevealComposer(): void {
+  donnaDockOpen = true; ffOperations = false; ffApplyMode();
+  workspaceTab = workspaceTab === 'chat' ? 'blueprint' : workspaceTab;
+  syncDonnaDock();
+  const box = $('chat-message') as HTMLTextAreaElement; box.focus();
+}
+function ffChatTarget(ctx: StudioActionContext): { ok: boolean; message?: string } {
+  const scopeSel = $('chat-scope') as HTMLSelectElement;
+  const company = officeCompany();
+  if (!ctx.employeeId) {
+    scopeSel.value = ctx.departmentId ? 'department' : ctx.officeId ? 'office' : 'company';
+    return { ok: true };
+  }
+  const employee = officeState?.employees.find((e) => e.id === ctx.employeeId);
+  if (!employee) return { ok: false, message: 'That employee is no longer in the workspace.' };
+  const local = employee.companyId === null ? false : employee.companyId === company?.id;
+  if (!local) {
+    scopeSel.value = 'company';
+    return { ok: true, message: `${employee.name} belongs outside this company, so this conversation is with this company's Donna instead.` };
+  }
+  scopeSel.value = 'employee';
+  renderWorkspaceControls();
+  const sel = $('chat-employee') as HTMLSelectElement;
+  if (!Array.from(sel.options).some((o) => o.value === employee.id)) return { ok: false, message: `${employee.name} is not eligible for chat in this scope.` };
+  sel.value = employee.id;
+  return { ok: true };
+}
+function ffActionConfirmed(action: StudioActionKind, ctx: StudioActionContext): void {
   const readOnly = workspaceReadOnly();
   const toWorkspace = (tab: string, focusId: string) => { ffOperations = true; ffSetNav('operations'); ffApplyMode(); setPortfolioOpen(false); switchWorkspaceTab(tab); window.setTimeout(() => ffOpenPanel('', focusId), 0); };
   switch (action) {
     case 'chat': {
-      const scopeSel = $('chat-scope') as HTMLSelectElement;
-      scopeSel.value = ctx.employeeId ? 'employee' : ctx.departmentId ? 'department' : ctx.officeId ? 'office' : 'company';
-      renderWorkspaceControls();
-      if (ctx.employeeId) ($('chat-employee') as HTMLSelectElement).value = ctx.employeeId;
-      donnaDockOpen = true; ffOperations = false; ffApplyMode(); workspaceTab = workspaceTab === 'chat' ? 'blueprint' : workspaceTab; syncDonnaDock(); $('chat-message').focus(); break;
+      renderOffice();
+      const target = ffChatTarget(ctx);
+      renderWorkspaceControls(); conversationSignature = ''; renderConversation(); renderWorkspaceGoals();
+      if (!target.ok) { setStatus($('workspace-action-status'), target.message || 'This conversation is unavailable.', 'error'); break; }
+      ffRevealComposer();
+      setStatus($('chat-status'), target.message || '');
+      break;
     }
     case 'jobs': ffShowOps(); setPortfolioOpen(false); switchOfficeTab('queue'); ffOpenPanel('', 'office-queue-filter'); break;
     case 'new-job': {
+      const contractSel = $('queue-service-contract') as HTMLSelectElement;
+      const wantContract = ctx.contractId || '';
+      if (wantContract) {
+        const contract = scopedServiceContracts().find((k) => k.id === wantContract);
+        if (!contract) { setStatus($('workspace-action-status'), 'That service contract is not active for this scope.', 'error'); break; }
+        if (ctx.employeeId && !contract.employeeIds.includes(ctx.employeeId)) { setStatus($('workspace-action-status'), 'That employee is not part of the requested service contract.', 'error'); break; }
+        contractSel.value = contract.id;
+      } else contractSel.value = '';
+      renderOfficeScope();
+      const sel = $('queue-employee') as HTMLSelectElement;
+      if (ctx.employeeId) {
+        if (!Array.from(sel.options).some((o) => o.value === ctx.employeeId)) { setStatus($('workspace-action-status'), 'That employee is not eligible for a new job in this scope.', 'error'); break; }
+        sel.value = ctx.employeeId;
+      }
       ffShowOps(); switchOfficeTab('queue'); ($('queue-composer') as HTMLDetailsElement).open = true;
-      if (ctx.employeeId) { const sel = $('queue-employee') as HTMLSelectElement; if (Array.from(sel.options).some((o) => o.value === ctx.employeeId)) sel.value = ctx.employeeId; }
       ffOpenPanel('', 'queue-goal'); break;
     }
+    case 'new-goal' as unknown as StudioActionKind: ffRevealComposer(); break;
     case 'roadmap': ffOperations = true; ffApplyMode(); setPortfolioOpen(false); switchWorkspaceTab('timeline'); break;
     case 'whiteboard': toWorkspace('whiteboard', 'whiteboard-add-node'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } break;
-    case 'ownership': toWorkspace('whiteboard', 'node-title'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } break;
+    case 'ownership': {
+      if (ctx.employeeId && !ctx.boardId) {
+        if (!officeState?.employees.some((e) => e.id === ctx.employeeId)) { setStatus($('workspace-action-status'), 'That employee is no longer in the workspace.', 'error'); break; }
+        ffShowOps(); setPortfolioOpen(true); renderAuthority();
+        ($('ceo-authority-editor') as HTMLDetailsElement).open = true;
+        const sel = $('authority-employee') as HTMLSelectElement; sel.value = ctx.employeeId;
+        renderAuthorityForm(); renderAuthorityGrants(); ffOpenPanel('', 'authority-employee'); break;
+      }
+      toWorkspace('whiteboard', 'node-title'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } break;
+    }
     case 'manage': ffShowOps(); switchOfficeTab('people'); ffOpenPanel('', 'office-employees'); break;
     case 'new-company': ffShowOps(); switchOfficeTab('overview'); ffOpenPanel('', 'office-new-company-name'); break;
     case 'new-office': ffShowOps(); switchOfficeTab('overview'); ffOpenPanel('', 'office-new-office-name'); break;
