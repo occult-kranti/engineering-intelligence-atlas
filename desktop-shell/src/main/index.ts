@@ -33,6 +33,71 @@ import { existingUserDataPath } from './profileMigration';
  *    They are decrypted in main, per call, and never exposed over IPC.
  */
 
+// Main-only, bounded, sanitized startup record. Never exposed to renderer/IPC.
+interface StartupStage { stage: string; outcome: 'start' | 'ok' | 'error'; tMs: number; error?: { name: string; message: string; stack?: string } }
+interface StartupLifecycle { event: string; tMs: number; id?: number; code?: number; reason?: string; detail?: string }
+const startupT0 = Date.now();
+const startupStages: StartupStage[] = [];
+const startupLifecycle: StartupLifecycle[] = [];
+function sanitizeStartupText(value: unknown, max: number): string {
+  try {
+    return String(value ?? '')
+      .replace(/file:\/\/\/?[^\s)'"]*/gi, (m) => 'file://<path>/' + (m.split(/[\\/]/).pop() ?? '').split(/[?#]/)[0])
+      .replace(/https?:\/\/[^\s)'"?#]*[?#][^\s)'"]*/gi, (m) => m.split(/[?#]/)[0])
+      .replace(/[A-Za-z]:[\\/](?:[^\\/\s:)'"]+[\\/])+/g, '<path>/')
+      .replace(/(?:\/(?:home|Users|root|var|tmp|opt|mnt|private)\/)(?:[^\/\s:)'"]+\/)*/g, '<path>/')
+      .replace(/(^|[^A-Za-z0-9_-])(?:sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}/g, '$1[redacted]')
+      .replace(/(token|secret|password|authorization|api[_-]?key)(\s*[=:]\s*)\S+/gi, '$1$2[redacted]')
+      .slice(0, max);
+  } catch { return '[unsanitizable]'; }
+}
+function recordStage(stage: string, outcome: StartupStage['outcome'], error?: unknown): void {
+  try {
+    if (startupStages.length >= 64) return;
+    const entry: StartupStage = { stage: stage.slice(0, 64), outcome, tMs: Date.now() - startupT0 };
+    if (error !== undefined) {
+      const e = error instanceof Error ? error : new Error(String(error));
+      entry.error = { name: sanitizeStartupText(e.name, 80), message: sanitizeStartupText(e.message, 500), stack: sanitizeStartupText((e.stack ?? '').split('\n').slice(0, 6).join('\n'), 1200) };
+    }
+    startupStages.push(entry);
+  } catch { /* recording must never throw */ }
+}
+function recordLifecycle(event: string, extra: Partial<StartupLifecycle> = {}): void {
+  try {
+    if (startupLifecycle.length >= 100) return;
+    const entry: StartupLifecycle = { event: event.slice(0, 48), tMs: Date.now() - startupT0 };
+    if (typeof extra.id === 'number') entry.id = extra.id;
+    if (typeof extra.code === 'number') entry.code = extra.code;
+    if (extra.reason !== undefined) entry.reason = sanitizeStartupText(extra.reason, 80);
+    if (extra.detail !== undefined) entry.detail = sanitizeStartupText(extra.detail, 200);
+    startupLifecycle.push(entry);
+  } catch { /* ignore */ }
+}
+function safeIdentity(): Record<string, unknown> {
+  const out: Record<string, unknown> = { pid: process.pid, electron: process.versions.electron, node: process.versions.node };
+  try { out.packaged = app.isPackaged; } catch { /* ignore */ }
+  try { out.version = app.getVersion(); } catch { /* ignore */ }
+  try { out.appPath = path.basename(app.getAppPath()); } catch { /* ignore */ }
+  return out;
+}
+(globalThis as Record<string, unknown>).__atlasStartupRecord = () => ({ stages: startupStages.slice(), lifecycle: startupLifecycle.slice(), identity: safeIdentity() });
+recordStage('entry', 'ok');
+// Monitor only: does not replace Node's normal uncaught-exception handling.
+process.on('uncaughtExceptionMonitor', (err) => { recordStage('uncaughtException', 'error', err); });
+
+function installLifecycleRecorders(): void {
+  app.on('browser-window-created', (_e, win) => {
+    recordLifecycle('browser-window-created', { id: win.id });
+    win.on('closed', () => recordLifecycle('window-closed', { id: win.id }));
+  });
+  app.on('web-contents-created', (_e, contents) => {
+    recordLifecycle('web-contents-created', { id: contents.id });
+    contents.on('did-fail-load', (_ev, code, description, url) => recordLifecycle('did-fail-load', { id: contents.id, code, reason: String(description), detail: String(url) }));
+    contents.on('did-finish-load', () => recordLifecycle('did-finish-load', { id: contents.id }));
+    contents.on('render-process-gone', (_ev, details) => recordLifecycle('render-process-gone', { id: contents.id, code: details?.exitCode, reason: details?.reason }));
+  });
+}
+
 function applySessionHardening(): void {
   const ses = session.defaultSession;
   // Deny all permission requests (camera, mic, notifications, …) by default.
@@ -43,14 +108,23 @@ function applySessionHardening(): void {
 }
 
 async function main(): Promise<void> {
+  recordStage('profile-resolve', 'start');
   const currentProfile = app.getPath('userData');
   const preservedProfile = existingUserDataPath(currentProfile, app.getPath('appData'), app.commandLine.hasSwitch('user-data-dir'), fs.existsSync);
   if (preservedProfile !== currentProfile) app.setPath('userData', preservedProfile);
+  recordStage('profile-resolve', 'ok');
+  recordStage('app-ready', 'start');
   await app.whenReady();
+  recordStage('app-ready', 'ok');
+  recordStage('session-hardening', 'start');
   applySessionHardening();
+  recordStage('session-hardening', 'ok');
 
   const userDataPath = app.getPath('userData');
+  installLifecycleRecorders();
+  recordStage('window-construct', 'start');
   const windowManager = new WindowManager();
+  recordStage('window-construct', 'ok');
   const jobManager = new JobManager(path.join(userDataPath, 'logs'));
   const settings = new SettingsStore(userDataPath);
   const catalogPath = path.join(app.getAppPath(), 'models.catalog.json');
@@ -142,11 +216,12 @@ async function main(): Promise<void> {
     },
   });
   app.once('before-quit', () => { void personalDashboard.close(); });
+  recordStage('init-complete', 'ok');
 
   app.on('activate', () => {
     // Single-window shell: re-create only if the window was destroyed.
     if (windowManager.window.isDestroyed()) {
-      void main();
+      runStartup('activation');
     }
   });
 }
@@ -155,4 +230,12 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
-void main();
+/** Single explicit error boundary for initial and activation startup. No retry, no substitute window. */
+function runStartup(origin: 'initial' | 'activation'): void {
+  main().catch((err) => {
+    recordStage(origin === 'initial' ? 'main-rejected' : 'activation-rejected', 'error', err);
+    try { console.error('Daftar startup failed (' + origin + '):', sanitizeStartupText(err instanceof Error ? err.message : err, 500)); } catch { /* ignore */ }
+  });
+}
+
+runStartup('initial');

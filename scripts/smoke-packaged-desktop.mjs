@@ -77,23 +77,44 @@ function writeDiagnostics(extra) {
     }, null, 2) + '\n');
   } catch {}
 }
+// Collects the early main-process recorder plus current windows; every state is explicit and bounded.
+async function collectStartupEvidence(app) {
+  const work = (async () => {
+    const out = { recorder: 'absent', startup: null, windows: [], isReady: null };
+    try {
+      const snap = await app.evaluate(({ app: electronApp, BrowserWindow }) => {
+        const getter = globalThis.__atlasStartupRecord;
+        let rec = null; let recErr = null;
+        if (typeof getter === 'function') { try { rec = getter(); } catch (e) { recErr = String(e && e.message || e).slice(0, 300); } }
+        return {
+          hasGetter: typeof getter === 'function', rec, recErr,
+          isReady: electronApp.isReady(),
+          windows: BrowserWindow.getAllWindows().map(win => ({
+            id: win.id, destroyed: win.isDestroyed(),
+            visible: win.isDestroyed() ? false : win.isVisible(),
+            url: win.isDestroyed() ? '' : String(win.webContents.getURL()).slice(0, 300),
+            loading: win.isDestroyed() ? null : win.webContents.isLoading(),
+            crashed: win.isDestroyed() ? null : win.webContents.isCrashed(),
+          })),
+        };
+      });
+      out.isReady = snap.isReady;
+      out.windows = snap.windows;
+      if (!snap.hasGetter) out.recorder = 'startup record unavailable / entry not observed';
+      else if (snap.recErr) out.recorder = 'getter-failed: ' + snap.recErr;
+      else { out.recorder = 'present'; out.startup = JSON.parse(redactText(JSON.stringify(snap.rec))); }
+    } catch (inner) { out.recorder = 'collection-failed: ' + redactText(inner instanceof Error ? inner.message : inner); }
+    return out;
+  })();
+  const timeout = new Promise(resolveTimeout => setTimeout(() => resolveTimeout({ recorder: 'collection-timed-out' }), 8000));
+  return Promise.race([work, timeout]);
+}
 async function firstWindowWithDiagnostics(app) {
   try {
     return await app.firstWindow({ timeout: 30000 });
   } catch (error) {
     const diag = { error: redactText(error instanceof Error ? error.message : error), windows: [], isReady: null };
-    try {
-      Object.assign(diag, await app.evaluate(({ app: electronApp, BrowserWindow }) => ({
-        isReady: electronApp.isReady(),
-        windows: BrowserWindow.getAllWindows().map(win => ({
-          id: win.id, destroyed: win.isDestroyed(),
-          visible: win.isDestroyed() ? false : win.isVisible(),
-          url: win.isDestroyed() ? '' : String(win.webContents.getURL()).slice(0, 300),
-          loading: win.isDestroyed() ? null : win.webContents.isLoading(),
-          crashed: win.isDestroyed() ? null : win.webContents.isCrashed(),
-        })),
-      })));
-    } catch (inner) { diag.evaluateError = redactText(inner instanceof Error ? inner.message : inner); }
+    Object.assign(diag, await collectStartupEvidence(app));
     launchDiagnostic = diag;
     writeDiagnostics({ firstWindowTimeout: diag });
     throw error;
@@ -250,13 +271,10 @@ try {
   writeFileSync(join(screenshots, 'receipt.json'), JSON.stringify(receipt, null, 2) + '\n');
   console.log(`Packaged desktop acceptance passed: real Rust state, persisted local plan, ${captured.length} screenshots, no provider work.`);
 } catch (error) {
-  if (application && !launchDiagnostic) {
-    try {
-      const events = await application.evaluate(() => globalThis.__atlasSmokeEvents ?? []);
-      pushBounded(appEvents, { event: 'collected-webcontents-events', events });
-    } catch {}
-  }
-  writeDiagnostics({ failure: redactText(error instanceof Error ? error.message : error), firstWindowTimeout: launchDiagnostic });
+  // Collect retained evidence even when launchDiagnostic already exists; bounded so it cannot hang.
+  let lateEvidence = null;
+  if (application) lateEvidence = await collectStartupEvidence(application);
+  writeDiagnostics({ failure: redactText(error instanceof Error ? error.message : error), firstWindowTimeout: launchDiagnostic, startupEvidence: lateEvidence, limits: 'Static import failures precede the in-module recorder; the post-launch stdout listener can miss earlier output.' });
   if (page) await page.screenshot({ path: join(screenshots, 'failure.png'), fullPage: false }).catch(() => {});
   writeFileSync(join(screenshots, 'receipt.json'), JSON.stringify({ schemaVersion: 1, status: 'failed', at: new Date().toISOString(), error: error instanceof Error ? error.message : String(error), screenshots: captured, pageErrors: errors }, null, 2) + '\n');
   throw error;
