@@ -85,6 +85,7 @@ export function describeNode(n: SceneNode): string {
   }
   const bits = [prefix, n.label];
   if (n.subtitle) bits.push(n.subtitle);
+  if (n.kind === 'room') bits.push(typeof md['assignment'] === 'string' ? (md['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department'));
   if (n.status) bits.push(`status ${n.status}`);
   const c = countsText(n);
   if (c) bits.push(c);
@@ -172,7 +173,7 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   const paper = e.firstElementChild as HTMLElement;
   const hk = heatOf(n);
   const assign = typeof n.metadata['assignment'] === 'string' ? (n.metadata['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department');
-  const key = `${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}`;
+  const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}`;
   if (e.dataset.sig === key) return;
   e.dataset.sig = key;
   paper.replaceChildren(detailSvg(n, lod));
