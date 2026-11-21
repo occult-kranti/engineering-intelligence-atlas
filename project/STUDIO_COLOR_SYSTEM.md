@@ -315,8 +315,22 @@ The foreground selectors are `chat-message-text`, `chat-message-header strong`,
 capture and were not changed merely to match a preferred appearance.
 
 The ratios above are calculations from the specified foregrounds and actual
-surface roles, not a claim that the corrected candidate has already passed a
-browser run. The targeted mobile layout change and saved-content corrections
-require new screenshots and a passing receipt from the rerun. The earlier
-candidate's images remain failed-candidate evidence, not proof of the final
-release's appearance.
+surface roles. At that checkpoint, the corrected candidate still required a
+browser rerun. The earlier candidate's images remain failed-candidate evidence;
+final release measurements are recorded below.
+
+
+## Released build: rendered contrast and visual review
+
+The final source `5b661e57a2ac68530e50a7f452d912f169495ef5` passed the full [Verify gate](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920958) and [Pages gate](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920872). Both receipts contain the following actual computed text/background ratios, separate from the 69 calculated token pairs above.
+
+| Rendered target | Violet studio | Golden drafting |
+| --- | ---: | ---: |
+| Inactive navigation | 9.1423:1 | 5.1253:1 |
+| Active navigation | 8.8737:1 | 6.5000:1 |
+| Save status | 8.3707:1 | 6.0009:1 |
+| Blueprint description | 9.3457:1 | 5.4503:1 |
+
+The release retains 74 public, 18 cloud-fixture and four packaged-desktop captures. Independent review confirmed the corrected saved message, goal and sync-state text, the compact mobile rooms, and the first-screen laptop composer. The final 1024×768 send-button bottom is 732.6875px; at 1280×720 it is 689.1875px. Two additional live public screenshots show Violet ownership and the Golden drafting roadmap with the released stylesheet `chrome.32a6e07447d920cd.css`.
+
+The cloud captures use synthetic records and do not establish an authenticated production session. The live private URL still presents its ChatGPT sign-in gate. Full screen-reader/forced-colors acceptance and every possible legacy state remain outside this targeted review. A narrow floating-launcher overlap and the difference between activity-scope people and shared leadership remain specific layout/copy follow-ups. [Full receipt and limitations](release-0.6.0.json).

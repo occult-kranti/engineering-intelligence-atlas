@@ -15,7 +15,7 @@ React/TypeScript/MySQL runtime remains available as a separate deployment option
 
 ## Command studio 0.6.0 integration
 
-The candidate adds Violet studio / Golden drafting themes, a scoped ownership hierarchy, roadmap status lanes, derived heat maps and the same Donna conversation docked beside visual work. Local checks pass; final publication evidence will be recorded in [validation](project/VALIDATION.md). Until then the verified install below remains 0.5.0.
+Daftar 0.6.0 adds Violet studio / Golden drafting themes, a scoped ownership hierarchy, roadmap status lanes, derived heat maps and the same Donna conversation docked beside visual work. All seven CI gates, release publication, Pages and the owner-private website deployment passed. The [release receipt](project/release-0.6.0.json) records exact source, downloadable hashes, browser measurements and remaining acceptance boundaries.
 
 Theme and heat-mode settings stay in local presentation storage. They do not write the native state, spend tokens or enqueue cloud commands. Both website routes and the shared renderer use `daftar-studio-theme`. The desktop/browser view uses `daftar-studio-heat`. Existing archives, native identity and D1 schema remain unchanged. Heat maps use actual snapshot receipts, explicit unknown states and labeled job allowances, not unmeasured utilization or company budgets.
 
@@ -23,17 +23,9 @@ After a renderer edit, build `desktop-shell`, regenerate the static preview, and
 
 ## Install a published build and restore personal work
 
-Use the assets attached to [v0.5.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0):
-an unsigned Linux x86_64 AppImage, a VS Code VSIX and an Android debug APK.
-The exact release source is
-[`0b87469`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/0b87469ba14864959bd5ec70dd323ce909904faa),
-whose seven verification gates and release job passed. All three downloaded
-assets match their published digests. The final personal archive was restored
-using the published Rust binary and successfully paired to the deployed API;
-original, restored and cloud projections matched. Exact download hashes and
-restore evidence are in [validation](project/VALIDATION.md). The mobile shell carries the research atlas;
-the complete personal Office runtime is in the desktop application. Packages
-exclude personal company records and keys.
+Use the assets attached to [v0.6.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.0): an unsigned Linux x86_64 AppImage, a VS Code VSIX and an Android debug APK. The exact release source is [`5b661e5`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/5b661e57a2ac68530e50a7f452d912f169495ef5). All three downloaded assets match the published sizes and SHA-256 digests. Actual packaged Electron startup, native state and local-goal persistence passed; the installed VSIX activated in VS Code 1.147.0. [Validation](project/VALIDATION.md) separates these checks from owner-laptop, keychain and production sign-in acceptance.
+
+The existing private archive and native schema remain compatible with this presentation update. The complete personal restore and production pairing rehearsal is historical 0.5.0 evidence, not a newly performed 0.6.0 owner-device test. The mobile shell carries the research atlas; the complete personal Office runtime is in the desktop application. Packages exclude personal company records and keys.
 
 For a private workspace archive, first launch the desktop app and find its user
 data directory in Models & system. Close the app, then run the release's restore
@@ -92,7 +84,7 @@ Open [Daftar](https://atlas-command-office.whatswrong-inc.chatgpt.site) and sign
 
 The website saves its office snapshot and cloud conversation in D1. Native repository work, job execution and files remain on the laptop. Restore the supplied personal workspace before first pairing so a fresh empty desktop cannot overwrite an existing cloud portfolio. Create a desktop pairing on the website, paste it into Settings → Account & cloud connection, and choose **Sync now**. Connection itself does not upload or start an unattended loop. A conflict preserves both sides until reviewed.
 
-Install the published `atlas-office-0.5.0.vsix` through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page. The installed VSIX passed its isolated CI activation checks; the owner's editor session and credential store remain a separate setup context.
+Install the published `atlas-office-0.6.0.vsix` through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page. The installed VSIX passed its isolated CI activation checks; the owner's editor session and credential store remain a separate setup context.
 
 Cloud model calls use a separate atomic admission ledger funded by an allocation held in the native global budget. Do not release that allocation while the cloud runtime can still spend it. Unknown provider outcomes keep their reservations. [Full protocol and verification](project/EDITOR_AND_CLOUD.md).
 

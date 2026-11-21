@@ -298,10 +298,18 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Evidence:** desktop-shell/src/renderer/office-signals.ts; desktop-shell/tests/office-signals.test.ts; project/OFFICE_SIGNALS.md
 - **Next handoff:** Connect the same compiled projection to native, public and private assets; run browser gates with fixture data.
 
-## 038 · Director / cloud and editor integration engineer · in-progress
+## 038 · Director / cloud and editor integration engineer · complete
 
 - **Ask:** Carry the studio design into the private homepage, application directory and editor links, then build, verify, push and deploy the complete update.
 - **Expected return:** Matched shared assets, validated scope links, private-access preservation, release evidence and updated handoffs.
-- **Returned:** Implemented shared website theme, company-scoped ownership/roadmap links, hashed private renderer assets and validated VS Code navigation. Desktop build, 392 service tests, 212 DOM assertions and 13 editor tests pass. Combined cloud, browser, package and hosted-release verification is in progress; no new paid Claude requests.
-- **Evidence:** cloud-workspace/app/office-header.tsx; cloud-workspace/scripts/sync-desktop.mjs; vscode-extension/src/client.js; project/VALIDATION.md
-- **Next handoff:** Finish browser review, address actual defects, publish verified 0.6.0 packages and owner-private website, then record exact receipts.
+- **Returned:** Integrated shared website themes, company-scoped studio links, content-addressed private assets and origin-validated VS Code navigation. Final exact-source CI passed 392 desktop service tests, 218 DOM assertions, 28 cloud API/directory tests and 13 editor protocol tests. Owner-private website source e38d5a5 was deployed successfully, with all 142 mirrored application files matching GitHub source 5b661e5 before packaging. No new Claude API requests.
+- **Evidence:** cloud-workspace/app/office-header.tsx; cloud-workspace/scripts/sync-desktop.mjs; vscode-extension/src/client.js; project/release-0.6.0.json; project/VALIDATION.md
+- **Next handoff:** Complete actual owner-laptop/keychain and signed-in browser setup; keep native actions on the existing explicit-sync boundary.
+
+## 039 · Director / interface reviewers / release auditors · complete
+
+- **Ask:** Review all worker returns and actual screenshots, correct mobile and laptop regressions, and publish only the verified studio build with exact receipts.
+- **Expected return:** Passing unchanged browser gates, readable saved content, published installers and private website, measured download integrity, and complete handoff evidence.
+- **Returned:** Preserved two failed candidates: a 507.19px mobile room, then a 1024px first action ending at 817.75px. Corrected employee-card compaction, legacy saved-content colors, and laptop scope/composer spacing without weakening any gate. Final 5b661e5 passed all seven verification jobs, release and Pages. Public browser: 76 checks, 74 screenshots, 10 interaction groups and eight measured contrast pairs. Cloud: 42 checks and 18 screenshots with zero provider calls. Packaged desktop: real Rust state and saved local goal, four screenshots. Installed VSIX: six checks in VS Code 1.147.0. All three downloaded asset sizes/hashes matched GitHub. The owner-private website deployment succeeded; live public Blueprint, Donna ownership inspector and Golden drafting roadmap were reviewed, with two additional screenshots saved.
+- **Evidence:** project/release-0.6.0.json; project/VALIDATION.md; project/STUDIO_REDESIGN.md; project/STUDIO_COLOR_SYSTEM.md; https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920958; https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920872; https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.0
+- **Next handoff:** Owner-device acceptance, actual production browser sign-in, signed distribution, deliberate scheduled roadmap schema, account preference sync, measured large-canvas virtualization, activity-scope label clarification and narrow Donna-launcher layout review.

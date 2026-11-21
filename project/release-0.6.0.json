@@ -1,0 +1,223 @@
+{
+  "schemaVersion": 1,
+  "version": "0.6.0",
+  "codeCommit": "5b661e57a2ac68530e50a7f452d912f169495ef5",
+  "releaseUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.0",
+  "publishedAt": "2026-11-21T04:39:10Z",
+  "displayDate": "2026-11-20",
+  "displayTimezone": "America/New_York",
+  "verification": {
+    "combinedCi": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920958",
+    "combinedCiStatus": "success",
+    "jobs": [
+      "android",
+      "desktop",
+      "cloud",
+      "editor",
+      "mysql-connectors",
+      "web",
+      "design-tools",
+      "release"
+    ],
+    "pagesCi": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920872",
+    "pagesCiStatus": "success",
+    "rustTests": 70,
+    "desktopTests": 392,
+    "desktopTestFiles": 27,
+    "rendererAssertions": 218,
+    "signalTestsIncludedInDesktop": 17,
+    "cloudApiAndDirectoryTests": 28,
+    "editorClientTests": 13,
+    "mcpTests": 26,
+    "staticFiles": 171,
+    "precacheEntries": 115
+  },
+  "downloads": [
+    {
+      "name": "app-debug.apk",
+      "bytes": 8603393,
+      "sha256": "091c96b66523be828f2481c6fa8e4d36ede077f4fb7f6e5b28734894e5175904",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.6.0/app-debug.apk",
+      "matchesPublishedGitHubDigest": true
+    },
+    {
+      "name": "atlas-office-0.6.0.vsix",
+      "bytes": 18275,
+      "sha256": "49997caea0e8a2d01e017a25a7cb12e586ee347bea74928dec28cf4322641ac5",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.6.0/atlas-office-0.6.0.vsix",
+      "matchesPublishedGitHubDigest": true
+    },
+    {
+      "name": "daftar-desktop-0.6.0-x86_64.AppImage",
+      "bytes": 136135848,
+      "sha256": "6c501e48a5e252c3d5ae1c8b77d62bbf632f58b7e40727ccc3afcc98a7522444",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.6.0/daftar-desktop-0.6.0-x86_64.AppImage",
+      "matchesPublishedGitHubDigest": true
+    }
+  ],
+  "website": {
+    "url": "https://atlas-command-office.whatswrong-inc.chatgpt.site/",
+    "audience": "owner-only",
+    "sourceCommit": "e38d5a537e036bb07a45fb5f75132ac6d942fe1e",
+    "deploymentId": "appgdep_6b01208ec62881919b8e81a27efad4f0",
+    "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_ff808618c6e081918396709046cdb685",
+    "deploymentStatus": "succeeded",
+    "deployedAt": "2026-11-21T04:39:48.526371+00:00",
+    "database": "Cloudflare D1",
+    "sourceMirrorFilesMatched": 142
+  },
+  "browserEvidence": {
+    "public": {
+      "checks": 76,
+      "screenshots": 74,
+      "interactionGroups": 10,
+      "contrastChecks": [
+        {
+          "theme": "blueprint",
+          "target": "inactive navigation",
+          "ratio": 9.142271345699069
+        },
+        {
+          "theme": "blueprint",
+          "target": "active navigation",
+          "ratio": 8.873654725485402
+        },
+        {
+          "theme": "blueprint",
+          "target": "save status",
+          "ratio": 8.370668793286557
+        },
+        {
+          "theme": "blueprint",
+          "target": "blueprint description",
+          "ratio": 9.345692485634666
+        },
+        {
+          "theme": "drafting",
+          "target": "inactive navigation",
+          "ratio": 5.125322293625095
+        },
+        {
+          "theme": "drafting",
+          "target": "active navigation",
+          "ratio": 6.500018489288026
+        },
+        {
+          "theme": "drafting",
+          "target": "save status",
+          "ratio": 6.00091572621501
+        },
+        {
+          "theme": "drafting",
+          "target": "blueprint description",
+          "ratio": 5.450257084147674
+        }
+      ],
+      "laptopGeometry": [
+        {
+          "viewport": {
+            "width": 1280,
+            "height": 720
+          },
+          "sendButtonBottomPx": 689.1875,
+          "clearancePx": 30.8125,
+          "scroll": {
+            "x": 0,
+            "y": 0
+          },
+          "passed": true
+        },
+        {
+          "viewport": {
+            "width": 1024,
+            "height": 768
+          },
+          "sendButtonBottomPx": 732.6875,
+          "clearancePx": 35.3125,
+          "scroll": {
+            "x": 0,
+            "y": 0
+          },
+          "passed": true
+        }
+      ],
+      "mobileRoomGate": {
+        "widthPx": 390,
+        "roomHeightLimitPx": 400,
+        "passed": true,
+        "exactPassingHeightsRetained": false
+      },
+      "data": "Public isolated starter only; no private user data"
+    },
+    "cloud": {
+      "checks": 42,
+      "screenshots": 18,
+      "browserSource": "playwright-managed",
+      "browserVersion": "159.0.8154.6",
+      "data": "Test-only Fixture companies; no owner portfolio, credentials, private source metadata or production API responses",
+      "providerCalls": 0,
+      "pageErrors": [],
+      "unexpectedRequests": [],
+      "productionAuthenticationVerified": false,
+      "productionPersistenceVerified": false
+    },
+    "desktop": {
+      "screenshots": 4,
+      "nativeStateLoaded": true,
+      "localGoalPersisted": true,
+      "providerSpendChanged": false,
+      "nativeBinarySha256": "7e51cee7a09427aced1df2ca15ba42389eaeecd96169740655a79869a0cea491",
+      "scope": "Linux unpacked release in CI; not an owner-laptop installation, signing or OS-keychain acceptance test."
+    },
+    "installedEditor": {
+      "vscodeVersion": "1.147.0",
+      "extensionVersion": "0.6.0",
+      "checks": 6,
+      "commands": 7,
+      "runtimeFilesVerified": 5,
+      "networkRequests": 0,
+      "vsixSha256": "49997caea0e8a2d01e017a25a7cb12e586ee347bea74928dec28cf4322641ac5"
+    },
+    "livePublicReview": {
+      "url": "https://occult-kranti.github.io/engineering-intelligence-atlas/desktop-preview/chrome.html",
+      "views": [
+        "Blueprint",
+        "Ownership with Donna inspector",
+        "Golden drafting roadmap"
+      ],
+      "observedStylesheet": "chrome.32a6e07447d920cd.css",
+      "screenshotsSaved": 2,
+      "data": "Public starter example only"
+    },
+    "privateBrowserReview": {
+      "result": "ChatGPT sign-in gate observed",
+      "authenticatedSessionVerified": false
+    }
+  },
+  "providerUsageThisIncrement": {
+    "newClaudeApiRequests": 0,
+    "note": "Historical provider usage and uncertainty remain in the 0.5.0 usage receipt; these checks do not assert zero platform or ChatGPT cost."
+  },
+  "priorFailedCandidates": [
+    {
+      "commit": "81afaf3d0762b368642aa5e1f0c73263d2bd097f",
+      "verifyRun": 44865684035,
+      "pagesRun": 44865684142,
+      "reason": "390px staffed room exceeded unchanged 400px limit; release skipped."
+    },
+    {
+      "commit": "2377821b7e5ed3f7aabfba5d1d5af4a4ceea26c4",
+      "verifyRun": 44866373418,
+      "pagesRun": 44866373460,
+      "reason": "1024x768 first action ended at 817.75px; release skipped."
+    }
+  ],
+  "remainingAcceptance": [
+    "Owner-laptop installation, actual OS keychain and production browser sign-in",
+    "Signed Windows/macOS installers and production-signed Android distribution",
+    "Account-synchronized presentation preferences and measured large-canvas virtualization",
+    "Real scheduled roadmap intervals with persisted dates",
+    "Owned Figma application import, isolated code execution adapter and optional OS background service"
+  ],
+  "recordedAt": "2026-11-21T04:43:37Z"
+}

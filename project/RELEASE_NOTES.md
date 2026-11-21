@@ -34,8 +34,8 @@ Public and private renderer assets use content-addressed names. The cloud transp
 
 ## Installation and verification
 
-Use the assets attached to this version after all release gates pass: the Linux x86_64 AppImage, `atlas-office-0.6.0.vsix`, and the Android debug APK. The AppImage remains unsigned; Windows/macOS signing and owner-device keychain acceptance are separate work. The Android attachment carries the research atlas rather than the full native Office runtime.
+All seven verification gates, release publication and Pages passed for source `5b661e5`; the owner-private website is deployed. All three downloaded asset sizes and SHA-256 hashes match GitHub metadata. Use the assets attached to this version: the Linux x86_64 AppImage, `atlas-office-0.6.0.vsix`, and the Android debug APK. The AppImage remains unsigned; Windows/macOS signing and owner-device keychain acceptance are separate work. The Android attachment carries the research atlas rather than the full native Office runtime.
 
 The redesign introduces no native schema migration or provider request. Desktop scheduling still runs while the app is open. Website controls still queue native changes for explicit **Sync now**; hosted Donna is text-only. Theme and heat preferences are local to the current browser/app, while office state follows the existing D1/native synchronization protocol.
 
-[Validation](VALIDATION.md) records actual test, browser, package, deployment and download evidence. Earlier release receipts remain historical and do not certify this version. [Studio review](STUDIO_REDESIGN.md), [handoff](../HANDOFF.md) and [roadmap](../ROADMAP.md) explain the decisions and next acceptance work.
+[Validation](VALIDATION.md) and the [0.6.0 release receipt](release-0.6.0.json) record actual test, browser, package, deployment and download evidence. Earlier release receipts remain historical and do not certify this version. [Studio review](STUDIO_REDESIGN.md), [handoff](../HANDOFF.md) and [roadmap](../ROADMAP.md) explain the decisions and next acceptance work.

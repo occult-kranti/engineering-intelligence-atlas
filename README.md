@@ -13,17 +13,17 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
-## Studio redesign — 0.6.0 candidate
+## Studio redesign — 0.6.0 released
 
 The shared desktop and website office now has **Violet studio** and **Golden drafting** themes: deep violet, electric green, warm gold and an ivory drawing surface. Blueprint rooms, an Ownership / Soft Board hierarchy, real roadmap status lanes and the ownership whiteboard use the same saved scope. Donna's dock contains the existing conversation and preserves an unsent draft when changing views.
 
 Heat maps show **saved unfinished jobs**, **recorded commitment against job allowances**, or **items needing attention**. Legends, labels and unknown states travel with the metric. They do not infer employee utilization, invent schedule dates or trigger model calls. The website directory and VS Code client link to the new company-scoped views. The existing Design & Architecture role now includes color-system and data-visualization acceptance examples.
 
-Local verification has passed 392 desktop tests, 218 renderer assertions and 13 editor protocol tests. Final browser, package, publication and hosted deployment evidence is pending for this candidate; the verified 0.5.0 release below remains the installation baseline until those gates pass.
+[Daftar 0.6.0 is released](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.0) from exact source [`5b661e5`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/5b661e57a2ac68530e50a7f452d912f169495ef5). All seven verification gates, the release job and Pages passed. Checks include 70 Rust tests, 392 desktop tests, 218 renderer assertions and 13 editor protocol tests; the public browser sweep passed 76 checks with 74 screenshots, and cloud fixtures passed 42 checks with 18 screenshots. The matching owner-private website is deployed. All three downloaded package sizes and SHA-256 hashes match GitHub metadata. [Exact release receipt](project/release-0.6.0.json) · [Validation and limits](project/VALIDATION.md).
 
 [Design decisions](project/STUDIO_REDESIGN.md) · [Color tokens and contrast](project/STUDIO_COLOR_SYSTEM.md) · [Heat-map data contract](project/OFFICE_SIGNALS.md)
 
-## Previous verified product — connected office 0.5.0
+## Earlier connected office delivery — 0.5.0 history
 
 [v0.5.0 is released](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0)
 from exact source

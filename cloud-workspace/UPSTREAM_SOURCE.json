@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
   "projectId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8",
-  "sourceCommit": "03b9264757c38ae86689cc03f23defed39383498",
-  "deploymentId": "appgdep_6b01094b1bf48191b53b9b012252ce89",
-  "deployedAt": "2026-11-21T03:00:33.507277Z",
-  "url": "https://atlas-command-office.whatswrong-inc.chatgpt.site",
+  "sourceCommit": "e38d5a537e036bb07a45fb5f75132ac6d942fe1e",
+  "deploymentId": "appgdep_6b01208ec62881919b8e81a27efad4f0",
+  "deployedAt": "2026-11-21T04:39:48.526371+00:00",
+  "url": "https://atlas-command-office.whatswrong-inc.chatgpt.site/",
   "audience": "owner-private",
   "scope": "Source mirror. Deployment archive, runtime data and credentials are excluded."
 }
