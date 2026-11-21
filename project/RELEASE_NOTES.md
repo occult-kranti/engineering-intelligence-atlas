@@ -4,9 +4,11 @@ Daftar keeps the conference table, company seats, office blueprints, Donna conve
 
 ## One world for the work
 
-The conference table remains in the composed world when a company's blueprint opens. Focusing an office or department moves the camera within that company layout. Owners can pan, zoom, rotate, use perspective, browse company seats automatically or use keyboard/list navigation. Night office and Drafting paper use a shared charcoal, olive, brass and warm-ivory palette while preserving existing theme preference keys.
+The conference table carries bounded miniature sheets drawn from companies' actual saved office blueprints. Selecting one opens the full company layout in the same composed world, with the table still present. Focusing an office or department moves the camera within that layout. Owners can pan, zoom, rotate, use perspective, browse company seats automatically or use keyboard/list navigation. Night office and Drafting paper use a shared charcoal, olive, brass and warm-ivory palette while preserving existing theme preference keys.
 
 Conversation, crew, scope, ownership, roadmap, whiteboard, decisions, goals, hiring, queues, knowledge, ledger, models and settings are movable and resizable elements. Panels support pinning, collapse, close/reopen and saved device-local positions. **Find a surface** and **Home** keep tools and the conference table reachable. Camera flights are interruptible, reduced-motion preference is respected, and presentation storage contains bounded geometry rather than form contents or permissions.
+
+Fresh conversation deep links retain their requested framing through initial data loading and asynchronous company selection. Donna starts at a compact 400-world-unit height with scrollable history; browser acceptance verifies a visible send button at least 24 CSS pixels high. Opening another surface preserves unsent conversation and policy drafts. Read-only previews remain read-only after form reparenting, and stale scope reads cannot replace a newly selected company.
 
 ## Donna and her crew
 
@@ -34,6 +36,6 @@ The Rust authority, durable receipts, restricted memberships, shared local model
 
 ## Verification and setup
 
-[The 0.8.0 validation record](ENDLESS_CANVAS_VALIDATION.md) tracks candidate checks separately from release and deployment. The required workflow gates cover web/static assets, checksums, headless/container operation, MySQL connectors, Linux and Windows desktop packages, Android, cloud, VS Code and design tools. A source version bump is not evidence that those gates or publication completed.
+[Daftar 0.8.0 is published](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.8.0) from `ad96204`, merged by [PR #2](https://github.com/occult-kranti/engineering-intelligence-atlas/pull/2). All eleven required verification jobs, release publication and Pages passed. Checks include 643 desktop tests, 361 renderer assertions, 108 cloud tests, public and cloud browser matrices, and real native operation in Linux and Windows packages. All five package digests match the independently downloaded checksum manifest. The matching owner-private website is deployed and was reviewed in the signed-in session. [The validation record](ENDLESS_CANVAS_VALIDATION.md) and [publication receipt](release-0.8.0.json) give exact source, browser, package-test, checksum and deployment evidence.
 
-See [maintainer setup](../HANDOFF.md), [VPS deployment](../deploy/README.md), [shared models](../deploy/MODEL_POOL.md), [runtime MCP](../tools/DAFTAR_RUNTIME_MCP.md) and the [last verified 0.7.0 publication](release-0.7.0.json).
+See [maintainer setup](../HANDOFF.md), [VPS deployment](../deploy/README.md), [shared models](../deploy/MODEL_POOL.md), [runtime MCP](../tools/DAFTAR_RUNTIME_MCP.md) and the historical [0.7.0 publication](release-0.7.0.json).

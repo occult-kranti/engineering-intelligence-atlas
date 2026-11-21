@@ -4,20 +4,20 @@ This file distinguishes implemented behavior from deployment and validation work
 The detailed worker asks and returns are in [the shared ledger](project/WORKER_LEDGER.md),
 with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
-## Endless company canvas — 0.8.0 candidate
+## Endless company canvas — 0.8.0 released
 
 | Outcome | State | Acceptance |
 | --- | --- | --- |
-| Conference table and company blueprint in one spatial world | Implemented candidate | Stable scope coordinates, bounded geometry, member isolation and final browser acceptance |
-| Movable application elements with saved layout | Implemented candidate | Form/draft continuity, keyboard movement/resize, close/reopen, reduced motion and corrupt-storage recovery |
-| Donna hierarchy and scoped proposals | Implemented; focused checks passed | Actual employee IDs/contracts, malformed and expired grant handling, native revalidation and honest runtime status |
-| Owner website entry and embedded management forms | Implemented; route/TypeScript checks passed | Final owner, signed-out, visitor, invitation and narrow-browser gates |
-| Deterministic external-source review | Implemented candidate | Managed GitHub/worker integration, bounded private reports and no model/tool authority from source text |
+| Conference table and company blueprint in one spatial world | Implemented; required PR and browser gates passed | Actual tabletop blueprint previews, stable scope coordinates, bounded geometry, member isolation and readable opening camera |
+| Movable application elements with saved layout | Implemented; browser and native package checks passed | Concurrent live forms/drafts, keyboard movement/resize, pinning, close/reopen, Escape cancellation, reduced motion and corrupt-storage recovery |
+| Donna hierarchy and scoped proposals | Implemented; required checks passed | Actual employee IDs/contracts, malformed and expired grant handling, native revalidation and honest runtime status |
+| Owner website entry and embedded management forms | Deployed; owner review and fixture matrix passed | Owner entry, private embedded People & access, signed-out/visitor/invitation boundaries and narrow browser coverage |
+| Deterministic external-source review | Implemented; required checks passed | Managed GitHub/worker integration, bounded private reports and no model/tool authority from source text; services remain Not configured in the existing owner runtime projection |
 | Kimi branch review | Verified audit | 2,053 added files; selective original implementation; old runtime and package acceptance remain separate |
 | General website crawler, live VPS/ChatGPT connection | Separate work | No crawler transport or paid host provisioned by this increment |
-| 0.8.0 packages and publication | Pending final gates | Exact source, required CI, package digests, hosted deployment and acceptance receipts |
+| 0.8.0 packages and publication | Released and verified | Source `ad96204`; all required jobs, release and Pages passed; five package digests match the downloaded manifest |
 
-See [the candidate validation record](project/ENDLESS_CANVAS_VALIDATION.md), [source review](project/SOURCE_REVIEW.md) and [Kimi provenance](project/KIMI_BRANCH_REVIEW.md). The previous 0.7.0 release remains independently documented below.
+All eleven required checks, release publication and Pages passed on source `ad96204`, merged by PR #2. The matching owner-private website is deployed. See [the publication receipt](project/release-0.8.0.json), [validation record](project/ENDLESS_CANVAS_VALIDATION.md), [source review](project/SOURCE_REVIEW.md) and [Kimi provenance](project/KIMI_BRANCH_REVIEW.md). The previous 0.7.0 release remains independently documented below.
 
 ## Freeflow and shared cloud execution — 0.7.0
 

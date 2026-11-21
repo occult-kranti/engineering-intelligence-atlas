@@ -1,10 +1,14 @@
 {
   "schemaVersion": 1,
   "projectId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8",
-  "sourceCommit": "88c0c330027d97a6d95f6d17bc7a3fbc9c23bdba",
-  "deploymentId": "appgdep_6b01f7cc5e3881919b7e25cc44e9a184",
-  "deployedAt": "2026-11-21T19:58:10.358439+00:00",
+  "sourceCommit": "0449717b8efdee18c3a206fac441e64efc6745bb",
+  "deploymentId": "appgdep_6b02142ce61c81918bbdf675b28973fa",
+  "version": 13,
+  "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_57b9df32db3481919776758089ec8d99",
+  "deployedAt": "2026-11-21T21:59:14.323269+00:00",
   "url": "https://atlas-command-office.whatswrong-inc.chatgpt.site/",
-  "audience": "owner-private",
-  "scope": "Source mirror. Deployment archive, runtime data and credentials are excluded."
+  "audience": "owner-only",
+  "hasMcp": false,
+  "newMembershipsOrAudienceGrants": 0,
+  "scope": "Source mirror of owner-only Site version 13. Deployment archive, runtime data and credentials are excluded. The paired runtime was not upgraded by this frontend deployment."
 }

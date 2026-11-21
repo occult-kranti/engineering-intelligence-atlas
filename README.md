@@ -14,9 +14,9 @@ dependency graphs with queues, checkpoints, budgets and evidence.
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
-## Endless canvas — 0.8.0 release candidate
+## Endless canvas — 0.8.0 released
 
-The desktop and private website now keep the workspace in one spatial world. Company seats stay at the conference table while the selected company's office blueprint is laid beside it. Conversation, crew, goals, hiring, queue, ledger, models and settings are canvas elements that can be moved, resized, pinned, collapsed and reopened through **Find a surface**. Camera focus, keyboard controls, reduced motion and saved local layouts support the same workspace at different scales.
+The desktop and private website now keep the workspace in one spatial world. Company seats stay at the conference table, with miniature sheets drawn from their saved office blueprints laid on the tabletop. Selecting a company reveals its full blueprint in the same world. Conversation, crew, goals, hiring, queue, ledger, models and settings are canvas elements that can be moved, resized, pinned, collapsed and reopened through **Find a surface**. Camera focus, keyboard controls, reduced motion and saved local layouts support the same workspace at different scales.
 
 **Donna & sub-Donnas** resolves the actual saved company and department assistants, contracted shared specialists and deterministic runtime checks. Missing definitions remain unconfigured. Scoped draft-goal and pause/resume actions use the existing native authority boundary. A saved employee does not imply a running model; source review and ledger observation make zero model calls.
 
@@ -26,7 +26,7 @@ The owner website enters the canvas by default. Connections, People & access and
 
 The [Kimi branch review](project/KIMI_BRANCH_REVIEW.md) verified **2,053 added files**, not 2,053 added lines, at the supplied commit. Current Donna coordination adapts selected ideas using the existing native model. The older archived runtime and binaries remain separate. Sonnet supplied the new universe compositor and focused tests; the code was independently reviewed and corrected before integration. [Sanitized usage accounting](project/CLAUDE_USAGE.md) records the observed request and retained uncertainty.
 
-**Publication and full candidate verification are pending.** [The 0.8.0 validation record](project/ENDLESS_CANVAS_VALIDATION.md) separates focused checks from the required build, browser, package and publication gates. [Release notes](project/RELEASE_NOTES.md) describe this candidate. The last verified application downloads are the 0.7.0 release below; no VPS rental, model-weight download or live ChatGPT tunnel is implied by this source update.
+**[Daftar 0.8.0 is published](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.8.0) from `ad96204`.** All eleven required verification jobs, release publication and Pages passed; the matching private website is deployed and reviewed. Checks include 643 desktop tests, 361 renderer assertions, public and cloud browser coverage, and real native operation in Linux and Windows packages. All five published package digests match the independently downloaded checksum manifest. Live owner review confirmed the table, movable Donna panel, saved crew and embedded People & access. [The publication receipt](project/release-0.8.0.json), [validation record](project/ENDLESS_CANVAS_VALIDATION.md) and [release notes](project/RELEASE_NOTES.md) retain exact evidence and remaining acceptance. No VPS rental, model-weight download or live ChatGPT tunnel is implied.
 
 ## Freeflow studio and private runtimes — 0.7.0 released
 
@@ -104,7 +104,7 @@ npm --prefix desktop-shell start
 
 Node 22.13+ and Rust stable are required. Complete setup, MCP configuration,
 credential import and limitations are in [HANDOFF.md](HANDOFF.md). Actual test,
-build and deployment outcomes are separated by release in the [0.8.0 candidate record](project/ENDLESS_CANVAS_VALIDATION.md), [0.7.0 receipt](project/FREEFLOW_VALIDATION.md) and [earlier validation](project/VALIDATION.md).
+build and deployment outcomes are separated by release in the [0.8.0 validation record](project/ENDLESS_CANVAS_VALIDATION.md), [0.7.0 receipt](project/FREEFLOW_VALIDATION.md) and [earlier validation](project/VALIDATION.md).
 
 ## CEO portfolio and shared teams
 

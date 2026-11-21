@@ -1,11 +1,11 @@
-# Daftar private cloud office · 0.8.0 source candidate
+# Daftar private cloud office · 0.8.0 deployed
 
 Daftar is the renamed personal command office built in the existing Engineering Intelligence Atlas repository. This directory contains its owner-private website: the shared desktop renderer, ChatGPT sign-in, D1 persistence, Donna chat, device pairing and a durable relay for native commands. Existing Atlas package IDs, API paths and URLs remain compatible.
 
 - [Private Daftar website](https://atlas-command-office.whatswrong-inc.chatgpt.site)
 - [Private application directory](https://atlas-command-office.whatswrong-inc.chatgpt.site/applications)
 - [Public atlas and read-only example](https://occult-kranti.github.io/engineering-intelligence-atlas/)
-- [Executed release validation](https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/project/VALIDATION.md)
+- [Current canvas verification and deployment](https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/project/ENDLESS_CANVAS_VALIDATION.md)
 - [Desktop and editor setup](https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/project/EDITOR_AND_CLOUD.md)
 
 ## Continuous canvas entry
@@ -14,7 +14,7 @@ The owner website now opens the shared continuous canvas. Top-level `/`, `/acces
 
 The parent renderer hosts the existing forms in same-origin elements using `?canvas=1`. Embedded routes omit the full site header/hero, retain semantic forms and drafts, and never start another owner redirect. Known authentication links escape the frame only through user navigation. `/visit` and `/join` remain valid independent entry routes with their existing restricted projections and invitation-fragment consumption; they are not redirected into the owner workspace.
 
-The wrapper does not change API authorization, create grants, modify the Site audience or add a postMessage bridge. [The 0.8.0 candidate record](../project/ENDLESS_CANVAS_VALIDATION.md) tracks source checks separately from publication and hosted acceptance; the earlier deployment receipt does not certify this candidate.
+The wrapper does not change API authorization, create grants, modify the Site audience or add a postMessage bridge. Version 13, source `0449717b8efdee18c3a206fac441e64efc6745bb`, deployed successfully on 2026-11-21 at 21:59:14 UTC. Live owner review confirmed the continuous table, movable Donna panel, actual saved crew and private People & access within the canvas, without changing memberships, grants or workers. Source Review and Ledger observer remain honestly **Not configured** on the existing native-runtime projection. [The 0.8.0 validation record](../project/ENDLESS_CANVAS_VALIDATION.md) separates this production review from the synthetic cloud browser fixture; [the publication receipt](../project/release-0.8.0.json) records the verified installers and their source.
 
 ## One workspace, explicit responsibilities
 
