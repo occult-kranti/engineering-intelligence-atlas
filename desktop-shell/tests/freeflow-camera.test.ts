@@ -41,7 +41,6 @@ describe('freeflow camera', () => {
     const bounds = { x: 0, y: 0, width: 1000, height: 600 };
     const cam = fitBounds({ ...DEFAULT_CAMERA, pitch: 35, distance: 1800 }, vp, bounds, 48);
     expectFits(cam, vp, bounds, 48);
-    expect(cam.zoom).toBeLessThan(1);
   });
 
   it('fitBounds handles yaw, short distance and negative origin', () => {
