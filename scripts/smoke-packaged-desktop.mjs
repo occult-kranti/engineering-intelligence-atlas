@@ -69,6 +69,39 @@ const redactText = value => String(value)
   .replace(/(token|secret|password|authorization|api[_-]?key)(\s*[=:]\s*)\S+/gi, '$1$2[redacted]')
   .slice(0, 4000);
 const pushBounded = (list, entry, max = 200) => { if (list.length < max) list.push(entry); };
+// Field-wise sanitizers: bound each allowlisted scalar instead of truncating serialized JSON.
+const safeStr = (v, n) => redactText(v ?? '').slice(0, n);
+const safeNum = v => (typeof v === 'number' && Number.isFinite(v) ? v : undefined);
+function sanitizeStartupRecord(rec) {
+  const MAXS = 64, MAXL = 100;
+  const r = rec && typeof rec === 'object' ? rec : {};
+  const stagesIn = Array.isArray(r.stages) ? r.stages : [];
+  const lifeIn = Array.isArray(r.lifecycle) ? r.lifecycle : [];
+  const stages = stagesIn.slice(0, MAXS).map(s => {
+    const o = { stage: safeStr(s?.stage, 64), outcome: safeStr(s?.outcome, 16), tMs: safeNum(s?.tMs) };
+    if (s?.error && typeof s.error === 'object') o.error = { name: safeStr(s.error.name, 80), message: safeStr(s.error.message, 500), stack: safeStr(s.error.stack, 1200) };
+    return o;
+  });
+  const lifecycle = lifeIn.slice(0, MAXL).map(l => {
+    const o = { event: safeStr(l?.event, 48), tMs: safeNum(l?.tMs) };
+    if (safeNum(l?.id) !== undefined) o.id = l.id;
+    if (safeNum(l?.code) !== undefined) o.code = l.code;
+    if (l?.reason !== undefined) o.reason = safeStr(l.reason, 80);
+    if (l?.detail !== undefined) o.detail = safeStr(l.detail, 200);
+    return o;
+  });
+  const id = r.identity && typeof r.identity === 'object' ? r.identity : {};
+  const identity = {};
+  for (const k of ['pid', 'electron', 'node', 'packaged', 'version', 'appPath']) {
+    const v = id[k];
+    if (typeof v === 'number' || typeof v === 'boolean') identity[k] = v;
+    else if (typeof v === 'string') identity[k] = safeStr(v, 80);
+  }
+  return {
+    stages, lifecycle, identity,
+    truncated: { stages: stagesIn.length > MAXS, lifecycle: lifeIn.length > MAXL, stageTotal: stagesIn.length, lifecycleTotal: lifeIn.length },
+  };
+}
 function writeDiagnostics(extra) {
   try {
     writeFileSync(join(screenshots, 'launch-diagnostics.json'), JSON.stringify({
@@ -99,10 +132,10 @@ async function collectStartupEvidence(app) {
         };
       });
       out.isReady = snap.isReady;
-      out.windows = snap.windows;
+      out.windows = (Array.isArray(snap.windows) ? snap.windows.slice(0, 20) : []).map(w => ({ id: safeNum(w?.id), destroyed: !!w?.destroyed, visible: !!w?.visible, url: safeStr(w?.url, 300), loading: w?.loading ?? null, crashed: w?.crashed ?? null }));
       if (!snap.hasGetter) out.recorder = 'startup record unavailable / entry not observed';
-      else if (snap.recErr) out.recorder = 'getter-failed: ' + snap.recErr;
-      else { out.recorder = 'present'; out.startup = JSON.parse(redactText(JSON.stringify(snap.rec))); }
+      else if (snap.recErr) out.recorder = 'getter-failed: ' + safeStr(snap.recErr, 300);
+      else { out.recorder = 'present'; out.startup = sanitizeStartupRecord(snap.rec); }
     } catch (inner) { out.recorder = 'collection-failed: ' + redactText(inner instanceof Error ? inner.message : inner); }
     return out;
   })();

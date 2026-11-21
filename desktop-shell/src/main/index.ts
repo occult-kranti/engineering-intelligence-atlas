@@ -42,8 +42,8 @@ const startupLifecycle: StartupLifecycle[] = [];
 function sanitizeStartupText(value: unknown, max: number): string {
   try {
     return String(value ?? '')
-      .replace(/file:\/\/\/?[^\s)'"]*/gi, (m) => 'file://<path>/' + (m.split(/[\\/]/).pop() ?? '').split(/[?#]/)[0])
-      .replace(/https?:\/\/[^\s)'"?#]*[?#][^\s)'"]*/gi, (m) => m.split(/[?#]/)[0])
+      .replace(/file:\/\/\/?[^\s)'"]*/gi, (m) => 'file://<path>/' + ((m.split(/[\\/]/).pop() ?? '').split(/[?#]/)[0] ?? ''))
+      .replace(/https?:\/\/[^\s)'"?#]*[?#][^\s)'"]*/gi, (m) => m.split(/[?#]/)[0] ?? '')
       .replace(/[A-Za-z]:[\\/](?:[^\\/\s:)'"]+[\\/])+/g, '<path>/')
       .replace(/(?:\/(?:home|Users|root|var|tmp|opt|mnt|private)\/)(?:[^\/\s:)'"]+\/)*/g, '<path>/')
       .replace(/(^|[^A-Za-z0-9_-])(?:sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}/g, '$1[redacted]')
