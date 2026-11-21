@@ -103,7 +103,7 @@ async function acceptInvitation(env: AtlasEnv, user: CollabUser, request: Reques
     insist(cur && cur.role !== 'owner', 'Invitation is not valid.', 409, 'invalid_invitation');
     return json({ ok: true, replay: true, membership: { companyId: inv.company_id, role: cur.role, expiresAt: cur.expiresAt } });
   }
-  const existing = await env.DB!.prepare('SELECT * FROM daftar_company_memberships WHERE company_id=? AND user_id=?').bind(inv.company_id, user.id).first<Row>();
+  const existing = await env.DB!.prepare("SELECT * FROM daftar_company_memberships WHERE workspace_id='owner' AND company_id=? AND user_id=?").bind(inv.company_id, user.id).first<Row>();
   insist(inv.status === 'pending', 'Invitation is not valid.', 409, 'invalid_invitation');
   insist(Date.parse(inv.expires_at) > Date.now(), 'Invitation expired.', 410, 'expired');
   if (inv.intended_email) insist(user.email && user.email.toLowerCase() === String(inv.intended_email).toLowerCase(), 'Invitation is for a different account.', 403, 'wrong_email');
@@ -119,18 +119,29 @@ async function acceptInvitation(env: AtlasEnv, user: CollabUser, request: Reques
   const gateArgs = [inv.id, stamp, user.email ?? '', user.id, inv.company_id];
   const membershipStmt = existing
     ? env.DB!.prepare("UPDATE daftar_company_memberships SET role=?,status='active',revoked_at=NULL,revoked_by_user_id=NULL,expires_at=?,acl_revision=acl_revision+1,granted_by_user_id=?,updated_at=? WHERE id=? AND acl_revision=? AND COALESCE(revoked_at,'')=COALESCE(?,'') AND (revoked_at IS NULL OR revoked_at < (SELECT created_at FROM daftar_invitations WHERE id=?)) AND " + gate).bind(inv.role, inv.expires_at, inv.invited_by_user_id, stamp, mid, exRev, exRevoked, inv.id, ...gateArgs)
-    : env.DB!.prepare("INSERT INTO daftar_company_memberships (id,workspace_id,company_id,user_id,role,status,expires_at,acl_revision,granted_by_user_id,created_at,updated_at) SELECT ?,'owner',?,?,?,'active',?,1,?,?,? WHERE NOT EXISTS (SELECT 1 FROM daftar_company_memberships WHERE company_id=? AND user_id=?) AND " + gate).bind(mid, inv.company_id, user.id, inv.role, inv.expires_at, inv.invited_by_user_id, stamp, stamp, inv.company_id, user.id, ...gateArgs);
-  const memberOk = "EXISTS (SELECT 1 FROM daftar_company_memberships WHERE id=? AND user_id=? AND status='active' AND revoked_at IS NULL AND updated_at=?)";
-  const results = await env.DB!.batch([
-    membershipStmt,
-    env.DB!.prepare("UPDATE daftar_invitations SET status='accepted',accepted_by_user_id=?,accepted_at=? WHERE id=? AND status='pending' AND expires_at > ? AND " + memberOk).bind(user.id, stamp, inv.id, stamp, mid, user.id, stamp),
-    event(env, user.id, 'invitation.accept', inv.company_id, inv.id, `Accepted ${inv.role} invitation granted by ${inv.invited_by_user_id}`, "EXISTS (SELECT 1 FROM daftar_invitations WHERE id=? AND status='accepted' AND accepted_by_user_id=? AND accepted_at=?)", [inv.id, user.id, stamp]),
-  ]);
+    : env.DB!.prepare("INSERT INTO daftar_company_memberships (id,workspace_id,company_id,user_id,role,status,expires_at,acl_revision,granted_by_user_id,created_at,updated_at) SELECT ?,'owner',?,?,?,'active',?,1,?,?,? WHERE NOT EXISTS (SELECT 1 FROM daftar_company_memberships WHERE workspace_id='owner' AND company_id=? AND user_id=?) AND " + gate).bind(mid, inv.company_id, user.id, inv.role, inv.expires_at, inv.invited_by_user_id, stamp, stamp, inv.company_id, user.id, ...gateArgs);
+  // Consume only if the immediately preceding statement in this transaction changed exactly one membership row.
+  let results: any[];
+  try {
+    results = await env.DB!.batch([
+      membershipStmt,
+      env.DB!.prepare("UPDATE daftar_invitations SET status='accepted',accepted_by_user_id=?,accepted_at=? WHERE id=? AND status='pending' AND expires_at > ? AND changes() = 1 AND EXISTS (SELECT 1 FROM daftar_company_memberships WHERE workspace_id='owner' AND id=? AND company_id=? AND user_id=? AND status='active' AND revoked_at IS NULL)").bind(user.id, stamp, inv.id, stamp, mid, inv.company_id, user.id),
+      event(env, user.id, 'invitation.accept', inv.company_id, inv.id, `Accepted ${inv.role} invitation granted by ${inv.invited_by_user_id}`, "changes() = 1", []),
+    ]);
+  } catch (e) {
+    const again = await env.DB!.prepare('SELECT status,accepted_by_user_id FROM daftar_invitations WHERE id=?').bind(inv.id).first<Row>();
+    if (again && again.status === 'accepted' && again.accepted_by_user_id === user.id) {
+      const cur = await currentMembership(env, user, inv.company_id);
+      if (cur && cur.role !== 'owner') return json({ ok: true, replay: true, membership: { companyId: inv.company_id, role: cur.role, expiresAt: cur.expiresAt } });
+    }
+    throw new CollabError(409, 'invitation_conflict', 'Invitation could not be accepted; retry.');
+  }
   if ((results[0].meta?.changes ?? 0) !== 1 || (results[1].meta?.changes ?? 0) !== 1) {
-    // Undo any partial membership change made by this attempt only if the invite did not get consumed.
+    // No compensating write: a losing attempt leaves state untouched (membership CAS lost or admission failed).
     const after = await env.DB!.prepare('SELECT status,accepted_by_user_id FROM daftar_invitations WHERE id=?').bind(inv.id).first<Row>();
-    if (!(after && after.status === 'accepted' && after.accepted_by_user_id === user.id)) {
-      await env.DB!.prepare("UPDATE daftar_company_memberships SET status='revoked',revoked_at=?,updated_at=? WHERE id=? AND user_id=? AND updated_at=? AND NOT EXISTS (SELECT 1 FROM daftar_invitations WHERE id=? AND status='accepted' AND accepted_by_user_id=?)").bind(stamp, stamp, mid, user.id, stamp, inv.id, user.id).run();
+    if (after && after.status === 'accepted' && after.accepted_by_user_id === user.id) {
+      const cur = await currentMembership(env, user, inv.company_id);
+      if (cur && cur.role !== 'owner') return json({ ok: true, replay: true, membership: { companyId: inv.company_id, role: cur.role, expiresAt: cur.expiresAt } });
     }
     throw new CollabError(409, 'invalid_invitation', 'Invitation is not valid.');
   }
