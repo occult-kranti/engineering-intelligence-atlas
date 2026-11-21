@@ -214,18 +214,25 @@ async function createProposal(env: AtlasEnv, user: CollabUser, companyId: string
   const id = 'prop-' + (await sha256(`${user.id}|${companyId}|${key}`)).slice(0, 40);
   const prior = await env.DB!.prepare('SELECT * FROM daftar_task_proposals WHERE id=?').bind(id).first<Row>();
   if (prior) { insist(prior.source_hash === hash, 'Idempotency key conflicts with different content.', 409, 'conflict'); return json({ ok: true, replay: true, proposal: proposalDto(prior) }); }
-  const pending = await env.DB!.prepare("SELECT COUNT(*) n FROM daftar_task_proposals WHERE company_id=? AND status='proposed'").bind(companyId).first<Row>();
-  insist((pending?.n ?? 0) < 500, 'Too many open proposals.', 429, 'capacity');
   const g = await writerGuard(env, user, companyId);
   const stampP = now();
   const [pins] = await env.DB!.batch([
-    env.DB!.prepare("INSERT OR IGNORE INTO daftar_task_proposals (id,company_id,requester_user_id,brief,source_hash,evidence_links,status,created_at) SELECT ?,?,?,?,?,?,'proposed',? WHERE " + g.sql).bind(id, companyId, user.id, brief, hash, JSON.stringify(links), stampP, ...g.args),
-    event(env, user.id, 'proposal.create', companyId, id, 'Submitted task proposal', 'EXISTS (SELECT 1 FROM daftar_task_proposals WHERE id=? AND created_at=? AND requester_user_id=?)', [id, stampP, user.id]),
+    env.DB!.prepare("INSERT OR IGNORE INTO daftar_task_proposals (id,company_id,requester_user_id,brief,source_hash,evidence_links,status,created_at) SELECT ?,?,?,?,?,?,'proposed',? WHERE (SELECT COUNT(*) FROM daftar_task_proposals WHERE company_id=? AND status='proposed') < 500 AND " + g.sql).bind(id, companyId, user.id, brief, hash, JSON.stringify(links), stampP, companyId, ...g.args),
+    event(env, user.id, 'proposal.create', companyId, id, 'Submitted task proposal', 'changes() = 1'),
   ]);
   const row = await env.DB!.prepare('SELECT * FROM daftar_task_proposals WHERE id=?').bind(id).first<Row>();
-  insist(row || (pins.meta?.changes ?? 0) === 1, 'Company not found or access denied.', 404, 'not_found');
+  const inserted = (pins.meta?.changes ?? 0) === 1;
+  if (!inserted && row) {
+    insist(row.source_hash === hash, 'Idempotency key conflicts with different content.', 409, 'conflict');
+    return json({ ok: true, replay: true, proposal: proposalDto(row) });
+  }
+  if (!inserted) {
+    const open = await env.DB!.prepare("SELECT COUNT(*) n FROM daftar_task_proposals WHERE company_id=? AND status='proposed'").bind(companyId).first<Row>();
+    insist((open?.n ?? 0) < 500, 'Too many open proposals.', 429, 'capacity');
+    insist(false, 'Company not found or access denied.', 404, 'not_found');
+  }
   insist(row && row.source_hash === hash, 'Idempotency key conflicts with different content.', 409, 'conflict');
-  return json({ ok: true, proposal: proposalDto(row) }, 201);
+  return json({ ok: true, proposal: proposalDto(row!) }, 201);
 }
 async function claimProposal(env: AtlasEnv, user: CollabUser, id: string, request: Request): Promise<Response> {
   const p = await env.DB!.prepare('SELECT * FROM daftar_task_proposals WHERE id=?').bind(id).first<Row>();
@@ -253,12 +260,11 @@ async function claimProposal(env: AtlasEnv, user: CollabUser, id: string, reques
   const g = await writerGuard(env, user, p.company_id);
   const tgtSql = target === null ? '1=1' : "(EXISTS (SELECT 1 FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner' AND o.user_id=? AND u.status='active') OR " + ACTIVE_MEMBER_SQL + ')';
   const tgtArgs = target === null ? [] : [target, p.company_id, target, now()];
-  const stampC = now();
+  const noop = (expectedAssignee ?? null) === target;
   const [r] = await env.DB!.batch([
     env.DB!.prepare("UPDATE daftar_task_proposals SET assigned_user_id=? WHERE id=? AND status='proposed' AND COALESCE(assigned_user_id,'')=COALESCE(?,'') AND " + g.sql + ' AND ' + tgtSql).bind(target, id, expectedAssignee, ...g.args, ...tgtArgs),
-    event(env, user.id, 'proposal.claim', p.company_id, id, target ? `Assigned to ${target}` : 'Unassigned', "EXISTS (SELECT 1 FROM daftar_task_proposals WHERE id=? AND status='proposed' AND COALESCE(assigned_user_id,'')=COALESCE(?,'')) AND changes() = 1", [id, target]),
+    event(env, user.id, 'proposal.claim', p.company_id, id, target ? `Assigned to ${target}` : 'Unassigned', noop ? '0=1' : 'changes() = 1'),
   ]);
-  void stampC;
   insist((r.meta?.changes ?? 0) === 1, 'Proposal was claimed by someone else or access changed.', 409, 'claimed');
   return json({ ok: true, assignedUserId: target });
 }
@@ -273,7 +279,7 @@ async function decideProposal(env: AtlasEnv, user: CollabUser, id: string, reque
   if (b.decision === 'reject') {
     const [r] = await env.DB!.batch([
       env.DB!.prepare("UPDATE daftar_task_proposals SET status='rejected',approver_user_id=?,decided_at=? WHERE id=? AND status='proposed'").bind(user.id, stamp, id),
-      event(env, user.id, 'proposal.reject', p.company_id, id, 'Rejected proposal', "EXISTS (SELECT 1 FROM daftar_task_proposals WHERE id=? AND status='rejected' AND decided_at=? AND approver_user_id=?)", [id, stamp, user.id]),
+      event(env, user.id, 'proposal.reject', p.company_id, id, 'Rejected proposal', 'changes() = 1'),
     ]);
     insist((r.meta?.changes ?? 0) === 1, 'Proposal already decided.', 409, 'closed');
     return json({ ok: true, status: 'rejected' });
@@ -287,8 +293,8 @@ async function decideProposal(env: AtlasEnv, user: CollabUser, id: string, reque
   const cid = crypto.randomUUID(); const key = 'proposal-accept-' + id;
   const results = await env.DB!.batch([
     env.DB!.prepare("INSERT INTO atlas_commands (id,idempotency_key,command,status,created_at,base_revision) SELECT ?,?,?,'queued',?,? WHERE (SELECT COUNT(*) FROM atlas_commands WHERE status='queued') < 1000 AND (SELECT revision FROM atlas_workspace WHERE id='owner') = ? AND EXISTS (SELECT 1 FROM daftar_task_proposals WHERE id=? AND status='proposed') AND " + COMPANY_OK).bind(cid, key, JSON.stringify(command), stamp, ws.revision, ws.revision, id, p.company_id),
-    env.DB!.prepare("UPDATE daftar_task_proposals SET status='queued',queued_command_id=?,approver_user_id=?,decided_at=? WHERE id=? AND status='proposed' AND EXISTS (SELECT 1 FROM atlas_commands WHERE id=?)").bind(cid, user.id, stamp, id, cid),
-    event(env, user.id, 'proposal.accept', p.company_id, id, 'Accepted proposal; queued fixed plan-only create_goal for desktop', "EXISTS (SELECT 1 FROM daftar_task_proposals WHERE id=? AND status='queued' AND queued_command_id=? AND decided_at=?)", [id, cid, stamp]),
+    env.DB!.prepare("UPDATE daftar_task_proposals SET status='queued',queued_command_id=?,approver_user_id=?,decided_at=? WHERE id=? AND status='proposed' AND EXISTS (SELECT 1 FROM atlas_commands WHERE id=?) AND EXISTS (SELECT 1 FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner' AND o.user_id=? AND u.status='active')").bind(cid, user.id, stamp, id, cid, user.id),
+    event(env, user.id, 'proposal.accept', p.company_id, id, 'Accepted proposal; queued fixed plan-only create_goal for desktop', 'changes() = 1'),
   ]);
   insist((results[0].meta?.changes ?? 0) === 1 && (results[1].meta?.changes ?? 0) === 1, 'Queue admission changed or proposal already decided.', 409, 'conflict');
   return json({ ok: true, status: 'queued', commandId: cid, note: 'Awaiting desktop; no native goal exists yet.' }, 202);
