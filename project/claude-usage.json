@@ -263,9 +263,12 @@
     ],
     "incrementObservedUsd": 0.5529,
     "observedBeforeIncrementUsd": 0.90583,
-    "status": "awaiting-test-and-publication",
+    "status": "prototype-verified-owner-site-published",
     "externalClaudeAuthorship": true,
     "prototypeDonnaBehavior": "scripted",
-    "scope": "Design metadata only. Provider completion does not establish runtime integration, autonomous Donna execution, successful tests or publication."
+    "scope": "External authorship accounting for a standalone synthetic frontend demo. Independent stress checks, preview browser interaction review, and owner-only Site version 14 publication and live review passed. Donna remains scripted, with no production runtime or autonomous execution claim. This work is outside the released 0.8.0 binaries.",
+    "validationEvidence": "design/blueprint-canvas/README.md",
+    "validatedSourceSha256": "91d824237d60305a51d255b0e8ca58b1a327fc6135bd9f9150c1f370b22e69cf",
+    "publicationEvidence": "design/blueprint-canvas/publication.json"
   }
 }

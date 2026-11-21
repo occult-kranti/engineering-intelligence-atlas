@@ -1,0 +1,92 @@
+{
+  "schemaVersion": 1,
+  "artifact": "standalone blueprint canvas prototype",
+  "status": "owner-only-site-published-and-reviewed",
+  "liveUrl": "https://atlas-command-office.whatswrong-inc.chatgpt.site/concepts/blueprint-office",
+  "site": {
+    "projectId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8",
+    "version": 14,
+    "sourceCommit": "ed3d1befdd083c82e6eb0b6b6bed5e7a17f3b86b",
+    "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_d6a4a24001588191b8e9548f1dd296ef",
+    "deploymentId": "appgdep_6b021cb085a081919a9e311552906c6a",
+    "deploymentStatus": "succeeded",
+    "deployedAt": "2026-11-21T22:35:33.726141+00:00",
+    "environmentRevision": 1,
+    "hasMcp": false,
+    "audience": "owner-only",
+    "customAudienceRevision": 1,
+    "ownerCount": 1,
+    "groupCount": 0,
+    "visitorCount": 0,
+    "newMembershipsOrAudienceGrants": 0
+  },
+  "prototype": {
+    "path": "cloud-workspace/public/concepts/blueprint-office.html",
+    "bytes": 86124,
+    "sha256": "91d824237d60305a51d255b0e8ca58b1a327fc6135bd9f9150c1f370b22e69cf",
+    "syntheticData": true,
+    "localBrowserState": true,
+    "donnaBehavior": "scripted",
+    "realCompanyWorkerOrModelGrantsCreated": false,
+    "includedInReleased080Binaries": false
+  },
+  "primaryConcept": {
+    "path": "design/blueprint-canvas/assets/04-top-view-blueprint-canvas.png",
+    "bytes": 2033349,
+    "sha256": "71dc245296935926dfd987b7ccaec73a1451854e1bcdd4c62a33c6c161884f9d",
+    "type": "generated visual target, not an application screenshot"
+  },
+  "sourceArchives": {
+    "localGzip": {
+      "files": 125,
+      "bytes": 706025,
+      "sha256": "0c841bdc779e464df7bf6a8f9471cc3ca7d572bc2831e0b3672bad0ac764abc5"
+    },
+    "serverNormalizedTar": {
+      "files": 125,
+      "bytes": 2959360,
+      "sha256": "fcde3c5244d6dc2d637d4ca542932f36594353de2ba49aa966309beb1522858b"
+    },
+    "note": "The local gzip and server-normalized tar are different archive representations, with different byte sizes and digests. The uploaded source contains the exact tested HTML identified above."
+  },
+  "validation": {
+    "syntheticReceipt": "design/blueprint-canvas/validation/receipt.json",
+    "scope": "full",
+    "passed": true,
+    "groups": 15,
+    "completedAt": "2026-11-21T22:34:08.263Z",
+    "previewBrowser": {
+      "environment": "Managed Chrome through the Sites preview",
+      "viewport": {
+        "width": 1363,
+        "height": 936
+      },
+      "donnaSendPitchesDegrees": [
+        20,
+        38,
+        52,
+        0
+      ],
+      "sendWasActualHitTarget": true,
+      "inputCleared": true,
+      "scriptedResponseObserved": true,
+      "inspectedAncestors": 10,
+      "allAncestorScrollOffsetsZero": true,
+      "evidence": "design/blueprint-canvas/validation/RECEIPT.md"
+    },
+    "publishedBrowser": {
+      "canonicalUrl": "https://atlas-command-office.whatswrong-inc.chatgpt.site/concepts/blueprint-office",
+      "initialPitchDegrees": 0,
+      "initialTopViewVerified": true,
+      "donnaSendPrompt": "Summarize tasks",
+      "scriptedResponseObserved": true,
+      "ownerAudienceRechecked": true
+    },
+    "evidenceProvenance": "The integration owner retained the Site source/deployment metadata and performed the separate preview and published owner-browser reviews. The independent reviewer retained the full synthetic runner receipt.",
+    "limitations": "Synthetic DOM geometry does not measure real layout or hit testing. Preview browser checks cover the specified laptop viewport and angles. Published review covers Top view and the scripted Send interaction; no production runtime, autonomous Donna, provider execution, or multi-user authorization claim is made."
+  },
+  "sourceBranch": "design/infinite-blueprint-canvas",
+  "initialRemoteDesignCheckpoint": "239d4d5",
+  "githubPublicationEvidence": "Git history of sourceBranch; the published prototype is independently pinned by its SHA-256 above.",
+  "relatedReleaseReceipt": "project/release-0.8.0.json"
+}
