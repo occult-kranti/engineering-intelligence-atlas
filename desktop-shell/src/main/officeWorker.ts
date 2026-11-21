@@ -40,7 +40,9 @@ function unwrap(result: OfficeResult): OfficeSnapshot {
   if (!result.ok || !result.snapshot) throw new Error(result.error || 'Office core unavailable');
   return result.snapshot;
 }
-function redact(text: string): string { return text.replace(/(?:sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}/g, '[redacted]'); }
+/** Credential-start boundary: a key prefix only counts at the start of a token, so embedded ordinary
+ * word/hyphen identifiers survive. The preceding delimiter is preserved. */
+function redact(text: string): string { return text.replace(/(^|[^A-Za-z0-9_-])(?:sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}/g, '$1[redacted]'); }
 function hash(value: string | Buffer): string { return crypto.createHash('sha256').update(value).digest('hex'); }
 /** Longest valid UTF-8 prefix within maxBytes; never splits a code point and never exceeds the byte bound. */
 function utf8Prefix(text: string, maxBytes: number): string {

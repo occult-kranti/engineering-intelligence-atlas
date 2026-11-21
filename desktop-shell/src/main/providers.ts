@@ -88,7 +88,7 @@ export function sanitizeError(err: unknown, apiKey: string): Error {
   }
   // Also redact anything that looks like an OpenAI/Anthropic key, in case a
   // library echoes a different credential.
-  message = message.replace(/sk-[A-Za-z0-9_-]{8,}/g, '[redacted]');
+  message = message.replace(/(^|[^A-Za-z0-9_-])sk-[A-Za-z0-9_-]{8,}/g, '$1[redacted]');
   if (message.length > 300) message = `${message.slice(0, 300)}…`;
   const safe = new Error(message);
   safe.name = 'ProviderError';
