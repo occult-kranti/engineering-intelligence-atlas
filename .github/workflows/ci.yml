@@ -43,6 +43,16 @@ jobs:
           path: site-source/.work/ui-screenshots
           if-no-files-found: warn
 
+  release-checksums:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify release checksum rules with disposable temp files
+        run: node scripts/release-checksums.test.mjs
+
   mysql-connectors:
     runs-on: ubuntu-latest
     services:
@@ -145,19 +155,28 @@ jobs:
         shell: pwsh
         run: |
           rustup default stable-x86_64-pc-windows-msvc
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           rustc --version --verbose
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Verify native core
         run: cargo test --locked --manifest-path native-core/Cargo.toml
       - run: npm ci
         working-directory: desktop-shell
-      - name: Typecheck, test and build native helper and atlas
+      - name: Build native helper
         working-directory: desktop-shell
-        run: |
-          npm run build:native
-          npm run typecheck
-          npm test
-          npm run test:renderer
-          npm run sync-atlas -- --src ../docs
+        run: npm run build:native
+      - name: Typecheck
+        working-directory: desktop-shell
+        run: npm run typecheck
+      - name: Desktop unit tests
+        working-directory: desktop-shell
+        run: npm test
+      - name: Renderer tests
+        working-directory: desktop-shell
+        run: npm run test:renderer
+      - name: Sync atlas
+        working-directory: desktop-shell
+        run: npm run sync-atlas -- --src ../docs
       - name: Package Windows x64 NSIS and ZIP
         working-directory: desktop-shell
         run: npm run package:win
@@ -315,7 +334,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: [web, mysql-connectors, desktop, desktop-windows, android, cloud, editor, design-tools]
+    needs: [web, release-checksums, mysql-connectors, desktop, desktop-windows, android, cloud, editor, design-tools]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -346,6 +365,7 @@ jobs:
           if gh release view "v${release_version}" >/dev/null 2>&1; then
             echo "Version already published; existing release is preserved."
           else
+            node scripts/release-checksums.test.mjs
             node scripts/release-checksums.mjs release release/SHA256SUMS
             gh release create "v${release_version}" release/*.AppImage release/windows/*.exe release/windows/*.zip release/android/*.apk release/editor/*.vsix release/SHA256SUMS --target "$GITHUB_SHA" --title "Daftar ${release_version} — command studio" --notes-file project/RELEASE_NOTES.md
           fi
