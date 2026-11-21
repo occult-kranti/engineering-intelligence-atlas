@@ -308,7 +308,15 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
       }
       p.setAttribute('d', d);
       p.dataset.kind = t.kind;
-      p.setAttribute('class', `ff-thread ff-thread--${t.kind === 'service-contract' ? 'contract' : t.kind === 'shared-staff' ? 'staff' : 'ownership'}${t.id === selectedThread ? ' ff-thread--focus' : ''}`);
+      const kindClass = t.kind === 'service-contract' ? 'contract' : t.kind === 'shared-staff' ? 'staff' : t.kind === 'company-parent' ? 'hierarchy' : 'ownership';
+      p.setAttribute('class', `ff-thread ff-thread--${kindClass}${t.id === selectedThread ? ' ff-thread--focus' : ''}`);
+      if (t.kind === 'company-parent') {
+        p.style.stroke = 'var(--connection)';
+        p.style.strokeDasharray = 'none';
+      } else {
+        p.style.removeProperty('stroke');
+        p.style.removeProperty('stroke-dasharray');
+      }
     }
     for (const [id, p] of threadEls) if (!keep.has(id)) { p.remove(); threadEls.delete(id); }
     st.total = scene.nodes.length; st.visible = chosen.length; st.rich = rich; st.simple = simple;

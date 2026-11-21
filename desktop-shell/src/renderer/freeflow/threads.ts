@@ -1,6 +1,6 @@
 // Redaction-safe thread projection. Only identity-free typed edges survive.
 
-export type ThreadKind = 'service-contract' | 'shared-staff' | 'ownership';
+export type ThreadKind = 'service-contract' | 'shared-staff' | 'ownership' | 'company-parent';
 
 export interface SceneThread {
   id: string;

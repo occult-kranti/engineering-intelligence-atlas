@@ -219,7 +219,12 @@ function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs:
       });
     });
   });
-  const threads = sortThreads(portfolioContractThreads(snap, known));
+  const hierarchyThreads: SceneThread[] = [];
+  for (const [childId, parentId] of forest.parentOf) {
+    const t = projectThread({ kind: 'company-parent', fromId: `folio:${parentId}`, toId: `folio:${childId}`, label: 'Organizational parent → subcompany' });
+    if (t) hierarchyThreads.push({ ...t, id: `thread:company-parent:${parentId}:${childId}`, contractId: null, homeCompanyId: null });
+  }
+  const threads = sortThreads([...portfolioContractThreads(snap, known), ...hierarchyThreads]);
   return {
     title: 'Conference table', breadcrumbs: [{ label: 'Portfolio', focus }], focus,
     bounds: unionBounds(nodes.map((n) => n.rect), nodes.length <= 6 ? 60 : nodes.length <= 24 ? 110 : 200), nodes, threads,
