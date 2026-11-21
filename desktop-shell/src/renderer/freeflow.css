@@ -1,3 +1,21 @@
+/* Host shell: Freeflow is the default canvas; operations are an explicit switch. */
+.ff-surface { display: flex; flex-direction: column; min-height: min(70vh, 620px); height: calc(100vh - 230px); margin: 0 0 12px; border: 1px solid var(--line-strong); border-radius: 8px; overflow: hidden; background: var(--canvas); }
+.ff-surface.hidden { display: none; }
+.ff-surface-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 6px 12px; border-bottom: 1px solid var(--line); background: var(--surface); }
+.ff-surface-nav { display: flex; flex-wrap: wrap; gap: 6px; }
+.ff-nav-btn { min-height: 36px; padding: 0 12px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--elevated); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+.ff-nav-btn.active { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.ff-nav-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.ff-surface-host { flex: 1; min-height: 0; }
+body.ff-operations .ff-surface { display: none; }
+body:not(.ff-operations) #office-view > :not(.page-heading):not(#freeflow-surface):not(.hidden) { }
+body.ff-canvas-mode #office-view .page-heading,
+body.ff-canvas-mode #office-view .ceo-entry,
+body.ff-canvas-mode #office-view #ceo-panel,
+body.ff-canvas-mode #office-view #company-workspace > :not(#donna-chat-home-wrap) { display: none; }
+body.ff-canvas-mode #donna-dock-toggle { bottom: 16px; }
+@media (max-height: 800px) { .ff-surface { height: calc(100vh - 190px); min-height: 420px; } }
+
 /* Freeflow blueprint studio: drafting-table scene, list fallback and studio shell.
  * Uses studio-tokens.css semantic tokens only. Presentation-only; no indefinite animation. */
 

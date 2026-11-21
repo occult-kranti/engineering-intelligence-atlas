@@ -1,3 +1,5 @@
+import { mountStudio, type Studio, type StudioHeat, type StudioActionKind, type StudioActionContext, type StudioActionState, type InspectorActionSpec } from './freeflow/studio.js';
+import type { FreeflowFocus, FreeflowSnapshot, SceneNode } from './freeflow/model.js';
 /**
  * Local chrome/launcher page logic. Runs only on file:// inside the sandboxed
  * shell window. Structural copies of the bridge types live here so the
@@ -626,7 +628,7 @@ function navigate(view: ViewName, updateHash = true): void {
   if (view === 'usage' || view === 'overview') void safeTask(refreshWorkspace);
   if (view === 'roadmap') renderRoadmap();
   if (view === 'library') renderIndex();
-  syncDonnaDock();
+  ffApplyMode();syncDonnaDock();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
@@ -2294,9 +2296,10 @@ function switchWorkspaceTab(name:string):void{
   if(!['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(name))return;workspaceTab=name;
   document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]').forEach((button)=>{const active=button.dataset.workspaceTab===name;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;});
   document.querySelectorAll<HTMLElement>('.workspace-tab-panel').forEach((panel)=>panel.classList.toggle('hidden',panel.id!==`workspace-panel-${name}`));
-  if(name==='blueprint'||name==='whiteboard')workspaceTask(ensureWorkspaceBlueprint);renderUnifiedWorkspace();
+  renderUnifiedWorkspace();
 }
 function renderUnifiedWorkspace():void{
+  if(ffStudio){if(ffFocus.kind==='portfolio'&&new URLSearchParams(location.search).has('company'))ffFocus=ffFocusFromUrl();ffRefresh();}
   $('workspace-studio-signals').classList.toggle('hidden',workspaceTab==='chat'||workspaceTab==='decisions');
   renderWorkspaceControls();renderPortfolio();renderWorkspaceLocator();renderDecisionPanels();renderCloudConnection();
   if(spatialOfficeId!==selectedOfficeId){spatialOfficeId=selectedOfficeId;resetRoomForm();resetBoardForm();}
@@ -2398,7 +2401,7 @@ function portfolioState():OfficePortfolio|undefined{return officeState?.portfoli
 function portfolioCompanies():OfficeCompany[]{return(officeState?.companies||[]).filter(company=>company.id!==portfolioState()?.ceo.sharedServicesCompanyId).sort((a,b)=>a.name.localeCompare(b.name));}
 function portfolioReady():boolean{return workspaceAvailable()&&Boolean(portfolioState());}
 function setPortfolioOpen(open:boolean):void{
-  portfolioOpen=open;$('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open);$('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').classList.toggle('return-arrow',open);
+  portfolioOpen=open;if(open)ffOperations=true;$('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open);$('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').classList.toggle('return-arrow',open);
   const label=$('ceo-toggle').querySelector('strong');if(label)label.textContent=open?'Back to company workspace':'CEO office';if(open)renderPortfolio();syncDonnaDock();
 }
 function portfolioNavigation(label:string,companyId:string,tab='chat',kind='text-button',officeId?:string,departmentId?:string):HTMLButtonElement{
@@ -2881,7 +2884,7 @@ function renderStudioRoadmap():void{
 }
 function syncDonnaDock():void{
   const panel=document.getElementById('donna-conversation'),home=document.getElementById('donna-chat-home'),dock=document.getElementById('donna-dock'),toggle=document.getElementById('donna-dock-toggle'),slot=document.getElementById('donna-dock-slot');if(!panel||!home||!dock||!toggle||!slot)return;
-  const available=activeView==='office'&&workspaceTab!=='chat'&&!$('company-workspace').classList.contains('hidden');const open=available&&donnaDockOpen;
+  const canvasMode=document.body.classList.contains('ff-canvas-mode');const available=activeView==='office'&&(canvasMode||workspaceTab!=='chat'||portfolioOpen);const open=available&&donnaDockOpen;
   toggle.classList.toggle('hidden',!available||open);toggle.setAttribute('aria-expanded',String(open));dock.classList.toggle('hidden',!open);if(open){if(panel.parentElement!==slot)slot.append(panel);}else if(panel.parentElement!==home)home.prepend(panel);
 }
 function initStudio():void{
@@ -2896,9 +2899,144 @@ function initStudio():void{
   $('donna-dock-toggle').onclick=()=>{donnaDockOpen=true;syncDonnaDock();$('chat-message').focus();};$('donna-dock-close').onclick=()=>{donnaDockOpen=false;syncDonnaDock();$('donna-dock-toggle').focus();};
 }
 
+// ---------------------------------------------------------------- Freeflow host
+let ffStudio: Studio | null = null;
+let ffFocus: FreeflowFocus = { kind: 'portfolio' };
+let ffOperations = false;
+let ffHeatCache = new Map<string, StudioHeat | null>();
+let ffHeatKey = '';
+function ffReadOnlyCaps(spec: InspectorActionSpec): StudioActionState {
+  if (workspaceReadOnly() && ['new-job','new-company','new-office','new-department','hire'].includes(spec.action)) return { enabled: false, reason: 'Read-only starter preview.' };
+  return { enabled: true };
+}
+function ffFocusFromUrl(): FreeflowFocus {
+  const params = new URLSearchParams(location.search); const cid = params.get('company') || params.get('companyId');
+  if (cid && officeState?.companies.some((c) => c.id === cid)) return { kind: 'company', companyId: cid };
+  return { kind: 'portfolio' };
+}
+function ffSignalsFor(scope: {companyId?: string; officeId?: string; departmentId?: string}): StudioSignals | null {
+  if (!officeState || !window.DaftarSignals) return null;
+  const key = `${officeSampledAt}|${scope.companyId||''}|${scope.officeId||''}|${scope.departmentId||''}`;
+  if (ffHeatKey !== officeSampledAt) { ffHeatCache = new Map(); ffHeatKey = officeSampledAt; }
+  const cached = (ffHeatCache as unknown as Map<string, StudioSignals | null>).get(key);
+  if (cached !== undefined) return cached;
+  let result: StudioSignals | null = null;
+  try { result = window.DaftarSignals.build(officeState, { ...scope, now: new Date().toISOString(), ...(officeSampledAt ? { sampledAt: officeSampledAt } : {}) }); } catch { result = null; }
+  (ffHeatCache as unknown as Map<string, StudioSignals | null>).set(key, result);
+  return result;
+}
+function ffHeat(node: Readonly<SceneNode>): StudioHeat | null {
+  const mode = studioHeatMode();
+  if (mode === 'off') return { level: 'off', label: 'Heat off' };
+  const pick = (g: StudioSignalGroup | undefined): StudioHeat => { const m = g?.[mode]; return m ? { level: m.level, label: m.label, metric: m.detail } : { level: 'unknown', label: 'Unknown (no metric)' }; };
+  if (node.kind === 'folio') return pick(ffSignalsFor({ companyId: node.companyId })?.summary);
+  const s = ffSignalsFor({ companyId: node.companyId, officeId: node.officeId, departmentId: node.departmentId });
+  if (!s) return { level: 'unknown', label: 'Unknown (no metric)' };
+  if (node.kind === 'office') return pick(s.summary);
+  if (node.kind === 'room' && node.roomId) return pick(s.perRoom[node.roomId]);
+  if (node.kind === 'department' && node.departmentId) return pick(s.perDepartment[node.departmentId]);
+  if ((node.kind === 'employee') && node.employeeId) return pick(s.perEmployee[node.employeeId]);
+  return null;
+}
+function ffSetNav(name: string): void {
+  document.querySelectorAll<HTMLButtonElement>('[data-ff-nav]').forEach((b) => { const on = b.dataset.ffNav === name; b.classList.toggle('active', on); b.setAttribute('aria-pressed', String(on)); });
+}
+function ffApplyMode(): void {
+  const canvas = activeView === 'office' && !ffOperations && !portfolioOpen;
+  document.body.classList.toggle('ff-canvas-mode', canvas);
+  document.body.classList.toggle('ff-operations', ffOperations);
+  $('freeflow-surface').classList.toggle('hidden', activeView !== 'office' || portfolioOpen);
+  ffStudio?.setActive(activeView === 'office' && !portfolioOpen && !ffOperations);
+}
+function ffRefresh(): void {
+  if (!ffStudio) return;
+  const btn = $('ff-create-blueprint') as HTMLButtonElement;
+  const needs = Boolean(officeState && selectedOfficeId && !currentBlueprint() && !workspaceReadOnly() && workspaceAvailable());
+  btn.classList.toggle('hidden', !needs);
+  ffStudio.update((officeState || {}) as unknown as FreeflowSnapshot, ffFocus);
+  $('ff-surface-heat').textContent = studioHeatMode() === 'off' ? 'Heat off' : `Heat: ${studioHeatMode()}`;
+  ffApplyMode();
+}
+function ffNavigate(focus: FreeflowFocus): void {
+  ffFocus = focus;
+  const url = new URL(location.href);
+  if (focus.kind === 'portfolio') url.searchParams.delete('company'); else url.searchParams.set('company', focus.companyId);
+  history.replaceState(null, '', url.toString());
+  if (focus.kind !== 'portfolio') {
+    if (officeState?.companies.some((c) => c.id === focus.companyId) && officeState.activeCompanyId !== focus.companyId) {
+      if (workspaceReadOnly()) { officeState.activeCompanyId = focus.companyId; } else void safeTask(() => performOffice({ action: 'select_company', companyId: focus.companyId }, 'Company selected.'));
+    }
+    if ('officeId' in focus) selectedOfficeId = focus.officeId;
+    selectedDepartmentId = focus.kind === 'department' ? focus.departmentId : '';
+    renderOffice();
+  }
+  ffRefresh();
+}
+function ffOpenPanel(selector: string, focusId: string): void {
+  let el: HTMLElement | null = document.getElementById(focusId);
+  let parent: HTMLElement | null = el;
+  while (parent) { if (parent instanceof HTMLDetailsElement) parent.open = true; parent = parent.parentElement; }
+  if (!el) return; el.scrollIntoView({ block: 'nearest' });
+  if (el.matches('input,select,textarea,button')) el.focus(); else { el.tabIndex = -1; el.focus(); }
+  void selector;
+}
+function ffShowOps(): void { ffOperations = true; ffSetNav('operations'); ffApplyMode(); }
+function ffAction(action: StudioActionKind, ctx: StudioActionContext): void {
+  if (ctx.companyId && officeState?.companies.some((c) => c.id === ctx.companyId) && officeState.activeCompanyId !== ctx.companyId) {
+    if (workspaceReadOnly()) officeState.activeCompanyId = ctx.companyId; else void safeTask(() => performOffice({ action: 'select_company', companyId: ctx.companyId! }));
+  }
+  if (ctx.officeId) selectedOfficeId = ctx.officeId;
+  if (ctx.departmentId) selectedDepartmentId = ctx.departmentId;
+  renderOffice();
+  const readOnly = workspaceReadOnly();
+  const toWorkspace = (tab: string, focusId: string) => { ffOperations = true; ffSetNav('operations'); ffApplyMode(); setPortfolioOpen(false); switchWorkspaceTab(tab); window.setTimeout(() => ffOpenPanel('', focusId), 0); };
+  switch (action) {
+    case 'chat': {
+      const scopeSel = $('chat-scope') as HTMLSelectElement;
+      scopeSel.value = ctx.employeeId ? 'employee' : ctx.departmentId ? 'department' : ctx.officeId ? 'office' : 'company';
+      renderWorkspaceControls();
+      if (ctx.employeeId) ($('chat-employee') as HTMLSelectElement).value = ctx.employeeId;
+      donnaDockOpen = true; ffOperations = false; ffApplyMode(); workspaceTab = workspaceTab === 'chat' ? 'blueprint' : workspaceTab; syncDonnaDock(); $('chat-message').focus(); break;
+    }
+    case 'jobs': ffShowOps(); setPortfolioOpen(false); switchOfficeTab('queue'); ffOpenPanel('', 'office-queue-filter'); break;
+    case 'new-job': {
+      ffShowOps(); switchOfficeTab('queue'); ($('queue-composer') as HTMLDetailsElement).open = true;
+      if (ctx.employeeId) { const sel = $('queue-employee') as HTMLSelectElement; if (Array.from(sel.options).some((o) => o.value === ctx.employeeId)) sel.value = ctx.employeeId; }
+      ffOpenPanel('', 'queue-goal'); break;
+    }
+    case 'roadmap': ffOperations = true; ffApplyMode(); setPortfolioOpen(false); switchWorkspaceTab('timeline'); break;
+    case 'whiteboard': toWorkspace('whiteboard', 'whiteboard-add-node'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } break;
+    case 'ownership': toWorkspace('whiteboard', 'node-title'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } break;
+    case 'manage': ffShowOps(); switchOfficeTab('people'); ffOpenPanel('', 'office-employees'); break;
+    case 'new-company': ffShowOps(); switchOfficeTab('overview'); ffOpenPanel('', 'office-new-company-name'); break;
+    case 'new-office': ffShowOps(); switchOfficeTab('overview'); ffOpenPanel('', 'office-new-office-name'); break;
+    case 'new-department': ffShowOps(); switchOfficeTab('overview'); ffOpenPanel('', 'office-new-department-name'); break;
+    case 'hire': ffShowOps(); switchOfficeTab('people'); ffOpenPanel('', 'hire-name'); break;
+    case 'services': ffShowOps(); setPortfolioOpen(true); ($('ceo-contract-editor') as HTMLDetailsElement).open = true; ffOpenPanel('', 'ceo-contract-service'); if (ctx.contractId) { const sel = $('ceo-contract-service') as HTMLSelectElement; const k = portfolioState()?.contracts.find((c) => c.id === ctx.contractId); if (k) { sel.value = k.serviceId; renderContractRecipients(); } } break;
+    case 'settings': navigate('settings'); break;
+  }
+  if (readOnly) setStatus($('workspace-action-status'), 'Starter preview: navigation only; changes are disabled.');
+}
+function initFreeflowHost(): void {
+  const host = $('freeflow-host');
+  ffStudio = mountStudio(host, { onNavigate: ffNavigate, onAction: ffAction, heat: ffHeat, capabilities: ffReadOnlyCaps });
+  document.querySelectorAll<HTMLButtonElement>('[data-ff-nav]').forEach((b) => b.addEventListener('click', () => {
+    const name = b.dataset.ffNav || 'table'; ffSetNav(name);
+    if (name === 'table') { ffOperations = false; setPortfolioOpen(false); ffNavigate({ kind: 'portfolio' }); ffApplyMode(); }
+    else if (name === 'team') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('softboard'); }
+    else if (name === 'roadmap') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('timeline'); }
+    else if (name === 'whiteboard') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('whiteboard'); }
+    else { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('chat'); }
+  }));
+  $('ff-create-blueprint').addEventListener('click', () => workspaceTask(async () => { await ensureWorkspaceBlueprint(); ffRefresh(); }));
+  $('workspace-heat-mode').addEventListener('change', ffRefresh);
+  $('workspace-theme').addEventListener('change', () => ffRefresh());
+  window.addEventListener('beforeunload', () => { ffStudio?.destroy(); ffStudio = null; });
+  window.addEventListener('hashchange', () => { ffApplyMode(); });
+}
 // ---------------------------------------------------------------- boot
 function boot(): void {
-  initStudio(); initWorkspace(); initOffice(); initUnifiedWorkspace(); initGitHubTools(); initPortfolio(); initAuthority(); initDecisionPanels(); initCloudConnection(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
+  initStudio(); initWorkspace(); initOffice(); initUnifiedWorkspace(); initFreeflowHost(); initGitHubTools(); initPortfolio(); initAuthority(); initDecisionPanels(); initCloudConnection(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
   if (!bridge) {
     $('bridge-notice').classList.remove('hidden'); $('core-label').textContent = 'Desktop preview'; $('core-note').textContent = 'Native actions need the desktop app';
     noData($('team-grid'), 'Open the desktop app to load your skill-linked team.'); noData($('project-list'), 'Create and save projects in the installed desktop app.'); noData($('key-rows'), 'Provider credentials are managed by the desktop app’s secure storage.');
@@ -2922,7 +3060,8 @@ function boot(): void {
     $('core-label').textContent='Starter office preview';$('core-note').textContent='Example state · read only';
   } else if (bridge?.transport === 'personal-browser') { $('core-label').textContent='Private browser workspace'; $('core-note').textContent='Connected to your desktop app'; }
   const route = location.hash.replace('#', '') as ViewName;const params=new URLSearchParams(location.search);const requested=params.get('workspace')||'';const workspaceRoute=['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(requested)?requested:null;const ceoRoute=params.get('ceo')==='true';
-  navigate(workspaceRoute||ceoRoute?'office':route in VIEW_IDS?route:'office',false);if(workspaceRoute)switchWorkspaceTab(workspaceRoute);if(ceoRoute)setPortfolioOpen(true);void safeTask(refreshWorkspace);
+  if(workspaceRoute||ceoRoute)ffOperations=true;ffFocus=params.get('company')||params.get('companyId')?{kind:'company',companyId:params.get('company')||params.get('companyId')||''}:{kind:'portfolio'};
+  navigate(workspaceRoute||ceoRoute?'office':route in VIEW_IDS?route:'office',false);if(workspaceRoute)switchWorkspaceTab(workspaceRoute);if(ceoRoute)setPortfolioOpen(true);ffApplyMode();void safeTask(refreshWorkspace);
 }
 boot();
 export {};
