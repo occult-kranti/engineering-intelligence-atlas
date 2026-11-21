@@ -1,0 +1,223 @@
+// @vitest-environment node
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { installDom, type FreeflowDom } from './fixtures/freeflow-dom.js';
+import { buildScene, type FreeflowSnapshot } from '../src/renderer/freeflow/model.js';
+import { mountStudio, type Studio, type StudioActionKind, type StudioActionContext } from '../src/renderer/freeflow/studio.js';
+import { mountScene, RICH_NODE_BUDGET, THREAD_BUDGET, type SceneRenderer } from '../src/renderer/freeflow/scene.js';
+import { mountA11yList, type A11yList } from '../src/renderer/freeflow/a11y-list.js';
+
+let dom: FreeflowDom;
+const cleanups: Array<() => void> = [];
+
+beforeEach(() => { dom = installDom(); });
+afterEach(() => { for (const c of cleanups.splice(0)) try { c(); } catch { /* ignore */ } dom.restore(); });
+
+function dense(nEmployees: number): FreeflowSnapshot {
+  const rooms = [{ id: 'r1', name: 'Hall', departmentId: null, x: 0, y: 0, width: 800, height: 400 }];
+  const employees = Array.from({ length: nEmployees }, (_, i) => ({
+    id: `e${String(i).padStart(4, '0')}`, companyId: 'c1', officeId: 'o1', departmentId: null, name: `Emp ${String(i).padStart(4, '0')}`, role: 'Worker', kind: 'specialist', status: 'active',
+  }));
+  const desks = employees.map((e, i) => ({ id: `dk${i}`, roomId: 'r1', employeeId: e.id, x: (i % 40) / 40, y: Math.floor(i / 40) / Math.ceil(nEmployees / 40) }));
+  const boards = employees.slice(0, 200).map((e, i) => ({ id: `w${i}`, roomId: 'r1', ownerEmployeeId: e.id, title: `B${i}`, goalIds: [], jobIds: [], x: 0.5, y: 0.5 }));
+  return {
+    companies: [{ id: 'c1', name: 'Co', status: 'active' }],
+    offices: [{ id: 'o1', companyId: 'c1', name: 'HQ', status: 'active' }],
+    departments: [], employees, jobs: [],
+    blueprints: [{ id: 'bp', companyId: 'c1', officeId: 'o1', rooms, desks, whiteboards: boards }],
+  };
+}
+
+function small(extra: Partial<FreeflowSnapshot> = {}): FreeflowSnapshot {
+  return {
+    companies: [{ id: 'a', name: 'Alpha', status: 'active' }, { id: 'b', name: 'Beta', status: 'active' }],
+    offices: [{ id: 'oa', companyId: 'a', name: 'A HQ', status: 'active' }],
+    ...extra,
+  };
+}
+
+interface Mounted { studio: Studio; host: HTMLElement; actions: Array<{ a: StudioActionKind; c: StudioActionContext }>; nav: unknown[] }
+
+function mountS(storage: Pick<Storage, 'getItem' | 'setItem'> | null = null, caps?: Parameters<typeof mountStudio>[1]['capabilities']): Mounted {
+  const host = document.createElement('div');
+  document.body.appendChild(host);
+  const m: Mounted = { host, actions: [], nav: [], studio: null as never };
+  m.studio = mountStudio(host, { onNavigate: (f) => m.nav.push(f), onAction: (a, c) => m.actions.push({ a, c }), storage, capabilities: caps });
+  cleanups.push(() => m.studio.destroy());
+  return m;
+}
+
+function measure(m: Mounted, w = 1200, h = 800) {
+  dom.setGeometry(m.studio.elements.canvasHost, { width: w, height: h, left: 0, top: 0 });
+  dom.fireResize();
+}
+
+function worldTransform(m: Mounted): string {
+  return (m.studio.elements.canvasHost.querySelector('.ff-world') as HTMLElement).style.transform;
+}
+
+describe('freeflow studio (mounted)', () => {
+  it('keeps one camera owner: A camera restored from memory with null or throwing storage', () => {
+    const throwing = { getItem: () => { throw new Error('denied'); }, setItem: () => { throw new Error('denied'); } };
+    for (const storage of [null, throwing]) {
+      const m = mountS(storage);
+      measure(m);
+      const snap = small();
+      m.studio.update(snap, { kind: 'company', companyId: 'a' });
+      measure(m);
+      const initial = worldTransform(m);
+      const zoomIn = [...m.studio.elements.canvasHost.querySelectorAll('button')].find((b) => b.getAttribute('aria-label') === 'Zoom in')!;
+      dom.setReducedMotion(true);
+      zoomIn.click();
+      const changed = worldTransform(m);
+      expect(changed).not.toBe(initial);
+      m.studio.update(snap, { kind: 'company', companyId: 'b' });
+      m.studio.update(snap, { kind: 'company', companyId: 'a' });
+      expect(worldTransform(m)).toBe(changed);
+    }
+  });
+
+  it('hidden initial mount fits once with final geometry and preserves user camera afterwards', () => {
+    const store = { m: new Map<string, string>(), getItem(k: string) { return this.m.get(k) ?? null; }, setItem(k: string, v: string) { this.m.set(k, v); } };
+    const m = mountS(store);
+    m.studio.setActive(false);
+    m.studio.update(small(), { kind: 'company', companyId: 'a' });
+    expect(store.m.size).toBe(0);
+    m.studio.setActive(true);
+    expect(store.m.size).toBe(0);
+    measure(m, 1600, 900);
+    const fitted = worldTransform(m);
+    expect(fitted).toContain('translate(800px, 450px)');
+    m.studio.update(small(), { kind: 'company', companyId: 'a' });
+    expect(worldTransform(m)).toBe(fitted);
+  });
+
+  it('list mode stops canvas controls; narrow Canvas view usable; inactive studio is disabled', () => {
+    const m = mountS();
+    measure(m);
+    m.studio.update(small(), { kind: 'company', companyId: 'a' });
+    const toggle = [...m.host.querySelectorAll('.ff-tools button')].find((b) => /view/.test(b.textContent ?? '')) as HTMLButtonElement;
+    toggle.click();
+    expect(m.studio.elements.listHost.hidden).toBe(false);
+    expect(m.studio.elements.canvasHost.hidden).toBe(true);
+    const ctl = m.studio.elements.canvasHost.querySelector('.ff-controls') as HTMLElement;
+    expect(ctl.dataset.active).toBe('false');
+    toggle.click();
+    expect(m.studio.elements.canvasHost.hidden).toBe(false);
+    expect(ctl.dataset.active).toBe('true');
+    m.studio.setActive(false);
+    expect(m.studio.elements.root.hidden).toBe(true);
+    expect(ctl.dataset.active).toBe('false');
+    m.studio.setActive(true);
+    expect(ctl.dataset.active).toBe('true');
+  });
+
+  it('mounted scene honors node and thread budgets and reports full counts', () => {
+    const snap = dense(300);
+    const scene = buildScene(snap, { kind: 'company', companyId: 'c1' });
+    expect(scene.nodes.length).toBeGreaterThan(RICH_NODE_BUDGET);
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    dom.setGeometry(host, { width: 1200, height: 800, left: 0, top: 0 });
+    let sr: SceneRenderer = mountScene(host, {});
+    cleanups.push(() => sr.destroy());
+    sr.setCamera({ x: 400, y: 200, zoom: 0.02, yaw: 0, pitch: 0, distance: 1800 });
+    sr.update(scene);
+    const nodes = host.querySelectorAll('.ff-node').length;
+    expect(nodes).toBeLessThanOrEqual(RICH_NODE_BUDGET);
+    expect(host.querySelectorAll('.ff-thread').length).toBeLessThanOrEqual(THREAD_BUDGET);
+    const msg = (host.querySelector('.ff-budget') as HTMLElement).textContent ?? '';
+    expect(msg).toContain(`of ${scene.nodes.length} nodes`);
+    expect(sr.stats().capped).toBe(true);
+    const keep = scene.nodes.find((n) => n.kind === 'employee')!;
+    sr.select(keep.id);
+    expect(host.querySelector(`[data-node-id="${keep.id}"]`)).not.toBeNull();
+    sr.update(buildScene(small(), { kind: 'portfolio' }));
+    expect(host.querySelector(`[data-node-id="${keep.id}"]`)).toBeNull();
+  });
+
+  it('list exposes every record beyond canvas budget and opens the right one', () => {
+    const scene = buildScene(dense(300), { kind: 'company', companyId: 'c1' });
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const opened: string[] = [];
+    const list: A11yList = mountA11yList(host, { onOpen: (n) => opened.push(n.id) });
+    cleanups.push(() => list.destroy());
+    list.update(scene);
+    expect(list.resultCount()).toBe(scene.nodes.length);
+    list.setQuery('Emp 0299');
+    expect(list.resultCount()).toBe(1);
+    const btn = host.querySelector('.ff-list-button') as HTMLElement;
+    btn.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    dom.key(btn, 'Enter');
+    expect(opened).toEqual(['employee:c1:e0299']);
+  });
+
+  it('list focus and selection survive same-scope updates, recover on removal, and instances are independent', () => {
+    const sel: Array<string | null> = [];
+    const mk = () => {
+      const host = document.createElement('div');
+      document.body.appendChild(host);
+      const l = mountA11yList(host, { onSelect: (id) => sel.push(id) });
+      cleanups.push(() => l.destroy());
+      return { host, l };
+    };
+    const s1 = buildScene(dense(5), { kind: 'company', companyId: 'c1' });
+    const A = mk(); const B = mk();
+    A.l.update(s1); B.l.update(s1);
+    B.l.setQuery('Emp 0003');
+    const emp = A.host.querySelector('[data-node-id="employee:c1:e0002"]') as HTMLElement;
+    emp.focus();
+    emp.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    const picks = sel.length;
+    A.l.update(s1);
+    expect(sel.length).toBe(picks);
+    expect((document.activeElement as HTMLElement | null)?.dataset.nodeId).toBe('employee:c1:e0002');
+    // Another instance changes scope; A's query stays independent.
+    A.l.setQuery('Emp');
+    B.l.update(buildScene(small(), { kind: 'portfolio' }));
+    expect((A.host.querySelector('.ff-list-search') as HTMLInputElement).value).toBe('Emp');
+    // Remove focused row in same scope: focus must land somewhere meaningful, not body.
+    const s2 = buildScene(dense(2), { kind: 'company', companyId: 'c1' });
+    A.l.update(s2);
+    expect(document.activeElement).not.toBe(document.body);
+  });
+
+  it('mounted capabilities: denied action is disabled, visible reason, zero callbacks; allowed fires once with exact context', () => {
+    let allow = false;
+    const m = mountS(null, (spec) => (spec.action === 'new-company' ? { enabled: allow, reason: allow ? undefined : 'Not permitted here.' } : { enabled: true }));
+    measure(m);
+    m.studio.update(small(), { kind: 'portfolio' });
+    const inspToggle = [...m.host.querySelectorAll('.ff-tools button')].find((b) => b.textContent === 'Inspector') as HTMLButtonElement;
+    inspToggle.click();
+    const find = () => [...m.host.querySelectorAll('.ff-inspector-actions button')].find((b) => b.textContent === 'New company') as HTMLButtonElement;
+    const denied = find();
+    expect(denied.disabled).toBe(true);
+    expect(m.host.querySelector('.ff-inspector .ff-notice')?.textContent).toContain('Not permitted here.');
+    denied.click();
+    expect(m.actions.length).toBe(0);
+    allow = true;
+    m.studio.setCapabilities((spec) => (spec.action === 'new-company' ? { enabled: allow } : { enabled: true }));
+    const ok = find();
+    expect(ok.disabled).toBe(false);
+    ok.click();
+    expect(m.actions).toEqual([{ a: 'new-company', c: {} }]);
+  });
+
+  it('selection clears when the selected record is removed or scope changes, and persists on same-scope refresh', () => {
+    const m = mountS();
+    measure(m);
+    const full = buildScene(dense(3), { kind: 'company', companyId: 'c1' });
+    void full;
+    m.studio.update(dense(3), { kind: 'company', companyId: 'c1' });
+    const target = 'employee:c1:e0001';
+    const row = m.studio.elements.listHost.querySelector(`[data-node-id="${target}"]`) as HTMLElement;
+    row.dispatchEvent(new window.MouseEvent('click', { bubbles: true }));
+    expect(m.host.querySelector('.ff-inspector-header')?.textContent).toBe('Emp 0001');
+    m.studio.update(dense(3), { kind: 'company', companyId: 'c1' });
+    expect(m.host.querySelector('.ff-inspector-header')?.textContent).toBe('Emp 0001');
+    m.studio.update(dense(1), { kind: 'company', companyId: 'c1' });
+    expect(m.host.querySelector('.ff-inspector-header')?.textContent).not.toBe('Emp 0001');
+    m.studio.update(small(), { kind: 'portfolio' });
+    expect(m.host.querySelector('.ff-inspector-header')?.textContent).not.toBe('Emp 0001');
+  });
+});
