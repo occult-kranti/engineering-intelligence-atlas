@@ -295,6 +295,7 @@ interface OfficeCompany {
   assistantId: string; createdAt: string; source: string;
   importedAt: string | null; githubStatus: 'unchecked' | 'metadata-reviewed';
   visibility?: 'public' | 'private' | null; defaultBranch?: string | null;
+  parentCompanyId?: string | null;
 }
 interface OfficeLocation {
   id: string; companyId: string; name: string; status: OfficeEntityStatus; assistantId: string; createdAt: string;
@@ -452,7 +453,8 @@ type OfficeAction = 'create_company' | 'select_company' | 'import_repositories' 
   | 'configure_ceo' | 'upsert_portfolio_group' | 'ensure_shared_services' | 'optimize_portfolio'
   | 'contract_service' | 'share_knowledge' | 'upsert_roadmap_item' | 'schedule_repository_reviews'
   | 'convene_panel' | 'start_panel_round' | 'record_panel_decision' | 'pause_panel' | 'resume_panel' | 'apply_remote_command'
-  | 'grant_authority' | 'promote_employee' | 'revoke_authority' | 'set_authority_enforcement' | 'apply_employee_command' | 'rebuild_office_index';
+  | 'grant_authority' | 'promote_employee' | 'revoke_authority' | 'set_authority_enforcement' | 'apply_employee_command' | 'rebuild_office_index'
+  | 'set_company_parent';
 /** Every action has a fixed Rust-side schema; unknown fields are never executed. */
 interface OfficeCommand { action: OfficeAction; [key: string]: unknown }
 interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: string; code?: string; queued?: boolean; commandId?: string }
@@ -1787,6 +1789,61 @@ function renderOfficeScope(): void {
   const employees = (selectedContract?(officeState?.employees||[]).filter(employee=>selectedContract.employeeIds.includes(employee.id)):scopedEmployees()).filter((e) => e.status === 'active');
   populateSelect($('queue-employee') as HTMLSelectElement, employees, current || employees.find((e) => e.id === 'donna')?.id || employees[0]?.id || '');
 }
+// ---- company hierarchy owner editor (explicit submit only; native validation authoritative) ----
+let hierarchyChildId = '';
+let hierarchyDirty = false;
+function companyDescendantIds(rootId: string): Set<string> {
+  const out = new Set<string>(); const all = officeState?.companies || [];
+  let frontier = [rootId]; let steps = 0;
+  while (frontier.length && steps++ < 2100) {
+    const next: string[] = [];
+    for (const company of all) if (company.parentCompanyId && frontier.includes(company.parentCompanyId) && !out.has(company.id)) { out.add(company.id); next.push(company.id); }
+    frontier = next;
+  }
+  return out;
+}
+function renderCompanyHierarchy(): void {
+  const form = d0('company-parent-form'); if (!form) return;
+  const company = officeCompany();
+  const child = $('company-parent-child'); const current = $('company-parent-current');
+  const select = $('company-parent-select') as HTMLSelectElement; const submit = $('company-parent-submit') as HTMLButtonElement;
+  if (!company || !officeState) { child.textContent = 'No company selected'; current.textContent = ''; select.replaceChildren(); submit.disabled = true; return; }
+  if (hierarchyChildId !== company.id) { hierarchyChildId = company.id; hierarchyDirty = false; }
+  child.textContent = company.name; child.dataset.companyId = company.id;
+  const parent = company.parentCompanyId ? officeState.companies.find((c) => c.id === company.parentCompanyId) : undefined;
+  current.textContent = company.parentCompanyId ? `Current parent: ${parent?.name || company.parentCompanyId}` : 'Current parent: none (root company)';
+  const blocked = companyDescendantIds(company.id); blocked.add(company.id);
+  const draft = hierarchyDirty ? select.value : (company.parentCompanyId ?? '');
+  const options: Array<{ id: string; name: string }> = [{ id: '', name: 'No parent (root company)' }];
+  for (const c of officeState.companies) if (!blocked.has(c.id)) options.push({ id: c.id, name: c.name });
+  select.replaceChildren();
+  for (const o of options) { const option = textElement('option', o.name); option.value = o.id; select.append(option); }
+  select.value = options.some((o) => o.id === draft) ? draft : (company.parentCompanyId ?? '');
+  submit.disabled = workspaceReadOnly() || !workspaceAvailable();
+}
+function d0(id: string): HTMLElement | null { return document.getElementById(id); }
+function initCompanyHierarchy(): void {
+  const select = d0('company-parent-select'); const form = d0('company-parent-form'); if (!select || !form) return;
+  select.addEventListener('change', () => { hierarchyDirty = true; });
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const button = $('company-parent-submit') as HTMLButtonElement;
+    const childId = ($('company-parent-child').dataset.companyId || '');
+    const chosen = ($('company-parent-select') as HTMLSelectElement).value;
+    workspaceTask(async () => {
+      if (workspaceReadOnly()) throw new Error('The starter preview is read only.');
+      const company = officeCompany();
+      if (!company || company.id !== childId || !officeState?.companies.some((c) => c.id === childId)) throw new Error('The selected company changed. Reopen the hierarchy form for the company you intend to edit.');
+      if (chosen && (!officeState.companies.some((c) => c.id === chosen) || chosen === childId || companyDescendantIds(childId).has(chosen))) throw new Error('That parent is not available for this company.');
+      button.disabled = true;
+      try {
+        await workspaceCommand({ action: 'set_company_parent', companyId: childId, parentCompanyId: chosen === '' ? null : chosen }, 'Company hierarchy saved.');
+        hierarchyDirty = false; renderCompanyHierarchy();
+        setStatus($('company-parent-status'), 'Company hierarchy confirmed.', 'ok');
+      } finally { button.disabled = workspaceReadOnly() || !workspaceAvailable(); }
+    }, 'company-parent-status');
+  });
+}
 function renderWorker(): void {
   const status = officeWorker;
   $('worker-status').textContent = !status ? 'Unavailable' : status.running ? 'Processing a job' : status.enabled ? 'Dispatcher enabled' : 'Dispatcher off';
@@ -1799,7 +1856,7 @@ function renderWorker(): void {
   if (status?.lastError) setStatus($('worker-result'), status.lastError, 'error');
 }
 function renderOffice(): void {
-  renderOfficeScope(); renderWorker(); renderUnifiedWorkspace(); if (!officeState) return;
+  renderOfficeScope(); renderWorker(); renderCompanyHierarchy(); renderUnifiedWorkspace(); if (!officeState) return;
   const employees = scopedEmployees(); const jobs = scopedJobs();
   $('office-active-employees').textContent = number(employees.filter((e) => e.status === 'active').length);
   $('office-queued-jobs').textContent = number(jobs.filter((j) => j.status === 'queued' || j.status === 'waiting-budget').length);
@@ -3239,7 +3296,11 @@ function ffActionConfirmed(action: StudioActionKind, ctx: StudioActionContext): 
       }
       toWorkspace('whiteboard', 'node-title'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } break;
     }
-    case 'manage': ffShowOps(); switchOfficeTab('people'); ffOpenPanel('', 'office-employees'); break;
+    case 'manage':
+      if (ctx.employeeId) { ffShowOps(); switchOfficeTab('people'); ffOpenPanel('', 'office-employees'); }
+      else if (ctx.companyId && !ctx.officeId && !ctx.departmentId) { ffShowOps(); switchOfficeTab('overview'); renderCompanyHierarchy(); ffOpenPanel('', 'company-parent-select'); }
+      else { ffShowOps(); switchOfficeTab('people'); ffOpenPanel('', 'office-employees'); }
+      break;
     case 'new-company': ffShowOps(); switchOfficeTab('overview'); ffOpenPanel('', 'office-new-company-name'); break;
     case 'new-office': ffShowOps(); switchOfficeTab('overview'); ffOpenPanel('', 'office-new-office-name'); break;
     case 'new-department': ffShowOps(); switchOfficeTab('overview'); ffOpenPanel('', 'office-new-department-name'); break;
@@ -3273,7 +3334,7 @@ function initFreeflowHost(): void {
 }
 // ---------------------------------------------------------------- boot
 function boot(): void {
-  initStudio(); initWorkspace(); initOffice(); initUnifiedWorkspace(); initFreeflowHost(); initGitHubTools(); initPortfolio(); initAuthority(); initDecisionPanels(); initCloudConnection(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
+  initStudio(); initWorkspace(); initOffice(); initCompanyHierarchy(); initUnifiedWorkspace(); initFreeflowHost(); initGitHubTools(); initPortfolio(); initAuthority(); initDecisionPanels(); initCloudConnection(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
   if (!bridge) {
     $('bridge-notice').classList.remove('hidden'); $('core-label').textContent = 'Desktop preview'; $('core-note').textContent = 'Native actions need the desktop app';
     noData($('team-grid'), 'Open the desktop app to load your skill-linked team.'); noData($('project-list'), 'Create and save projects in the installed desktop app.'); noData($('key-rows'), 'Provider credentials are managed by the desktop app’s secure storage.');
