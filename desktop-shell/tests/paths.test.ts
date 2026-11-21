@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import path from 'node:path';
+import os from 'node:os';
+import fs from 'node:fs';
 import { isSafeRepoFilePath, isValidVenvName, resolveContainedPath } from '../src/main/paths';
 
 describe('resolveContainedPath', () => {
-  const root = path.join('/tmp', 'dshell-root');
+  const root = path.join(fs.realpathSync(os.tmpdir()), 'dshell-root');
 
   it('resolves paths inside the root', () => {
     expect(resolveContainedPath(root, 'a/b/c')).toBe(path.join(root, 'a', 'b', 'c'));

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-/** Bounded Linux package acceptance: real Electron, preload, Rust core and one local plan. */
+/** Bounded Linux/Windows unpacked-package acceptance: real Electron, preload, Rust core and one local plan.
+ * Does not prove NSIS install/upgrade, signing, or an owner machine. */
 import assert from 'node:assert/strict';
 import crypto from 'node:crypto';
 import { createRequire } from 'node:module';
@@ -11,10 +12,23 @@ import { fileURLToPath } from 'node:url';
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(join(root, 'site-source', 'package.json'));
 const { _electron: electron } = require('playwright');
-const executablePath = resolve(process.env.ATLAS_PACKAGED_BINARY || join(root, 'desktop-shell', 'release', 'linux-unpacked', 'research-director-desktop-shell'));
+const isWin = process.platform === 'win32';
+const defaultExecutable = isWin
+  ? join(root, 'desktop-shell', 'release', 'win-unpacked', 'Daftar.exe')
+  : join(root, 'desktop-shell', 'release', 'linux-unpacked', 'research-director-desktop-shell');
+const executablePath = resolve(process.env.ATLAS_PACKAGED_BINARY || defaultExecutable);
+const helperName = isWin ? 'atlas-core.exe' : 'atlas-core';
+function peMachine(file) {
+  const b = readFileSync(file);
+  assert(b.length > 0x40 && b.readUInt16LE(0) === 0x5a4d, `${basename(file)} is not a PE executable`);
+  const off = b.readUInt32LE(0x3c);
+  assert(b.toString('latin1', off, off + 4) === 'PE\0\0', `${basename(file)} has no PE header`);
+  return b.readUInt16LE(off + 4);
+}
+const sha256File = file => crypto.createHash('sha256').update(readFileSync(file)).digest('hex');
 const screenshots = resolve(process.env.ATLAS_PACKAGED_SMOKE_OUT || join(root, 'desktop-shell', '.work', 'packaged-ui'));
-const profile = mkdtempSync(join(tmpdir(), 'atlas-packaged-smoke-'));
-const userData = join(profile, 'user-data');
+const profile = mkdtempSync(join(tmpdir(), 'atlas packaged smoke '));
+const userData = join(profile, 'user data');
 const config = join(profile, 'config');
 mkdirSync(screenshots, { recursive: true });
 mkdirSync(userData, { recursive: true });
@@ -22,14 +36,25 @@ mkdirSync(config, { recursive: true });
 
 // Credentials, NODE_OPTIONS and Electron mode overrides are intentionally not inherited.
 const environment = {};
-for (const key of ['PATH', 'LANG', 'LC_ALL', 'DISPLAY', 'XAUTHORITY', 'DBUS_SESSION_BUS_ADDRESS', 'XDG_RUNTIME_DIR', 'LD_LIBRARY_PATH']) {
+const inheritKeys = isWin
+  ? ['PATH', 'Path', 'PATHEXT', 'SystemRoot', 'WINDIR', 'COMSPEC', 'LANG']
+  : ['PATH', 'LANG', 'LC_ALL', 'DISPLAY', 'XAUTHORITY', 'DBUS_SESSION_BUS_ADDRESS', 'XDG_RUNTIME_DIR', 'LD_LIBRARY_PATH'];
+for (const key of inheritKeys) {
   if (process.env[key]) environment[key] = process.env[key];
 }
-// Electron documents XDG_CONFIG_HOME as its Linux appData root. This affects only
-// the spawned test process; the caller's profile and global environment are untouched.
-environment.XDG_CONFIG_HOME = config;
-environment.XDG_CACHE_HOME = join(profile, 'cache');
-const noOsSandbox = process.env.ATLAS_CI_NO_SANDBOX === '1';
+if (isWin) {
+  const tempDir = join(profile, 'temp');
+  const roaming = join(profile, 'AppData Roaming');
+  const local = join(profile, 'AppData Local');
+  for (const dir of [tempDir, roaming, local]) mkdirSync(dir, { recursive: true });
+  Object.assign(environment, { TEMP: tempDir, TMP: tempDir, APPDATA: roaming, LOCALAPPDATA: local, USERPROFILE: profile });
+} else {
+  // Electron documents XDG_CONFIG_HOME as its Linux appData root. This affects only
+  // the spawned test process; the caller's profile and global environment are untouched.
+  environment.XDG_CONFIG_HOME = config;
+  environment.XDG_CACHE_HOME = join(profile, 'cache');
+}
+const noOsSandbox = !isWin && process.env.ATLAS_CI_NO_SANDBOX === '1';
 const args = [`--user-data-dir=${userData}`, ...(noOsSandbox ? ['--no-sandbox'] : [])];
 const captured = [];
 const errors = [];
@@ -45,9 +70,11 @@ async function capture(name) {
 
 try {
   if (noOsSandbox && process.env.CI !== 'true') throw new Error('The optional sandbox exception is limited to an isolated CI runner.');
-  assert.equal(process.platform, 'linux', 'This package smoke targets the Linux release directory.');
+  assert(process.platform === 'linux' || isWin, 'This package smoke supports Linux and Windows x64 only.');
+  if (isWin) assert.equal(process.arch, 'x64', 'Windows smoke requires an x64 runner.');
   assert(existsSync(executablePath), 'Package the desktop before running this acceptance gate.');
-  assert(environment.DISPLAY, 'Run this test under xvfb-run or an isolated Linux display.');
+  if (!isWin) assert(environment.DISPLAY, 'Run this test under xvfb-run or an isolated Linux display.');
+  if (isWin) assert.equal(peMachine(executablePath), 0x8664, 'Application executable is not PE x64.');
   application = await electron.launch({ executablePath, args, cwd: dirname(executablePath), env: environment, timeout: 45000 });
   const appInfo = await application.evaluate(({ app }) => ({
     packaged: app.isPackaged,
@@ -57,8 +84,13 @@ try {
   }));
   assert.equal(appInfo.packaged, true, 'The acceptance gate must use the packaged application.');
   assert(resolve(appInfo.userData).startsWith(profile + sep), 'Electron did not use the isolated test profile.');
-  const binary = join(appInfo.resourcesPath, 'native', 'atlas-core');
+  const binary = join(appInfo.resourcesPath, 'native', helperName);
   assert(existsSync(binary), 'Packaged Rust helper is missing.');
+  const buildMeta = JSON.parse(readFileSync(join(appInfo.resourcesPath, 'native', 'build.json'), 'utf8'));
+  assert.equal(buildMeta.platform, process.platform, 'Packaged helper metadata platform mismatch.');
+  assert.equal(buildMeta.arch, process.arch, 'Packaged helper metadata arch mismatch.');
+  assert.equal(buildMeta.binary, helperName, 'Packaged helper metadata binary mismatch.');
+  if (isWin) assert.equal(peMachine(binary), 0x8664, 'Packaged helper is not PE x64.');
   page = await application.firstWindow();
   page.setDefaultTimeout(15000);
   page.on('pageerror', error => errors.push(error.message));
@@ -141,6 +173,9 @@ try {
     platform: process.platform,
     arch: process.arch,
     executable: basename(executablePath),
+    executableSha256: sha256File(executablePath),
+    helperMetadata: buildMeta,
+    peMachineX64: isWin ? true : undefined,
     packaged: true,
     userDataIsolated: true,
     nativeBinarySha256: crypto.createHash('sha256').update(readFileSync(binary)).digest('hex'),
@@ -152,7 +187,7 @@ try {
     providerCredentialsConfigured: false,
     cloudConnected: false,
     screenshots: captured,
-    limits: 'Linux unpacked release in CI; not an owner-laptop installation, signing or OS-keychain acceptance test.',
+    limits: `${process.platform}/${process.arch} unpacked release directory in CI. Does not prove NSIS install or upgrade, uninstall data retention, code signing/SmartScreen, an owner machine, or OS-keychain behavior.`,
   };
   writeFileSync(join(screenshots, 'receipt.json'), JSON.stringify(receipt, null, 2) + '\n');
   console.log(`Packaged desktop acceptance passed: real Rust state, persisted local plan, ${captured.length} screenshots, no provider work.`);

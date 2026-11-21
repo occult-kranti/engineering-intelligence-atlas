@@ -99,7 +99,7 @@ export function resolveLaunchConfig(env = process.env, moduleUrl = import.meta.u
   const stateDir = resolve(
     env.ATLAS_STATE_DIR || join(homedir(), '.local', 'share', 'engineering-intelligence-atlas', 'company')
   );
-  const binary = resolve(env.ATLAS_CORE_BINARY || join(repoRoot, 'native-core', 'target', 'release', 'atlas-core'));
+  const binary = resolve(env.ATLAS_CORE_BINARY || join(repoRoot, 'native-core', 'target', 'release', process.platform === 'win32' ? 'atlas-core.exe' : 'atlas-core'));
   const seedDir = join(repoRoot, 'company');
   for (const [label, p] of [['repoRoot', repoRoot], ['stateDir', stateDir], ['binary', binary]]) {
     if (!isAbsolute(p)) throw new Error(`${label} must be absolute`);

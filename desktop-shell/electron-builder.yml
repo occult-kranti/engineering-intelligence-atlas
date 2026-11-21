@@ -37,5 +37,19 @@ linux:
   category: Utility
   executableName: research-director-desktop-shell
   artifactName: daftar-desktop-${version}-${arch}.${ext}
-# Windows (nsis/zip) and macOS (dmg/zip) packaging must be run on their
-# respective host OSes; see README.md "Packaging".
+win:
+  executableName: Daftar
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: zip
+      arch:
+        - x64
+  artifactName: daftar-desktop-${version}-windows-${arch}.${ext}
+nsis:
+  oneClick: true
+  perMachine: false
+  deleteAppDataOnUninstall: false
+# Windows is unsigned unless signing is configured by the release owner.
+# Windows packaging must run on a Windows host; macOS (dmg/zip) on macOS.

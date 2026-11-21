@@ -17,6 +17,7 @@
     "test:watch": "vitest",
     "package:linux": "npm run build:native && npm run build && electron-builder --linux AppImage --linux dir",
     "package:dir": "npm run build:native && npm run build && electron-builder --linux dir",
+    "package:win": "npm run build:native && npm run build && electron-builder --win nsis zip --x64 --publish never",
     "test:renderer": "tsc -p tsconfig.renderer.json && node scripts/copy-renderer-assets.mjs && node tests/renderer-behavior.mjs"
   },
   "devDependencies": {

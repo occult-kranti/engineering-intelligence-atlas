@@ -19,6 +19,10 @@ try {
 const name = process.platform === 'win32' ? 'atlas-core.exe' : 'atlas-core';
 const destination = path.join(desktop, 'native');
 fs.mkdirSync(destination, { recursive: true });
+// Remove stale helpers/metadata from other platforms so packaging cannot include them.
+for (const stale of fs.readdirSync(destination)) {
+  if (stale.startsWith('atlas-core') && stale !== name) fs.rmSync(path.join(destination, stale), { force: true });
+}
 fs.copyFileSync(path.join(core, 'target', 'release', name), path.join(destination, name));
 if (process.platform !== 'win32') fs.chmodSync(path.join(destination, name), 0o755);
 fs.writeFileSync(path.join(destination, 'build.json'), JSON.stringify({ platform: process.platform, arch: process.arch, binary: name, builtAt: new Date().toISOString() }, null, 2) + '\n');
