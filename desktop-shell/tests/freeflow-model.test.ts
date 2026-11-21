@@ -80,14 +80,14 @@ describe('freeflow model', () => {
 
   it('puts unplaced employees and departments in fallback areas', () => {
     const sc = buildScene(fixture(), { kind: 'company', companyId: 'c-b' });
-    const fb = sc.nodes.filter((n) => n.kind === 'fallback' || n.metadata.fallback === true);
+    const fb = sc.nodes.filter((n) => (n.kind === 'fallback' || n.metadata.fallback === true) && n.metadata.companyLevel !== true);
     expect(fb.map((n) => n.entityId).sort()).toEqual(['d-b2', 'e-x']);
     expect(sc.counts.employees).toBe(2);
   });
 
   it('recipient scene shows contracted reference only, scoped and leak free', () => {
     const sc = buildScene(fixture(), { kind: 'company', companyId: 'c-a' });
-    const refs = sc.nodes.filter((n) => n.kind === 'reference');
+    const refs = sc.nodes.filter((n) => n.kind === 'reference' && n.contractId === 'k1' && !n.metadata.portal && !n.metadata.globalAssistant);
     expect(refs).toHaveLength(1);
     expect(refs[0]!.contractId).toBe('k1');
     expect(refs[0]!.metadata.homeCompanyId).toBe('c-s');

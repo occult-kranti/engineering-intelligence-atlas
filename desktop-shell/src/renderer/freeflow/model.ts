@@ -17,7 +17,7 @@ interface SDesk { id: string; roomId: string; employeeId: string; x: number; y: 
 interface SBoard { id: string; roomId: string; ownerEmployeeId: string; title: string; goalIds?: string[]; jobIds?: string[]; roadmapItemIds?: string[]; x: number; y: number }
 interface SBlueprint { id: string; companyId: string; officeId: string; rooms: SRoom[]; desks: SDesk[]; whiteboards: SBoard[] }
 interface SGroup { id: string; name: string; companyIds: string[]; status?: string }
-interface SService { id: string; key: string; name: string; companyId: string; officeId: string; departmentId: string; employeeIds: string[]; status: string }
+interface SService { id: string; key: string; name: string; companyId: string; officeId: string; departmentId: string; employeeIds: string[]; retiredEmployeeIds?: string[]; status: string }
 interface SContract { id: string; serviceId: string; recipientCompanyId: string; recipientOfficeId: string | null; recipientDepartmentId: string | null; employeeIds: string[]; allowedTools: string[]; status: string }
 
 export interface FreeflowSnapshot {
@@ -224,6 +224,17 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
   const push = (n: SceneNode) => { if (!nodeIds.has(n.id)) { nodeIds.add(n.id); nodes.push(n); } };
   const placedLocal = new Set<string>();
   const placedRef = new Set<string>(); // contract:employee keys already placed in a room
+  const placedHost = new Set<string>(); // service:employee keys already placed as host-member references
+  const allServices = byId(snap.portfolio?.services);
+  const hostFor = (eid: string, officeId: string) => {
+    for (const s of allServices) {
+      if (s.companyId !== cid || s.officeId !== officeId) continue;
+      const current = s.employeeIds.includes(eid);
+      const retired = (s.retiredEmployeeIds ?? []).includes(eid);
+      if (current || retired) return { s, current };
+    }
+    return null;
+  };
   const sheets = packGrid(offices.length, SHEET_W, SHEET_H, GAP * 2, gridColumns(offices.length));
 
   // Active contracts that apply to this scene (recipient company/office/department).
@@ -286,6 +297,21 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
           if (placedLocal.has(e.id)) continue;
           placedLocal.add(e.id);
           push(employeeNode(e, parent, rect, cid, jobs, { roomId: d.roomId, officeId: o.id, departmentId: e.departmentId ?? undefined }));
+          continue;
+        }
+        const host = hostFor(e.id, o.id);
+        if (host) {
+          const hkey = `${host.s.id}:${e.id}`;
+          if (placedHost.has(hkey)) continue;
+          placedHost.add(hkey);
+          const live = host.current && host.s.status === 'active' && e.status === 'active';
+          push({
+            id: `reference:${cid}:${o.id}:host:${host.s.id}:${e.id}`, kind: 'reference', entityId: e.id, companyId: cid,
+            officeId: o.id, employeeId: e.id, roomId: d.roomId, parentId: parent, label: e.name, subtitle: e.role,
+            status: live ? 'service-host' : 'service-host-historical', rect,
+            metadata: { homeCompanyId: e.companyId, serviceCompanyId: host.s.companyId, serviceId: host.s.id, serviceHost: true, reference: true, layoutOnly: true, current: live, unavailable: !live, monogram: initials(e.name) },
+            counts: {},
+          });
           continue;
         }
         if (e.status !== 'active') { warnings.push(`Desk ${d.id} occupant ${e.id} is not active and has no local employment.`); continue; }
@@ -424,13 +450,14 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
   const safeThreads = threads.filter((t) => nodeIds.has(t.fromId) && nodeIds.has(t.toId));
   const cj = jobs.filter((j) => j.companyId === cid);
   const costed = cj.filter((j) => j.usage && j.costStatus && j.costStatus !== 'none');
-  const isRef = (n: SceneNode) => n.kind === 'reference' && !n.metadata['portal'] && !n.metadata['globalAssistant'];
+  const isRef = (n: SceneNode) => n.kind === 'reference' && !n.metadata['portal'] && !n.metadata['globalAssistant'] && !n.metadata['serviceHost'];
   return {
     title: company.name, breadcrumbs: crumbs, focus,
     bounds: unionBounds(nodes.map((n) => n.rect), 120), nodes, threads: sortThreads(safeThreads),
     counts: {
       offices: offices.length, rooms: nodes.filter((n) => n.kind === 'room').length, whiteboards: nodes.filter((n) => n.kind === 'whiteboard').length,
       employees: nodes.filter((n) => n.kind === 'employee').length, references: nodes.filter(isRef).length,
+      serviceHostReferences: nodes.filter((n) => n.metadata['serviceHost'] === true).length,
       fallbacks: nodes.filter((n) => n.kind === 'fallback').length, hiredEmployees: employees.length,
       runningJobs: cj.filter((j) => j.status === 'running').length, recordedCostUsd: costed.reduce((a, j) => a + (j.usage?.costUsd ?? 0), 0),
       unknownCostJobs: cj.length - costed.length,
