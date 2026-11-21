@@ -1,7 +1,7 @@
 {
   "name": "research-director-desktop-shell",
   "productName": "Research Director Desktop",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "private": true,
   "description": "Electron desktop shell for the Research Director product: offline atlas, online runtime connection, and local System & Models panel.",
   "main": "dist/main/index.js",

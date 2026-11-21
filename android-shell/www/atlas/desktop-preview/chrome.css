@@ -466,8 +466,9 @@ progress::-webkit-progress-value { background: #548744; border-radius: 3px; }
 .ownership-lines path { stroke: #b3c79e; stroke-width: 1.5; fill: none; stroke-dasharray: 4 4; }
 .ownership-lines circle { fill: #8fac77; }
 .office-blueprint.list-mode, .workspace-whiteboard.list-mode { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); align-content: start; gap: 15px; padding: 18px; min-width: 0; min-height: 250px; }
-.list-mode .blueprint-room, .list-mode .ownership-card { position: relative; left: auto !important; top: auto !important; width: auto; min-width: 0; }
-.list-mode .canvas-grid, .list-mode .ownership-lines { display: none; }
+.list-mode .blueprint-room, .list-mode .ownership-card { position: relative; left: auto !important; top: auto !important; width: auto !important; min-width: 0; }
+.list-mode .blueprint-room { min-height: 0 !important; }
+.list-mode .canvas-grid, .list-mode .ownership-lines, .list-mode .room-floorplan { display: none; }
 .list-mode .canvas-empty { position: static; max-width: none; grid-column: 1 / -1; }
 .workspace-policy { margin-top: 22px; padding: 18px 22px; }
 .workspace-policy summary strong, .office-tools summary strong { font-size: 12px; color: #4c6640; }

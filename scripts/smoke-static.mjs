@@ -104,6 +104,17 @@ try {
     for (const tab of tabs) {
       await page.locator(`[data-workspace-tab="${tab}"]`).click();
       await capture(tab, 'workspace', true);
+      if (tab === 'blueprint' && viewport.width < 650) {
+        const layout = await page.locator('#office-blueprint').evaluate(canvas => {
+          const style = getComputedStyle(canvas);
+          return {list: canvas.classList.contains('list-mode'), track: canvas.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight), rooms: [...canvas.querySelectorAll('.blueprint-room')].map(room => ({width: room.getBoundingClientRect().width, height: room.getBoundingClientRect().height}))};
+        });
+        assert(layout.list && layout.rooms.length > 0, 'Narrow blueprint must expose a populated list alternative.');
+        for (const room of layout.rooms) {
+          assert(room.width >= layout.track - 2, `Narrow blueprint room must fill its list track: ${JSON.stringify(layout)}`);
+          assert(room.height < 400, `Starter list room retains excessive spatial height: ${JSON.stringify(layout)}`);
+        }
+      }
     }
     // Inspect every operating surface, including the disclosures below the
     // primary workspace and the portfolio view above company scope.
