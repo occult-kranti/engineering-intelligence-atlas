@@ -3,7 +3,8 @@
  * Unknown outcomes retain their reservation. All amounts are integer micro-USD; invalid accounting fails closed.
  * No cache; every admission recomputes inside its own atomic INSERT...SELECT. */
 type Row = Record<string, any>;
-type DbLike = { prepare(sql: string): { bind(...a: any[]): any; first<T = any>(): Promise<T | null> } };
+type StmtLike = { bind(...a: any[]): StmtLike; first<T = any>(): Promise<T | null> };
+type DbLike = { prepare(sql: string): StmtLike };
 
 export const SHARED_ACTIVE_MAX = 2;
 export const SHARED_ACTIVE_STATUSES_SQL = "('reserved','dispatching')";
@@ -35,7 +36,9 @@ export function parseCapMicros(raw: unknown): number {
 /** Integer-ceiling cost from token counts and per-million micro rates. Throws on invalid input. */
 export function ceilCostMicros(inputTokens: number, outputTokens: number, inputRateMicrosPerMTok: number, outputRateMicrosPerMTok: number): number {
   for (const v of [inputTokens, outputTokens, inputRateMicrosPerMTok, outputRateMicrosPerMTok]) if (!isMicros(v)) throw new Error('invalid accounting input');
-  const total = (BigInt(inputTokens) * BigInt(inputRateMicrosPerMTok) + BigInt(outputTokens) * BigInt(outputRateMicrosPerMTok) + 999999n) / 1000000n;
+  // BigInt() calls (not literals) keep integer arithmetic valid under target ES2017.
+  const big = (n: number) => BigInt(n);
+  const total = (big(inputTokens) * big(inputRateMicrosPerMTok) + big(outputTokens) * big(outputRateMicrosPerMTok) + big(999999)) / big(1000000);
   if (total > BigInt(Number.MAX_SAFE_INTEGER)) throw new Error('cost overflow');
   return Number(total);
 }
