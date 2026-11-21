@@ -33,7 +33,8 @@ await new Promise((done) => server.listen(0, '127.0.0.1', done));
 const base = `http://127.0.0.1:${server.address().port}${mount}`;
 let browser;
 try {
-  const executablePath = process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined);
+  // CI installs the Playwright-managed browser matched to this driver.
+  const executablePath = process.env.CHROMIUM_PATH || undefined;
   browser = await chromium.launch({ executablePath, args: ['--no-sandbox'] });
   const routes = ['workspace', 'roadmap', 'overview', 'roles', 'library', 'jobs', 'reverse', 'research', 'science', 'methodology', 'director'];
   let checked = 0;

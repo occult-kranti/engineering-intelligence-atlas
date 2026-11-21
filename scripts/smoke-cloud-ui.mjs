@@ -195,9 +195,11 @@ try {
   const base = await startBuiltServer();
   receipt.localServerReady = true;
   stage = 'launch-browser';
-  const executablePath = process.env.CHROMIUM_PATH || (existsSync('/usr/bin/chromium') ? '/usr/bin/chromium' : undefined);
+  // CI installs the Playwright-managed browser matched to this driver.
+  const executablePath = process.env.CHROMIUM_PATH || undefined;
   browser = await chromium.launch({executablePath, args: ['--no-sandbox'], env: cleanEnvironment(), timeout: 30000});
   receipt.browserVersion = browser.version();
+  receipt.browserSource = executablePath ? 'explicit-override' : 'playwright-managed';
   for (const viewport of [{width: 1440, height: 1000}, {width: 390, height: 844}]) {
     stage = `browser-${viewport.width}`;
     const context = await browser.newContext({viewport, reducedMotion: 'reduce', serviceWorkers: 'block'});
