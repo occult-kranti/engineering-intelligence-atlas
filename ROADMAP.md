@@ -4,7 +4,20 @@ This file distinguishes implemented behavior from deployment and validation work
 The detailed worker asks and returns are in [the shared ledger](project/WORKER_LEDGER.md),
 with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
-## Connected office 0.5.0
+## Command studio 0.6.0 — implemented, release gates pending
+
+| Outcome | Owner | Evidence and acceptance |
+| --- | --- | --- |
+| Violet studio and Golden drafting | Design & Architecture | Shared semantic tokens, measured contrast pairs, text/pattern heat legends; [color system](project/STUDIO_COLOR_SYSTEM.md) |
+| Blueprint, Ownership, Roadmap and Whiteboard | Studio engineering | Actual hierarchy and recorded ownership; no invented dates; one Donna composer; 218 DOM assertions |
+| Derived heat maps | Signals engineering | 17 tests, including 5,000 jobs, scoped shared staff, reserved-cost accounting and distinct zero/unknown states; [contract](project/OFFICE_SIGNALS.md) |
+| Website and editor navigation | Platform engineering | Company-scoped links, shared website theme and origin-validated editor navigation; 13 editor protocol tests |
+| Shared role guidance | Design role steward | Existing role enriched; all 23 roles and capability boundaries retained; 15 loader tests |
+| Published artifacts and live review | Release engineering | Pending final browser/package gates, live hosted deployment, screenshot review and download verification |
+
+Next design work should start from measured usage: add scheduled roadmap intervals only with persisted dates and timezone semantics; profile the signal projection before introducing incremental storage; validate the owner's laptop/keychain and forced-color experience; add per-device preference sync only with an explicit conflict rule. The current theme/heat settings are local presentation preferences and do not alter the shared office revision.
+
+## Connected office 0.5.0 — verified baseline
 
 [v0.5.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0)
 was released from

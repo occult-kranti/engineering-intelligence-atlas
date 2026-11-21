@@ -13,6 +13,14 @@ manager, project runner and Android source remain available. The architecture is
 Electron/TypeScript with a Rust state and control core, plus the deployed owner-private Sites/Vinext/D1 companion. The earlier
 React/TypeScript/MySQL runtime remains available as a separate deployment option.
 
+## Command studio 0.6.0 integration
+
+The candidate adds Violet studio / Golden drafting themes, a scoped ownership hierarchy, roadmap status lanes, derived heat maps and the same Donna conversation docked beside visual work. Local checks pass; final publication evidence will be recorded in [validation](project/VALIDATION.md). Until then the verified install below remains 0.5.0.
+
+Theme and heat-mode settings stay in local presentation storage. They do not write the native state, spend tokens or enqueue cloud commands. Both website routes and the shared renderer use `daftar-studio-theme`. The desktop/browser view uses `daftar-studio-heat`. Existing archives, native identity and D1 schema remain unchanged. Heat maps use actual snapshot receipts, explicit unknown states and labeled job allowances, not unmeasured utilization or company budgets.
+
+After a renderer edit, build `desktop-shell`, regenerate the static preview, and run `cloud-workspace/scripts/sync-desktop.mjs` from the cloud directory with the absolute repository path. This updates content-addressed assets and the cloud app's shared token stylesheet. The authored cloud bridge is `cloud-workspace/scripts/cloud-bridge.js`. See [studio decisions](project/STUDIO_REDESIGN.md), [signal contract](project/OFFICE_SIGNALS.md) and [color contract](project/STUDIO_COLOR_SYSTEM.md).
+
 ## Install a published build and restore personal work
 
 Use the assets attached to [v0.5.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0):

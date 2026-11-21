@@ -1,9 +1,23 @@
 'use strict';
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const {AtlasClient,origin,pairing}=require('../src/client');
+const {AtlasClient,origin,pairing,studioUrl}=require('../src/client');
 const json=(body,status=200,headers={})=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json',...headers}});
 const cloud={kind:'cloud',url:'https://atlas.example',deviceToken:'device-token-test-1234567890',siteAccessToken:'site-test-token-1234567890'};
+test('studio links preserve company scope and never turn identifiers into navigation',()=>{
+  for(const view of ['blueprint','softboard','timeline','whiteboard']) {
+    const result=new URL(studioUrl(cloud.url,'company/with ?/# & symbols',view));
+    assert.equal(result.origin,cloud.url);assert.equal(result.pathname,'/workspace/chrome.html');
+    assert.equal(result.searchParams.get('company'),'company/with ?/# & symbols');
+    assert.equal(result.searchParams.get('workspace'),view);assert.equal(result.hash,'#office');
+    assert.equal([...result.searchParams].length,2);
+  }
+});
+test('studio navigation rejects credential-bearing origins and unsupported destinations',()=>{
+  for(const base of ['https://user:pass@atlas.example','https://atlas.example?token=x','http://outside.example'])assert.throws(()=>studioUrl(base,'company','blueprint'));
+  for(const view of ['//evil.example','../api/devices','chat?token=x',null])assert.throws(()=>studioUrl(cloud.url,'company',view));
+  for(const id of ['',null,'x'.repeat(201)])assert.throws(()=>studioUrl(cloud.url,id,'blueprint'));
+});
 test('restricts cloud and desktop origins before sending any credentials',()=>{
   for(const bad of ['http://public.example','https://user:pass@atlas.example','https://atlas.example/path','https://atlas.example?token=secret','file:///tmp/app','https://atlas.example/#key'])assert.throws(()=>origin(bad));
   assert.equal(origin('https://atlas.example/'),'https://atlas.example');

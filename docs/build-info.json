@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "buildMode": "static",
-  "sourceSha256": "64ab0e82f18a17d122f64edbd3c5dd55fd088a418311fd2dfb933e302aeaff7b",
+  "sourceSha256": "9efe1d47fabae0e116cfa74df6643be97297058ef6eeba50c5ffcf9fca4e68d7",
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "assets/DirectorShell-CINQMSLb.css": "145efbe4f7b92c3fd193d3bb3f2f12d8d18394b2fef43c37795552e532f41803",
@@ -102,10 +102,12 @@
     "assets/reverse-G1Cd91PM.js": "377791bfbe851ff6a5e0270286e6f33f5a752125917a59eb8e13bc3fc3bb450d",
     "assets/science-DIbnrChB.js": "5c849b3253fd47cc8e842bc7505bed76118f9899d83ac4c6944485516fad8b44",
     "desktop-preview/browser-bridge.e3d30e253716ec53.js": "e3d30e253716ec536e7a9e6f3c739b0ebc767b2d876b4635330de48da3dfede5",
-    "desktop-preview/chrome.2c236ee112c70afa.js": "2c236ee112c70afaa5eee998b38ce51900f5214ae9bb4f26268cd3d57722dfd3",
-    "desktop-preview/chrome.f1507c2b389da6b4.css": "f1507c2b389da6b460ad0d131241f40adb5fe84e03e31693bcb6666039545d75",
-    "desktop-preview/chrome.html": "fe73568d45740d4973244b3d177eb7dad6a851ab9362972b360dbd7906027bf2",
+    "desktop-preview/chrome.5d57c24c7987b94f.js": "5d57c24c7987b94f4c27ed0acc9e3f5d729b1cce46d0341c1ca1a58f46020716",
+    "desktop-preview/chrome.a3fb4c0b075905b2.css": "a3fb4c0b075905b2d34eff998d99361da84fe5e86677b6884d5f9ec0be7855ae",
+    "desktop-preview/chrome.html": "853ff4ec49496e5afe2d03b8eacee3f52532fbe4b4b161bac1b0e23c15b18b18",
+    "desktop-preview/office-signals.479f2f6a818e656a.js": "479f2f6a818e656a3a46b611dda109eac5223339c103b03f78c5b973d9d2624c",
     "desktop-preview/preview-state.6339761d7902456b.json": "6339761d7902456b252e8db4b6ffe71ed5ebecd45e908e7bab6d90eb5a5bdb68",
+    "desktop-preview/studio-tokens.9ae00f532d356700.css": "9ae00f532d3567001de65d7ad6d11b9fda82713f62ea42f8e0b9baca90ad70f6",
     "icon-192.png": "3530145f3a794daabd8395da4630c9ddb232ddd7f38920f700c42678a5a385fa",
     "icon-512.png": "73a3ec1e2eb71eb57ab61959feca67d259ce94484c4a2eac6c0cc6e864ce01eb",
     "icon-maskable-512.png": "250e91c652654fd10d4ca21375e6ac362d9ecd1c6d96a8f4cef13206e0f62eb9",
@@ -170,7 +172,7 @@
     "research/sota_multimodal_media_models.md": "8b6763168b2a4426a227d3411a3363842ff00d31cc706c878f56379136524b0c",
     "research/sota_open_model_landscape.md": "952f46c03cd69b3177870e5f98a632c0ff7f887d44bc2a3683c5ee74c6dee888",
     "research/sota_scientific_models.md": "18c8695ad1487ccad36e48b91708ca3bc6bee0049a041a0f9abed81d99559e76",
-    "sw.js": "2221b744a781444387d909d98f236bc2aee65eb2290feb6b411c1c4f4a896d18",
+    "sw.js": "c967370f5105a012dc595e8bd3b3178d45bc5c5daea61bc316605974313cb3b7",
     "workbox-051dea9f.js": "954497c1756c293988d7e65d0f9a74b9d965bbbbdeed268b4e567b66febc149a"
   }
 }

@@ -545,6 +545,7 @@ interface DesktopBridge {
 declare global {
   interface Window {
     desktopBridge?: DesktopBridge;
+    DaftarSignals?: { build(snapshot: unknown, options: {companyId?: string; officeId?: string; departmentId?: string; now: string; sampledAt?: string}): StudioSignals };
   }
 }
 
@@ -625,6 +626,7 @@ function navigate(view: ViewName, updateHash = true): void {
   if (view === 'usage' || view === 'overview') void safeTask(refreshWorkspace);
   if (view === 'roadmap') renderRoadmap();
   if (view === 'library') renderIndex();
+  syncDonnaDock();
   window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
@@ -1497,8 +1499,8 @@ function refreshWorkspace(): Promise<void> {
 }
 function renderCompany(): void {
   const company = companyState?.company; const ready = companyState?.available === true;
-  $('core-label').textContent = workspaceReadOnly() ? 'Starter office preview' : bridge?.transport==='cloud-browser' ? 'Private cloud workspace' : bridge?.transport === 'personal-browser' ? 'Private browser workspace' : ready ? 'Native workspace ready' : bridge ? 'Native core unavailable' : 'Desktop preview';
-  $('core-note').textContent = workspaceReadOnly() ? 'Example state · read only' : bridge?.transport==='cloud-browser' ? 'Desktop executes queued commands' : bridge?.transport === 'personal-browser' ? 'Connected to your desktop app' : ready ? 'Rust core · local persistence' : bridge ? 'Company actions unavailable' : 'Open the installed desktop app';
+  $('core-label').textContent = workspaceReadOnly() ? 'Starter office preview' : bridge?.transport==='cloud-browser' ? officeState ? 'Private cloud workspace' : 'Cloud workspace not loaded' : bridge?.transport === 'personal-browser' ? 'Private browser workspace' : ready ? 'Native workspace ready' : bridge ? 'Native core unavailable' : 'Desktop preview';
+  $('core-note').textContent = workspaceReadOnly() ? 'Example state · read only' : bridge?.transport==='cloud-browser' ? officeState ? 'Desktop executes queued commands' : 'Open welcome to check sign-in' : bridge?.transport === 'personal-browser' ? 'Connected to your desktop app' : ready ? 'Rust core · local persistence' : bridge ? 'Company actions unavailable' : 'Open the installed desktop app';
   if (companyState?.error) setStatus($('company-status'), companyState.error, 'error');
   const label = company?.githubStatus === 'verified' ? 'GitHub verified' : company?.githubStatus === 'error' ? 'Repository check failed' : 'Repository not checked';
   for (const id of ['company-connection', 'settings-repo-status']) {
@@ -1709,6 +1711,7 @@ function initWorkspace(): void {
 }
 // ---------------------------------------------------------------- permanent office control plane
 let officeState: OfficeSnapshot | null = null;
+let officeSampledAt = '';
 let officeWorker: OfficeWorkerStatus | null = null;
 let selectedOfficeId = '';
 let selectedDepartmentId = '';
@@ -1734,10 +1737,11 @@ async function refreshOffice(): Promise<void> {
   try {
     const [state, worker] = await Promise.allSettled([bridge.officeSnapshot(), bridge.officeWorkerStatus ? bridge.officeWorkerStatus() : Promise.resolve(null)]);
     if (state.status === 'fulfilled' && state.value.ok && state.value.snapshot) {
-      officeState = state.value.snapshot; $('office-native-status').textContent = workspaceReadOnly() ? 'Example workspace · read only' : bridge?.transport==='cloud-browser' ? 'Cloud workspace · desktop projection' : 'Local state loaded'; $('office-native-status').className = 'pill ok';
+      officeState = state.value.snapshot; officeSampledAt = new Date().toISOString(); $('office-native-status').textContent = workspaceReadOnly() ? 'Example workspace · read only' : bridge?.transport==='cloud-browser' ? 'Cloud workspace · desktop projection' : 'Local state loaded'; $('office-native-status').className = 'pill ok';
     } else {
       const error = state.status === 'fulfilled' ? state.value.error : String(state.reason);
-      setStatus($('office-status'), error || 'Office state could not be loaded.', 'error'); $('office-native-status').textContent = 'Workspace unavailable';
+      const unloadedHosted=bridge?.transport==='cloud-browser'&&!officeState;
+      setStatus($('office-status'), unloadedHosted ? 'Cloud workspace could not be loaded. Open welcome to check sign-in, or refresh to try again.' : error || 'Office state could not be loaded.', 'error'); $('office-native-status').textContent = unloadedHosted ? 'Cloud not loaded' : 'Workspace unavailable'; $('office-native-status').className='pill neutral';
     }
     if (worker.status === 'fulfilled') officeWorker = worker.value;
     renderOffice();
@@ -1965,6 +1969,7 @@ function initOffice(): void {
 let workspaceTab = 'chat';
 let selectedGoalId = '';
 let selectedRoomId = '';
+let roomDraftDirty = false;
 let selectedBoardId = '';
 let selectedDeskEmployeeId = '';
 let conversationSignature = '';
@@ -2040,8 +2045,8 @@ function renderWorkspaceControls(): void {
   for (const id of ['chat-send','room-save','node-save']) ($(id) as HTMLButtonElement).disabled = !available;
   const policySubmit = $('workspace-policy-form').querySelector<HTMLButtonElement>('button[type="submit"]'); if (policySubmit) policySubmit.disabled = !available;
   if (!available) {
-    $('workspace-budget-label').textContent = bridge ? 'Workspace upgrade required' : 'Desktop workspace required';
-    $('chat-mode-note').textContent = bridge ? (workspaceReadOnly() ? 'Example workspace · read only. Open your private workspace to save a goal.' : 'Load the current native workspace to save goals and conversations.') : 'This preview shows the workspace. Open the desktop app to save a goal.';
+    $('workspace-budget-label').textContent = !bridge ? 'Desktop workspace required' : !officeState ? 'Budget not loaded' : 'Workspace upgrade required';
+    $('chat-mode-note').textContent = bridge?.transport==='cloud-browser'&&!officeState ? 'Load your cloud workspace from welcome before starting a conversation.' : bridge ? (workspaceReadOnly() ? 'Example workspace · read only. Open your private workspace to save a goal.' : 'Load the current native workspace to save goals and conversations.') : 'This preview shows the workspace. Open the desktop app to save a goal.';
   } else updateChatMode();
 }
 function renderConversation(): void {
@@ -2149,12 +2154,12 @@ function renderSpatialSelectors(): void {
   ] as const) { const selected = value(id); populateSelect($(id) as HTMLSelectElement,rows,selected,empty); }
 }
 function resetRoomForm(): void {
-  selectedRoomId = ''; ($('workspace-room-form') as HTMLFormElement).reset();
+  selectedRoomId = ''; roomDraftDirty = false; ($('workspace-room-form') as HTMLFormElement).reset();
   ($('room-id') as HTMLInputElement).value = ''; $('room-inspector-title').textContent = 'A place for each team.'; $('room-inspector-note').textContent = 'Add a shared room or connect it to a department.'; $('room-save').textContent = 'Add room';
   $('room-people').replaceChildren(); $('workspace-room-assign').classList.add('hidden'); renderSpatialSelectors();
 }
 function selectRoom(room: OfficeRoom,focus = false): void {
-  selectedRoomId = room.id; ($('room-id') as HTMLInputElement).value = room.id; ($('room-name') as HTMLInputElement).value = room.name;
+  selectedRoomId = room.id; roomDraftDirty = false; ($('room-id') as HTMLInputElement).value = room.id; ($('room-name') as HTMLInputElement).value = room.name;
   ($('room-department') as HTMLSelectElement).value = room.departmentId || ''; ($('room-x') as HTMLInputElement).value = String(Math.round(room.x*100)); ($('room-y') as HTMLInputElement).value = String(Math.round(room.y*100));
   $('room-inspector-title').textContent = room.name; $('room-inspector-note').textContent = 'Saved room position and employee assignments.'; $('room-save').textContent = 'Save room'; $('workspace-room-assign').classList.remove('hidden');
   const people = $('room-people'); people.replaceChildren(); people.setAttribute('aria-label',`${room.name} employees`);
@@ -2195,10 +2200,11 @@ function renderBlueprint(): void {
     const title=textElement('button',room.name,'blueprint-room-title'); title.type='button'; title.onclick=()=>selectRoom(room);
     title.setAttribute('aria-label',`${room.name}. Select room; arrow keys move it.`);
     const department=officeState?.departments.find((d)=>d.id===room.departmentId); card.append(title,textElement('p',department?.name || 'Shared office space','blueprint-room-subtitle'));
+    addStudioHeat(card,currentStudioSignals()?.perRoom[room.id]);
     const occupants=textElement('div','','room-occupants');
     const roomEmployees=blueprint.desks.filter((item)=>item.roomId===room.id).map(desk=>officeState?.employees.find(employee=>employee.id===desk.employeeId)).filter((employee):employee is OfficeEmployee=>Boolean(employee));
     for(const employee of roomEmployees.slice(0,6)) {
-      const button=textElement('button',employee.name,`room-occupant${selectedDeskEmployeeId===employee.id?' selected':''}`); button.type='button'; button.title=`${employee.role} · ${employee.status}`;
+      const button=textElement('button',employee.name,`room-occupant${selectedDeskEmployeeId===employee.id?' selected':''}`); button.type='button'; button.title=`${employee.role} · ${employee.status}`;button.replaceChildren(studioAvatar(employee),textElement('span',employee.name,'room-occupant-name'));
       button.onclick=()=>{if(employee.companyId&&employee.companyId!==officeCompany()?.id){selectRoom(room);if(portfolioState()?.services.some(service=>service.companyId===officeCompany()?.id&&service.officeId===selectedOfficeId&&service.employeeIds.includes(employee.id))){setStatus($('room-status'),`${employee.name} is a shared specialist whose original company assignment is preserved. Assign recipient work through that company’s active service contract.`);return;}selectedDepartmentId=room.departmentId||'';renderOfficeScope();const contract=scopedServiceContracts().find(item=>item.employeeIds.includes(employee.id));if(!contract){setStatus($('room-status'),'This historical assignment has no active staffing contract.','error');return;}($('queue-service-contract') as HTMLSelectElement).value=contract.id;renderOfficeScope();($('queue-employee') as HTMLSelectElement).value=employee.id;switchOfficeTab('queue');($('queue-composer') as HTMLDetailsElement).open=true;$('queue-composer').scrollIntoView({block:'nearest'});$('queue-goal').focus();return;}selectedDeskEmployeeId=employee.id;selectedDepartmentId=employee.departmentId||'';renderOfficeScope();renderWorkspaceControls();selectRoom(room);($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=employee.id;switchWorkspaceTab('chat');renderUnifiedWorkspace();$('chat-message').focus();}; occupants.append(button);
     }
     if(roomEmployees.length>6){const more=textElement('button',`+${roomEmployees.length-6} more`,'room-occupant room-occupant-more');more.type='button';more.setAttribute('aria-label',`View all ${roomEmployees.length} employees in ${room.name}`);more.onclick=()=>{selectRoom(room);$('room-people').focus();$('room-people').scrollIntoView({block:'nearest'});};occupants.append(more);}
@@ -2209,7 +2215,7 @@ function renderBlueprint(): void {
     wireSpatialMove(title,card,room.x,room.y,1-room.width,1-room.height,async(x,y)=>{await workspaceCommand({action:'upsert_room',officeId:selectedOfficeId,id:room.id,name:room.name,departmentId:room.departmentId,x,y,width:room.width,height:room.height},'Room position saved.'); Array.from(document.querySelectorAll<HTMLElement>('[data-room-id]')).find(item=>item.dataset.roomId===room.id)?.querySelector<HTMLButtonElement>('.blueprint-room-title')?.focus();});
     container.append(card);
   }
-  if(selectedRoomId){const room=blueprint.rooms.find((item)=>item.id===selectedRoomId);if(room&&!$('workspace-room-form').contains(document.activeElement))selectRoom(room);}
+  if(selectedRoomId){const room=blueprint.rooms.find((item)=>item.id===selectedRoomId);if(room&&!roomDraftDirty&&!$('workspace-room-form').contains(document.activeElement))selectRoom(room);}
 }
 function resetBoardForm(): void {
   selectedBoardId='';($('workspace-node-form') as HTMLFormElement).reset();($('node-id') as HTMLInputElement).value='';$('node-inspector-title').textContent='Work with a clear owner.';$('node-save').textContent='Add card';renderSpatialSelectors();
@@ -2231,6 +2237,7 @@ function renderWhiteboard():void {
     const card=textElement('article','',`ownership-card${selectedBoardId===board.id?' selected':''}`);card.dataset.boardId=board.id;spatialPosition(card,x,y);card.append(textElement('span',linkedJob?'JOB OWNERSHIP':goal?'GOAL OWNERSHIP':roadmap?'ROADMAP OWNERSHIP':'WORK OWNERSHIP','card-type'));
     const title=textElement('button',board.title,'card-title');title.type='button';title.onclick=()=>selectBoard(board);title.setAttribute('aria-label',`${board.title}. Owned by ${employee?.name||'unknown employee'} in ${room.name}. Arrow keys move the card.`);card.append(title);
     const status=linkedJob?.status||goal?.status||roadmap?.status||'Assigned';card.append(textElement('span',status.replaceAll('-',' '),`badge ${status==='completed'?'ok':status==='needs-review'||status==='waiting-budget'?'unknown':''}`));
+    addStudioHeat(card,employee?currentStudioSignals()?.perEmployee[employee.id]:undefined);
     const ownership=textElement('div','','card-ownership');ownership.append(textElement('strong',employee?.name||'Employee unavailable'),textElement('span',room.name));if(goal)ownership.append(textElement('span',`Goal: ${goal.title}`));if(roadmap)ownership.append(textElement('span',`Roadmap: ${roadmap.title}`));if(linkedJob?.artifactUri)ownership.append(textElement('span',`Artifact: ${linkedJob.artifactUri}`));card.append(ownership);
     const desk=blueprint.desks.find((item)=>item.roomId===room.id&&item.employeeId===board.ownerEmployeeId);
     if(desk){const ax=(room.x+desk.x*room.width)*width;const ay=(room.y+desk.y*room.height)*620;lines.append(svgElement('path',{d:`M${x*width+12} ${y*620+70} C${x*width-20} ${y*620+70} ${ax-20} ${ay} ${ax} ${ay}`}),svgElement('circle',{cx:ax,cy:ay,r:4}));}
@@ -2242,15 +2249,16 @@ async function ensureWorkspaceBlueprint():Promise<void>{
   try{await workspaceCommand({action:'ensure_blueprint',officeId:selectedOfficeId},'Office blueprint loaded.');}finally{blueprintLoading=false;}
 }
 function switchWorkspaceTab(name:string):void{
-  if(!['chat','blueprint','whiteboard','decisions'].includes(name))return;workspaceTab=name;
+  if(!['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(name))return;workspaceTab=name;
   document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]').forEach((button)=>{const active=button.dataset.workspaceTab===name;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;});
   document.querySelectorAll<HTMLElement>('.workspace-tab-panel').forEach((panel)=>panel.classList.toggle('hidden',panel.id!==`workspace-panel-${name}`));
   if(name==='blueprint'||name==='whiteboard')workspaceTask(ensureWorkspaceBlueprint);renderUnifiedWorkspace();
 }
 function renderUnifiedWorkspace():void{
+  $('workspace-studio-signals').classList.toggle('hidden',workspaceTab==='chat'||workspaceTab==='decisions');
   renderWorkspaceControls();renderPortfolio();renderWorkspaceLocator();renderDecisionPanels();renderCloudConnection();
   if(spatialOfficeId!==selectedOfficeId){spatialOfficeId=selectedOfficeId;resetRoomForm();resetBoardForm();}
-  renderWorkspacePolicy();renderConversation();renderWorkspaceGoals();renderSpatialSelectors();renderBlueprint();renderWhiteboard();
+  renderWorkspacePolicy();renderConversation();renderWorkspaceGoals();renderSpatialSelectors();renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();renderStudioRoadmap();syncDonnaDock();
   $('github-repository-label').textContent=officeCompany()?.repoUrl||'Choose a repository company.';
 }
 function updateChatMode():void{
@@ -2292,6 +2300,7 @@ function initUnifiedWorkspace():void{
     await workspaceCommand({action:'configure_policy',approvalMode:value('workspace-approval-mode'),dispatchPaused:($('workspace-dispatch-paused') as HTMLInputElement).checked,hardCapUsd,hardCapTokens,warningPercent},'Global policy saved.');setStatus($('workspace-policy-status'),'Global budget and approval mode saved.','ok');
   },'workspace-policy-status');
   $('blueprint-add-room').onclick=()=>{resetRoomForm();$('room-name').focus();};$('whiteboard-add-node').onclick=()=>{resetBoardForm();$('node-title').focus();};
+  for(const event of ['input','change'])$('workspace-room-form').addEventListener(event,()=>{roomDraftDirty=true;$('room-inspector-note').textContent='Unsaved room details. Save to apply; changing views keeps this draft.';});
   for(const id of ['blueprint-list-mode','whiteboard-list-mode']){$(id).addEventListener('change',renderUnifiedWorkspace);if(window.innerWidth<650)($(id) as HTMLInputElement).checked=true;}
   workspaceForm('workspace-room-form',async()=>{
     const scope=requireOfficeScope();await ensureWorkspaceBlueprint();const name=value('room-name');if(!name)throw new Error('Give this room a name.');const previous=currentBlueprint()?.rooms.find((room)=>room.id===value('room-id'));const x=Number(value('room-x'))/100;const y=Number(value('room-y'))/100;const width=previous?.width||.35;const height=previous?.height||.35;
@@ -2348,7 +2357,7 @@ function portfolioCompanies():OfficeCompany[]{return(officeState?.companies||[])
 function portfolioReady():boolean{return workspaceAvailable()&&Boolean(portfolioState());}
 function setPortfolioOpen(open:boolean):void{
   portfolioOpen=open;$('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open);$('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').classList.toggle('return-arrow',open);
-  const label=$('ceo-toggle').querySelector('strong');if(label)label.textContent=open?'Back to company workspace':'CEO office';if(open)renderPortfolio();
+  const label=$('ceo-toggle').querySelector('strong');if(label)label.textContent=open?'Back to company workspace':'CEO office';if(open)renderPortfolio();syncDonnaDock();
 }
 function portfolioNavigation(label:string,companyId:string,tab='chat',kind='text-button',officeId?:string,departmentId?:string):HTMLButtonElement{
   const button=actionButton(label,kind);button.type='button';button.onclick=()=>workspaceTask(()=>openPortfolioCompany(companyId,tab,officeId,departmentId),'ceo-status');return button;
@@ -2618,6 +2627,7 @@ function scopedServiceContracts():PortfolioServiceContract[]{return(portfolioSta
 class QueuedWorkspaceCommand extends Error {}
 function appliedOfficeSnapshot(result: OfficeResult): OfficeSnapshot {
   if (!result.ok || !result.snapshot) throw new Error(result.error || 'The workspace change could not be saved.');
+  officeSampledAt = new Date().toISOString();
   if (result.queued) {
     officeState=result.snapshot;renderOffice();
     throw new QueuedWorkspaceCommand(`Queued for desktop confirmation${result.commandId ? ` · ${result.commandId}` : ''}. This change has not been applied yet.`);
@@ -2642,11 +2652,14 @@ async function refreshCloudConnection(): Promise<void> {
 }
 function renderCloudConnection(): void {
   const preview=workspaceReadOnly();const hosted=bridge?.transport==='cloud-browser';const available=Boolean(bridge?.configureCloud)&&!preview&&!hosted;
-  const label=preview?'Read-only preview':hosted?'Cloud session':cloudState?.connected?'Cloud linked':cloudState?.configured?'Cloud offline':officeState?'Saved locally':'Local workspace';
-  $('workspace-save-label').textContent=label;$('workspace-save-status').title=cloudState?.lastSyncedAt?`Last explicit sync: ${dateLabel(cloudState.lastSyncedAt,true)}. New edits remain local until the next sync.`:preview?'Example data only. Changes are disabled.':hosted?'Signed-in cloud conversation; owner commands require desktop acknowledgement.':'Local state and optional cloud connection';
-  $('cloud-state').textContent=preview?'Example · unavailable':hosted?'Signed-in cloud view':cloudBusy?'Working…':cloudState?.connected?'Device authenticated':cloudState?.configured?'Connection needs attention':'Not connected';
-  $('cloud-state').className=`pill ${cloudState?.connected||hosted?'ok':'neutral'}`;
-  $('cloud-local-state').textContent=preview?'Example data':hosted?'Last desktop projection':officeState?'Saved on this device':'Not loaded';
+  const unloadedHosted=hosted&&!officeState;
+  if(hosted){$('core-label').textContent=unloadedHosted?'Cloud workspace not loaded':'Private cloud workspace';$('core-note').textContent=unloadedHosted?'Open welcome to check sign-in':'Desktop executes queued commands';}
+  $('cloud-workspace-notice').classList.toggle('hidden',!unloadedHosted);($('cloud-welcome') as HTMLButtonElement).disabled=!bridge?.backToLauncher;
+  const label=preview?'Read-only preview':unloadedHosted?'Cloud not loaded':hosted?'Cloud session':cloudState?.connected?'Cloud linked':cloudState?.configured?'Cloud offline':officeState?'Saved locally':'Local workspace';
+  $('workspace-save-label').textContent=label;$('workspace-save-status').title=unloadedHosted?'No cloud workspace snapshot is loaded. Open welcome to check sign-in or retry the workspace refresh.':cloudState?.lastSyncedAt?`Last explicit sync: ${dateLabel(cloudState.lastSyncedAt,true)}. New edits remain local until the next sync.`:preview?'Example data only. Changes are disabled.':hosted?'Signed-in cloud conversation; owner commands require desktop acknowledgement.':'Local state and optional cloud connection';
+  $('cloud-state').textContent=preview?'Example · unavailable':unloadedHosted?'Cloud not loaded':hosted?'Signed-in cloud view':cloudBusy?'Working…':cloudState?.connected?'Device authenticated':cloudState?.configured?'Connection needs attention':'Not connected';
+  $('cloud-state').className=`pill ${!unloadedHosted&&(cloudState?.connected||hosted)?'ok':'neutral'}`;
+  $('cloud-local-state').textContent=preview?'Example data':unloadedHosted?'Not loaded':hosted?'Last desktop projection':officeState?'Saved on this device':'Not loaded';
   $('cloud-last-sync').textContent=cloudState?.lastSyncedAt?dateLabel(cloudState.lastSyncedAt,true):'Never';
   $('cloud-revision').textContent=cloudState?.revision===null||cloudState?.revision===undefined?'—':String(cloudState.revision);
   $('cloud-pending').textContent=number(cloudState?.pendingCommands||0);
@@ -2655,9 +2668,10 @@ function renderCloudConnection(): void {
   ($('cloud-connect') as HTMLButtonElement).disabled=!available||cloudBusy||cloudState?.encryptionAvailable===false;
   ($('cloud-sync') as HTMLButtonElement).disabled=!available||cloudBusy||!cloudState?.configured;
   ($('cloud-disconnect') as HTMLButtonElement).disabled=!available||cloudBusy||!cloudState?.configured;
-  ($('cloud-open-site') as HTMLButtonElement).disabled=!bridge?.openExternal||cloudBusy;$('cloud-open-site').textContent=hosted?'Open device connections':'Open website & sign in';
+  ($('cloud-open-site') as HTMLButtonElement).disabled=(unloadedHosted?!bridge?.backToLauncher:!bridge?.openExternal)||cloudBusy;$('cloud-open-site').textContent=unloadedHosted?'Open welcome / sign in':hosted?'Open device connections':'Open website & sign in';
   ($('editor-pair') as HTMLButtonElement).disabled=!bridge?.copyEditorPairing||preview||hosted;
   if(preview)setStatus($('cloud-status'),'This starter preview cannot connect a device or sync data. Open the private desktop app to pair your account.');
+  else if(unloadedHosted)setStatus($('cloud-status'),'Cloud workspace is not loaded. Open welcome to check sign-in, or refresh to try again.');
   else if(hosted)setStatus($('cloud-status'),'This is your cloud conversation and last acknowledged desktop state. Pair a desktop from the website’s account page to process queued owner commands.');
   else if(cloudState?.error)setStatus($('cloud-status'),cloudState.error,'error');
   else if(!available)setStatus($('cloud-status'),'Cloud pairing requires the current desktop app. Your existing workspace remains available.');
@@ -2673,7 +2687,9 @@ function cloudWebsiteUrl():string{
 }
 function initCloudConnection():void{
   $('workspace-save-status').onclick=()=>{navigate('settings');$('cloud-connection-panel').scrollIntoView({block:'start'});$('cloud-open-site').focus();};
-  $('cloud-open-site').onclick=()=>workspaceTask(async()=>{const url=cloudWebsiteUrl();if(!bridge?.openExternal)throw new Error('Open the private website from your browser.');const result=await bridge.openExternal(url);if(!result.ok)throw new Error(result.error||'The website could not be opened.');setStatus($('cloud-status'),'Website opened. Complete sign-in there and copy its device pairing token.');},'cloud-status');
+  const openWelcome=async()=>{if(!bridge?.backToLauncher)throw new Error('The welcome page is unavailable in this view.');const result=await bridge.backToLauncher();if(!result.ok)throw new Error('The welcome page could not be opened.');};
+  $('cloud-welcome').onclick=()=>workspaceTask(openWelcome,'cloud-workspace-notice-message');
+  $('cloud-open-site').onclick=()=>workspaceTask(async()=>{if(bridge?.transport==='cloud-browser'&&!officeState){await openWelcome();return;}const url=cloudWebsiteUrl();if(!bridge?.openExternal)throw new Error('Open the private website from your browser.');const result=await bridge.openExternal(url);if(!result.ok)throw new Error(result.error||'The website could not be opened.');setStatus($('cloud-status'),'Website opened. Complete sign-in there and copy its device pairing token.');},'cloud-status');
   $('cloud-connect-form').addEventListener('submit',event=>{event.preventDefault();workspaceTask(async()=>{if(!bridge?.configureCloud||workspaceReadOnly())throw new Error('Device pairing requires the private desktop app.');const token=value('cloud-device-token');($('cloud-device-token') as HTMLInputElement).value='';if(!token)throw new Error('Paste the device token from your signed-in website.');const url=cloudWebsiteUrl();await cloudAction(()=>bridge.configureCloud!({url,token}),'Device authenticated. No snapshot has been uploaded by connecting. Choose Sync now when ready.');},'cloud-status');});
   $('cloud-sync').onclick=()=>workspaceTask(async()=>{if(!bridge?.syncCloud||workspaceReadOnly())throw new Error('Sync requires the private desktop app.');await cloudAction(()=>bridge.syncCloud!(),'Workspace snapshot and fetched owner commands synchronized. See the confirmed time above.');await refreshOffice();},'cloud-status');
   $('cloud-disconnect').onclick=()=>workspaceTask(async()=>{if(!bridge?.disconnectCloud)throw new Error('Cloud disconnect is unavailable.');await cloudAction(()=>bridge.disconnectCloud!(),'Device disconnected. Local work remains on this device.');},'cloud-status');
@@ -2682,7 +2698,7 @@ function initCloudConnection():void{
 }
 async function sendDonnaCloud(message:string,scope:OfficeScope):Promise<void>{
   if(cloudChatBusy)return;if(!bridge?.sendCloudChat)throw new Error('The cloud conversation service is unavailable.');cloudChatBusy=true;($('chat-send') as HTMLButtonElement).disabled=true;setStatus($('chat-status'),'Donna is reviewing your brief…');
-  try{const result=await bridge.sendCloudChat({scope,message,idempotencyKey:crypto.randomUUID(),goalMode:'manual'});if(!result.ok||!result.snapshot)throw new Error(result.error||'Donna’s cloud request did not complete.');if(!result.reply?.trim())throw new Error('No provider reply was returned. Your brief remains here to retry.');officeState=result.snapshot;($('chat-message') as HTMLTextAreaElement).value='';renderOffice();setStatus($('chat-status'),'Cloud reply saved. No repository changes were applied.','ok');}
+  try{const result=await bridge.sendCloudChat({scope,message,idempotencyKey:crypto.randomUUID(),goalMode:'manual'});if(!result.ok||!result.snapshot)throw new Error(result.error||'Donna’s cloud request did not complete.');if(!result.reply?.trim())throw new Error('No provider reply was returned. Your brief remains here to retry.');officeState=result.snapshot;officeSampledAt=new Date().toISOString();($('chat-message') as HTMLTextAreaElement).value='';renderOffice();setStatus($('chat-status'),'Cloud reply saved. No repository changes were applied.','ok');}
   finally{cloudChatBusy=false;($('chat-send') as HTMLButtonElement).disabled=workspaceReadOnly();}
 }
 
@@ -2748,9 +2764,95 @@ function initDecisionPanels():void{
   renderDecisionRoleOptions();renderDecisionPanels();
 }
 
+// ---------------------------------------------------------------- connected blueprint studio
+interface StudioMetric { level: 0|1|2|3|4|'unknown'; value: number|null; numerator: number|null; denominator: number|null; ratio: number|null; unknown: boolean; label: string; detail: string }
+interface StudioSignalGroup { id: string; name: string; workload: StudioMetric; budget: StudioMetric; attention: StudioMetric; jobs: number; employees: number }
+interface StudioSignals { summary: StudioSignalGroup; perEmployee: Record<string,StudioSignalGroup>; perDepartment: Record<string,StudioSignalGroup>; perRoom: Record<string,StudioSignalGroup>; legend: Record<'workload'|'budget'|'attention',ReadonlyArray<{level:0|1|2|3|4|'unknown';label:string;detail:string}>>; scopeValid: boolean; sample: unknown }
+type StudioHeatMode = 'workload'|'budget'|'attention'|'off';
+let studioSignalState: OfficeSnapshot|null = null;
+let studioSignalKey = '';
+let studioSignals: StudioSignals|null = null;
+let softboardEmployeeId = '';
+let donnaDockOpen = false;
+function studioPreference(key: string, fallback: string): string { try { return localStorage.getItem(`daftar-studio-${key}`) || fallback; } catch { return fallback; } }
+function saveStudioPreference(key: string, value: string): void { try { localStorage.setItem(`daftar-studio-${key}`,value); } catch { /* Private browsing can still use the current view. */ } }
+function studioHeatMode(): StudioHeatMode { const selected=value('workspace-heat-mode'); return ['workload','budget','attention','off'].includes(selected)?selected as StudioHeatMode:'workload'; }
+function currentStudioSignals(): StudioSignals|null {
+  const key=[officeCompany()?.id,selectedOfficeId,selectedDepartmentId,officeSampledAt].join('|');
+  if(studioSignalState!==officeState||studioSignalKey!==key){studioSignalState=officeState;studioSignalKey=key;studioSignals=null;
+    if(officeState&&window.DaftarSignals){try{studioSignals=window.DaftarSignals.build(officeState,{companyId:officeCompany()?.id,officeId:selectedOfficeId||undefined,departmentId:selectedDepartmentId||undefined,now:new Date().toISOString(),...(officeSampledAt?{sampledAt:officeSampledAt}:{})});}catch{/* Missing signals must not look like a healthy zero. */}}
+  }
+  return studioSignals;
+}
+function addStudioHeat(element: HTMLElement, group: StudioSignalGroup|undefined, className='heat-reading'): void {
+  const mode=studioHeatMode();if(mode==='off'){element.dataset.heatLevel='off';return;}
+  const metric=group?.[mode];element.dataset.heatLevel=String(metric?.level??'unknown');
+  const reading=textElement('span',metric?.label||'Unknown · no records',className);reading.title=metric?.detail||'No usable records are available for this selection.';element.append(reading);
+}
+function renderStudioSignals(): void {
+  const signals=currentStudioSignals(),mode=studioHeatMode();const summary=$('workspace-signal-summary');summary.replaceChildren();
+  if(!signals?.scopeValid){summary.append(textElement('span','Signals unavailable','signal-stat'),textElement('span','Load a valid saved scope to inspect recorded activity.','muted'));}
+  else {const group=signals.summary;for(const [number,label] of [[group.employees,'assigned people'],[group.jobs,'recorded jobs']] as const){const item=textElement('span','','signal-stat');item.append(textElement('strong',String(number)),textElement('span',label));summary.append(item);}const item=textElement('span','','signal-stat signal-primary');item.append(textElement('strong',mode==='off'?'Heat map off':group[mode].label),textElement('span',mode==='budget'?'Commitments / recorded job allowances':mode==='attention'?'Exceptions and blocked work':'Saved work in this scope'));summary.append(item);}
+  const legend=$('workspace-heat-legend');legend.replaceChildren();
+  if(mode==='off'){legend.append(textElement('p','Color overlay is off. Names, counts and recorded statuses remain available.'));return;}
+  for(const entry of signals?.legend[mode]||[]){const row=textElement('div','','heat-legend-row');row.dataset.heatLevel=String(entry.level);const swatch=textElement('span',entry.level==='unknown'?'?':String(entry.level),'heat-legend-swatch');swatch.setAttribute('aria-hidden','true');const copy=textElement('span','','heat-legend-copy');copy.append(textElement('strong',entry.label),textElement('small',entry.detail));row.append(swatch,copy);legend.append(row);}
+  if(!legend.children.length)legend.append(textElement('p','No signal data is loaded. Unknown values are not treated as zero.'));
+}
+function studioAvatar(employee: OfficeEmployee): HTMLElement {const initials=employee.name.trim().split(/\s+/).slice(0,2).map(part=>part[0]||'').join('').toUpperCase();const avatar=textElement('span',initials||'AI','studio-avatar');avatar.setAttribute('aria-hidden','true');return avatar;}
+function renderSoftboard(): void {
+  const board=$('workspace-softboard');board.replaceChildren();const company=officeCompany(),office=officeLocation();if(!company||!office){noData(board,'Select an office to inspect its organization.');return;}
+  const query=value('softboard-search').toLowerCase(),signals=currentStudioSignals();const members=scopedEmployees().filter(e=>e.status!=='fired'&&(!query||`${e.name} ${e.role}`.toLowerCase().includes(query)));
+  const root=textElement('div','','org-root');const ceo=textElement('button','CEO / Director','org-executive');ceo.type='button';ceo.onclick=()=>{setPortfolioOpen(true);syncDonnaDock();$('ceo-toggle').focus();};root.append(ceo,textElement('span',company.name,'org-company'),textElement('h3',office.name,'org-office'));board.append(root);
+  const branches=textElement('div','','org-branches');let rendered=0;const departments=(officeState?.departments||[]).filter(d=>d.officeId===office.id&&(!selectedDepartmentId||d.id===selectedDepartmentId));
+  const groups:Array<{id:string;name:string;employees:OfficeEmployee[]}>=[{id:'office-leadership',name:'Office & shared leadership',employees:members.filter(e=>!e.departmentId)},...departments.map(d=>({id:d.id,name:d.name,employees:members.filter(e=>e.departmentId===d.id)}))];
+  for(const group of groups){if(query&&!group.employees.length)continue;const branch=textElement('section','','org-branch');branch.setAttribute('aria-label',group.name);const heading=textElement('div','','org-department');heading.append(textElement('h4',group.name),textElement('span',`${group.employees.length} assigned`,'org-count'));if(group.id!=='office-leadership')addStudioHeat(heading,signals?.perDepartment[group.id]);branch.append(heading);const people=textElement('div','','org-people');
+    for(const employee of group.employees){if(rendered>=150)break;rendered++;const card=textElement('button','',`org-person${employee.id===softboardEmployeeId?' selected':''}`);card.type='button';card.dataset.employeeId=employee.id;card.setAttribute('aria-pressed',String(employee.id===softboardEmployeeId));const name=textElement('span','','org-person-copy');name.append(textElement('strong',employee.name),textElement('span',employee.role),textElement('small',employee.status==='active'?'Active assignment':employee.status));card.append(studioAvatar(employee),name);addStudioHeat(card,signals?.perEmployee[employee.id]);card.onclick=()=>{softboardEmployeeId=employee.id;renderSoftboard();$('softboard-person-title').focus();};people.append(card);}
+    if(!group.employees.length)people.append(textElement('p','No people assigned in this view.','empty-inline'));branch.append(people);branches.append(branch);
+  }
+  board.append(branches);$('softboard-result-note').textContent=`${rendered} of ${members.length} matching assignments shown. Direct office assignments and shared leadership; contracted staffing stays in service contracts. Select a person to inspect ownership.${members.length>150?' Refine the search to see another person.':''}`;
+  if(!members.some(e=>e.id===softboardEmployeeId))softboardEmployeeId='';renderSoftboardInspector();
+}
+function renderSoftboardInspector():void{
+  const employee=scopedEmployees().find(e=>e.id===softboardEmployeeId),detail=$('softboard-person-detail');detail.replaceChildren();$('softboard-person-title').tabIndex=-1;$('softboard-person-title').textContent=employee?.name||'Choose a person.';
+  ($('softboard-person-chat') as HTMLButtonElement).disabled=!employee||employee.status!=='active';
+  ($('softboard-person-authority') as HTMLButtonElement).disabled=!employee;
+  $('softboard-person-chat').title=employee&&employee.status!=='active'?'Resume this employee in the employee register before starting a conversation.':'';
+  if(!employee){detail.append(textElement('p','Inspect their role, current records and timed permissions.','muted'));return;}
+  detail.append(textElement('p',employee.role,'softboard-role'),textElement('span',employee.status,'badge'));
+  if(employee.status!=='active')detail.append(textElement('p','This employee is paused. Ownership remains visible; resume their assignment in the employee register before starting a conversation.','form-help'));
+  const signals=currentStudioSignals()?.perEmployee[employee.id];for(const key of ['workload','budget','attention'] as const){const metric=signals?.[key];const item=textElement('div','','inspector-signal');item.dataset.heatLevel=String(metric?.level??'unknown');item.append(textElement('strong',metric?.label||'Unknown · no records'),textElement('small',metric?.detail||'No usable job records in this execution scope.'));detail.append(item);}
+  const grants=(officeState?.authority?.grants||[]).filter(g=>g.employeeId===employee.id);detail.append(textElement('p',`${grants.length} recorded permission or promotion ${grants.length===1?'grant':'grants'}. Inspect the authority register for scope, expiry and parent restrictions.`,'form-help'));
+  const owned=(portfolioState()?.roadmap||[]).filter(r=>r.ownerEmployeeId===employee.id&&roadmapInCompany(r,officeCompany()?.id||''));detail.append(textElement('p',`${owned.length} roadmap outcomes owned in this company.`,'form-help'));
+}
+function renderStudioRoadmap():void{
+  const container=$('workspace-timeline');container.replaceChildren();const company=officeCompany();const all=(portfolioState()?.roadmap||[]).filter(item=>company&&roadmapInCompany(item,company.id)&&(!selectedDepartmentId||item.departmentId===selectedDepartmentId));const state=value('studio-roadmap-status');const items=all.filter(item=>state==='all'||item.status===state);$('studio-roadmap-summary').textContent=`${items.length} outcomes in view · ${all.filter(item=>item.status==='done').length} completed with recorded evidence · ${all.filter(item=>item.status==='blocked').length} blocked`;
+  const stages=[['planned','Planned'],['in-progress','In progress'],['blocked','Blocked'],['done','Done']] as const;let rendered=0;
+  for(const [status,label] of stages){if(state!=='all'&&state!==status)continue;const lane=textElement('section','','roadmap-lane');lane.dataset.stage=status;const rows=items.filter(item=>item.status===status);const head=textElement('header','','roadmap-lane-heading');head.append(textElement('h3',label),textElement('span',String(rows.length),'badge'));lane.append(head);
+    for(const item of rows){if(rendered>=120)break;rendered++;const card=textElement('article','','studio-outcome');card.dataset.roadmapId=item.id;const owner=officeState?.employees.find(e=>e.id===item.ownerEmployeeId);card.append(textElement('span',roadmapScopeLabel(item),'card-type'),textElement('h4',item.title));if(item.description)card.append(textElement('p',item.description.slice(0,260)));const person=textElement('div','','outcome-person');if(owner)person.append(studioAvatar(owner));person.append(textElement('strong',owner?.name||'Owner unavailable'));card.append(person);const date=new Date(item.updatedAt);card.append(textElement('small',`Updated ${Number.isFinite(date.getTime())?date.toLocaleDateString():'date unavailable'} · ${item.dependencies.length} dependencies`,'outcome-meta'));if(item.evidence)card.append(textElement('p',`Evidence: ${item.evidence}`,'form-help'));const action=textElement('button','Inspect ownership','text-button');action.type='button';action.onclick=()=>{setPortfolioOpen(true);editPortfolioRoadmap(item);syncDonnaDock();};card.append(action);lane.append(card);}
+    if(!rows.length)lane.append(textElement('p','No saved outcomes in this stage.','lane-empty'));container.append(lane);
+  }
+  if(items.length>120)container.append(textElement('p','Showing the first 120 outcomes. Filter by delivery state or department.','form-help'));
+}
+function syncDonnaDock():void{
+  const panel=document.getElementById('donna-conversation'),home=document.getElementById('donna-chat-home'),dock=document.getElementById('donna-dock'),toggle=document.getElementById('donna-dock-toggle'),slot=document.getElementById('donna-dock-slot');if(!panel||!home||!dock||!toggle||!slot)return;
+  const available=activeView==='office'&&workspaceTab!=='chat'&&!$('company-workspace').classList.contains('hidden');const open=available&&donnaDockOpen;
+  toggle.classList.toggle('hidden',!available||open);toggle.setAttribute('aria-expanded',String(open));dock.classList.toggle('hidden',!open);if(open){if(panel.parentElement!==slot)slot.append(panel);}else if(panel.parentElement!==home)home.prepend(panel);
+}
+function initStudio():void{
+  const theme=studioPreference('theme','blueprint');document.documentElement.dataset.theme=theme==='drafting'?'drafting':'blueprint';($('workspace-theme') as HTMLSelectElement).value=document.documentElement.dataset.theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',document.documentElement.dataset.theme==='drafting'?'#F6F2E8':'#151126');
+  $('workspace-theme').onchange=()=>{const next=value('workspace-theme')==='drafting'?'drafting':'blueprint';document.documentElement.dataset.theme=next;saveStudioPreference('theme',next);document.querySelector('meta[name="theme-color"]')?.setAttribute('content',next==='drafting'?'#F6F2E8':'#151126');};
+  const heat=studioPreference('heat','workload');($('workspace-heat-mode') as HTMLSelectElement).value=['workload','budget','attention','off'].includes(heat)?heat:'workload';
+  $('workspace-heat-mode').onchange=()=>{saveStudioPreference('heat',studioHeatMode());renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();};
+  $('softboard-search').oninput=renderSoftboard;$('studio-roadmap-status').onchange=renderStudioRoadmap;
+  $('softboard-person-chat').onclick=()=>{const e=scopedEmployees().find(item=>item.id===softboardEmployeeId);if(!e||e.status!=='active')return;renderWorkspaceControls();($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=e.id;switchWorkspaceTab('chat');$('chat-message').focus();};
+  $('softboard-person-authority').onclick=()=>{if(!softboardEmployeeId)return;setPortfolioOpen(true);renderAuthority();($('authority-employee') as HTMLSelectElement).value=softboardEmployeeId;renderAuthorityForm();renderAuthorityGrants();($('ceo-authority-editor') as HTMLDetailsElement).open=true;$('authority-employee').focus();$('ceo-authority-editor').scrollIntoView({block:'nearest'});syncDonnaDock();};
+  $('donna-dock-toggle').onclick=()=>{donnaDockOpen=true;syncDonnaDock();$('chat-message').focus();};$('donna-dock-close').onclick=()=>{donnaDockOpen=false;syncDonnaDock();$('donna-dock-toggle').focus();};
+}
+
 // ---------------------------------------------------------------- boot
 function boot(): void {
-  initWorkspace(); initOffice(); initUnifiedWorkspace(); initGitHubTools(); initPortfolio(); initAuthority(); initDecisionPanels(); initCloudConnection(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
+  initStudio(); initWorkspace(); initOffice(); initUnifiedWorkspace(); initGitHubTools(); initPortfolio(); initAuthority(); initDecisionPanels(); initCloudConnection(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
   if (!bridge) {
     $('bridge-notice').classList.remove('hidden'); $('core-label').textContent = 'Desktop preview'; $('core-note').textContent = 'Native actions need the desktop app';
     noData($('team-grid'), 'Open the desktop app to load your skill-linked team.'); noData($('project-list'), 'Create and save projects in the installed desktop app.'); noData($('key-rows'), 'Provider credentials are managed by the desktop app’s secure storage.');
@@ -2773,7 +2875,7 @@ function boot(): void {
     $('bridge-notice').textContent = 'Starter office preview · data is an example workspace; changes and provider execution require the private desktop/browser workspace.';
     $('core-label').textContent='Starter office preview';$('core-note').textContent='Example state · read only';
   } else if (bridge?.transport === 'personal-browser') { $('core-label').textContent='Private browser workspace'; $('core-note').textContent='Connected to your desktop app'; }
-  const route = location.hash.replace('#', '') as ViewName;const params=new URLSearchParams(location.search);const requested=params.get('workspace')||'';const workspaceRoute=['chat','blueprint','whiteboard','decisions'].includes(requested)?requested:null;const ceoRoute=params.get('ceo')==='true';
+  const route = location.hash.replace('#', '') as ViewName;const params=new URLSearchParams(location.search);const requested=params.get('workspace')||'';const workspaceRoute=['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(requested)?requested:null;const ceoRoute=params.get('ceo')==='true';
   navigate(workspaceRoute||ceoRoute?'office':route in VIEW_IDS?route:'office',false);if(workspaceRoute)switchWorkspaceTab(workspaceRoute);if(ceoRoute)setPortfolioOpen(true);void safeTask(refreshWorkspace);
 }
 boot();

@@ -1,7 +1,7 @@
 'use strict';
 const vscode = require('vscode');
 const crypto = require('node:crypto');
-const { AtlasClient, origin } = require('./client');
+const { AtlasClient, origin, studioUrl } = require('./client');
 const SECRET_KEY = 'atlas.office.connection.v1';
 const GUIDE = 'https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/project/EDITOR_AND_CLOUD.md';
 
@@ -100,6 +100,12 @@ function activate(context) {
       if(message.type==='connectCloud')return await connectCloud();
       if(message.type==='disconnect')return await disconnect();
       if(message.type==='openWebsite')return await openWebsite();
+      if(message.type==='openStudio') {
+        requireTrust();
+        if(connection?.kind!=='cloud')throw new Error('Connect this editor to your private website to open its studio views.');
+        if(!current?.companies.some(c=>c.id===selectedCompany))throw new Error('Choose an existing company.');
+        return await vscode.env.openExternal(vscode.Uri.parse(studioUrl(connection.url,selectedCompany,message.view)));
+      }
       if(message.type==='company') {
         if(typeof message.id!=='string'||!current?.companies.some(c=>c.id===message.id))throw new Error('Unknown company.');
         selectedCompany=message.id;await context.globalState.update('atlas.company',selectedCompany);return refresh();
@@ -144,12 +150,13 @@ function html(webview,root) {
   const css=webview.asWebviewUri(vscode.Uri.joinPath(root,'media','office.css'));
   const js=webview.asWebviewUri(vscode.Uri.joinPath(root,'media','office.js'));
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource}; connect-src 'none'; form-action 'none'; base-uri 'none';"><link rel="stylesheet" href="${css}"><title>Daftar Office</title></head><body>
-  <header><div class="brand">DAFTAR <span>One Office</span></div><button id="refresh" title="Refresh workspace">Refresh</button></header>
+  <header><div class="brand">DAFTAR <span>Command Studio</span></div><button id="refresh" title="Refresh workspace">Refresh</button></header>
   <p id="connection" class="muted">Pair your workspace to begin.</p>
   <section id="connect"><h1>Your office, beside your code.</h1><p>One Donna conversation, permanent teams, and a roadmap tied to their work.</p><button id="connect-desktop" class="primary">Connect desktop</button><button id="connect-cloud">Connect signed-in website</button><p class="muted">Desktop execution stays in Daftar. API keys stay in its vault or on the website server.</p></section>
   <div id="notice" role="status" aria-live="polite"></div>
   <main id="workspace" hidden><label for="company">Company</label><select id="company"></select>
   <div id="budget" class="budget"></div>
+  <div id="studio-links" class="studio-links" hidden><p class="muted">Open this company in the connected studio</p><div><button data-studio="blueprint">Blueprint</button><button data-studio="softboard">Ownership</button><button data-studio="timeline">Roadmap</button><button data-studio="whiteboard">Whiteboard</button></div></div>
   <nav aria-label="Workspace views"><button data-tab="chat" aria-pressed="true">Donna</button><button data-tab="team" aria-pressed="false">Team</button><button data-tab="roadmap" aria-pressed="false">Roadmap</button></nav>
   <section id="tab-chat"><h2>Donna's desk</h2><p id="chat-mode" class="muted"></p><div id="messages" aria-live="polite"></div><form id="chat-form"><label for="brief">What should we work on?</label><textarea id="brief" rows="4" maxlength="12000" placeholder="Describe a decision, goal, or improvement…" required></textarea><button type="submit" class="primary" id="send">Send brief</button></form><details><summary>Convene a decision panel</summary><p>Donna reuses experts or fills missing roles. This creates a draft; execution is reviewed in Daftar.</p><label for="panel-focus">Expertise</label><select id="panel-focus"><option value="software">Software and architecture</option><option value="design">Design and experience</option><option value="research">Research · Newton · Tesla · skeptic</option><option value="data">Data and caching</option></select><button id="panel">Use current brief for a panel</button><p class="muted">One round · $2 panel ceiling · 60,000 token allowance per request. The allowance includes context and is not a consumption target.</p></details><div id="panels"></div></section>
   <section id="tab-team" hidden><h2>Office blueprint</h2><p class="muted">Role definitions are permanent. Job states below show actual execution.</p><div id="team"></div><h2>Work queue</h2><div id="jobs"></div></section>

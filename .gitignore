@@ -6,7 +6,7 @@
 *.key
 
 # Dependencies and build output
-node_modules/
+node_modules
 vscode-extension/*.vsix
 dist/
 site-source/node_modules/

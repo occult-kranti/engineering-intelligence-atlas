@@ -100,4 +100,13 @@ class AtlasClient {
     return connection;
   }
 }
-module.exports={AtlasClient,origin,pairing};
+function studioUrl(base, companyId, view) {
+  if (!['blueprint','softboard','timeline','whiteboard'].includes(view)) throw new Error('Choose a supported studio view.');
+  if (typeof companyId !== 'string' || !companyId || companyId.length > 200) throw new Error('Choose a company before opening the studio.');
+  const url = new URL('/workspace/chrome.html', origin(base));
+  url.searchParams.set('company', companyId);
+  url.searchParams.set('workspace', view);
+  url.hash = 'office';
+  return url.href;
+}
+module.exports={AtlasClient,origin,pairing,studioUrl};

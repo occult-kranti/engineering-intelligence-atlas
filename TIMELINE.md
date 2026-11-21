@@ -45,4 +45,14 @@ Follow the numbered records for the delivery sequence. The repository import and
 
 - **034: Director / release auditors / restored-device verifier** — Published [Daftar 0.5.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0) at `0b87469`; all seven test jobs, release and Pages passed. Verified three asset hashes, installed VSIX/runtime, 81 CI screenshots, and the actual published Rust binary. The complete private backup restored seven artifacts; its device paired with production, all three workspace projections matched, and cleanup preserved the final saved state. Seven milestones completed; five next steps assigned. ([release receipt](project/release-0.5.0.json))
 
+## Violet command studio · 20 November 2026 (America/New_York)
+
+- **035: Studio design and renderer engineer** — Implemented Violet studio / Golden drafting, Ownership / Soft Board, actual roadmap status lanes, heat controls and the existing conversation dock. Fixed unsaved room-edit retention, paused employee chat targeting and receipt timestamps. Renderer compilation and 212 DOM assertions pass; final visual browser review remains the release gate. ([ledger](project/WORKER_LEDGER.md))
+
+- **036: Color systems and accessibility reviewer** — Created one shared token system and 69 calculated contrast pairs; normal-text pairs are at least 4.99:1 and essential boundary/focus pairs at least 3.65:1. Enriched only the existing Design & Architecture role; all 23 roles remain and all 15 loader tests pass. No blanket accessibility certification or paid model call is claimed. ([ledger](project/WORKER_LEDGER.md))
+
+- **037: Office signals and accounting engineer** — Implemented global DaftarSignals projection and 17 tests, including 5,000 jobs, scope mismatches, reservations counted once, unknown/zero distinctions, duplicates, missing placement and immutable input. Full desktop suite now passes 392 tests. No database migration, provider call or saved-state mutation. ([ledger](project/WORKER_LEDGER.md))
+
+- **038: Director / cloud and editor integration engineer** — Implemented shared website theme, company-scoped ownership/roadmap links, hashed private renderer assets and validated VS Code navigation. Desktop build, 392 service tests, 212 DOM assertions and 13 editor tests pass. Combined cloud, browser, package and hosted-release verification is in progress; no new paid Claude requests. ([ledger](project/WORKER_LEDGER.md))
+
 Related: [Roadmap](ROADMAP.md) · [Handoff](HANDOFF.md) · [Backend research](project/BACKEND_RESEARCH.md) · [Claude usage](project/CLAUDE_USAGE.md)

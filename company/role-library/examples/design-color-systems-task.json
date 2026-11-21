@@ -1,0 +1,55 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "design-architecture",
+  "taskId": "demo-design-color-systems-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Review a violet, vivid-green and gold studio palette, produce semantic foreground/background pairs and explain the supplied heat-map cases without implying unmeasured capacity or safety.",
+  "inputs": [
+    { "ref": "project/STUDIO_COLOR_SYSTEM.md", "classification": "public-reference" },
+    { "ref": "desktop-shell/src/renderer/studio-tokens.css", "classification": "public-reference" },
+    { "ref": "desktop-shell/src/renderer/office-signals.ts", "classification": "public-reference" },
+    { "ref": "inline:syntheticReview", "classification": "synthetic" }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 25,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "syntheticReview": {
+    "mode": "paper-or-authorized-local-review",
+    "externalExecutionStatus": "not-run",
+    "notice": "These are synthetic derived-metric cases for design review, not OfficeSnapshot records, live permissions or provider accounting receipts.",
+    "contrastPairs": [
+      { "id": "green-action", "foreground": "#17220B", "background": "#BEF264", "purpose": "normal action text", "minimumRatio": 4.5, "expectedResult": "passed" },
+      { "id": "unsafe-white-label", "foreground": "#FFFFFF", "background": "#BEF264", "purpose": "normal action text", "minimumRatio": 4.5, "expectedResult": "failed" },
+      { "id": "light-description", "foreground": "#685E75", "background": "#EEE8DC", "purpose": "normal supporting text", "minimumRatio": 4.5, "expectedResult": "passed" },
+      { "id": "dark-control-boundary", "foreground": "#887A9F", "background": "#2D2544", "purpose": "essential control boundary", "minimumRatio": 3, "expectedResult": "passed" }
+    ],
+    "metricCases": [
+      { "id": "confirmed-zero", "metric": "workload", "recordedValue": 0, "complete": true, "stale": false, "expectedLevel": 0, "expectedMeaning": "Zero recorded unresolved jobs in this scope; no claim about available capacity." },
+      { "id": "loaded-room", "metric": "workload", "recordedValue": 7, "complete": true, "stale": false, "expectedLevel": 3, "expectedMeaning": "Seven recorded unresolved jobs; not a failure or a utilization percentage." },
+      { "id": "attention-needed", "metric": "attention", "recordedValue": 2, "complete": true, "stale": false, "expectedLevel": 2, "expectedMeaning": "Two distinct recorded jobs require attention; retain their reasons." },
+      { "id": "recorded-budget", "metric": "budget", "committedUsd": 8, "ceilingUsd": 10, "complete": true, "stale": false, "expectedLevel": 3, "expectedRatio": 0.8, "expectedMeaning": "80% of the applicable recorded job ceilings; not the global budget balance." },
+      { "id": "missing-ceiling", "metric": "budget", "committedUsd": 8, "ceilingUsd": null, "complete": true, "stale": false, "expectedLevel": "unknown", "expectedRatio": null, "expectedMeaning": "Unknown ratio because the relevant ceiling is missing." },
+      { "id": "explicit-zero-ceiling", "metric": "budget", "committedUsd": 0.25, "ceilingUsd": 0, "complete": true, "stale": false, "expectedLevel": 4, "expectedRatio": null, "expectedMeaning": "Positive commitment exceeds an explicitly zero ceiling; percentage is undefined." },
+      { "id": "stale-workload", "metric": "workload", "recordedValue": 12, "complete": true, "stale": true, "expectedLevel": "unknown", "expectedMeaning": "The sample is stale; retain the last recorded value with its stale label, without presenting it as current." }
+    ]
+  },
+  "acceptance": [
+    "Return semanticPalette and componentPairs for both themes using the actual token source and recorded revision; preserve action, status and heat-map distinctions.",
+    "Calculate all four supplied contrast pairs using unrounded sRGB ratios and identify the intentionally failing white-on-green label.",
+    "Explain each metric case with its value, unit, fixed bucket and exact denominator when present; zero and unknown remain distinct.",
+    "The heatLegend includes visible text or ordinal values, scope and unit, a separate unknown marker, and no invented capacity or risk score.",
+    "Report browser interactions, forced-colors behavior and keyboard/state preservation as not-run unless an actual authorized check produced a receipt.",
+    "Return an accountable handoff to frontend-extensions, with backend questions and QA checks named separately; no duplicate employee, model call or live service action is created."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Reuse the Color Systems procedure of the shared design-architecture role. Inspect the referenced tokens and signal definitions; evaluate only this synthetic packet. Return designIntent, referenceMap, specification and evaluation in the common result envelope. Include semanticPalette, componentPairs, heatLegend, contrast ratios and observed versus not-run checks. Give a concise implementation handoff. Preserve incomplete work at the supplied limit; the packet grants no tools, spending or live data access."
+}

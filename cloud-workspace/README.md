@@ -1,4 +1,4 @@
-# Daftar private cloud office · 0.5.0
+# Daftar private cloud office · 0.6.0
 
 Daftar is the renamed personal command office built in the existing Engineering Intelligence Atlas repository. This directory contains its owner-private website: the shared desktop renderer, ChatGPT sign-in, D1 persistence, Donna chat, device pairing and a durable relay for native commands. Existing Atlas package IDs, API paths and URLs remain compatible.
 
@@ -122,7 +122,9 @@ After building the desktop renderer, update its generated cloud copy:
 node scripts/sync-desktop.mjs /absolute/path/to/engineering-intelligence-atlas
 ```
 
-Edit desktop `chrome.*` source, then regenerate `public/workspace/chrome.*`. The authored `public/workspace/cloud-bridge.js` adapter is preserved. It queues owner commands and never claims optimistic native completion.
+Edit the desktop renderer sources, then run `node scripts/sync-desktop.mjs /absolute/path/to/engineering-intelligence-atlas` from this directory after building the desktop. The script copies the shared studio tokens into `app/studio-tokens.css` and emits content-addressed renderer, signal, style and transport assets in `public/workspace/`. The authored cloud transport now lives in `scripts/cloud-bridge.js`; edit that source, never its generated hashed copy. It queues owner commands and never claims optimistic native completion.
+
+The website and shared office use the same Violet studio / Golden drafting preference, saved as `daftar-studio-theme` on this origin. Blueprint, Ownership, Roadmap and Whiteboard links preserve company scope from the application directory. The theme is a local presentation preference; it does not change the D1 workspace revision or enqueue a native command. Heat signals are derived from the last received snapshot and keep unknown data separate from a confirmed zero. See [the signal contract](../project/OFFICE_SIGNALS.md) and [color system](../project/STUDIO_COLOR_SYSTEM.md).
 
 Clean clones use the portable execution profile. `npm run dev` starts local development; `npm start` previews an already-built Worker on loopback. Portable mock identity is development-only and absent from production; local protected routes still need matching test bindings and a migrated database. Managed Sites checkouts use their ignored execution-profile selection and the Sites lifecycle helpers. This project has no source `wrangler.jsonc`; builds generate `dist/server/wrangler.json`.
 

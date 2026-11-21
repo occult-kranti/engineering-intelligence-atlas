@@ -8,7 +8,7 @@ const src = path.join(here, '..', 'src', 'renderer');
 const dest = path.join(here, '..', 'dist', 'renderer');
 
 fs.mkdirSync(dest, { recursive: true });
-for (const name of ['chrome.html', 'chrome.css']) {
+for (const name of ['chrome.html', 'chrome.css', 'studio-tokens.css']) {
   fs.copyFileSync(path.join(src, name), path.join(dest, name));
 }
 console.log(`Copied renderer assets to ${dest}`);

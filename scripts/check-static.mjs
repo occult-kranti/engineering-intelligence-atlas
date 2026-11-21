@@ -46,7 +46,7 @@ function previewAssetReference(source, name) {
   previewAssets.push(filename);
   return filename;
 }
-for (const name of ['chrome.css', 'chrome.js']) previewAssetReference(previewHtml, name);
+for (const name of ['studio-tokens.css', 'chrome.css', 'office-signals.js', 'chrome.js']) previewAssetReference(previewHtml, name);
 const bridgeFile = previewAssetReference(previewHtml, 'browser-bridge.js');
 previewAssetReference(read('desktop-preview/' + bridgeFile), 'preview-state.json');
 const worker = read('sw.js');

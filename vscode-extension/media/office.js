@@ -13,6 +13,7 @@ function fill(id,items,empty){$(id).replaceChildren(...(items.length?items:[node
 function render(){
   if(!current)return;
   const company=current.companies.find(c=>c.id===companyId);
+  $('studio-links').hidden=kind!=='cloud';
   $('company').replaceChildren(...current.companies.map(c=>{const o=node('option',c.name);o.value=c.id;o.selected=c.id===companyId;return o;}));
   const budget=current.budget;
   $('budget').textContent=budget?`${money(budget.committedUsd)} committed · ${money(budget.remainingUsd)} remaining${budget.warning?' · Budget warning':''}`:'Budget appears after desktop sync.';
@@ -40,6 +41,7 @@ function render(){
 }
 function renderMessages(messages){fill('messages',messages.slice(-30).map(m=>{const el=node('article',undefined,`message ${m.role==='user'?'user':'assistant'}`);el.append(node('strong',m.role==='user'?'You':'Donna'),node('p',m.content||m.message||''));return el;}),'Your company conversation starts here.');}
 for(const [id,type] of [['refresh','refresh'],['connect-desktop','connectDesktop'],['connect-cloud','connectCloud'],['disconnect','disconnect'],['open-website','openWebsite']])$(id).onclick=()=>send({type});
+for(const button of document.querySelectorAll('[data-studio]'))button.onclick=()=>send({type:'openStudio',view:button.dataset.studio});
 $('company').onchange=()=>{companyId=$('company').value;$('messages').replaceChildren();send({type:'company',id:companyId});};
 for(const button of document.querySelectorAll('[data-tab]'))button.onclick=()=>{for(const b of document.querySelectorAll('[data-tab]'))b.setAttribute('aria-pressed',String(b===button));for(const id of ['chat','team','roadmap'])$(`tab-${id}`).hidden=id!==button.dataset.tab;};
 $('chat-form').onsubmit=event=>{event.preventDefault();const content=$('brief').value.trim();if(!content||busy)return;setBusy(true);notice('Sending to the selected company…');send({type:'chat',content});};

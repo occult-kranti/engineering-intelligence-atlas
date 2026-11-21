@@ -41,6 +41,19 @@ function fixture() {
   // Reuse only the repository's explicit test fixture, never native user state.
   const office = structuredClone(installRendererFixture({}).office);
   office.companies[0].visibility = 'private';
+  // Bounded synthetic records distinguish known activity from an employee with
+  // no records. They never schedule or execute provider work.
+  office.employees.push(...[
+    ['fixture-specialist', 'Fixture engineer', 'Backend engineering'],
+    ['fixture-researcher', 'Fixture researcher', 'Research and evidence'],
+  ].map(([id, name, role]) => ({id, name, role, companyId: 'fixture-company', officeId: 'fixture-office', departmentId: 'fixture-department', kind: 'specialist', status: 'active', skillPaths: [], createdAt: fixtureAt, updatedAt: fixtureAt})));
+  office.blueprints[0].rooms[0].departmentId = 'fixture-department';
+  office.blueprints[0].desks = office.employees.filter(employee => employee.companyId === 'fixture-company').map((employee, index) => ({id: `fixture-desk-${index}`, employeeId: employee.id, roomId: 'fixture-room', x: .1 + index * .18, y: .14, width: .14, height: .12}));
+  office.jobs = [
+    {id: 'fixture-queued', goal: 'Fixture queued review', status: 'queued', costStatus: 'none', costUsd: 0},
+    {id: 'fixture-review', goal: 'Fixture review result', status: 'needs-review', costStatus: 'observed', costUsd: .2},
+  ].map(({costUsd, ...job}) => ({...job, companyId: 'fixture-company', officeId: 'fixture-office', departmentId: 'fixture-department', employeeId: 'fixture-specialist', mode: 'provider', provider: 'anthropic', model: 'fixture-no-provider', authorized: false, allowedTools: [], dependencies: [], limits: {maxTokens: 1000, maxUsd: 1, maxMinutes: 5}, priceRates: {inputUsdPerMillion: null, outputUsdPerMillion: null}, usage: {inputTokens: 0, outputTokens: 0, costUsd}, reservation: null, usageRecorded: false, idempotencyKey: job.id, dueAt: fixtureAt, createdAt: fixtureAt, updatedAt: fixtureAt, startedAt: null, finishedAt: null, artifactUri: null, error: null, summary: null, contextHash: null, cacheKey: null, promptVersion: 'fixture', workerId: null, leaseToken: null, leaseExpiresAt: null}));
+  Object.assign(office.budget, {observedUsd: .2, committedUsd: .2, remainingUsd: 9.8});
   office.companies.push(
     { id: 'fixture-sketchbook', name: 'Fixture Sketchbook', repoUrl: 'https://github.com/example/fixture-sketchbook', visibility: 'public', status: 'active', assistantId: 'donna', createdAt: fixtureAt, source: 'ui-test-fixture', importedAt: null, githubStatus: 'unchecked' },
     { id: 'fixture-shared', name: 'Fixture Shared Services', repoUrl: null, status: 'active', assistantId: 'donna', createdAt: fixtureAt, source: 'ui-test-fixture', importedAt: null, githubStatus: 'unchecked' },
@@ -57,7 +70,7 @@ function fixture() {
   const queue = [{ id: 'fixture-command', status: 'queued', baseRevision: 4, createdAt: fixtureAt, command: {action: 'pause_employee', payload: {employeeId: 'fixture-specialist'}} }];
   const budget = {capUsd: 5, observedUsd: .25, reservedUsd: .5, committedUsd: .75, remainingUsd: 4.25};
   return {
-    authenticated: true, sessionSeen: false, calls: [], figmaPosts: [], failFigmaSave: true, integrations: [],
+    authenticated: true, sessionSeen: false, allowRejectedRendererReads: false, rejectedRendererReads: [], calls: [], figmaPosts: [], failFigmaSave: true, integrations: [],
     ledger: [{ id: 'fixture-index-event', actorId: 'fixture-owner', action: 'update_application_index', scopeId: 'owner', summary: 'Synthetic application records loaded for UI verification.', createdAt: fixtureAt }],
     session: {signedIn: true, user: {email: 'fixture-owner@example.invalid'}, capabilities: {chat: true, pairDevices: true, writeSnapshot: false}, budget},
     workspace: {revision: 4, snapshot: office, sourceClientId: null, updatedAt: fixtureAt},
@@ -136,7 +149,14 @@ async function installApiFixture(context, base, state) {
     state.calls.push(key);
     const json = (body, status = 200) => route.fulfill({status, contentType: 'application/json', headers: {'cache-control': 'no-store'}, body: JSON.stringify(body)});
     if (key === 'GET /api/session') { state.sessionSeen = true; return state.authenticated ? json(state.session) : json({ok: false, error: 'Fixture owner sign-in required.'}, 401); }
-    if (!state.authenticated || !state.sessionSeen) { unexpectedRequests.push({key, reason: 'Private fixture API requested before a successful session'}); return json({ok: false, error: 'UI fixture requires the session step.'}, 401); }
+    if (!state.authenticated || !state.sessionSeen) {
+      // A direct signed-out renderer has no successful session to reuse. Permit
+      // only its expected read attempts, return no private payload, and record
+      // each denial separately; all writes still fail the security gate.
+      if (!state.authenticated && state.allowRejectedRendererReads && ['GET /api/workspace', 'GET /api/cloud-threads', 'GET /api/commands'].includes(key)) state.rejectedRendererReads.push(key);
+      else unexpectedRequests.push({key, reason: 'Private fixture API requested before a successful session'});
+      return json({ok: false, error: 'UI fixture requires the session step.'}, 401);
+    }
     if (key === 'GET /api/workspace') return json(state.workspace);
     if (key === 'GET /api/applications') return json(state.catalog);
     if (key === 'GET /api/devices') return json({devices: state.devices});
@@ -182,12 +202,109 @@ async function capture(page, name, viewport, fullPage = true) {
 }
 async function checkScopedLinks(page, base) {
   const company = page.locator('#company-fixture-company');
-  for (const [name, view] of [['Donna', 'chat'], ['Blueprint', 'blueprint'], ['Roadmap & whiteboard', 'whiteboard'], ['Expert panels', 'decisions']]) {
+  for (const [name, view] of [['Donna', 'chat'], ['Blueprint', 'blueprint'], ['Ownership', 'softboard'], ['Roadmap', 'timeline'], ['Whiteboard', 'whiteboard'], ['Expert panels', 'decisions']]) {
     const href = await company.getByRole('link', {name, exact: true}).getAttribute('href');
     const url = new URL(href, base);
     assert.equal(url.pathname, '/workspace/chrome.html'); assert.equal(url.searchParams.get('company'), 'fixture-company'); assert.equal(url.searchParams.get('workspace'), view); assert.equal(url.hash, '#office');
   }
-  checks.push('Directory links retain the company and intended Donna/Blueprint/Whiteboard/Panel scope');
+  checks.push('Directory links retain the company and distinct Donna, Blueprint, Ownership, Roadmap, Whiteboard and Expert panel routes');
+}
+
+async function checkConnectedStudio(page, viewport) {
+  const company = page.locator('#office-company-select');
+  const assertScope = async () => {
+    assert.equal(await company.inputValue(), 'fixture-company');
+    assert.equal(new URL(page.url()).searchParams.get('company'), 'fixture-company');
+  };
+  await page.waitForFunction(() => typeof window.DaftarSignals?.build === 'function');
+  await assertScope();
+  assert.equal(await page.locator('#workspace-theme').inputValue(), 'drafting', 'The cloud choice must reach the shared renderer');
+  await page.reload({waitUntil: 'networkidle'});
+  await page.locator('#workspace-panel-blueprint').waitFor({state: 'visible'});
+  await page.waitForFunction(() => document.documentElement.dataset.theme === 'drafting' && document.querySelector('#office-company-select')?.value === 'fixture-company' && document.querySelectorAll('#office-blueprint .blueprint-room').length > 0);
+  assert.equal(await page.locator('#workspace-theme').inputValue(), 'drafting');
+  await assertScope();
+
+  const heat = page.locator('#workspace-heat-mode');
+  await page.locator('.heat-key > summary').click();
+  for (const [mode, label] of [['workload', '1 unresolved job'], ['budget', '10% job allowance'], ['attention', '1 flagged job']]) {
+    await heat.selectOption(mode);
+    assert.match(await page.locator('#workspace-signal-summary').innerText(), new RegExp(label));
+    assert.deepEqual(await page.locator('#workspace-heat-legend .heat-legend-row').evaluateAll(rows => rows.map(row => row.dataset.heatLevel)), ['0', '1', '2', '3', '4', 'unknown']);
+    await page.locator('#workspace-heat-legend').getByText('Unknown / stale', {exact: true}).waitFor({state: 'visible'});
+    const room = page.locator('#office-blueprint .blueprint-room').first();
+    assert.equal(await room.getAttribute('data-heat-level'), '1', `${mode}: fixture room must use actual job records`);
+    assert.equal(await room.locator('.heat-reading').innerText(), label);
+  }
+  await heat.selectOption('off');
+  assert.match(await page.locator('#workspace-signal-summary').innerText(), /Heat map off/);
+  assert.match(await page.locator('#workspace-heat-legend').innerText(), /Color overlay is off/);
+  assert.equal(await page.locator('#office-blueprint .blueprint-room').first().getAttribute('data-heat-level'), 'off');
+  assert.equal(await page.locator('#office-blueprint .heat-reading').count(), 0, 'Off must remove the color readings, not retain a misleading intensity');
+  await heat.selectOption('workload');
+  await page.locator('.heat-key > summary').click();
+  await capture(page, 'fixture-connected-blueprint-drafting', viewport, false);
+  checks.push(`Studio ${viewport.width}: loaded signal engine, actual workload/cost/attention, six labelled levels, and an explicit off state`);
+
+  await page.locator('#workspace-tab-softboard').click();
+  await page.getByRole('heading', {name: 'See the people behind the work.', exact: true}).waitFor({state: 'visible'});
+  assert.equal(await page.locator('#workspace-softboard .org-company').innerText(), 'Fixture Engineering');
+  assert.equal(await page.locator('#workspace-softboard .org-office').innerText(), 'Product studio');
+  assert.equal(await page.locator('#workspace-softboard .org-person').count(), 3);
+  const unknownPerson = page.locator('.org-person[data-employee-id="fixture-researcher"]');
+  assert.equal(await unknownPerson.getAttribute('data-heat-level'), 'unknown');
+  assert.equal(await unknownPerson.locator('.heat-reading').innerText(), 'No comparable data', 'No jobs must not imply a measured zero');
+  await page.locator('.org-person[data-employee-id="fixture-specialist"]').click();
+  assert.equal(await page.locator('#softboard-person-title').innerText(), 'Fixture engineer');
+  assert.match(await page.locator('#softboard-person-detail').innerText(), /Backend engineering/);
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'softboard-person-title');
+  await page.locator('#softboard-search').fill('no matching synthetic person');
+  assert.equal(await page.locator('#workspace-softboard .org-person').count(), 0);
+  await page.locator('#softboard-search').fill('');
+  assert.equal(await page.locator('#workspace-softboard .org-person').count(), 3);
+  await page.locator('.org-person[data-employee-id="fixture-specialist"]').click();
+  await assertScope();
+  await capture(page, 'fixture-connected-ownership', viewport);
+  checks.push(`Ownership ${viewport.width}: actual hierarchy, searchable people, focused inspector, unknown data and company scope`);
+
+  await page.locator('#workspace-tab-timeline').click();
+  await page.getByRole('heading', {name: 'From intention to evidence.', exact: true}).waitFor({state: 'visible'});
+  assert.deepEqual(await page.locator('#workspace-timeline .roadmap-lane').evaluateAll(rows => rows.map(row => row.dataset.stage)), ['planned', 'in-progress', 'blocked', 'done']);
+  const outcome = page.locator('.studio-outcome[data-roadmap-id="fixture-outcome"]');
+  assert.equal(await outcome.locator('h4').innerText(), 'Fixture ownership example');
+  assert.equal(await outcome.locator('.outcome-person strong').innerText(), 'Donna');
+  await page.locator('#studio-roadmap-status').selectOption('blocked');
+  assert.equal(await page.locator('#workspace-timeline .studio-outcome').count(), 0);
+  await page.getByText('No saved outcomes in this stage.', {exact: true}).waitFor({state: 'visible'});
+  assert.match(await page.locator('#studio-roadmap-summary').innerText(), /^0 outcomes in view/);
+  await page.locator('#studio-roadmap-status').selectOption('all');
+  assert.equal(await page.locator('#workspace-timeline .studio-outcome').count(), 1);
+  await assertScope();
+  await capture(page, 'fixture-connected-roadmap', viewport);
+  checks.push(`Roadmap ${viewport.width}: recorded ownership, four delivery stages, empty filtered lane and restored scope`);
+
+  // A draft never invokes /api/chat. Follow the same conversation DOM node
+  // between its home and dock so duplicate composers cannot hide data loss.
+  await page.locator('#workspace-tab-chat').click();
+  const draft = `Unsent synthetic brief at ${viewport.width}px`;
+  await page.locator('#chat-message').fill(draft);
+  const conversation = await page.locator('#donna-conversation').elementHandle();
+  await page.locator('#workspace-tab-blueprint').click();
+  await page.locator('#donna-dock-toggle').click();
+  assert.equal(await conversation.evaluate(node => node.parentElement?.id), 'donna-dock-slot');
+  assert.equal(await page.locator('#chat-message').inputValue(), draft);
+  await page.locator('#workspace-tab-timeline').click();
+  assert.equal(await page.locator('#chat-message').inputValue(), draft);
+  assert.equal(await page.locator('#donna-conversation').count(), 1);
+  if (viewport.width === 1440) await capture(page, 'fixture-connected-donna-dock', viewport, false);
+  await page.locator('#donna-dock-close').click();
+  assert.equal(await page.evaluate(() => document.activeElement?.id), 'donna-dock-toggle');
+  await page.locator('#workspace-tab-chat').click();
+  assert.equal(await conversation.evaluate(node => node.parentElement?.id), 'donna-chat-home');
+  assert.equal(await page.locator('#chat-message').inputValue(), draft);
+  await conversation.dispose();
+  await assertScope();
+  checks.push(`Donna ${viewport.width}: one conversation, unsent draft survives tab/dock switches, focus returns and company stays selected`);
 }
 
 try {
@@ -218,6 +335,14 @@ try {
     await page.getByLabel('Device name', {exact: true}).fill('Fixture laptop');
     await capture(page, 'fixture-home', viewport);
     checks.push(`Homepage ${viewport.width}: Daftar navigation, saved-state summary, devices and office entry`);
+    await page.waitForFunction(() => document.documentElement.dataset.theme === 'blueprint');
+    const darkCanvas = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--canvas').trim());
+    assert.ok(darkCanvas, 'The built homepage must load the shared studio palette');
+    await page.locator('#cloud-studio-theme').selectOption('drafting');
+    await page.waitForFunction(() => document.documentElement.dataset.theme === 'drafting');
+    assert.equal(await page.evaluate(() => localStorage.getItem('daftar-studio-theme')), 'drafting');
+    assert.notEqual(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--canvas').trim()), darkCanvas, 'Changing the appearance must apply a different canvas palette');
+    if (viewport.width === 1440) await capture(page, 'fixture-home-drafting', viewport);
 
     const beforeDirectory = state.calls.length;
     await page.getByRole('navigation', {name: 'Daftar workspace'}).getByRole('link', {name: 'Directory', exact: true}).click();
@@ -225,6 +350,8 @@ try {
     await page.locator('.directory-company').first().waitFor({state: 'visible'});
     await page.waitForFunction(() => document.querySelectorAll('.directory-company').length === 3);
     assert.equal(state.calls[beforeDirectory], 'GET /api/session', 'Directory must load its session before private records');
+    await page.waitForFunction(() => document.documentElement.dataset.theme === 'drafting');
+    assert.equal(await page.locator('#cloud-studio-theme').inputValue(), 'drafting');
     assert.match(await page.title(), /Daftar.*Application Directory/);
     await page.getByText('Website record created', {exact: true}).waitFor({state: 'visible'});
     await page.getByText('Repository created', {exact: true}).first().waitFor({state: 'visible'});
@@ -296,8 +423,19 @@ try {
     await page.locator('#workspace-panel-blueprint').waitFor({state: 'visible'});
     assert.equal(new URL(page.url()).searchParams.get('company'), 'fixture-company');
     assert.ok(await page.locator('#office-blueprint .blueprint-room').count() > 0, 'Connected blueprint should show the synthetic saved room');
-    await capture(page, 'fixture-connected-blueprint', viewport, false);
-    checks.push(`Connected renderer ${viewport.width}: directory blueprint link opens the scoped saved room`);
+    await checkConnectedStudio(page, viewport);
+    // Also exercise the reverse shared-renderer → cloud boundary, then reload
+    // the React page. This is a local preference, not a production save claim.
+    await page.locator('#workspace-theme').selectOption('blueprint');
+    assert.equal(await page.evaluate(() => localStorage.getItem('daftar-studio-theme')), 'blueprint');
+    await page.goto(base + '/applications', {waitUntil: 'networkidle'});
+    await page.waitForFunction(() => document.documentElement.dataset.theme === 'blueprint' && document.querySelectorAll('.directory-company').length === 3);
+    assert.equal(await page.locator('#cloud-studio-theme').inputValue(), 'blueprint');
+    await page.reload({waitUntil: 'networkidle'});
+    await page.waitForFunction(() => document.documentElement.dataset.theme === 'blueprint' && document.querySelectorAll('.directory-company').length === 3);
+    assert.equal(await page.locator('#cloud-studio-theme').inputValue(), 'blueprint');
+    await checkScopedLinks(page, base);
+    checks.push(`Theme ${viewport.width}: cloud → shared renderer → cloud, distinct palettes and persistence across both reloads`);
 
     if (viewport.width === 390) {
       state.authenticated = false; state.sessionSeen = false;
@@ -308,6 +446,28 @@ try {
       assert.deepEqual(state.calls.slice(previousCalls), ['GET /api/session'], 'A rejected synthetic session must not fetch private directory APIs');
       await capture(page, 'fixture-directory-signin-required', viewport, false);
       checks.push('Client sign-in state: failed synthetic session shows no company metadata and makes no directory API requests');
+
+      state.allowRejectedRendererReads = true;
+      const beforeDirectRenderer = state.calls.length;
+      await page.goto(base + '/workspace/chrome.html?company=fixture-company&workspace=blueprint#office', {waitUntil: 'networkidle'});
+      await page.locator('#cloud-workspace-notice').waitFor({state: 'visible'});
+      assert.equal(await page.locator('#workspace-save-label').innerText(), 'Cloud not loaded');
+      assert.equal(await page.locator('#workspace-budget-label').innerText(), 'Budget not loaded');
+      assert.match(await page.locator('#cloud-workspace-notice-message').innerText(), /Cloud workspace is not loaded/);
+      assert.equal(await page.locator('#office-blueprint .blueprint-room').count(), 0);
+      assert.equal(await page.locator('#workspace-softboard .org-person').count(), 0);
+      assert.equal(await page.getByText('Fixture Engineering', {exact: true}).count(), 0, 'A new signed-out renderer must not expose fixture company metadata');
+      assert(await page.locator('#chat-send').isDisabled(), 'An unavailable cloud snapshot must not enable chat submission');
+      assert(state.rejectedRendererReads.length > 0, 'Direct cloud read attempts must receive fixture 401s');
+      assert(state.calls.slice(beforeDirectRenderer).every(key => ['GET /api/session', 'GET /api/workspace', 'GET /api/cloud-threads', 'GET /api/commands'].includes(key)), 'The unavailable renderer may only check session and denied read-only workspace routes');
+      await capture(page, 'fixture-connected-signin-required', viewport, false);
+      state.allowRejectedRendererReads = false;
+      const beforeWelcome = state.calls.length;
+      await page.locator('#cloud-welcome').click();
+      await page.waitForURL(base + '/');
+      await page.getByRole('link', {name: 'Sign in', exact: true}).waitFor({state: 'visible'});
+      assert.deepEqual(state.calls.slice(beforeWelcome), ['GET /api/session'], 'Welcome must not fetch private records after a rejected session');
+      checks.push('Direct renderer sign-in state: denied reads expose no metadata, cloud/budget status stays unavailable, chat is disabled and welcome opens sign-in');
     }
     assert.deepEqual(pageErrors, [], 'Cloud UI emitted browser exceptions');
     await context.close(); activePage = null;

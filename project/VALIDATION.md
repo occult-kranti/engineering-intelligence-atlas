@@ -1,5 +1,11 @@
 # Integrated validation record
 
+## Command studio candidate · v0.6.0
+
+The current candidate adds the violet/green/gold studio, a shared light theme, ownership and roadmap views, and derived heat maps. Local desktop build and **392 service tests / 27 files**, **218 DOM assertions**, cloud TypeScript/build and **28 API/directory tests**, and VS Code syntax/package plus **13 protocol tests** pass. The portable build verifies **171 files and 115 precache entries**. The design role loads with its existing 23-role registry; 15 loader tests pass inside the desktop suite. No new Claude API requests were made.
+
+The managed browser preview confirmed both homepage palettes and persistence into the shared renderer. It exposed actual navigation/background specificity and dim helper-text defects; these were corrected and eight rendered contrast regressions added to the public browser gate. A missing hosted snapshot also exposed misleading cloud-session/upgrade labels; visible recovery and six DOM regressions now cover this state. Final combined CI, screenshots, packages, owner-private deployment and exact release/download receipts are still pending. The verified 0.5.0 records below remain historical.
+
 ## Released connected office · v0.5.0
 
 Checkpoint: **20 November 2026 (America/New_York)**. Evidence timestamps retain

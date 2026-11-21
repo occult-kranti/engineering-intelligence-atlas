@@ -1,8 +1,8 @@
 {
   "name": "atlas-office",
-  "displayName": "Daftar — Donna and One Office",
+  "displayName": "Daftar \u2014 Donna and One Office",
   "description": "Control your Daftar companies, Donna chat, decision panels, roadmaps and bounded jobs from VS Code.",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "publisher": "occult-kranti",
   "license": "UNLICENSED",
   "engines": {
@@ -106,7 +106,7 @@
     "test": "node --test test/*.test.js",
     "test:installed": "node scripts/smoke-installed.mjs",
     "vscode:prepublish": "npm run check && npm test",
-    "package": "vsce package --no-dependencies --out atlas-office-0.5.0.vsix"
+    "package": "vsce package --no-dependencies"
   },
   "devDependencies": {
     "@vscode/test-electron": "3.1.0",

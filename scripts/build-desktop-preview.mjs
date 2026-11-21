@@ -25,7 +25,9 @@ function rewriteReference(source, original, generated) {
 const seed = contentAddress('preview-state.json', readFileSync(join(repoRoot, 'company/preview-state.json')));
 const bridge = rewriteReference(readFileSync(join(shell, 'dist/renderer/browser-bridge.js'), 'utf8'), 'preview-state.json', seed);
 const references = [
+  ['studio-tokens.css', contentAddress('studio-tokens.css', readFileSync(join(shell, 'src/renderer/studio-tokens.css')))],
   ['chrome.css', contentAddress('chrome.css', readFileSync(join(shell, 'src/renderer/chrome.css')))],
+  ['office-signals.js', contentAddress('office-signals.js', readFileSync(join(shell, 'dist/renderer/office-signals.js')))],
   ['chrome.js', contentAddress('chrome.js', readFileSync(join(shell, 'dist/renderer/chrome.js')))],
   ['browser-bridge.js', contentAddress('browser-bridge.js', bridge)],
 ];
@@ -33,7 +35,7 @@ let html = readFileSync(join(shell, 'src/renderer/chrome.html'), 'utf8');
 for (const [original, generated] of references) html = rewriteReference(html, original, generated);
 
 mkdirSync(dest, { recursive: true });
-const generatedFile = /^(?:chrome\.html|(?:chrome|browser-bridge)(?:\.[a-f0-9]{16})?\.js|chrome(?:\.[a-f0-9]{16})?\.css|preview-state(?:\.[a-f0-9]{16})?\.json)$/;
+const generatedFile = /^(?:chrome\.html|(?:chrome|browser-bridge|office-signals)(?:\.[a-f0-9]{16})?\.js|(?:chrome|studio-tokens)(?:\.[a-f0-9]{16})?\.css|preview-state(?:\.[a-f0-9]{16})?\.json)$/;
 for (const entry of readdirSync(dest, { withFileTypes: true })) {
   if (generatedFile.test(entry.name) && !entry.isDirectory()) rmSync(join(dest, entry.name));
 }

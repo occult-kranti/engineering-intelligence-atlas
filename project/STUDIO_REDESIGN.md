@@ -1,0 +1,124 @@
+# Daftar 0.6 — connected office studio
+
+Implementation review: **21 November 2026 (UTC)**. Owner: renderer/design agent, with separate color/accessibility, signal-engine, and release owners.
+
+This increment translates the supplied office-dashboard references into the existing shared renderer. The implemented surfaces are an editable office blueprint, an organization and ownership board, a recorded-outcome roadmap, the existing connected whiteboard, and a nearby Donna conversation. The later palette direction is represented by deep violet, electric green, and warm gold, with an ivory drafting alternative. The implementation keeps saved office records and the existing authorization paths as the source of truth. [Renderer](../desktop-shell/src/renderer/chrome.ts) · [Markup](../desktop-shell/src/renderer/chrome.html) · [Styles](../desktop-shell/src/renderer/chrome.css)
+
+**Verification at this handoff:** renderer TypeScript compilation and **218 pure-DOM assertions pass**. The release owner's live preview identified an unavailable-state issue, now corrected and covered below; final browser acceptance, screenshots, and release/deployment evidence remain pending. No provider calls or paid work were performed by this renderer/documentation task. This review does not reuse an earlier release's provider or browser evidence as proof of this increment. [Interaction suite](../desktop-shell/tests/renderer-behavior.mjs) · [Build/test commands](../desktop-shell/package.json)
+
+## Reference interpretation and decisions
+
+The supplied images are design inputs, not records of an existing Daftar account. Their sample companies, portraits, dates, API badges, permission toggles, percentages, and spend figures were not copied into operational state. Design judgments below are implementation decisions reviewed across UI, data, and accessibility responsibilities; they are not results of a user study.
+
+| Reference idea | Implemented translation | Data and interaction boundary |
+| --- | --- | --- |
+| Drafting grids, office rooms, desks, and architectural detail | Blueprint rooms use saved position and size, a drafting grid, small vector furniture details, real employee initials, and an inspector. | Existing drag and arrow-key movement save through the existing workspace command. The drawing is an office metaphor, not a measured physical floor plan. |
+| CEO → company → department → employee hierarchy | The **Soft Board** shows the selected company and office, shared leadership, departments, and actual assigned people. Search narrows names and roles. | Selecting a person opens their recorded role, status, metrics, ownership, and permission-register links. A visual connection or job title does not grant a capability. |
+| Timeline with owners and milestones | **Roadmap** presents saved outcomes in Planned, In progress, Blocked, and Done lanes, with owner, dependencies, evidence, and last update. | The current roadmap record has no start/end schedule. No Gantt duration, predicted date, milestone, or completion percentage is fabricated. |
+| Whiteboard cards connected to office teams | The existing whiteboard retains room, employee, goal, job, and roadmap links. Owner signal labels use the same selected metric as the blueprint and hierarchy. | Existing ownership editors and mutations remain authoritative. Decorative connectors do not add dependencies or execution permissions. |
+| Donna always close to the work | An explicitly opened Donna dock moves the existing conversation into the spatial view and returns it to the chat view when closed. | There is one conversation DOM and one composer. Opening, closing, or switching views preserves the unsent brief. |
+| Dark technical view and light drafting view | **Violet studio** (`blueprint`) and **Golden drafting** (`drafting`) share semantic component tokens. | The local theme preference changes presentation only. It does not change jobs, scope, policy, or budgets. |
+| Color-coded activity | Open work, Job allowance, and Needs attention overlays use deterministic saved-record projections and fixed bands. An Off choice removes the overlay. | Colors retain visible labels. Unknown is distinct from an observed zero, and high activity is not a verdict about employee quality or security. |
+
+The implemented functions for these mappings are `renderBlueprint`, `renderSoftboard`, `renderSoftboardInspector`, `renderStudioRoadmap`, `renderWhiteboard`, and `syncDonnaDock` in the [renderer](../desktop-shell/src/renderer/chrome.ts). Their controls and text alternatives live in the [shared markup](../desktop-shell/src/renderer/chrome.html).
+
+## Color and hierarchy
+
+The selected dark field uses `--canvas: #151126`, with elevated violet surfaces, electric-green action color `#BEF264`, and warm-gold identity/detail color `#E8BA64`. The light view uses ivory with violet ink and a darker green action color that can support white action text. Connections, operational statuses, action affordances, and heat intensity have separate semantic tokens. The color owner's [color-system document](STUDIO_COLOR_SYSTEM.md) records the exact pairs, calculated contrast checks, and limitations; the [token stylesheet](../desktop-shell/src/renderer/studio-tokens.css) supplies the implementation.
+
+The renderer selects `html[data-theme="blueprint"]` or `html[data-theme="drafting"]`. The corresponding storage key is `daftar-studio-theme`; the heat preference uses `daftar-studio-heat`. Both keys are guarded so an unavailable local storage API does not prevent the interface from loading. These are browser/device presentation preferences, not synchronized workspace fields. [Preference handling and `initStudio`](../desktop-shell/src/renderer/chrome.ts)
+
+The heat controls appear on Blueprint, Soft Board, Roadmap, and Whiteboard. They are hidden on Chat and Decision room, where no heat-colored content is shown; the preference is retained when returning to a visual planning view. The compact laptop rules explicitly include the theme selector's specificity, so the general themed layout cannot silently override the short-height spacing. [View visibility](../desktop-shell/src/renderer/chrome.ts) · [Compact layout rules](../desktop-shell/src/renderer/chrome.css)
+
+The interface uses visible focus outlines, text beside colored signals, real initials instead of invented staff portraits, and list fallbacks for the spatial editors. Narrow layouts reduce columns and expose a single-column work surface. Reduced-motion and forced-colors rules are present in [component styles](../desktop-shell/src/renderer/chrome.css). Their existence and token calculations do not establish a complete accessibility audit; computed styles and interaction still need browser review.
+
+## Saved data, scope, and authority
+
+The active company, office, and optional department remain the common context for the blueprint, hierarchy, whiteboard, and signal summary. The Soft Board shows direct assignments and applicable shared leadership; cross-company contracted staffing remains explicitly managed through the existing service-contract workflow. It does not silently reassign a contractor's home company. The engine can include valid contracted execution records in the summary, so a summary's recorded roster need not equal the Soft Board's direct-assignment cards. [Scope and board rendering](../desktop-shell/src/renderer/chrome.ts) · [Signal ownership rules](OFFICE_SIGNALS.md#scope-and-ownership)
+
+An employee card's Active or Paused label describes the saved assignment. It is not proof of an online process. The inspector counts recorded grants without presenting that count as currently effective rights; expiry, scope, issuer restrictions, and enforcement remain visible in the existing authority register. A paused employee can still be inspected, but the conversation action is disabled until the assignment is resumed through the employee register. [Inspector and existing authority handlers](../desktop-shell/src/renderer/chrome.ts)
+
+The new board actions route to existing controls rather than introducing parallel writes:
+
+- **Talk to this employee** selects an active employee in the existing conversation.
+- **Inspect permissions** opens the existing authority editor for that employee.
+- **Inspect ownership** opens the existing portfolio-roadmap editor.
+- **CEO / Director** opens the existing portfolio control surface.
+
+The renderer continues to use `workspaceCommand` and `appliedOfficeSnapshot`. A cloud command marked `queued` remains pending desktop confirmation; it is not presented as an applied native mutation. Public-preview mutation controls retain the existing read-only boundary. These display rules complement server/native authorization; they do not replace it. [Command and scope handling](../desktop-shell/src/renderer/chrome.ts)
+
+## Heatmap and cache contract
+
+The renderer consumes the shared classic script through:
+
+```ts
+window.DaftarSignals.build(snapshot, {
+  companyId,
+  officeId,
+  departmentId,
+  now: new Date().toISOString(),
+  sampledAt, // actual receipt of a successful snapshot response
+});
+```
+
+`summary`, `perEmployee`, `perDepartment`, and `perRoom` supply groups keyed by persisted IDs. Each metric supplies `level`, `label`, `detail`, and numeric fields; the UI maps `level` to theme tokens and renders the supplied wording. The separate engine owns thresholds and accounting. The full source of truth for this contract is [Office signals](OFFICE_SIGNALS.md), backed by [office-signals.ts](../desktop-shell/src/renderer/office-signals.ts) and its [unit suite](../desktop-shell/tests/office-signals.test.ts).
+
+| UI selection | Meaning | What it does not establish |
+| --- | --- | --- |
+| Open work | Count of saved queued, running, waiting-budget, and paused jobs in scope | Employee capacity, CPU load, or actual current process activity |
+| Job allowance | Recorded commitments compared with summed individual job allowances | A company allocation, account balance, or remaining global budget |
+| Needs attention | Distinct jobs with the engine's recorded exception/dependency/lease conditions | A severity ranking or security score |
+| Off | Removes the color overlay while keeping names and saved records | A data reset or a change in dispatch policy |
+
+No matching records remain unknown. The visible legend provides fixed band meanings and an Unknown / stale entry. The inspector exposes metric details, including the job-allowance denominator. The engine's global budget projection is separate from these scoped comparisons. [Signals and legends](OFFICE_SIGNALS.md#fixed-bands-and-accounting)
+
+`currentStudioSignals` reuses one projection for an unchanged snapshot identity and selected scope. A new snapshot or scope rebuilds it. Receipt time is updated after a successful refresh, acknowledged command snapshot, or cloud conversation snapshot; job `updatedAt` is never substituted for that receipt time. The projection is a cache of derived display data, not another ledger or database table. [Renderer cache and receipt handlers](../desktop-shell/src/renderer/chrome.ts)
+
+The new view adds no automatic polling. Time-sensitive lease/freshness results are recalculated when the existing refresh/snapshot path runs. The interface describes saved records and does not claim continuously live telemetry. The existing worker polling path and its conditions remain separate. [Freshness contract](OFFICE_SIGNALS.md#freshness-scale-and-persistence) · [Existing refresh path](../desktop-shell/src/renderer/chrome.ts)
+
+## Implementation review log
+
+| Review | Finding | Decision / fix | Evidence and status |
+| --- | --- | --- | --- |
+| Initial implementation | The references need a coherent relationship between office position, hierarchy, work, and conversation. | Introduced the two themes, shared signal controls, Soft Board, recorded-outcome roadmap, themed blueprint/whiteboard, and movable single Donna dock. Preserved existing controls and native mutations. | [Renderer](../desktop-shell/src/renderer/chrome.ts), [markup](../desktop-shell/src/renderer/chrome.html), [styles](../desktop-shell/src/renderer/chrome.css). Initial expanded DOM suite: 209 assertions passed. |
+| Draft preservation | Changing the heat selector rebuilt the room canvas; its automatic inspector selection could overwrite an unsaved room-name edit after focus left the form. | Track room-form input/change as dirty. Automatic canvas refresh does not repopulate a dirty form. Explicit room selection or a successful save resets the draft flag. Added visible unsaved-detail text. | Two regression assertions verify survival across heat changes and snapshot refresh in [renderer-behavior.mjs](../desktop-shell/tests/renderer-behavior.mjs). |
+| Paused employee target | The hierarchy could select a paused employee, while the existing conversation selector accepts active employees only. | Keep role and ownership inspection available, disable the paused employee's chat action, and explain how to resume the assignment. Guard the click handler as well. | Regression assertion verifies disabled chat, available permission inspection, and explanatory text in the [interaction suite](../desktop-shell/tests/renderer-behavior.mjs). |
+| Snapshot receipt consistency | Only explicit refresh initially recorded the analytics sample time. A later successful command could return a fresh snapshot while retaining the earlier receipt timestamp. | Stamp successful snapshot receipts in the existing command-result and cloud-reply paths as well. Preserve the queued-command acknowledgement semantics. | `appliedOfficeSnapshot`, `sendDonnaCloud`, and `refreshOffice` in the [renderer](../desktop-shell/src/renderer/chrome.ts). Renderer compile and all 212 DOM assertions passed after the fix. |
+| Data/visual contract review | A room with no jobs can look deceptively idle; a monetary ratio can be mistaken for global budget use; reference dates can imply a schedule that does not exist. | Keep unknown distinct, name the job-allowance denominator, expose band labels, and use recorded delivery states/update dates instead of invented timeline geometry. | [Signal contract](OFFICE_SIGNALS.md), [color rules](STUDIO_COLOR_SYSTEM.md), and [view assertions](../desktop-shell/tests/renderer-behavior.mjs). |
+| Color and reachable-screen review | The unknown legend used a boundary color as its fill; placeholder opacity weakened the measured text pair; the keyboard skip link retained white on electric green. Several reachable legacy cards/code surfaces remained pale beneath dark-theme text, and the drafting emphasis banner inherited dark heading/eyebrow colors. | Use the unknown fill/text pair and dashed border, full-opacity muted placeholders, accent-ink for the skip link, semantic surfaces/text for metrics, employee/squad/node/pricing/artifact/code views, and the explicit emphasis-surface/emphasis-ink pair for the banner. Preserve the banner button's separate surface/text pair. | Source review by the color/accessibility owner; bounded fixes in [component styles](../desktop-shell/src/renderer/chrome.css). TypeScript and all 212 DOM assertions passed after the fixes; final computed browser styles remain part of the pending visual gate. |
+| Restored theme review | Restoring the light preference changed the document theme but left the browser's theme-color metadata violet until a user toggled the selector. | Synchronize the initial meta theme-color with the restored preference, using the same theme colors as the change handler. | `initStudio` in the [renderer](../desktop-shell/src/renderer/chrome.ts). Included in the final compiled renderer; no scope or execution state changes. |
+| Live hosted unavailable-state review | The release owner's direct hosted-renderer preview had no loaded authenticated snapshot but showed Cloud session, a signed-in tooltip, and Workspace upgrade required; the actionable failure was outside the visible working view. | Show Cloud not loaded and Budget not loaded, expose a concise non-sensitive status and **Open welcome / sign in**, and use the existing `backToLauncher` navigation. Missing state stays distinct from a loaded snapshot that lacks the required schema. Hide the notice after a successful snapshot refresh. | [Markup notice](../desktop-shell/src/renderer/chrome.html), cloud/refresh state handling in the [renderer](../desktop-shell/src/renderer/chrome.ts), and six new [DOM assertions](../desktop-shell/tests/renderer-behavior.mjs). The suite now passes 218 assertions. Live browser retest and capture remain with the release owner. |
+| Live computed-color review | The generic themed button background won over legacy backgrounds for inactive navigation and the save-state control, leaving muted text on electric green. Toolbar/composer helper text still retained old palette values, and several hover states had the same cascade risk. | Explicitly pair navigation, save-state, picker, budget, Donna toggle, office tabs, inline links, executive button, and actual `.decision-list-button` default/hover/selected states. Use muted text for toolbar and composer explanations. | The release owner's live observation supplied the failing computed style; the color owner reviewed the bounded selector list. Fixes are in [component styles](../desktop-shell/src/renderer/chrome.css). The browser gate owner is adding computed contrast regressions for navigation, save-state, and the visible blueprint description in both themes. |
+| First-laptop-viewport review | The new signal bar added space above Chat, and the themed view/heading rules outranked earlier compact rules. The release owner's live screenshot showed the send action close to the bottom even on a taller display. | Hide the heat bar on Chat and Decision room and restore theme-aware short-height layout rules. Keep the existing 1280×720 and 1024×768 first-composer viewport assertions unchanged. | [`#workspace-studio-signals`](../desktop-shell/src/renderer/chrome.html), `renderUnifiedWorkspace` in the [renderer](../desktop-shell/src/renderer/chrome.ts), and themed compact [styles](../desktop-shell/src/renderer/chrome.css). TypeScript and all 218 DOM assertions pass; actual viewport bounds require the browser gate. |
+| Real-browser release review | DOM tests do not calculate visual overlap, effective contrast, viewport bounds, or renderer transport behavior. | Release owner runs the browser gates, captures both themes and important views, reviews narrow layouts, and records any fixes before claiming visual acceptance. | **Pending at renderer handoff.** Evidence should be appended below. |
+
+## Verification and release evidence
+
+Completed locally for this increment:
+
+```sh
+npm --prefix desktop-shell run test:renderer
+git diff --check
+```
+
+The renderer command compiled TypeScript, copied renderer assets, and ran **218 passing assertions** using the actual compiled renderer and signal script against the test bridge. Reported `fixtureOnly: true`, `networkCalls: 0`, `providerCalls: 0`, and `visualVerification: false`. This validates the tested interaction contracts; it does not validate a hosted account, real provider execution, signed desktop installation, or a final deployment. [Test source](../desktop-shell/tests/renderer-behavior.mjs) · [Package script](../desktop-shell/package.json)
+
+| Release evidence | Status at this handoff | Evidence location / release-owner follow-up |
+| --- | --- | --- |
+| Shared renderer TypeScript and DOM interactions | Passed: 218 assertions | `npm --prefix desktop-shell run test:renderer` |
+| Diff whitespace/error check | Passed | `git diff --check` |
+| Browser interaction gates | Pending | [Cloud smoke source](../scripts/smoke-cloud-ui.mjs) and [static smoke source](../scripts/smoke-static.mjs); record the actual run result here |
+| Blueprint, Soft Board, roadmap, whiteboard, and Donna screenshots | Pending | Release owner to link reviewed captures, dimensions, theme, and scope |
+| Narrow/mobile, keyboard, and theme contrast inspection | Pending | Release owner to record failures/fixes and the final inspected build |
+| Published build and deployment | Separate release responsibility | Central release notes and release links should identify the built revision |
+
+## Known limitations and next design checks
+
+1. **Roadmap is a delivery board.** A genuine scheduled timeline needs explicit start/end dates, timezone rules, dependency scheduling semantics, and a durable migration before date bars can be rendered accurately. Existing outcomes continue to carry their recorded update dates. [Roadmap model and renderer](../desktop-shell/src/renderer/chrome.ts)
+2. **The organization board has a deliberate scope.** It displays direct office assignments and shared leadership. Contracted cross-company staffing is managed through service contracts; no new cross-company drag/reassignment or permission inheritance is implied. [Scope rendering](../desktop-shell/src/renderer/chrome.ts)
+3. **Rendering is bounded, not virtualized.** Blueprint renders up to 80 rooms, whiteboard up to 100 cards, Soft Board up to 150 matching people, and the new roadmap up to 120 matching outcomes. The new board/roadmap identify their display limits and provide search or scope/state filtering. Very large portfolios still need a measured pagination/virtualization design. A 5,000-job analytics fixture is not evidence of a large-canvas browser benchmark. [Render loops](../desktop-shell/src/renderer/chrome.ts) · [Analytics verification scope](OFFICE_SIGNALS.md#verification)
+4. **Presentation preferences are local.** Theme and overlay choice can be shared by same-origin surfaces using the agreed keys, but are not automatically synchronized between devices. Durable account preferences require a separately versioned persisted field. [Preference handling](../desktop-shell/src/renderer/chrome.ts)
+5. **Freshness is bounded by received state.** A display cache does not independently poll a running worker or observe new lease expiry between refreshes. Unknown/stale handling belongs to the projection; operational actions continue through the existing native services. [Freshness contract](OFFICE_SIGNALS.md#freshness-scale-and-persistence)
+6. **Visual acceptance remains separate.** Token checks and fixture assertions do not prove every legacy component has an appropriate final computed color, that a dock avoids overlap at all sizes, or that screen-reader navigation is complete. Browser captures and interaction evidence are required before those claims. [Color verification limits](STUDIO_COLOR_SYSTEM.md#calculated-contrast-and-scope-of-the-check)
+
+This document supersedes the earlier studio handoff's visual direction for 0.6. The earlier [desktop studio handoff](DESKTOP_STUDIO_HANDOFF.md) remains relevant to the decision-room, cloud-connection, and command-acknowledgement behavior it introduced; its historical measurements and provider run belong to that earlier increment.

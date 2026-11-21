@@ -1,49 +1,41 @@
-# Daftar 0.5.0 — Connected personal office
+# Daftar 0.6.0 — Violet command studio
 
-Daftar brings the desktop office, private website and VS Code client into one company model. Donna remains the main conversation, with a linked office blueprint, ownership whiteboard, decision room and CEO portfolio. The visible product is renamed Daftar; repository URLs, existing Atlas identifiers and local workspace compatibility remain stable.
+Daftar's desktop and private website share a redesigned office inspired by architectural blueprints, ownership boards and drafting surfaces. Deep violet, electric green and warm gold define **Violet studio**; an ivory canvas and darker green/gold controls define **Golden drafting**. The names and company records remain Daftar, with existing native identities and archive compatibility preserved.
 
-## Connected work
+## One office, connected views
 
-- An owner-private website adds ChatGPT sign-in, D1-backed workspace and conversation storage, revocable desktop/editor pairings and server-held provider credentials.
-- The website queues native changes with their original revision. The desktop validates and applies them on **Sync now**, then publishes a fresh projection. Pairing itself does not upload or start an unattended loop.
-- Native receipts prevent duplicate effects after lost acknowledgments. Stale commands stay visible as conflicts. Cancelling queued work preserves history and any command already applied.
-- One desktop owns writes. The website exposes explicit writer recovery after a device is revoked or expires, preserving the snapshot and requiring a matching restored replacement workspace.
-- Cloud-origin company, office, department and employee messages import into native conversation threads in full within explicit limits, with attribution and stable identities. Native conversations sync back and merge without duplicate replies. Group-scoped messages currently stay online.
+- **Blueprint:** saved rooms and employee desks, architectural grid, keyboard movement and a compact accessible list alternative.
+- **Ownership / Soft Board:** the actual company, office, department and employee hierarchy, search, an employee inspector and links to existing chat and authority controls.
+- **Roadmap:** recorded outcomes grouped by their real status, with ownership, dependencies, evidence and update dates. No invented start/end dates or Gantt intervals.
+- **Whiteboard:** owned cards and existing goal/job mappings on the same studio surface.
+- **Donna dock:** the existing conversation moves beside visual work. One composer and one thread preserve the unsent draft while changing views.
 
-The VS Code extension uses the paired desktop or website, stores credentials in SecretStorage and exposes company context, Donna, team/roadmap controls and draft decision panels. The installed VSIX retains the compatible `atlas-office` package identity.
+Unsaved room edits survive heat-map changes and state refreshes. Paused employees remain inspectable and cannot become an invalid active chat target. Existing native authorization, revision checks and queued-command behavior remain the action boundary.
 
-## Donna and expert panels
+## Heat maps with explicit meaning
 
-Donna completed two real Claude roadmap requests for the initial platform and design workstreams, followed by two independent expert reviews and a synthesis. Their saved reports informed this implementation. They are planning evidence, not claims of autonomous code execution or independently run tests.
+Choose Workload, Job allowance, Attention or Off. The data layer derives each view from saved records without a provider call or database migration:
 
-Two additional Donna reviews covered Daftar management and the application directory under separate $20 ceilings inside the global budget. Their actual combined observed cost was $0.093502. Hosted Donna also returned a saved production reply; the usage record distinguishes native and cloud requests and retained uncertain reservations.
+- Workload counts unfinished saved jobs; it is not employee utilization or CPU telemetry.
+- Job allowance compares recorded commitment with the sum of individual job ceilings. Native reservations already reflected in job usage are counted once. The global budget remains separately labeled and includes external allocations.
+- Attention counts distinct jobs with recorded conditions requiring review, such as failures, waiting budget or expired running leases. Earliest dispatch time is not treated as a deadline.
+- Missing, stale or unusable evidence is **unknown**, visibly different from a confirmed zero. Fixed legend bins, numbers and patterns accompany color.
+- Shared employees and duplicate placements cannot multiply work across the selected execution scope. Oversized inputs fail visibly rather than returning a partial heat map.
 
-Panels reuse eligible specialists, create an explicit review DAG and keep a whole-panel spending ceiling. A subsequent round requires a recorded revision decision. Five shared research roles add Newton analysis/synthesis, Tesla mechanism/resonance, a research skeptic, a resonance advisor and a paired research coordinator. These are documented research methods and role definitions, not historical endorsements or proof of scientific claims.
+[Signal contract](OFFICE_SIGNALS.md) records the exact thresholds, ownership rules, bounds and limitations. [Color system](STUDIO_COLOR_SYSTEM.md) records the calculated foreground/background pairs; those calculations are not a blanket accessibility certification.
 
-## Management and ownership
+## Website, editor and shared design role
 
-CEO management adds scoped, expiring permission grants and temporary promotions. Full and partial rights are finite supported in-app capabilities. Donna can delegate within her own active scope, capability and expiry; parent revocation invalidates descendants. Temporary titles preserve permanent employee roles.
+The private homepage and application directory use the same studio tokens and appearance preference. Each company has direct links to Donna, Blueprint, Ownership, Roadmap, Whiteboard and expert panels. VS Code adds company-scoped studio links for its connected website, with strict origin/view validation and no credentials in navigation URLs. The extension preserves the editor's high-contrast theme behavior.
 
-Managed employee policy remains enforced after a grant expires or is revoked until an owner explicitly changes that policy. A searchable native index and authority decision ledger connect people, scopes, work and recorded reasons. The public preview contains labeled synthetic examples and disables mutations.
+The existing Design & Architecture role now includes color-system responsibilities, contrast examples and truthful heat-map acceptance. All 23 role definitions remain; no duplicate employee or paid provider task is created by the redesign.
 
-The common interface uses the Daftar name, a compact laptop composer and an architectural office layout. Specialized management controls stay with the CEO view, keeping one main conversation.
+Public and private renderer assets use content-addressed names. The cloud transport's authored source is now `cloud-workspace/scripts/cloud-bridge.js`; the shared synchronization script generates its hashed distribution together with the renderer, signal engine and styles.
 
-The private application directory links recorded repository deployments and owned websites to company context, with separate creation, publication and reachability dates. Unconfirmed associations remain visible. Figma references are company-owned and point to the official client-specific MCP setup. The bounded OpenPencil adapter performs offline HTML / `.fig` / SVG handoffs with provenance and receipts. The existing Security specialist gains a source-reviewed Clouds Against Humanity curriculum guide and zero-dollar beginner exercise.
+## Installation and verification
 
-## Budget and execution boundaries
+Use the assets attached to this version after all release gates pass: the Linux x86_64 AppImage, `atlas-office-0.6.0.vsix`, and the Android debug APK. The AppImage remains unsigned; Windows/macOS signing and owner-device keychain acceptance are separate work. The Android attachment carries the research atlas rather than the full native Office runtime.
 
-Cloud model calls use a $5 allocation held inside the same $100 development-session budget. Atomic admission, request idempotency and retained uncertain reservations prevent silent rebilling or double allocation. A limit pauses new admission while preserving work. Current usage and uncertainty are recorded in [Claude usage](CLAUDE_USAGE.md).
+The redesign introduces no native schema migration or provider request. Desktop scheduling still runs while the app is open. Website controls still queue native changes for explicit **Sync now**; hosted Donna is text-only. Theme and heat preferences are local to the current browser/app, while office state follows the existing D1/native synchronization protocol.
 
-Hosted Donna is text-only and cannot execute code, access local files, hire or publish repositories. Native commands, provider jobs, approved code changes and GitHub publication remain separate operations with their own checks. The cloud provider request path explicitly rejects redirects after adapting to Workers' supported request options.
-
-D1 is the implemented website database. Supabase remains a documented optional adapter requiring its own access policies, migration, restore and concurrency acceptance. Rust continues to own the native control core; this release does not replace the UI with an unbenchmarked Rust rewrite.
-
-## Install and verify
-
-Use the assets attached to the successfully published version. The Linux AppImage is an unsigned development build; it contains application code, not the owner's private workspace or credentials. Restore the separate private workspace and configure the destination OS vault. Install `atlas-office-0.5.0.vsix` through VS Code's **Install from VSIX** action. Desktop scheduling runs while the app is open.
-
-The Android attachment is a debug build of the existing mobile shell with the updated atlas. Windows/macOS signing, an OS background service, physical-device acceptance and a general code-execution adapter remain separate work.
-
-[Validation](VALIDATION.md) records the actual candidate commit, test results, packaged Electron and installed VSIX checks, live cloud results, UI evidence and download integrity. A source change, package file or model report does not by itself establish those outcomes. Historical 0.4.3 checks remain separate.
-
-See [connected release details](CONNECTED_RELEASE.md), [editor/cloud setup](EDITOR_AND_CLOUD.md), [panel lifecycle](DECISION_PANELS.md), [handoff](../HANDOFF.md) and [roadmap](../ROADMAP.md).
+[Validation](VALIDATION.md) records actual test, browser, package, deployment and download evidence. Earlier release receipts remain historical and do not certify this version. [Studio review](STUDIO_REDESIGN.md), [handoff](../HANDOFF.md) and [roadmap](../ROADMAP.md) explain the decisions and next acceptance work.

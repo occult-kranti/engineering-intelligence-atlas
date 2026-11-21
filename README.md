@@ -13,7 +13,17 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
-## Current product — connected office 0.5.0
+## Studio redesign — 0.6.0 candidate
+
+The shared desktop and website office now has **Violet studio** and **Golden drafting** themes: deep violet, electric green, warm gold and an ivory drawing surface. Blueprint rooms, an Ownership / Soft Board hierarchy, real roadmap status lanes and the ownership whiteboard use the same saved scope. Donna's dock contains the existing conversation and preserves an unsent draft when changing views.
+
+Heat maps show **saved unfinished jobs**, **recorded commitment against job allowances**, or **items needing attention**. Legends, labels and unknown states travel with the metric. They do not infer employee utilization, invent schedule dates or trigger model calls. The website directory and VS Code client link to the new company-scoped views. The existing Design & Architecture role now includes color-system and data-visualization acceptance examples.
+
+Local verification has passed 392 desktop tests, 218 renderer assertions and 13 editor protocol tests. Final browser, package, publication and hosted deployment evidence is pending for this candidate; the verified 0.5.0 release below remains the installation baseline until those gates pass.
+
+[Design decisions](project/STUDIO_REDESIGN.md) · [Color tokens and contrast](project/STUDIO_COLOR_SYSTEM.md) · [Heat-map data contract](project/OFFICE_SIGNALS.md)
+
+## Previous verified product — connected office 0.5.0
 
 [v0.5.0 is released](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0)
 from exact source

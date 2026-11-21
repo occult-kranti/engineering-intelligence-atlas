@@ -13,6 +13,8 @@ const root = join(repoRoot, 'docs');
 const screenshotRoot = join(webRoot, '.work', 'ui-screenshots');
 mkdirSync(screenshotRoot, { recursive: true });
 const screenshots = [];
+const interactionChecks = [];
+const contrastChecks = [];
 const mount = '/engineering-intelligence-atlas/';
 const mime = {
   '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css',
@@ -31,6 +33,60 @@ const server = createServer((request, response) => {
 });
 await new Promise((done) => server.listen(0, '127.0.0.1', done));
 const base = `http://127.0.0.1:${server.address().port}${mount}`;
+async function assertStudioContrast(page, viewport, theme) {
+  // These four rendered regressions are the scope of this check. Sidebar text
+  // is intentionally hidden at mobile widths, so inspect it at the desktop size.
+  const targets = [
+    {name: 'inactive navigation', selector: '#primary-nav .nav-item[data-view="overview"]:not(.active) > span:first-of-type'},
+    {name: 'active navigation', selector: '#primary-nav .nav-item.active > span:first-of-type'},
+    {name: 'save status', selector: '#workspace-save-status #workspace-save-label'},
+    {name: 'blueprint description', selector: '#workspace-panel-blueprint .canvas-toolbar > div > p:last-child'},
+  ];
+  for (const target of targets) await page.locator(target.selector).waitFor({state: 'visible'});
+  await page.mouse.move(0, 0); // Measure the resting state, without a prior hover.
+  const results = await page.evaluate(targets => {
+    const parse = value => {
+      const match = value.match(/^rgba?\((.*)\)$/i);
+      if (!match) throw new Error(`Unsupported computed color ${value}; this check expects flat sRGB colors.`);
+      const parts = match[1].trim().split(/[\s,/]+/);
+      if (parts.length < 3 || parts.length > 4) throw new Error(`Invalid computed color ${value}`);
+      const channels = parts.slice(0, 3).map(part => parseFloat(part) / (part.endsWith('%') ? 100 : 255));
+      const alpha = parts.length === 4 ? parseFloat(parts[3]) / (parts[3].endsWith('%') ? 100 : 1) : 1;
+      const color = [...channels, alpha];
+      if (!color.every(channel => Number.isFinite(channel) && channel >= 0 && channel <= 1)) throw new Error(`Invalid computed color ${value}`);
+      return color;
+    };
+    const over = (front, back) => {
+      const alpha = front[3] + back[3] * (1 - front[3]);
+      return alpha === 0 ? [0, 0, 0, 0] : [0, 1, 2].map(index => (front[index] * front[3] + back[index] * back[3] * (1 - front[3])) / alpha).concat(alpha);
+    };
+    const luminance = color => color.slice(0, 3).map(channel => channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4).reduce((sum, channel, index) => sum + channel * [.2126, .7152, .0722][index], 0);
+    return targets.map(target => {
+      const element = document.querySelector(target.selector);
+      if (!element || !element.textContent.trim() || !element.getClientRects().length || element.closest(':disabled,[aria-disabled="true"]')) throw new Error(`${target.name}: expected visible enabled text`);
+      const ancestors = [];
+      for (let current = element; current; current = current.parentElement) {
+        const style = getComputedStyle(current);
+        if (style.visibility !== 'visible' || style.display === 'none' || Number(style.opacity) !== 1 || style.filter !== 'none' || style.mixBlendMode !== 'normal') throw new Error(`${target.name}: hidden text or unsupported group compositing`);
+        ancestors.push(style);
+      }
+      let background = [0, 0, 0, 0];
+      for (const style of ancestors) {
+        if (style.backgroundImage !== 'none') throw new Error(`${target.name}: background imagery needs visual inspection, not a guessed flat contrast ratio`);
+        background = over(background, parse(style.backgroundColor));
+        if (background[3] >= 1) break;
+      }
+      if (background[3] < 1) throw new Error(`${target.name}: no opaque ancestor background was found`);
+      const foreground = over(parse(ancestors[0].color), background);
+      const light = luminance(foreground), dark = luminance(background);
+      return {name: target.name, selector: target.selector, foreground, background, ratio: (Math.max(light, dark) + .05) / (Math.min(light, dark) + .05)};
+    });
+  }, targets);
+  for (const result of results) {
+    assert(result.ratio >= 4.5, `${theme}/${viewport.width}/${result.name}: enabled text contrast ${result.ratio.toFixed(3)} is below 4.5:1; ${JSON.stringify(result)}`);
+    contrastChecks.push({theme, width: viewport.width, ...result});
+  }
+}
 let browser;
 try {
   // CI installs the Playwright-managed browser matched to this driver.
@@ -77,6 +133,9 @@ try {
     const page = await context.newPage();
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
+    page.on('request', request => {
+      if (!['GET', 'HEAD'].includes(request.method())) errors.push(`Read-only preview attempted ${request.method()} ${request.url()}`);
+    });
     await page.goto(`${base}desktop-preview/chrome.html`, { waitUntil: 'networkidle' });
     await page.locator('#office-native-status').filter({ hasNotText: 'Checking' }).waitFor({ state: 'visible' });
     const capture = async (route, surface = 'desktop', fullPage = false) => {
@@ -124,6 +183,106 @@ try {
         }
       }
     }
+    // Appearance and heat are local viewing preferences. A scoped deep link
+    // must survive reload without changing the company or granting writes.
+    await page.locator('#workspace-tab-blueprint').click();
+    const companyId = await page.locator('#office-company-select').inputValue();
+    assert.ok(companyId, 'The public starter must expose its selected company.');
+    await page.waitForFunction(() => typeof window.DaftarSignals?.build === 'function');
+    const darkCanvas = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--canvas').trim());
+    assert.ok(darkCanvas, 'The built preview must load studio palette tokens.');
+    if (viewport.width === 1440) await assertStudioContrast(page, viewport, 'blueprint');
+    await page.locator('#workspace-theme').selectOption('drafting');
+    const lightCanvas = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--canvas').trim());
+    assert.notEqual(lightCanvas, darkCanvas, 'The appearance switch must change the rendered canvas.');
+    await page.locator('#workspace-heat-mode').selectOption('budget');
+    const scopedUrl = new URL(page.url());
+    scopedUrl.searchParams.set('company', companyId);
+    scopedUrl.searchParams.set('workspace', 'blueprint');
+    scopedUrl.hash = '#office';
+    await page.goto(scopedUrl.href, {waitUntil: 'networkidle'});
+    await page.reload({waitUntil: 'networkidle'});
+    await page.waitForFunction(id => document.querySelector('#office-company-select')?.value === id && document.querySelectorAll('#office-blueprint .blueprint-room').length > 0, companyId);
+    assert.equal(await page.locator('#workspace-theme').inputValue(), 'drafting');
+    assert.equal(await page.locator('#workspace-heat-mode').inputValue(), 'budget');
+    assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'drafting');
+    assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--canvas').trim()), lightCanvas);
+    assert.equal(new URL(page.url()).searchParams.get('company'), companyId);
+    if (viewport.width === 1440) await assertStudioContrast(page, viewport, 'drafting');
+    interactionChecks.push(`Theme ${viewport.width}: distinct rendered palettes, persisted theme/heat and scoped company after navigation and reload`);
+
+    await page.locator('.heat-key > summary').click();
+    for (const mode of ['workload', 'budget', 'attention']) {
+      await page.locator('#workspace-heat-mode').selectOption(mode);
+      assert.deepEqual(await page.locator('#workspace-heat-legend .heat-legend-row').evaluateAll(rows => rows.map(row => row.dataset.heatLevel)), ['0', '1', '2', '3', '4', 'unknown']);
+      await page.locator('#workspace-heat-legend').getByText('Unknown / stale', {exact: true}).waitFor({state: 'visible'});
+      const rooms = await page.locator('#office-blueprint .blueprint-room').evaluateAll(nodes => nodes.map(node => ({level: node.dataset.heatLevel, label: node.querySelector('.heat-reading')?.textContent})));
+      assert(rooms.length > 0 && rooms.every(room => room.level === 'unknown' && room.label === 'No comparable data'), 'The public starter has no jobs: every room must state unknown, not zero activity.');
+    }
+    if (viewport.width === 1440) await capture('heat-legend-drafting', 'workspace', true);
+    await page.locator('#workspace-heat-mode').selectOption('off');
+    assert.match(await page.locator('#workspace-signal-summary').innerText(), /Heat map off/);
+    assert.match(await page.locator('#workspace-heat-legend').innerText(), /Color overlay is off/);
+    assert.equal(await page.locator('#office-blueprint .heat-reading').count(), 0);
+    assert(await page.locator('#office-blueprint .blueprint-room').evaluateAll(nodes => nodes.every(node => node.dataset.heatLevel === 'off')));
+    await page.locator('#workspace-heat-mode').selectOption('workload');
+    await page.locator('.heat-key > summary').click();
+    interactionChecks.push(`Heat ${viewport.width}: all three legends, no-record unknown labels and an explicit off state`);
+
+    await page.locator('#workspace-tab-softboard').click();
+    await page.getByRole('heading', {name: 'See the people behind the work.', exact: true}).waitFor({state: 'visible'});
+    const peopleCount = await page.locator('#workspace-softboard .org-person').count();
+    assert(peopleCount > 0, 'Ownership must show the saved public starter assignments.');
+    await page.locator('#softboard-search').fill('no-matching-example-person');
+    assert.equal(await page.locator('#workspace-softboard .org-person').count(), 0);
+    await page.locator('#softboard-search').fill('');
+    assert.equal(await page.locator('#workspace-softboard .org-person').count(), peopleCount);
+    await page.locator('.org-person[data-employee-id="donna"]').click();
+    assert.equal(await page.locator('#softboard-person-title').innerText(), 'Donna');
+    assert.equal(await page.evaluate(() => document.activeElement?.id), 'softboard-person-title');
+    assert.equal(await page.locator('#softboard-person-detail .inspector-signal[data-heat-level="unknown"]').count(), 3);
+    await capture('ownership-drafting', 'workspace', true);
+    await page.locator('#softboard-person-chat').click();
+    assert.equal(await page.locator('#chat-scope').inputValue(), 'employee');
+    assert.equal(await page.locator('#chat-employee').inputValue(), 'donna');
+    assert.equal(await page.locator('#office-company-select').inputValue(), companyId);
+    assert(await page.locator('#chat-send').isDisabled(), 'A viewing preference or employee selection must not enable writes in the public starter.');
+    interactionChecks.push(`Ownership ${viewport.width}: saved people, search/clear, focused inspector and employee conversation handoff remain read only`);
+
+    const draft = `Unsent public starter brief at ${viewport.width}px`;
+    await page.locator('#chat-message').fill(draft);
+    const conversation = await page.locator('#donna-conversation').elementHandle();
+    await page.locator('#workspace-tab-blueprint').click();
+    await page.locator('#donna-dock-toggle').click();
+    assert.equal(await conversation.evaluate(node => node.parentElement?.id), 'donna-dock-slot');
+    assert.equal(await page.locator('#chat-message').inputValue(), draft);
+    await page.locator('#workspace-tab-timeline').click();
+    assert.equal(await page.locator('#chat-message').inputValue(), draft);
+    assert.equal(await page.locator('#donna-conversation').count(), 1);
+    if (viewport.width === 1440) await capture('donna-dock-drafting', 'workspace', false);
+    await page.locator('#donna-dock-close').click();
+    assert.equal(await page.evaluate(() => document.activeElement?.id), 'donna-dock-toggle');
+    await page.locator('#workspace-tab-chat').click();
+    assert.equal(await conversation.evaluate(node => node.parentElement?.id), 'donna-chat-home');
+    assert.equal(await page.locator('#chat-message').inputValue(), draft);
+    await conversation.dispose();
+    interactionChecks.push(`Donna ${viewport.width}: one composer, draft retained through tab/dock moves and focus returned without submitting`);
+
+    await page.locator('#workspace-tab-timeline').click();
+    await page.getByRole('heading', {name: 'From intention to evidence.', exact: true}).waitFor({state: 'visible'});
+    assert.deepEqual(await page.locator('#workspace-timeline .roadmap-lane').evaluateAll(nodes => nodes.map(node => node.dataset.stage)), ['planned', 'in-progress', 'blocked', 'done']);
+    const outcomeCount = await page.locator('#workspace-timeline .studio-outcome').count();
+    assert(outcomeCount > 0, 'The public roadmap must display its example outcomes.');
+    assert(await page.locator('#workspace-timeline .outcome-person strong').evaluateAll(nodes => nodes.every(node => node.textContent.trim().length > 0)), 'Each saved outcome must expose its owner or the explicit owner-unavailable label.');
+    await page.locator('#studio-roadmap-status').selectOption('blocked');
+    assert.equal(await page.locator('#workspace-timeline .studio-outcome').count(), 0);
+    await page.getByText('No saved outcomes in this stage.', {exact: true}).waitFor({state: 'visible'});
+    await page.locator('#studio-roadmap-status').selectOption('all');
+    assert.equal(await page.locator('#workspace-timeline .studio-outcome').count(), outcomeCount);
+    assert.equal(await page.locator('#office-company-select').inputValue(), companyId);
+    assert.equal(new URL(page.url()).searchParams.get('company'), companyId);
+    interactionChecks.push(`Roadmap ${viewport.width}: four delivery lanes, recorded ownership, filtered empty state and unchanged company scope`);
+    await page.locator('#workspace-theme').selectOption('blueprint');
     // Inspect every operating surface, including the disclosures below the
     // primary workspace and the portfolio view above company scope.
     await page.locator('#ceo-toggle').click();
@@ -167,8 +326,8 @@ try {
     screenshots.push({file:filename,surface:'workspace',route:'first-brief',width:viewport.width});checked++;
     await context.close();
   }
-  writeFileSync(join(screenshotRoot, 'index.json'), JSON.stringify({ generatedAt: new Date().toISOString(), screenshots, checks: checked, data: 'Public isolated starter only; no private user data', limitations: 'Browser-rendered shell; native OS keychain and desktop window controls are not exercised.' }, null, 2) + '\n');
-  console.log(`Static browser smoke passed: ${checked} route/reload checks, desktop + mobile, real Pages subpath, offline reload.`);
+  writeFileSync(join(screenshotRoot, 'index.json'), JSON.stringify({ generatedAt: new Date().toISOString(), screenshots, checks: checked, interactionChecks, contrastChecks, data: 'Public isolated starter only; no private user data', limitations: 'Browser-rendered shell; native OS keychain and desktop window controls are not exercised.' }, null, 2) + '\n');
+  console.log(`Static browser smoke passed: ${checked} route/reload checks, ${interactionChecks.length} studio interaction groups, ${contrastChecks.length} rendered contrast checks, desktop + mobile, real Pages subpath, offline reload.`);
 } finally {
   await browser?.close();
   await new Promise((done) => server.close(done));

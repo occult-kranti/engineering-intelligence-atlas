@@ -46,6 +46,57 @@ The shared envelope carries `taskId`, `roleKey`, scope, status, summary, artifac
 - Each historical influence has a precise source and is labeled interpretation.
 - Design quality is evaluated by actual use and accessibility; no ancient-style performance claims are made.
 
+## Color Systems specialist procedure
+
+This is a specialization of the existing `design-architecture` role. Donna
+routes color-system work through the assigned employee or an eligible shared
+service contract; the procedure creates no duplicate employee, paid request or
+executable permission. Reuse the [studio color system](../../project/STUDIO_COLOR_SYSTEM.md),
+[semantic tokens](../../desktop-shell/src/renderer/studio-tokens.css) and
+[office signal model](../../desktop-shell/src/renderer/office-signals.ts) as the
+current source references. Read the relevant sections for the task instead of
+copying the entire portfolio into a prompt.
+
+1. Identify the actual user task, selected scope, light/dark preference, current
+   token revision and latest explicit color direction. Treat source images as
+   visual references; do not import their sample numbers, statuses or permission
+   badges as live data.
+2. Map canvas, surfaces, text, action, focus and categorical feedback to semantic
+   tokens. Keep an action accent separate from a claim of success. Preserve a
+   foreground/background pair for every solid action, status chip and legend
+   swatch; a visually pleasing hue is not a readability check.
+3. Calculate unrounded sRGB contrast for the pairs that will actually appear
+   together. Record the foreground, background, ratio, intended threshold and
+   outcome. Check normal text, descriptions, placeholders, focus and required
+   control boundaries. A token calculation does not establish browser-wide
+   accessibility, so record actual component checks separately.
+4. Read the signal model's metric definitions, scope, fixed buckets and freshness
+   rules before assigning heat colors. Return the selected metric, units, exact
+   value, bucket label and numerator/denominator where applicable. Keep unknown,
+   confirmed zero, stale data and an explicitly exceeded zero ceiling distinct.
+   Never derive capacity or employee quality from a job count, nor replace a
+   missing denominator with a fabricated percentage.
+5. Provide visible labels or ordinal markers alongside color, an explicit
+   unknown treatment, an accessible list alternative and a stable legend across
+   scopes. State which colors are decorative. Verify that theme changes preserve
+   the current selection, unsent chat and saved work; themes grant no authority.
+6. Send the semantic specification and relevant source hashes to Frontend,
+   accounting/scope questions to Backend or Database/Cache, and actual keyboard,
+   narrow-screen, forced-colors and state-preservation checks to QA. Donna
+   receives only the useful outcome, unresolved issue and next accountable owner.
+
+For a color task, retain the normal output envelope and four role fields.
+`specification` includes `semanticPalette`, `componentPairs` and `heatLegend`;
+`evaluation` includes calculated contrast pairs, unknown-versus-zero cases and
+separate observed or not-run interaction checks. `referenceMap` distinguishes
+the user's visual direction, primary accessibility guidance and local code.
+The envelope's `handoff` names the next role and exact dependency references.
+
+Use the [Color Systems task example](examples/design-color-systems-task.json)
+for a bounded paper/local review. Its values and identities are synthetic; its
+zero-dollar ceiling and empty capability list do not authorize provider calls,
+network access, a code edit or a deployment.
+
 ## Handoff
 
 Give frontend the component/state specification, math-geometry the explicit geometric constraint, and QA the interaction checks.
@@ -61,6 +112,10 @@ Attach the task packet rather than pasting the whole portfolio. The machine-read
 - [company/role-library/examples/design-architecture-task.json](../../company/role-library/examples/design-architecture-task.json)
 - [company/role-library/examples/design-reference.json](../../company/role-library/examples/design-reference.json)
 - [roles/architect-architectural-designer/README.md](../../roles/architect-architectural-designer/README.md)
+- [Color Systems synthetic task](examples/design-color-systems-task.json)
+- [Studio color specification](../../project/STUDIO_COLOR_SYSTEM.md)
+- [Shared studio tokens](../../desktop-shell/src/renderer/studio-tokens.css)
+- [Shared office signals](../../desktop-shell/src/renderer/office-signals.ts)
 
 ## Primary references and reading rule
 
@@ -69,5 +124,16 @@ Attach the task packet rather than pasting the whole portfolio. The machine-read
 - [The Met: Hinduism and Hindu Art](https://www.metmuseum.org/essays/hinduism-and-hindu-art)
 - [The Met: Temple of Dendur architecture](https://www.metmuseum.org/essays/temple-of-dendur-architecture-and-ritual)
 - [W3C WCAG 2.2](https://www.w3.org/TR/WCAG22/)
+- [W3C: Contrast Minimum](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html)
+- [W3C: Use of Color](https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html)
+- [W3C: Non-text Contrast](https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html)
+- [W3C: Focus Visible](https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html)
 
-References were checked on 2026-11-21. Read the relevant section for the current task, record the version/date, and apply it within its documented scope. These sources guide the design; they do not prove this repository passed a test or benchmark. Existing [backend research](../../project/BACKEND_RESEARCH.md) and [budget research](../../project/PROMPT_BUDGET_RESEARCH.md) distinguish implemented behavior from proposals.
+The added color/accessibility references were checked on 20 November 2026
+(America/New_York; UTC receipt date 2026-11-21). Existing architectural source
+references retain their earlier review record. Read the relevant section for
+the current task, record the version/date, and apply it within its documented
+scope. These sources guide the design; they do not prove this repository passed
+a test or benchmark. Existing [backend research](../../project/BACKEND_RESEARCH.md)
+and [budget research](../../project/PROMPT_BUDGET_RESEARCH.md) distinguish
+implemented behavior from proposals.

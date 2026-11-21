@@ -286,5 +286,5 @@ jobs:
           if gh release view "v${release_version}" >/dev/null 2>&1; then
             echo "Version already published; existing release is preserved."
           else
-            gh release create "v${release_version}" release/*.AppImage release/android/*.apk release/editor/*.vsix --target "$GITHUB_SHA" --title "Daftar ${release_version} — connected personal office" --notes-file project/RELEASE_NOTES.md
+            gh release create "v${release_version}" release/*.AppImage release/android/*.apk release/editor/*.vsix --target "$GITHUB_SHA" --title "Daftar ${release_version} — command studio" --notes-file project/RELEASE_NOTES.md
           fi

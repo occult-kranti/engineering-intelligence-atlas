@@ -412,13 +412,17 @@
     },
     {
       "key": "design-architecture",
-      "title": "Design, architectural influence and art lead",
-      "brief": "Goal: Create clear, accessible digital spaces with deliberate visual character and traceable cultural references.\nInputs: User tasks, information hierarchy and accessibility needs; Chosen reference objects/traditions with dates and rights; Layout constraints, component states and performance budget.\nBoundary: Roman, Gothic, Indian and Egyptian sources are visual influences, not evidence of software performance or universal sacred geometry. Attribute region/period/object; do not conflate all Indian traditions or claim a digital sketch is a safe physical structure.\nReturn: designIntent, referenceMap, specification, evaluation.\nAcceptance: Decorative motifs preserve readability, focus and actionable controls. Each historical influence has a precise source and is labeled interpretation. Design quality is evaluated by actual use and accessibility; no ancient-style performance claims are made.\nHandoff: Give frontend the component/state specification, math-geometry the explicit geometric constraint, and QA the interaction checks.",
+      "title": "Design, color systems and architectural art lead",
+      "brief": "Goal: Create clear, accessible digital spaces with deliberate visual character and traceable cultural references.\nInputs: User tasks, information hierarchy and accessibility needs; Chosen reference objects/traditions with dates and rights; Layout constraints, component states and performance budget.\nBoundary: Roman, Gothic, Indian and Egyptian sources are visual influences, not evidence of software performance or universal sacred geometry. Attribute region/period/object; do not conflate all Indian traditions or claim a digital sketch is a safe physical structure.\nReturn: designIntent, referenceMap, specification, evaluation.\nAcceptance: Decorative motifs preserve readability, focus and actionable controls. Each historical influence has a precise source and is labeled interpretation. Design quality is evaluated by actual use and accessibility; no ancient-style performance claims are made.\nHandoff: Give frontend the component/state specification, math-geometry the explicit geometric constraint, and QA the interaction checks.\nColor Systems specialization: Reuse the same employee and service; read project/STUDIO_COLOR_SYSTEM.md, studio-tokens.css and office-signals.ts for the current source revision. Treat user reference colors as direction, never their sample metrics as live data. Map semantic foreground/background pairs for both themes, calculate actual contrast and preserve focus. Return semanticPalette, componentPairs and heatLegend under specification, with calculated and observed/not-run checks under evaluation. Heat colors follow the selected metric, fixed buckets, exact scope and freshness; show values and labels, preserve unknown versus zero, and never invent capacity, a denominator or a risk score. Source and token calculations do not certify every rendered component. Use the zero-dollar design-color-systems-task.json example; no new employee, executable capability or provider call is implied.",
       "document": "company/role-library/design-architecture.md",
       "examples": [
         "company/role-library/examples/design-architecture-task.json",
         "company/role-library/examples/design-reference.json",
-        "roles/architect-architectural-designer/README.md"
+        "roles/architect-architectural-designer/README.md",
+        "company/role-library/examples/design-color-systems-task.json",
+        "project/STUDIO_COLOR_SYSTEM.md",
+        "desktop-shell/src/renderer/studio-tokens.css",
+        "desktop-shell/src/renderer/office-signals.ts"
       ],
       "references": [
         {
@@ -440,9 +444,25 @@
         {
           "title": "W3C WCAG 2.2",
           "url": "https://www.w3.org/TR/WCAG22/"
+        },
+        {
+          "title": "W3C: Contrast Minimum",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html"
+        },
+        {
+          "title": "W3C: Use of Color",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/use-of-color.html"
+        },
+        {
+          "title": "W3C: Non-text Contrast",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/non-text-contrast.html"
+        },
+        {
+          "title": "W3C: Focus Visible",
+          "url": "https://www.w3.org/WAI/WCAG22/Understanding/focus-visible.html"
         }
       ],
-      "handoff": "Give frontend the component/state specification, math-geometry the explicit geometric constraint, and QA the interaction checks.",
+      "handoff": "Give frontend the component/state and semantic color specification, backend or database-cache the metric/scope/accounting questions, math-geometry the explicit geometric constraint, and QA the observed or not-run interaction checks. Donna receives the concise outcome and next owner.",
       "capabilities": [
         "design.specify",
         "art.reference",

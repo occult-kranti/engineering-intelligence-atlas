@@ -4,7 +4,9 @@ Keep Donna, permanent teams, company roadmaps, goals and the work queue beside y
 
 ## Install
 
-Download `atlas-office-0.5.0.vsix` from the [Daftar release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases). In VS Code, choose **Extensions → … → Install from VSIX**, select the file, then open **Daftar** in the activity bar. VS Code 1.95 or newer is required. Marketplace publication is not part of this release.
+Download the versioned `atlas-office` VSIX from the [Daftar release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases). In VS Code, choose **Extensions → … → Install from VSIX**, select the file, then open **Daftar** in the activity bar. VS Code 1.95 or newer is required. Marketplace publication is not part of this release.
+
+When paired to the private website, the Studio controls open Blueprint, Ownership, Roadmap and Whiteboard with the selected company retained. URLs are restricted to the connected HTTPS origin and supported views; no device secret is added to a navigation URL. The editor keeps its own theme and high-contrast behavior, with restrained green/gold accents in normal light and dark modes.
 
 ## Connect the desktop
 

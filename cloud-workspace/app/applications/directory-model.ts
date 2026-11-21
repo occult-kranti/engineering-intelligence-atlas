@@ -32,7 +32,7 @@ export function safeHttpsUrl(value: unknown): string | null {
   } catch { return null; }
 }
 
-export function officeLink(companyId: string, view: 'chat' | 'blueprint' | 'whiteboard' | 'decisions' = 'chat'): string {
+export function officeLink(companyId: string, view: 'chat' | 'blueprint' | 'softboard' | 'timeline' | 'whiteboard' | 'decisions' = 'chat'): string {
   return `/workspace/chrome.html?company=${encodeURIComponent(companyId)}&workspace=${view}#office`;
 }
 

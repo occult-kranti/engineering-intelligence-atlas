@@ -85,6 +85,7 @@ function navigate(view, updateHash = true) {
         renderRoadmap();
     if (view === 'library')
         renderIndex();
+    syncDonnaDock();
     window.scrollTo({ top: 0, behavior: 'instant' });
 }
 // ---------------------------------------------------------------- launcher
@@ -955,8 +956,8 @@ function refreshWorkspace() {
 function renderCompany() {
     const company = companyState?.company;
     const ready = companyState?.available === true;
-    $('core-label').textContent = workspaceReadOnly() ? 'Starter office preview' : bridge?.transport === 'cloud-browser' ? 'Private cloud workspace' : bridge?.transport === 'personal-browser' ? 'Private browser workspace' : ready ? 'Native workspace ready' : bridge ? 'Native core unavailable' : 'Desktop preview';
-    $('core-note').textContent = workspaceReadOnly() ? 'Example state · read only' : bridge?.transport === 'cloud-browser' ? 'Desktop executes queued commands' : bridge?.transport === 'personal-browser' ? 'Connected to your desktop app' : ready ? 'Rust core · local persistence' : bridge ? 'Company actions unavailable' : 'Open the installed desktop app';
+    $('core-label').textContent = workspaceReadOnly() ? 'Starter office preview' : bridge?.transport === 'cloud-browser' ? officeState ? 'Private cloud workspace' : 'Cloud workspace not loaded' : bridge?.transport === 'personal-browser' ? 'Private browser workspace' : ready ? 'Native workspace ready' : bridge ? 'Native core unavailable' : 'Desktop preview';
+    $('core-note').textContent = workspaceReadOnly() ? 'Example state · read only' : bridge?.transport === 'cloud-browser' ? officeState ? 'Desktop executes queued commands' : 'Open welcome to check sign-in' : bridge?.transport === 'personal-browser' ? 'Connected to your desktop app' : ready ? 'Rust core · local persistence' : bridge ? 'Company actions unavailable' : 'Open the installed desktop app';
     if (companyState?.error)
         setStatus($('company-status'), companyState.error, 'error');
     const label = company?.githubStatus === 'verified' ? 'GitHub verified' : company?.githubStatus === 'error' ? 'Repository check failed' : 'Repository not checked';
@@ -1424,6 +1425,7 @@ function initWorkspace() {
 }
 // ---------------------------------------------------------------- permanent office control plane
 let officeState = null;
+let officeSampledAt = '';
 let officeWorker = null;
 let selectedOfficeId = '';
 let selectedDepartmentId = '';
@@ -1458,13 +1460,16 @@ async function refreshOffice() {
         const [state, worker] = await Promise.allSettled([bridge.officeSnapshot(), bridge.officeWorkerStatus ? bridge.officeWorkerStatus() : Promise.resolve(null)]);
         if (state.status === 'fulfilled' && state.value.ok && state.value.snapshot) {
             officeState = state.value.snapshot;
+            officeSampledAt = new Date().toISOString();
             $('office-native-status').textContent = workspaceReadOnly() ? 'Example workspace · read only' : bridge?.transport === 'cloud-browser' ? 'Cloud workspace · desktop projection' : 'Local state loaded';
             $('office-native-status').className = 'pill ok';
         }
         else {
             const error = state.status === 'fulfilled' ? state.value.error : String(state.reason);
-            setStatus($('office-status'), error || 'Office state could not be loaded.', 'error');
-            $('office-native-status').textContent = 'Workspace unavailable';
+            const unloadedHosted = bridge?.transport === 'cloud-browser' && !officeState;
+            setStatus($('office-status'), unloadedHosted ? 'Cloud workspace could not be loaded. Open welcome to check sign-in, or refresh to try again.' : error || 'Office state could not be loaded.', 'error');
+            $('office-native-status').textContent = unloadedHosted ? 'Cloud not loaded' : 'Workspace unavailable';
+            $('office-native-status').className = 'pill neutral';
         }
         if (worker.status === 'fulfilled')
             officeWorker = worker.value;
@@ -1848,6 +1853,7 @@ function initOffice() {
 let workspaceTab = 'chat';
 let selectedGoalId = '';
 let selectedRoomId = '';
+let roomDraftDirty = false;
 let selectedBoardId = '';
 let selectedDeskEmployeeId = '';
 let conversationSignature = '';
@@ -1975,8 +1981,8 @@ function renderWorkspaceControls() {
     if (policySubmit)
         policySubmit.disabled = !available;
     if (!available) {
-        $('workspace-budget-label').textContent = bridge ? 'Workspace upgrade required' : 'Desktop workspace required';
-        $('chat-mode-note').textContent = bridge ? (workspaceReadOnly() ? 'Example workspace · read only. Open your private workspace to save a goal.' : 'Load the current native workspace to save goals and conversations.') : 'This preview shows the workspace. Open the desktop app to save a goal.';
+        $('workspace-budget-label').textContent = !bridge ? 'Desktop workspace required' : !officeState ? 'Budget not loaded' : 'Workspace upgrade required';
+        $('chat-mode-note').textContent = bridge?.transport === 'cloud-browser' && !officeState ? 'Load your cloud workspace from welcome before starting a conversation.' : bridge ? (workspaceReadOnly() ? 'Example workspace · read only. Open your private workspace to save a goal.' : 'Load the current native workspace to save goals and conversations.') : 'This preview shows the workspace. Open the desktop app to save a goal.';
     }
     else
         updateChatMode();
@@ -2148,6 +2154,7 @@ function renderSpatialSelectors() {
 }
 function resetRoomForm() {
     selectedRoomId = '';
+    roomDraftDirty = false;
     $('workspace-room-form').reset();
     $('room-id').value = '';
     $('room-inspector-title').textContent = 'A place for each team.';
@@ -2159,6 +2166,7 @@ function resetRoomForm() {
 }
 function selectRoom(room, focus = false) {
     selectedRoomId = room.id;
+    roomDraftDirty = false;
     $('room-id').value = room.id;
     $('room-name').value = room.name;
     $('room-department').value = room.departmentId || '';
@@ -2262,12 +2270,14 @@ function renderBlueprint() {
         title.setAttribute('aria-label', `${room.name}. Select room; arrow keys move it.`);
         const department = officeState?.departments.find((d) => d.id === room.departmentId);
         card.append(title, textElement('p', department?.name || 'Shared office space', 'blueprint-room-subtitle'));
+        addStudioHeat(card, currentStudioSignals()?.perRoom[room.id]);
         const occupants = textElement('div', '', 'room-occupants');
         const roomEmployees = blueprint.desks.filter((item) => item.roomId === room.id).map(desk => officeState?.employees.find(employee => employee.id === desk.employeeId)).filter((employee) => Boolean(employee));
         for (const employee of roomEmployees.slice(0, 6)) {
             const button = textElement('button', employee.name, `room-occupant${selectedDeskEmployeeId === employee.id ? ' selected' : ''}`);
             button.type = 'button';
             button.title = `${employee.role} · ${employee.status}`;
+            button.replaceChildren(studioAvatar(employee), textElement('span', employee.name, 'room-occupant-name'));
             button.onclick = () => { if (employee.companyId && employee.companyId !== officeCompany()?.id) {
                 selectRoom(room);
                 if (portfolioState()?.services.some(service => service.companyId === officeCompany()?.id && service.officeId === selectedOfficeId && service.employeeIds.includes(employee.id))) {
@@ -2310,7 +2320,7 @@ function renderBlueprint() {
     }
     if (selectedRoomId) {
         const room = blueprint.rooms.find((item) => item.id === selectedRoomId);
-        if (room && !$('workspace-room-form').contains(document.activeElement))
+        if (room && !roomDraftDirty && !$('workspace-room-form').contains(document.activeElement))
             selectRoom(room);
     }
 }
@@ -2376,6 +2386,7 @@ function renderWhiteboard() {
         card.append(title);
         const status = linkedJob?.status || goal?.status || roadmap?.status || 'Assigned';
         card.append(textElement('span', status.replaceAll('-', ' '), `badge ${status === 'completed' ? 'ok' : status === 'needs-review' || status === 'waiting-budget' ? 'unknown' : ''}`));
+        addStudioHeat(card, employee ? currentStudioSignals()?.perEmployee[employee.id] : undefined);
         const ownership = textElement('div', '', 'card-ownership');
         ownership.append(textElement('strong', employee?.name || 'Employee unavailable'), textElement('span', room.name));
         if (goal)
@@ -2407,7 +2418,7 @@ async function ensureWorkspaceBlueprint() {
     }
 }
 function switchWorkspaceTab(name) {
-    if (!['chat', 'blueprint', 'whiteboard', 'decisions'].includes(name))
+    if (!['chat', 'blueprint', 'softboard', 'timeline', 'whiteboard', 'decisions'].includes(name))
         return;
     workspaceTab = name;
     document.querySelectorAll('[data-workspace-tab]').forEach((button) => { const active = button.dataset.workspaceTab === name; button.classList.toggle('active', active); button.setAttribute('aria-selected', String(active)); button.tabIndex = active ? 0 : -1; });
@@ -2417,6 +2428,7 @@ function switchWorkspaceTab(name) {
     renderUnifiedWorkspace();
 }
 function renderUnifiedWorkspace() {
+    $('workspace-studio-signals').classList.toggle('hidden', workspaceTab === 'chat' || workspaceTab === 'decisions');
     renderWorkspaceControls();
     renderPortfolio();
     renderWorkspaceLocator();
@@ -2431,8 +2443,12 @@ function renderUnifiedWorkspace() {
     renderConversation();
     renderWorkspaceGoals();
     renderSpatialSelectors();
+    renderStudioSignals();
     renderBlueprint();
     renderWhiteboard();
+    renderSoftboard();
+    renderStudioRoadmap();
+    syncDonnaDock();
     $('github-repository-label').textContent = officeCompany()?.repoUrl || 'Choose a repository company.';
 }
 function updateChatMode() {
@@ -2533,6 +2549,8 @@ function initUnifiedWorkspace() {
     }, 'workspace-policy-status');
     $('blueprint-add-room').onclick = () => { resetRoomForm(); $('room-name').focus(); };
     $('whiteboard-add-node').onclick = () => { resetBoardForm(); $('node-title').focus(); };
+    for (const event of ['input', 'change'])
+        $('workspace-room-form').addEventListener(event, () => { roomDraftDirty = true; $('room-inspector-note').textContent = 'Unsaved room details. Save to apply; changing views keeps this draft.'; });
     for (const id of ['blueprint-list-mode', 'whiteboard-list-mode']) {
         $(id).addEventListener('change', renderUnifiedWorkspace);
         if (window.innerWidth < 650)
@@ -2674,6 +2692,7 @@ function setPortfolioOpen(open) {
         label.textContent = open ? 'Back to company workspace' : 'CEO office';
     if (open)
         renderPortfolio();
+    syncDonnaDock();
 }
 function portfolioNavigation(label, companyId, tab = 'chat', kind = 'text-button', officeId, departmentId) {
     const button = actionButton(label, kind);
@@ -3313,6 +3332,7 @@ class QueuedWorkspaceCommand extends Error {
 function appliedOfficeSnapshot(result) {
     if (!result.ok || !result.snapshot)
         throw new Error(result.error || 'The workspace change could not be saved.');
+    officeSampledAt = new Date().toISOString();
     if (result.queued) {
         officeState = result.snapshot;
         renderOffice();
@@ -3348,12 +3368,19 @@ function renderCloudConnection() {
     const preview = workspaceReadOnly();
     const hosted = bridge?.transport === 'cloud-browser';
     const available = Boolean(bridge?.configureCloud) && !preview && !hosted;
-    const label = preview ? 'Read-only preview' : hosted ? 'Cloud session' : cloudState?.connected ? 'Cloud linked' : cloudState?.configured ? 'Cloud offline' : officeState ? 'Saved locally' : 'Local workspace';
+    const unloadedHosted = hosted && !officeState;
+    if (hosted) {
+        $('core-label').textContent = unloadedHosted ? 'Cloud workspace not loaded' : 'Private cloud workspace';
+        $('core-note').textContent = unloadedHosted ? 'Open welcome to check sign-in' : 'Desktop executes queued commands';
+    }
+    $('cloud-workspace-notice').classList.toggle('hidden', !unloadedHosted);
+    $('cloud-welcome').disabled = !bridge?.backToLauncher;
+    const label = preview ? 'Read-only preview' : unloadedHosted ? 'Cloud not loaded' : hosted ? 'Cloud session' : cloudState?.connected ? 'Cloud linked' : cloudState?.configured ? 'Cloud offline' : officeState ? 'Saved locally' : 'Local workspace';
     $('workspace-save-label').textContent = label;
-    $('workspace-save-status').title = cloudState?.lastSyncedAt ? `Last explicit sync: ${dateLabel(cloudState.lastSyncedAt, true)}. New edits remain local until the next sync.` : preview ? 'Example data only. Changes are disabled.' : hosted ? 'Signed-in cloud conversation; owner commands require desktop acknowledgement.' : 'Local state and optional cloud connection';
-    $('cloud-state').textContent = preview ? 'Example · unavailable' : hosted ? 'Signed-in cloud view' : cloudBusy ? 'Working…' : cloudState?.connected ? 'Device authenticated' : cloudState?.configured ? 'Connection needs attention' : 'Not connected';
-    $('cloud-state').className = `pill ${cloudState?.connected || hosted ? 'ok' : 'neutral'}`;
-    $('cloud-local-state').textContent = preview ? 'Example data' : hosted ? 'Last desktop projection' : officeState ? 'Saved on this device' : 'Not loaded';
+    $('workspace-save-status').title = unloadedHosted ? 'No cloud workspace snapshot is loaded. Open welcome to check sign-in or retry the workspace refresh.' : cloudState?.lastSyncedAt ? `Last explicit sync: ${dateLabel(cloudState.lastSyncedAt, true)}. New edits remain local until the next sync.` : preview ? 'Example data only. Changes are disabled.' : hosted ? 'Signed-in cloud conversation; owner commands require desktop acknowledgement.' : 'Local state and optional cloud connection';
+    $('cloud-state').textContent = preview ? 'Example · unavailable' : unloadedHosted ? 'Cloud not loaded' : hosted ? 'Signed-in cloud view' : cloudBusy ? 'Working…' : cloudState?.connected ? 'Device authenticated' : cloudState?.configured ? 'Connection needs attention' : 'Not connected';
+    $('cloud-state').className = `pill ${!unloadedHosted && (cloudState?.connected || hosted) ? 'ok' : 'neutral'}`;
+    $('cloud-local-state').textContent = preview ? 'Example data' : unloadedHosted ? 'Not loaded' : hosted ? 'Last desktop projection' : officeState ? 'Saved on this device' : 'Not loaded';
     $('cloud-last-sync').textContent = cloudState?.lastSyncedAt ? dateLabel(cloudState.lastSyncedAt, true) : 'Never';
     $('cloud-revision').textContent = cloudState?.revision === null || cloudState?.revision === undefined ? '—' : String(cloudState.revision);
     $('cloud-pending').textContent = number(cloudState?.pendingCommands || 0);
@@ -3364,11 +3391,13 @@ function renderCloudConnection() {
     $('cloud-connect').disabled = !available || cloudBusy || cloudState?.encryptionAvailable === false;
     $('cloud-sync').disabled = !available || cloudBusy || !cloudState?.configured;
     $('cloud-disconnect').disabled = !available || cloudBusy || !cloudState?.configured;
-    $('cloud-open-site').disabled = !bridge?.openExternal || cloudBusy;
-    $('cloud-open-site').textContent = hosted ? 'Open device connections' : 'Open website & sign in';
+    $('cloud-open-site').disabled = (unloadedHosted ? !bridge?.backToLauncher : !bridge?.openExternal) || cloudBusy;
+    $('cloud-open-site').textContent = unloadedHosted ? 'Open welcome / sign in' : hosted ? 'Open device connections' : 'Open website & sign in';
     $('editor-pair').disabled = !bridge?.copyEditorPairing || preview || hosted;
     if (preview)
         setStatus($('cloud-status'), 'This starter preview cannot connect a device or sync data. Open the private desktop app to pair your account.');
+    else if (unloadedHosted)
+        setStatus($('cloud-status'), 'Cloud workspace is not loaded. Open welcome to check sign-in, or refresh to try again.');
     else if (hosted)
         setStatus($('cloud-status'), 'This is your cloud conversation and last acknowledged desktop state. Pair a desktop from the website’s account page to process queued owner commands.');
     else if (cloudState?.error)
@@ -3404,7 +3433,14 @@ function cloudWebsiteUrl() {
 }
 function initCloudConnection() {
     $('workspace-save-status').onclick = () => { navigate('settings'); $('cloud-connection-panel').scrollIntoView({ block: 'start' }); $('cloud-open-site').focus(); };
-    $('cloud-open-site').onclick = () => workspaceTask(async () => { const url = cloudWebsiteUrl(); if (!bridge?.openExternal)
+    const openWelcome = async () => { if (!bridge?.backToLauncher)
+        throw new Error('The welcome page is unavailable in this view.'); const result = await bridge.backToLauncher(); if (!result.ok)
+        throw new Error('The welcome page could not be opened.'); };
+    $('cloud-welcome').onclick = () => workspaceTask(openWelcome, 'cloud-workspace-notice-message');
+    $('cloud-open-site').onclick = () => workspaceTask(async () => { if (bridge?.transport === 'cloud-browser' && !officeState) {
+        await openWelcome();
+        return;
+    } const url = cloudWebsiteUrl(); if (!bridge?.openExternal)
         throw new Error('Open the private website from your browser.'); const result = await bridge.openExternal(url); if (!result.ok)
         throw new Error(result.error || 'The website could not be opened.'); setStatus($('cloud-status'), 'Website opened. Complete sign-in there and copy its device pairing token.'); }, 'cloud-status');
     $('cloud-connect-form').addEventListener('submit', event => { event.preventDefault(); workspaceTask(async () => { if (!bridge?.configureCloud || workspaceReadOnly())
@@ -3435,6 +3471,7 @@ async function sendDonnaCloud(message, scope) {
         if (!result.reply?.trim())
             throw new Error('No provider reply was returned. Your brief remains here to retry.');
         officeState = result.snapshot;
+        officeSampledAt = new Date().toISOString();
         $('chat-message').value = '';
         renderOffice();
         setStatus($('chat-status'), 'Cloud reply saved. No repository changes were applied.', 'ok');
@@ -3622,8 +3659,260 @@ function initDecisionPanels() {
     renderDecisionRoleOptions();
     renderDecisionPanels();
 }
+let studioSignalState = null;
+let studioSignalKey = '';
+let studioSignals = null;
+let softboardEmployeeId = '';
+let donnaDockOpen = false;
+function studioPreference(key, fallback) { try {
+    return localStorage.getItem(`daftar-studio-${key}`) || fallback;
+}
+catch {
+    return fallback;
+} }
+function saveStudioPreference(key, value) { try {
+    localStorage.setItem(`daftar-studio-${key}`, value);
+}
+catch { /* Private browsing can still use the current view. */ } }
+function studioHeatMode() { const selected = value('workspace-heat-mode'); return ['workload', 'budget', 'attention', 'off'].includes(selected) ? selected : 'workload'; }
+function currentStudioSignals() {
+    const key = [officeCompany()?.id, selectedOfficeId, selectedDepartmentId, officeSampledAt].join('|');
+    if (studioSignalState !== officeState || studioSignalKey !== key) {
+        studioSignalState = officeState;
+        studioSignalKey = key;
+        studioSignals = null;
+        if (officeState && window.DaftarSignals) {
+            try {
+                studioSignals = window.DaftarSignals.build(officeState, { companyId: officeCompany()?.id, officeId: selectedOfficeId || undefined, departmentId: selectedDepartmentId || undefined, now: new Date().toISOString(), ...(officeSampledAt ? { sampledAt: officeSampledAt } : {}) });
+            }
+            catch { /* Missing signals must not look like a healthy zero. */ }
+        }
+    }
+    return studioSignals;
+}
+function addStudioHeat(element, group, className = 'heat-reading') {
+    const mode = studioHeatMode();
+    if (mode === 'off') {
+        element.dataset.heatLevel = 'off';
+        return;
+    }
+    const metric = group?.[mode];
+    element.dataset.heatLevel = String(metric?.level ?? 'unknown');
+    const reading = textElement('span', metric?.label || 'Unknown · no records', className);
+    reading.title = metric?.detail || 'No usable records are available for this selection.';
+    element.append(reading);
+}
+function renderStudioSignals() {
+    const signals = currentStudioSignals(), mode = studioHeatMode();
+    const summary = $('workspace-signal-summary');
+    summary.replaceChildren();
+    if (!signals?.scopeValid) {
+        summary.append(textElement('span', 'Signals unavailable', 'signal-stat'), textElement('span', 'Load a valid saved scope to inspect recorded activity.', 'muted'));
+    }
+    else {
+        const group = signals.summary;
+        for (const [number, label] of [[group.employees, 'assigned people'], [group.jobs, 'recorded jobs']]) {
+            const item = textElement('span', '', 'signal-stat');
+            item.append(textElement('strong', String(number)), textElement('span', label));
+            summary.append(item);
+        }
+        const item = textElement('span', '', 'signal-stat signal-primary');
+        item.append(textElement('strong', mode === 'off' ? 'Heat map off' : group[mode].label), textElement('span', mode === 'budget' ? 'Commitments / recorded job allowances' : mode === 'attention' ? 'Exceptions and blocked work' : 'Saved work in this scope'));
+        summary.append(item);
+    }
+    const legend = $('workspace-heat-legend');
+    legend.replaceChildren();
+    if (mode === 'off') {
+        legend.append(textElement('p', 'Color overlay is off. Names, counts and recorded statuses remain available.'));
+        return;
+    }
+    for (const entry of signals?.legend[mode] || []) {
+        const row = textElement('div', '', 'heat-legend-row');
+        row.dataset.heatLevel = String(entry.level);
+        const swatch = textElement('span', entry.level === 'unknown' ? '?' : String(entry.level), 'heat-legend-swatch');
+        swatch.setAttribute('aria-hidden', 'true');
+        const copy = textElement('span', '', 'heat-legend-copy');
+        copy.append(textElement('strong', entry.label), textElement('small', entry.detail));
+        row.append(swatch, copy);
+        legend.append(row);
+    }
+    if (!legend.children.length)
+        legend.append(textElement('p', 'No signal data is loaded. Unknown values are not treated as zero.'));
+}
+function studioAvatar(employee) { const initials = employee.name.trim().split(/\s+/).slice(0, 2).map(part => part[0] || '').join('').toUpperCase(); const avatar = textElement('span', initials || 'AI', 'studio-avatar'); avatar.setAttribute('aria-hidden', 'true'); return avatar; }
+function renderSoftboard() {
+    const board = $('workspace-softboard');
+    board.replaceChildren();
+    const company = officeCompany(), office = officeLocation();
+    if (!company || !office) {
+        noData(board, 'Select an office to inspect its organization.');
+        return;
+    }
+    const query = value('softboard-search').toLowerCase(), signals = currentStudioSignals();
+    const members = scopedEmployees().filter(e => e.status !== 'fired' && (!query || `${e.name} ${e.role}`.toLowerCase().includes(query)));
+    const root = textElement('div', '', 'org-root');
+    const ceo = textElement('button', 'CEO / Director', 'org-executive');
+    ceo.type = 'button';
+    ceo.onclick = () => { setPortfolioOpen(true); syncDonnaDock(); $('ceo-toggle').focus(); };
+    root.append(ceo, textElement('span', company.name, 'org-company'), textElement('h3', office.name, 'org-office'));
+    board.append(root);
+    const branches = textElement('div', '', 'org-branches');
+    let rendered = 0;
+    const departments = (officeState?.departments || []).filter(d => d.officeId === office.id && (!selectedDepartmentId || d.id === selectedDepartmentId));
+    const groups = [{ id: 'office-leadership', name: 'Office & shared leadership', employees: members.filter(e => !e.departmentId) }, ...departments.map(d => ({ id: d.id, name: d.name, employees: members.filter(e => e.departmentId === d.id) }))];
+    for (const group of groups) {
+        if (query && !group.employees.length)
+            continue;
+        const branch = textElement('section', '', 'org-branch');
+        branch.setAttribute('aria-label', group.name);
+        const heading = textElement('div', '', 'org-department');
+        heading.append(textElement('h4', group.name), textElement('span', `${group.employees.length} assigned`, 'org-count'));
+        if (group.id !== 'office-leadership')
+            addStudioHeat(heading, signals?.perDepartment[group.id]);
+        branch.append(heading);
+        const people = textElement('div', '', 'org-people');
+        for (const employee of group.employees) {
+            if (rendered >= 150)
+                break;
+            rendered++;
+            const card = textElement('button', '', `org-person${employee.id === softboardEmployeeId ? ' selected' : ''}`);
+            card.type = 'button';
+            card.dataset.employeeId = employee.id;
+            card.setAttribute('aria-pressed', String(employee.id === softboardEmployeeId));
+            const name = textElement('span', '', 'org-person-copy');
+            name.append(textElement('strong', employee.name), textElement('span', employee.role), textElement('small', employee.status === 'active' ? 'Active assignment' : employee.status));
+            card.append(studioAvatar(employee), name);
+            addStudioHeat(card, signals?.perEmployee[employee.id]);
+            card.onclick = () => { softboardEmployeeId = employee.id; renderSoftboard(); $('softboard-person-title').focus(); };
+            people.append(card);
+        }
+        if (!group.employees.length)
+            people.append(textElement('p', 'No people assigned in this view.', 'empty-inline'));
+        branch.append(people);
+        branches.append(branch);
+    }
+    board.append(branches);
+    $('softboard-result-note').textContent = `${rendered} of ${members.length} matching assignments shown. Direct office assignments and shared leadership; contracted staffing stays in service contracts. Select a person to inspect ownership.${members.length > 150 ? ' Refine the search to see another person.' : ''}`;
+    if (!members.some(e => e.id === softboardEmployeeId))
+        softboardEmployeeId = '';
+    renderSoftboardInspector();
+}
+function renderSoftboardInspector() {
+    const employee = scopedEmployees().find(e => e.id === softboardEmployeeId), detail = $('softboard-person-detail');
+    detail.replaceChildren();
+    $('softboard-person-title').tabIndex = -1;
+    $('softboard-person-title').textContent = employee?.name || 'Choose a person.';
+    $('softboard-person-chat').disabled = !employee || employee.status !== 'active';
+    $('softboard-person-authority').disabled = !employee;
+    $('softboard-person-chat').title = employee && employee.status !== 'active' ? 'Resume this employee in the employee register before starting a conversation.' : '';
+    if (!employee) {
+        detail.append(textElement('p', 'Inspect their role, current records and timed permissions.', 'muted'));
+        return;
+    }
+    detail.append(textElement('p', employee.role, 'softboard-role'), textElement('span', employee.status, 'badge'));
+    if (employee.status !== 'active')
+        detail.append(textElement('p', 'This employee is paused. Ownership remains visible; resume their assignment in the employee register before starting a conversation.', 'form-help'));
+    const signals = currentStudioSignals()?.perEmployee[employee.id];
+    for (const key of ['workload', 'budget', 'attention']) {
+        const metric = signals?.[key];
+        const item = textElement('div', '', 'inspector-signal');
+        item.dataset.heatLevel = String(metric?.level ?? 'unknown');
+        item.append(textElement('strong', metric?.label || 'Unknown · no records'), textElement('small', metric?.detail || 'No usable job records in this execution scope.'));
+        detail.append(item);
+    }
+    const grants = (officeState?.authority?.grants || []).filter(g => g.employeeId === employee.id);
+    detail.append(textElement('p', `${grants.length} recorded permission or promotion ${grants.length === 1 ? 'grant' : 'grants'}. Inspect the authority register for scope, expiry and parent restrictions.`, 'form-help'));
+    const owned = (portfolioState()?.roadmap || []).filter(r => r.ownerEmployeeId === employee.id && roadmapInCompany(r, officeCompany()?.id || ''));
+    detail.append(textElement('p', `${owned.length} roadmap outcomes owned in this company.`, 'form-help'));
+}
+function renderStudioRoadmap() {
+    const container = $('workspace-timeline');
+    container.replaceChildren();
+    const company = officeCompany();
+    const all = (portfolioState()?.roadmap || []).filter(item => company && roadmapInCompany(item, company.id) && (!selectedDepartmentId || item.departmentId === selectedDepartmentId));
+    const state = value('studio-roadmap-status');
+    const items = all.filter(item => state === 'all' || item.status === state);
+    $('studio-roadmap-summary').textContent = `${items.length} outcomes in view · ${all.filter(item => item.status === 'done').length} completed with recorded evidence · ${all.filter(item => item.status === 'blocked').length} blocked`;
+    const stages = [['planned', 'Planned'], ['in-progress', 'In progress'], ['blocked', 'Blocked'], ['done', 'Done']];
+    let rendered = 0;
+    for (const [status, label] of stages) {
+        if (state !== 'all' && state !== status)
+            continue;
+        const lane = textElement('section', '', 'roadmap-lane');
+        lane.dataset.stage = status;
+        const rows = items.filter(item => item.status === status);
+        const head = textElement('header', '', 'roadmap-lane-heading');
+        head.append(textElement('h3', label), textElement('span', String(rows.length), 'badge'));
+        lane.append(head);
+        for (const item of rows) {
+            if (rendered >= 120)
+                break;
+            rendered++;
+            const card = textElement('article', '', 'studio-outcome');
+            card.dataset.roadmapId = item.id;
+            const owner = officeState?.employees.find(e => e.id === item.ownerEmployeeId);
+            card.append(textElement('span', roadmapScopeLabel(item), 'card-type'), textElement('h4', item.title));
+            if (item.description)
+                card.append(textElement('p', item.description.slice(0, 260)));
+            const person = textElement('div', '', 'outcome-person');
+            if (owner)
+                person.append(studioAvatar(owner));
+            person.append(textElement('strong', owner?.name || 'Owner unavailable'));
+            card.append(person);
+            const date = new Date(item.updatedAt);
+            card.append(textElement('small', `Updated ${Number.isFinite(date.getTime()) ? date.toLocaleDateString() : 'date unavailable'} · ${item.dependencies.length} dependencies`, 'outcome-meta'));
+            if (item.evidence)
+                card.append(textElement('p', `Evidence: ${item.evidence}`, 'form-help'));
+            const action = textElement('button', 'Inspect ownership', 'text-button');
+            action.type = 'button';
+            action.onclick = () => { setPortfolioOpen(true); editPortfolioRoadmap(item); syncDonnaDock(); };
+            card.append(action);
+            lane.append(card);
+        }
+        if (!rows.length)
+            lane.append(textElement('p', 'No saved outcomes in this stage.', 'lane-empty'));
+        container.append(lane);
+    }
+    if (items.length > 120)
+        container.append(textElement('p', 'Showing the first 120 outcomes. Filter by delivery state or department.', 'form-help'));
+}
+function syncDonnaDock() {
+    const panel = document.getElementById('donna-conversation'), home = document.getElementById('donna-chat-home'), dock = document.getElementById('donna-dock'), toggle = document.getElementById('donna-dock-toggle'), slot = document.getElementById('donna-dock-slot');
+    if (!panel || !home || !dock || !toggle || !slot)
+        return;
+    const available = activeView === 'office' && workspaceTab !== 'chat' && !$('company-workspace').classList.contains('hidden');
+    const open = available && donnaDockOpen;
+    toggle.classList.toggle('hidden', !available || open);
+    toggle.setAttribute('aria-expanded', String(open));
+    dock.classList.toggle('hidden', !open);
+    if (open) {
+        if (panel.parentElement !== slot)
+            slot.append(panel);
+    }
+    else if (panel.parentElement !== home)
+        home.prepend(panel);
+}
+function initStudio() {
+    const theme = studioPreference('theme', 'blueprint');
+    document.documentElement.dataset.theme = theme === 'drafting' ? 'drafting' : 'blueprint';
+    $('workspace-theme').value = document.documentElement.dataset.theme;
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', document.documentElement.dataset.theme === 'drafting' ? '#F6F2E8' : '#151126');
+    $('workspace-theme').onchange = () => { const next = value('workspace-theme') === 'drafting' ? 'drafting' : 'blueprint'; document.documentElement.dataset.theme = next; saveStudioPreference('theme', next); document.querySelector('meta[name="theme-color"]')?.setAttribute('content', next === 'drafting' ? '#F6F2E8' : '#151126'); };
+    const heat = studioPreference('heat', 'workload');
+    $('workspace-heat-mode').value = ['workload', 'budget', 'attention', 'off'].includes(heat) ? heat : 'workload';
+    $('workspace-heat-mode').onchange = () => { saveStudioPreference('heat', studioHeatMode()); renderStudioSignals(); renderBlueprint(); renderWhiteboard(); renderSoftboard(); };
+    $('softboard-search').oninput = renderSoftboard;
+    $('studio-roadmap-status').onchange = renderStudioRoadmap;
+    $('softboard-person-chat').onclick = () => { const e = scopedEmployees().find(item => item.id === softboardEmployeeId); if (!e || e.status !== 'active')
+        return; renderWorkspaceControls(); $('chat-scope').value = 'employee'; $('chat-employee').value = e.id; switchWorkspaceTab('chat'); $('chat-message').focus(); };
+    $('softboard-person-authority').onclick = () => { if (!softboardEmployeeId)
+        return; setPortfolioOpen(true); renderAuthority(); $('authority-employee').value = softboardEmployeeId; renderAuthorityForm(); renderAuthorityGrants(); $('ceo-authority-editor').open = true; $('authority-employee').focus(); $('ceo-authority-editor').scrollIntoView({ block: 'nearest' }); syncDonnaDock(); };
+    $('donna-dock-toggle').onclick = () => { donnaDockOpen = true; syncDonnaDock(); $('chat-message').focus(); };
+    $('donna-dock-close').onclick = () => { donnaDockOpen = false; syncDonnaDock(); $('donna-dock-toggle').focus(); };
+}
 // ---------------------------------------------------------------- boot
 function boot() {
+    initStudio();
     initWorkspace();
     initOffice();
     initUnifiedWorkspace();
@@ -3699,7 +3988,7 @@ function boot() {
     const route = location.hash.replace('#', '');
     const params = new URLSearchParams(location.search);
     const requested = params.get('workspace') || '';
-    const workspaceRoute = ['chat', 'blueprint', 'whiteboard', 'decisions'].includes(requested) ? requested : null;
+    const workspaceRoute = ['chat', 'blueprint', 'softboard', 'timeline', 'whiteboard', 'decisions'].includes(requested) ? requested : null;
     const ceoRoute = params.get('ceo') === 'true';
     navigate(workspaceRoute || ceoRoute ? 'office' : route in VIEW_IDS ? route : 'office', false);
     if (workspaceRoute)
