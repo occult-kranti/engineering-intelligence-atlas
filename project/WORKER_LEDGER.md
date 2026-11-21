@@ -459,3 +459,11 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Deployment boundary:** Owner-only Site version 13 was deployed and reviewed with the conference table, Donna, crew and embedded People & access. No new membership or audience grants were created, and the Site has no MCP connection. The paired runtime was not upgraded; Source Review and Ledger remain visibly Not configured there. Source registers and private company identities/counts are excluded from this public receipt. Later prototype work is outside the 0.8.0 release record.
 - **Evidence:** project/release-0.8.0.json; project/ENDLESS_CANVAS_VALIDATION.md; cloud-workspace/UPSTREAM_SOURCE.json; GitHub runs44954070788,44954668181 and44954668193
 - **Next handoff:** Retain the 0.7.0 host/device acceptance boundaries: select and validate a real VPS/Vast host, pair an authorized single writer, establish the requested ChatGPT connection, upgrade the paired runtime deliberately, and verify the owner's installer/OS-keychain before claiming those production capabilities.
+
+## 059 · Frontend concept development · awaiting tests and publication
+
+- **Ask:** Record later Sonnet frontend design work, including the user's correction toward a continuous 3D core, without folding it into the released 0.8.0 binaries.
+- **Returned:** Three external Claude authorship requests are recorded as calls 16–18. The first stopped at `max_tokens` and remains incomplete; the bounded continuation and user-corrected core ended at `end_turn`. Their combined observed usage is $0.552900. Total observed accounting is $1.458730; the $0.495762 retained uncertainty is unchanged, giving $1.954492 conservative accounting within the existing $100 ceiling.
+- **Scope:** This is offline frontend prototype authorship. Donna in the concept is scripted; these metadata receipts do not demonstrate a connected runtime, autonomous employees, provider execution through Donna, passing tests or publication. Private prompts, provider results, credentials and local paths are not exported.
+- **Evidence:** project/claude-usage.json; project/CLAUDE_USAGE.md. The released source and package record remain separately pinned in project/release-0.8.0.json.
+- **Next handoff:** Await actual implementation review, interaction tests and publication evidence before updating this entry's acceptance status.

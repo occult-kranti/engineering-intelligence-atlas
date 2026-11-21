@@ -1,17 +1,17 @@
 # Claude development usage
 
-Current checkpoint: **0.8.0 endless-canvas development**. Historical source receipts retain their original UTC timestamps. Authorized development ceiling: **$100 USD**. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
+Current checkpoint: **later frontend design work, outside the released 0.8.0 binary source**. The [0.8.0 release receipt](release-0.8.0.json) retains its original source and accounting boundary. Historical request receipts retain their original UTC timestamps. Authorized development ceiling: **$100 USD**. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
 
 | Accounting category | USD | Interpretation |
 | --- | ---: | --- |
-| Observed native/development requests | **0.883690** | Usage returned by the recorded provider requests |
+| Observed development requests | **1.436590** | Recorded non-hosted requests, including external frontend authorship; not evidence of native Donna execution |
 | Observed successful hosted request | **0.022140** | Confirmed cloud reply and usage |
-| Total observed usage | **0.905830** | Native/development plus cloud; no allocation added |
+| Total observed usage | **1.458730** | Development plus cloud; no allocation added |
 | Retained uncertain attempts | **0.495762** | Earlier 0.285266 plus the blocked canvas source-review reservation 0.210496 |
-| Conservative usage accounting | **1.401592** | Observed usage plus retained uncertainty, against the 100.000000 ceiling |
+| Conservative usage accounting | **1.954492** | Observed usage plus retained uncertainty, against the 100.000000 ceiling |
 | Cloud allocation | **5.000000 reserved capacity** | Held inside the same global ceiling; contains cloud usage and is not an additional charge |
 
-The totals reconcile to [claude-usage.json](claude-usage.json). A reserved allocation, an uncertain attempt and observed usage are separate records. Do not add the $5 allocation to the observed or conservative usage totals, and do not describe an uncertain reservation as a confirmed provider charge.
+The totals reconcile to [claude-usage.json](claude-usage.json). Its historical `observedNativeUsd` field covers all non-hosted development requests, including external provider authorship. A reserved allocation, an uncertain attempt and observed usage are separate records. Do not add the $5 allocation to the observed or conservative usage totals, and do not describe an uncertain reservation as a confirmed provider charge.
 
 ## Request history
 
@@ -34,8 +34,11 @@ The totals reconcile to [claude-usage.json](claude-usage.json). A reserved alloc
 | Successful hosted Donna reply | 7,800 | 654 | 0.022140 | Confirmed reply after the request-option correction; no tools executed |
 | Blocked canvas source review | Unobserved | Unobserved | 0.210496 reserved | Automatic approval review classified public source as private; no provider response or actual charge observed |
 | Endless-canvas universe compositor and tests | 20,716 | 6,551 | 0.106942 | Sonnet returned implementation and tests; independently reviewed, corrected and integrated |
+| Later frontend design · initial response | 2,986 | 18,000 | 0.185972 | `max_tokens`; incomplete response with confirmed usage |
+| Later frontend design · bounded continuation | 18,617 | 13,477 | 0.172004 | `end_turn`; further prototype authorship returned |
+| Later frontend design · user-corrected continuous 3D core | 35,302 | 12,432 | 0.194924 | `end_turn`; prototype authorship returned; test and publication acceptance remain separate |
 
-The first call is recorded as incomplete delivery even though the HTTP call completed. Subsequent requests used supported `between_tools` thinking with medium effort. The integrated server was reviewed and hardened by the director; generated code was not accepted merely because the provider returned it.
+The initial MCP call is recorded as incomplete delivery even though the HTTP call completed. Follow-on MCP requests used supported `between_tools` thinking with medium effort. The integrated server was reviewed and hardened by the director; generated code was not accepted merely because the provider returned it.
 
 Accounting uses the [official Claude price card](https://platform.claude.com/docs/en/about-claude/pricing) recorded for these standard/global Sonnet 5.5 requests: $2 per million input tokens and $10 per million output tokens. The original development calls and successful cloud receipt report no cache read/write tokens. The complete sanitized request accounting is in [claude-usage.json](claude-usage.json).
 
@@ -46,6 +49,20 @@ The first canvas request was blocked by automatic approval review because the su
 A new bounded request established all three source files as public using unauthenticated reads and matching hashes. That request completed with **20,716 input tokens, 6,551 output tokens and $0.106942 observed usage**, request ID `d38ebb65-3dd2-461f-baaf-a791eb25a74f`. Sonnet supplied the universe compositor and focused tests. Independent review corrected scope continuity, malformed geometry and member-isolation issues before integration. There was no blanket retry of an uncertain billed request, and the earlier reservation was not cleared.
 
 This is a completed coding response and reviewed implementation input. Full integrated testing, packaged application acceptance and publication have separate receipts in [the 0.8.0 validation record](ENDLESS_CANVAS_VALIDATION.md).
+
+## Later frontend design calls
+
+These three requests belong to a separate frontend concept after the 0.8.0 source cut. They are not part of the released 0.8.0 binaries, and they do not alter that release's verification receipt.
+
+| Request | Started at (UTC) | Provider stop | Delivery state |
+| --- | --- | --- | --- |
+| `9e5e6d72-3568-4b96-a41d-b6d9df74f34d` | 2026-11-21 22:07:05 | `max_tokens` | Incomplete initial concept response |
+| `6ac0bd4a-6960-47f5-906b-b8989df286c2` | 2026-11-21 22:10:48 | `end_turn` | Bounded continuation returned |
+| `b77160ed-bca8-47ee-8356-296035bb5aa3` | 2026-11-21 22:16:42 | `end_turn` | User-corrected continuous 3D core returned |
+
+The increment is **$0.552900** from observed token usage. It raises total observed accounting from **$0.905830 to $1.458730**. The **$0.495762** retained uncertainty is unchanged, so conservative accounting becomes **$1.954492**. The initial response's output limit does not erase its confirmed usage; the following two responses are separate bounded requests. No earlier uncertain reservation was cleared.
+
+External Claude supplied the prototype's authorship. **Donna inside this offline concept remains scripted**; these calls do not establish a connected runtime, autonomous employees, provider execution through Donna or a live backend. Test and publication acceptance are awaiting their own evidence. Only allowlisted request metadata is exported to this ledger; prompts, provider results, credentials and private local paths remain excluded.
 
 ## Completed Donna rounds
 

@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 1.401592,
+  "accountedUsd": 1.954492,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -172,9 +172,60 @@
       "costUsd": 0.106942,
       "retainedReservationUsd": 0,
       "contribution": "A new bounded request used three source files whose public availability was established by unauthenticated reads and matching hashes. Sonnet returned a universe compositor and tests; the implementation was independently reviewed, corrected and integrated. This receipt does not establish release or deployment success."
+    },
+    {
+      "number": 16,
+      "model": "claude-sonnet-5-5",
+      "task": "front-end design concept initial response",
+      "requestId": "9e5e6d72-3568-4b96-a41d-b6d9df74f34d",
+      "startedAt": "2026-11-21T22:07:05Z",
+      "state": "incomplete",
+      "stopReason": "max_tokens",
+      "inputTokens": 2986,
+      "outputTokens": 18000,
+      "costUsd": 0.185972,
+      "retainedReservationUsd": 0,
+      "workstream": "later-frontend-design",
+      "releaseScope": "Outside the released 0.8.0 binary source.",
+      "executionContext": "External provider authorship for an offline frontend prototype.",
+      "contribution": "The initial frontend design response reached its output limit and is retained as incomplete. Observed usage is recorded despite incomplete delivery."
+    },
+    {
+      "number": 17,
+      "model": "claude-sonnet-5-5",
+      "task": "front-end design bounded continuation",
+      "requestId": "6ac0bd4a-6960-47f5-906b-b8989df286c2",
+      "startedAt": "2026-11-21T22:10:48Z",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 18617,
+      "outputTokens": 13477,
+      "costUsd": 0.172004,
+      "retainedReservationUsd": 0,
+      "workstream": "later-frontend-design",
+      "releaseScope": "Outside the released 0.8.0 binary source.",
+      "executionContext": "External provider authorship for an offline frontend prototype.",
+      "contribution": "A bounded continuation ended normally and returned further prototype authorship. Completion does not establish tested or published application behavior."
+    },
+    {
+      "number": 18,
+      "model": "claude-sonnet-5-5",
+      "task": "user-corrected continuous 3D frontend core",
+      "requestId": "b77160ed-bca8-47ee-8356-296035bb5aa3",
+      "startedAt": "2026-11-21T22:16:42Z",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 35302,
+      "outputTokens": 12432,
+      "costUsd": 0.194924,
+      "retainedReservationUsd": 0,
+      "workstream": "later-frontend-design",
+      "releaseScope": "Outside the released 0.8.0 binary source.",
+      "executionContext": "External provider authorship for an offline frontend prototype.",
+      "contribution": "A user-corrected continuous 3D frontend core response ended normally. External Claude authored prototype code; Donna inside the offline concept remains scripted."
     }
   ],
-  "observedUsd": 0.90583,
+  "observedUsd": 1.45873,
   "retainedReservationUsd": 0.495762,
   "cloud": {
     "allocationUsd": 5,
@@ -200,6 +251,21 @@
     },
     "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
   },
-  "observedNativeUsd": 0.88369,
-  "newWorkstreamCapUsd": 20
+  "observedNativeUsd": 1.43659,
+  "newWorkstreamCapUsd": 20,
+  "observedNativeUsdScope": "Historical field for all non-hosted development requests, including external provider authorship. It does not imply execution by native Donna.",
+  "laterFrontendDesign": {
+    "sourceReleaseExcluded": "0.8.0",
+    "requestNumbers": [
+      16,
+      17,
+      18
+    ],
+    "incrementObservedUsd": 0.5529,
+    "observedBeforeIncrementUsd": 0.90583,
+    "status": "awaiting-test-and-publication",
+    "externalClaudeAuthorship": true,
+    "prototypeDonnaBehavior": "scripted",
+    "scope": "Design metadata only. Provider completion does not establish runtime integration, autonomous Donna execution, successful tests or publication."
+  }
 }
