@@ -11,6 +11,7 @@ import re
 import stat
 import tempfile
 import zipfile
+from urllib.parse import unquote, urlsplit
 
 MAX_STATE_BYTES = 64 * 1024 * 1024
 MAX_ARTIFACT_BYTES = 512_000
@@ -182,14 +183,88 @@ def atomic_private_write(path, content):
         if temporary is not None:
             temporary.unlink(missing_ok=True)
 
+def canonical_file_uri(value):
+    """Canonical key for an exact local file URI, else None. Percent-decodes and normalizes Windows drive syntax."""
+    if not isinstance(value, str) or not value.startswith('file:///') or len(value) > 8192:
+        return None
+    parts = urlsplit(value)
+    if parts.scheme != 'file' or parts.netloc or parts.query or parts.fragment:
+        return None
+    path = unquote(parts.path)
+    if '\x00' in path:
+        return None
+    match = re.match(r'^/([A-Za-z]):[\\/](.*)
+def restore_workspace(archive, user_data, replace=False):
+    root = safe_path(user_data)
+    state_path = safe_path(root / 'company' / 'company-state.json')
+    if state_path.exists() and not replace:
+        raise ValueError('Existing workspace preserved. Use --replace to make a timestamped backup and replace it.')
+    data, mapping, payloads = validate_archive(archive)
+    artifact_dir = safe_path(root / 'office-artifacts')
+    destinations = {member: safe_path(artifact_dir / Path(member).name) for member in set(mapping.values())}
+    for member, destination in destinations.items():
+        if destination.exists() and read_regular(destination, MAX_ARTIFACT_BYTES) != payloads[member]:
+            raise ValueError('A conflicting existing artifact was preserved; restore to a different user-data directory.')
+    old_state = read_regular(state_path, MAX_STATE_BYTES) if state_path.exists() else None
+    replacements = {old: str(destinations[member]) for old, member in mapping.items()}
+    restored = json.dumps(remap_references(data, replacements), ensure_ascii=False, indent=2).encode()
+    parse_state(restored)
+    root.mkdir(parents=True, exist_ok=True, mode=0o700)
+    state_path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+    artifact_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
+    safe_path(state_path)
+    safe_path(artifact_dir)
+    for member, destination in destinations.items():
+        if not destination.exists():
+            atomic_private_write(destination, payloads[member])
+        os.chmod(destination, 0o600)
+    backup = None
+    if old_state is not None:
+        stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+        backup = safe_path(state_path.with_name('company-state.backup-' + stamp + '.json'))
+        atomic_private_write(backup, old_state)
+    atomic_private_write(state_path, restored)
+    missing = parse_json(payloads['artifact-map.json']).get('missingArtifactReferences', [])
+    return {'state': str(state_path), 'companies': len(data['office']['companies']), 'artifacts': len(destinations), 'backup': str(backup) if backup else None, 'missingArtifactReferences': len(missing), 'credentialsRestored': False}
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--archive', required=True, type=Path)
+    parser.add_argument('--user-data-path', required=True, type=Path)
+    parser.add_argument('--replace', action='store_true')
+    args = parser.parse_args()
+    try:
+        print(json.dumps(restore_workspace(args.archive, args.user_data_path, args.replace)))
+    except (OSError, ValueError, RecursionError, zipfile.BadZipFile) as error:
+        raise SystemExit('Restore refused: ' + str(error))
+
+if __name__ == '__main__':
+    main()
+, path)
+    if match:
+        return 'file-win:' + match[1].lower() + ':/' + match[2].replace('\\', '/')
+    return 'file:' + path
+
 def remap_references(value, replacements):
-    if isinstance(value, str):
-        return replacements.get(value, value)
-    if isinstance(value, list):
-        return [remap_references(x, replacements) for x in value]
-    if isinstance(value, dict):
-        return {key: remap_references(item, replacements) for key, item in value.items()}
-    return value
+    canonical = {}
+    for old, new in replacements.items():
+        key = canonical_file_uri(old)
+        if key is not None:
+            canonical.setdefault(key, new)
+    def walk(item):
+        if isinstance(item, str):
+            if item in replacements:
+                return replacements[item]
+            key = canonical_file_uri(item)
+            if key is not None and key in canonical:
+                return canonical[key]
+            return item
+        if isinstance(item, list):
+            return [walk(x) for x in item]
+        if isinstance(item, dict):
+            return {k: walk(v) for k, v in item.items()}
+        return item
+    return walk(value)
 
 def restore_workspace(archive, user_data, replace=False):
     root = safe_path(user_data)
