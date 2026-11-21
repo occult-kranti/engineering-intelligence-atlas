@@ -1,0 +1,87 @@
+{
+  "artifactType": "blueprint-renderer-non-gpu-evidence/v1",
+  "runId": "blueprint-world-20261121",
+  "nodeId": "renderer",
+  "attempt": "local-fallback-1-review",
+  "scope": "NON-GPU: actual Three 0.187.0 math, geometries and OrbitControls; mocked WebGLRenderer and 2D text measurement; synthetic DOM/events",
+  "sourceSHA256": "c595ab9e7fbe3dc7cbbb969fba7f7eac7094f8ca27cb6f6a6b553f258f839f53",
+  "groups": [
+    {
+      "name": "Initial scene, stable idle and ready notification",
+      "ok": true,
+      "settleFrames": 1,
+      "mountedAssignments": 38
+    },
+    {
+      "name": "Independent orthographic equations and ray round trips",
+      "ok": true,
+      "cases": 36,
+      "maxScreenError": 7.346888194559166e-12,
+      "maxWorldError": 1.3642420526593924e-12
+    },
+    {
+      "name": "Actual generated room/sheet geometry is finite and contained",
+      "ok": true,
+      "inkMeshes": 6,
+      "triangles": 2178
+    },
+    {
+      "name": "Normal-motion camera flight is interrupted by manual canvas input",
+      "ok": true,
+      "reducedMotion": false
+    },
+    {
+      "name": "Fast release commits a core-stable, contained point",
+      "ok": true,
+      "commits": 1
+    },
+    {
+      "name": "Escape, pointer cancel, capture loss, blur and hidden restore exactly",
+      "ok": true,
+      "cases": 5
+    },
+    {
+      "name": "Collisions, extreme corner targets and long frame gap remain contained",
+      "ok": true,
+      "cases": 4,
+      "frameGapMs": 250
+    },
+    {
+      "name": "Malformed public camera/projection input remains finite",
+      "ok": true
+    },
+    {
+      "name": "Camera survives state refresh and resource churn is bounded",
+      "ok": true,
+      "liveResources": {
+        "geometry": 56,
+        "material": 198,
+        "texture": 172
+      }
+    },
+    {
+      "name": "Context restore notifies the host ready again",
+      "ok": true
+    },
+    {
+      "name": "Dispose releases observed resources, listeners, observer and frames",
+      "ok": true,
+      "observed": {
+        "geometry": 851,
+        "material": 2778,
+        "texture": 2752
+      }
+    }
+  ],
+  "limitations": [
+    "No WebGL context, shader compilation or GPU rasterization was tested.",
+    "Synthetic text measurements do not validate glyph sizing or legibility.",
+    "Synthetic pointer events do not establish real-browser hit targets."
+  ],
+  "passed": 11,
+  "failed": 0,
+  "renderCallsMocked": 481,
+  "expectedErrorCallbacks": [
+    "The graphics context was interrupted. Your records remain saved. Waiting for graphics recovery."
+  ]
+}

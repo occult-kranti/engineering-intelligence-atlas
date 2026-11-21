@@ -1,0 +1,156 @@
+{
+  "artifactType": "blueprint-world-native-browser-receipt/v1",
+  "runId": "blueprint-world-20261121",
+  "nodeId": "root-browser",
+  "attempt": 1,
+  "recordedAt": "2026-11-21T23:40:18.658799+00:00",
+  "environment": {
+    "browser": "managed Chrome",
+    "url": "http://127.0.0.1:4173/concepts/blueprint-world.html",
+    "viewport": {
+      "width": 1363,
+      "height": 936
+    }
+  },
+  "scope": "Native controls and layout in the graphics-unavailable path, using synthetic QA records in local preview storage.",
+  "sourceFiles": [
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world.html",
+      "bytes": 11581,
+      "sha256": "c8788f3c5ce5070bdccc3f900aabf99e4e9bf00548ceba1422162e88056c0b9d"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-app.js",
+      "bytes": 63778,
+      "sha256": "3dd32e492c47215835842394a8f78ef42a3c84066b2d7755b121cdc5f20d9546"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-core.js",
+      "bytes": 35637,
+      "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-renderer.js",
+      "bytes": 33195,
+      "sha256": "c595ab9e7fbe3dc7cbbb969fba7f7eac7094f8ca27cb6f6a6b553f258f839f53"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-vendor.js",
+      "bytes": 769573,
+      "sha256": "fc7cbff1e3c2d33d2ac1fe1ad49d8a31db926cd5c966482ce2d2762bc82147c4"
+    }
+  ],
+  "checks": [
+    {
+      "id": "graphics-unavailable",
+      "status": "observed-pass",
+      "evidence": "Truthful WebGL2-unavailable message and disabled camera controls; native forms usable."
+    },
+    {
+      "id": "required-company-name",
+      "status": "observed-pass",
+      "evidence": "Empty company name rejected; valid Canvas QA company created and saved."
+    },
+    {
+      "id": "scoped-hiring",
+      "status": "observed-pass",
+      "evidence": "Global Create inherited Engineering; Taylor QA hired as visiting Build engineer with canonical home, host and director."
+    },
+    {
+      "id": "scoped-task-owner",
+      "status": "observed-pass",
+      "evidence": "Task creation inherited selected department and Taylor QA owner."
+    },
+    {
+      "id": "literal-task-text",
+      "status": "observed-pass",
+      "evidence": "Review <canvas> ownership rendered literally in profile and roadmap."
+    },
+    {
+      "id": "task-edit",
+      "status": "observed-pass",
+      "evidence": "Lane next and status doing saved independently; canonical owner retained."
+    },
+    {
+      "id": "panel-limit",
+      "status": "observed-pass",
+      "evidence": "Sixth panel tucked the oldest and exposed Recent panels with announcement; restore was not manually exercised."
+    },
+    {
+      "id": "filter-keyboard-focus",
+      "status": "observed-pass",
+      "evidence": "Native Home key changed roadmap filter and focus remained on the replacement select."
+    },
+    {
+      "id": "nested-department",
+      "status": "observed-pass",
+      "evidence": "Systems created under Engineering; hierarchical path displayed."
+    },
+    {
+      "id": "whiteboard-literal-text",
+      "status": "observed-pass",
+      "evidence": "Company note saved and HTML-looking text remained literal."
+    },
+    {
+      "id": "donna-close-draft",
+      "status": "observed-pass",
+      "evidence": "Unsent text survived closing and reopening Donna."
+    },
+    {
+      "id": "donna-send",
+      "status": "observed-pass",
+      "evidence": "Scripted scoped summary matched local company task counts; input cleared and focus returned to Message Donna."
+    },
+    {
+      "id": "donna-scope-isolation",
+      "status": "observed-pass",
+      "evidence": "Switching Canvas QA and Studio North separated drafts and task summaries."
+    },
+    {
+      "id": "donna-prepare-only",
+      "status": "observed-pass",
+      "evidence": "Prepare task copied unsent text into a form without creating a task."
+    },
+    {
+      "id": "movable-panel",
+      "status": "observed-pass",
+      "evidence": "Native header drag moved Donna within the viewport; send remained usable afterward."
+    },
+    {
+      "id": "no-document-scroll",
+      "status": "observed-pass",
+      "evidence": "Window, html and body scroll offsets remained zero after Donna send."
+    },
+    {
+      "id": "reload-persistence",
+      "status": "observed-pass",
+      "evidence": "Company, nested department, employee, task status and note persisted after reload."
+    },
+    {
+      "id": "note-search-focus",
+      "status": "observed-pass",
+      "evidence": "Search opened the note whiteboard and focused its actual text."
+    },
+    {
+      "id": "note-save-focus",
+      "status": "observed-pass",
+      "evidence": "Adding a second note restored focus to Add note after rerender."
+    },
+    {
+      "id": "task-save-return-focus",
+      "status": "observed-pass",
+      "evidence": "Saving task closed its editor and focused Focus Roadmap in the world; document scrollY was zero."
+    }
+  ],
+  "graphics": {
+    "status": "not-verified",
+    "reason": "WebGL2 context creation returned unavailable in this managed browser.",
+    "diagnosticBoundary": "A chrome://gpu navigation was rejected by browser URL policy; no alternate browser or lower-level workaround was attempted."
+  },
+  "limitations": [
+    "No actual GPU rendering, shader compilation, visual appearance, rendered-object picking, frame timing or GPU memory acceptance.",
+    "Popup drag was observed with fallback pixel anchoring; this does not validate world-anchor projection.",
+    "Local records and Donna conversation are synthetic; no live worker, provider or shared-account access is connected.",
+    "No production publication is claimed by this local preview receipt."
+  ]
+}

@@ -478,3 +478,13 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Scope:** Planning and generated visual assets only. No new Claude API request, app implementation, physics integration, deployment or benchmark result is claimed. The previously verified 86,124-byte prototype remains byte-identical at SHA-256 `91d824237d60305a51d255b0e8ca58b1a327fc6135bd9f9150c1f370b22e69cf`.
 - **Evidence:** design/blueprint-world/PLAN.md; design/blueprint-world/BRIEF.md; design/blueprint-world/provenance.json.
 - **Next handoff:** Implement the scoped record model and flat world renderer as separate bounded Claude packages, then camera/motion and world work elements, with numeric and actual-browser acceptance kept distinct.
+
+## 061 · Blueprint world build swarm · local implementation checkpoint
+
+- **Ask:** Use the project skill swarm and Claude to implement the approved continuous blueprint world, improve workflows, verify edge cases and preserve progress.
+- **Returned:** Scoped core records, a locally bundled Three.js 0.187.0 renderer, flat employee circles, nested departments, native world-attached work elements, company/department hiring and task ownership, whiteboard, hierarchy, search and scoped scripted Donna.
+- **Verification:** 12 independent core groups passed; the 6-group DOM harness passed on the final checkpoint UI. The renderer-owner harness passed 11 non-GPU groups, including 36 camera cases, drag cancellation, containment and disposal. Root observed 20 grouped native-browser workflows in the WebGL-unavailable path. Actual GPU appearance, shaders and scene picking remain unverified because managed Chrome could not create WebGL2.
+- **Authorship and cost:** Calls 19–22 contributed partial core and UI source. Renderer source was authored locally after a provider-process polling approval block; its unobserved request reservation is retained without retry. New observed usage is $0.463624 and new uncertainty is $0.273954; public conservative cumulative usage is $2.692070.
+- **Scope:** Local synthetic frontend only; Donna is scripted and no live employee, permission or model grant was created. The prior prototype and 0.8.0 release remain unchanged. Publication waits for the user-requested next expansion.
+- **Evidence:** design/blueprint-world/BUILD-RUN.json; design/blueprint-world/validation/validation-index.json; design/blueprint-world/validation/browser-receipt.json; project/claude-usage.json.
+- **Next handoff:** User authorized an additional $20 ceiling for architectural-depth graphics and scoped Donna/sub-Donna floorplan editing. Preserve this checkpoint, then implement and independently test that bounded expansion.

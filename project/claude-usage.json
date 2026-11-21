@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 1.954492,
+  "accountedUsd": 2.69207,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -223,10 +223,73 @@
       "releaseScope": "Outside the released 0.8.0 binary source.",
       "executionContext": "External provider authorship for an offline frontend prototype.",
       "contribution": "A user-corrected continuous 3D frontend core response ended normally. External Claude authored prototype code; Donna inside the offline concept remains scripted."
+    },
+    {
+      "number": 19,
+      "model": "claude-sonnet-5-5",
+      "workstream": "blueprint-world-frontend",
+      "releaseScope": "Outside the released 0.8.0 binary source and separate from the earlier CSS 3D blueprint prototype.",
+      "executionContext": "External development authorship for a standalone synthetic local frontend; Donna remains scripted.",
+      "requestId": "7e03532f-c759-4845-b316-27612527f929",
+      "task": "blueprint world UI initial source",
+      "state": "incomplete",
+      "stopReason": "max_tokens",
+      "inputTokens": 10854,
+      "outputTokens": 20000,
+      "costUsd": 0.221708,
+      "retainedReservationUsd": 0,
+      "contribution": "Partial UI source returned at the output limit. A separate bounded completion and independent local repairs supplied the integrated UI."
+    },
+    {
+      "number": 20,
+      "model": "claude-sonnet-5-5",
+      "workstream": "blueprint-world-frontend",
+      "releaseScope": "Outside the released 0.8.0 binary source and separate from the earlier CSS 3D blueprint prototype.",
+      "executionContext": "External development authorship for a standalone synthetic local frontend; Donna remains scripted.",
+      "requestId": "56a84d27-219a-4746-a14d-55e6a74e019f",
+      "task": "blueprint world renderer request with blocked polling",
+      "state": "polling-blocked-process-unknown-reservation-retained",
+      "inputTokens": null,
+      "outputTokens": null,
+      "costUsd": null,
+      "retainedReservationUsd": 0.273954,
+      "contribution": "Automatic approval review blocked polling. The process outcome is unknown and no output or actual charge was observed. The conservative reservation is retained; the request was not retried. The renderer was authored locally, with no provider contribution claimed."
+    },
+    {
+      "number": 21,
+      "model": "claude-sonnet-5-5",
+      "workstream": "blueprint-world-frontend",
+      "releaseScope": "Outside the released 0.8.0 binary source and separate from the earlier CSS 3D blueprint prototype.",
+      "executionContext": "External development authorship for a standalone synthetic local frontend; Donna remains scripted.",
+      "requestId": "227945a3-4af8-4287-a63b-8b81340656f3",
+      "task": "blueprint world scoped core source",
+      "state": "incomplete",
+      "stopReason": "max_tokens",
+      "inputTokens": 8149,
+      "outputTokens": 9000,
+      "costUsd": 0.106298,
+      "retainedReservationUsd": 0,
+      "contribution": "Partial core source returned at the output limit. Independent local completion preserved the frozen API and added validation, transactional and containment repairs."
+    },
+    {
+      "number": 22,
+      "model": "claude-sonnet-5-5",
+      "workstream": "blueprint-world-frontend",
+      "releaseScope": "Outside the released 0.8.0 binary source and separate from the earlier CSS 3D blueprint prototype.",
+      "executionContext": "External development authorship for a standalone synthetic local frontend; Donna remains scripted.",
+      "requestId": "297f67fe-791e-42d7-8a83-a055e28d551d",
+      "task": "blueprint world UI bounded completion",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 21954,
+      "outputTokens": 9171,
+      "costUsd": 0.135618,
+      "retainedReservationUsd": 0,
+      "contribution": "A separate bounded UI completion ended normally. The resulting UI received local repairs and independent review; provider completion does not establish GPU verification or publication."
     }
   ],
-  "observedUsd": 1.45873,
-  "retainedReservationUsd": 0.495762,
+  "observedUsd": 1.922354,
+  "retainedReservationUsd": 0.769716,
   "cloud": {
     "allocationUsd": 5,
     "observedUsd": 0.02214,
@@ -251,7 +314,7 @@
     },
     "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
   },
-  "observedNativeUsd": 1.43659,
+  "observedNativeUsd": 1.900214,
   "newWorkstreamCapUsd": 20,
   "observedNativeUsdScope": "Historical field for all non-hosted development requests, including external provider authorship. It does not imply execution by native Donna.",
   "laterFrontendDesign": {
@@ -270,5 +333,38 @@
     "validationEvidence": "design/blueprint-canvas/README.md",
     "validatedSourceSha256": "91d824237d60305a51d255b0e8ca58b1a327fc6135bd9f9150c1f370b22e69cf",
     "publicationEvidence": "design/blueprint-canvas/publication.json"
+  },
+  "blueprintWorldDevelopment": {
+    "sourceReleaseExcluded": "0.8.0",
+    "requestNumbers": [
+      19,
+      20,
+      21,
+      22
+    ],
+    "requestIds": [
+      "7e03532f-c759-4845-b316-27612527f929",
+      "56a84d27-219a-4746-a14d-55e6a74e019f",
+      "227945a3-4af8-4287-a63b-8b81340656f3",
+      "297f67fe-791e-42d7-8a83-a055e28d551d"
+    ],
+    "incrementObservedUsd": 0.463624,
+    "incrementRetainedReservationUsd": 0.273954,
+    "incrementConservativeUsd": 0.737578,
+    "observedBeforeIncrementUsd": 1.45873,
+    "retainedBeforeIncrementUsd": 0.495762,
+    "conservativeBeforeIncrementUsd": 1.954492,
+    "status": "local-frontend-implemented-graphics-unverified-publication-pending",
+    "usageBasis": "Allowlisted request metadata supplied by the coordinator; no private ledger contents exported.",
+    "authorship": {
+      "core": "Partial Claude source, completed and repaired locally.",
+      "renderer": "Locally authored; provider process outcome unknown after polling was blocked.",
+      "ui": "Claude initial source and bounded completion, with independent local repairs."
+    },
+    "prototypeDonnaBehavior": "scripted",
+    "scope": "Standalone synthetic local frontend. Independent core and DOM validation and separate non-GPU renderer mathematics checks passed for recorded sources. Managed Chrome could not provide WebGL; GPU visuals, shaders and rendered-scene picking remain unverified. Publication is pending. No real workers, model calls or grants are enabled by the prototype.",
+    "validationEvidence": "design/blueprint-world/validation/README.md",
+    "buildEvidence": "design/blueprint-world/BUILD-RUN.json",
+    "approvalOutcome": "Automatic approval review blocked polling the renderer request. Later user authorization supported continued development. No platform automatic-approval setting was changed and no uncertain request was retried."
   }
 }

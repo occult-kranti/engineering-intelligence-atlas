@@ -1,6 +1,8 @@
 # Daftar: infinite blueprint world — graphics, interaction and implementation plan
 
-**Planning date:** 21 November 2026. **Status:** design and implementation plan; this replacement has not been built or deployed. **Surface mode:** Operate.
+**Planning date:** 21 November 2026. **Status:** implemented local frontend demo; publication pending. **Surface mode:** Operate.
+
+The scoped core, Three.js renderer source and native work-element UI now exist. Independent core and DOM checks have passed, alongside separate non-GPU renderer mathematics checks. Actual WebGL was unavailable in managed Chrome: GPU visuals, shaders and rendered-scene picking remain unverified. The architecture and acceptance targets below retain their design intent; section 13 distinguishes the implemented scope from remaining gates.
 
 ## 1. The decision
 
@@ -50,7 +52,7 @@ The initial layout should be mostly rectangular because its boundaries are legib
 
 ### One scene with flat content
 
-Use Three.js with a locally bundled renderer. Three's WebGLRenderer uses WebGL 2 [1]. The proposed scene contains a table surface, company groups, flat blueprint geometry, flat marker instances, connection paths and world anchors for work elements.
+Use Three.js with a locally bundled renderer. Three's WebGLRenderer uses WebGL 2 [1]. The implemented renderer source defines a table surface, company groups, flat blueprint geometry, flat marker instances, connection paths and world anchors for work elements.
 
 Store plan geometry in company-local two-dimensional coordinates. Convert those coordinates onto the world's X/Z plane; Y is reserved for a small, controlled depth separation. Illustrative layer order:
 
@@ -143,7 +145,7 @@ Only active or settling objects need simulation. Stop their updates after settli
 
 ### PhysX, Rapier or a small motion layer?
 
-**Recommended first implementation:** Three.js plus a small isolated motion/constraint module. The flat interface requires springs, circle/rectangle overlap tests and containment, rather than a fully simulated office.
+**Adopted implementation direction:** pinned Three.js 0.187.0 plus a small isolated motion/constraint layer; see [OPEN_SOURCE.md](OPEN_SOURCE.md). The flat interface requires springs, circle/rectangle overlap tests and containment, rather than a fully simulated office.
 
 **Escalation path:** use Rapier 2D if measured requirements expand to many interacting markers, complex collision shapes or joints. Its official JavaScript packages include 2D and 3D WebAssembly engines, with asynchronous initialization [5]. Keep the motion interface independent so this can change without replacing the domain model or renderer.
 
@@ -201,7 +203,7 @@ Active popups do not multiply into permanent sidebars. Distant elements may coll
 | Department | Stable ID, company/office, optional parent department and local bounds. |
 | Employee | Stable identity, home company, role, reporting relationship and configured skills/model policy where available. |
 | Assignment | Employee, host company/department, resident/shared/visiting kind, scope and expiry where applicable. |
-| Task | Company, optional department, eligible owner assignment, title, roadmap lane, status and evidence references. |
+| Task | Company, optional department, canonical employee owner validated through an eligible company/department assignment, title, roadmap lane and status; runtime evidence references remain a future adapter concern. |
 | Board / note | Company, board type, stable IDs and local placement. |
 | Connection | Typed endpoints, relationship scope and state. |
 | Presentation | Camera, selected IDs, panel anchors, local layout preferences and drafts kept separate from credentials/grants. |
@@ -249,7 +251,7 @@ Batch lines/circles, reuse materials, dispose replaced GPU resources, and render
 | --- | --- |
 | Laptop layouts | Verify 1366 × 768, 1440 × 900 and 1920 × 1080; no primary control clipped. |
 | Smoothness | Aim for 60 fps on a named representative laptop; measure frame timing, interaction latency and memory before claiming it. |
-| Portfolio stress | Exercise 100 companies and 5,000 synthetic assignments with bounded detailed rendering; increase only after measured results. |
+| Portfolio stress | Current model caps are 100 companies, 1,000 employee definitions and 2,000 explicit assignments. Actual GPU portfolio stress remains unverified; larger capacities require a separate model and performance decision. |
 | Active motion | Begin with at most 64 active/settling layout objects; other markers remain static. |
 | Detail stability | Cross each zoom threshold 20 times in both directions with no draft loss, duplicates or resource growth. |
 | Idle behavior | No continuous scene rendering after camera/motion settles, apart from an explicitly enabled live effect. |
@@ -257,9 +259,9 @@ Batch lines/circles, reuse materials, dispose replaced GPU resources, and render
 
 A local browser/desktop GPU renders the interface. A VPS or GPU host is not a prerequisite for this canvas. Remote runtime and model work can remain behind the existing API adapter. The website and desktop shell should reuse the same renderer, scene model and motion behavior.
 
-## 11. Implementation packages for Claude
+## 11. Implementation packages and remaining gates
 
-Do not ask one coding response to invent the visual world, state model, renderer and native integration simultaneously. Use the image and this plan as the fixed brief, then assign bounded packages with concrete returns.
+The implementation used bounded model, renderer and UI responsibilities with the image and this plan as the fixed brief. The package table retains its target gates; it is not a claim that every planned subfeature has passed. The scoped frontend covers portions of A–D, while actual graphics acceptance in E remains open and the runtime adapter in F remains unconnected.
 
 | Package | Deliverable | Completion gate |
 | --- | --- | --- |
@@ -290,7 +292,21 @@ Numerical tests can establish matrices, rays, containment and motion properties.
 
 ## 13. Current checkpoint and next implementation boundary
 
-This checkpoint contains the corrected image, the UX brief, this researched architecture and preserved superseded studies. It adds no new app runtime, live Donna connection, PhysX/Rapier integration or benchmark result. No Claude API request was made for this planning revision. The next implementation should start with packages A and B using the flat-circle visual reference.
+The initial planning checkpoint has progressed to an implemented standalone local frontend. The entry point is [blueprint-world.html](../../cloud-workspace/public/concepts/blueprint-world.html), with separate core, renderer and application modules plus a locally bundled graphics dependency. The corrected image remains a concept, not a captured application result.
+
+| Area | Implemented or recorded now | Remaining boundary |
+| --- | --- | --- |
+| Scoped records | Company/sub-company creation, one default office per company, root and nested departments, local employees and explicit assignments, tasks, notes and validated persistence. | Additional-office creation, real membership/grants, runtime model policy and collaborative conflict resolution are not connected by this demo. |
+| Native work elements | Scoped create, hire, task ownership/lane/status, notes, profiles, boards, search and scripted Donna. | Local definitions do not start employees or execute model calls. |
+| Graphics and motion source | Three.js 0.187.0 with OrbitControls, flat blueprint/circle scene source, world anchors and bounded UI motion/containment. | Actual GPU appearance, shaders, rendered-scene picking, laptop frame timing and GPU resource behavior remain unverified. No PhysX, Rapier or Troika dependency was added. |
+| Independent validation | 12 core groups and 6 DOM groups passed for their recorded source hashes; the DOM harness explicitly makes graphics unavailable. | These results establish neither browser layout nor WebGL rendering. See the [validation record](validation/README.md) and [index](validation/validation-index.json). |
+| Renderer review | The renderer owner reports 11 passing non-GPU groups using Three.js mathematics. | This separate numerical evidence is not an actual graphics-context or visual review. |
+| Browser review | The coordinator observed company creation, local hiring and task ownership, lane and status changes through native managed-Chrome controls. | WebGL was unavailable in that environment. Further browser review is in progress; no actual scene-picking success is claimed. |
+| Publication | Source exists locally with coordinated build evidence in [BUILD-RUN.json](BUILD-RUN.json). | Publication and its exact URL/version/source receipt are pending. |
+
+External Claude Sonnet 5.5 partially authored the core and supplied the initial UI plus its bounded completion; local review completed the core and repaired the UI. The renderer was authored locally after automatic approval review blocked polling its request. That process's outcome is unknown, no response was observed, and its reservation remains in [the usage ledger](../../project/CLAUDE_USAGE.md). There was no automatic retry or change to platform automatic-approval settings; later user authorization supported continuation of the development work.
+
+The next acceptance boundary is a real WebGL2-capable browser running this exact frontend, with visible geometry, text, shaders, object picking, camera modes and popup hit targets checked together. Numerical geometry and native-form checks remain useful evidence within their stated scope. The earlier CSS 3D prototype, its historical owner-private Site publication and the 0.8.0 release retain their own source and receipts; this new frontend is outside that released binary source.
 
 ## Primary technical sources
 

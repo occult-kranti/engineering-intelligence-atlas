@@ -1,14 +1,14 @@
 # Claude development usage
 
-Current checkpoint: **later frontend design work, outside the released 0.8.0 binary source**. The [0.8.0 release receipt](release-0.8.0.json) retains its original source and accounting boundary. Historical request receipts retain their original UTC timestamps. Authorized development ceiling: **$100 USD**. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
+Current checkpoint: **Blueprint World frontend implementation, outside the released 0.8.0 binary source; publication and GPU verification pending**. The [0.8.0 release receipt](release-0.8.0.json) retains its original source and accounting boundary. Historical request receipts retain their original UTC timestamps. Authorized development ceiling: **$100 USD**. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
 
 | Accounting category | USD | Interpretation |
 | --- | ---: | --- |
-| Observed development requests | **1.436590** | Recorded non-hosted requests, including external frontend authorship; not evidence of native Donna execution |
+| Observed development requests | **1.900214** | Recorded non-hosted requests, including external frontend authorship; not evidence of native Donna execution |
 | Observed successful hosted request | **0.022140** | Confirmed cloud reply and usage |
-| Total observed usage | **1.458730** | Development plus cloud; no allocation added |
-| Retained uncertain attempts | **0.495762** | Earlier 0.285266 plus the blocked canvas source-review reservation 0.210496 |
-| Conservative usage accounting | **1.954492** | Observed usage plus retained uncertainty, against the 100.000000 ceiling |
+| Total observed usage | **1.922354** | Development plus cloud; no allocation added |
+| Retained uncertain attempts | **0.769716** | Earlier 0.495762 plus the renderer process reservation 0.273954 after polling was blocked |
+| Conservative usage accounting | **2.692070** | Observed usage plus retained uncertainty, against the 100.000000 ceiling |
 | Cloud allocation | **5.000000 reserved capacity** | Held inside the same global ceiling; contains cloud usage and is not an additional charge |
 
 The totals reconcile to [claude-usage.json](claude-usage.json). Its historical `observedNativeUsd` field covers all non-hosted development requests, including external provider authorship. A reserved allocation, an uncertain attempt and observed usage are separate records. Do not add the $5 allocation to the observed or conservative usage totals, and do not describe an uncertain reservation as a confirmed provider charge.
@@ -37,6 +37,10 @@ The totals reconcile to [claude-usage.json](claude-usage.json). Its historical `
 | Later frontend design · initial response | 2,986 | 18,000 | 0.185972 | `max_tokens`; incomplete response with confirmed usage |
 | Later frontend design · bounded continuation | 18,617 | 13,477 | 0.172004 | `end_turn`; further prototype authorship returned |
 | Later frontend design · user-corrected continuous 3D core | 35,302 | 12,432 | 0.194924 | `end_turn`; prototype authorship returned; test and publication acceptance remain separate |
+| Blueprint World UI · initial source | 10,854 | 20,000 | 0.221708 | `max_tokens`; partial source with observed usage |
+| Blueprint World renderer · polling blocked | Unobserved | Unobserved | 0.273954 reserved | Process outcome unknown; no output observed, reservation retained and no retry |
+| Blueprint World scoped core | 8,149 | 9,000 | 0.106298 | `max_tokens`; partial Claude source completed locally |
+| Blueprint World UI · bounded completion | 21,954 | 9,171 | 0.135618 | `end_turn`; response returned and received independent local repairs |
 
 The initial MCP call is recorded as incomplete delivery even though the HTTP call completed. Follow-on MCP requests used supported `between_tools` thinking with medium effort. The integrated server was reviewed and hardened by the director; generated code was not accepted merely because the provider returned it.
 
@@ -63,6 +67,23 @@ These three requests belong to a separate frontend concept after the 0.8.0 sourc
 The increment is **$0.552900** from observed token usage. It raises total observed accounting from **$0.905830 to $1.458730**. The **$0.495762** retained uncertainty is unchanged, so conservative accounting becomes **$1.954492**. The initial response's output limit does not erase its confirmed usage; the following two responses are separate bounded requests. No earlier uncertain reservation was cleared.
 
 External Claude supplied the prototype's authorship. **Donna inside this standalone concept remains scripted**; these calls do not establish a connected runtime, autonomous employees, provider execution through Donna or a live backend. Subsequent independent review passed all 15 synthetic stress groups for the final prototype, and a separate managed Chromium preview confirmed Donna Send at 20°, 38°, 52° and Top 0°. The [prototype handoff](../design/blueprint-canvas/README.md) pins the exact source hash and distinguishes simulated geometry from browser hit testing. Owner-only Site version 14 was then published and reviewed at Top view with a scripted Donna reply; [its publication receipt](../design/blueprint-canvas/publication.json) records the exact source and deployment. These are prototype acceptance facts, separate from the 0.8.0 release and from provider completion. Only allowlisted request metadata is exported to this ledger; prompts, provider results, credentials and private local paths remain excluded.
+
+## Blueprint World implementation calls
+
+These four records concern the new flat-circle Blueprint World frontend, after the earlier CSS 3D prototype and outside the 0.8.0 binary source. All use `claude-sonnet-5-5` and the existing worker's recorded standard/global token rates. Only the coordinator's allowlisted accounting metadata is included; this update did not read the private ledger.
+
+| Request | Provider outcome | Accounting |
+| --- | --- | ---: |
+| `7e03532f-c759-4845-b316-27612527f929` | Initial UI source reached `max_tokens`; incomplete delivery with confirmed usage | $0.221708 observed |
+| `56a84d27-219a-4746-a14d-55e6a74e019f` | Automatic approval review blocked polling; process outcome unknown and no output observed | $0.273954 uncertain reservation retained |
+| `227945a3-4af8-4287-a63b-8b81340656f3` | Core source reached `max_tokens`; incomplete delivery with confirmed usage | $0.106298 observed |
+| `297f67fe-791e-42d7-8a83-a055e28d551d` | Separate bounded UI completion ended with `end_turn` | $0.135618 observed |
+
+The observed increment is **$0.463624**; the additional uncertain reservation is **$0.273954**. Conservative accounting therefore increases by **$0.737578**. Total observed usage is **$1.922354**, retained uncertainty is **$0.769716**, and conservative usage is **$2.692070**. The prior **$0.495762** uncertainty and the existing $5 cloud allocation remain intact. The allocation is capacity inside the same $100 ceiling and is not added to usage.
+
+The core has partial Claude authorship with local completion. The UI has Claude initial/completion authorship plus independent repairs. The renderer was authored locally after the polling block; there is no observed renderer response to attribute to Claude. No uncertain request was retried. The user's later authorization supported continuation of development, and no platform automatic-approval setting was changed.
+
+The [Blueprint World handoff](../design/blueprint-world/README.md) records an implemented local frontend with 12 independent core groups, 6 independent DOM groups and 11 separate non-GPU renderer mathematics groups passing within their stated scope. The coordinator also observed native-form company creation, local hiring and task ownership/lane/status changes. **Actual WebGL was unavailable in managed Chrome: GPU visuals, shaders and rendered-scene picking remain unverified.** Further browser review and publication are pending. Donna remains scripted; these development calls establish no real employee execution, runtime provider connection or access grant.
 
 ## Completed Donna rounds
 

@@ -35,8 +35,8 @@ Virtualize scene nodes, cap rendered lists and panel preferences, and bound deep
 
 Perform a baseline review, one full visual sweep, one grouped correction and one confirmation. Functional regression tests cover larger scenes and permission races separately from screenshots.
 
-## Next blueprint concept: flat circles in a continuous world
+## Blueprint World: flat circles in a continuous world
 
 The latest design brief uses flat, color-coded circles for people and roles, clean floorplan lines, company-contained offices/departments and anchored work elements. It supersedes the physical-office/figurine studies. The camera and table can occupy a real 3D scene while the blueprint content stays flat. Top view remains the normal operating view; optional orbit, zoom and bounded spring/snapping behavior preserve the same world and record identities.
 
-This is a planned replacement concept, not an implementation or release claim. [The blueprint-world plan](design/blueprint-world/PLAN.md) defines the graphics/physics decision, shared model, Claude implementation packages and acceptance gates. The current prototype and its publication receipts remain separate historical checkpoints.
+The standalone implementation uses a local Three.js WebGL 2 bundle, instanced flat circles, scoped records and native world-attached forms. [Blueprint World](design/blueprint-world/README.md) records the implemented flows, project-skill swarm, Claude authorship and bounded verification. Managed Chrome could not create a WebGL 2 context, so GPU painting and visual acceptance remain unverified; CPU/DOM checks and actual native-form observations are reported separately. The earlier CSS prototype and 0.8.0 runtime release remain separate historical checkpoints.
