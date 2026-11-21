@@ -341,20 +341,90 @@ check(df.calls.filter(c=>c.name==='officeCommand').length===cmdBefore,'presentat
 de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
 check(df.calls.filter(c=>c.name==='openExternal').length===0,'Web team with no configured base opens no external link');
 check(de('donna-options-status').textContent.includes('Setup required'),'Web team without base exposes setup required');
-de('cloud-url').value='https://site.example.test/path?x=1#h';de('cloud-device-token').value='tok';await submit('cloud-connect-form');
+de('cloud-url').value='https://site.example.test/path?x=1#h';de('cloud-device-token').value='tok';
+de('cloud-connect-form').dispatchEvent(new dw.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:de('cloud-connect-form').querySelector('button[type="submit"]')}));await flush();await flush();
+check(df.calls.filter(c=>c.name==='configureCloud').length===1&&df.cloud.configured===true,'local cloud form submit configures this fixture exactly once');
 ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();de('donna-dock-toggle').click();await flush();
 de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
 const opens=df.calls.filter(c=>c.name==='openExternal'&&c.args.url.endsWith('/team'));
 check(opens.length===1&&opens[0].args.url==='https://site.example.test/team','configured HTTPS base opens exactly /team without query/hash/token');
 de('cloud-url').value='https://user:pw@site.example.test';
 const before2=df.calls.filter(c=>c.name==='openExternal').length;
+check(df.calls.filter(c=>c.name==='configureCloud').length===1,'unsubmitted invalid draft does not reconfigure the confirmed connection');
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
+check(df.calls.filter(c=>c.name==='openExternal').length===before2||df.calls.filter(c=>c.name==='openExternal').every(c=>c.args.url==='https://site.example.test/team'),'invalid draft cannot redirect the confirmed team link');
 check(df.calls.filter(c=>c.name==='officeCommand').every(c=>c.args.action!=='post_chat'),'Donna options never post chat');
 check(before2===1,'only one external open recorded');
+// Reset clears all four inline edges after an actual move
+{
+de('donna-dock-toggle').click();await flush();
+const hh=de('donna-move-handle');hh.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));await flush();
+de('chat-message').value='Unsent text';
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="reset"]').click();await flush();
+for(const id of ['donna-dock','donna-dock-toggle']){const s=de(id).style;check(s.left===''&&s.top===''&&s.right===''&&s.bottom==='',`reset clears left/top/right/bottom on ${id}`);}
+check(de('chat-message').value==='Unsent text'&&ddoc.querySelectorAll('#donna-conversation').length===1&&ddoc.querySelectorAll('#workspace-chat-form').length===1,'reset preserves draft and single conversation');
+}
+// Agent permissions from company canvas reveals a rendered, focused control
+{
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="agents"]').click();await flush();
+const ce=de('ceo-authority-editor'),ae=de('authority-employee');
+check(ddoc.activeElement===ae&&ce.open,'agent permissions focuses the authority control with details open');
+let hiddenAnc=false;for(let n=ae;n&&n!==ddoc.body;n=n.parentElement){if(n.classList.contains('hidden'))hiddenAnc=true;}
+check(!hiddenAnc,'agent permissions control has no hidden ancestors');
+check(!ddoc.body.classList.contains('ff-canvas-mode')||ddoc.body.classList.contains('ff-operations'),'agent permissions leaves canvas-only mode for operations');
+}
 // Storage throwing
 const sd=await makeDom(true,undefined,'',(w1)=>{Object.defineProperty(w1,'localStorage',{value:{getItem(){throw new Error('denied');},setItem(){throw new Error('denied');},removeItem(){throw new Error('denied');}},configurable:true});});
 sd.window.document.querySelector('.nav-item[data-view="office"]').click();await flush();sd.window.document.getElementById('donna-dock-toggle').click();await flush();
 sd.window.document.getElementById('donna-move-handle').dispatchEvent(new sd.window.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true}));await flush();
 check(sd.window.document.querySelectorAll('#donna-conversation').length===1,'denied storage leaves Donna usable');sd.window.close();
+// Initially hidden saved position is clamped once visible; pending drag cancelled on hide/collapse
+{
+const gx=(w2)=>{w2.innerWidth=1024;w2.innerHeight=768;try{Object.defineProperty(w2,'innerWidth',{value:1024,configurable:true});Object.defineProperty(w2,'innerHeight',{value:768,configurable:true});}catch{}
+const stub=function(){let hid=false;for(let n=this;n&&n.nodeType===1;n=n.parentElement){if(n.classList&&n.classList.contains('hidden')){hid=true;break;}}
+if(hid)return{x:0,y:0,left:0,top:0,right:0,bottom:0,width:0,height:0,toJSON(){return this;}};
+const dock=this.id==='donna-dock';const wd=dock?420:180,ht=dock?400:64;const l=parseFloat(this.style.left)||0,t=parseFloat(this.style.top)||0;
+if(this.id==='donna-dock'||this.id==='donna-dock-toggle')return{x:l,y:t,left:l,top:t,right:l+wd,bottom:t+ht,width:wd,height:ht,toJSON(){return this;}};
+return{x:0,y:0,left:0,top:0,right:1024,bottom:768,width:1024,height:768,toJSON(){return this;}};};
+stub.__stub=true;w2.Element.prototype.getBoundingClientRect=stub;
+try{w2.localStorage.setItem('daftar-studio-donna-pos',JSON.stringify({x:1000,y:750,locked:false}));}catch{}};
+const hd=await makeDom(true,undefined,'?company=fixture-company',gx);const hw=hd.window,hdoc=hw.document;const he=(i)=>hdoc.getElementById(i);
+hdoc.querySelector('.nav-item[data-view="office"]').click();await flush();
+const inView=(id)=>{const s=he(id).style;const l=parseFloat(s.left),t=parseFloat(s.top);const wd=id==='donna-dock'?420:180,ht=id==='donna-dock'?400:64;return Number.isFinite(l)&&Number.isFinite(t)&&l>=0&&t>=0&&l+wd<=1024&&t+ht<=768;};
+check(!he('donna-dock-toggle').classList.contains('hidden')&&inView('donna-dock-toggle'),'saved off-screen launcher position is clamped within the viewport once visible');
+he('donna-dock-toggle').click();await flush();
+check(inView('donna-dock'),'expanded dock is within the viewport');
+hw.dispatchEvent(new hw.Event('resize'));await flush();check(inView('donna-dock'),'dock remains within viewport after resize');
+// pending drag then collapse
+let released=0,rafQueued=[];const realRaf=hw.requestAnimationFrame;hw.requestAnimationFrame=(fn)=>{rafQueued.push(fn);return rafQueued.length;};hw.cancelAnimationFrame=(id)=>{rafQueued[id-1]=null;};
+const handle=he('donna-move-handle');handle.releasePointerCapture=()=>{released++;};handle.setPointerCapture=()=>{};
+const pev=(type,x,y)=>{const e=new hw.Event(type,{bubbles:true,cancelable:true});Object.assign(e,{pointerId:7,clientX:x,clientY:y,button:0});return e;};
+handle.dispatchEvent(pev('pointerdown',100,100));handle.dispatchEvent(pev('pointermove',160,160));
+check(rafQueued.some(Boolean),'drag move frame is pending');
+he('donna-dock-close').click();await flush();
+check(released>=1,'collapse releases pointer capture');
+const posAfter=he('donna-dock-toggle').style.left;for(const f of rafQueued)if(f)f(0);
+check(he('donna-dock-toggle').style.left===posAfter,'cancelled pending frame cannot write position after collapse');
+he('donna-dock-toggle').click();await flush();
+handle.dispatchEvent(pev('pointerdown',100,100));handle.dispatchEvent(pev('pointermove',160,160));
+hdoc.querySelector('.nav-item[data-view="settings"]').click();await flush();
+const posSettings=he('donna-dock').style.left;for(const f of rafQueued)if(f)f(0);
+check(he('donna-dock').style.left===posSettings,'leaving for Settings cancels pending drag write');
+hdoc.querySelector('.nav-item[data-view="office"]').click();await flush();he('donna-dock-toggle').click();await flush();
+he('donna-move-handle').dispatchEvent(new hw.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));await flush();
+check(inView('donna-dock'),'interaction works after cancelled drag');
+hw.requestAnimationFrame=realRaf;hw.close();
+}
+// Invalid confirmed base must not open an external page
+{
+const iv=await makeDom(true,undefined,'?company=fixture-company');const iw=iv.window,idoc=iw.document,ifx=iw.__atlasFixture;
+ifx.cloud.configured=true;ifx.cloud.connected=true;ifx.cloud.url='https://user:pw@site.example.test';
+idoc.querySelector('.nav-item[data-view="settings"]').click();await flush();await flush();
+idoc.querySelector('.nav-item[data-view="office"]').click();await flush();idoc.getElementById('donna-dock-toggle').click();await flush();
+idoc.getElementById('donna-options-toggle').click();idoc.querySelector('[data-donna-option="team"]').click();await flush();
+check(ifx.calls.filter(c=>c.name==='openExternal').length===0,'credential-bearing confirmed base opens no external page');
+iv.window.close();
+}
 // Public preview
 const pv=await makeDom(true,'public-preview');pv.window.document.querySelector('.nav-item[data-view="office"]').click();await flush();pv.window.document.getElementById('donna-dock-toggle').click();await flush();
 pv.window.document.getElementById('donna-options-toggle').click();pv.window.document.querySelector('[data-donna-option="team"]').click();await flush();

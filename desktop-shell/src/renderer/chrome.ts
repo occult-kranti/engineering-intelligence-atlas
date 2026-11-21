@@ -2953,7 +2953,10 @@ function renderStudioRoadmap():void{
 function syncDonnaDock():void{
   const panel=document.getElementById('donna-conversation'),home=document.getElementById('donna-chat-home'),dock=document.getElementById('donna-dock'),toggle=document.getElementById('donna-dock-toggle'),slot=document.getElementById('donna-dock-slot');if(!panel||!home||!dock||!toggle||!slot)return;
   const canvasMode=document.body.classList.contains('ff-canvas-mode');const available=activeView==='office'&&(canvasMode||workspaceTab!=='chat'||portfolioOpen);const open=available&&donnaDockOpen;
+  const wasHidden=dock.classList.contains('hidden')&&toggle.classList.contains('hidden');
   toggle.classList.toggle('hidden',!available||open);toggle.setAttribute('aria-expanded',String(open));dock.classList.toggle('hidden',!open);if(open){if(panel.parentElement!==slot)slot.append(panel);}else if(panel.parentElement!==home)home.prepend(panel);
+  if(!available||!open||wasHidden)donnaCancelDrag();
+  if(available)donnaClamp();
 }
 function initStudio():void{
   const theme=studioPreference('theme','blueprint');document.documentElement.dataset.theme=theme==='drafting'?'drafting':'blueprint';($('workspace-theme') as HTMLSelectElement).value=document.documentElement.dataset.theme;
@@ -2977,9 +2980,10 @@ function donnaSavePref():void{if(!donnaPos&&!donnaLocked){try{localStorage.remov
 function donnaActiveEl():HTMLElement{const dock=$('donna-dock');return dock.classList.contains('hidden')?$('donna-dock-toggle'):dock;}
 function donnaClamp():void{
   const dock=$('donna-dock'),toggle=$('donna-dock-toggle');
-  if(!donnaPos){for(const el of [dock,toggle]){el.classList.remove('donna-moved');el.style.left='';el.style.top='';}return;}
+  if(!donnaPos){for(const el of [dock,toggle]){el.classList.remove('donna-moved');el.style.left='';el.style.top='';el.style.right='';el.style.bottom='';}return;}
   const el=donnaActiveEl(),other=el===dock?toggle:dock;
   const r=el.getBoundingClientRect(),w=r.width||el.offsetWidth||0,h=r.height||el.offsetHeight||0,m=8;
+  if(!(w>0&&h>0))return;
   const maxX=Math.max(m,(window.innerWidth||1200)-w-m),maxY=Math.max(m,(window.innerHeight||800)-h-m);
   donnaPos={x:Math.max(m,Math.min(maxX,donnaPos.x)),y:Math.max(m,Math.min(maxY,donnaPos.y))};
   el.classList.add('donna-moved');el.style.left=`${donnaPos.x}px`;el.style.top=`${donnaPos.y}px`;el.style.right='auto';el.style.bottom='auto';
@@ -3037,7 +3041,7 @@ function donnaOption(name:string):void{
   if(name==='company'){donnaDockOpen=false;syncDonnaDock();if(activeView!=='office')navigate('office');ffOperations=true;setPortfolioOpen(false);ffApplyMode();switchWorkspaceTab('chat');const sel=document.getElementById('office-company-select')||document.getElementById('office-department-select');sel?.focus();return;}
   if(name==='keys'){donnaRevealSettings('key-rows','key-rows');return;}
   if(name==='connections'){donnaRevealSettings('cloud-connection-panel',($('cloud-open-site') as HTMLButtonElement).disabled?'cloud-connection-panel':'cloud-open-site');return;}
-  if(name==='agents'){if(activeView!=='office')navigate('office');setPortfolioOpen(true);renderAuthority();($('ceo-authority-editor') as HTMLDetailsElement).open=true;const emp=$('authority-employee');emp.focus();$('ceo-authority-editor').scrollIntoView({block:'nearest'});return;}
+  if(name==='agents'){if(activeView!=='office')navigate('office');ffShowOps();setPortfolioOpen(true);renderAuthority();($('ceo-authority-editor') as HTMLDetailsElement).open=true;const emp=$('authority-employee');emp.focus();$('ceo-authority-editor').scrollIntoView({block:'nearest'});return;}
   if(name==='team'){
     const url=donnaTeamUrl();
     if(!url){donnaRevealSettings('cloud-connection-panel','cloud-connection-panel');setStatus($('cloud-status'),'Setup required: connect a website with an HTTPS address to open the team dashboard.','error');status.textContent='Setup required: connect a website first.';return;}
