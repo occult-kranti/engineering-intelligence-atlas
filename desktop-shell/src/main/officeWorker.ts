@@ -246,7 +246,9 @@ export class OfficeWorker {
       const controller = new AbortController();
       this.activeController = controller;
       const inputBound = Buffer.byteLength(system + prompt, 'utf8') + 1024;
-      let outputBound = Math.min(8192, Math.floor(job.limits.maxTokens - inputBound));
+      // Ceiling only: publishing jobs may reserve more room; spend stays bounded by limits.
+      const outputCeiling = job.allowedTools.includes('github.publish_changes') ? 16384 : 8192;
+      let outputBound = Math.min(outputCeiling, Math.floor(job.limits.maxTokens - inputBound));
       if (outputBound < 1) throw new Error('Token budget does not fit the role and task context. Increase the limit or shorten the brief.');
       const rates = job.priceRates;
       if (job.provider !== 'ollama') {
