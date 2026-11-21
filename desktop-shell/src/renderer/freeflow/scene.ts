@@ -31,6 +31,8 @@ export interface SceneCallbacks {
   onOpen?(node: SceneNode): void;
   onViewportChange?(size: Size): void;
   onThreadSelect?(thread: SceneThread | null): void;
+  /** Host should bring an offscreen selected node into view (e.g. center camera on it). */
+  onRevealNode?(node: SceneNode): void;
 }
 
 export interface SceneStats {
@@ -105,18 +107,51 @@ function buildNode(n: SceneNode): HTMLElement {
   return e;
 }
 
-function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected: boolean): void {
+const HEAT_LEVELS = new Set(['0', '1', '2', '3', '4', 'unknown', 'off']);
+
+function heatOf(n: SceneNode): { level: string; label: string; metric: string } | null {
+  const m = n.metadata;
+  const raw = m['heatLevel'];
+  if (raw === undefined || raw === null) return null;
+  const level = String(raw);
+  if (!HEAT_LEVELS.has(level) || level === 'off') return null;
+  const label = typeof m['heatLabel'] === 'string' ? (m['heatLabel'] as string) : (level === 'unknown' ? 'Unknown' : `Level ${level}`);
+  const metric = typeof m['heatMetric'] === 'string' ? (m['heatMetric'] as string) : '';
+  return { level, label, metric };
+}
+
+function applyHeat(e: HTMLElement, paper: HTMLElement, n: SceneNode, lod: 'rich' | 'simple'): void {
+  const h = heatOf(n);
+  const old = paper.querySelector('.ff-node-heat');
+  if (!h) {
+    delete e.dataset.heatLevel;
+    paper.removeAttribute('data-heat-text');
+    old?.remove();
+    return;
+  }
+  e.dataset.heatLevel = h.level;
+  const text = h.metric ? `${h.label} · ${h.metric}` : h.label;
+  paper.setAttribute('data-heat-text', text);
+  if (lod === 'rich') {
+    let badge = old as HTMLElement | null;
+    if (!badge) { badge = el('span', 'ff-node-heat'); paper.appendChild(badge); }
+    badge.textContent = text;
+  } else old?.remove();
+}
+
+function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected: boolean, tabStop: boolean): void {
   e.style.cssText = `position:absolute;left:0;top:0;width:${Math.max(1, fin(n.rect.width))}px;height:${Math.max(1, fin(n.rect.height))}px;transform:translate(${fin(n.rect.x)}px,${fin(n.rect.y)}px)`;
   e.dataset.lod = lod;
   e.dataset.status = n.status;
   e.classList.toggle('is-selected', selected);
   e.setAttribute('aria-label', describeNode(n));
   e.setAttribute('aria-pressed', String(selected));
-  e.tabIndex = selected ? 0 : -1;
-  const key = `${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}`;
+  e.tabIndex = tabStop ? 0 : -1;
+  const paper = e.firstElementChild as HTMLElement;
+  const hk = heatOf(n);
+  const key = `${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}`;
   if (e.dataset.sig === key) return;
   e.dataset.sig = key;
-  const paper = e.firstElementChild as HTMLElement;
   paper.replaceChildren(detailSvg(n, lod));
   const title = el('div', 'ff-node-title', n.label);
   paper.appendChild(title);
@@ -135,6 +170,7 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
       paper.appendChild(open);
     }
   }
+  applyHeat(e, paper, n, lod);
 }
 
 export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): SceneRenderer {
@@ -142,6 +178,7 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
   root.setAttribute('role', 'application');
   root.setAttribute('aria-label', 'Freeflow spatial scene');
   root.tabIndex = -1;
+  root.addEventListener('keydown', (ev) => { if (ev.target === root && ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(ev.key)) ev.stopPropagation(); }, { capture: false });
   const table = el('div', 'ff-table');
   table.appendChild(el('div', 'ff-grid'));
   const world = el('div', 'ff-world');
@@ -167,7 +204,9 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
   let selectedId: string | null = null;
   let selectedThread: string | null = null;
   let focusedId: string | null = null;
+  let tabId: string | null = null; // roving tab stop
   let destroyed = false;
+  let silent = 0; // suppress callbacks during internal clears
   const live = new Map<string, HTMLElement>();
   const threadEls = new Map<string, SVGPathElement>();
   const nodesById = new Map<string, SceneNode>();
@@ -220,9 +259,17 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
     nodesById.clear();
     for (const n of scene.nodes) nodesById.set(n.id, n);
     const vis = visibleRect(camera, viewport, 160);
-    const cands = scene.nodes.filter((n) => n.id === selectedId || n.id === focusedId || intersects(n.rect, vis));
+    // Roving tab stop: selected, else focused, else previous if still eligible, else first visible interactive node.
+    const eligible = (n: SceneNode) => intersects(n.rect, vis);
+    const interactive = scene.nodes.filter((n) => n.kind !== 'fallback' || true);
+    let tab = tabId && nodesById.get(tabId) && eligible(nodesById.get(tabId)!) ? tabId : null;
+    if (selectedId && nodesById.get(selectedId) && eligible(nodesById.get(selectedId)!)) tab = selectedId;
+    else if (focusedId && nodesById.get(focusedId)) tab = focusedId;
+    if (!tab) tab = (interactive.find(eligible) ?? null)?.id ?? null;
+    tabId = tab;
+    const cands = scene.nodes.filter((n) => n.id === selectedId || n.id === focusedId || n.id === tabId || intersects(n.rect, vis));
     // Container-first ordering then smaller (more specific) nodes win the rich budget.
-    const rank = (n: SceneNode) => (n.id === selectedId || n.id === focusedId ? 0 : 1);
+    const rank = (n: SceneNode) => (n.id === selectedId || n.id === focusedId || n.id === tabId ? 0 : 1);
     const sorted = [...cands].sort((a, b) => rank(a) - rank(b) || a.rect.width * a.rect.height - b.rect.width * b.rect.height);
     const chosen = sorted.slice(0, RICH_NODE_BUDGET);
     const chosenIds = new Set(chosen.map((n) => n.id));
@@ -236,7 +283,7 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
       lod === 'rich' ? rich++ : simple++;
       let e = live.get(n.id);
       if (!e) { e = buildNode(n); live.set(n.id, e); nodeLayer.appendChild(e); st.domCreated++; }
-      fillNode(e, n, lod, n.id === selectedId);
+      fillNode(e, n, lod, n.id === selectedId, n.id === tabId);
     }
     for (const [id, e] of live) {
       if (chosenIds.has(id)) continue;
@@ -279,7 +326,44 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
   }
 
   function emitSelect(id: string | null): void {
+    if (silent || destroyed) return;
     callbacks.onSelect?.(id, id ? nodesById.get(id) ?? null : null);
+  }
+
+  /** Clear selection state (node + thread) and notify only for what actually changed. */
+  function clearSelection(): void {
+    const hadNode = selectedId !== null;
+    const hadThread = selectedThread !== null;
+    selectedId = null; selectedThread = null;
+    if (hadNode) emitSelect(null);
+    if (hadThread && !silent && !destroyed) callbacks.onThreadSelect?.(null);
+  }
+
+  function revealIfOffscreen(id: string): void {
+    const n = nodesById.get(id);
+    if (!n || destroyed) return;
+    if (!intersects(n.rect, visibleRect(camera, viewport, 0))) callbacks.onRevealNode?.(n);
+  }
+
+  function sceneSig(s: FreeflowScene | null): string { return s ? JSON.stringify(s.focus) : ''; }
+
+  function moveTab(to: SceneNode | undefined, focusIt: boolean): void {
+    if (!to) return;
+    tabId = to.id;
+    focusedId = to.id;
+    render();
+    const e = live.get(to.id);
+    if (e && focusIt) e.focus({ preventScroll: true });
+    revealIfOffscreen(to.id);
+  }
+
+  /** Reading-order traversal of the nodes currently eligible (visible or selected). */
+  function traversal(): SceneNode[] {
+    if (!scene) return [];
+    const vis = visibleRect(camera, viewport, 0);
+    return scene.nodes
+      .filter((n) => n.id === selectedId || intersects(n.rect, vis))
+      .sort((a, b) => a.rect.y - b.rect.y || a.rect.x - b.rect.x || (a.id < b.id ? -1 : 1));
   }
 
   function doSelect(id: string | null, emit: boolean): void {
@@ -305,12 +389,44 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
   const onDbl = (ev: MouseEvent) => { const id = nodeAt(ev.target); const n = id ? nodesById.get(id) : null; if (n) callbacks.onOpen?.(n); };
   const onKey = (ev: KeyboardEvent) => {
     const id = nodeAt(ev.target);
-    if (!id) { if (ev.key === 'Escape') { doSelect(null, true); } return; }
-    if (ev.key === 'Enter') { ev.preventDefault(); const n = nodesById.get(id); if (n) callbacks.onOpen?.(n); }
-    else if (ev.key === ' ') { ev.preventDefault(); doSelect(id, true); }
-    else if (ev.key === 'Escape') { doSelect(null, true); }
+    const handle = () => { ev.preventDefault(); ev.stopPropagation(); };
+    if (!id) {
+      if (ev.key === 'Escape') { handle(); clearSelection(); return; }
+      // Canvas root focus: Arrow/Home/End enters the node traversal.
+      if (ev.target === root && ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(ev.key)) {
+        const list = traversal();
+        if (!list.length) return;
+        handle();
+        moveTab(ev.key === 'End' || ev.key === 'ArrowLeft' || ev.key === 'ArrowUp' ? list[list.length - 1] : list[0], true);
+      }
+      return;
+    }
+    if (ev.key === 'Enter') { handle(); const n = nodesById.get(id); if (n) { doSelect(id, true); callbacks.onOpen?.(n); } }
+    else if (ev.key === ' ') { handle(); doSelect(id, true); }
+    else if (ev.key === 'Escape') { handle(); clearSelection(); }
+    else if (['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(ev.key)) {
+      handle();
+      const list = traversal();
+      if (!list.length) return;
+      const i = Math.max(0, list.findIndex((n) => n.id === id));
+      const fwd = ev.key === 'ArrowRight' || ev.key === 'ArrowDown';
+      const target = ev.key === 'Home' ? list[0] : ev.key === 'End' ? list[list.length - 1] : list[Math.min(list.length - 1, Math.max(0, i + (fwd ? 1 : -1)))];
+      moveTab(target, true);
+    }
   };
-  const onFocusIn = (ev: FocusEvent) => { const id = nodeAt(ev.target); if (id) { focusedId = id; live.get(id)?.classList.add('is-focused'); } };
+  const onFocusIn = (ev: FocusEvent) => {
+    const id = nodeAt(ev.target);
+    if (!id) return;
+    focusedId = id;
+    if (tabId !== id) {
+      const old = tabId ? live.get(tabId) : null;
+      if (old) old.tabIndex = -1;
+      tabId = id;
+      const cur = live.get(id);
+      if (cur) cur.tabIndex = 0;
+    }
+    live.get(id)?.classList.add('is-focused');
+  };
   const onFocusOut = (ev: FocusEvent) => { const id = nodeAt(ev.target); if (id) { live.get(id)?.classList.remove('is-focused'); if (focusedId === id) focusedId = null; } };
   root.addEventListener('click', onClick);
   root.addEventListener('dblclick', onDbl);
@@ -336,17 +452,30 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
     elements: { root, table, world, threads: threadsSvg, caption, budget, empty },
     update(next, opts) {
       if (destroyed) return;
-      const prevCompany = scene?.focus;
-      scene = next;
+      const prevSig = sceneSig(scene);
+      const hadScene = scene !== null;
       if (!next) {
+        scene = null;
+        clearSelection();
+        focusedId = null; tabId = null;
+        capTitle.textContent = ''; capSub.textContent = ''; budget.textContent = '';
+        nodesById.clear();
         setEmpty(opts?.loading ? 'loading' : 'empty', opts?.loading ? 'Loading office…' : 'No scope selected.');
-        selectedId = null; selectedThread = null; focusedId = null; render();
+        render();
         return;
       }
-      if (prevCompany && JSON.stringify(prevCompany) !== JSON.stringify(next.focus)) { selectedId = null; selectedThread = null; }
+      const scopeChanged = hadScene && prevSig !== sceneSig(next);
+      scene = next;
+      nodesById.clear();
+      for (const n of next.nodes) nodesById.set(n.id, n);
+      if (scopeChanged) { focusedId = null; tabId = null; clearSelection(); }
       if (!next.nodes.length) setEmpty(next.title.startsWith('Missing') ? 'missing' : 'empty', next.warnings[0] ?? 'Nothing to show in this scope.');
       else setEmpty(null);
-      if (selectedId && !next.nodes.some((n) => n.id === selectedId)) selectedId = null;
+      if (selectedId && !nodesById.has(selectedId)) { selectedId = null; emitSelect(null); }
+      if (selectedThread && !next.threads.some((t) => t.id === selectedThread)) {
+        selectedThread = null;
+        if (!silent && !destroyed) callbacks.onThreadSelect?.(null);
+      }
       render();
     },
     setCamera(c) {
@@ -358,11 +487,19 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
     select(id) {
       if (id && !scene?.nodes.some((n) => n.id === id)) return;
       const changed = selectedId !== id;
-      if (changed) { selectedId = id; render(); emitSelect(id); }
+      if (changed) {
+        selectedId = id;
+        if (id) tabId = id;
+        render();
+        silent++;
+        try { if (id) revealIfOffscreen(id); } finally { silent--; }
+      }
     },
     selectThread(id) {
-      selectedThread = id && scene?.threads.some((t) => t.id === id) ? id : null;
-      callbacks.onThreadSelect?.(selectedThread ? scene!.threads.find((t) => t.id === selectedThread) ?? null : null);
+      const next = id && scene?.threads.some((t) => t.id === id) ? id : null;
+      if (next === selectedThread) return;
+      selectedThread = next;
+      callbacks.onThreadSelect?.(next ? scene!.threads.find((t) => t.id === next) ?? null : null);
       render();
     },
     getViewport: () => ({ ...viewport }),
@@ -371,6 +508,7 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      silent = 1;
       root.removeEventListener('click', onClick);
       root.removeEventListener('dblclick', onDbl);
       root.removeEventListener('keydown', onKey);
@@ -380,7 +518,7 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
       if (typeof window !== 'undefined') window.removeEventListener('resize', measure);
       live.clear(); threadEls.clear(); nodesById.clear();
       root.remove();
-      scene = null;
+      scene = null; selectedId = null; selectedThread = null; focusedId = null; tabId = null; labelEl = null;
     },
   };
 }

@@ -72,6 +72,7 @@ export function mountA11yList(host: HTMLElement, callbacks: ListCallbacks = {}, 
   let page = 0;
   let selected: string | null = null;
   let destroyed = false;
+  let lastFocus: FreeflowScene['focus'] | null = null; // per-mount scope memory
   const size = Math.max(1, Math.floor(pageSize));
 
   function render(): void {
@@ -169,7 +170,5 @@ export function mountA11yList(host: HTMLElement, callbacks: ListCallbacks = {}, 
     },
   };
 }
-
-let lastFocus: FreeflowScene['focus'] | null = null;
 
 export const mountList = mountA11yList;
