@@ -255,7 +255,8 @@ export class OfficeWorker {
       const preparedContext = job.allowedTools.includes('github.read_repository')
         ? await this.options.prepareContext?.(job, claimed) : '';
       if (job.allowedTools.includes('github.read_repository') && !preparedContext) throw new Error('GitHub source-read capability is not connected. No provider request was sent.');
-      if (preparedContext && Buffer.byteLength(preparedContext) > 200000) throw new Error('Prepared source context exceeds its bounded size.');
+      const preparedContextLimit = job.allowedTools.includes('github.publish_changes') ? 600000 : 200000;
+      if (preparedContext && Buffer.byteLength(preparedContext, 'utf8') > preparedContextLimit) throw new Error(`Prepared source context exceeds its bounded size (${preparedContextLimit} UTF-8 bytes).`);
       const { system, prompt, contextHash } = this.prompts(job, claimed, preparedContext);
       const controller = new AbortController();
       this.activeController = controller;
