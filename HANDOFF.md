@@ -13,6 +13,30 @@ manager, project runner and Android source remain available. The architecture is
 Electron/TypeScript with a Rust state and control core, plus the separately
 deployable React/TypeScript/MySQL web runtime.
 
+## Install a published build and restore personal work
+
+The [latest verified release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/latest)
+contains an unsigned Linux x86_64 AppImage and an Android debug APK. The mobile
+shell carries the research atlas; the complete personal Office runtime is in the
+desktop application. Neither download contains personal company records or keys.
+
+For a private workspace archive, first launch the desktop app and find its user
+data directory in Models & system. Close the app, then run the release's restore
+script from a matching source checkout:
+
+```bash
+python3 scripts/restore-personal-workspace.py \
+  --archive /path/to/Atlas-personal-workspace.zip \
+  --user-data-path /path/to/application-user-data
+```
+
+The destination is the application directory, not its `company` subdirectory.
+Existing state is preserved unless `--replace` is specified; replacement creates
+a timestamped backup. The tool verifies checksums and references before writing.
+Reopen Atlas, reconnect credentials in Settings and review the paused schedules.
+The archive's `PORTFOLIO.md`, `companies/` records and `RESTORE.md` provide readable
+roadmaps and detailed restoration instructions.
+
 ## Start from a clean checkout
 
 Use Node 22.12+ and a current Rust stable toolchain. From the repository root:
@@ -64,7 +88,7 @@ non-force update. A failed/ambiguous write is not automatically retried.
 
 - `desktop-shell/src/main/office.ts` is the main-process Office service; renderer callers cannot claim jobs, reserve money, forge provider replies or write settlement records.
 - `native-core/` owns hierarchy, goals, layouts, scopes, policy, reservations, checkpoints and event records. OS locking and atomic replacement protect the shared state file across processes.
-- `desktop-shell/src/main/officeWorker.ts` runs one admitted request at a time. It starts disabled; Start dispatcher or Run one enables actual work. Schedules and goal loops advance while this worker is running.
+- `desktop-shell/src/main/officeWorker.ts` runs one admitted request per worker; the application pool has two slots sharing the same reservation ledger. It starts disabled; Start dispatcher or Run one enables actual work. Schedules and goal loops advance while the dispatcher is running.
 - `desktop-shell/src/main/globalBudget.ts` shares the same admission ledger with the older local Project runner.
 - `desktop-shell/src/main/personalDashboard.ts` serves the same renderer on `127.0.0.1` with expiring one-use launch links, authenticated cookies and strict host/origin checks. Closing the desktop app closes this endpoint.
 - `tools/atlas-mcp.mjs` exposes stdio MCP operations over the same Rust core. Set `ATLAS_STATE_DIR` to the desktop's actual `userData/company` directory to share one workspace. Its default headless directory is separate.

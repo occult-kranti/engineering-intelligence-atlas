@@ -1,6 +1,6 @@
 # Integrated validation record
 
-Checkpoint: 20 November 2026 (America/New_York). This records executed checks and separates local results from remote publication evidence.
+Local validation checkpoint: 20 November 2026 (America/New_York). Remote publication update: 21 November 2026 (UTC). This records executed checks and separates local results from remote publication evidence.
 
 | Gate | Result | Scope |
 | --- | --- | --- |
@@ -34,15 +34,28 @@ Checkpoint: 20 November 2026 (America/New_York). This records executed checks an
 
 ## Remaining verification boundaries
 
-Local Chromium could not start because its required Unix socket was denied. Real browser screenshots are captured by the Pages workflow for all main web routes and desktop workspace views at laptop and narrow widths. Pure-DOM assertions are not represented as visual validation.
+Local Chromium could not start because its required Unix socket was denied. The published Pages workflow completed browser smoke and offline checks and captured 46 screenshots of the web routes and desktop workspace views. The director subsequently inspected the live public preview and opened the CEO view, a blueprint room and a whiteboard card, confirming the expected interface bindings with screenshots. Pure-DOM assertions remain distinct from this observed browser evidence.
 
-The local Android Gradle distribution download was unavailable. The CI Android job runs JVM tests and builds the debug APK. The CI MySQL job uses a disposable database to apply migrations and run database-backed connector checks. These remote outcomes are recorded after publication below.
+The local Android Gradle distribution download was unavailable. The first published CI Android job failed during SDK setup because it requested an obsolete tools package. Correction `1e16778` resolved that failure: the subsequent Android job passed 53 JavaScript tests, executed `:app:testDebugUnitTest` and completed `assembleDebug` with `BUILD SUCCESS`. The CI MySQL job also successfully applied migrations and ran database-backed connector checks against a disposable database. Remote evidence is linked below.
 
 The authenticated hosted cloud runtime is not deployed. The working personal browser view uses the desktop's authenticated loopback endpoint and the same native state. Scheduling runs while the application is open; no OS background daemon, signed installer, Windows/macOS package or complete Rust UI rewrite is claimed.
 
-## Publication and visual evidence
+## Publication and visual evidence · v0.4.0 checkpoint
 
-Pending first integrated source publication. Local success does not imply that remote CI, Pages deployment, release creation or the browser sweep passed.
+The integrated rebuild was published to `main` at [6447754](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/6447754). After the Android setup correction [1e16778](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/1e16778), all five jobs in [Verify run 44846695687](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687) succeeded, including the release job. The [public preview](https://occult-kranti.github.io/engineering-intelligence-atlas/) is deployed.
+
+| Remote gate | Observed result | Evidence |
+| --- | --- | --- |
+| Web verification | **Passed** | `web` job in [Verify run 44846695687](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687) |
+| Real MySQL integration | **Passed** | `mysql-connectors` job in [Verify run 44846695687](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687) |
+| Desktop verification | **Passed** | `desktop` job in [Verify run 44846695687](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687) |
+| Android verification | **Passed** | [Android job 136668043587](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687/job/136668043587): 53 JavaScript tests, `:app:testDebugUnitTest` executed, `assembleDebug` completed successfully |
+| v0.4.0 release workflow | **Passed** | `release` job in [Verify run 44846695687](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687) |
+| Pages deployment, browser smoke and offline checks | **Passed** | [Pages run 44846291115](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846291115) |
+| Browser screenshots | **46 captured** | Screenshot artifacts from [Pages run 44846291115](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846291115) |
+| Live interface review | **Passed for observed interactions** | Director opened the CEO view, blueprint room and whiteboard card in the [public preview](https://occult-kranti.github.io/engineering-intelligence-atlas/); screenshots confirmed the expected bindings |
+
+The first [Verify run 44846291141](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846291141) remains the historical record of the Android setup failure; the successful corrected run above supersedes its pending Android status. These results record the v0.4.0 checkpoint only. Subsequent visual polish, expanded screenshot coverage and later releases require their own observed results. The local Linux artifact remains unsigned.
 
 ## Review outcomes
 

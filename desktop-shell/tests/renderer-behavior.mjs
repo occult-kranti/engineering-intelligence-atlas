@@ -97,7 +97,7 @@ const beforeRoadmap=commands().length;await submit('ceo-roadmap-form');check(com
 set('ceo-roadmap-edit-status','in-progress');await submit('ceo-roadmap-form');check(lastCommand()?.action==='upsert_roadmap_item'&&lastCommand()?.scope.id==='fixture-company','portfolio roadmap saves real company scope and ownership');
 await change('ceo-roadmap-group','fixture-second-group');check(el('ceo-roadmap').textContent.includes('Deliver reviewed portfolio evidence'),'group filter includes member-company outcomes');
 await change('ceo-roadmap-department','fixture-department');check(el('ceo-roadmap').querySelectorAll('.portfolio-outcome').length===1,'department filter applies to saved roadmap ownership');
-const mapPortfolio=Array.from(el('ceo-roadmap').querySelectorAll('button')).find(b=>b.textContent==='Map ownership ↗');mapPortfolio.click();await flush();
+const mapPortfolio=Array.from(el('ceo-roadmap').querySelectorAll('button')).find(b=>b.textContent==='Map ownership');mapPortfolio.click();await flush();
 check(el('ceo-panel').classList.contains('hidden')&&el('workspace-tab-whiteboard').getAttribute('aria-selected')==='true','portfolio ownership returns to the same company whiteboard');
 check(el('node-roadmap').value===fixture.office.portfolio.roadmap[0].id,'whiteboard editor retains the portfolio outcome ID');set('node-room','fixture-room');await submit('workspace-node-form');check(lastCommand()?.roadmapItemIds?.[0]===fixture.office.portfolio.roadmap[0].id,'whiteboard persists a validated roadmap link');
 check(el('workspace-whiteboard').textContent.includes('Roadmap: Deliver reviewed portfolio evidence'),'whiteboard shows linked roadmap ownership');

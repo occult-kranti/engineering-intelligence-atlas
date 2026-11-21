@@ -8,6 +8,7 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 
 [Public atlas](https://occult-kranti.github.io/engineering-intelligence-atlas/) ·
 [Desktop starter preview](https://occult-kranti.github.io/engineering-intelligence-atlas/desktop-preview/chrome.html) ·
+[Desktop and Android downloads](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/latest) ·
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 

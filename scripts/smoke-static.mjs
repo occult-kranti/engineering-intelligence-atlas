@@ -78,12 +78,12 @@ try {
     page.on('pageerror', error => errors.push(error.message));
     await page.goto(`${base}desktop-preview/chrome.html`, { waitUntil: 'networkidle' });
     await page.locator('#office-native-status').filter({ hasNotText: 'Checking' }).waitFor({ state: 'visible' });
-    const capture = async (route, surface = 'desktop') => {
+    const capture = async (route, surface = 'desktop', fullPage = false) => {
       const dimensions = await page.evaluate(() => ({ actual: document.documentElement.scrollWidth, expected: innerWidth }));
       assert(dimensions.actual <= dimensions.expected + 1, `${surface}/${route}/${viewport.width}: horizontal overflow ${dimensions.actual}`);
       assert.deepEqual(errors, [], `${surface}/${route}/${viewport.width}: page errors`);
       const filename = `${surface}-${route}-${viewport.width}.png`;
-      await page.screenshot({ path: join(screenshotRoot, filename), fullPage: false });
+      await page.screenshot({ path: join(screenshotRoot, filename), fullPage });
       screenshots.push({ file: filename, surface, route, width: viewport.width });
       checked++;
     };
@@ -97,7 +97,23 @@ try {
     const tabs = await page.locator('[data-workspace-tab]').evaluateAll(nodes => nodes.map(node => node.dataset.workspaceTab));
     for (const tab of tabs) {
       await page.locator(`[data-workspace-tab="${tab}"]`).click();
-      await capture(tab, 'workspace');
+      await capture(tab, 'workspace', true);
+    }
+    // Inspect every operating surface, including the disclosures below the
+    // primary workspace and the portfolio view above company scope.
+    await page.locator('#ceo-toggle').click();
+    await page.locator('#ceo-panel').waitFor({ state: 'visible' });
+    await capture('portfolio', 'ceo', true);
+    await page.locator('#ceo-toggle').click();
+    await page.locator('#workspace-policy > summary').click();
+    await capture('budget-autonomy', 'workspace', true);
+    await page.locator('#workspace-policy > summary').click();
+    await page.locator('#office-tools > summary').click();
+    const officeTabs = await page.locator('[data-office-tab]').evaluateAll(nodes => nodes.map(node => node.dataset.officeTab));
+    for (const tab of officeTabs) {
+      await page.locator(`[data-office-tab="${tab}"]`).click();
+      await page.locator(`#office-panel-${tab}`).waitFor({ state: 'visible' });
+      await capture(tab, 'office-tools', true);
     }
     await context.close();
   }

@@ -145,3 +145,11 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Returned:** Two bounded worker slots implemented.328 desktop tests pass after fixing estimated token retention, global Donna thread isolation, custom-model pricing and post-generation scope revocation.
 - **Evidence:** desktop-shell/src/main/officeWorker.ts; desktop-shell/src/main/office.ts; desktop-shell/src/main/repositoryMaintenance.ts
 - **Next handoff:** Package, publish, inspect CI and capture each main screen.
+
+## 019 · Release validation reviewer · v0.4.0 checkpoint verified
+
+- **Ask:** Record the observed remote publication results without treating local checks or captured screenshots as complete release verification.
+- **Expected return:** Linked CI evidence, a deployed public preview and explicit remaining verification boundaries.
+- **Returned:** On 21 November 2026 (UTC), the rebuild was published to `main` at `6447754`. Android's initial obsolete SDK tools failure was corrected by `1e16778`; the subsequent run passed all five jobs: web, real MySQL connectors, desktop, Android and release. Android logs show 53 JavaScript tests, execution of `:app:testDebugUnitTest` and successful `assembleDebug`. Pages deployment, browser smoke and offline checks passed; 46 screenshots were captured. The director checked the live CEO view, blueprint room and whiteboard card and confirmed the expected bindings with screenshots.
+- **Evidence:** [Successful Verify run 44846695687](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687); [Android job 136668043587](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687/job/136668043587); [Pages run 44846291115](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846291115); [Android setup correction](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/1e16778); [public preview](https://occult-kranti.github.io/engineering-intelligence-atlas/); [validation record](VALIDATION.md).
+- **Next handoff:** Preserve this v0.4.0 evidence; record visual polish, expanded screenshot coverage and any later release only after their own validation finishes.

@@ -766,14 +766,14 @@ function renderModelCard(model: CatalogModel): HTMLElement {
 
   const sourceBtn = document.createElement('button');
   sourceBtn.className = 'secondary';
-  sourceBtn.textContent = 'Source ↗';
+  setActionLabel(sourceBtn,'Source ↗');
   sourceBtn.onclick = () => void bridge?.openExternal(model.sourceUrl);
   row.append(sourceBtn);
 
   if (model.licenseUrl) {
     const licenseBtn = document.createElement('button');
     licenseBtn.className = 'secondary';
-    licenseBtn.textContent = 'License ↗';
+    setActionLabel(licenseBtn,'License ↗');
     licenseBtn.onclick = () => void bridge?.openExternal(model.licenseUrl as string);
     row.append(licenseBtn);
   }
@@ -888,8 +888,9 @@ async function refreshKeys(): Promise<void> {
   const warning = $('vault-warning');
   warning.classList.toggle('hidden', status.encryptionAvailable);
   if (!status.encryptionAvailable) {
-    warning.textContent =
-      'OS secure storage is unavailable (no unlocked system keychain). Keys cannot be saved — this shell fails closed. Unlock your keychain (e.g. GNOME Keyring / KWallet) and restart the app.';
+    warning.textContent = bridge.transport === 'public-preview'
+      ? 'Provider keys are available only in your private desktop workspace; this public preview cannot store credentials.'
+      : 'OS secure storage is unavailable (no unlocked system keychain). Keys cannot be saved — this shell fails closed. Unlock your keychain (e.g. GNOME Keyring / KWallet) and restart the app.';
   }
   const container = $('key-rows');
   container.innerHTML = '';
@@ -1409,6 +1410,16 @@ function dateLabel(value: string | null, includeTime = false): string {
 function textElement<K extends keyof HTMLElementTagNameMap>(tag: K, text: string, className?: string): HTMLElementTagNameMap[K] {
   const element = document.createElement(tag); element.textContent = text; if (className) element.className = className; return element;
 }
+function setActionLabel(element: HTMLElement, label: string): void {
+  element.textContent = label.replace(/\s*↗$/, '');
+  if (label.endsWith('↗')) {
+    const icon = svgElement('svg', {viewBox:'0 0 16 16',class:'action-arrow','aria-hidden':'true',focusable:'false'});
+    icon.append(svgElement('path', {d:'M4 12 12 4M4 4h8v8'})); element.append(icon);
+  }
+}
+function actionButton(label: string, className = 'text-button'): HTMLButtonElement {
+  const button = textElement('button','',className); setActionLabel(button,label); return button;
+}
 function noData(container: HTMLElement, message: string): void { container.replaceChildren(textElement('p', message, 'empty-inline')); }
 function nativeUnavailable(): void { toast('Open the installed desktop app to use this action.'); }
 function refreshWorkspace(): Promise<void> {
@@ -1462,7 +1473,7 @@ function renderOverview(): void {
     const next = companyState.tasks.find((t) => t.status === 'in-progress') || companyState.tasks.find((t) => t.status === 'todo');
     $('focus-title').textContent = next?.title || 'Your next chapter starts here.';
     $('focus-description').textContent = next ? `Assigned to ${employeeName(next.ownerId)}. Review the milestone, define the evidence, and keep the release moving.` : 'Create a project and give your specialist team a clear outcome to work toward.';
-    $('focus-action').textContent = next ? 'Open roadmap ↗' : 'Create a project ↗';
+    setActionLabel($('focus-action'),next ? 'Open roadmap ↗' : 'Create a project ↗');
   }
   const container = $('overview-projects'); container.replaceChildren();
   if (!workspaceProjects.length) {
@@ -1471,7 +1482,7 @@ function renderOverview(): void {
   } else for (const project of [...workspaceProjects].sort((a,b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 3)) {
     const row = textElement('div', '', 'project-preview-row'); const info = textElement('div', '', 'project-preview-copy');
     info.append(textElement('strong', project.name), textElement('small', `${project.provider} · ${project.nodes.length} specialists · ${dateLabel(project.updatedAt)}`));
-    const button = textElement('button', '↗', 'text-button'); button.type = 'button'; button.setAttribute('aria-label', `Open ${project.name}`); button.onclick = () => { navigate('projects'); void safeTask(() => selectProject(project.id)); };
+    const button = actionButton('↗'); button.type = 'button'; button.setAttribute('aria-label', `Open ${project.name}`); button.onclick = () => { navigate('projects'); void safeTask(() => selectProject(project.id)); };
     row.append(textElement('span', '⌑', 'project-preview-icon'), info, button); container.append(row);
   }
   const roadmap = $('overview-roadmap'); roadmap.replaceChildren(); const tasks = companyState?.tasks.filter((t) => t.status !== 'done').slice(0, 3) || [];
@@ -1506,7 +1517,7 @@ function renderTeam(): void {
     const initials = employee.name.split(/\s+/).map((part) => part[0]).slice(0, 2).join('');
     top.append(textElement('span', initials, 'employee-avatar'), textElement('span', employee.status === 'ready' ? 'Assigned' : employee.status, `badge ${employee.status === 'blocked' ? 'unknown' : 'ok'}`));
     card.append(top, textElement('h2', employee.name), textElement('p', employee.role, 'role-name'), textElement('div', employee.skillPath, 'skill-path'), textElement('p', employee.lastResult || 'Ready for a task with a clear outcome and acceptance criteria.', 'employee-result'));
-    const link = textElement('button', 'View skill source ↗', 'text-button'); link.type = 'button'; link.onclick = () => openExternal(sourceFileUrl(employee.skillPath)); card.append(link); grid.append(card);
+    const link = actionButton('View skill source ↗'); link.type = 'button'; link.onclick = () => openExternal(sourceFileUrl(employee.skillPath)); card.append(link); grid.append(card);
   }
 }
 function renderRoadmap(): void {
@@ -2086,7 +2097,7 @@ function selectRoom(room: OfficeRoom,focus = false): void {
   selectedRoomId = room.id; ($('room-id') as HTMLInputElement).value = room.id; ($('room-name') as HTMLInputElement).value = room.name;
   ($('room-department') as HTMLSelectElement).value = room.departmentId || ''; ($('room-x') as HTMLInputElement).value = String(Math.round(room.x*100)); ($('room-y') as HTMLInputElement).value = String(Math.round(room.y*100));
   $('room-inspector-title').textContent = room.name; $('room-inspector-note').textContent = 'Saved room position and employee assignments.'; $('room-save').textContent = 'Save room'; $('workspace-room-assign').classList.remove('hidden');
-  const people = $('room-people'); people.replaceChildren();
+  const people = $('room-people'); people.replaceChildren(); people.setAttribute('aria-label',`${room.name} employees`);
   const assigned = currentBlueprint()?.desks.filter((desk) => desk.roomId === room.id) || [];
   for (const desk of assigned) { const employee = officeState?.employees.find((item) => item.id === desk.employeeId); if (!employee) continue; const row = textElement('div','','room-person'); row.append(textElement('strong',employee.name),textElement('span',`${employee.role} · ${employee.status}`)); people.append(row); }
   if (!assigned.length) noData(people,'No employees placed in this room.');
@@ -2125,11 +2136,12 @@ function renderBlueprint(): void {
     title.setAttribute('aria-label',`${room.name}. Select room; arrow keys move it.`);
     const department=officeState?.departments.find((d)=>d.id===room.departmentId); card.append(title,textElement('p',department?.name || 'Shared office space','blueprint-room-subtitle'));
     const occupants=textElement('div','','room-occupants');
-    for(const desk of blueprint.desks.filter((item)=>item.roomId===room.id).slice(0,6)) {
-      const employee=officeState?.employees.find((item)=>item.id===desk.employeeId); if(!employee)continue;
+    const roomEmployees=blueprint.desks.filter((item)=>item.roomId===room.id).map(desk=>officeState?.employees.find(employee=>employee.id===desk.employeeId)).filter((employee):employee is OfficeEmployee=>Boolean(employee));
+    for(const employee of roomEmployees.slice(0,6)) {
       const button=textElement('button',employee.name,`room-occupant${selectedDeskEmployeeId===employee.id?' selected':''}`); button.type='button'; button.title=`${employee.role} · ${employee.status}`;
       button.onclick=()=>{if(employee.companyId&&employee.companyId!==officeCompany()?.id){selectRoom(room);if(portfolioState()?.services.some(service=>service.companyId===officeCompany()?.id&&service.officeId===selectedOfficeId&&service.employeeIds.includes(employee.id))){setStatus($('room-status'),`${employee.name} is a shared specialist whose original company assignment is preserved. Assign recipient work through that company’s active service contract.`);return;}selectedDepartmentId=room.departmentId||'';renderOfficeScope();const contract=scopedServiceContracts().find(item=>item.employeeIds.includes(employee.id));if(!contract){setStatus($('room-status'),'This historical assignment has no active staffing contract.','error');return;}($('queue-service-contract') as HTMLSelectElement).value=contract.id;renderOfficeScope();($('queue-employee') as HTMLSelectElement).value=employee.id;switchOfficeTab('queue');($('queue-composer') as HTMLDetailsElement).open=true;$('queue-composer').scrollIntoView({block:'nearest'});$('queue-goal').focus();return;}selectedDeskEmployeeId=employee.id;selectedDepartmentId=employee.departmentId||'';renderOfficeScope();renderWorkspaceControls();selectRoom(room);($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=employee.id;switchWorkspaceTab('chat');renderUnifiedWorkspace();$('chat-message').focus();}; occupants.append(button);
     }
+    if(roomEmployees.length>6){const more=textElement('button',`+${roomEmployees.length-6} more`,'room-occupant room-occupant-more');more.type='button';more.setAttribute('aria-label',`View all ${roomEmployees.length} employees in ${room.name}`);more.onclick=()=>{selectRoom(room);$('room-people').focus();$('room-people').scrollIntoView({block:'nearest'});};occupants.append(more);}
     if(!occupants.children.length)occupants.append(textElement('span','Place an employee','form-help'));
     const art=svgElement('svg',{viewBox:'0 0 115 54',class:'room-floorplan','aria-hidden':'true'}); art.append(svgElement('rect',{x:10,y:10,width:46,height:26,rx:3}),svgElement('path',{d:'M20 8V4h25v4M20 40v9h25v-9M74 10h30v34H74Z M74 20h30M74 34h30'}));
     const boards=blueprint.whiteboards.filter((board)=>board.roomId===room.id).length;
@@ -2274,11 +2286,11 @@ function portfolioState():OfficePortfolio|undefined{return officeState?.portfoli
 function portfolioCompanies():OfficeCompany[]{return(officeState?.companies||[]).filter(company=>company.id!==portfolioState()?.ceo.sharedServicesCompanyId).sort((a,b)=>a.name.localeCompare(b.name));}
 function portfolioReady():boolean{return workspaceAvailable()&&Boolean(portfolioState());}
 function setPortfolioOpen(open:boolean):void{
-  portfolioOpen=open;$('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open);$('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').textContent=open?'↙':'↗';
+  portfolioOpen=open;$('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open);$('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').classList.toggle('return-arrow',open);
   const label=$('ceo-toggle').querySelector('strong');if(label)label.textContent=open?'Back to company workspace':'CEO office';if(open)renderPortfolio();
 }
 function portfolioNavigation(label:string,companyId:string,tab='chat',kind='text-button',officeId?:string,departmentId?:string):HTMLButtonElement{
-  const button=textElement('button',label,kind);button.type='button';button.onclick=()=>workspaceTask(()=>openPortfolioCompany(companyId,tab,officeId,departmentId),'ceo-status');return button;
+  const button=actionButton(label,kind);button.type='button';button.onclick=()=>workspaceTask(()=>openPortfolioCompany(companyId,tab,officeId,departmentId),'ceo-status');return button;
 }
 async function openPortfolioCompany(companyId:string,tab='chat',officeId?:string,departmentId?:string):Promise<void>{
   if(!officeState?.companies.some(company=>company.id===companyId))throw new Error('This company is no longer in the workspace.');
@@ -2332,15 +2344,16 @@ function renderPortfolioRoadmap():void{
     const owner=officeState?.employees.find(employee=>employee.id===item.ownerEmployeeId);const department=officeState?.departments.find(d=>d.id===item.departmentId);article.append(textElement('div',`${roadmapScopeLabel(item)} · ${owner?.name||'Owner unavailable'}${department?` / ${department.name}`:''}${item.serviceContractId?' · shared-service contract':''}`,'outcome-owner'));
     if(item.evidence)article.append(textElement('p',`Evidence: ${item.evidence}`,'form-help'));
     const actions=textElement('div','','row wrap');const edit=textElement('button','Edit outcome','text-button');edit.type='button';edit.onclick=()=>editPortfolioRoadmap(item);actions.append(edit);
-    const map=textElement('button','Map ownership ↗','text-button');map.type='button';map.onclick=()=>workspaceTask(()=>mapRoadmapOwnership(item),'ceo-status');actions.append(map);article.append(actions);container.append(article);
+    const map=actionButton('Map ownership ↗');map.type='button';map.onclick=()=>workspaceTask(()=>mapRoadmapOwnership(item),'ceo-status');actions.append(map);article.append(actions);container.append(article);
   }
   if(!items.length)noData(container,'No saved outcomes match these filters. Add one with a scope and accountable owner.');if(items.length>80)container.append(textElement('p','Showing the first 80 matches. Filter by group, company, or department.','form-help'));
 }
 function renderPortfolioServices():void{
   const container=$('ceo-services');container.replaceChildren();const portfolio=portfolioState();if(!portfolio)return;
-  const symbols:Record<PortfolioServiceKey,string>={engineering:'⌘','design-architecture':'◇','research-knowledge':'∴',security:'□',hackathon:'↗','music-arts':'♫'};
+  const symbols:Record<PortfolioServiceKey,string>={engineering:'M8 4 4 8l4 4m8-8 4 4-4 4M14 2l-4 14','design-architecture':'M3 3h18v18H3Zm0 8h10V3m0 8v10m0-5h8','research-knowledge':'M12 5C8 2 5 3 2 4v15c3-1 6-2 10 1 4-3 7-2 10-1V4c-3-1-6-2-10 1Zm0 0v15',security:'M12 2 3 6v6c0 5 5 8 9 10 4-2 9-5 9-10V6Zm-5 10 3 3 7-7',hackathon:'M14 2 4 14h7l-1 8 10-13h-7Z','music-arts':'M9 17V5l12-3v13M9 9l12-3M9 17c0 2-1 3-3 3s-3-1-3-2 1-3 3-3 3 1 3 2Zm12-2c0 2-1 3-3 3s-3-1-3-2 1-3 3-3 3 1 3 2Z'};
   for(const service of portfolio.services){const card=textElement('article','','portfolio-service');card.dataset.serviceKey=service.key;const contracts=portfolio.contracts.filter(contract=>contract.serviceId===service.id&&contract.status==='active');const employees=service.employeeIds.map(id=>officeState?.employees.find(employee=>employee.id===id)).filter((employee):employee is OfficeEmployee=>Boolean(employee));
-    card.append(textElement('span',symbols[service.key]||'·','service-symbol'),textElement('h4',service.name),textElement('span',service.status==='active'?'Staffing ready':'Paused','badge'),textElement('p',`${employees.length} shared ${employees.length===1?'specialist':'specialists'} · ${new Set(contracts.map(contract=>contract.recipientCompanyId)).size} recipient companies`),textElement('p',employees.map(employee=>employee.name).join(' · ')||'No employee assigned'));
+    const symbol=svgElement('svg',{viewBox:'0 0 24 24',class:'service-symbol','aria-hidden':'true',focusable:'false'});symbol.append(svgElement('path',{d:symbols[service.key]}));const recipients=new Set(contracts.map(contract=>contract.recipientCompanyId)).size;
+    card.append(symbol,textElement('h4',service.name),textElement('span',service.status==='active'?'Staffing ready':'Paused','badge'),textElement('p',`${employees.length} shared ${employees.length===1?'specialist':'specialists'} · ${recipients} recipient ${recipients===1?'company':'companies'}`),textElement('p',employees.map(employee=>employee.name).join(' · ')||'No employee assigned'));
     card.append(portfolioNavigation('Open shared department ↗',service.companyId,'blueprint','text-button',service.officeId,service.departmentId));container.append(card);
   }
   if(!container.children.length)noData(container,'Prepare the shared-team preset to establish six specialties, including hackathon production and music and arts.');
@@ -2384,7 +2397,8 @@ function optimizeGroups():Array<{id:string;name:string;description:string;compan
 }
 function renderPortfolio():void{
   const portfolio=portfolioState();const ready=portfolioReady();const companies=portfolioCompanies();const contracts=(portfolio?.contracts||[]).filter(contract=>contract.status==='active');const shared=new Set((portfolio?.services||[]).flatMap(service=>service.employeeIds));const assignments=contracts.reduce((sum,contract)=>sum+contract.employeeIds.length,0);const live=(officeState?.jobs||[]).filter(job=>job.status==='running');const queued=(officeState?.jobs||[]).filter(job=>['queued','waiting-budget'].includes(job.status)&&job.mode==='provider');
-  $('ceo-entry-summary').textContent=ready?`${companies.length} companies · ${portfolio!.groups.length} groups · ${shared.size} shared specialists`:'Companies, shared teams, and the portfolio roadmap';$('ceo-company-count').textContent=number(companies.length);$('ceo-group-count').textContent=`${portfolio?.groups.length||0} portfolio groups`;$('ceo-shared-count').textContent=number(shared.size);$('ceo-reuse-count').textContent=`${assignments} contracted assignments reuse saved employees`;$('ceo-contract-count').textContent=number(contracts.length);$('ceo-running-count').textContent=number(live.length);$('ceo-queued-count').textContent=`${queued.length} queued provider ${queued.length===1?'request':'requests'}`;$('ceo-directory-count').textContent=number(companies.length);
+  const groupCount=portfolio?.groups.length||0;
+  $('ceo-entry-summary').textContent=ready?`${companies.length} ${companies.length===1?'company':'companies'} · ${groupCount} ${groupCount===1?'group':'groups'} · ${shared.size} shared ${shared.size===1?'specialist':'specialists'}`:'Companies, shared teams, and the portfolio roadmap';$('ceo-company-count').textContent=number(companies.length);$('ceo-group-count').textContent=`${groupCount} portfolio ${groupCount===1?'group':'groups'}`;$('ceo-shared-count').textContent=number(shared.size);$('ceo-reuse-count').textContent=`${assignments} contracted ${assignments===1?'assignment reuses':'assignments reuse'} saved employees`;$('ceo-contract-count').textContent=number(contracts.length);$('ceo-running-count').textContent=number(live.length);$('ceo-queued-count').textContent=`${queued.length} queued provider ${queued.length===1?'request':'requests'}`;$('ceo-directory-count').textContent=number(companies.length);
   $('ceo-operating-state').textContent=!ready?'Current desktop required':portfolio!.ceo.enabled?'Coordination policy enabled':'Coordination policy paused';$('ceo-operating-state').className=`pill ${ready&&portfolio!.ceo.enabled?'ok':'neutral'}`;
   if(portfolio&&!$('ceo-policy-form').contains(document.activeElement)){($('ceo-policy-title') as HTMLInputElement).value=portfolio.ceo.title;($('ceo-enabled') as HTMLInputElement).checked=portfolio.ceo.enabled;}
   renderPortfolioSelectors();if(portfolio&&!$('ceo-policy-form').contains(document.activeElement))($('ceo-focus-group') as HTMLSelectElement).value=portfolio.ceo.focusGroupId||'';

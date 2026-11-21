@@ -53,7 +53,7 @@ with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
 - Validate Windows and macOS builds and their native credential stores.
 - Add signed releases and an authenticated update channel; unsigned local builds are not a signed production installer.
-- Run Android native tests/device flows and publish an APK only after the Gradle/device gate succeeds.
+- Android JVM tests and debug APK packaging passed in [run 44846695687](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687). Complete emulator/device interaction flows and signing before a production mobile release.
 - Benchmark an optional Tauri shell against Electron before choosing a full migration. Rust currently owns the native control core; this release is not a complete Rust UI rewrite.
 
 ## Completion rules
