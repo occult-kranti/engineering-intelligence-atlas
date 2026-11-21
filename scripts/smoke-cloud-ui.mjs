@@ -308,7 +308,12 @@ async function checkOwnerCanvasEntries(page, base, state, viewport) {
     const start = state.calls.length;
     await page.goto(base + entry.route, {waitUntil: 'networkidle'});
     await page.waitForURL(url => ['/workspace/chrome.html', '/workspace/chrome'].includes(url.pathname));
-    await page.locator('#freeflow-host .ff-node').first().waitFor({state: 'attached'});
+    await page.locator('#freeflow-host .ff-world').waitFor({state: 'attached'});
+    await page.waitForFunction(() => document.querySelector('#office-company-select')?.value === 'fixture-company');
+    // A website surface can be far from the company scene. Its correctly framed
+    // viewport may cull every scene card; loaded scope and the live world are the
+    // readiness contract here. Plain home must still render actual scene nodes.
+    if (!entry.surface) await page.locator('#freeflow-host .ff-node').first().waitFor({state: 'attached'});
     await settleCanvas(page);
     await assertEndlessShell(page, `Owner ${entry.surface || 'home'} entry ${viewport.width}`);
     const url = new URL(page.url());
