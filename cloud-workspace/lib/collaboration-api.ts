@@ -46,8 +46,9 @@ async function companyMembers(env: AtlasEnv, user: CollabUser, companyId: string
   const rows = (await env.DB!.prepare("SELECT m.id,m.user_id,m.role,m.expires_at,u.display_name,u.email FROM daftar_company_memberships m JOIN daftar_users u ON u.id=m.user_id WHERE m.workspace_id='owner' AND m.company_id=? AND m.status='active' AND m.revoked_at IS NULL ORDER BY m.created_at,m.id LIMIT 200").bind(companyId).all<Row>()).results;
   const live = rows.filter((m) => !m.expires_at || Date.parse(m.expires_at) > Date.now());
   const owner = await env.DB!.prepare("SELECT u.id,u.display_name,u.email FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner'").first<Row>();
-  const humans = live.map((m) => ({ membershipId: m.id, userId: m.user_id, displayName: m.display_name ?? 'Member', role: m.role, expiresAt: m.expires_at ?? null, ...(user.isOwner ? { email: m.email ?? null } : {}) }));
-  if (owner) humans.unshift({ membershipId: 'owner', userId: owner.id, displayName: owner.display_name ?? 'Owner', role: 'owner', expiresAt: null, ...(user.isOwner ? { email: owner.email ?? null } : {}) } as Row);
+  type HumanDto = { membershipId: string; userId: string; displayName: string; role: string; expiresAt: string | null; email?: string | null };
+  const humans: HumanDto[] = live.map((m): HumanDto => ({ membershipId: m.id, userId: m.user_id, displayName: m.display_name ?? 'Member', role: m.role, expiresAt: m.expires_at ?? null, ...(user.isOwner ? { email: m.email ?? null } : {}) }));
+  if (owner) humans.unshift({ membershipId: 'owner', userId: owner.id, displayName: owner.display_name ?? 'Owner', role: 'owner', expiresAt: null, ...(user.isOwner ? { email: owner.email ?? null } : {}) });
   return json({ ok: true, humans, note: 'Human company ownership; AI employees are listed separately in the company view.' });
 }
 async function createInvitation(env: AtlasEnv, user: CollabUser, companyId: string, request: Request): Promise<Response> {

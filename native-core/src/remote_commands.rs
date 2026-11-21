@@ -352,10 +352,12 @@ mod tests {
     #[test]
     fn remote_set_company_parent_attach_detach_replay_and_errors() {
         let mut state = fixture();
+        // Capture the existing fixture parent before create_company selects the new child.
+        let parent = state.active_company_id.clone();
         state
             .apply(&json!({"action":"create_company","name":"Remote child","id":"remote-child"}))
             .unwrap();
-        let parent = state.active_company_id.clone();
+        assert_ne!(parent, "remote-child");
         let wrap = |id: &str, parent_value: Value| {
             json!({"action":"apply_remote_command","id":id,"command":{"action":"set_company_parent","companyId":"remote-child","parentCompanyId":parent_value}})
         };
