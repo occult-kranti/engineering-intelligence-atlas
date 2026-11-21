@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 import { existsSync, readFileSync, statSync, mkdirSync, writeFileSync } from 'node:fs';
 import { extname, join, resolve, sep } from 'node:path';
 import { repoRoot, webRoot } from './static-build-lib.mjs';
+import { openCanvasSurface, assertEndlessShell, checkEndlessPanelInteractions, settleCanvas } from './endless-canvas-browser-checks.mjs';
 
 const require = createRequire(join(webRoot, 'package.json'));
 const { chromium } = require('playwright');
@@ -34,11 +35,13 @@ const server = createServer((request, response) => {
 await new Promise((done) => server.listen(0, '127.0.0.1', done));
 const base = `http://127.0.0.1:${server.address().port}${mount}`;
 async function assertStudioContrast(page, viewport, theme) {
-  // These four rendered regressions are the scope of this check. Sidebar text
-  // is intentionally hidden at mobile widths, so inspect it at the desktop size.
+  // Measure actual canvas controls and the active surface. The legacy sidebar
+  // is hidden by design and must not be made visible to satisfy this gate.
+  await openCanvasSurface(page, 'workspace-blueprint');
+  await page.locator('#workspace-panel-blueprint .canvas-toolbar > div > p:last-child').scrollIntoViewIfNeeded();
   const targets = [
-    {name: 'inactive navigation', selector: '#primary-nav .nav-item[data-view="overview"]:not(.active) > span:first-of-type'},
-    {name: 'active navigation', selector: '#primary-nav .nav-item.active > span:first-of-type'},
+    {name: 'surface finder', selector: '.canvas-launcher .canvas-find'},
+    {name: 'active canvas title', selector: '.canvas-panel[data-panel-id="workspace-blueprint"] .canvas-panel-grip'},
     {name: 'save status', selector: '#workspace-save-status #workspace-save-label'},
     {name: 'blueprint description', selector: '#workspace-panel-blueprint .canvas-toolbar > div > p:last-child'},
   ];
@@ -137,26 +140,20 @@ try {
       if (!['GET', 'HEAD'].includes(request.method())) errors.push(`Read-only preview attempted ${request.method()} ${request.url()}`);
     });
     await page.goto(`${base}desktop-preview/chrome.html`, { waitUntil: 'networkidle' });
-    // Default URL (no workspace=blueprint): Freeflow must be the visible first surface.
-    await page.locator('#freeflow-host').waitFor({ state: 'visible' });
-    await page.locator('#freeflow-surface').waitFor({ state: 'visible' });
-    assert(await page.locator('#freeflow-host').count() === 1, 'Freeflow host must be mounted exactly once.');
+    await page.waitForFunction(() => Boolean(document.querySelector('#office-company-select')?.value));
+    await assertEndlessShell(page, `Public starter ${viewport.width}`);
+    assert.equal(await page.locator('#freeflow-host').count(), 1, 'Freeflow host must be mounted exactly once.');
     assert(await page.locator('#office-native-status').isHidden(), 'Legacy status must be hidden while Freeflow is the default surface.');
-    interactionChecks.push(`Freeflow ${viewport.width}: host visible first on the default URL with the legacy surface hidden`);
-    // Switch through the real, visible Operations / Manage control; never force hidden clicks.
-    await page.locator('#ff-nav-operations').click();
+    interactionChecks.push(`Freeflow ${viewport.width}: one visible world on the default URL with a surface finder and no competing sidebar`);
+    await openCanvasSurface(page, 'scope');
     await page.locator('#office-native-status').filter({ hasNotText: 'Checking' }).waitFor({ state: 'visible' });
-    const capture = async (route, surface = 'desktop', fullPage = false) => {
+    const capture = async (route, surface = 'desktop') => {
       // Let the application's transient status finish naturally; do not hide
       // notices or focused accessibility controls just to produce a capture.
       await page.locator('#global-status').waitFor({ state: 'hidden', timeout: 10000 });
-      if (fullPage) {
-        await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
-        await page.waitForFunction(() => window.scrollY === 0 && window.scrollX === 0);
-      }
       const dimensions = await page.evaluate(() => ({ actual: document.documentElement.scrollWidth, expected: innerWidth }));
       const filename = `${surface}-${route}-${viewport.width}.png`;
-      await page.screenshot({ path: join(screenshotRoot, filename), fullPage });
+      await page.screenshot({ path: join(screenshotRoot, filename), fullPage: false });
       screenshots.push({ file: filename, surface, route, width: viewport.width });
       if (dimensions.actual > dimensions.expected + 1) {
         const outside = await page.locator('body *').evaluateAll(nodes => nodes.filter(node => {
@@ -166,40 +163,40 @@ try {
         assert.fail(`${surface}/${route}/${viewport.width}: horizontal overflow ${dimensions.actual}; ${JSON.stringify(outside)}`);
       }
       assert.deepEqual(errors, [], `${surface}/${route}/${viewport.width}: page errors`);
+      await assertEndlessShell(page, `${surface}/${route}/${viewport.width}`);
       checked++;
     };
-    const views = await page.locator('.sidebar .nav-item[data-view]').evaluateAll(nodes => nodes.map(node => node.dataset.view));
-    for (const view of [...new Set(views)]) {
-      await page.locator(`.sidebar .nav-item[data-view="${view}"]`).first().click();
-      await page.locator('#workspace-main > .view:not(.hidden) h1').first().waitFor({ state: 'visible' });
-      await capture(view);
+    const panels = await page.locator('.canvas-panel[data-panel-id]').evaluateAll(nodes => nodes.map(node => node.dataset.panelId));
+    assert.equal(new Set(panels).size, panels.length, 'Every canvas surface must have one identity.');
+    for (const required of ['donna', 'crew', 'scope', 'policy', 'portfolio', 'workspace-blueprint', 'office-people', 'office-queue', 'office-ledger', 'models', 'settings', 'source-review']) {
+      assert(panels.includes(required), `Canvas is missing the ${required} surface.`);
     }
-    await page.locator('.sidebar .nav-item[data-view="office"]').click();
-    const tabs = await page.locator('[data-workspace-tab]').evaluateAll(nodes => nodes.map(node => node.dataset.workspaceTab));
-    for (const tab of tabs) {
-      await page.locator(`[data-workspace-tab="${tab}"]`).click();
-      await capture(tab, 'workspace', true);
-      if (tab === 'blueprint' && viewport.width < 650) {
+    for (const id of panels) {
+      await openCanvasSurface(page, id);
+      await capture(id, 'canvas');
+      if (id === 'workspace-blueprint' && viewport.width < 650) {
         const layout = await page.locator('#office-blueprint').evaluate(canvas => {
           const style = getComputedStyle(canvas);
-          return {list: canvas.classList.contains('list-mode'), track: canvas.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight), rooms: [...canvas.querySelectorAll('.blueprint-room')].map(room => ({width: room.getBoundingClientRect().width, height: room.getBoundingClientRect().height}))};
+          const scale = canvas.getBoundingClientRect().width / canvas.offsetWidth;
+          return {list: canvas.classList.contains('list-mode'), scale, track: (canvas.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight)) * scale, rooms: [...canvas.querySelectorAll('.blueprint-room')].map(room => ({width: room.getBoundingClientRect().width, height: room.getBoundingClientRect().height}))};
         });
-        assert(layout.list && layout.rooms.length > 0, 'Narrow blueprint must expose a populated list alternative.');
+        assert(layout.list && layout.rooms.length > 0 && Number.isFinite(layout.scale) && layout.scale > 0, 'Narrow blueprint must expose a populated list alternative at a finite canvas scale.');
         for (const room of layout.rooms) {
           assert(room.width >= layout.track - 2, `Narrow blueprint room must fill its list track: ${JSON.stringify(layout)}`);
-          assert(room.height < 400, `Starter list room retains excessive spatial height: ${JSON.stringify(layout)}`);
+          assert(room.height < 400 * layout.scale, `Starter list room retains excessive spatial height: ${JSON.stringify(layout)}`);
         }
       }
     }
     // Appearance and heat are local viewing preferences. A scoped deep link
     // must survive reload without changing the company or granting writes.
-    await page.locator('#workspace-tab-blueprint').click();
+    await openCanvasSurface(page, 'workspace-blueprint');
     const companyId = await page.locator('#office-company-select').inputValue();
     assert.ok(companyId, 'The public starter must expose its selected company.');
     await page.waitForFunction(() => typeof window.DaftarSignals?.build === 'function');
     const darkCanvas = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--canvas').trim());
     assert.ok(darkCanvas, 'The built preview must load studio palette tokens.');
     if (viewport.width === 1440) await assertStudioContrast(page, viewport, 'blueprint');
+    await openCanvasSurface(page, 'scope');
     await page.locator('#workspace-theme').selectOption('drafting');
     const lightCanvas = await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--canvas').trim());
     assert.notEqual(lightCanvas, darkCanvas, 'The appearance switch must change the rendered canvas.');
@@ -219,6 +216,7 @@ try {
     if (viewport.width === 1440) await assertStudioContrast(page, viewport, 'drafting');
     interactionChecks.push(`Theme ${viewport.width}: distinct rendered palettes, persisted theme/heat and scoped company after navigation and reload`);
 
+    await openCanvasSurface(page, 'scope');
     await page.locator('.heat-key > summary').click();
     for (const mode of ['workload', 'budget', 'attention']) {
       await page.locator('#workspace-heat-mode').selectOption(mode);
@@ -227,7 +225,7 @@ try {
       const rooms = await page.locator('#office-blueprint .blueprint-room').evaluateAll(nodes => nodes.map(node => ({level: node.dataset.heatLevel, label: node.querySelector('.heat-reading')?.textContent})));
       assert(rooms.length > 0 && rooms.every(room => room.level === 'unknown' && room.label === 'No comparable data'), 'The public starter has no jobs: every room must state unknown, not zero activity.');
     }
-    if (viewport.width === 1440) await capture('heat-legend-drafting', 'workspace', true);
+    if (viewport.width === 1440) await capture('heat-legend-drafting', 'workspace');
     await page.locator('#workspace-heat-mode').selectOption('off');
     assert.match(await page.locator('#workspace-signal-summary').innerText(), /Heat map off/);
     assert.match(await page.locator('#workspace-heat-legend').innerText(), /Color overlay is off/);
@@ -237,7 +235,7 @@ try {
     await page.locator('.heat-key > summary').click();
     interactionChecks.push(`Heat ${viewport.width}: all three legends, no-record unknown labels and an explicit off state`);
 
-    await page.locator('#workspace-tab-softboard').click();
+    await openCanvasSurface(page, 'workspace-softboard');
     await page.getByRole('heading', {name: 'See the people behind the work.', exact: true}).waitFor({state: 'visible'});
     const peopleCount = await page.locator('#workspace-softboard .org-person').count();
     assert(peopleCount > 0, 'Ownership must show the saved public starter assignments.');
@@ -249,7 +247,7 @@ try {
     assert.equal(await page.locator('#softboard-person-title').innerText(), 'Donna');
     assert.equal(await page.evaluate(() => document.activeElement?.id), 'softboard-person-title');
     assert.equal(await page.locator('#softboard-person-detail .inspector-signal[data-heat-level="unknown"]').count(), 3);
-    await capture('ownership-drafting', 'workspace', true);
+    await capture('ownership-drafting', 'workspace');
     await page.locator('#softboard-person-chat').click();
     assert.equal(await page.locator('#chat-scope').inputValue(), 'employee');
     assert.equal(await page.locator('#chat-employee').inputValue(), 'donna');
@@ -257,26 +255,12 @@ try {
     assert(await page.locator('#chat-send').isDisabled(), 'A viewing preference or employee selection must not enable writes in the public starter.');
     interactionChecks.push(`Ownership ${viewport.width}: saved people, search/clear, focused inspector and employee conversation handoff remain read only`);
 
-    const draft = `Unsent public starter brief at ${viewport.width}px`;
-    await page.locator('#chat-message').fill(draft);
-    const conversation = await page.locator('#donna-conversation').elementHandle();
-    await page.locator('#workspace-tab-blueprint').click();
-    await page.locator('#donna-dock-toggle').click();
-    assert.equal(await conversation.evaluate(node => node.parentElement?.id), 'donna-dock-slot');
-    assert.equal(await page.locator('#chat-message').inputValue(), draft);
-    await page.locator('#workspace-tab-timeline').click();
-    assert.equal(await page.locator('#chat-message').inputValue(), draft);
-    assert.equal(await page.locator('#donna-conversation').count(), 1);
-    if (viewport.width === 1440) await capture('donna-dock-drafting', 'workspace', false);
-    await page.locator('#donna-dock-close').click();
-    assert.equal(await page.evaluate(() => document.activeElement?.id), 'donna-dock-toggle');
-    await page.locator('#workspace-tab-chat').click();
-    assert.equal(await conversation.evaluate(node => node.parentElement?.id), 'donna-chat-home');
-    assert.equal(await page.locator('#chat-message').inputValue(), draft);
-    await conversation.dispose();
-    interactionChecks.push(`Donna ${viewport.width}: one composer, draft retained through tab/dock moves and focus returned without submitting`);
+    const panelInteractions = await checkEndlessPanelInteractions(page, `Public starter ${viewport.width}`);
+    assert(await page.locator('#chat-send').isDisabled(), 'Canvas interactions must not enable public preview writes.');
+    if (viewport.width === 1440) await capture('donna-canvas-drafting', 'workspace');
+    interactionChecks.push(`Canvas ${viewport.width}: ${JSON.stringify(panelInteractions)}; no drafts submitted`);
 
-    await page.locator('#workspace-tab-timeline').click();
+    await openCanvasSurface(page, 'workspace-timeline');
     await page.getByRole('heading', {name: 'From intention to evidence.', exact: true}).waitFor({state: 'visible'});
     assert.deepEqual(await page.locator('#workspace-timeline .roadmap-lane').evaluateAll(nodes => nodes.map(node => node.dataset.stage)), ['planned', 'in-progress', 'blocked', 'done']);
     const outcomeCount = await page.locator('#workspace-timeline .studio-outcome').count();
@@ -290,56 +274,52 @@ try {
     assert.equal(await page.locator('#office-company-select').inputValue(), companyId);
     assert.equal(new URL(page.url()).searchParams.get('company'), companyId);
     interactionChecks.push(`Roadmap ${viewport.width}: four delivery lanes, recorded ownership, filtered empty state and unchanged company scope`);
+    await openCanvasSurface(page, 'scope');
     await page.locator('#workspace-theme').selectOption('blueprint');
-    // Inspect every operating surface, including the disclosures below the
-    // primary workspace and the portfolio view above company scope.
-    await page.locator('#ceo-toggle').click();
+    // Management and budget disclosures remain real forms inside their panels.
+    await openCanvasSurface(page, 'portfolio');
     await page.locator('#ceo-panel').waitFor({ state: 'visible' });
-    await capture('portfolio', 'ceo', true);
+    await capture('portfolio', 'ceo');
     await page.locator('#ceo-authority-editor > summary').click();
     await page.locator('#authority-grant-form').waitFor({ state: 'visible' });
     assert(await page.locator('#authority-grant-submit').isDisabled(), 'Public management preview must remain read only.');
     assert(await page.locator('#authority-grants .authority-grant').count() > 0, 'Management preview should expose the synthetic timed grant history.');
-    await capture('management', 'ceo', true);
+    await capture('management', 'ceo');
     await page.locator('#authority-search').fill('Donna');
     assert(await page.locator('#authority-index .authority-index-row').count() > 0, 'Management directory should search saved employee names.');
     await page.locator('#authority-search').fill('no-matching-example-record');
     assert.equal(await page.locator('#authority-index .authority-index-row').count(), 0, 'Management search must not leave unrelated records visible.');
     await page.locator('#authority-search').fill('');
     await page.locator('#ceo-authority-editor > summary').click();
-    await page.locator('#ceo-toggle').click();
+    await openCanvasSurface(page, 'policy');
     await page.locator('#workspace-policy > summary').click();
-    await capture('budget-autonomy', 'workspace', true);
+    await capture('budget-autonomy', 'workspace');
     await page.locator('#workspace-policy > summary').click();
-    await page.locator('#office-tools > summary').click();
-    const officeTabs = await page.locator('[data-office-tab]').evaluateAll(nodes => nodes.map(node => node.dataset.officeTab));
-    for (const tab of officeTabs) {
-      await page.locator(`[data-office-tab="${tab}"]`).click();
-      await page.locator(`#office-panel-${tab}`).waitFor({ state: 'visible' });
-      await capture(tab, 'office-tools', true);
-    }
     await context.close();
   }
-  // A brief must be reachable in the first laptop viewport, without scrolling
-  // past the scope controls. These sizes cover the new compact command deck.
+  // A chat deep link must frame the actual composer in the first laptop viewport,
+  // without a test-induced scroll or a second surface-opening action.
   for (const viewport of [{width:1280,height:720},{width:1024,height:768}]) for (const presentation of ['blueprint','drafting']) {
     const context=await browser.newContext({viewport,reducedMotion:'reduce'});
     await context.addInitScript(p=>{try{localStorage.setItem('daftar-studio-theme',p);}catch{}},presentation);
     const page=await context.newPage();
     await page.goto(`${base}desktop-preview/chrome.html?workspace=chat#office`,{waitUntil:'networkidle'});
+    await page.waitForFunction(() => Boolean(document.querySelector('#office-company-select')?.value));
+    await page.locator('.canvas-panel[data-panel-id="donna"][data-open="true"]').waitFor({state:'visible'});
     await page.locator('#chat-send').waitFor({state:'visible'});
     const actualTheme=await page.evaluate(()=>document.documentElement.getAttribute('data-theme'));
     assert(actualTheme===presentation,`Requested ${presentation} theme but DOM data-theme is ${actualTheme} at ${viewport.width}x${viewport.height}`);
     await page.evaluate(()=>document.fonts&&document.fonts.ready);
-    await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
+    await settleCanvas(page);
+    await assertEndlessShell(page, `First brief ${presentation}/${viewport.width}`);
     const box=await page.locator('#chat-send').boundingBox();
     const filename=`workspace-first-brief-${presentation}-${viewport.width}.png`;
     // Retain the actual first viewport even when its acceptance check fails.
     // Reading geometry does not scroll, focus, or change the rendered layout.
     await page.screenshot({path:join(screenshotRoot,filename)});
     const layout=await page.evaluate(()=>({scroll:{x:scrollX,y:scrollY},elements:Object.fromEntries([
-      ['topbar','.workspace-topbar'],['heading','#office-view > .donna-heading'],['ceoEntry','#office-view > .ceo-entry'],
-      ['scope','.office-scope'],['locator','.workspace-locator'],['tabs','.workspace-control-bar'],
+      ['topbar','.workspace-topbar'],['panel','.canvas-panel[data-panel-id="donna"]'],['titlebar','.canvas-panel[data-panel-id="donna"] .canvas-panel-titlebar'],
+      ['panelBody','.canvas-panel[data-panel-id="donna"] .canvas-panel-body'],['launcher','.canvas-launcher'],['cameraControls','.ff-controls'],
       ['conversation','#donna-conversation'],['composer','#workspace-chat-form'],['composerContext','#workspace-chat-form .composer-context'],
       ['message','#chat-message'],['composerFooter','#workspace-chat-form .composer-footer'],
       ['send','#chat-send'],['freeflowSurface','#freeflow-surface'],['surfaceBar','.ff-surface-bar'],['heatControls','#ff-heat-controls'],

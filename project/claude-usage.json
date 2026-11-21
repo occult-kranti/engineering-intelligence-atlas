@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 1.084154,
+  "accountedUsd": 1.401592,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -149,10 +149,33 @@
       "outputTokens": 2056,
       "costUsd": 0.04439,
       "contribution": "Completed and retained a real specialist review or Donna synthesis artifact; planning/review is distinct from executing code."
+    },
+    {
+      "number": 14,
+      "model": "claude-sonnet-5-5",
+      "task": "endless-canvas compositor source review",
+      "state": "blocked-review-reservation-retained",
+      "inputTokens": null,
+      "outputTokens": null,
+      "costUsd": null,
+      "retainedReservationUsd": 0.210496,
+      "contribution": "Automatic approval review classified supplied public source as private and blocked the request. No provider response or actual charge was observed; the conservative reservation remains retained."
+    },
+    {
+      "number": 15,
+      "model": "claude-sonnet-5-5",
+      "task": "endless-canvas universe compositor and focused tests",
+      "requestId": "d38ebb65-3dd2-461f-baaf-a791eb25a74f",
+      "state": "completed",
+      "inputTokens": 20716,
+      "outputTokens": 6551,
+      "costUsd": 0.106942,
+      "retainedReservationUsd": 0,
+      "contribution": "A new bounded request used three source files whose public availability was established by unauthenticated reads and matching hashes. Sonnet returned a universe compositor and tests; the implementation was independently reviewed, corrected and integrated. This receipt does not establish release or deployment success."
     }
   ],
-  "observedUsd": 0.798888,
-  "retainedReservationUsd": 0.285266,
+  "observedUsd": 0.90583,
+  "retainedReservationUsd": 0.495762,
   "cloud": {
     "allocationUsd": 5,
     "observedUsd": 0.02214,
@@ -177,6 +200,6 @@
     },
     "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
   },
-  "observedNativeUsd": 0.776748,
+  "observedNativeUsd": 0.88369,
   "newWorkstreamCapUsd": 20
 }

@@ -32,7 +32,8 @@ check(el('overview-heading').textContent==='Fixture Engineering','company state 
 check(el('metric-spend').textContent==='$0.00','zero usage is honest');
 check(Array.from(d.querySelectorAll('input[type="number"]')).filter(input=>input.value!=='').every(input=>input.validity.valid),'default numeric budgets satisfy native browser min and step validation');
 const ids=Array.from(d.querySelectorAll('[id]')).map(n=>n.id);check(new Set(ids).size===ids.length,'no duplicate DOM IDs');
-for(const view of ['overview','office','projects','team','roadmap','usage','library','models','settings']){d.querySelector(`.nav-item[data-view="${view}"]`).click();await flush();check(d.querySelectorAll('.view:not(.hidden)').length===1,`one visible screen: ${view}`);check(d.querySelector(`.nav-item[data-view="${view}"]`).getAttribute('aria-current')==='page',`selected nav: ${view}`);}
+const persistentWorld=d.querySelector('.ff-world');check(Boolean(persistentWorld)&&d.body.classList.contains('endless-canvas'),'one endless world is mounted at startup');
+for(const view of ['overview','office','projects','team','roadmap','usage','library','models','settings']){d.querySelector(`.nav-item[data-view="${view}"]`).click();await flush();check(d.querySelector('.ff-world')===persistentWorld&&!el('office-view').classList.contains('hidden')&&!el('freeflow-surface').classList.contains('hidden'),`navigation retains the same visible world: ${view}`);if(view!=='office'){const panel=d.querySelector(`.canvas-panel[data-panel-id="${view}"]`);check(Boolean(panel)&&!panel.hidden&&persistentWorld.contains(panel),`${view} opens as a live world element`);}check(d.querySelector(`.nav-item[data-view="${view}"]`).getAttribute('aria-current')==='page',`selected nav: ${view}`);}
 await click('header-new-project');check(el('new-project-details').open,'new project composer opens');check(d.activeElement===el('proj-name'),'new project focuses name');
 set('proj-name','UI fixture project');set('proj-goal','A test-only deliverable');set('proj-model','fixture-model');await submit('project-form');check(fixture.calls.some(c=>c.name==='createProject'&&c.args.nodes.length===4),'project submits its four specialist nodes');
 await click('run-start');check(!fixture.calls.some(c=>c.name==='startRun'),'zero cloud price blocks run');check(el('run-status').textContent.includes('positive'),'pricing error visible');set('rate-input','2');set('rate-output','10');await click('run-start');check(fixture.calls.some(c=>c.name==='startRun'&&c.args.priceRates.outputUsdPerMillion===10),'valid priced run reaches bridge');
@@ -91,7 +92,7 @@ d.querySelector('.nav-item[data-view="settings"]').click();await flush();check(e
 
 // CEO portfolio is an organizational view of the same Donna workspace.
 d.querySelector('.nav-item[data-view="office"]').click();await flush();await click('ceo-toggle');
-check(!el('ceo-panel').classList.contains('hidden')&&el('company-workspace').classList.contains('hidden'),'CEO overview changes workspace scope without creating another chat');
+check(!el('ceo-panel').classList.contains('hidden')&&persistentWorld.contains(el('ceo-panel'))&&!el('freeflow-surface').classList.contains('hidden'),'CEO overview opens inside the same world without creating another chat');
 check(d.querySelectorAll('#conversation-messages').length===1,'there is exactly one conversation surface');
 check(el('ceo-running-count').textContent==='0','staffing records do not imply running model requests');
 await change('ceo-edit-group','fixture-group');set('ceo-group-name','Fixture platforms <img src=x onerror=alert(1)>');await submit('ceo-group-form');
@@ -205,9 +206,9 @@ check(ae('office-blueprint').querySelector('[data-room-id]').dataset.heatLevel==
 check(ae('workspace-heat-legend').textContent.includes('Unknown / stale'),'heat legend includes a text equivalent for unknown');
 ae('office-blueprint').querySelector('.blueprint-room-title').click();av('room-name','Unsent room name');ae('room-name').dispatchEvent(new aw.Event('input',{bubbles:true}));await ach('workspace-heat-mode','attention');check(ae('room-name').value==='Unsent room name','changing heat mode preserves an unsaved room inspector edit');await ac('office-refresh');check(ae('room-name').value==='Unsent room name','refreshing saved signals preserves the unsaved room inspector edit');await ach('workspace-heat-mode','workload');
 av('chat-message','Preserve this unsent brief.');await ac('workspace-tab-blueprint');await ac('donna-dock-toggle');
-check(ae('donna-conversation').parentElement===ae('donna-dock-slot')&&ad.querySelectorAll('#workspace-chat-form').length===1,'dock moves the existing composer instead of duplicating it');
+check(ae('donna-conversation').closest('.canvas-panel')?.dataset.panelId==='donna'&&ad.querySelectorAll('#workspace-chat-form').length===1,'Donna opens the existing composer as one world element');
 check(ae('chat-message').value==='Preserve this unsent brief.','opening dock preserves the unsent brief');
-await ac('donna-dock-close');await ac('workspace-tab-chat');check(ae('donna-conversation').parentElement===ae('donna-chat-home')&&ae('chat-message').value==='Preserve this unsent brief.','closing dock and returning to chat preserves its form');
+await ac('donna-dock-close');await ac('workspace-tab-chat');check(ae('donna-conversation').closest('.canvas-panel')?.dataset.panelId==='donna'&&ae('chat-message').value==='Preserve this unsent brief.','closing and reopening Donna preserves its live world form');
 await ac('workspace-tab-softboard');check(ae('workspace-panel-softboard').classList.contains('hidden')===false&&ae('workspace-softboard').textContent.includes('Donna'),'soft board uses saved employee names');
 ae('workspace-softboard').querySelector('[data-employee-id="donna"]').click();await flush();check(ae('softboard-person-title').textContent==='Donna'&&!ae('softboard-person-authority').disabled,'selecting a person opens actual ownership inspection');
 af.office.employees.push({...af.office.employees[0],id:'paused-designer',name:'Paused designer',role:'Designer',status:'paused'});await ac('office-refresh');ae('workspace-softboard').querySelector('[data-employee-id="paused-designer"]').click();await flush();check(ae('softboard-person-chat').disabled&&!ae('softboard-person-authority').disabled&&ae('softboard-person-detail').textContent.includes('resume their assignment'),'paused employees keep ownership inspection without an invalid chat target');
@@ -316,130 +317,186 @@ const staff=sc.describeNode({...base,subtitle:'Reviewer',status:'contracted',emp
 check(staff.startsWith('Contracted staff reference'),'real contract reference keeps staff label');
 lw.close();
 }
-// Packet 18b: movable Donna, options and real entry actions.
+// Endless-canvas integration: existing forms, Donna options and authority are live world elements.
 {
-const dd=await makeDom(true,undefined,'?company=fixture-company',(w0)=>{w0.__opened=[];});const dw=dd.window,ddoc=dw.document,df=dw.__atlasFixture;const de=(i)=>ddoc.getElementById(i);
-ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();
-de('donna-dock-toggle').click();await flush();
-const cmdBefore=df.calls.filter(c=>c.name==='officeCommand').length;
-de('chat-message').value='Keep this draft';
-check(ddoc.querySelectorAll('#donna-conversation').length===1&&ddoc.querySelectorAll('#workspace-chat-form').length===1,'exactly one Donna conversation and composer');
-const h=de('donna-move-handle');
-h.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));await flush();
-check(de('donna-dock').classList.contains('donna-moved')&&de('donna-dock').style.left!=='','keyboard Move positions Donna with left/top');
-h.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'Home',bubbles:true}));await flush();
-check(!de('donna-dock').classList.contains('donna-moved'),'keyboard reset clears moved position');
-const ta=de('chat-message');const arrow=new dw.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true});ta.dispatchEvent(arrow);check(!arrow.defaultPrevented&&!de('donna-dock').classList.contains('donna-moved'),'textarea arrow keys are not hijacked');
-de('donna-options-toggle').click();check(!de('donna-options-menu').classList.contains('hidden')&&de('donna-options-toggle').getAttribute('aria-expanded')==='true','Options menu opens');
-de('donna-options-menu').dispatchEvent(new dw.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));check(de('donna-options-menu').classList.contains('hidden')&&ddoc.activeElement===de('donna-options-toggle'),'Escape closes options and restores focus');
-de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="lock"]').click();
-check(de('donna-option-lock').textContent==='Unlock position','lock option has truthful label');
-h.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));await flush();check(!de('donna-dock').classList.contains('donna-moved'),'locked position prevents movement');
-ddoc.querySelector('[data-donna-option="lock"]').click();
-de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="dock-left"]').click();await flush();check(de('donna-dock').classList.contains('donna-moved'),'dock-left sets explicit position');
+const dd=await makeDom(true,undefined,'?company=fixture-company');const dw=dd.window,ddoc=dw.document,df=dw.__atlasFixture;const de=(id)=>ddoc.getElementById(id);
+const panel=(id)=>ddoc.querySelector(`.canvas-panel[data-panel-id="${id}"]`);
+const surface=async(id)=>{ddoc.querySelector(`.canvas-shortcut[data-canvas-open="${id}"]`).click();await flush();};
+const world=ddoc.querySelector('.ff-world');const cmdBefore=df.calls.filter(c=>c.name==='officeCommand').length;
+await surface('donna');de('chat-message').value='Keep this unsent brief';
+await surface('workspace-blueprint');de('office-blueprint').querySelector('.blueprint-room-title').click();de('room-name').value='Unsent room plan';de('room-name').dispatchEvent(new dw.Event('input',{bubbles:true}));
+check(!panel('donna').hidden&&!panel('workspace-blueprint').hidden&&world.contains(panel('donna'))&&world.contains(panel('workspace-blueprint')),'conversation and blueprint forms coexist inside one world');
+await surface('settings');await surface('donna');
+check(de('chat-message').value==='Keep this unsent brief'&&de('room-name').value==='Unsent room plan','navigating between world surfaces preserves both unsaved forms');
+const currentIds=Array.from(ddoc.querySelectorAll('[id]')).map(node=>node.id);check(new Set(currentIds).size===currentIds.length,'reparented surfaces retain unique DOM identities');
+const grip=panel('donna').querySelector('.canvas-panel-grip'),beforeMove=panel('donna').style.transform;
+grip.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));await flush();
+check(panel('donna').style.transform!==beforeMove&&ddoc.querySelector('.ff-world')===world,'Donna moves in world coordinates without replacing the canvas');
+const arrow=new dw.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true,cancelable:true});de('chat-message').dispatchEvent(arrow);check(!arrow.defaultPrevented,'text input arrow keys retain native editing behavior');
+panel('donna').querySelector('.canvas-panel-pin').click();const pinned=panel('donna').style.transform;
+grip.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true,cancelable:true}));check(panel('donna').style.transform===pinned,'Donna panel position lock prevents keyboard movement');panel('donna').querySelector('.canvas-panel-pin').click();
+de('donna-options-toggle').click();check(!de('donna-options-menu').classList.contains('hidden')&&de('donna-options-toggle').getAttribute('aria-expanded')==='true','Donna options remain attached to the world conversation');
+de('donna-options-menu').dispatchEvent(new dw.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));check(de('donna-options-menu').classList.contains('hidden')&&ddoc.activeElement===de('donna-options-toggle'),'Escape closes Donna options and restores focus');
 de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="collapse"]').click();await flush();
-check(de('donna-dock').classList.contains('hidden')&&ddoc.activeElement===de('donna-dock-toggle'),'collapse returns to bubble and focuses launcher');
-de('donna-dock-toggle').click();await flush();
-check(de('chat-message').value==='Keep this draft'&&ddoc.querySelectorAll('#donna-conversation').length===1,'draft and single composer survive collapse/reopen');
-de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="scope"]').click();await flush();check(ddoc.activeElement===de('chat-scope')&&de('chat-message').value==='Keep this draft','Conversation scope focuses chat-scope and preserves draft');
-de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="keys"]').click();await flush();check(!de('settings-view').classList.contains('hidden'),'API keys option reveals settings');
-ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();de('donna-dock-toggle').click();await flush();
-de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="connections"]').click();await flush();check(!de('settings-view').classList.contains('hidden'),'Connections option reveals settings');
-ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();de('donna-dock-toggle').click();await flush();
-de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="agents"]').click();await flush();check(!de('ceo-panel').classList.contains('hidden')&&de('ceo-authority-editor').open,'Agent permissions opens authority editor');
-check(df.calls.filter(c=>c.name==='officeCommand').length===cmdBefore,'presentation and navigation options send no commands');
-// Web team URL
+check(panel('donna').hidden&&de('donna-dock-toggle').getAttribute('aria-expanded')==='false','Donna collapse closes its world element and updates the persistent launcher');
+de('donna-dock-toggle').click();await flush();check(!panel('donna').hidden&&de('chat-message').value==='Keep this unsent brief'&&ddoc.querySelectorAll('#workspace-chat-form').length===1,'Donna reopening retains the exact unsent conversation');
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="scope"]').click();await flush();check(ddoc.activeElement===de('chat-scope')&&de('chat-message').value==='Keep this unsent brief','Donna scope entry focuses the existing live scope selector');
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="keys"]').click();await flush();check(!panel('settings').hidden&&world.contains(de('key-rows')),'API keys open within the world settings surface');
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="connections"]').click();await flush();check(!panel('settings').hidden&&world.contains(de('cloud-connection-panel')),'runtime connections remain a world element');
+de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="agents"]').click();await flush();check(!panel('crew').hidden&&world.contains(de('canvas-crew-list')),'Donna agents opens the scoped crew in the world');
+const donnaRow=de('canvas-crew-list').querySelector('[data-role="donna"]');const authority=Array.from(donnaRow.querySelectorAll('button')).find(button=>button.textContent==='Authority');check(Boolean(authority),'configured Donna exposes the existing authority editor');authority.click();await flush();
+check(!panel('portfolio').hidden&&de('ceo-authority-editor').open&&ddoc.activeElement===de('authority-employee'),'crew authority focuses the real authority form inside its world surface');
+let hiddenAncestor=false;for(let node=de('authority-employee');node&&node!==ddoc.body;node=node.parentElement)if(node.hidden||node.classList.contains('hidden'))hiddenAncestor=true;
+check(!hiddenAncestor&&ddoc.body.classList.contains('endless-canvas')&&!de('freeflow-surface').classList.contains('hidden'),'authority controls have no hidden ancestors and retain the canvas');
+check(df.calls.filter(c=>c.name==='officeCommand').length===cmdBefore,'world movement and entry actions do not issue native mutations');
+// Confirmed private website links retain their existing validation.
 de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
-check(df.calls.filter(c=>c.name==='openExternal').length===0,'Web team with no configured base opens no external link');
-check(de('donna-options-status').textContent.includes('Setup required'),'Web team without base exposes setup required');
-de('cloud-url').value='https://site.example.test/path?x=1#h';de('cloud-device-token').value='tok';
-de('cloud-connect-form').dispatchEvent(new dw.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:de('cloud-connect-form').querySelector('button[type="submit"]')}));await flush();await flush();
-check(df.calls.filter(c=>c.name==='configureCloud').length===1&&df.cloud.configured===true,'local cloud form submit configures this fixture exactly once');
-ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();de('donna-dock-toggle').click();await flush();
+check(df.calls.filter(c=>c.name==='openExternal').length===0&&de('donna-options-status').textContent.includes('Setup required'),'unconfigured website access has an honest setup state');
+de('cloud-url').value='https://site.example.test/path?x=1#h';de('cloud-device-token').value='fixture-token';de('cloud-connect-form').dispatchEvent(new dw.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();await flush();
 de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
-const opens=df.calls.filter(c=>c.name==='openExternal'&&c.args.url.endsWith('/access'));
-check(opens.length===1&&opens[0].args.url==='https://site.example.test/access','configured HTTPS base opens exactly /access without query/hash/token');
-de('cloud-url').value='https://user:pw@site.example.test';
-const before2=df.calls.filter(c=>c.name==='openExternal').length;
-check(df.calls.filter(c=>c.name==='configureCloud').length===1,'unsubmitted invalid draft does not reconfigure the confirmed connection');
-de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
-check(df.calls.filter(c=>c.name==='openExternal').length===before2||df.calls.filter(c=>c.name==='openExternal').every(c=>c.args.url==='https://site.example.test/access'),'invalid draft cannot redirect the confirmed team link');
-check(df.calls.filter(c=>c.name==='officeCommand').every(c=>c.args.action!=='post_chat'),'Donna options never post chat');
-check(before2===1,'only one external open recorded');
-// Reset clears all four inline edges after an actual move
-{
-de('donna-dock-toggle').click();await flush();
-const hh=de('donna-move-handle');hh.dispatchEvent(new dw.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true}));await flush();
-de('chat-message').value='Unsent text';
-de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="reset"]').click();await flush();
-for(const id of ['donna-dock','donna-dock-toggle']){const s=de(id).style;check(s.left===''&&s.top===''&&s.right===''&&s.bottom==='',`reset clears left/top/right/bottom on ${id}`);}
-check(de('chat-message').value==='Unsent text'&&ddoc.querySelectorAll('#donna-conversation').length===1&&ddoc.querySelectorAll('#workspace-chat-form').length===1,'reset preserves draft and single conversation');
-}
-// Agent permissions from company canvas reveals a rendered, focused control
-{
-de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="agents"]').click();await flush();
-const ce=de('ceo-authority-editor'),ae=de('authority-employee');
-check(ddoc.activeElement===ae&&ce.open,'agent permissions focuses the authority control with details open');
-let hiddenAnc=false;for(let n=ae;n&&n!==ddoc.body;n=n.parentElement){if(n.classList.contains('hidden'))hiddenAnc=true;}
-check(!hiddenAnc,'agent permissions control has no hidden ancestors');
-check(!ddoc.body.classList.contains('ff-canvas-mode')||ddoc.body.classList.contains('ff-operations'),'agent permissions leaves canvas-only mode for operations');
-}
-// Storage throwing
-const sd=await makeDom(true,undefined,'',(w1)=>{Object.defineProperty(w1,'localStorage',{value:{getItem(){throw new Error('denied');},setItem(){throw new Error('denied');},removeItem(){throw new Error('denied');}},configurable:true});});
-sd.window.document.querySelector('.nav-item[data-view="office"]').click();await flush();sd.window.document.getElementById('donna-dock-toggle').click();await flush();
-sd.window.document.getElementById('donna-move-handle').dispatchEvent(new sd.window.KeyboardEvent('keydown',{key:'ArrowDown',bubbles:true}));await flush();
-check(sd.window.document.querySelectorAll('#donna-conversation').length===1,'denied storage leaves Donna usable');sd.window.close();
-// Initially hidden saved position is clamped once visible; pending drag cancelled on hide/collapse
-{
-const gx=(w2)=>{w2.innerWidth=1024;w2.innerHeight=768;try{Object.defineProperty(w2,'innerWidth',{value:1024,configurable:true});Object.defineProperty(w2,'innerHeight',{value:768,configurable:true});}catch{}
-const stub=function(){let hid=false;for(let n=this;n&&n.nodeType===1;n=n.parentElement){if(n.classList&&n.classList.contains('hidden')){hid=true;break;}}
-if(hid)return{x:0,y:0,left:0,top:0,right:0,bottom:0,width:0,height:0,toJSON(){return this;}};
-const dock=this.id==='donna-dock';const wd=dock?420:180,ht=dock?400:64;const l=parseFloat(this.style.left)||0,t=parseFloat(this.style.top)||0;
-if(this.id==='donna-dock'||this.id==='donna-dock-toggle')return{x:l,y:t,left:l,top:t,right:l+wd,bottom:t+ht,width:wd,height:ht,toJSON(){return this;}};
-return{x:0,y:0,left:0,top:0,right:1024,bottom:768,width:1024,height:768,toJSON(){return this;}};};
-stub.__stub=true;w2.Element.prototype.getBoundingClientRect=stub;
-try{w2.localStorage.setItem('daftar-studio-donna-pos',JSON.stringify({x:1000,y:750,locked:false}));}catch{}};
-const hd=await makeDom(true,undefined,'?company=fixture-company',gx);const hw=hd.window,hdoc=hw.document;const he=(i)=>hdoc.getElementById(i);
-hdoc.querySelector('.nav-item[data-view="office"]').click();await flush();
-const inView=(id)=>{const s=he(id).style;const l=parseFloat(s.left),t=parseFloat(s.top);const wd=id==='donna-dock'?420:180,ht=id==='donna-dock'?400:64;return Number.isFinite(l)&&Number.isFinite(t)&&l>=0&&t>=0&&l+wd<=1024&&t+ht<=768;};
-check(!he('donna-dock-toggle').classList.contains('hidden')&&inView('donna-dock-toggle'),'saved off-screen launcher position is clamped within the viewport once visible');
-he('donna-dock-toggle').click();await flush();
-check(inView('donna-dock'),'expanded dock is within the viewport');
-hw.dispatchEvent(new hw.Event('resize'));await flush();check(inView('donna-dock'),'dock remains within viewport after resize');
-// pending drag then collapse
-let released=0,rafQueued=[];const realRaf=hw.requestAnimationFrame;hw.requestAnimationFrame=(fn)=>{rafQueued.push(fn);return rafQueued.length;};hw.cancelAnimationFrame=(id)=>{rafQueued[id-1]=null;};
-const handle=he('donna-move-handle');handle.releasePointerCapture=()=>{released++;};handle.setPointerCapture=()=>{};
-const pev=(type,x,y)=>{const e=new hw.Event(type,{bubbles:true,cancelable:true});Object.assign(e,{pointerId:7,clientX:x,clientY:y,button:0});return e;};
-handle.dispatchEvent(pev('pointerdown',100,100));handle.dispatchEvent(pev('pointermove',160,160));
-check(rafQueued.some(Boolean),'drag move frame is pending');
-he('donna-dock-close').click();await flush();
-check(released>=1,'collapse releases pointer capture');
-const posAfter=he('donna-dock-toggle').style.left;for(const f of rafQueued)if(f)f(0);
-check(he('donna-dock-toggle').style.left===posAfter,'cancelled pending frame cannot write position after collapse');
-he('donna-dock-toggle').click();await flush();
-handle.dispatchEvent(pev('pointerdown',100,100));handle.dispatchEvent(pev('pointermove',160,160));
-hdoc.querySelector('.nav-item[data-view="settings"]').click();await flush();
-const posSettings=he('donna-dock').style.left;for(const f of rafQueued)if(f)f(0);
-check(he('donna-dock').style.left===posSettings,'leaving for Settings cancels pending drag write');
-hdoc.querySelector('.nav-item[data-view="office"]').click();await flush();he('donna-dock-toggle').click();await flush();
-he('donna-move-handle').dispatchEvent(new hw.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));await flush();
-check(inView('donna-dock'),'interaction works after cancelled drag');
-hw.requestAnimationFrame=realRaf;hw.close();
-}
-// Invalid confirmed base must not open an external page
-{
-const iv=await makeDom(true,undefined,'?company=fixture-company');const iw=iv.window,idoc=iw.document,ifx=iw.__atlasFixture;
-ifx.cloud.configured=true;ifx.cloud.connected=true;ifx.cloud.url='https://user:pw@site.example.test';
-idoc.querySelector('.nav-item[data-view="settings"]').click();await flush();await flush();
-idoc.querySelector('.nav-item[data-view="office"]').click();await flush();idoc.getElementById('donna-dock-toggle').click();await flush();
-idoc.getElementById('donna-options-toggle').click();idoc.querySelector('[data-donna-option="team"]').click();await flush();
-check(ifx.calls.filter(c=>c.name==='openExternal').length===0,'credential-bearing confirmed base opens no external page');
-iv.window.close();
-}
-// Public preview
-const pv=await makeDom(true,'public-preview');pv.window.document.querySelector('.nav-item[data-view="office"]').click();await flush();pv.window.document.getElementById('donna-dock-toggle').click();await flush();
-pv.window.document.getElementById('donna-options-toggle').click();pv.window.document.querySelector('[data-donna-option="team"]').click();await flush();
-check(pv.window.__atlasFixture.calls.filter(c=>c.name==='openExternal').length===0,'public preview acquires no external access through Donna options');pv.window.close();
+const opens=df.calls.filter(c=>c.name==='openExternal');check(opens.length===1&&opens[0].args.url==='https://site.example.test/access','desktop website access uses the confirmed HTTPS origin without paths, query, fragments or credentials');
+de('cloud-url').value='https://user:pw@site.example.test';de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();check(df.calls.filter(c=>c.name==='openExternal').every(c=>c.args.url==='https://site.example.test/access'),'an unsaved credential-bearing draft cannot redirect the confirmed website');
+check(df.calls.filter(c=>c.name==='officeCommand').every(c=>c.args.action!=='post_chat'),'presentation controls never post the retained draft');
+await surface('source-review');check(!panel('source-review').hidden&&de('canvas-source-reports').textContent.includes('Connect the desktop or VPS runtime'),'unreported source review is shown as unavailable, not clean');
+check(panel('source-review').textContent.includes('General website crawling is not connected'),'source review does not claim an implemented website crawler');
+const layout=dw.localStorage.getItem('daftar.endless-workspace.layout.v1');check(layout&&!layout.includes('Keep this unsent brief')&&!layout.includes('Unsent room plan')&&!layout.includes('fixture-token'),'layout persistence contains no conversation, editor draft or credential');
+// Closing a world element cancels a captured drag without allowing a late pointer move.
+await surface('donna');let captures=0,releases=0;grip.setPointerCapture=()=>captures++;grip.releasePointerCapture=()=>releases++;
+const pointer=(type,x,y)=>{const event=new dw.Event(type,{bubbles:true,cancelable:true});Object.assign(event,{pointerId:9,clientX:x,clientY:y,button:0});return event;};
+grip.dispatchEvent(pointer('pointerdown',100,100));grip.dispatchEvent(pointer('pointermove',160,150));panel('donna').querySelector('.canvas-panel-close').click();await flush();const positionAfterClose=panel('donna').style.transform;dw.dispatchEvent(pointer('pointermove',800,700));
+check(captures===1&&releases===1&&panel('donna').style.transform===positionAfterClose,'closing Donna releases capture and rejects late gesture writes');
+await surface('donna');check(de('chat-message').value==='Keep this unsent brief','cancelled drag and close retain the draft');
 dd.window.close();
+}
+// Scoped crew actions use the native employee-command envelope, never an implicit owner action.
+{
+const cd=await makeDom(true,undefined,'?company=fixture-company',w=>{
+ const fx=w.__atlasFixture;fx.office.authority.grants.push({id:'crew-grant',employeeId:'donna',scope:{kind:'company',id:'fixture-company'},capabilities:['work.manage','team.manage'],issuer:'owner',grantedAt:new Date(Date.now()-60000).toISOString(),expiresAt:new Date(Date.now()+3600000).toISOString(),revokedAt:null,parentGrantIds:[]});
+ const worker=w.desktopBridge.officeWorkerStatus;w.desktopBridge.officeWorkerStatus=async()=>({...await worker(),sourceReviews:[{companyId:'fixture-company',jobId:'source-job',coverage:'partial',handoff:{state:'needs-review',reason:'Embedded command <img src=x onerror=alert(1)>'},artifactUri:'/fixture/source-review.json'},{companyId:'another-company',jobId:'secret-job',coverage:'full',handoff:{state:'needs-review',reason:'Other company private finding'}}]});
+});
+const cw=cd.window,doc=cw.document,fx=cw.__atlasFixture,ce=id=>doc.getElementById(id);doc.querySelector('.canvas-shortcut[data-canvas-open="crew"]').click();await flush();
+check(ce('canvas-crew-actor').querySelector('option[value="crew:donna:donna"]')&&!ce('canvas-crew-submit').disabled,'current company Donna is selectable for recorded scoped actions');
+ce('canvas-crew-actor').value='crew:donna:donna';ce('canvas-crew-intent').value='plan-work';ce('canvas-crew-title').value='A bounded crew plan';ce('canvas-crew-form').dispatchEvent(new cw.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();
+const delegated=fx.calls.filter(c=>c.name==='officeCommand'&&c.args.action==='apply_employee_command').at(-1)?.args;
+check(delegated?.employeeId==='donna'&&delegated?.command.action==='create_goal'&&delegated?.command.scope.kind==='company'&&delegated?.command.scope.id==='fixture-company'&&delegated?.command.mode==='plan','crew planning reaches the supported native employee command with its exact company scope');
+check(fx.office.jobs.length===0,'crew planning does not manufacture provider execution');
+let rejected=0;const original=cw.desktopBridge.officeCommand;cw.desktopBridge.officeCommand=async command=>command.action==='apply_employee_command'?(rejected++,{ok:false,snapshot:null,error:'Fixture native authority rejected the expired grant.'}):original(command);
+ce('canvas-crew-form').dispatchEvent(new cw.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();check(rejected===1&&ce('canvas-crew-result').textContent.includes('native authority rejected'),'native scope/expiry rejection is displayed without claiming success');
+fx.office.authority.grants[0].expiresAt='2020-01-01T00:00:00.000Z';ce('office-refresh').click();await flush();ce('canvas-crew-form').dispatchEvent(new cw.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();check(rejected===1&&ce('canvas-crew-result').textContent.includes('active authority grant'),'a visibly expired grant is held before dispatch');
+check(ce('canvas-source-reports').textContent.includes('Donna review requested')&&ce('canvas-source-reports').textContent.includes('Embedded command <img src=x onerror=alert(1)>')&&!ce('canvas-source-reports').querySelector('img'),'flagged source review remains inert text with its recorded status');
+check(!ce('canvas-source-reports').textContent.includes('Other company private finding')&&!ce('canvas-source-reports').textContent.includes('secret-job'),'source reports remain scoped to the selected company');
+check(ce('canvas-crew-list').querySelector('[data-role="source-reviewer"]').dataset.state==='runtime-service','reported deterministic source review is distinguished from a hired or running model employee');
+cd.window.close();
+}
+// Model polling follows the open canvas element, not the former page selection.
+{
+let reads=0;const timers=new Map();let nextTimer=-1;const md=await makeDom(true,undefined,'',w=>{
+ const set=w.setTimeout.bind(w),clear=w.clearTimeout.bind(w);w.setTimeout=(fn,ms,...args)=>{if(ms!==3000)return set(fn,ms,...args);const id=nextTimer--;timers.set(id,()=>fn(...args));return id;};w.clearTimeout=id=>{if(timers.has(id))timers.delete(id);else clear(id);};
+ w.desktopBridge.modelPoolSnapshot=async({companyId})=>{reads++;return{ok:true,snapshot:{companyId,available:true,enabled:true,endpoint:'http://127.0.0.1:11434',infrastructureCost:'separate',catalog:[],models:[],requests:[{id:'pull',companyId,employeeId:'donna',model:'fixture-model',status:'pulling',completedBytes:1,totalBytes:10,error:null}],assignments:[],error:null}};};
+});const doc=md.window.document;doc.querySelector('.canvas-shortcut[data-canvas-open="models"]').click();await flush();check(reads>0&&timers.size===1,'opening model management starts one pending-download refresh timer');
+doc.querySelector('.canvas-shortcut[data-canvas-open="settings"]').click();await flush();check(timers.size===1&&!doc.querySelector('.canvas-panel[data-panel-id="models"]').hidden,'opening another surface preserves visible model monitoring');
+const stale=[...timers.values()][0];doc.querySelector('.canvas-panel[data-panel-id="models"] .canvas-panel-close').click();await flush();const before=reads;stale();await flush();check(timers.size===0&&reads===before,'closing model management stops polling and rejects a late timer callback');md.window.close();
+}
+// Launchers refresh their own data and live events update every open surface.
+{
+let projectEvent,jobEvent,vaultReads=0;let background=[];
+const live=await makeDom(true,undefined,'',w=>{
+ const fx=w.__atlasFixture,at=new Date().toISOString();
+ fx.projects.push({id:'live-project',name:'Live canvas project',goal:'Fixture only',provider:'anthropic',model:'fixture-model',nodes:[],createdAt:at,updatedAt:at});
+ fx.company.index={fileCount:1,totalBytes:123,workers:1,elapsedMs:2,truncated:false,files:[{path:'docs/canvas-fixture.md',kind:'markdown',bytes:123}]};
+ const vault=w.desktopBridge.getVaultStatus;w.desktopBridge.getVaultStatus=async()=>{vaultReads++;return vault();};
+ w.desktopBridge.onProjectEvent=callback=>{projectEvent=callback;return()=>{};};w.desktopBridge.onJobEvent=callback=>{jobEvent=callback;return()=>{};};
+ w.desktopBridge.getJobStatus=async()=>background;
+});const lw=live.window,doc=lw.document,le=id=>doc.getElementById(id);
+const open=async id=>{doc.querySelector(`.canvas-shortcut[data-canvas-open="${id}"]`).click();await flush();await flush();};
+await open('projects');check(le('project-list').textContent.includes('Live canvas project'),'fresh launcher entry loads its saved projects without legacy page navigation');le('project-list').querySelector('button').click();await flush();
+const beforeVault=vaultReads;await open('settings');check(vaultReads>beforeVault&&le('key-rows').textContent.includes('GitHub'),'settings launcher refreshes vault metadata on its live surface');
+await open('library');check(le('index-files').textContent.includes('docs/canvas-fixture.md'),'library launcher renders the current repository index');
+await open('overview');await open('usage');await open('models');await open('settings');
+const at=new Date().toISOString();projectEvent({id:'canvas-live-run',projectId:'live-project',status:'running',terminationReason:null,error:null,usage:{inputTokens:20,outputTokens:10,costUsd:.5,elapsedSeconds:1},nodeStates:{},createdAt:at,updatedAt:at,finishedAt:null});await flush();
+check(le('run-state-pill').textContent==='running'&&!le('run-pause').disabled,'a visible project surface consumes native run events while another surface has focus');
+check(le('usage-runs').textContent==='1'&&le('usage-cost').textContent==='$0.50','the simultaneously open usage surface reflects the same run event');
+background=[{id:'background-canvas',kind:'download',status:'completed',progress:1,detail:'Fixture download completed',error:null,createdAt:at,updatedAt:at}];jobEvent();await flush();
+check(le('jobs-table').textContent.includes('Fixture download completed'),'an open model surface consumes background events while settings is focused');
+const canvas=doc.querySelector('.ff-world');for(const id of ['projects','settings','library','overview','usage','models'])check(canvas.contains(doc.querySelector(`.canvas-panel[data-panel-id="${id}"]`))&&!doc.querySelector(`.canvas-panel[data-panel-id="${id}"]`).hidden,`live event surfaces remain together in the world: ${id}`);
+live.window.close();
+}
+// Restoring open geometry also activates each surface's data lifecycle after mount.
+{
+let modelReads=0;
+const savedPanels=['projects','settings','models','library'];
+const restored=await makeDom(true,undefined,'',w=>{
+ const fx=w.__atlasFixture,at=new Date().toISOString();
+ fx.projects.push({id:'restored-project',name:'Restored canvas project',goal:'Fixture only',provider:'anthropic',model:'fixture-model',nodes:[],createdAt:at,updatedAt:at});
+ fx.company.index={fileCount:1,totalBytes:10,workers:1,elapsedMs:1,truncated:false,files:[{path:'docs/restored-canvas.md',kind:'markdown',bytes:10}]};
+ w.localStorage.setItem('daftar.endless-workspace.layout.v1',JSON.stringify({version:1,activeId:'projects',panels:savedPanels.map((id,z)=>({id,open:true,collapsed:false,pinned:id==='projects',z,rect:{x:1600+z*1000,y:2000,width:800,height:600}}))}));
+ w.desktopBridge.modelPoolSnapshot=async({companyId})=>{modelReads++;return{ok:true,snapshot:{companyId,available:true,enabled:true,endpoint:'http://127.0.0.1:11434',infrastructureCost:'separate',catalog:[],models:[],requests:[{id:'restored-pull',companyId,employeeId:'donna',model:'fixture-model',status:'pulling',completedBytes:1,totalBytes:10,error:null}],assignments:[],error:null}};};
+});await flush();const doc=restored.window.document;
+for(const id of savedPanels)check(!doc.querySelector(`.canvas-panel[data-panel-id="${id}"]`).hidden,`saved open surface is restored without navigation: ${id}`);
+check(doc.getElementById('project-list').textContent.includes('Restored canvas project'),'restored project surface loads its saved records without reopening');
+check(doc.getElementById('key-rows').textContent.includes('GitHub'),'restored settings surface loads vault metadata without reopening');
+check(doc.getElementById('index-files').textContent.includes('docs/restored-canvas.md'),'restored library surface receives the loaded repository index');
+check(modelReads>0&&doc.getElementById('shared-model-pool').textContent.includes('fixture-model'),'restored model surface starts monitoring after company scope loads');
+check(doc.querySelector('.canvas-panel[data-panel-id="projects"]').classList.contains('is-pinned'),'saved position lock survives data activation');
+restored.window.close();
+const portal=await makeDom(true,'cloud-browser','?company=fixture-company',w=>{
+ w.localStorage.setItem('daftar.endless-workspace.layout.v1',JSON.stringify({version:1,activeId:'access',panels:[{id:'access',open:true,rect:{x:1600,y:2000,width:900,height:700}}]}));
+});const pd=portal.window.document,frame=pd.querySelector('.canvas-panel[data-panel-id="access"] iframe');
+check(!pd.querySelector('.canvas-panel[data-panel-id="access"]').hidden&&frame.getAttribute('src')==='/access?canvas=1&company=fixture-company','a restored website surface starts its allowlisted local portal with company scope');
+check(!pd.querySelector('.canvas-panel[data-panel-id="applications"] iframe').hasAttribute('src'),'closed website surfaces remain unloaded after restoration');
+portal.window.close();
+}
+// The same controls remain read-only after forms move into the world.
+{
+const pv=await makeDom(true,'public-preview');const pw=pv.window,doc=pw.document,fx=pw.__atlasFixture;
+for(const id of ['donna','crew','office-people','office-memory','workspace-decisions','portfolio','settings']){doc.querySelector(`.canvas-shortcut[data-canvas-open="${id}"]`).click();await flush();}
+for(const id of ['chat-send','canvas-crew-submit','canvas-dispatch-toggle','decision-create','cloud-connect','editor-pair','ceo-optimize','authority-grant-submit'])check(doc.getElementById(id).disabled,`read-only world control stays disabled: ${id}`);
+for(const id of ['office-create-company','office-create-office','office-create-department','office-hire-form','office-queue-form','office-knowledge-form'])check(doc.getElementById(id).querySelector('button[type="submit"]').disabled,`read-only reparented form stays disabled: ${id}`);
+const before=fx.calls.filter(c=>c.name==='officeCommand').length;doc.getElementById('canvas-crew-form').dispatchEvent(new pw.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();check(fx.calls.filter(c=>c.name==='officeCommand').length===before,'synthetic submit cannot bypass read-only crew restrictions');
+doc.getElementById('donna-options-toggle').click();doc.querySelector('[data-donna-option="team"]').click();await flush();check(fx.calls.filter(c=>c.name==='openExternal').length===0,'public preview acquires no website access through Donna options');pv.window.close();
+const denied=await makeDom(true,undefined,'',w=>{Object.defineProperty(w,'localStorage',{value:{getItem(){throw Error('denied');},setItem(){throw Error('denied');}},configurable:true});});denied.window.document.querySelector('.canvas-shortcut[data-canvas-open="donna"]').click();await flush();check(denied.window.document.querySelectorAll('#workspace-chat-form').length===1&&!denied.window.document.querySelector('.canvas-panel[data-panel-id="donna"]').hidden,'blocked layout storage leaves the world and Donna usable');denied.window.close();
+const invalid=await makeDom(true,undefined,'',w=>Object.assign(w.__atlasFixture.cloud,{configured:true,connected:true,url:'https://user:pw@site.example.test'}));const iw=invalid.window,idoc=iw.document;idoc.querySelector('.canvas-shortcut[data-canvas-open="settings"]').click();await flush();idoc.querySelector('.canvas-shortcut[data-canvas-open="donna"]').click();idoc.getElementById('donna-options-toggle').click();idoc.querySelector('[data-donna-option="team"]').click();await flush();check(iw.__atlasFixture.calls.filter(c=>c.name==='openExternal').length===0,'credential-bearing confirmed website opens no external page');invalid.window.close();
+}
+// Final concurrency review: visible surface drafts and scope ownership survive unrelated work.
+{
+const owner=await makeDom(),ow=owner.window,doc=ow.document,fx=ow.__atlasFixture;
+for(const id of ['policy','office-memory','portfolio','donna']){doc.querySelector(`.canvas-shortcut[data-canvas-open="${id}"]`).click();await flush();}
+doc.getElementById('workspace-policy').open=true;doc.getElementById('ceo-policy-editor').open=true;
+for(const [id,text] of [['workspace-global-usd','73'],['cache-max-entries','96'],['ceo-policy-title','Unsent CEO policy title']]){
+ const field=doc.getElementById(id);field.focus();field.value=text;field.dispatchEvent(new ow.Event('input',{bubbles:true}));
+}
+doc.getElementById('chat-message').focus();doc.getElementById('office-refresh').click();await flush();
+check(doc.getElementById('workspace-global-usd').value==='73','an unfinished budget survives refresh after focus moves to another canvas element');
+check(doc.getElementById('cache-max-entries').value==='96','an unfinished cache policy survives refresh while another canvas element has focus');
+check(doc.getElementById('ceo-policy-title').value==='Unsent CEO policy title','an unfinished CEO policy survives refresh while another canvas element has focus');
+const policy=doc.getElementById('workspace-policy-form');policy.dispatchEvent(new ow.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:policy.querySelector('button[type="submit"]')}));await flush();
+check(fx.office.policy.budget.hardCapUsd===73,'the retained budget is the value submitted to the native command');
+fx.office.policy.budget.hardCapUsd=84;doc.getElementById('chat-message').focus();doc.getElementById('office-refresh').click();await flush();
+check(doc.getElementById('workspace-global-usd').value==='84','a confirmed policy save releases draft protection for subsequent native updates');owner.window.close();
+
+const readonly=await makeDom(true,'public-preview'),rw=readonly.window,rd=rw.document,rf=rw.__atlasFixture;
+for(const id of ['office-overview','scope'])rd.querySelector(`.canvas-shortcut[data-canvas-open="${id}"]`).click();
+const before=rf.calls.filter(call=>call.name==='officeCommand').length;
+rd.getElementById('office-company-search').value='Fixture';rd.getElementById('office-company-search').dispatchEvent(new rw.Event('input',{bubbles:true}));
+for(const id of ['office-pause-company','office-pause-office']){check(rd.getElementById(id).disabled,`read-only scope search preserves mutation disabling: ${id}`);rd.getElementById(id).click();}
+check(rf.calls.filter(call=>call.name==='officeCommand').length===before,'read-only pause controls dispatch no command after a scope-only rerender');readonly.window.close();
+
+const scope=await makeDom(true,'cloud-browser','?company=fixture-company',w=>{
+ const office=w.__atlasFixture.office;
+ office.companies.push({...office.companies[0],id:'canvas-company-b',name:'Canvas company B'});
+ office.offices.push({...office.offices[0],id:'canvas-office-b',companyId:'canvas-company-b',name:'Canvas office B'});
+});const sw=scope.window,sd=sw.document,sf=sw.__atlasFixture;
+const select=async id=>{sd.getElementById('office-company-select').value=id;sd.getElementById('office-company-select').dispatchEvent(new sw.Event('change',{bubbles:true}));await flush();await flush();};
+await select('canvas-company-b');
+check(sd.getElementById('locator-company').textContent==='Canvas company B','a company switch is canonically confirmed before opening website surfaces');
+sd.querySelector('.canvas-shortcut[data-canvas-open="access"]').click();await flush();
+check(sd.querySelector('.canvas-panel[data-panel-id="access"] iframe').getAttribute('src')==='/access?canvas=1&company=canvas-company-b','first website access opening uses the current confirmed company rather than the boot URL company');
+const stale=structuredClone(sf.office);let release;sw.desktopBridge.officeSnapshot=()=>new Promise(resolve=>{release=()=>resolve({ok:true,snapshot:stale});});
+sd.getElementById('office-refresh').click();await flush();check(typeof release==='function','the scope race fixture has a pending old snapshot read');
+await select('fixture-company');
+check(sd.getElementById('office-company-select').value==='fixture-company'&&new URL(sw.location.href).searchParams.get('company')==='fixture-company','the newer company selection is confirmed while the old read remains pending');
+release();await flush();
+check(sd.getElementById('office-company-select').value==='fixture-company'&&sd.getElementById('locator-company').textContent==='Fixture Engineering'&&new URL(sw.location.href).searchParams.get('company')==='fixture-company','a stale pre-switch snapshot cannot split panel scope from the focused world and URL');
+scope.window.close();
 }
 console.log(JSON.stringify({suite:'renderer pure-DOM interaction',checks,passed:true,fixtureOnly:true,networkCalls:0,providerCalls:0,visualVerification:false},null,2));

@@ -3,8 +3,9 @@
 ## Product contract
 
 Daftar is an owner-operated personal agent office. Donna is the single user-facing
-coordinator. The office map and whiteboard expose the same company, employee,
-goal, job and artifact records as the chat. Ordinary hiring, layout, queue, cache,
+coordinator. The conference table, office blueprint, conversation, whiteboard and
+management forms are elements of one continuous canvas, exposing the same company,
+employee, goal, job and artifact records. Ordinary hiring, layout, queue, cache,
 policy and schedule changes are deterministic local operations and do not consume
 provider tokens.
 
@@ -12,6 +13,22 @@ The original research atlas, 109 role charters, 15 skill packages, local model
 manager, project runner and Android source remain available. The architecture is
 Electron/TypeScript with a Rust state and control core, plus the deployed owner-private Sites/Vinext/D1 companion. The earlier
 React/TypeScript/MySQL runtime remains available as a separate deployment option.
+
+## Endless canvas 0.8.0 — candidate handoff
+
+Source/package metadata is prepared for 0.8.0. Final build, browser, packaged application, publication and hosted deployment results belong in [the candidate validation record](project/ENDLESS_CANVAS_VALIDATION.md). Until those receipts are complete, 0.7.0 remains the last verified published application release.
+
+The renderer uses `freeflow/universe.ts` to compose the conference table and selected company's blueprint in the same coordinates. `freeflow/workspace.ts` and `freeflow/canvas-workspace.ts` manage panel geometry, focus, keyboard movement, resizing, pinning, collapse and device-local persistence. Existing form elements are moved into the canvas, preserving handlers and drafts. Geometry storage must never become a store for credentials, field values or access grants. Keep the surface finder and Home route usable after malformed or unavailable storage.
+
+`freeflow/donna-team.ts` is a pure crew projection and typed action planner. It resolves current employee IDs, company/office/department assignments and scoped service contracts. Malformed grants fail closed; saved employees and running job evidence remain separate. Scoped commands still pass through native authority. Draft goals do not launch provider requests; resuming a scope can admit already authorized queued work. Runtime source/ledger services are deterministic and do not represent additional model hires.
+
+The [Source Review service](project/SOURCE_REVIEW.md) operates in managed GitHub reads and OfficeWorker prompt preparation. Review artifacts contain hashes, coverage and findings without raw source excerpts. Provider results and failures retain review references through the existing job/ledger path. The standalone public-read policy supports an exact-URL advisory robots decision, but no general website fetcher or crawler is wired to it.
+
+In the website, top-level owner `/`, `/access` and `/applications` entries resolve into the canvas only after a successful owner session probe. `?canvas=1` retains the original compact form within a same-origin canvas element. Signed-out, failed-session, visitor and invitation flows remain usable without owner redirect loops. Preserve company queries, permitted deep links and invitation fragment consumption when editing either side. There is no cross-origin messaging bridge.
+
+The Kimi handoff is an additive archive at a separately verified commit. Its coordination ideas inform current original code; its old file store, runtime and binaries are not installed over the Rust-backed product. [The public audit](project/KIMI_BRANCH_REVIEW.md) records exact file/line counts, package evidence and unverified historical test claims. Sonnet authored the universe compositor and tests through a bounded public-source request; independent integration review remains distinct from that provider receipt.
+
+For a renderer change, build `desktop-shell`, regenerate the public static preview, sync the shared renderer into `cloud-workspace`, then run the relevant DOM/browser and package gates. The release workflow takes the version from `desktop-shell/package.json`. Desktop, VS Code, Android and cloud app metadata is 0.8.0; native/MCP/headless protocol versions remain independent. Do not replace a published tag or reuse historical CI counts for a new source tree.
 
 ## Freeflow 0.7.0 — released
 
@@ -43,9 +60,9 @@ After a renderer edit, build `desktop-shell`, regenerate the static preview, and
 
 ## Install a published build and restore personal work
 
-Use the assets attached to [v0.6.1](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.1): unsigned Linux x86_64 AppImage, VS Code VSIX and Android debug APK. Exact release source is [`600d5fc`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/600d5fcca67b76e515833e0d1d6e4138b7e1fc3c). All seven verification jobs, release and Pages passed; all downloaded sizes/SHA-256 matched GitHub. Packaged native state/local-goal persistence and six installed VSIX checks passed. [The receipt](project/release-0.6.1.json) separates these from owner-laptop, keychain and production browser sign-in acceptance.
+The last verified application release is [v0.7.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.7.0): Linux x86_64 AppImage, Windows x64 NSIS/ZIP, VS Code VSIX and Android debug APK. Exact release source is [`9ac0080`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/9ac008011d5bde2d1d09f55ae5caa176d7d5973d). All required verification jobs, release and Pages passed; the downloaded checksum manifest matched the five package digests in GitHub metadata. Linux and Windows packaged applications exercised the real native core. [The receipt](project/release-0.7.0.json) separates those checks from signed-installer, owner-device and keychain acceptance. The 0.8.0 source version is not yet a published installer receipt.
 
-The latest private recovery export passed checksums and isolated restore with only documented artifact-path relocations. Existing destination worker settings require review because restore preserves policy fields. Public packages exclude personal records and keys. Android carries the research atlas; the complete Office runtime is desktop-based. The subsequently requested Windows-first freeflow rebuild is a separate workstream.
+The latest private recovery export passed checksums and isolated restore with only documented artifact-path relocations. Existing destination worker settings require review because restore preserves policy fields. Public packages exclude personal records and keys. Android carries the research atlas; the native Office runtime runs in the desktop or configured Linux headless service. The Android version bump does not add that runtime to the APK.
 
 For a private workspace archive, first launch the desktop app and find its user
 data directory in Models & system. Close the app, then run the release's restore
@@ -73,7 +90,7 @@ and provider-credential setup.
 
 ## Start from a clean checkout
 
-Use Node 22.12+ and a current Rust stable toolchain. From the repository root:
+Use Node 22.13+ and a current Rust stable toolchain. From the repository root:
 
 ```bash
 npm --prefix site-source ci
@@ -102,9 +119,9 @@ Private company catalogs and credentials must never be copied into that preview.
 
 Open [Daftar](https://atlas-command-office.whatswrong-inc.chatgpt.site) and sign in with ChatGPT. The public GitHub Pages view links to this private runtime; provider keys never enter the static website.
 
-The website saves its office snapshot and cloud conversation in D1. Native repository work, job execution and files remain on the laptop. Restore the supplied personal workspace before first pairing so a fresh empty desktop cannot overwrite an existing cloud portfolio. Create a desktop pairing on the website, paste it into Settings → Account & cloud connection, and choose **Sync now**. Connection itself does not upload or start an unattended loop. A conflict preserves both sides until reviewed.
+The website saves its office snapshot and cloud conversation in D1. Native repository work, job execution and files remain on the connected desktop or configured VPS runtime. Restore the supplied personal workspace before first pairing so a fresh empty runtime cannot overwrite an existing cloud portfolio. Create a desktop pairing on the website, paste it into Settings → Account & cloud connection, and choose **Sync now**. Connection itself does not upload or start an unattended loop. A conflict preserves both sides until reviewed.
 
-Install the published `atlas-office-0.6.1.vsix` through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page. The installed VSIX passed its isolated CI activation checks; the owner's editor session and credential store remain a separate setup context.
+Install the published `atlas-office-0.7.0.vsix` through VS Code → Extensions → Install from VSIX until a newer release has its own verified publication receipt. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page. The installed VSIX passed its isolated CI activation checks; the owner's editor session and credential store remain a separate setup context.
 
 Cloud model calls use a separate atomic admission ledger funded by an allocation held in the native global budget. Do not release that allocation while the cloud runtime can still spend it. Unknown provider outcomes keep their reservations. [Full protocol and verification](project/EDITOR_AND_CLOUD.md).
 
@@ -207,9 +224,9 @@ Prompts request deliverables, concise decisions, evidence and handoffs, not raw
 private reasoning. Provider-specific task budgets and effort modes are distinct
 from application spending limits; see [the research](project/PROMPT_BUDGET_RESEARCH.md).
 
-## Release record and remaining work
+## Historical 0.5.0 acceptance record
 
-The released source is
+The 0.5.0 released source is
 [`0b87469ba14864959bd5ec70dd323ce909904faa`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/0b87469ba14864959bd5ec70dd323ce909904faa).
 [Verify 44860194825](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194825)
 passed all seven gates and the release job, which completed at

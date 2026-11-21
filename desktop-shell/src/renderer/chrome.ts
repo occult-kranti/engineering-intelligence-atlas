@@ -1,4 +1,6 @@
 import { mountStudio, type Studio, type StudioHeat, type StudioActionKind, type StudioActionContext, type StudioActionState, type InspectorActionSpec } from './freeflow/studio.js';
+import { mountCanvasWorkspace, type CanvasWorkspace, type CanvasWorkspacePanel } from './freeflow/canvas-workspace.js';
+import { buildDonnaTeam, proposeDonnaAction, type DonnaSnapshot, type DonnaIntent } from './freeflow/donna-team.js';
 import type { FreeflowFocus, FreeflowSnapshot, SceneNode } from './freeflow/model.js';
 import { mountModelPool, type ModelPoolBridge, type ModelPoolPanel } from './model-pool.js';
 /**
@@ -464,6 +466,7 @@ interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: s
 interface OfficeWorkerStatus {
   enabled: boolean; running: boolean; activeJobId: string | null; lastError: string | null;
   concurrency?: number; activeJobIds?: string[];
+  sourceReviews?: Array<{ companyId?: string; jobId: string; status: string; coverage: string; artifactUri?: string; handoff: { state: string; reason: string }; sources: Array<{ findings: Array<{ code: string }> }> }>;
 }
 
 /** Device credentials never leave the desktop main process after configuration. */
@@ -598,6 +601,17 @@ const VIEW_LABELS: Record<ViewName, string> = {
 };
 let activeView: ViewName = 'office';
 let contentMode = false;
+let endlessWorkspace: CanvasWorkspace | null = null;
+// Live surfaces share refreshes, but an unfinished policy edit belongs to its
+// form until confirmed saved or explicitly reset, even after focus moves away.
+const canvasFormDrafts = new Set<string>();
+function initCanvasFormDrafts():void {
+  for(const id of ['workspace-policy-form','office-cache-form','ceo-policy-form']){
+    const form=$(id);
+    for(const event of ['input','change'])form.addEventListener(event,()=>canvasFormDrafts.add(id));
+    form.addEventListener('reset',()=>canvasFormDrafts.delete(id));
+  }
+}
 
 function setMode(mode: 'launcher' | 'content', url: string | null): void {
   contentMode = mode === 'content';
@@ -615,9 +629,26 @@ function showView(id: 'launcher-view' | 'system-view' | 'projects-view'): void {
   navigate(id === 'launcher-view' ? 'overview' : id === 'system-view' ? 'models' : 'projects');
 }
 
+function workspaceSurfaceVisible(view: ViewName): boolean {
+  return endlessWorkspace ? view === 'office' || endlessWorkspace.isOpen(view) : activeView === view;
+}
+
+function refreshWorkspaceSurface(view: ViewName): void {
+  if (view === 'office') void safeTask(refreshOffice);
+  if (view === 'projects') void safeTask(refreshProjectsPanel);
+  if (view === 'models') void safeTask(refreshSystemPanel);
+  if (view === 'settings') { void safeTask(refreshKeys); void safeTask(refreshCloudConnection); }
+  if (view === 'usage' || view === 'overview' || view === 'team') void safeTask(refreshWorkspace);
+  if (view === 'roadmap') renderRoadmap();
+  if (view === 'library') renderIndex();
+}
+
 function navigate(view: ViewName, updateHash = true): void {
   activeView = view;
-  for (const [key, id] of Object.entries(VIEW_IDS)) $(id).classList.toggle('hidden', key !== view);
+  if (endlessWorkspace) {
+    $('office-view').classList.remove('hidden');
+    if (view === 'office') ffStudio?.frame(); else endlessWorkspace.open(view);
+  } else for (const [key, id] of Object.entries(VIEW_IDS)) $(id).classList.toggle('hidden', key !== view);
   document.querySelectorAll<HTMLButtonElement>('.nav-item').forEach((button) => {
     const selected = button.dataset.view === view;
     button.classList.toggle('active', selected);
@@ -626,16 +657,12 @@ function navigate(view: ViewName, updateHash = true): void {
   });
   $('screen-name').textContent = VIEW_LABELS[view];
   if (updateHash && location.hash !== `#${view}`) history.replaceState(null, '', `#${view}`);
-  if (view === 'office') void safeTask(refreshOffice);
-  if (view === 'projects') void safeTask(refreshProjectsPanel);
-  if (view === 'models') void safeTask(refreshSystemPanel);
-  modelPoolPanel?.setActive(view === 'models');
-  if (view === 'settings') { void safeTask(refreshKeys); void safeTask(refreshCloudConnection); }
-  if (view === 'usage' || view === 'overview') void safeTask(refreshWorkspace);
-  if (view === 'roadmap') renderRoadmap();
-  if (view === 'library') renderIndex();
+  // New canvas surfaces refresh on their open lifecycle. Focusing an already
+  // open surface keeps its unsaved draft; its explicit refresh remains available.
+  if (!endlessWorkspace || view === 'office') refreshWorkspaceSurface(view);
+  modelPoolPanel?.setActive(endlessWorkspace ? endlessWorkspace.isOpen('models') : view === 'models');
   ffApplyMode();syncDonnaDock();
-  window.scrollTo({ top: 0, behavior: 'instant' });
+  if (!endlessWorkspace) window.scrollTo({ top: 0, behavior: 'instant' });
 }
 
 // ---------------------------------------------------------------- launcher
@@ -1501,7 +1528,7 @@ function refreshWorkspace(): Promise<void> {
     if (company?.status === 'rejected') setStatus($('company-status'), 'The company workspace could not be loaded. Refresh to try again.', 'error');
     const projects = result[1]; if (projects?.status === 'fulfilled') workspaceProjects = projects.value;
     const runs = result[2]; if (runs?.status === 'fulfilled') workspaceRuns = runs.value;
-    renderCompany(); renderOverview(); renderTeam(); renderRoadmap(); renderUsage(); if (activeView === 'library') renderIndex();
+    renderCompany(); renderOverview(); renderTeam(); renderRoadmap(); renderUsage(); if (workspaceSurfaceVisible('library')) renderIndex();
   })().finally(() => { workspaceRefresh = null; });
   return workspaceRefresh;
 }
@@ -1725,6 +1752,7 @@ let selectedOfficeId = '';
 let selectedDepartmentId = '';
 let officeTab = 'overview';
 let officeRefreshing = false;
+let officeWriteRevision = 0;
 let officePoll: ReturnType<typeof setInterval> | null = null;
 let officeObservation: OfficeResult['observer'];
 function officeCompany(): OfficeCompany | undefined { return officeState?.companies.find((c) => c.id === officeState?.activeCompanyId) || officeState?.companies[0]; }
@@ -1743,12 +1771,13 @@ async function refreshOffice(): Promise<void> {
   if (officeRefreshing) return;
   if (!bridge?.officeSnapshot) { $('office-native-status').textContent = 'Desktop required'; noData($('office-employees'), 'Open the desktop app to load your permanent employees.'); return; }
   officeRefreshing = true;
+  const readRevision=officeWriteRevision;
   try {
     const [state, worker] = await Promise.allSettled([bridge.officeSnapshot(), bridge.officeWorkerStatus ? bridge.officeWorkerStatus() : Promise.resolve(null)]);
-    if (state.status === 'fulfilled' && state.value.ok && state.value.snapshot) {
+    if (readRevision===officeWriteRevision && state.status === 'fulfilled' && state.value.ok && state.value.snapshot) {
       officeObservation = state.value.observer;
       officeState = state.value.snapshot; officeSampledAt = new Date().toISOString(); $('office-native-status').textContent = workspaceReadOnly() ? 'Example workspace · read only' : bridge?.transport==='cloud-browser' ? 'Cloud workspace · desktop projection' : 'Local state loaded'; $('office-native-status').className = 'pill ok';
-    } else {
+    } else if(readRevision===officeWriteRevision) {
       const error = state.status === 'fulfilled' ? state.value.error : String(state.reason);
       const unloadedHosted=bridge?.transport==='cloud-browser'&&!officeState;
       setStatus($('office-status'), unloadedHosted ? 'Cloud workspace could not be loaded. Open welcome to check sign-in, or refresh to try again.' : error || 'Office state could not be loaded.', 'error'); $('office-native-status').textContent = unloadedHosted ? 'Cloud not loaded' : 'Workspace unavailable'; $('office-native-status').className='pill neutral';
@@ -1758,6 +1787,7 @@ async function refreshOffice(): Promise<void> {
   } finally { officeRefreshing = false; }
 }
 async function performOffice(command: OfficeCommand, success = 'Workspace updated.'): Promise<void> {
+  if(workspaceReadOnly())throw new Error('The starter office preview is read only. Open your private workspace to save changes.');
   if (!bridge?.officeCommand) { nativeUnavailable(); return; }
   const result = await bridge.officeCommand(command);
   if (!result.ok || !result.snapshot) throw new Error(result.error || 'The workspace change could not be saved.');
@@ -1786,9 +1816,9 @@ function renderOfficeScope(): void {
   $('office-scope-summary').textContent = company ? `${company.name}${scope ? ` / ${scope.name}` : ' · No office selected'}${selectedDepartmentId ? ` / ${departments.find((d) => d.id === selectedDepartmentId)?.name || ''}` : ''}` : 'Create a company to organize your employees.';
   $('office-scope-state').textContent = company?.status || 'No company';
   $('office-scope-state').className = `pill ${company?.status === 'active' ? 'ok' : 'neutral'}`;
-  ($('office-pause-company') as HTMLButtonElement).disabled = !company;
+  ($('office-pause-company') as HTMLButtonElement).disabled = !company || workspaceReadOnly();
   $('office-pause-company').textContent = company?.status === 'paused' ? 'Resume company' : 'Pause company';
-  ($('office-pause-office') as HTMLButtonElement).disabled = !scope;
+  ($('office-pause-office') as HTMLButtonElement).disabled = !scope || workspaceReadOnly();
   $('office-pause-office').textContent = scope?.status === 'paused' ? 'Resume office' : 'Pause office';
   const current = ($('queue-employee') as HTMLSelectElement).value;
   const contracts=scopedServiceContracts();const contractSelect=$('queue-service-contract') as HTMLSelectElement;populateSelect(contractSelect,contracts.map(contract=>({id:contract.id,name:portfolioState()?.services.find(service=>service.id===contract.serviceId)?.name||'Shared service'})),contractSelect.value,'Company employees');const selectedContract=contracts.find(contract=>contract.id===contractSelect.value);
@@ -1915,6 +1945,7 @@ function renderWorker(): void {
   ($('worker-run-once') as HTMLButtonElement).disabled = !bridge?.runOfficeQueue || status?.running === true;
   if(status?.concurrency)$('worker-detail').textContent=`${status.concurrency} worker slots · ${status.activeJobIds?.length||(status.running?1:0)} active. Global reservations and company scopes bound dispatch. Schedules need the app to stay open.`;
   if (status?.lastError) setStatus($('worker-result'), status.lastError, 'error');
+  renderCanvasCrew();
 }
 function renderOffice(): void {
   const observer = document.getElementById('office-observer-status');
@@ -2027,7 +2058,7 @@ function knowledgeSourceUrls(note: OfficeKnowledge): string[] {
 function renderOfficeMemory(): void {
   if (!officeState) return; const entries = officeState.cache.entries.filter((e) => e.companyId === officeCompany()?.id);
   $('cache-entries').textContent = number(entries.length); $('cache-size').textContent = formatBytes(entries.reduce((total,e) => total + e.bytes,0)); $('cache-hits').textContent = number(officeState.cache.hits); $('cache-misses').textContent = number(officeState.cache.misses);
-  if (!($('office-cache-form').contains(document.activeElement))) {
+  if (!canvasFormDrafts.has('office-cache-form') && !($('office-cache-form').contains(document.activeElement))) {
     ($('cache-enabled') as HTMLInputElement).checked = officeState.cache.enabled; ($('cache-max-entries') as HTMLInputElement).value = String(officeState.cache.maxEntries); ($('cache-ttl') as HTMLInputElement).value = String(officeState.cache.ttlMinutes);
   }
   const container = $('office-knowledge'); container.replaceChildren();
@@ -2059,7 +2090,8 @@ function renderOfficeEvents(container: HTMLElement, limit: number): void {
 function switchOfficeTab(name: string): void {
   officeTab = name; ($('office-tools') as HTMLDetailsElement).open = true;
   document.querySelectorAll<HTMLButtonElement>('[data-office-tab]').forEach((button) => { const selected = button.dataset.officeTab === name; button.classList.toggle('active', selected); button.setAttribute('aria-selected',String(selected)); button.tabIndex = selected ? 0 : -1; });
-  document.querySelectorAll<HTMLElement>('.office-tab-panel').forEach((panel) => panel.classList.toggle('hidden',panel.id !== `office-panel-${name}`));
+  if (endlessWorkspace) endlessWorkspace.open(`office-${name}`);
+  else document.querySelectorAll<HTMLElement>('.office-tab-panel').forEach((panel) => panel.classList.toggle('hidden',panel.id !== `office-panel-${name}`));
 }
 function value(id:string):string { return ($(id) as HTMLInputElement).value.trim(); }
 function officeQueueDraft(): Record<string,unknown> {
@@ -2079,7 +2111,7 @@ function bindOfficeForm(id:string, callback:()=>Promise<void>): void {
   $(id).addEventListener('submit',(event) => {
     event.preventDefault(); const button = (event as SubmitEvent).submitter as HTMLButtonElement | null;
     if (button) button.disabled = true;
-    void safeTask(async () => { try { await callback(); } finally { if (button) button.disabled = false; } });
+    void safeTask(async () => { try { if(workspaceReadOnly())throw new Error('The starter office preview is read only.');await callback();canvasFormDrafts.delete(id); } finally { if (button) button.disabled = workspaceReadOnly(); } });
   });
 }
 function initOffice(): void {
@@ -2131,13 +2163,18 @@ function initOffice(): void {
     setStatus($('office-import-status'),`${number(officeState.companies.length)} companies in the workspace · ${number(Math.max(0,officeState.companies.length-previous))} added. Existing repositories were kept.`,'ok');
   });
   for(const [id,enabled] of [['worker-enable',true],['worker-disable',false]] as const) $(id).addEventListener('click',() => void safeTask(async () => {
-    if(!bridge?.setOfficeWorker) throw new Error('The dispatcher is unavailable in this build.'); officeWorker=await bridge.setOfficeWorker({enabled}); renderWorker(); setStatus($('worker-result'),enabled ? 'Dispatcher enabled. Authorized due jobs can now run.' : 'Dispatcher stopped. New jobs will remain queued.','ok');
+    if(workspaceReadOnly())throw new Error('The starter office preview is read only.');
+    if(!bridge?.setOfficeWorker) throw new Error('The dispatcher is unavailable in this build.');
+    const result=await bridge.setOfficeWorker({enabled});
+    const outcome=result as unknown as {ok?:boolean;error?:string;enabled?:boolean};
+    if(outcome?.ok===false||typeof outcome?.enabled!=='boolean'||outcome.enabled!==enabled)throw new Error(outcome?.error||'The runtime did not confirm the dispatcher change. Refresh its status before continuing.');
+    officeWorker=result; renderWorker(); setStatus($('worker-result'),enabled ? 'Dispatcher enabled. Authorized due jobs can now run.' : 'Dispatcher stopped. New jobs will remain queued.','ok');
   }));
   $('worker-run-once').addEventListener('click',() => void safeTask(async () => {
     if(!bridge?.runOfficeQueue) throw new Error('The dispatcher is unavailable in this build.'); const button=$('worker-run-once') as HTMLButtonElement; button.disabled=true;
     try { officeWorker=await bridge.runOfficeQueue(); renderWorker(); await refreshOffice(); } finally { button.disabled=officeWorker?.running === true; }
   }));
-  officePoll=setInterval(() => { if(activeView === 'office' && !document.hidden && officeWorker?.enabled) void safeTask(refreshOffice); },5000);
+  officePoll=setInterval(() => { if((endlessWorkspace || activeView === 'office') && !document.hidden && officeWorker?.enabled) void safeTask(refreshOffice); },5000);
   window.addEventListener('beforeunload',() => { if(officePoll) clearInterval(officePoll); });
 }
 
@@ -2202,7 +2239,7 @@ function workspaceForm(id: string, task: () => Promise<void>, statusId: string):
   $(id).addEventListener('submit', (event) => {
     event.preventDefault(); const button = (event as SubmitEvent).submitter as HTMLButtonElement | null;
     if (button) button.disabled = true;
-    workspaceTask(async () => { try { await task(); } finally { if (button) button.disabled = !workspaceAvailable() || workspaceReadOnly(); } },statusId);
+    workspaceTask(async () => { try { await task();canvasFormDrafts.delete(id); } finally { if (button) button.disabled = !workspaceAvailable() || workspaceReadOnly(); } },statusId);
   });
 }
 function workspaceButton(label: string, task: () => Promise<void>, kind = 'secondary small'): HTMLButtonElement {
@@ -2299,7 +2336,7 @@ function renderWorkspacePolicy(): void {
   $('global-budget-fill').style.width = `${fraction*100}%`;
   $('global-budget-meter').setAttribute('aria-label',`${money(budget.committedUsd)} committed out of ${money(policy.budget.hardCapUsd)} global ceiling`);
   $('global-budget-detail').textContent = `${money(budget.observedUsd)} observed · ${money(budget.estimatedUsd)} conservatively estimated · ${money(budget.reservedUsd)} reserved. ${number(budget.committedTokens)} tokens committed.${budget.remainingTokens === null ? '' : ` ${number(budget.remainingTokens)} tokens available.`}${budget.atCap ? ' Dispatch waits for budget.' : budget.warning ? ' Budget warning threshold reached.' : ''}`;
-  if (!$('workspace-policy-form').contains(document.activeElement)) {
+  if (!canvasFormDrafts.has('workspace-policy-form') && !$('workspace-policy-form').contains(document.activeElement)) {
     ($('workspace-approval-mode') as HTMLSelectElement).value = policy.approvalMode;
     ($('workspace-global-usd') as HTMLInputElement).value = String(policy.budget.hardCapUsd);
     ($('workspace-global-tokens') as HTMLInputElement).value = policy.budget.hardCapTokens === null ? '' : String(policy.budget.hardCapTokens);
@@ -2428,16 +2465,18 @@ async function ensureWorkspaceBlueprint():Promise<void>{
 function switchWorkspaceTab(name:string):void{
   if(!['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(name))return;workspaceTab=name;if(ffBootSettled)ffSerializeUrl();
   document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]').forEach((button)=>{const active=button.dataset.workspaceTab===name;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;});
-  document.querySelectorAll<HTMLElement>('.workspace-tab-panel').forEach((panel)=>panel.classList.toggle('hidden',panel.id!==`workspace-panel-${name}`));
+  if (endlessWorkspace) { endlessWorkspace.open(name === 'chat' ? 'donna' : `workspace-${name}`); donnaDockOpen = endlessWorkspace.isOpen('donna'); }
+  else document.querySelectorAll<HTMLElement>('.workspace-tab-panel').forEach((panel)=>panel.classList.toggle('hidden',panel.id!==`workspace-panel-${name}`));
   renderUnifiedWorkspace();
 }
 function renderUnifiedWorkspace():void{
   if(ffStudio)ffRefresh();
-  $('workspace-studio-signals').classList.toggle('hidden',workspaceTab==='chat'||workspaceTab==='decisions');
+  $('workspace-studio-signals').classList.toggle('hidden',!endlessWorkspace&&(workspaceTab==='chat'||workspaceTab==='decisions'));
   renderWorkspaceControls();renderPortfolio();renderWorkspaceLocator();renderDecisionPanels();renderCloudConnection();
   if(spatialOfficeId!==selectedOfficeId){spatialOfficeId=selectedOfficeId;resetRoomForm();resetBoardForm();}
   renderWorkspacePolicy();renderConversation();renderWorkspaceGoals();renderSpatialSelectors();renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();renderStudioRoadmap();syncDonnaDock();
   $('github-repository-label').textContent=officeCompany()?.repoUrl||'Choose a repository company.';
+  endlessWorkspace?.refresh();
 }
 function updateChatMode():void{
   if(bridge?.transport==='cloud-browser'){ $('chat-goal-mode').closest('label')?.classList.add('hidden');$('chat-provider-options').classList.add('hidden');$('chat-send').textContent='Ask Donna';$('chat-mode-note').textContent='A real cloud reply. Code and panel jobs wait for a connected desktop; this conversation does not apply changes.';return;}
@@ -2534,7 +2573,10 @@ function portfolioState():OfficePortfolio|undefined{return officeState?.portfoli
 function portfolioCompanies():OfficeCompany[]{return(officeState?.companies||[]).filter(company=>company.id!==portfolioState()?.ceo.sharedServicesCompanyId).sort((a,b)=>a.name.localeCompare(b.name));}
 function portfolioReady():boolean{return workspaceAvailable()&&Boolean(portfolioState());}
 function setPortfolioOpen(open:boolean):void{
-  portfolioOpen=open;if(open)ffOperations=true;if(ffBootSettled)ffSerializeUrl();$('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open);$('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').classList.toggle('return-arrow',open);
+  portfolioOpen=open;if(open)ffOperations=true;if(ffBootSettled)ffSerializeUrl();
+  if (endlessWorkspace) { if (open) endlessWorkspace.open('portfolio'); else endlessWorkspace.close('portfolio'); }
+  else { $('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open); }
+  $('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').classList.toggle('return-arrow',open);
   const label=$('ceo-toggle').querySelector('strong');if(label)label.textContent=open?'Back to company workspace':'CEO office';if(open)renderPortfolio();syncDonnaDock();
 }
 function portfolioNavigation(label:string,companyId:string,tab='chat',kind='text-button',officeId?:string,departmentId?:string):HTMLButtonElement{
@@ -2650,8 +2692,8 @@ function renderPortfolio():void{
   const groupCount=portfolio?.groups.length||0;
   $('ceo-entry-summary').textContent=ready?`${companies.length} ${companies.length===1?'company':'companies'} · ${groupCount} ${groupCount===1?'group':'groups'} · ${shared.size} shared ${shared.size===1?'specialist':'specialists'}`:'Companies, shared teams, and the portfolio roadmap';$('ceo-company-count').textContent=number(companies.length);$('ceo-group-count').textContent=`${groupCount} portfolio ${groupCount===1?'group':'groups'}`;$('ceo-shared-count').textContent=number(shared.size);$('ceo-reuse-count').textContent=`${assignments} contracted ${assignments===1?'assignment reuses':'assignments reuse'} saved employees`;$('ceo-contract-count').textContent=number(contracts.length);$('ceo-running-count').textContent=number(live.length);$('ceo-queued-count').textContent=`${queued.length} queued provider ${queued.length===1?'request':'requests'}`;$('ceo-directory-count').textContent=number(companies.length);
   $('ceo-operating-state').textContent=!ready?'Current desktop required':portfolio!.ceo.enabled?'Coordination policy enabled':'Coordination policy paused';$('ceo-operating-state').className=`pill ${ready&&portfolio!.ceo.enabled?'ok':'neutral'}`;
-  if(portfolio&&!$('ceo-policy-form').contains(document.activeElement)){($('ceo-policy-title') as HTMLInputElement).value=portfolio.ceo.title;($('ceo-enabled') as HTMLInputElement).checked=portfolio.ceo.enabled;}
-  renderPortfolioSelectors();if(portfolio&&!$('ceo-policy-form').contains(document.activeElement))($('ceo-focus-group') as HTMLSelectElement).value=portfolio.ceo.focusGroupId||'';
+  if(portfolio&&!canvasFormDrafts.has('ceo-policy-form')&&!$('ceo-policy-form').contains(document.activeElement)){($('ceo-policy-title') as HTMLInputElement).value=portfolio.ceo.title;($('ceo-enabled') as HTMLInputElement).checked=portfolio.ceo.enabled;}
+  renderPortfolioSelectors();if(portfolio&&!canvasFormDrafts.has('ceo-policy-form')&&!$('ceo-policy-form').contains(document.activeElement))($('ceo-focus-group') as HTMLSelectElement).value=portfolio.ceo.focusGroupId||'';
   renderPortfolioDirectory();renderPortfolioRoadmap();renderPortfolioServices();renderPortfolioContracts();renderPortfolioMembers();
   for(const id of ['ceo-optimize','ceo-ensure-services'])($(id) as HTMLButtonElement).disabled=!ready||workspaceReadOnly();
   $('ceo-panel').querySelectorAll<HTMLButtonElement>('form button[type="submit"]').forEach(button=>button.disabled=!ready||workspaceReadOnly());
@@ -2810,6 +2852,7 @@ function scopedServiceContracts():PortfolioServiceContract[]{return(portfolioSta
 // ---------------------------------------------------------------- studio, connected devices, and decision rooms
 class QueuedWorkspaceCommand extends Error {}
 function appliedOfficeSnapshot(result: OfficeResult): OfficeSnapshot {
+  officeWriteRevision++;
   if (!result.ok || !result.snapshot) throw new Error(result.error || 'The workspace change could not be saved.');
   officeObservation = result.observer;
   officeSampledAt = new Date().toISOString();
@@ -2883,7 +2926,7 @@ function initCloudConnection():void{
 }
 async function sendDonnaCloud(message:string,scope:OfficeScope):Promise<void>{
   if(cloudChatBusy)return;if(!bridge?.sendCloudChat)throw new Error('The cloud conversation service is unavailable.');cloudChatBusy=true;($('chat-send') as HTMLButtonElement).disabled=true;setStatus($('chat-status'),'Donna is reviewing your brief…');
-  try{const result=await bridge.sendCloudChat({scope,message,idempotencyKey:crypto.randomUUID(),goalMode:'manual'});if(!result.ok||!result.snapshot)throw new Error(result.error||'Donna’s cloud request did not complete.');if(!result.reply?.trim())throw new Error('No provider reply was returned. Your brief remains here to retry.');officeState=result.snapshot;officeSampledAt=new Date().toISOString();($('chat-message') as HTMLTextAreaElement).value='';renderOffice();setStatus($('chat-status'),'Cloud reply saved. No repository changes were applied.','ok');}
+  try{const result=await bridge.sendCloudChat({scope,message,idempotencyKey:crypto.randomUUID(),goalMode:'manual'});if(!result.ok||!result.snapshot)throw new Error(result.error||'Donna’s cloud request did not complete.');if(!result.reply?.trim())throw new Error('No provider reply was returned. Your brief remains here to retry.');officeWriteRevision++;officeState=result.snapshot;officeSampledAt=new Date().toISOString();($('chat-message') as HTMLTextAreaElement).value='';renderOffice();setStatus($('chat-status'),'Cloud reply saved. No repository changes were applied.','ok');}
   finally{cloudChatBusy=false;($('chat-send') as HTMLButtonElement).disabled=workspaceReadOnly();}
 }
 
@@ -3019,6 +3062,12 @@ function renderStudioRoadmap():void{
   if(items.length>120)container.append(textElement('p','Showing the first 120 outcomes. Filter by delivery state or department.','form-help'));
 }
 function syncDonnaDock():void{
+  if (endlessWorkspace) {
+    $('donna-dock').classList.add('hidden');
+    const toggle = $('donna-dock-toggle'); toggle.classList.remove('hidden');
+    toggle.setAttribute('aria-expanded', String(endlessWorkspace.isOpen('donna')));
+    return;
+  }
   const panel=document.getElementById('donna-conversation'),home=document.getElementById('donna-chat-home'),dock=document.getElementById('donna-dock'),toggle=document.getElementById('donna-dock-toggle'),slot=document.getElementById('donna-dock-slot');if(!panel||!home||!dock||!toggle||!slot)return;
   const canvasMode=document.body.classList.contains('ff-canvas-mode');const available=activeView==='office'&&(canvasMode||workspaceTab!=='chat'||portfolioOpen);const open=available&&donnaDockOpen;
   const wasHidden=dock.classList.contains('hidden')&&toggle.classList.contains('hidden');
@@ -3028,14 +3077,14 @@ function syncDonnaDock():void{
 }
 function initStudio():void{
   const theme=studioPreference('theme','blueprint');document.documentElement.dataset.theme=theme==='drafting'?'drafting':'blueprint';($('workspace-theme') as HTMLSelectElement).value=document.documentElement.dataset.theme;
-  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',document.documentElement.dataset.theme==='drafting'?'#F6F2E8':'#151126');
-  $('workspace-theme').onchange=()=>{const next=value('workspace-theme')==='drafting'?'drafting':'blueprint';document.documentElement.dataset.theme=next;saveStudioPreference('theme',next);document.querySelector('meta[name="theme-color"]')?.setAttribute('content',next==='drafting'?'#F6F2E8':'#151126');};
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content',document.documentElement.dataset.theme==='drafting'?'#E8E5DA':'#111719');
+  $('workspace-theme').onchange=()=>{const next=value('workspace-theme')==='drafting'?'drafting':'blueprint';document.documentElement.dataset.theme=next;saveStudioPreference('theme',next);document.querySelector('meta[name="theme-color"]')?.setAttribute('content',next==='drafting'?'#E8E5DA':'#111719');};
   const heat=studioPreference('heat','workload');($('workspace-heat-mode') as HTMLSelectElement).value=['workload','budget','attention','off'].includes(heat)?heat:'workload';
   $('workspace-heat-mode').onchange=()=>{saveStudioPreference('heat',studioHeatMode());renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();};
   $('softboard-search').oninput=renderSoftboard;$('studio-roadmap-status').onchange=renderStudioRoadmap;
   $('softboard-person-chat').onclick=()=>{const e=scopedEmployees().find(item=>item.id===softboardEmployeeId);if(!e||e.status!=='active')return;renderWorkspaceControls();($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=e.id;switchWorkspaceTab('chat');$('chat-message').focus();};
   $('softboard-person-authority').onclick=()=>{if(!softboardEmployeeId)return;setPortfolioOpen(true);renderAuthority();($('authority-employee') as HTMLSelectElement).value=softboardEmployeeId;renderAuthorityForm();renderAuthorityGrants();($('ceo-authority-editor') as HTMLDetailsElement).open=true;$('authority-employee').focus();$('ceo-authority-editor').scrollIntoView({block:'nearest'});syncDonnaDock();};
-  $('donna-dock-toggle').onclick=()=>{if(donnaSuppressClick){donnaSuppressClick=false;return;}donnaDockOpen=true;syncDonnaDock();donnaClamp();$('chat-message').focus();};$('donna-dock-close').onclick=()=>{donnaDockOpen=false;donnaCloseOptions(false);syncDonnaDock();donnaClamp();$('donna-dock-toggle').focus();};
+  $('donna-dock-toggle').onclick=()=>{if(donnaSuppressClick){donnaSuppressClick=false;return;}donnaDockOpen=true;endlessWorkspace?.open('donna');syncDonnaDock();donnaClamp();$('chat-message').focus();};$('donna-dock-close').onclick=()=>{donnaDockOpen=false;endlessWorkspace?.close('donna');donnaCloseOptions(false);syncDonnaDock();donnaClamp();$('donna-dock-toggle').focus();};
   initDonnaPresentation();
 }
 // ---------------------------------------------------------------- Donna presentation (position, options, entry actions)
@@ -3047,6 +3096,7 @@ function donnaLoadPref():void{
 function donnaSavePref():void{if(!donnaPos&&!donnaLocked){try{localStorage.removeItem('daftar-studio-donna-pos');}catch{/* storage denied */}return;}saveStudioPreference('donna-pos',JSON.stringify({x:Math.round(donnaPos?.x??0),y:Math.round(donnaPos?.y??0),locked:donnaLocked}));}
 function donnaActiveEl():HTMLElement{const dock=$('donna-dock');return dock.classList.contains('hidden')?$('donna-dock-toggle'):dock;}
 function donnaClamp():void{
+  if (endlessWorkspace) return;
   const dock=$('donna-dock'),toggle=$('donna-dock-toggle');
   if(!donnaPos){for(const el of [dock,toggle]){el.classList.remove('donna-moved');el.style.left='';el.style.top='';el.style.right='';el.style.bottom='';}return;}
   const el=donnaActiveEl(),other=el===dock?toggle:dock;
@@ -3100,6 +3150,12 @@ function donnaTeamUrl():string|null{
 function donnaRevealSettings(panelId:string,focusId:string):void{navigate('settings');const panel=document.getElementById(panelId);panel?.scrollIntoView({block:'start'});const f=document.getElementById(focusId);if(f){if(!f.matches('input,select,textarea,button'))f.tabIndex=-1;f.focus();}}
 function donnaOption(name:string):void{
   const status=$('donna-options-status');status.textContent='';
+  if (endlessWorkspace && name === 'collapse') { endlessWorkspace.close('donna'); donnaCloseOptions(false); return; }
+  if (endlessWorkspace && name === 'company') { endlessWorkspace.open('scope'); donnaCloseOptions(false); return; }
+  if (endlessWorkspace && name === 'team' && bridge?.transport === 'cloud-browser') { endlessWorkspace.open('access'); donnaCloseOptions(false); return; }
+  if (endlessWorkspace && name === 'agents') { endlessWorkspace.open('crew'); donnaCloseOptions(false); return; }
+  const canvasOptions:Record<string,string>={budget:'policy',source:'source-review',ledger:'office-ledger',models:'models'};
+  if(endlessWorkspace&&canvasOptions[name]){endlessWorkspace.open(canvasOptions[name]!);donnaCloseOptions(false);return;}
   if(name==='lock'){donnaLocked=!donnaLocked;donnaSyncLock();donnaSavePref();return;}
   donnaCloseOptions(false);
   if(name==='dock-left'||name==='dock-right'){const el=donnaActiveEl(),w=el.getBoundingClientRect().width||el.offsetWidth||420,h=el.getBoundingClientRect().height||el.offsetHeight||300;donnaMoveTo(name==='dock-left'?8:(window.innerWidth||1200)-w-8,Math.max(8,(window.innerHeight||800)-h-24),true);return;}
@@ -3128,7 +3184,7 @@ function initDonnaPresentation():void{
     ev.preventDefault();if(donnaLocked)return;
     const r=dock.getBoundingClientRect();const base=donnaPos||{x:r.left,y:r.top};donnaMoveTo(base.x+dx,base.y+dy,true);
   });
-  opt.onclick=()=>{const open=menu.classList.contains('hidden');menu.classList.toggle('hidden',!open);opt.setAttribute('aria-expanded',String(open));if(open)(menu.querySelector('button') as HTMLElement|null)?.focus();};
+  opt.onclick=()=>{const open=menu.classList.contains('hidden');menu.classList.toggle('hidden',!open);opt.setAttribute('aria-expanded',String(open));if(open)(menu.querySelector('button:not(.hidden)') as HTMLElement|null)?.focus();};
   menu.addEventListener('keydown',(ev:KeyboardEvent)=>{if(ev.key==='Escape'){ev.stopPropagation();donnaCloseOptions(true);}});
   menu.querySelectorAll<HTMLButtonElement>('[data-donna-option]').forEach((b)=>b.addEventListener('click',()=>donnaOption(b.dataset.donnaOption||'')));
   window.addEventListener('resize',()=>donnaClamp());
@@ -3159,7 +3215,7 @@ function signalGeneration(): string {
   return `${ffSnapshotId()}|${officeSampledAt}|${Math.floor(Date.now() / FF_CLOCK_MS)}`;
 }
 function ffHeatVisible(): boolean {
-  return !document.hidden && activeView === 'office' && studioHeatMode() !== 'off';
+  return !document.hidden && (endlessWorkspace !== null || activeView === 'office') && studioHeatMode() !== 'off';
 }
 function ffStopHeatTimer(): void { if (ffHeatTimer !== null) { clearTimeout(ffHeatTimer); ffHeatTimer = null; } }
 function ffScheduleHeatTimer(): void {
@@ -3220,6 +3276,12 @@ function ffMountHeatControls(): void {
   if (key && !slot.contains(key)) slot.append(key);
 }
 function ffApplyMode(): void {
+  if (endlessWorkspace) {
+    document.body.classList.add('ff-canvas-mode', 'endless-canvas');
+    document.body.classList.remove('ff-operations');
+    $('office-view').classList.remove('hidden'); $('freeflow-surface').classList.remove('hidden');
+    ffStudio?.setActive(!contentMode); endlessWorkspace.refresh(); ffScheduleHeatTimer(); return;
+  }
   const canvas = activeView === 'office' && !ffOperations && !portfolioOpen;
   document.body.classList.toggle('ff-canvas-mode', canvas);
   document.body.classList.toggle('ff-operations', ffOperations);
@@ -3294,14 +3356,14 @@ async function ffRunScopeIntent(intent: FfScopeIntent): Promise<void> {
   const problem = ffValidateFocus(focus);
   if (problem) { ffNavStatus(intent, problem, 'error'); ffReconcileToCanonical(); return; }
   if (focus.kind !== 'portfolio' && officeState && officeState.activeCompanyId !== focus.companyId) {
-    if (workspaceReadOnly()) officeState.activeCompanyId = focus.companyId;
+    if (workspaceReadOnly()) {officeState.activeCompanyId = focus.companyId;officeWriteRevision++;}
     else {
       if (!bridge?.officeCommand) { ffNavStatus(intent, 'Open the installed desktop app to switch companies.', 'error'); ffReconcileToCanonical(); return; }
       ffNavStatus(intent, 'Switching company…', '');
       let result: OfficeResult;
       try { result = await bridge.officeCommand({ action: 'select_company', companyId: focus.companyId }); }
       catch (error) { ffNavStatus(intent, error instanceof Error ? error.message : 'Company selection failed.', 'error'); ffReconcileToCanonical(); return; }
-      if (result.ok && result.snapshot) { officeState = result.snapshot; officeSampledAt = new Date().toISOString(); }
+      if (result.ok && result.snapshot) { officeWriteRevision++;officeState = result.snapshot; officeSampledAt = new Date().toISOString(); }
       if (!result.ok || !result.snapshot) { ffNavStatus(intent, result.error || 'Company selection failed.', 'error'); ffReconcileToCanonical(); return; }
       if (result.queued) {
         ffNavStatus(intent, `Queued for desktop confirmation${result.commandId ? ` · ${result.commandId}` : ''}. The company has not been switched yet.`, '');
@@ -3360,11 +3422,11 @@ function ffOpenPanel(selector: string, focusId: string): void {
   let el: HTMLElement | null = document.getElementById(focusId);
   let parent: HTMLElement | null = el;
   while (parent) { if (parent instanceof HTMLDetailsElement) parent.open = true; parent = parent.parentElement; }
-  if (!el) return; el.scrollIntoView({ block: 'nearest' });
+  if (!el) return; endlessWorkspace?.revealElement(el); el.scrollIntoView({ block: 'nearest' });
   if (el.matches('input,select,textarea,button')) el.focus(); else { el.tabIndex = -1; el.focus(); }
   void selector;
 }
-function ffShowOps(): void { ffOperations = true; ffSetNav('operations'); ffApplyMode(); }
+function ffShowOps(): void { ffOperations = true; ffSetNav('operations'); ffApplyMode(); if (endlessWorkspace) endlessWorkspace.open(`office-${officeTab}`); }
 function ffActionFocus(ctx: StudioActionContext): FreeflowFocus | null {
   const companyId = ctx.companyId || officeState?.activeCompanyId; if (!companyId) return null;
   const departmentId = ctx.departmentId; const officeId = ctx.officeId || (departmentId ? officeState?.departments.find((d) => d.id === departmentId)?.officeId : undefined);
@@ -3389,6 +3451,7 @@ function ffAction(action: StudioActionKind, ctx: StudioActionContext): void {
   ffActionConfirmed(action, ctx);
 }
 function ffRevealComposer(): void {
+  if (endlessWorkspace) { endlessWorkspace.open('donna'); donnaDockOpen = true; syncDonnaDock(); $('chat-message').focus(); return; }
   donnaDockOpen = true; ffOperations = false; ffApplyMode();
   workspaceTab = workspaceTab === 'chat' ? 'blueprint' : workspaceTab;
   if (ffBootSettled) ffSerializeUrl();
@@ -3486,7 +3549,8 @@ function ffActionConfirmed(action: StudioActionKind, ctx: StudioActionContext): 
 }
 function initFreeflowHost(): void {
   const host = $('freeflow-host');
-  ffStudio = mountStudio(host, { onNavigate: ffNavigate, onAction: ffAction, heat: ffHeat, capabilities: ffReadOnlyCaps });
+  document.body.classList.add('endless-canvas');
+  ffStudio = mountStudio(host, { continuousCanvas: true, onSurface: (id) => endlessWorkspace?.open(id, {nearCamera:true}), onNavigate: ffNavigate, onAction: ffAction, heat: ffHeat, capabilities: ffReadOnlyCaps });
   document.querySelectorAll<HTMLButtonElement>('[data-ff-nav]').forEach((b) => b.addEventListener('click', () => {
     const name = b.dataset.ffNav || 'table'; ffSetNav(name);
     if (name === 'table') { ffOperations = false; setPortfolioOpen(false); ffNavigate({ kind: 'portfolio' }); ffApplyMode(); ffSerializeUrl(); }
@@ -3494,7 +3558,7 @@ function initFreeflowHost(): void {
     else if (name === 'team') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('softboard'); ffSerializeUrl(); }
     else if (name === 'roadmap') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('timeline'); ffSerializeUrl(); }
     else if (name === 'whiteboard') { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('whiteboard'); ffSerializeUrl(); }
-    else { ffOperations = true; setPortfolioOpen(false); ffApplyMode(); switchWorkspaceTab('chat'); ffSerializeUrl(); }
+    else { setPortfolioOpen(false); ffShowOps(); switchOfficeTab(officeTab); ffSerializeUrl(); }
   }));
   $('ff-create-blueprint').addEventListener('click', () => workspaceTask(async () => { await ensureWorkspaceBlueprint(); ffRefresh(); }));
   $('workspace-heat-mode').addEventListener('change', ffRefresh);
@@ -3502,15 +3566,164 @@ function initFreeflowHost(): void {
   ffMountHeatControls();
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (ffStudio) ffRefresh(); renderStudioSignals(); } ffScheduleHeatTimer(); });
   $('workspace-heat-mode').addEventListener('change', ffScheduleHeatTimer);
-  window.addEventListener('beforeunload', () => { ffStopHeatTimer(); ffStudio?.destroy(); ffStudio = null; });
+  window.addEventListener('beforeunload', () => { ffStopHeatTimer(); endlessWorkspace?.destroy(); endlessWorkspace = null; ffStudio?.destroy(); ffStudio = null; });
   window.addEventListener('pagehide', ffStopHeatTimer);
   window.addEventListener('hashchange', () => { ffApplyMode(); });
 }
+// ---------------------------------------------------------------- One endless workspace; live forms are spatial elements.
+function canvasCrewFocus(): FreeflowFocus {
+  if (ffFocus.kind !== 'portfolio') return ffFocus;
+  const companyId = officeCompany()?.id;
+  return companyId ? {kind:'company',companyId} : {kind:'portfolio'};
+}
+function canvasCrewOptions() {
+  return {now:Date.now(),maxNodes:60,runtimeServices:{sourceReviewer:Array.isArray(officeWorker?.sourceReviews),ledgerObserver:officeObservation !== null && officeObservation !== undefined}};
+}
+function renderCanvasCrew(): void {
+  const list = document.getElementById('canvas-crew-list'); if (!list) return;
+  const focus = canvasCrewFocus();
+  const team = buildDonnaTeam((officeState || {}) as unknown as DonnaSnapshot, focus, canvasCrewOptions());
+  $('canvas-crew-scope').textContent = officeCompany()?.name || 'Choose a company to see its crew';
+  $('canvas-crew-runtime').textContent = !officeWorker ? 'Runtime not connected' : officeWorker.running ? `${officeWorker.activeJobIds?.length || 1} requests running` : officeWorker.enabled ? 'Dispatch enabled' : 'Dispatch paused';
+  const dispatch = $('canvas-dispatch-toggle') as HTMLButtonElement;
+  dispatch.textContent = officeWorker?.enabled ? 'Pause dispatch' : 'Enable dispatch';
+  dispatch.disabled = !bridge?.setOfficeWorker || workspaceReadOnly();
+  list.replaceChildren();
+  for (const node of team.nodes) {
+    const row = textElement('article','','canvas-crew-member'); row.dataset.crewId=node.id; row.dataset.role=node.role; row.dataset.state=node.status;
+    const stamp=textElement('span',node.role==='donna'?'D':node.execution==='deterministic-service'?'◎':node.label.slice(0,1),'canvas-crew-avatar');stamp.setAttribute('aria-hidden','true');
+    const copy=textElement('div','','canvas-crew-copy');
+    copy.append(textElement('strong',node.label),textElement('span',node.subtitle),textElement('small',node.execution==='deterministic-service'?'Runtime check · 0 model calls':node.status==='unconfigured'?'Not configured':`${node.reportedRunningJobs} running · ${node.queuedJobs} queued · ${node.authority.state==='recorded'?'recorded authority':'authority checked at action'}`));
+    const actions=textElement('div','','canvas-crew-actions');
+    const inspect=textElement('button',node.inspectTarget==='chat'?'Talk':'Inspect','secondary small');inspect.type='button';inspect.onclick=()=>{
+      if(node.inspectTarget==='ledger-observer') { switchOfficeTab('ledger'); return; }
+      if(node.inspectTarget==='source-review') { endlessWorkspace?.open('source-review'); return; }
+      if(node.employeeId) ffAction('chat',{companyId:node.companyId||officeCompany()?.id,employeeId:node.employeeId,...(node.scope?.kind==='office'?{officeId:node.scope.id}:{}),...(node.scope?.kind==='department'?{departmentId:node.scope.id}:{})});
+      else { ffShowOps(); switchOfficeTab('people'); }
+    }; actions.append(inspect);
+    if(node.employeeId && node.status==='configured') {
+      const permissions=textElement('button','Authority','text-button');permissions.type='button';permissions.onclick=()=>ffAction('ownership',{employeeId:node.employeeId!,companyId:node.companyId||officeCompany()?.id});actions.append(permissions);
+    }
+    row.append(stamp,copy,actions);list.append(row);
+  }
+  if(!team.nodes.length)list.append(textElement('p','Your saved assistants appear here when the workspace is loaded.','empty-inline'));
+  if(team.omittedCount)list.append(textElement('p',`${team.omittedCount} more definitions. Focus an office or department to narrow the crew.`,'form-help'));
+  const selector=$('canvas-crew-actor') as HTMLSelectElement, previous=selector.value; selector.replaceChildren();
+  for(const node of team.nodes.filter(n=>n.actions.length)) { const option=document.createElement('option');option.value=node.id;option.textContent=`${node.label} · ${node.scope?.kind||'workspace'}`;selector.append(option); }
+  if(Array.from(selector.options).some(o=>o.value===previous))selector.value=previous;
+  ($('canvas-crew-submit') as HTMLButtonElement).disabled=!selector.options.length||!workspaceAvailable()||workspaceReadOnly();
+  const reports=$('canvas-source-reports');reports.replaceChildren();
+  const relevant=(officeWorker?.sourceReviews||[]).filter(r=>!r.companyId||r.companyId===officeCompany()?.id);
+  for(const report of relevant) {
+    const item=textElement('article','','canvas-source-report');
+    item.append(textElement('strong',report.handoff.state==='needs-review'?'Donna review requested':'Source check clear'),textElement('p',report.handoff.reason),textElement('small',`Coverage: ${report.coverage} · Job ${report.jobId}`));
+    if(report.artifactUri)item.append(textElement('code',report.artifactUri));reports.append(item);
+  }
+  if(!relevant.length)reports.append(textElement('p',officeWorker?.sourceReviews?'No source reviews have been reported for this company in the current runtime session.':'Connect the desktop or VPS runtime to receive source-review reports.','empty-inline'));
+}
+
+function initEndlessWorkspace(): void {
+  const studio=ffStudio; if(!studio)return;
+  const surface=$('freeflow-surface');
+  const scope=textElement('section','','canvas-scope-content');scope.id='canvas-scope-content';
+  scope.append(textElement('p','Choose where Donna and the controls are working.','canvas-surface-intro'));
+  for(const el of [document.querySelector('.office-heading-state'),$('office-status'),document.querySelector('#company-workspace .office-scope'),document.querySelector('#company-workspace .workspace-locator'),document.getElementById('ff-heat-controls'),$('workspace-studio-signals'),document.querySelector('.studio-theme-control')])if(el)scope.append(el);
+  const donna=$('donna-conversation');
+  const options=$('donna-options-toggle'),menu=$('donna-options-menu');
+  donna.querySelector('.conversation-header')?.append(options);
+  donna.prepend(menu,$('donna-options-status'));
+  for(const name of ['dock-left','dock-right','reset','lock'])menu.querySelector(`[data-donna-option="${name}"]`)?.classList.add('hidden');
+  const crew=textElement('section','','canvas-crew-content');crew.id='canvas-crew-content';
+  crew.innerHTML='<p class="eyebrow">DONNA & HER CREW</p><h2 id="canvas-crew-scope">Your company assistants</h2><div class="canvas-runtime-bar"><span id="canvas-crew-runtime">Runtime not connected</span><button type="button" id="canvas-dispatch-toggle" class="secondary small">Enable dispatch</button></div><div id="canvas-crew-list"></div><form id="canvas-crew-form" class="canvas-crew-form"><h3>Delegate through recorded authority</h3><label class="field">Assistant<select id="canvas-crew-actor"></select></label><label class="field">Action<select id="canvas-crew-intent"><option value="plan-work">Draft a scoped goal</option><option value="pause-scope">Pause this scope</option><option value="resume-scope">Resume this scope</option></select></label><label class="field">Goal title<input id="canvas-crew-title" maxlength="160" placeholder="What should this assistant plan?" /></label><p class="form-help">Every action is checked by the native authority. Resuming a scope can admit its already-authorized queued work.</p><button type="submit" class="primary" id="canvas-crew-submit">Apply scoped action</button><p id="canvas-crew-result" class="status" role="status"></p></form>';
+  const source=textElement('section','','canvas-source-content');source.id='canvas-source-content';
+  source.append(textElement('p','SOURCE REVIEW / SHARED RUNTIME EMPLOYEE','eyebrow'),textElement('h2','Keep sources in their place.'),textElement('p','External repository and website instructions are reviewed as source material. They cannot change Donna’s task, access, or tool permissions. The reviewer records findings and passes flagged content to Donna without a model request.','canvas-surface-intro'));
+  const reports=textElement('div','','');reports.id='canvas-source-reports';source.append(reports);
+  const policy=textElement('details','','canvas-source-policy');policy.append(textElement('summary','Robots and public-source access'),textElement('p','Robots exclusion is reviewed separately from embedded AI commands. An exact-source owner override can record a decision about advisory crawling preferences. Authentication, rate limits, and access restrictions still apply. General website crawling is not connected in this build.'));source.append(policy);
+  const panels:CanvasWorkspacePanel[]=[];
+  const add=(id:string,title:string,element:HTMLElement,group='Workspace',width=900,height=660)=>{
+    const index=panels.length;panels.push({id,title,element,group,rect:{x:-1000+(index%4)*1040,y:1100+Math.floor(index/4)*800,width,height},minWidth:320,minHeight:220});
+  };
+  add('donna','Donna · conversation',donna,'Donna',680,720);
+  add('crew','Donna & sub-Donnas',crew,'Donna',800,720);
+  add('policy','Budget & autonomy',$('workspace-policy'),'Donna',880,680);
+  add('scope','Company & department',scope,'Office',760,510);
+  add('company-directory','Find a company',studio.elements.listHost,'Office',620,690);
+  add('workspace-blueprint','Office blueprint',$('workspace-panel-blueprint'),'Office',1080,740);
+  add('workspace-softboard','People & ownership',$('workspace-panel-softboard'),'Office',1040,720);
+  add('workspace-timeline','Company roadmap',$('workspace-panel-timeline'),'Work',1080,720);
+  add('workspace-whiteboard','Whiteboard',$('workspace-panel-whiteboard'),'Work',1080,740);
+  add('workspace-decisions','Decision room',$('workspace-panel-decisions'),'Work',1000,740);
+  add('goals','Goals & conversation history',$('workspace-panel-chat'),'Donna',900,680);
+  add('portfolio','CEO · portfolio & authority',$('ceo-panel'),'Office',1080,760);
+  $('ceo-panel').prepend($('ceo-optimize'));
+  for(const [name,label] of [['overview','Company management'],['people','Employees & hiring'],['queue','Jobs & schedules'],['memory','Knowledge & transfers'],['ledger','Ledger & observer']])add(`office-${name}`,label!,$(`office-panel-${name}`),'Operations',1020,720);
+  for(const [name,id] of Object.entries(VIEW_IDS))if(name!=='office')add(name,VIEW_LABELS[name as ViewName],$(id),'Workspace',1040,740);
+  add('object-inspector','Object inspector',studio.elements.inspectorHost,'Office',420,580);
+  add('source-review','Source review',source,'Donna',760,600);
+  const portals=new Map<string,HTMLIFrameElement>();
+  const portalScopeLabels=new Map<string,HTMLElement>();
+  if(bridge?.transport==='cloud-browser') {
+    const outerParams=new URLSearchParams(location.search);
+    for(const [id,title,path] of [['connections','Website & device connections','/'],['access','People & access','/access'],['applications','Applications & integrations','/applications'],['visit','Visiting employees','/visit'],['join','Invitation review','/join']]) {
+      const wrapper=textElement('section','','canvas-web-surface');
+      if(['access','applications','visit'].includes(id!)){const label=textElement('p','','canvas-web-context');wrapper.append(label);portalScopeLabels.set(id!,label);}
+      const frameUrl=new URL(path!,location.origin);frameUrl.searchParams.set('canvas','1');
+      const company=outerParams.get('company')||outerParams.get('companyId');if(company)frameUrl.searchParams.set('company',company);
+      const anchor=outerParams.get('surfaceAnchor');
+      if(outerParams.get('surface')===id&&((id==='connections'&&anchor==='devices')||(id==='applications'&&anchor==='design-connections')))frameUrl.hash=anchor;
+      const frame=document.createElement('iframe');frame.title=title!;frame.dataset.canvasSrc=frameUrl.pathname+frameUrl.search+frameUrl.hash;frame.loading='lazy';frame.referrerPolicy='same-origin';
+      wrapper.append(frame);portals.set(id!,frame);add(id!,title!,wrapper,'Website',1080,760);
+    }
+  }
+  const panelChanged=(id:string,open:boolean)=>{
+      if(id==='donna'){donnaDockOpen=open;syncDonnaDock();}
+      if(id==='portfolio'&&!open)portfolioOpen=false;
+      if(id==='models')modelPoolPanel?.setActive(open);
+      if(open&&id in VIEW_IDS)refreshWorkspaceSurface(id as ViewName);
+      const frame=portals.get(id);
+      if(open&&frame&&!frame.hasAttribute('src')){
+        const frameUrl=new URL(frame.dataset.canvasSrc!,location.origin);
+        // Bind a newly opened surface to the confirmed current company. Once
+        // loaded, its own selector and drafts keep their explicit context.
+        const company=officeState?.activeCompanyId||frameUrl.searchParams.get('company');
+        if(company)frameUrl.searchParams.set('company',company);
+        frame.src=frameUrl.pathname+frameUrl.search+frameUrl.hash;
+        const label=portalScopeLabels.get(id);
+        if(label){const name=officeState?.companies.find(item=>item.id===company)?.name;label.textContent=company?`Opened for ${name||company}. This surface keeps its own company selection.`:'Choose a company inside this surface.';}
+      }
+  };
+  endlessWorkspace=mountCanvasWorkspace(surface,{world:studio.elements.world,viewport:studio.elements.canvasHost,getCamera:()=>studio.getCamera(),setCamera:c=>studio.setCamera(c),stopMotion:()=>studio.stopMotion(),showCanvas:()=>studio.showCanvas(),panels,
+    getFrameInsets:()=>({top:workspaceReadOnly()?(window.innerWidth<=650?178:210):(window.innerWidth<=650?142:150),bottom:window.innerWidth<=650?210:150,left:16,right:16}),
+    onHome:()=>{activeView='office';ffOperations=false;setPortfolioOpen(false);void ffTransitionScope({kind:'portfolio'},false).then(()=>studio.frame());},onPanelChange:panelChanged});
+  // Restore geometry first, then start services for actually visible surfaces.
+  // Mount cannot emit these callbacks before the controller has been assigned.
+  for(const panel of panels)if(endlessWorkspace.isOpen(panel.id))panelChanged(panel.id,true);
+  document.body.classList.add('endless-canvas');
+  const brand=document.querySelector('.sidebar .brand');if(brand)document.querySelector('.workspace-topbar')?.prepend(brand);
+  $('canvas-dispatch-toggle').onclick=()=>$(officeWorker?.enabled?'worker-disable':'worker-enable').click();
+  $('canvas-crew-form').addEventListener('submit',(event)=>{
+    event.preventDefault();const focus=canvasCrewFocus();const nodeId=value('canvas-crew-actor'),intent=value('canvas-crew-intent') as DonnaIntent;
+    workspaceTask(async()=>{
+      if(workspaceReadOnly()||!officeState)throw new Error('Load a writable owner workspace first.');
+      const proposal=proposeDonnaAction(officeState as unknown as DonnaSnapshot,focus,{nodeId,intent,title:value('canvas-crew-title')},canvasCrewOptions());
+      if(!proposal.ok)throw new Error(proposal.reason);
+      if(proposal.proposal.readiness!=='recorded-grant')throw new Error('This assistant needs an active authority grant for that action. Open Authority to review its scope.');
+      await workspaceCommand(proposal.proposal.command,'Scoped assistant action recorded.');
+      setStatus($('canvas-crew-result'),'The native authority accepted the assistant’s scoped action.','ok');
+    },'canvas-crew-result');
+  });
+  $('donna-dock-toggle').addEventListener('pointerdown',(event)=>{if(endlessWorkspace)event.stopImmediatePropagation();},true);
+  renderCanvasCrew();ffApplyMode();
+  const portal=new URLSearchParams(location.search).get('surface');if(portal&&panels.some(p=>p.id===portal))endlessWorkspace.open(portal);
+}
+
 // ---------------------------------------------------------------- boot
 function boot(): void {
+  initCanvasFormDrafts();
   initStudio(); initWorkspace(); initOffice(); initCompanyHierarchy(); initUnifiedWorkspace(); initFreeflowHost(); initGitHubTools(); initPortfolio(); initAuthority(); initDecisionPanels(); initCloudConnection(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
   modelPoolPanel = mountModelPool($('system-view'), bridge, () => ({ activeCompanyId: officeState?.activeCompanyId,
     companies: officeState?.companies || [], employees: officeState?.employees || [] }), workspaceReadOnly);
+  initEndlessWorkspace();
   if (!bridge) {
     $('bridge-notice').classList.remove('hidden'); $('core-label').textContent = 'Desktop preview'; $('core-note').textContent = 'Native actions need the desktop app';
     noData($('team-grid'), 'Open the desktop app to load your skill-linked team.'); noData($('project-list'), 'Create and save projects in the installed desktop app.'); noData($('key-rows'), 'Provider credentials are managed by the desktop app’s secure storage.');
@@ -3522,11 +3735,11 @@ function boot(): void {
   $('run-pause').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { const r = await bridge.pauseRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
   $('run-resume').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { const r = await bridge.resumeRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
   $('run-cancel').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { const r = await bridge.cancelRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
-  bridge?.onModeChanged((mode, url) => setMode(mode, url)); bridge?.onJobEvent(() => { if (activeView === 'models') void safeTask(refreshJobs); });
+  bridge?.onModeChanged((mode, url) => setMode(mode, url)); bridge?.onJobEvent(() => { if (workspaceSurfaceVisible('models')) void safeTask(refreshJobs); });
   bridge?.onProjectEvent((run) => {
     workspaceRuns = [run, ...workspaceRuns.filter((existing) => existing.id !== run.id)];
-    if (currentProject && run.projectId === currentProject.id) { currentRun = run; if (activeView === 'projects') renderRunDetail(); }
-    if (activeView === 'overview') renderOverview(); if (activeView === 'usage') renderUsage();
+    if (currentProject && run.projectId === currentProject.id) { currentRun = run; if (workspaceSurfaceVisible('projects')) renderRunDetail(); }
+    if (workspaceSurfaceVisible('overview')) renderOverview(); if (workspaceSurfaceVisible('usage')) renderUsage();
   });
   if (workspaceReadOnly()) {
     $('bridge-notice').classList.remove('hidden');

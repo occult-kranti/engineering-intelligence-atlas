@@ -1,4 +1,5 @@
 import { githubJson } from './githubImport';
+import { reviewExternalSources } from './sourceReview';
 
 export interface GitHubChange { path: string; content: string }
 export interface GitHubOperation {
@@ -55,7 +56,12 @@ export class GitHubService {
         // A repository can have no README. Other failures must remain visible.
         if (!(error instanceof Error && error.message.includes('HTTP 404'))) throw error;
       }
-      return { operation: 'snapshot', repository: identity, branch, headSha, description: typeof metadata.description === 'string' ? metadata.description.slice(0, 1000) : '', branches: branches.branches, readme, checkedAt: new Date().toISOString(), url: `${repoUrl}/tree/${headSha}` };
+      const description = typeof metadata.description === 'string' ? metadata.description.slice(0, 1000) : '';
+      const contentReview = reviewExternalSources([
+        { id: 'repository-description', kind: 'repository', text: description, truncated: typeof metadata.description === 'string' && metadata.description.length > 1000 },
+        ...(readme ? [{ id: 'repository-readme', kind: 'repository' as const, text: readme.content, truncated: readme.truncated }] : []),
+      ]);
+      return { operation: 'snapshot', repository: identity, branch, headSha, description, branches: branches.branches, readme, contentReview, checkedAt: new Date().toISOString(), url: `${repoUrl}/tree/${headSha}` };
     }
     if (request.operation === 'branches') {
       const branches: Array<{ name: string; sha: string; protected: boolean }> = [];

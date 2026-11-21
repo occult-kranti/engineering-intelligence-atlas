@@ -334,3 +334,22 @@ The final source `5b661e57a2ac68530e50a7f452d912f169495ef5` passed the full [Ver
 The release retains 74 public, 18 cloud-fixture and four packaged-desktop captures. Independent review confirmed the corrected saved message, goal and sync-state text, the compact mobile rooms, and the first-screen laptop composer. The final 1024×768 send-button bottom is 732.6875px; at 1280×720 it is 689.1875px. Two additional live public screenshots show Violet ownership and the Golden drafting roadmap with the released stylesheet `chrome.32a6e07447d920cd.css`.
 
 The cloud captures use synthetic records and do not establish an authenticated production session. The live private URL still presents its ChatGPT sign-in gate. Full screen-reader/forced-colors acceptance and every possible legacy state remain outside this targeted review. A narrow floating-launcher overlap and the difference between activity-scope people and shared leadership remain specific layout/copy follow-ups. [Full receipt and limitations](release-0.6.0.json).
+
+
+## 0.8.0 endless canvas palette — 2026-11-21
+
+The shared renderer and embedded website now use **Night office** (charcoal, moss and brass) and **Drafting paper** (warm paper and forest ink). The stable stored theme keys remain `blueprint` and `drafting`. The palette is defined in `desktop-shell/src/renderer/studio-tokens.css` and copied to the website by the renderer sync; panel bodies use sans-serif text and serif type is limited to display headings. Earlier tables above record historical releases, not these new values.
+
+The following ratios were recalculated from the new source tokens using the WCAG relative-luminance formula. These are specified-color checks. The real browser gate separately measures enabled rendered navigation, status and blueprint-description text; it remains a release gate.
+
+| Pair | Night office | Drafting paper |
+| --- | ---: | ---: |
+| Body / surface | 12.94:1 | 12.43:1 |
+| Muted / surface | 7.81:1 | 6.19:1 |
+| Muted / elevated | 6.64:1 | 4.74:1 |
+| Action label / accent | 13.00:1 | 9.08:1 |
+| Accent / surface | 11.76:1 | 8.91:1 |
+| Focus / elevated | 10.00:1 | 6.82:1 |
+| Strong boundary / surface | 3.98:1 | 3.28:1 |
+
+The selected action label remains paired with its accent fill. Workload heat keeps its five numeric levels and unknown hatch; it does not express employee quality. Tabletop blueprint thumbnails use recorded room geometry, dark green ink on warm paper, and explicit saved/omitted counts. The owner canvas inherits its palette from root tokens so system forced-color substitutions can reach panels instead of being overridden by body-level colors. HUD spacing, keyboard focus and panel reading scale are covered by the endless canvas browser checks.
