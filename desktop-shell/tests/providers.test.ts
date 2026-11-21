@@ -6,7 +6,10 @@ import {
   type AiSdkLike,
 } from '../src/main/providers';
 
-const KEY = '[redacted]';
+// Synthetic fixtures. KEY has no sk- prefix so native output redaction does not
+// rewrite it; SK_SHAPED is assembled at runtime from segments and is fake.
+const KEY = 'synthetic-fixture-credential-value-0001';
+const SK_SHAPED = ['s', 'k', '-', 'FAKEFIXTURE', '0123456789'].join('');
 
 function fakeResponse(body: unknown, ok = true, status = 200): Response {
   return { ok, status, json: async () => body } as unknown as Response;
@@ -47,6 +50,13 @@ describe('provider model discovery (live list calls, fake fetch)', () => {
     };
     await expect(listProviderModels('openai', KEY, fetchFn as typeof fetch)).rejects.toThrow(/\[redacted\]/);
     await expect(listProviderModels('openai', KEY, fetchFn as typeof fetch)).rejects.not.toThrow(new RegExp(KEY));
+    try {
+      await listProviderModels('openai', KEY, fetchFn as typeof fetch);
+      expect.unreachable();
+    } catch (err) {
+      expect(String(err)).not.toContain(KEY);
+      expect(String(err)).toContain('[redacted]');
+    }
   });
 });
 
@@ -111,6 +121,7 @@ describe('generateWithProvider (AI SDK, injected fake)', () => {
       expect.unreachable();
     } catch (err) {
       expect(String(err)).not.toContain(KEY);
+      expect(String(err)).toContain('[redacted]');
     }
   });
 
@@ -181,9 +192,9 @@ describe('Anthropic version-specific request shapes', () => {
 
 describe('sanitizeError', () => {
   it('redacts exact key and sk-* shaped strings', () => {
-    const err = sanitizeError(new Error(`bad key ${KEY} and [redacted]`), KEY);
+    const err = sanitizeError(new Error(`bad key ${KEY} and ${SK_SHAPED}`), KEY);
     expect(err.message).not.toContain(KEY);
-    expect(err.message).not.toContain('[redacted]');
+    expect(err.message).not.toContain(SK_SHAPED);
     expect(err.message).toContain('[redacted]');
   });
 });

@@ -154,8 +154,8 @@ export async function listProviderModels(
 
 /**
  * Version-specific Anthropic options. Sonnet 5.5 supports between_tools thinking
- * at medium effort; Opus 5.5 rejects between_tools (HTTP 400), so it gets
- * adaptive thinking... actually omit the thinking field and keep medium effort.
+ * at medium effort; Opus 5.5 rejects between_tools (HTTP 400), so it omits
+ * the thinking field entirely and keeps medium effort.
  * Unknown/older models receive nothing. Matching accepts the exact id or a
  * dash-separated dated suffix only, so e.g. `claude-opus-5-50` never matches.
  */
