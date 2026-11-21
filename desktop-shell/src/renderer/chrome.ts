@@ -1845,6 +1845,7 @@ function initCompanyHierarchy(): void {
   });
 }
 function renderWorker(): void {
+  renderCompanyHierarchy();
   const status = officeWorker;
   $('worker-status').textContent = !status ? 'Unavailable' : status.running ? 'Processing a job' : status.enabled ? 'Dispatcher enabled' : 'Dispatcher off';
   $('worker-status').className = `pill ${status?.enabled || status?.running ? 'ok' : 'neutral'}`;
@@ -2358,7 +2359,7 @@ async function ensureWorkspaceBlueprint():Promise<void>{
   try{await workspaceCommand({action:'ensure_blueprint',officeId:selectedOfficeId},'Office blueprint loaded.');}finally{blueprintLoading=false;}
 }
 function switchWorkspaceTab(name:string):void{
-  if(!['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(name))return;workspaceTab=name;
+  if(!['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(name))return;workspaceTab=name;if(ffBootSettled)ffSerializeUrl();
   document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]').forEach((button)=>{const active=button.dataset.workspaceTab===name;button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));button.tabIndex=active?0:-1;});
   document.querySelectorAll<HTMLElement>('.workspace-tab-panel').forEach((panel)=>panel.classList.toggle('hidden',panel.id!==`workspace-panel-${name}`));
   renderUnifiedWorkspace();
@@ -2466,7 +2467,7 @@ function portfolioState():OfficePortfolio|undefined{return officeState?.portfoli
 function portfolioCompanies():OfficeCompany[]{return(officeState?.companies||[]).filter(company=>company.id!==portfolioState()?.ceo.sharedServicesCompanyId).sort((a,b)=>a.name.localeCompare(b.name));}
 function portfolioReady():boolean{return workspaceAvailable()&&Boolean(portfolioState());}
 function setPortfolioOpen(open:boolean):void{
-  portfolioOpen=open;if(open)ffOperations=true;$('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open);$('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').classList.toggle('return-arrow',open);
+  portfolioOpen=open;if(open)ffOperations=true;if(ffBootSettled)ffSerializeUrl();$('ceo-panel').classList.toggle('hidden',!open);$('company-workspace').classList.toggle('hidden',open);$('ceo-toggle').setAttribute('aria-expanded',String(open));$('ceo-toggle-arrow').classList.toggle('return-arrow',open);
   const label=$('ceo-toggle').querySelector('strong');if(label)label.textContent=open?'Back to company workspace':'CEO office';if(open)renderPortfolio();syncDonnaDock();
 }
 function portfolioNavigation(label:string,companyId:string,tab='chat',kind='text-button',officeId?:string,departmentId?:string):HTMLButtonElement{
@@ -2967,6 +2968,7 @@ function initStudio():void{
 }
 
 // ---------------------------------------------------------------- Freeflow host
+let ffBootSettled = false;
 let ffStudio: Studio | null = null;
 let ffFocus: FreeflowFocus = { kind: 'portfolio' };
 let ffOperations = false;
@@ -3219,6 +3221,7 @@ function ffAction(action: StudioActionKind, ctx: StudioActionContext): void {
 function ffRevealComposer(): void {
   donnaDockOpen = true; ffOperations = false; ffApplyMode();
   workspaceTab = workspaceTab === 'chat' ? 'blueprint' : workspaceTab;
+  if (ffBootSettled) ffSerializeUrl();
   syncDonnaDock();
   const box = $('chat-message') as HTMLTextAreaElement; box.focus();
 }
@@ -3284,8 +3287,8 @@ function ffActionConfirmed(action: StudioActionKind, ctx: StudioActionContext): 
       setStatus($('chat-status'), target.message || '');
       break;
     }
-    case 'roadmap': ffOperations = true; ffApplyMode(); setPortfolioOpen(false); switchWorkspaceTab('timeline'); break;
-    case 'whiteboard': toWorkspace('whiteboard', 'whiteboard-add-node'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } break;
+    case 'roadmap': ffOperations = true; ffApplyMode(); setPortfolioOpen(false); switchWorkspaceTab('timeline'); ffSerializeUrl(); break;
+    case 'whiteboard': toWorkspace('whiteboard', 'whiteboard-add-node'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } ffSerializeUrl(); break;
     case 'ownership': {
       if (ctx.employeeId && !ctx.boardId) {
         if (!officeState?.employees.some((e) => e.id === ctx.employeeId)) { setStatus($('workspace-action-status'), 'That employee is no longer in the workspace.', 'error'); break; }
@@ -3368,8 +3371,8 @@ function boot(): void {
   void safeTask(async()=>{
     await refreshWorkspace();
     if(!officeState&&bridge?.officeSnapshot)await refreshOffice();
-    if(deepLinkFocus.kind!=='portfolio')await ffTransitionScope(deepLinkFocus,null);
-    else ffCanonicalizeUrl();
+    try{if(deepLinkFocus.kind!=='portfolio')await ffTransitionScope(deepLinkFocus,null);}
+    finally{ffBootSettled=true;ffCanonicalizeUrl();}
   });
 }
 boot();

@@ -51,8 +51,10 @@ await click('office-tab-overview');await submit('office-import-form');check(fixt
 
 // Unified conversation, budget policy, and saved spatial ownership.
 await click('header-new-goal');check(d.activeElement===el('chat-message'),'new goal focuses the shared conversation');
+check(el('chat-scope').value==='office','New goal inherits office focus');
+await change('chat-scope','company');const preChat=commands().length;
 set('chat-message','Review release evidence <img src=x onerror=alert(1)>');await submit('workspace-chat-form');
-check(commands().some(c=>c.args.action==='post_chat'&&c.args.scope.kind==='company'),'chat retains explicit company scope');
+check(commands().slice(preChat).some(c=>c.args.action==='post_chat'&&c.args.scope.kind==='company'&&c.args.scope.id==='fixture-company'),'chat retains explicit company scope');
 check(lastCommand()?.action==='plan_goal','plan-only creates a persisted local plan');
 check(el('conversation-messages').textContent.includes('Local planning'),'local planner provenance visible');
 check(!el('conversation-messages').querySelector('img'),'untrusted chat content stays text');
@@ -263,8 +265,44 @@ hdoc.getElementById('workspace-heat-mode').value='attention';hdoc.getElementById
 check(hw2.localStorage.getItem('daftar-studio-heat')==='attention','heat preference persists');
 hdoc.getElementById('ff-nav-table').click();await flush();
 const q1=new hw2.URL(hw2.location.href).searchParams;check(!q1.has('workspace')&&!q1.has('ceo')&&!q1.has('company'),'Conference table clears mode and company parameters');
+hdoc.getElementById('ff-nav-roadmap').click();await flush();
+hdoc.querySelector('[data-workspace-tab="whiteboard"]').click();await flush();
+check(new hw2.URL(hw2.location.href).searchParams.get('workspace')==='whiteboard','legacy whiteboard tab serializes workspace=whiteboard');
+hdoc.getElementById('ceo-toggle').click();await flush();
+const qc=new hw2.URL(hw2.location.href).searchParams;check(qc.get('ceo')==='true'&&!qc.has('workspace'),'CEO open serializes ceo=true only');
+hdoc.getElementById('ceo-toggle').click();await flush();
+check(new hw2.URL(hw2.location.href).searchParams.get('workspace')==='whiteboard','CEO close records resulting workspace');
+const rl=await makeDom(true,undefined,'?company=fixture-company&workspace=whiteboard');check(rl.window.document.querySelector('[data-workspace-tab="whiteboard"]').getAttribute('aria-selected')==='true','reload from serialized URL opens whiteboard');rl.window.close();
 hd2.window.close();
 const ceoq=await makeDom(true,undefined,'?ceo=true');const cw=ceoq.window;cw.document.getElementById('ff-nav-table').click();await flush();
 check(!new cw.URL(cw.location.href).searchParams.has('ceo'),'Conference table clears CEO mode');ceoq.window.close();
+}
+// Company hierarchy form.
+{
+const pd=await makeDom(true);const pw=pd.window,pdoc=pw.document,pf=pw.__atlasFixture;const pel=(i)=>pdoc.getElementById(i);
+pdoc.querySelector('.nav-item[data-view="office"]').click();await flush();
+check(!!pel('company-parent-form')&&!!pel('company-parent-select')&&!!pel('company-parent-submit'),'parent form elements exist');
+check(pdoc.querySelector('label[for="company-parent-select"]')!==null,'parent select has a visible label');
+check(!Array.from(pel('company-parent-select').options).some(o=>o.value==='fixture-company'),'self absent from parent options');
+const pcalls=()=>pf.calls.filter(c=>c.name==='officeCommand'&&c.args.action==='set_company_parent');
+const before=pcalls().length;
+const other=Array.from(pel('company-parent-select').options).find(o=>o.value);
+if(other){pel('company-parent-select').value=other.value;pel('company-parent-select').dispatchEvent(new pw.Event('change',{bubbles:true}));await flush();check(pcalls().length===before,'choosing a parent alone sends no command');}
+pel('company-parent-form').dispatchEvent(new pw.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();
+check(pcalls().length===before+1&&pcalls()[before].args.companyId==='fixture-company','explicit submit sends one set_company_parent for the selected child');
+pd.window.close();
+const pub=await makeDom(true,'public-preview');pub.window.document.querySelector('.nav-item[data-view="office"]').click();await flush();
+pub.window.document.getElementById('company-parent-form').dispatchEvent(new pub.window.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();
+check(pub.window.__atlasFixture.calls.filter(c=>c.name==='officeCommand'&&c.args.action==='set_company_parent').length===0,'public preview submit makes zero commands');pub.window.close();
+}
+// Parent portal label via describeNode.
+{
+const lw=(await makeDom(true)).window;const loader=createModuleLoader(lw,rendererRoot);const sc=loader.run('freeflow/scene.js');
+const base={id:'x',kind:'reference',entityId:'e',companyId:'c',parentId:null,label:'Synthetic',subtitle:'Parent company (organizational link)',status:'portal',rect:{x:0,y:0,width:1,height:1},counts:{}};
+const portal=sc.describeNode({...base,metadata:{portal:true,role:'parent',organizational:true}});
+check(portal.startsWith('Parent company link')&&!portal.includes('Contracted staff'),'org parent portal announces company relationship');
+const staff=sc.describeNode({...base,subtitle:'Reviewer',status:'contracted',employeeId:'emp',contractId:'k',metadata:{reference:true}});
+check(staff.startsWith('Contracted staff reference'),'real contract reference keeps staff label');
+lw.close();
 }
 console.log(JSON.stringify({suite:'renderer pure-DOM interaction',checks,passed:true,fixtureOnly:true,networkCalls:0,providerCalls:0,visualVerification:false},null,2));

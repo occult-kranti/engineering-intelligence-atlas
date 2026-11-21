@@ -74,7 +74,16 @@ function countsText(n: SceneNode): string {
 }
 
 export function describeNode(n: SceneNode): string {
-  const bits = [n.kind === 'reference' ? 'Contracted staff reference' : n.kind, n.label];
+  const md = n.metadata || {};
+  let prefix: string = n.kind;
+  if (n.kind === 'reference') {
+    if (md['organizational'] === true || md['portal'] === true) prefix = md['role'] === 'parent' ? 'Parent company link' : md['role'] === 'child' ? 'Subcompany link' : 'Company link';
+    else if (md['globalAssistant'] === true) prefix = 'Global assistant reference';
+    else if (md['serviceHost'] === true || md['layoutOnly'] === true) prefix = 'Service host reference';
+    else if (n.employeeId || n.contractId) prefix = 'Contracted staff reference';
+    else prefix = 'Reference';
+  }
+  const bits = [prefix, n.label];
   if (n.subtitle) bits.push(n.subtitle);
   if (n.status) bits.push(`status ${n.status}`);
   const c = countsText(n);
