@@ -353,3 +353,92 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Returned:** Created both companies through native commands; zero-mutation replay passed. Saved roadmaps, source knowledge, first-cycle draft goals and scoped handoffs; matched native/cloud projections and private directory. Corrected the static compiler failure found by CI. Released 0.6.1 from 600d5fc after all seven jobs, release and Pages passed; deployed matching private Site, verified downloaded digests and independently checked private export/restore. No new provider calls or external social actions.
 - **Evidence:** project/COMPANY_KITS.md; project/release-0.6.1.json; project/VALIDATION.md
 - **Next handoff:** Run the newly requested Windows-first freeflow redesign through Donna/Director and the native agent platform; preserve this release and private records.
+
+## 045 · Cloud architecture and Vast/VPS researcher · complete
+
+- **Ask:** Evaluate an always-on Daftar runtime on a VPS or Vast, with website, desktop and ChatGPT access.
+- **Expected return:** Source-grounded deployment choices, GPU/storage/billing constraints, sizing and practical connection routes.
+- **Returned:** Recommended one CPU VPS authority with optional Vast GPU capacity. Audited actual repository boundaries, current OpenAI plugin/tunnel/authentication routes, provider gaps, state ownership and migration requirements. Added a complete architecture and phased acceptance plan; no cloud rental or account connection was made.
+- **Evidence:** project/CLOUD_RUNTIME_PLAN.md; tools/DAFTAR_RUNTIME_MCP.md
+- **Next handoff:** Select the deployment host after the development branch and container gate are reviewed; verify account-specific ChatGPT capabilities.
+
+## 046 · Headless runtime and deployment engineers · complete
+
+- **Ask:** Make the existing native office and provider workers runnable without the desktop, and package the result for a private Linux host.
+- **Expected return:** Reusable native-backed daemon, durable command receipts, persistent artifacts, paused startup and Docker/systemd operator instructions.
+- **Returned:** Implemented the private HTTP runtime, secret-file adapters, portable TypeScript build, Docker Compose/systemd pack and operator helpers. Thirteen runtime tests passed, including real native mutation replay and injected-provider execution. Provider credentials and synthetic usage were kept separate; no live model call occurred.
+- **Evidence:** headless-runtime/README.md; headless-runtime/runtime.mjs; headless-runtime/test/runtime.test.mjs; deploy/README.md; deploy/Dockerfile; deploy/compose.yaml
+- **Next handoff:** Run the remote container gate and an isolated host acceptance before migrating private workspace state.
+
+## 047 · MCP integration and cancellation reviewer · complete
+
+- **Ask:** Expose meaningful owner control through MCP and check asynchronous pause behavior before enabling remote execution.
+- **Expected return:** Bounded metadata and owner actions, no internal worker privileges, correct mutation replay and cancellation regression coverage.
+- **Returned:** Implemented five stdio runtime tools with 17 passing tests. Found and fixed a shared worker pause race before provider dispatch; four regression cases brought the worker suite to 47 passing tests. Documented that an already-entered managed GitHub action can still finish after a pause.
+- **Evidence:** tools/daftar-runtime-mcp.mjs; tools/daftar-runtime-mcp.test.mjs; desktop-shell/src/main/officeWorker.ts; desktop-shell/tests/office-worker.test.ts; project/CLOUD_RUNTIME_VALIDATION.md
+- **Next handoff:** Connect the private stdio bridge through a supported Desktop or Secure MCP Tunnel route; treat public multi-user OAuth and per-company authorization as additional work.
+
+## 048 · Director / integration verifier · complete
+
+- **Ask:** Reconcile the research and implementations with actual tests, explicit limits and an isolated review branch.
+- **Expected return:** End-to-end native-backed evidence, reproducible CI, accurate documentation and preservation of the current release/private website.
+- **Returned:** Verified 117 distinct test cases and nine real stdio-to-HTTP-to-Rust smoke checks, including daemon independence and durable replay across restart. Added focused runtime/container CI, updated roadmap/handoff and recorded the deployment limits. Docker was unavailable locally; remote image/boot evidence is a separate gate. No paid resource, real provider request or private-state migration was performed.
+- **Evidence:** scripts/smoke-runtime-mcp.mjs; .github/workflows/headless-runtime.yml; project/CLOUD_RUNTIME_VALIDATION.md; ROADMAP.md; HANDOFF.md
+- **Next handoff:** Review feat/cloud-runtime-mcp, pass the container gate, then implement the explicit Sites runtime-device/secret adapter and desktop remote mode before claiming all interfaces share a production execution authority.
+
+
+## 049 · Director / Freeflow integration · complete
+
+- **Ask:** Unite the existing Sonnet Freeflow branch with the native cloud foundation, preserve private data and push the integrated upgrade.
+- **Returned:** Merged the two workstreams; added explicit company/subdepartment topology, reviewed shared-service boundaries, updated product/design truth and prepared 0.7.0 packages.
+- **Evidence:** PRODUCT.md; DESIGN.md; project/FREEFLOW_VALIDATION.md; project/RELEASE_NOTES.md
+- **Next handoff:** Required external CI gates and exact production receipts control release claims.
+
+## 050 · Freeflow renderer and accessibility · complete
+
+- **Ask:** Improve conference-table framing, movement, Donna controls, visitor masking and nested departments.
+- **Returned:** Added optional auto/edge pan, bounded ancestry and member canvas, model manager UI, legible small-table framing and a separate camera-control lane. Large company/deep department cases and renderer interactions passed; browser launch limitations are recorded separately.
+- **Evidence:** desktop-shell/src/renderer/freeflow/; desktop-shell/src/renderer/model-pool.ts; scripts/smoke-cloud-ui.mjs
+- **Next handoff:** Keep camera/list/keyboard behavior and reduced-motion settings together when evolving the scene.
+
+## 051 · Collaboration and authority reviewers · complete
+
+- **Ask:** Implement visiting-employee membership, owner dashboards and nested-department authority without cross-company leaks.
+- **Returned:** People & access, visiting office, join review and restricted projections; fixed revocation-during-read, owner-deactivation admission and concurrent ACL edits. Native department forest and affected-parent checks passed 95 Rust tests; cloud suite passed 98 tests.
+- **Evidence:** cloud-workspace/app/access/; cloud-workspace/app/visit/; cloud-workspace/app/join/; native-core/src/department_hierarchy.rs; native-core/src/authority.rs
+- **Next handoff:** Site-level audience and company membership remain distinct permissions; do not infer inheritance from visual parents.
+
+## 052 · VPS models and cloud-device integration · complete
+
+- **Ask:** Share local model weights across scoped employees and support an optional persistent headless website writer.
+- **Returned:** Durable shared pull/assignment registry, verified digests, local-only Ollama enforcement, encrypted cloud-device adapter and optional Compose profiles. External GPU rentals, downloads and live pairings were not performed.
+- **Evidence:** desktop-shell/src/main/modelPool.ts; headless-runtime/cloud-sync.mjs; deploy/MODEL_POOL.md; deploy/CLOUD_DEVICE_SYNC.md
+- **Next handoff:** Validate the chosen host and model sizing with explicit infrastructure accounting; preserve first-connect hash/writer checks.
+
+## 053 · Sonnet code engineer / observer review · complete
+
+- **Ask:** Author a bounded permanent ledger/index observer and tests with no recurring model cost.
+- **Returned:** Configured Sonnet authored the function and initial tests in the private Donna conversation. Integration review corrected invalid-calendar/time bounds, long-ID comparison and heartbeat handling. The runtime checks deterministically once per minute and alongside native responses; diagnostics cannot invalidate saved commands.
+- **Evidence:** desktop-shell/src/shared/office-observer.ts; desktop-shell/tests/office-observer.test.ts; desktop-shell/src/main/office.ts
+- **Next handoff:** Treat findings as diagnostic evidence, not permission to repair state or call a provider.
+
+## 054 · Portfolio hierarchy reconciler · complete
+
+- **Ask:** Represent saved repositories as parent/child companies while keeping custom ownership and existing records.
+- **Returned:** Private-plan-first CLI with complete forest preflight, native CAS/receipts and zero-change replay. Twelve tests cover missing IDs, cycles, ambiguous groups, record preservation, lost responses and private output boundaries. Applied against the private owner copy; native-backed export/restore verification preserved its full projection.
+- **Evidence:** scripts/reconcile-company-hierarchy.mjs; scripts/reconcile-company-hierarchy.test.mjs; project/FREEFLOW_VALIDATION.md
+- **Next handoff:** Restore a matching baseline and establish the authorized writer before synchronizing structural edits to an existing Site.
+
+## 055 · Independent release and sync review · complete
+
+- **Ask:** Verify generated assets, backup recovery and publication gates before shipping the integrated release.
+- **Returned:** Confirmed renderer/static asset parity and version consistency. Reproduced and fixed two same-device cloud overwrite paths, preserving exact-state lost-acknowledgment recovery; independent reproductions now perform zero writes. Made real headless/container verification a required installer-release dependency. Final desktop and headless/MCP suites passed 503 and 55 tests respectively. Published and observed the owner-private Site without changing its audience or memberships.
+- **Evidence:** desktop-shell/src/main/cloudSync.ts; desktop-shell/tests/cloud-sync.test.ts; headless-runtime/test/cloud-sync.test.mjs; .github/workflows/ci.yml; project/FREEFLOW_VALIDATION.md
+- **Next handoff:** GitHub release checks and real host/device acceptance retain their explicit evidence gates.
+
+## 056 · Cross-platform CI correction · complete
+
+- **Ask:** Resolve observed container, mobile browser and Windows packaged-boot failures before release.
+- **Returned:** Corrected BuildKit context pruning and added a protected-secrets rebuild gate; targeted explicit navigable mobile fixtures; used retained Windows boot stages to remove an unnecessary eager appData lookup. Preserved test assertions, profile isolation and secret permissions. Local desktop suite passed 504 tests after the Windows correction.
+- **Evidence:** .dockerignore; .github/workflows/headless-runtime.yml; scripts/freeflow-browser-checks.mjs; desktop-shell/src/main/profileMigration.ts; desktop-shell/tests/profile-migration.test.ts
+- **Next handoff:** Require the corrected candidate's full GitHub CI and main release run; initial failures are retained in run44944163515.

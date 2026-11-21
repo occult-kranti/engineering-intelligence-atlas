@@ -1,23 +1,25 @@
-# Atlas design system
+# Daftar design system
 
 ## Direction
 
-An editorial engineering workspace: warm white surfaces, deep ink text, precise evergreen accents, measured spacing, fine rules, and clear functional density. The identity is a map of evidence and connected specialist work. Use typographic hierarchy and a small topology motif rather than decorative dashboards or invented metrics.
+A game-like operating studio built around a conference table, company seats, department rooms, employee roles and connected work. The interface makes ownership legible through position, labels and navigation. It keeps real work, permissions and evidence visible without turning stored definitions into fabricated activity.
 
 ## Surfaces
 
-- **Desktop workspace — Operate.** Stable left rail; company identity above navigation; active work and one primary action first. Overview, Projects, Team, Roadmap, Usage, Library, Models, Settings are distinct destinations.
-- **Public atlas — Read.** Preserve source-linked evidence and all existing chapters. Add a coherent release/workspace entry and clear paths into the research library.
-- **Director — Operate.** Keep the existing project/graph/run/approval workflow. Static builds explain where the server boundary lies and link to actual supported entry points.
+- **Conference table:** companies occupy seats. Pan, zoom, rotate, fit and optional automatic browsing let the same view scale from a small team to a large portfolio. Keyboard and list alternatives remain available.
+- **Company office:** offices, nested departments, employees, goals, roadmaps and whiteboards share saved identities. Connections describe actual relationships. Parent relations do not imply inherited authority.
+- **Donna:** a movable, keyboard-operable conversation panel with scope, position, connection and access options. Drafts survive view changes; saved work remains scoped.
+- **People & access:** owner controls show the exact company, person, role and expiry. Visiting employees see only permitted projections; restricted areas use grey/black treatment with a clear unavailable label.
+- **Models & system:** show downloaded models, progress, shared receipts and employee assignments. Never show configured infrastructure as verified healthy.
 
-## Foundations
+## Visual foundations
 
-- Paper `#f6f7f4`; raised surface `#ffffff`; ink `#17251f`; secondary ink `#53645b`; rules `#dce4dd`; accent `#22674b`; accent tint `#e7f0e9`.
-- Serif display headings sparingly; Manrope/system sans for interface text; tabular numerals for counts and cost.
-- Spacing unit 4 px; main groups 24–32 px; controls at least 40–44 px; radius 8–12 px for meaningful groups.
-- Avoid deep nested panels, rainbow category colors, decorative gradients, fake live telemetry, and text-heavy setup panels on the home screen.
-- Motion communicates navigation or progress. Respect reduced motion. Keep keyboard focus visible; label every form input and icon-only control.
+Violet studio and Golden drafting are the supported themes. Shared tokens in desktop-shell/src/renderer/studio-tokens.css are authoritative. Violet combines dark ink-violet surfaces and an electric green action accent; Golden uses ivory drawing surfaces, warm ink and gold details. Use serif display headings sparingly, clear interface text, tabular numbers, fine rules and strong focus outlines.
 
-## State and performance
+Keep text readable at the default scene scale, controls at least 40–44px where layout allows, and labels close to the object they describe. Restriction states, ownership and selected states use text as well as color. Empty, loading, unknown, unavailable, failed and connected states remain distinct.
 
-Loading, empty, unknown, unavailable, failed, and connected are separate states. Aggregate usage from persisted runs only. Charts include text equivalents. Bound rendered lists and repository traversal. Keep long research chapters accessible without blocking initial navigation; code-split heavy routes. Do one complete visual sweep, fix the observed issues in a batch, then confirm once.
+## Motion and performance
+
+Motion communicates navigation and progress. Auto-pan is opt-in and pauses on interaction, blur or tab hiding; reduced-motion preference suppresses automatic movement. Edge pan and camera gestures must not steal text input or focus. Virtualize scene nodes, cap rendered lists, and bound deep hierarchy labels without discarding descendants.
+
+Perform a baseline review, one full visual sweep, one grouped correction and one confirmation. Functional regression tests cover larger scenes and permission races separately from screenshots.

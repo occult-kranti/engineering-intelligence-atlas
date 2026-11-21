@@ -137,6 +137,14 @@ try {
       if (!['GET', 'HEAD'].includes(request.method())) errors.push(`Read-only preview attempted ${request.method()} ${request.url()}`);
     });
     await page.goto(`${base}desktop-preview/chrome.html`, { waitUntil: 'networkidle' });
+    // Default URL (no workspace=blueprint): Freeflow must be the visible first surface.
+    await page.locator('#freeflow-host').waitFor({ state: 'visible' });
+    await page.locator('#freeflow-surface').waitFor({ state: 'visible' });
+    assert(await page.locator('#freeflow-host').count() === 1, 'Freeflow host must be mounted exactly once.');
+    assert(await page.locator('#office-native-status').isHidden(), 'Legacy status must be hidden while Freeflow is the default surface.');
+    interactionChecks.push(`Freeflow ${viewport.width}: host visible first on the default URL with the legacy surface hidden`);
+    // Switch through the real, visible Operations / Manage control; never force hidden clicks.
+    await page.locator('#ff-nav-operations').click();
     await page.locator('#office-native-status').filter({ hasNotText: 'Checking' }).waitFor({ state: 'visible' });
     const capture = async (route, surface = 'desktop', fullPage = false) => {
       // Let the application's transient status finish naturally; do not hide
@@ -314,13 +322,18 @@ try {
   }
   // A brief must be reachable in the first laptop viewport, without scrolling
   // past the scope controls. These sizes cover the new compact command deck.
-  for (const viewport of [{width:1280,height:720},{width:1024,height:768}]) {
+  for (const viewport of [{width:1280,height:720},{width:1024,height:768}]) for (const presentation of ['blueprint','drafting']) {
     const context=await browser.newContext({viewport,reducedMotion:'reduce'});
+    await context.addInitScript(p=>{try{localStorage.setItem('daftar-studio-theme',p);}catch{}},presentation);
     const page=await context.newPage();
     await page.goto(`${base}desktop-preview/chrome.html?workspace=chat#office`,{waitUntil:'networkidle'});
     await page.locator('#chat-send').waitFor({state:'visible'});
+    const actualTheme=await page.evaluate(()=>document.documentElement.getAttribute('data-theme'));
+    assert(actualTheme===presentation,`Requested ${presentation} theme but DOM data-theme is ${actualTheme} at ${viewport.width}x${viewport.height}`);
+    await page.evaluate(()=>document.fonts&&document.fonts.ready);
+    await page.evaluate(()=>new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r))));
     const box=await page.locator('#chat-send').boundingBox();
-    const filename=`workspace-first-brief-${viewport.width}.png`;
+    const filename=`workspace-first-brief-${presentation}-${viewport.width}.png`;
     // Retain the actual first viewport even when its acceptance check fails.
     // Reading geometry does not scroll, focus, or change the rendered layout.
     await page.screenshot({path:join(screenshotRoot,filename)});
@@ -329,9 +342,11 @@ try {
       ['scope','.office-scope'],['locator','.workspace-locator'],['tabs','.workspace-control-bar'],
       ['conversation','#donna-conversation'],['composer','#workspace-chat-form'],['composerContext','#workspace-chat-form .composer-context'],
       ['message','#chat-message'],['composerFooter','#workspace-chat-form .composer-footer'],
-    ].map(([name,selector])=>{const node=document.querySelector(selector);if(!node)return[name,null];const rect=node.getBoundingClientRect(),style=getComputedStyle(node);return[name,{x:rect.x,y:rect.y,width:rect.width,height:rect.height,bottom:rect.bottom,display:style.display,gridColumns:style.gridTemplateColumns,rowGap:style.rowGap,padding:style.padding,margin:style.margin}];}))}));
-    writeFileSync(join(screenshotRoot,`workspace-first-brief-${viewport.width}.json`),JSON.stringify({viewport,sendButton:box,layout,completedContrastChecks:contrastChecks},null,2)+'\n');
-    screenshots.push({file:filename,surface:'workspace',route:'first-brief',width:viewport.width});
+      ['send','#chat-send'],['freeflowSurface','#freeflow-surface'],['surfaceBar','.ff-surface-bar'],['heatControls','#ff-heat-controls'],
+    ].map(([name,selector])=>{const node=document.querySelector(selector);if(!node)return[name,null];const rect=node.getBoundingClientRect(),style=getComputedStyle(node);return[name,{x:rect.x,y:rect.y,width:rect.width,height:rect.height,bottom:rect.bottom,display:style.display,visibility:style.visibility,opacity:style.opacity,overflow:style.overflow,gridColumns:style.gridTemplateColumns,rowGap:style.rowGap,padding:style.padding,margin:style.margin}];})),overflowX:document.documentElement.scrollWidth>document.documentElement.clientWidth,theme:document.documentElement.getAttribute('data-theme'),bodyClass:document.body.className}));
+    writeFileSync(join(screenshotRoot,`workspace-first-brief-${presentation}-${viewport.width}.json`),JSON.stringify({presentation,viewport,sendButton:box,layout,completedContrastChecks:contrastChecks},null,2)+'\n');
+    screenshots.push({file:filename,surface:'workspace',route:'first-brief',width:viewport.width,presentation});
+    assert(layout.scroll.x===0&&layout.scroll.y===0&&!layout.overflowX,`No scroll or horizontal overflow expected at ${presentation}/${viewport.width}: ${JSON.stringify({scroll:layout.scroll,overflowX:layout.overflowX})}`);
     assert(box&&box.y>=0&&box.y+box.height<=viewport.height,`Donna composer must fit first laptop viewport ${viewport.width}: ${JSON.stringify(box)}`);
     checked++;
     await context.close();

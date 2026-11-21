@@ -4,6 +4,7 @@ import { CompanyError, executeNativeCore, type NativeRequest } from './company';
 import { discoverPublicRepositories, discoverOwnedRepositories } from './githubImport';
 import { GitHubService, type GitHubOperation } from './githubService';
 import { repositoryReviewSchedules } from './repositoryMaintenance';
+import { observeSnapshot, type OfficeObservation } from '../shared/office-observer';
 
 export interface OfficeServiceOptions {
   userDataPath: string;
@@ -42,7 +43,26 @@ export function assertWorkerCapability(snapshot: OfficeSnapshot, job: OfficeJob,
 /** One native state file is shared by the desktop and headless MCP worker. */
 export class OfficeService {
   private queue: Promise<unknown> = Promise.resolve();
+  private observerTimer: ReturnType<typeof setInterval> | null = null;
+  private observerPending = false;
+  private lastObservation: OfficeObservation | null = null;
   constructor(private readonly options: OfficeServiceOptions) {}
+  observerStatus(): OfficeObservation | null { return this.lastObservation; }
+  startObserving(): void {
+    if (this.observerTimer) return;
+    const check = () => {
+      if (this.observerPending) return;
+      this.observerPending = true;
+      void this.officeSnapshot().finally(() => { this.observerPending = false; });
+    };
+    this.observerTimer = setInterval(check, 60_000);
+    this.observerTimer.unref();
+    check();
+  }
+  stopObserving(): void {
+    if (this.observerTimer) clearInterval(this.observerTimer);
+    this.observerTimer = null;
+  }
   private async native(command: 'office_snapshot' | 'office_command', payload?: unknown): Promise<OfficeResult> {
     try {
       if (!this.options.binaryPath) throw new CompanyError('Rust core is not built. Run npm run build:native or use the complete desktop package.', 'CORE_UNAVAILABLE');
@@ -50,7 +70,9 @@ export class OfficeService {
       const snapshot = this.options.execute
         ? await this.options.execute(this.options.binaryPath, request)
         : await executeNativeCore<OfficeSnapshot>(this.options.binaryPath, request);
-      return { ok: true, snapshot };
+      try { this.lastObservation = observeSnapshot(snapshot); }
+      catch { this.lastObservation = { checkedAt: new Date().toISOString(), modelCalls: 0, health: 'attention', issues: [{ code: 'observer_unavailable', count: 1 }] }; }
+      return { ok: true, snapshot, observer: this.lastObservation };
     } catch (error) {
       return { ok: false, snapshot: null, error: error instanceof CompanyError ? error.message : 'Office operation failed; existing state was preserved.', code: error instanceof CompanyError ? error.code : 'OFFICE_ERROR' };
     }

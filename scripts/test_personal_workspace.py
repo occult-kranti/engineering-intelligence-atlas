@@ -107,5 +107,34 @@ class PersonalWorkspaceTests(unittest.TestCase):
         self.assertFalse(fresh.exists())
         self.assertFalse((self.root / 'escaped.md').exists())
 
+class FileUriCanonicalizationTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('atlas_restore_under_test', SCRIPTS / 'restore-personal-workspace.py')
+        cls.restore = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.restore)
+
+    def test_encoded_and_unencoded_tilde_are_equivalent(self):
+        py = 'file:///C:/Users/RUNNER~1/AppData/office-artifacts/' + 'a' * 64 + '.md'
+        node = 'file:///C:/Users/RUNNER%7E1/AppData/office-artifacts/' + 'a' * 64 + '.md'
+        self.assertEqual(self.restore.canonical_file_uri(py), self.restore.canonical_file_uri(node))
+        new = 'C:/new/office-artifacts/' + 'a' * 64 + '.md'
+        state = {'a': node, 'b': [py], 'note': 'see ' + node + ' for details'}
+        result = self.restore.remap_references(state, {py: new})
+        self.assertEqual(result['a'], new)
+        self.assertEqual(result['b'], [new])
+        self.assertEqual(result['note'], 'see ' + node + ' for details')
+
+    def test_unrelated_local_and_remote_references_are_untouched(self):
+        py = 'file:///C:/Users/RUNNER~1/x/' + 'a' * 64 + '.md'
+        other = 'file:///C:/Users/RUNNER~1/x/' + 'b' * 64 + '.md'
+        unc = 'file://server/share/x/' + 'a' * 64 + '.md'
+        https = 'https://example.com/C:/Users/RUNNER~1/x/' + 'a' * 64 + '.md'
+        result = self.restore.remap_references([other, unc, https], {py: '/new/a.md'})
+        self.assertEqual(result, [other, unc, https])
+        self.assertIsNone(self.restore.canonical_file_uri(unc))
+        self.assertIsNone(self.restore.canonical_file_uri(https))
+
 if __name__ == '__main__':
     unittest.main()

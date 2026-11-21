@@ -1,0 +1,11 @@
+# Apply only on an already-provisioned NVIDIA host with Container Toolkit.
+# This reserves an existing device; it does not rent a GPU.
+services:
+  ollama:
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

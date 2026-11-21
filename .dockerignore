@@ -1,0 +1,38 @@
+# Allow only the inputs used by deploy/Dockerfile into the build context.
+# Keep exceptions literal or ending in /**: embedded globs disable BuildKit's
+# directory pruning and can make an excluded 0700 secrets directory unreadable.
+# Parent directories are included automatically for these allowed descendants.
+**
+!deploy/Dockerfile
+!deploy/ollama.Dockerfile
+!deploy/healthcheck.mjs
+!deploy/runtime-request.mjs
+!headless-runtime/cloud-sync.mjs
+!headless-runtime/contract.mjs
+!headless-runtime/runtime.mjs
+!headless-runtime/secrets.mjs
+!headless-runtime/server.mjs
+!headless-runtime/tsconfig.json
+!desktop-shell/package.json
+!desktop-shell/package-lock.json
+!desktop-shell/tsconfig.json
+!desktop-shell/src/**
+!native-core/Cargo.toml
+!native-core/Cargo.lock
+!native-core/src/**
+!company/**
+!tools/atlas-mcp.mjs
+!tools/daftar-runtime-mcp.mjs
+
+# These exclusions apply even if an allowed directory later contains a secret.
+**/.env
+**/.env.*
+**/*.key
+**/*.pem
+deploy/secrets
+deploy/secrets/**
+**/secrets
+**/secrets/**
+**/node_modules
+**/target
+**/dist

@@ -13,6 +13,16 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
+## Freeflow studio and private runtimes — 0.7.0
+
+Company seats now form an interactive conference table with pan, zoom, perspective, automatic browsing and a keyboard/list alternative. Company and subdepartment relationships are explicit and cycle-checked. Donna's movable panel retains scoped conversations and adds docking, position lock/reset, connection and access options.
+
+The private website adds **People & access**, **Visiting office**, and invitation review. Visitor canvases use restricted server projections; membership expiry, revocation, concurrent edits and owner deactivation are enforced at the mutation boundary. Parent companies do not inherit access to their children.
+
+The [headless runtime](headless-runtime/README.md), [VPS deployment pack](deploy/README.md), [encrypted cloud-device sync](deploy/CLOUD_DEVICE_SYNC.md) and [nine-tool MCP adapter](tools/DAFTAR_RUNTIME_MCP.md) let a configured Linux host run the native office independently of a laptop. The [shared model pool](deploy/MODEL_POOL.md) reuses reviewed local model downloads across scoped employee assignments. A deterministic permanent observer checks native index/ledger health with zero model calls.
+
+[Release notes](project/RELEASE_NOTES.md) · [Validation and current acceptance boundaries](project/FREEFLOW_VALIDATION.md) · [Vast/VPS and ChatGPT architecture](project/CLOUD_RUNTIME_PLAN.md). Deployment recipes do not provision a paid host or create a ChatGPT tunnel automatically.
+
 ## Company kits — 0.6.1 released
 
 Two reusable company templates add a Fintech & Hackathon Studio and a Social & Digital Presence organization. The [company-kit catalog and installer](company/company-kits/README.md) define seventeen departments, eight domain specialties, scoped shared-service contracts, owned roadmap items and office whiteboards. The detailed [fintech guide](company/company-kits/fintech-hackathon/README.md) and [social-presence guide](company/company-kits/social-presence/README.md) include bounded roles, evidence rules and current official integration references. Personal client records remain in the owner workspace.

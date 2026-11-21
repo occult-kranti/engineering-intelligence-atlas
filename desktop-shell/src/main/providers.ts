@@ -88,7 +88,7 @@ export function sanitizeError(err: unknown, apiKey: string): Error {
   }
   // Also redact anything that looks like an OpenAI/Anthropic key, in case a
   // library echoes a different credential.
-  message = message.replace(/sk-[A-Za-z0-9_-]{8,}/g, '[redacted]');
+  message = message.replace(/(^|[^A-Za-z0-9_-])sk-[A-Za-z0-9_-]{8,}/g, '$1[redacted]');
   if (message.length > 300) message = `${message.slice(0, 300)}…`;
   const safe = new Error(message);
   safe.name = 'ProviderError';
@@ -153,6 +153,23 @@ export async function listProviderModels(
 }
 
 /**
+ * Version-specific Anthropic options. Sonnet 5.5 supports between_tools thinking
+ * at medium effort; Opus 5.5 rejects between_tools (HTTP 400), so it omits
+ * the thinking field entirely and keeps medium effort.
+ * Unknown/older models receive nothing. Matching accepts the exact id or a
+ * dash-separated dated suffix only, so e.g. `claude-opus-5-50` never matches.
+ */
+export function anthropicProviderOptions(model: string): Record<string, Record<string, unknown>> | undefined {
+  if (/^claude-sonnet-5-5(?:-[A-Za-z0-9][A-Za-z0-9-]*)?$/.test(model)) {
+    return { anthropic: { thinking: { type: 'between_tools' }, effort: 'medium' } };
+  }
+  if (/^claude-opus-5-5(?:-[A-Za-z0-9][A-Za-z0-9-]*)?$/.test(model)) {
+    return { anthropic: { effort: 'medium' } };
+  }
+  return undefined;
+}
+
+/**
  * One-shot text generation via the AI SDK. Exactly one provider HTTP request
  * is made per call (`maxRetries: 0`); no streaming, no tool use.
  */
@@ -166,15 +183,14 @@ export async function generateWithProvider(
   try {
     const factory = provider === 'openai' ? sdk.createOpenAI : sdk.createAnthropic;
     const model = factory({ apiKey })(req.model);
+    const providerOptions = provider === 'anthropic' ? anthropicProviderOptions(req.model) : undefined;
     const result = await sdk.generateText({
       model,
       ...(req.system !== undefined ? { system: req.system } : {}),
       prompt: req.prompt,
       maxOutputTokens: req.maxOutputTokens,
       maxRetries: 0, // never auto-retry a billed request
-      ...(provider === 'anthropic' && /^claude-(?:sonnet|opus)-5-5(?:-|$)/.test(req.model)
-        ? { providerOptions: { anthropic: { thinking: { type: 'between_tools' }, effort: 'medium' } } }
-        : {}),
+      ...(providerOptions !== undefined ? { providerOptions } : {}),
       ...(req.abortSignal !== undefined ? { abortSignal: req.abortSignal } : {}),
     });
     return {

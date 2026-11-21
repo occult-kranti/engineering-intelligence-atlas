@@ -6,6 +6,7 @@
  */
 import type { OfficeCommand, OfficeResult, OfficeWorkerStatus } from './office';
 import type { CloudConnectionResult, CloudConnectionStatus, ConfigureCloudRequest } from './cloud';
+import type { ModelScope, ModelPullInput, ModelCancelInput, ModelSelectInput, ModelPoolResult } from './model-pool';
 
 export const BRIDGE_VERSION = 3 as const;
 
@@ -57,6 +58,10 @@ export const CHANNELS = {
   officeWorkerStatus: 'desktop:office:worker-status',
   setOfficeWorker: 'desktop:office:set-worker',
   runOfficeQueue: 'desktop:office:run-queue',
+  modelPoolSnapshot: 'desktop:model-pool:snapshot',
+  modelPoolRequest: 'desktop:model-pool:request',
+  modelPoolCancel: 'desktop:model-pool:cancel',
+  modelPoolSelect: 'desktop:model-pool:select',
   // main -> renderer events
   jobEvent: 'desktop:event:job',
   modeChanged: 'desktop:event:mode',
@@ -462,6 +467,10 @@ export interface UpdateCompanyTaskRequest { id: string; status: CompanyTaskStatu
 
 /** The versioned bridge exposed to local file:// launcher content only. */
 export interface DesktopBridge {
+  modelPoolSnapshot?(request: ModelScope): Promise<ModelPoolResult>;
+  modelPoolRequest?(request: ModelPullInput): Promise<ModelPoolResult>;
+  modelPoolCancel?(request: ModelCancelInput): Promise<ModelPoolResult>;
+  modelPoolSelect?(request: ModelSelectInput): Promise<ModelPoolResult>;
   copyEditorPairing(): Promise<{ ok: boolean; expiresAt?: string; error?: string }>;
   cloudStatus(): Promise<CloudConnectionStatus>;
   configureCloud(request: ConfigureCloudRequest): Promise<CloudConnectionResult>;

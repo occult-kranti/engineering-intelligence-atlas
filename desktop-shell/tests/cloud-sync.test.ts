@@ -18,7 +18,7 @@ function fixture() {
   let commands:Array<{id:string;baseRevision:number;command:{action:string;payload:Record<string,unknown>}}>=[];
   const cloudMessages:Array<{id:string;scope:{kind:string;id:string};role:string;content:string;createdAt:string}>=[];
   let messagePageSize=100;
-  let failAck=false; let writes=0;let effects=0;
+  let failAck=false; let failPutAck=false; let writes=0;let effects=0;
   const acknowledgements:any[]=[];
   const fetcher=vi.fn(async(url:any,init:any)=>{
     const pathname=new URL(url).pathname;
@@ -49,6 +49,7 @@ function fixture() {
       writes++;const body=JSON.parse(init.body);
       if(body.expectedRevision!==remote.revision)return json({error:'conflict'},409);
       remote.revision++;remote.clientId=body.clientId;remote.snapshot=body.snapshot;
+      if(failPutAck){failPutAck=false;throw new Error('lost saved revision acknowledgement');}
       return json({revision:remote.revision,updatedAt:remote.updatedAt});
     }
     throw new Error('Unexpected route');
@@ -73,7 +74,7 @@ function fixture() {
   const createService=()=>new CloudSyncService({userDataPath:dir,safeStorage,fetch:fetcher,snapshot:async()=>({ok:true,snapshot}),command});
   const service=createService();
   const configure=()=>service.configure({url:'https://atlas.example',token:JSON.stringify({deviceToken:token,clientId:'desktop-one',siteAccessToken:'site-access-test-1234567890'})});
-  return {dir,safeStorage,service,configure,createService,fetcher,command,remote,acknowledgements,cloudMessages,pageSize(size:number){messagePageSize=size;},get snapshot(){return snapshot;},get writes(){return writes;},get effects(){return effects;},enqueue(){commands.push({id:'command-1',baseRevision:remote.revision,command:{action:'pause_employee',payload:{employeeId:snapshot.employees[0]!.id}}});},failAckOnce(){failAck=true;}};
+  return {dir,safeStorage,service,configure,createService,fetcher,command,remote,acknowledgements,cloudMessages,pageSize(size:number){messagePageSize=size;},get snapshot(){return snapshot;},get writes(){return writes;},get effects(){return effects;},get commands(){return commands;},enqueue(){commands.push({id:'command-1',baseRevision:remote.revision,command:{action:'pause_employee',payload:{employeeId:snapshot.employees[0]!.id}}});},failAckOnce(){failAck=true;},failPutAckOnce(){failPutAck=true;}};
 }
 afterEach(()=>{for(const dir of dirs.splice(0))fs.rmSync(dir,{recursive:true,force:true});});
 describe('explicit desktop cloud pairing and synchronization',()=>{
@@ -134,10 +135,33 @@ describe('explicit desktop cloud pairing and synchronization',()=>{
     expect(f.acknowledgements[0]).toMatchObject({ok:false,code:'CONFLICT'});
     expect(f.remote.snapshot?.companies[0]!.name).toBe('Changed locally');
   });
-  it('native receipts prevent duplicate effects after lost acknowledgement',async()=>{
+  it('native receipts prevent duplicate effects after lost acknowledgement and restart at the same revision',async()=>{
     const f=fixture();await f.configure();await f.service.sync();f.enqueue();f.failAckOnce();
     expect((await f.service.sync()).ok).toBe(false);expect(f.effects).toBe(1);
-    expect((await f.service.sync()).ok).toBe(true);expect(f.effects).toBe(1);expect(f.command).toHaveBeenCalledTimes(2);
+    expect(f.service.status().revision).toBe(f.remote.revision);
+    expect((await f.createService().sync()).ok).toBe(true);expect(f.effects).toBe(1);expect(f.command).toHaveBeenCalledTimes(2);
+    expect(f.acknowledgements).toEqual([{ok:true}]);expect(f.commands).toHaveLength(0);
+  });
+  it.each([9,2])('preserves an older restored device when the same writer has a different remote revision %s',async(revision)=>{
+    const f=fixture();await f.configure();for(let i=0;i<4;i++)expect((await f.service.sync()).ok).toBe(true);
+    const metadata=fs.readFileSync(path.join(f.dir,'cloud/connection.json'),'utf8');
+    const localHash=syncStateHash(f.snapshot);
+    f.remote.revision=revision;f.remote.snapshot!.companies[0]!.name='Different saved cloud work';f.enqueue();
+    const remoteBefore=structuredClone(f.remote);const restored=f.createService();(f.fetcher as any).mockClear();
+    const result=await restored.sync();
+    expect(result.ok).toBe(false);expect(result.error).toMatch(/saved revision/);expect(result.status.revision).toBe(4);
+    expect(f.remote).toEqual(remoteBefore);expect(syncStateHash(f.snapshot)).toBe(localHash);
+    expect(f.writes).toBe(4);expect(f.command).not.toHaveBeenCalled();expect(f.acknowledgements).toEqual([]);expect(f.commands).toHaveLength(1);
+    expect((f.fetcher as any).mock.calls.map((call:any)=>new URL(call[0]).pathname)).toEqual(['/api/workspace']);
+    expect(fs.readFileSync(path.join(f.dir,'cloud/connection.json'),'utf8')).toBe(metadata);
+  });
+  it('recovers a lost PUT acknowledgement only when the same writer has the exact current local projection',async()=>{
+    const f=fixture();await f.configure();expect((await f.service.sync()).ok).toBe(true);f.enqueue();f.failPutAckOnce();
+    expect((await f.service.sync()).ok).toBe(false);expect(f.remote.revision).toBe(2);expect(f.service.status().revision).toBe(1);
+    expect(syncStateHash(f.remote.snapshot!)).toBe(syncStateHash(f.snapshot));expect(f.effects).toBe(1);
+    const restored=f.createService();expect((await restored.sync()).ok).toBe(true);
+    expect(restored.status().revision).toBe(3);expect(f.remote.revision).toBe(3);
+    expect(f.effects).toBe(1);expect(f.command).toHaveBeenCalledTimes(1);expect(f.acknowledgements).toEqual([{ok:true}]);
   });
   it('preserves another desktop writer instead of overwriting its snapshot',async()=>{
     const f=fixture();await f.configure();await f.service.sync();f.remote.clientId='another-desktop';f.remote.revision++;
@@ -146,6 +170,19 @@ describe('explicit desktop cloud pairing and synchronization',()=>{
   it('requires restoring the personal bundle before replacing a populated unowned seed',async()=>{
     const f=fixture();f.remote.revision=1;f.remote.snapshot=cloudSnapshot(f.snapshot);f.remote.snapshot.companies[0]!.name='Private portfolio';
     await f.configure();const result=await f.service.sync();expect(result.ok).toBe(false);expect(result.error).toMatch(/Restore your latest private workspace/);expect(f.writes).toBe(0);
+  });
+  it('a fresh desktop pairing cannot overwrite a populated same-writer workspace or acknowledge its queue',async()=>{
+    const f=fixture();f.remote.revision=9;f.remote.clientId='desktop-one';f.remote.snapshot=cloudSnapshot(f.snapshot);
+    f.remote.snapshot.companies[0]!.name='Existing personal portfolio';f.enqueue();const remoteBefore=structuredClone(f.remote);
+    await f.configure();const result=await f.service.sync();
+    expect(result.ok).toBe(false);expect(result.error).toMatch(/before the first sync/);expect(result.status.revision).toBeNull();
+    expect(f.remote).toEqual(remoteBefore);expect(f.writes).toBe(0);expect(f.command).not.toHaveBeenCalled();expect(f.acknowledgements).toEqual([]);expect(f.commands).toHaveLength(1);
+  });
+  it('a desktop first-command acknowledgement failure stops for review when no verified bootstrap proof exists',async()=>{
+    const f=fixture();f.remote.revision=4;f.remote.snapshot=cloudSnapshot(f.snapshot);f.enqueue();await f.configure();f.failAckOnce();
+    expect((await f.service.sync()).ok).toBe(false);expect(f.effects).toBe(1);expect(f.service.status().revision).toBeNull();
+    const result=await f.createService().sync();expect(result.ok).toBe(false);expect(result.error).toMatch(/interrupted first sync/);
+    expect(f.writes).toBe(0);expect(f.effects).toBe(1);expect(f.acknowledgements).toEqual([]);expect(f.commands).toHaveLength(1);
   });
   it('binds a seeded cloud workspace only when restored local state matches',async()=>{
     const f=fixture();f.remote.revision=1;f.remote.snapshot=cloudSnapshot(f.snapshot);await f.configure();

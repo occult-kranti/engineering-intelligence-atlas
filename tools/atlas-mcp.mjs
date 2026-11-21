@@ -99,7 +99,7 @@ export function resolveLaunchConfig(env = process.env, moduleUrl = import.meta.u
   const stateDir = resolve(
     env.ATLAS_STATE_DIR || join(homedir(), '.local', 'share', 'engineering-intelligence-atlas', 'company')
   );
-  const binary = resolve(env.ATLAS_CORE_BINARY || join(repoRoot, 'native-core', 'target', 'release', 'atlas-core'));
+  const binary = resolve(env.ATLAS_CORE_BINARY || join(repoRoot, 'native-core', 'target', 'release', process.platform === 'win32' ? 'atlas-core.exe' : 'atlas-core'));
   const seedDir = join(repoRoot, 'company');
   for (const [label, p] of [['repoRoot', repoRoot], ['stateDir', stateDir], ['binary', binary]]) {
     if (!isAbsolute(p)) throw new Error(`${label} must be absolute`);
@@ -284,7 +284,7 @@ const EMPTY_SCHEMA = Object.freeze({ type: 'object', properties: {}, additionalP
 export const OFFICE_COLLECTIONS = Object.freeze(['companies','offices','departments','employees','jobs','schedules','knowledge','events','chatThreads','goals','checkpoints','blueprints','groups','services','contracts','transfers','roadmap','decisionPanels','authorityGrants','authorityLedger','index']);
 const QUERY_SCOPE_KINDS = Object.freeze(['company','office','department','employee','goal','group']);
 
-export const OFFICE_ACTIONS = Object.freeze(['create_company','select_company','create_office','create_department','hire_employee','pause_employee','resume_employee','fire_employee','pause_company','resume_company','pause_office','resume_office','pause_department','resume_department','enqueue_job','claim_job','reserve_job','finish_job','heartbeat_job','cancel_job','pause_job','resume_job','create_schedule','pause_schedule','resume_schedule','tick_schedules','configure_cache','clear_cache','get_cache','put_cache','add_knowledge','configure_policy','reserve_external','settle_external','approve_job','bootstrap_directors','post_chat','post_assistant_message','create_goal','plan_goal','set_goal_plan','execute_goal','advance_goal','tick_goals','pause_goal','resume_goal','checkpoint_goal','ensure_blueprint','save_blueprint','upsert_room','place_employee','upsert_whiteboard','configure_ceo','upsert_portfolio_group','ensure_shared_services','optimize_portfolio','contract_service','share_knowledge','upsert_roadmap_item','convene_panel','start_panel_round','record_panel_decision','pause_panel','resume_panel','grant_authority','promote_employee','revoke_authority','set_authority_enforcement','rebuild_office_index','apply_employee_command','check_worker_authority','rename_company']);
+export const OFFICE_ACTIONS = Object.freeze(['create_company','select_company','create_office','create_department','hire_employee','pause_employee','resume_employee','fire_employee','pause_company','resume_company','pause_office','resume_office','pause_department','resume_department','enqueue_job','claim_job','reserve_job','finish_job','heartbeat_job','cancel_job','pause_job','resume_job','create_schedule','pause_schedule','resume_schedule','tick_schedules','configure_cache','clear_cache','get_cache','put_cache','add_knowledge','configure_policy','reserve_external','settle_external','approve_job','bootstrap_directors','post_chat','post_assistant_message','create_goal','plan_goal','set_goal_plan','execute_goal','advance_goal','tick_goals','pause_goal','resume_goal','checkpoint_goal','ensure_blueprint','save_blueprint','upsert_room','place_employee','upsert_whiteboard','configure_ceo','upsert_portfolio_group','ensure_shared_services','optimize_portfolio','contract_service','share_knowledge','upsert_roadmap_item','convene_panel','start_panel_round','record_panel_decision','pause_panel','resume_panel','grant_authority','promote_employee','revoke_authority','set_authority_enforcement','rebuild_office_index','apply_employee_command','check_worker_authority','rename_company','set_company_parent','set_department_parent']);
 
 export const TOOL_DEFINITIONS = Object.freeze([
   { name:'office_snapshot', title:'Office control snapshot', description:'Read the local office. Large wire results are successful metadata summaries with snapshotOmitted:true; use office_query for paginated metadata. No provider calls.', inputSchema:EMPTY_SCHEMA, annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false} },
@@ -375,7 +375,7 @@ function unwrapNative(result) {
 }
 
 const SECRET_TEXT = /(?:sk-ant-|sk-proj-|sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}|\bBearer\s+[A-Za-z0-9._~-]+/gi;
-const ID_FIELDS = ['id','entityId','parentId','companyId','officeId','departmentId','employeeId','ownerEmployeeId','assistantId','goalId','jobId','scheduleId','panelId','grantId','blueprintId','roomId','whiteboardId','roadmapItemId','serviceId','serviceContractId','contractId','transferId','knowledgeId','groupId','recipientCompanyId','recipientOfficeId','recipientDepartmentId','sourceCompanyId','targetId'];
+const ID_FIELDS = ['id','entityId','parentId','parentCompanyId','parentDepartmentId','companyId','officeId','departmentId','employeeId','ownerEmployeeId','assistantId','goalId','jobId','scheduleId','panelId','grantId','blueprintId','roomId','whiteboardId','roadmapItemId','serviceId','serviceContractId','contractId','transferId','knowledgeId','groupId','recipientCompanyId','recipientOfficeId','recipientDepartmentId','sourceCompanyId','targetId'];
 const TEXT_FIELDS = ['name','title','role','kind','status','action','actor','outcome','type','preset','issuer','mode','provider','model','costStatus','source','visibility','githubStatus'];
 const DATE_FIELDS = ['at','createdAt','updatedAt','importedAt','grantedAt','expiresAt','revokedAt','dueAt','startedAt','finishedAt','nextRunAt','lastEnqueuedAt'];
 const NUMBER_FIELDS = ['iteration','maxIterations','round','maxRounds','everyMinutes','indexEntries','imported','created'];
@@ -409,6 +409,7 @@ function metadataSummary(row) {
   const out = {};
   if (!row || typeof row !== 'object') return out;
   for (const key of ID_FIELDS) { const value = summaryId(row[key]); if (value !== undefined) out[key] = value; }
+  for (const key of ['parentCompanyId','parentDepartmentId']) if (row[key] === null) out[key] = null;
   for (const key of TEXT_FIELDS) if (typeof row[key] === 'string') out[key] = summaryText(row[key]);
   for (const key of DATE_FIELDS) if (isIsoDate(row[key])) out[key] = row[key];
   for (const key of NUMBER_FIELDS) if (Number.isFinite(row[key])) out[key] = row[key];

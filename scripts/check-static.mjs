@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { digest, filesUnder, outputDigests, repoRoot, sourceDigest } from './static-build-lib.mjs';
+import { scanImports } from './renderer-assets.mjs';
 
 const directory = join(repoRoot, 'docs');
 const read = (file) => readFileSync(join(directory, file), 'utf8');
@@ -48,6 +49,42 @@ function previewAssetReference(source, name) {
 }
 for (const name of ['studio-tokens.css', 'chrome.css', 'office-signals.js', 'chrome.js']) previewAssetReference(previewHtml, name);
 const bridgeFile = previewAssetReference(previewHtml, 'browser-bridge.js');
+
+// Nested renderer ESM graph: every local import must exist, carry a matching content digest,
+// be in the offline precache, and no unversioned leftover may remain. Works with or without
+// Freeflow imports present in chrome.js. Uses the builder's bounded scanner (fails closed).
+const previewDir = join(directory, 'desktop-preview');
+const workerText = read('sw.js');
+const graphSeen = new Set();
+function verifyGraph(rel, from) {
+  const abs = resolve(previewDir, rel);
+  assert(abs.startsWith(previewDir + sep), `Renderer import escapes preview tree: ${rel}`);
+  assert(existsSync(abs), `Missing renderer module: ${rel}${from ? ` imported by ${from}` : ''}`);
+  if (graphSeen.has(rel)) return;
+  graphSeen.add(rel);
+  const name = rel.split('/').pop();
+  const match = /\.([a-f0-9]{16})\.[^./]+$/.exec(name);
+  assert(match, `Renderer asset is not content-addressed: ${rel}`);
+  assert.equal(digest(readFileSync(abs)).slice(0, 16), match[1], `Stale or wrong hash for renderer asset: ${rel}`);
+  assert(workerText.includes(`desktop-preview/${rel}"`), `Renderer asset missing from offline precache: ${rel}`);
+  if (/\.m?js$/.test(rel)) {
+    for (const found of scanImports(readFileSync(abs, 'utf8'), rel)) {
+      assert(found.spec.startsWith('./') || found.spec.startsWith('../'), `Non-relative renderer import "${found.spec}" in ${rel}`);
+      const target = join(dirname(rel), found.spec).split(sep).join('/');
+      verifyGraph(target, rel);
+    }
+  }
+}
+for (const [, reference] of previewHtml.matchAll(/(?:src|href)=["']\.\/([^"'?#]+)["']/g)) {
+  if (/\.(?:js|css)$/.test(reference)) verifyGraph(reference, 'chrome.html');
+}
+const unversioned = filesUnder(join(previewDir, 'freeflow')).filter((f) => !/\.[a-f0-9]{16}\.[^./]+$/.test(f));
+assert.equal(unversioned.length, 0, `Unversioned renderer leftovers: ${unversioned.join(', ')}`);
+assert(!existsSync(join(previewDir, 'freeflow.css')), 'Unversioned freeflow.css remains');
+const graphCss = [...graphSeen].filter((p) => /^freeflow\.[a-f0-9]{16}\.css$/.test(p));
+if (/freeflow\.[a-f0-9]{16}\.css/.test(readFileSync(join(previewDir, [...graphSeen].find((p) => /^chrome\./.test(p)) ?? ''), 'utf8')) || graphCss.length) {
+  assert.equal(graphCss.length, 1, 'freeflow.css must be referenced once and content-addressed');
+}
 previewAssetReference(read('desktop-preview/' + bridgeFile), 'preview-state.json');
 const worker = read('sw.js');
 for (const filename of previewAssets) {

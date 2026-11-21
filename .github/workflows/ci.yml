@@ -43,6 +43,19 @@ jobs:
           path: site-source/.work/ui-screenshots
           if-no-files-found: warn
 
+  release-checksums:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify release checksum rules with disposable temp files
+        run: node scripts/release-checksums.test.mjs
+
+  headless:
+    uses: ./.github/workflows/headless-runtime.yml
+
   mysql-connectors:
     runs-on: ubuntu-latest
     services:
@@ -109,7 +122,7 @@ jobs:
           npm run test:renderer
           node ../scripts/smoke-office.mjs
           node --test ../tools/atlas-mcp.test.mjs
-          node --test ../scripts/test-company-kits.mjs
+          node --test ../scripts/test-company-kits.mjs ../scripts/reconcile-company-hierarchy.test.mjs
       - name: Package Linux desktop
         working-directory: desktop-shell
         run: npm run package:linux
@@ -130,6 +143,70 @@ jobs:
         with:
           name: desktop-linux
           path: desktop-shell/release/*.AppImage
+
+  desktop-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          architecture: x64
+          cache: npm
+          cache-dependency-path: desktop-shell/package-lock.json
+      - name: Select Rust stable MSVC x64
+        shell: pwsh
+        run: |
+          rustup default stable-x86_64-pc-windows-msvc
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          rustc --version --verbose
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify native core
+        run: cargo test --locked --manifest-path native-core/Cargo.toml
+      - run: npm ci
+        working-directory: desktop-shell
+      - name: Build native helper
+        working-directory: desktop-shell
+        run: npm run build:native
+      - name: Typecheck
+        working-directory: desktop-shell
+        run: npm run typecheck
+      - name: Desktop unit tests
+        working-directory: desktop-shell
+        run: npm test
+      - name: Renderer tests
+        working-directory: desktop-shell
+        run: npm run test:renderer
+      - name: Sync atlas
+        working-directory: desktop-shell
+        run: npm run sync-atlas -- --src ../docs
+      - name: Package Windows x64 NSIS and ZIP
+        working-directory: desktop-shell
+        run: npm run package:win
+      - name: Install the browser test driver for the packaged application
+        run: npm --prefix site-source ci
+      - name: Launch the packaged Windows app and exercise its real Rust core
+        shell: pwsh
+        env:
+          ATLAS_PACKAGED_SMOKE_OUT: ${{ github.workspace }}\desktop-shell\.work\packaged-ui-windows
+        run: |
+          $env:ATLAS_PACKAGED_BINARY = Join-Path $PWD 'desktop-shell/release/win-unpacked/Daftar.exe'
+          node scripts/smoke-packaged-desktop.mjs
+      - name: Retain packaged Windows evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged-desktop-ui-windows
+          path: desktop-shell/.work/packaged-ui-windows
+          include-hidden-files: true
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: desktop-windows-x64
+          path: |
+            desktop-shell/release/daftar-desktop-*-windows-x64.exe
+            desktop-shell/release/daftar-desktop-*-windows-x64.zip
+          if-no-files-found: error
 
   android:
     runs-on: ubuntu-latest
@@ -175,9 +252,22 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-          cache-dependency-path: cloud-workspace/package-lock.json
+          cache-dependency-path: |
+            cloud-workspace/package-lock.json
+            desktop-shell/package-lock.json
+      - name: Install desktop-shell dependencies without the Electron binary
+        working-directory: desktop-shell
+        env:
+          ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+        run: npm ci
+      - name: Build the shared desktop renderer
+        working-directory: desktop-shell
+        run: npm run build
       - run: npm ci
         working-directory: cloud-workspace
+      - name: Sync the real shared renderer into the cloud workspace
+        working-directory: cloud-workspace
+        run: node scripts/sync-desktop.mjs "$GITHUB_WORKSPACE"
       - name: Verify owner access, atomic budgets, revisions, device claims and queue recovery
         working-directory: cloud-workspace
         run: |
@@ -260,7 +350,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: [web, mysql-connectors, desktop, android, cloud, editor, design-tools]
+    needs: [web, release-checksums, headless, mysql-connectors, desktop, desktop-windows, android, cloud, editor, design-tools]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -271,6 +361,10 @@ jobs:
         with:
           name: desktop-linux
           path: release
+      - uses: actions/download-artifact@v4
+        with:
+          name: desktop-windows-x64
+          path: release/windows
       - uses: actions/download-artifact@v4
         with:
           name: android-debug
@@ -287,5 +381,7 @@ jobs:
           if gh release view "v${release_version}" >/dev/null 2>&1; then
             echo "Version already published; existing release is preserved."
           else
-            gh release create "v${release_version}" release/*.AppImage release/android/*.apk release/editor/*.vsix --target "$GITHUB_SHA" --title "Daftar ${release_version} — command studio" --notes-file project/RELEASE_NOTES.md
+            node scripts/release-checksums.test.mjs
+            node scripts/release-checksums.mjs release release/SHA256SUMS
+            gh release create "v${release_version}" release/*.AppImage release/windows/*.exe release/windows/*.zip release/android/*.apk release/editor/*.vsix release/SHA256SUMS --target "$GITHUB_SHA" --title "Daftar ${release_version} — command studio" --notes-file project/RELEASE_NOTES.md
           fi

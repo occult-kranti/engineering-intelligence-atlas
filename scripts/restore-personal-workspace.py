@@ -11,6 +11,7 @@ import re
 import stat
 import tempfile
 import zipfile
+from urllib.parse import unquote, urlsplit
 
 MAX_STATE_BYTES = 64 * 1024 * 1024
 MAX_ARTIFACT_BYTES = 512_000
@@ -182,14 +183,41 @@ def atomic_private_write(path, content):
         if temporary is not None:
             temporary.unlink(missing_ok=True)
 
+def canonical_file_uri(value):
+    """Canonical key for an exact local file URI, else None. Percent-decodes and normalizes Windows drive syntax."""
+    if not isinstance(value, str) or not value.startswith('file:///') or len(value) > 8192:
+        return None
+    parts = urlsplit(value)
+    if parts.scheme != 'file' or parts.netloc or parts.query or parts.fragment:
+        return None
+    path = unquote(parts.path)
+    if '\x00' in path:
+        return None
+    match = re.match(r'^/([A-Za-z]):[\\/](.*)$', path)
+    if match:
+        return 'file-win:' + match[1].lower() + ':/' + match[2].replace('\\', '/')
+    return 'file:' + path
+
 def remap_references(value, replacements):
-    if isinstance(value, str):
-        return replacements.get(value, value)
-    if isinstance(value, list):
-        return [remap_references(x, replacements) for x in value]
-    if isinstance(value, dict):
-        return {key: remap_references(item, replacements) for key, item in value.items()}
-    return value
+    canonical = {}
+    for old, new in replacements.items():
+        key = canonical_file_uri(old)
+        if key is not None:
+            canonical.setdefault(key, new)
+    def walk(item):
+        if isinstance(item, str):
+            if item in replacements:
+                return replacements[item]
+            key = canonical_file_uri(item)
+            if key is not None and key in canonical:
+                return canonical[key]
+            return item
+        if isinstance(item, list):
+            return [walk(x) for x in item]
+        if isinstance(item, dict):
+            return {k: walk(v) for k, v in item.items()}
+        return item
+    return walk(value)
 
 def restore_workspace(archive, user_data, replace=False):
     root = safe_path(user_data)

@@ -9,11 +9,13 @@ import { selectCompanyKitKnowledge } from './companyKitKnowledge';
 export interface OfficeWorkerOptions {
   snapshot: () => Promise<OfficeResult>;
   command: (request: OfficeCommand) => Promise<OfficeResult>;
-  generate: GenerateFn;
+  generate: (request: Parameters<GenerateFn>[0], job?: OfficeJob) => ReturnType<GenerateFn>;
   artifactRoot: string;
   seedDir: string;
   intervalMs?: number;
   prepareContext?: (job: OfficeJob, snapshot: OfficeSnapshot) => Promise<string>;
+  /** Validate the exact route and assignment before cache/budget admission and again at dispatch. */
+  validateJob?: (job: OfficeJob) => Promise<void>;
   executeTool?: (job: OfficeJob, text: string) => Promise<{ summary: string; evidenceUrl: string }>;
 }
 
@@ -40,8 +42,24 @@ function unwrap(result: OfficeResult): OfficeSnapshot {
   if (!result.ok || !result.snapshot) throw new Error(result.error || 'Office core unavailable');
   return result.snapshot;
 }
-function redact(text: string): string { return text.replace(/(?:sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}/g, '[redacted]'); }
+/** Credential-start boundary: a key prefix only counts at the start of a token, so embedded ordinary
+ * word/hyphen identifiers survive. The preceding delimiter is preserved. */
+function redact(text: string): string { return text.replace(/(^|[^A-Za-z0-9_-])(?:sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}/g, '$1[redacted]'); }
 function hash(value: string | Buffer): string { return crypto.createHash('sha256').update(value).digest('hex'); }
+/** Longest valid UTF-8 prefix within maxBytes; never splits a code point and never exceeds the byte bound. */
+function utf8Prefix(text: string, maxBytes: number): string {
+  if (maxBytes <= 0) return '';
+  let bytes = 0;
+  let out = '';
+  for (const ch of text) {
+    const size = Buffer.byteLength(ch, 'utf8');
+    if (bytes + size > maxBytes) break;
+    bytes += size;
+    out += ch;
+  }
+  return out;
+}
+const EMPTY_RESULT_SUMMARY = 'No text deliverable was returned (the model may have used its entire output allowance on internal reasoning). Usage was recorded; no retry was made. Retry deliberately with a narrower task or a larger allowance.';
 
 /** One bounded worker. Definitions persist; execution runs only while explicitly enabled. */
 export class OfficeWorker {
@@ -214,6 +232,11 @@ export class OfficeWorker {
     if (this.running) return this.status();
     this.running = true;
     this.lastError = null;
+    // Install cancellation before the first await. A stop during a native claim
+    // or source read must also stop this attempt before any provider dispatch.
+    // Do not gate on enabled: an explicitly requested one-shot can start paused.
+    const controller = new AbortController();
+    this.activeController = controller;
     let job: OfficeJob | undefined;
     let leaseToken = '';
     let reservedUsd = 0;
@@ -227,9 +250,11 @@ export class OfficeWorker {
     let deadline: NodeJS.Timeout | null = null;
     try {
       unwrap(await this.options.command({ action: 'tick_schedules' }));
+      controller.signal.throwIfAborted();
       // New cores materialize bounded goal iterations only after predecessor
       // checkpoints pass. Old injected fixtures can safely ignore this action.
       unwrap(await this.options.command({ action: 'tick_goals' }));
+      controller.signal.throwIfAborted();
       const claimed = unwrap(await this.options.command({ action: 'claim_job', workerId: this.workerId, mode: 'provider' }));
       const id = claimed.lastAction?.jobId;
       if (typeof id !== 'string') return { ...this.status(), running: false, activeJobId: null };
@@ -237,16 +262,23 @@ export class OfficeWorker {
       if (!job || !job.leaseToken) throw new Error('Claimed job or lease missing');
       this.activeJobId = job.id;
       leaseToken = job.leaseToken;
+      // Capture a successful claim first so the catch path can settle it even
+      // if cancellation arrived while the claim response was pending.
+      controller.signal.throwIfAborted();
       if ((!job.authorized && (claimed as OfficeSnapshot & { policy?: { approvalMode: string } }).policy?.approvalMode !== 'autonomous') || job.mode !== 'provider') throw new Error('Provider execution is not authorized for this job');
+      await this.options.validateJob?.(job);
+      controller.signal.throwIfAborted();
       const preparedContext = job.allowedTools.includes('github.read_repository')
         ? await this.options.prepareContext?.(job, claimed) : '';
+      controller.signal.throwIfAborted();
       if (job.allowedTools.includes('github.read_repository') && !preparedContext) throw new Error('GitHub source-read capability is not connected. No provider request was sent.');
-      if (preparedContext && Buffer.byteLength(preparedContext) > 200000) throw new Error('Prepared source context exceeds its bounded size.');
+      const preparedContextLimit = job.allowedTools.includes('github.publish_changes') ? 600000 : 200000;
+      if (preparedContext && Buffer.byteLength(preparedContext, 'utf8') > preparedContextLimit) throw new Error(`Prepared source context exceeds its bounded size (${preparedContextLimit} UTF-8 bytes).`);
       const { system, prompt, contextHash } = this.prompts(job, claimed, preparedContext);
-      const controller = new AbortController();
-      this.activeController = controller;
       const inputBound = Buffer.byteLength(system + prompt, 'utf8') + 1024;
-      let outputBound = Math.min(8192, Math.floor(job.limits.maxTokens - inputBound));
+      // Ceiling only: publishing jobs may reserve more room; spend stays bounded by limits.
+      const outputCeiling = job.allowedTools.includes('github.publish_changes') ? 32768 : 8192;
+      let outputBound = Math.min(outputCeiling, Math.floor(job.limits.maxTokens - inputBound));
       if (outputBound < 1) throw new Error('Token budget does not fit the role and task context. Increase the limit or shorten the brief.');
       const rates = job.priceRates;
       if (job.provider !== 'ollama') {
@@ -259,6 +291,7 @@ export class OfficeWorker {
       const cacheKey = hash(`${contextHash}:${outputBound}`);
       if (claimed.cache.enabled && job.allowedTools.length === 0) {
         const cached = unwrap(await this.options.command({ action: 'get_cache', companyId: job.companyId, key: cacheKey }));
+        controller.signal.throwIfAborted();
         const entry = cached.cache.entries.find(e => e.key === cacheKey && e.companyId === job!.companyId && Date.parse(e.expiresAt) > Date.now());
         const cachedPath = entry ? this.safeArtifact(entry.artifactUri) : null;
         if (cachedPath && entry?.contentSha256 && this.artifactHash(cachedPath) === entry.contentSha256) {
@@ -277,8 +310,12 @@ export class OfficeWorker {
       if (admitted?.status !== 'running' || admitted.leaseToken !== leaseToken || admitted.costStatus !== 'reserved' || admitted.reservation?.inputTokens !== inputBound || admitted.reservation.maxOutputTokens !== outputBound || Math.abs(admitted.reservation.costUsd - reservedUsd) > 1e-9) throw new Error('The persisted reservation could not be verified. No provider request was sent.');
       reservedInputTokens = inputBound;
       reservedOutputTokens = outputBound;
+      controller.signal.throwIfAborted();
       const authority = unwrap(await this.options.command({ action: 'check_worker_authority', jobId: job.id, leaseToken, capability: 'provider.run' }));
       if (authority.lastAction?.allowed !== true) throw new Error('Native provider authority was not confirmed. No provider request was sent.');
+      controller.signal.throwIfAborted();
+      await this.options.validateJob?.(job);
+      controller.signal.throwIfAborted();
       const minutes = Math.min(job.limits.maxMinutes, 4.5);
       deadline = setTimeout(() => controller.abort(new Error('Job time limit reached')), minutes * 60000);
       let checking = false;
@@ -291,7 +328,7 @@ export class OfficeWorker {
         }).catch(() => controller.abort(new Error('Office state unavailable'))).finally(() => { checking = false; });
       }, 1000);
       dispatched = true;
-      const result = await this.options.generate({ provider: job.provider, model: job.model, system, prompt, maxOutputTokens: outputBound, abortSignal: controller.signal });
+      const result = await this.options.generate({ provider: job.provider, model: job.model, system, prompt, maxOutputTokens: outputBound, abortSignal: controller.signal }, job);
       const usageObserved = result.usageObserved !== false && [result.inputTokens, result.outputTokens].every(n => Number.isSafeInteger(n) && n >= 0);
       const costUsd = !usageObserved ? reservedUsd : job.provider === 'ollama' ? 0 : (result.inputTokens * rates.inputUsdPerMillion! + result.outputTokens * rates.outputUsdPerMillion!) / 1e6;
       if (usageObserved) observedUsage = { inputTokens: result.inputTokens, outputTokens: result.outputTokens, costUsd };
@@ -302,6 +339,9 @@ export class OfficeWorker {
       fs.writeFileSync(artifact + '.tmp', header + body, { mode: 0o600 });
       fs.renameSync(artifact + '.tmp', artifact);
       producedArtifact = artifact;
+      // Preserve a late provider result and its observed usage, but do not
+      // publish or mark it completed after the owner has stopped the attempt.
+      controller.signal.throwIfAborted();
       let toolSummary = '';
       if (usageObserved && body.trim() && job.allowedTools.includes('github.publish_changes')) {
         if (result.inputTokens + result.outputTokens > job.limits.maxTokens || costUsd > job.limits.maxUsd) throw new Error('Provider exceeded the approved allocation. Artifact preserved; publishing was not attempted.');
@@ -313,10 +353,10 @@ export class OfficeWorker {
         toolSummary = `${outcome.summary}\n${outcome.evidenceUrl}\n`;
         fs.appendFileSync(artifact, `\n\n## Managed action\n${toolSummary}`);
       }
-      const final = unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: usageObserved && body.trim() ? 'completed' : 'failed', inputTokens: usageObserved ? result.inputTokens : inputBound, outputTokens: usageObserved ? result.outputTokens : outputBound, costUsd, costStatus: usageObserved ? 'observed' : 'estimated', artifactUri: artifact, summary: (toolSummary + body).slice(0,800), error: !usageObserved ? 'Provider usage is unavailable. Deliverable preserved; reservation retained for reconciliation.' : body.trim() ? undefined : 'Provider returned no text deliverable.' }));
+      const final = unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: usageObserved && body.trim() ? 'completed' : 'failed', inputTokens: usageObserved ? result.inputTokens : inputBound, outputTokens: usageObserved ? result.outputTokens : outputBound, costUsd, costStatus: usageObserved ? 'observed' : 'estimated', artifactUri: artifact, summary: body.trim() ? (utf8Prefix(toolSummary + body, 800) || 'Deliverable preserved in the private artifact.') : EMPTY_RESULT_SUMMARY, error: !usageObserved ? 'Provider usage is unavailable. Deliverable preserved; reservation retained for reconciliation.' : body.trim() ? undefined : 'Provider returned no text deliverable.' }));
       settled = true;
       if (body.trim() && job.allowedTools.includes('github.read_repository') && final.jobs.find(j => j.id === job!.id)?.status === 'completed') {
-        unwrap(await this.options.command({ action: 'add_knowledge', companyId: job.companyId, title: `Repository review proposal · ${new Date().toISOString().slice(0, 10)}`, summary: `Model-authored proposal from a commit-pinned repository read. This is not build or publication evidence.\n${body.slice(0, 3500)}`, artifactUri: artifact }));
+        unwrap(await this.options.command({ action: 'add_knowledge', companyId: job.companyId, title: `Repository review proposal · ${new Date().toISOString().slice(0, 10)}`, summary: utf8Prefix(`Model-authored proposal from a commit-pinned repository read. This is not build or publication evidence.\n${body}`, 3900), artifactUri: artifact }));
       }
       if (body.trim() && job.allowedTools.length === 0 && final.jobs.find(j=>j.id===job!.id)?.status === 'completed' && final.cache.enabled) {
         await this.options.command({ action: 'put_cache', companyId: job.companyId, key: cacheKey, artifactUri: artifact, bytes: Buffer.byteLength(header + body), contentSha256: hash(header + body) });

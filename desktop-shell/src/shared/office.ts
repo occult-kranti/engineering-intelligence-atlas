@@ -5,12 +5,14 @@ export interface OfficeCompany {
   assistantId: string; createdAt: string; source: string;
   importedAt: string | null; githubStatus: 'unchecked' | 'metadata-reviewed';
   visibility?: 'public' | 'private' | null; defaultBranch?: string | null;
+  parentCompanyId?: string | null;
 }
 export interface OfficeLocation {
   id: string; companyId: string; name: string; status: OfficeEntityStatus; assistantId: string; createdAt: string;
 }
 export interface OfficeDepartment {
   id: string; companyId: string; officeId: string; name: string; status: OfficeEntityStatus; assistantId: string; createdAt: string;
+  parentDepartmentId?: string | null;
 }
 export interface OfficeEmployee {
   id: string; companyId: string | null; officeId: string | null; departmentId: string | null;
@@ -161,7 +163,7 @@ export interface OfficeSnapshot {
   authority?: OfficeAuthority;
 }
 export type OfficeAction = 'create_company' | 'select_company' | 'import_repositories' | 'import_github_account'
-  | 'create_office' | 'create_department' | 'hire_employee' | 'pause_employee' | 'resume_employee' | 'fire_employee'
+  | 'create_office' | 'create_department' | 'set_department_parent' | 'hire_employee' | 'pause_employee' | 'resume_employee' | 'fire_employee'
   | 'pause_company' | 'resume_company' | 'pause_office' | 'resume_office' | 'pause_department' | 'resume_department'
   | 'enqueue_job' | 'claim_job' | 'reserve_job' | 'finish_job' | 'complete_job' | 'heartbeat_job' | 'cancel_job' | 'pause_job' | 'resume_job'
   | 'create_schedule' | 'pause_schedule' | 'resume_schedule' | 'tick_schedules'
@@ -173,10 +175,10 @@ export type OfficeAction = 'create_company' | 'select_company' | 'import_reposit
   | 'configure_ceo' | 'upsert_portfolio_group' | 'ensure_shared_services' | 'optimize_portfolio'
   | 'contract_service' | 'share_knowledge' | 'upsert_roadmap_item' | 'schedule_repository_reviews'
   | 'convene_panel' | 'start_panel_round' | 'record_panel_decision' | 'pause_panel' | 'resume_panel' | 'apply_remote_command'
-  | 'grant_authority' | 'promote_employee' | 'revoke_authority' | 'set_authority_enforcement' | 'apply_employee_command' | 'rebuild_office_index' | 'rename_company' | 'check_worker_authority';
+  | 'grant_authority' | 'promote_employee' | 'revoke_authority' | 'set_authority_enforcement' | 'apply_employee_command' | 'rebuild_office_index' | 'rename_company' | 'set_company_parent' | 'check_worker_authority';
 /** Every action has a fixed Rust-side schema; unknown fields are never executed. */
 export interface OfficeCommand { action: OfficeAction; [key: string]: unknown }
-export interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: string; code?: string }
+export interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: string; code?: string; observer?: import('./office-observer').OfficeObservation }
 
 export interface OfficeWorkerStatus {
   enabled: boolean; running: boolean; activeJobId: string | null; lastError: string | null;

@@ -6,6 +6,10 @@ use serde_json::{json, Value};
 use std::collections::{HashMap, HashSet, VecDeque};
 use time::{format_description::well_known::Rfc3339, Duration, OffsetDateTime};
 use uuid::Uuid;
+#[path = "company_hierarchy.rs"]
+mod company_hierarchy;
+#[path = "department_hierarchy.rs"]
+mod department_hierarchy;
 #[path = "governance.rs"]
 mod governance;
 pub use governance::*;
@@ -126,6 +130,8 @@ pub struct OfficeCompany {
     pub visibility: Option<String>,
     #[serde(default)]
     pub default_branch: Option<String>,
+    #[serde(default)]
+    pub parent_company_id: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -147,6 +153,8 @@ pub struct Department {
     pub status: String,
     pub assistant_id: String,
     pub created_at: String,
+    #[serde(default)]
+    pub parent_department_id: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -554,6 +562,8 @@ impl OfficeSnapshot {
         {
             return Err(fail("OFFICE_STATE_INVALID", "Invalid cache bounds"));
         }
+        company_hierarchy::validate_company_forest(self)?;
+        department_hierarchy::validate_department_forest(self)?;
         self.validate_governance()?;
         self.validate_portfolio()?;
         self.validate_decision_panels()?;
@@ -798,6 +808,7 @@ impl OfficeSnapshot {
                 None
             },
             default_branch: None,
+            parent_company_id: None,
         });
         let assistant = self.add_staff(
             &company_id,
@@ -872,6 +883,7 @@ impl OfficeSnapshot {
             status: "active".into(),
             assistant_id: String::new(),
             created_at: now(),
+            parent_department_id: None,
         });
         let assistant = self.add_staff(
             &company_id,
@@ -1232,6 +1244,9 @@ impl OfficeSnapshot {
             return Ok(());
         }
         match action.as_str() {
+            "set_company_parent" => {
+                self.set_company_parent(p)?;
+            }
             "rename_company" => {
                 let company_id = string(p, "companyId", 100)?;
                 let name = string(p, "name", 200)?;
@@ -1339,6 +1354,7 @@ impl OfficeSnapshot {
                 );
                 self.last_action = Some(json!({"departmentId":department_id}));
             }
+            "set_department_parent" => self.set_department_parent(p)?,
             "hire_employee" => {
                 let employee_id = self.add_staff(
                     &string(p, "companyId", 100)?,

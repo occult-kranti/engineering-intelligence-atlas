@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "buildMode": "static",
-  "sourceSha256": "a764a33576aa31230d8bea6e96c4eabffba93599efddbffce340d1b635d5f9e4",
+  "sourceSha256": "15a3513429b73fe25be49496028d7a8db466dc5e6c3f03f27ae765c3c9d146ef",
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "assets/DirectorShell-CINQMSLb.css": "145efbe4f7b92c3fd193d3bb3f2f12d8d18394b2fef43c37795552e532f41803",
@@ -101,10 +101,21 @@
     "assets/pt-serif-latin-ext-700-normal-BQOBW4N0.woff": "a2cdfa8e3887adc01692195853ce2b4626e154aba67076ad7c2d52e80d20e97e",
     "assets/reverse-G1Cd91PM.js": "377791bfbe851ff6a5e0270286e6f33f5a752125917a59eb8e13bc3fc3bb450d",
     "assets/science-DIbnrChB.js": "5c849b3253fd47cc8e842bc7505bed76118f9899d83ac4c6944485516fad8b44",
-    "desktop-preview/browser-bridge.e3d30e253716ec53.js": "e3d30e253716ec536e7a9e6f3c739b0ebc767b2d876b4635330de48da3dfede5",
-    "desktop-preview/chrome.32a6e07447d920cd.css": "32a6e07447d920cd1b0f60abc5e90fd536c962df170b1019ed58f6752c3977eb",
-    "desktop-preview/chrome.968b9e2f07167afb.js": "968b9e2f07167afb6b66d504a54822f12cb7ae0cecbac31f739f5b6eab77f1aa",
-    "desktop-preview/chrome.html": "6b31e7bcc579cbcb254a9faaedf389aba37a636ad2881db3904eed4498986677",
+    "desktop-preview/browser-bridge.09289ca8756aa240.js": "09289ca8756aa2404f0fea9bce363dbafc1cdd5c239f1cad50a902057e981c9c",
+    "desktop-preview/chrome.0f034e6cc32430ad.css": "0f034e6cc32430ada5f158d228fa1d24a3bc9801cc71b29dde40c4b7248a7f6c",
+    "desktop-preview/chrome.e03e1639fd89d627.js": "e03e1639fd89d6270cf7e464ea4dbc3e967e63bf562cf428ab21964cd3c9e5e2",
+    "desktop-preview/chrome.html": "6f14b983e77111c1832421053b59391da109c1a6a386b2d9e6ed2048f6200f3e",
+    "desktop-preview/freeflow.90e4932cc024735c.css": "90e4932cc024735c9470f6919d052c0e6269dd1b8d45cbc859874cebed2f0e43",
+    "desktop-preview/freeflow/a11y-list.c972998eb8ad6bc6.js": "c972998eb8ad6bc624a3929e223952034bcc05afaf5395830da49d3e793511d6",
+    "desktop-preview/freeflow/camera.457a3ca4fd1e3c65.js": "457a3ca4fd1e3c65e57406a86ccff357f513841c178611f1f2181cf41d0393c5",
+    "desktop-preview/freeflow/controls.0198fad9fd170198.js": "0198fad9fd1701981842a47dfcc5ce9cb761cc13985db51e1d448432e7611288",
+    "desktop-preview/freeflow/inspector.2ad19899cbf7dd2d.js": "2ad19899cbf7dd2d3a9ae186db5c31659036506bdc1cd22b069b32f4d645f265",
+    "desktop-preview/freeflow/layout.a2beae2ddc99ac8a.js": "a2beae2ddc99ac8ad8876d9a075f623aac9283ec01cd61de66396d3645c6db21",
+    "desktop-preview/freeflow/model.21b07fb6c63ec187.js": "21b07fb6c63ec1871b413476e1a8f003374fe223ecbbbc710b574b2b7ef75e78",
+    "desktop-preview/freeflow/scene.e16cf6e3dc094d97.js": "e16cf6e3dc094d979010ad31ced17d052a4471aadb712a76d91a7d33e9598bc5",
+    "desktop-preview/freeflow/studio.91756b36b1be6a19.js": "91756b36b1be6a19318471a3925f05a80b9e263df216aa44cbbddcef4b62dc27",
+    "desktop-preview/freeflow/threads.fb21bcd42ffa67d5.js": "fb21bcd42ffa67d5793737a31aff8ddf0d8165ccf0a465cea9bb65bf781c8521",
+    "desktop-preview/model-pool.ea9e9ba1c164d356.js": "ea9e9ba1c164d356f656d4844ac6239c89a957ffe9200c439eb6f946716b92e0",
     "desktop-preview/office-signals.479f2f6a818e656a.js": "479f2f6a818e656a3a46b611dda109eac5223339c103b03f78c5b973d9d2624c",
     "desktop-preview/preview-state.6339761d7902456b.json": "6339761d7902456b252e8db4b6ffe71ed5ebecd45e908e7bab6d90eb5a5bdb68",
     "desktop-preview/studio-tokens.9ae00f532d356700.css": "9ae00f532d3567001de65d7ad6d11b9fda82713f62ea42f8e0b9baca90ad70f6",
@@ -172,7 +183,7 @@
     "research/sota_multimodal_media_models.md": "8b6763168b2a4426a227d3411a3363842ff00d31cc706c878f56379136524b0c",
     "research/sota_open_model_landscape.md": "952f46c03cd69b3177870e5f98a632c0ff7f887d44bc2a3683c5ee74c6dee888",
     "research/sota_scientific_models.md": "18c8695ad1487ccad36e48b91708ca3bc6bee0049a041a0f9abed81d99559e76",
-    "sw.js": "fbf9bc0e60a7be8c40545c760c06152fa64d34a271f413d817bb15adbb42dae5",
+    "sw.js": "83eb10d88690e59820090d8c202ecbedd42253d7daa23e2878b3b278694e9200",
     "workbox-051dea9f.js": "954497c1756c293988d7e65d0f9a74b9d965bbbbdeed268b4e567b66febc149a"
   }
 }
