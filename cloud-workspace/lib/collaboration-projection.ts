@@ -184,6 +184,18 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
     counts: { offices: officesOut.length, departments: deptsOut.length, roleCards: roleOut.length, jobs: jobsOut.length, goals: goalsOut.length, roadmap: roadOut.length },
   };
 }
+function canonicalize(v: unknown): unknown {
+  if (Array.isArray(v)) return v.map(canonicalize);
+  if (v && typeof v === 'object') { const out: Row = {}; for (const k of Object.keys(v as Row).sort()) out[k] = canonicalize((v as Row)[k]); return out; }
+  return v;
+}
+/** Versioned SHA-256 freshness digest over a deterministic serialization of the permitted body only. */
+export async function viewFingerprint(body: Row, companyId: string, userId: string): Promise<string> {
+  const text = JSON.stringify(canonicalize({ body, companyId, userId }));
+  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  let hex = ''; for (const b of new Uint8Array(digest)) hex += b.toString(16).padStart(2, '0');
+  return 'vf1:' + hex;
+}
 /** Route-facing helper: authorize current membership, then project the current owner snapshot. */
 export async function authorizedCompanyView(env: AtlasEnv, user: CollabUser, companyId: string): Promise<Row> {
   const membership = await requireMembership(env, user, companyId);
@@ -192,5 +204,9 @@ export async function authorizedCompanyView(env: AtlasEnv, user: CollabUser, com
   let snap: unknown; try { snap = JSON.parse(row.snapshot); } catch { snap = null; }
   const view = projectCompanyForMember(snap, companyId);
   insist(view, 'Company not found or access denied.', 404, 'not_found');
-  return { ...view, membership: { role: membership.role, expiresAt: membership.expiresAt, aclRevision: membership.aclRevision }, revision: row.revision };
+  const body: Row = { ...view, membership: { role: membership.role, expiresAt: membership.expiresAt, aclRevision: membership.aclRevision } };
+  // Owner keeps the exact global revision for proposal-acceptance CAS.
+  if (user.isOwner === true) return { ...body, revision: row.revision };
+  // Members: no revision property at all; fingerprint is freshness metadata only, never authority for mutations.
+  return { ...body, viewFingerprint: await viewFingerprint(body, companyId, user.id) };
 }
