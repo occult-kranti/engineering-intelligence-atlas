@@ -11,7 +11,7 @@
 //   studio.destroy()
 // Heat: callback returns per-node { level: 0..4, label, metric? } or null (shown as unknown).
 
-import { type Camera, type Rect, fitBounds, normalizeCamera } from './camera.js';
+import { type Camera, type Rect, fitBounds, normalizeCamera, worldToScreen, isVisible, screenToWorld } from './camera.js';
 import { loadCameraPref, mountControls, type Controls } from './controls.js';
 import { buildScene, type FreeflowFocus, type FreeflowScene, type FreeflowSnapshot, type SceneNode, type SceneThread } from './model.js';
 import { mountScene, type SceneRenderer } from './scene.js';
@@ -20,7 +20,8 @@ import { mountInspector, type InspectorActionSpec, type InspectorView, type Stud
 
 export type { StudioActionContext, StudioActionKind, StudioActionState, InspectorActionSpec } from './inspector.js';
 
-export interface StudioHeat { level: 0 | 1 | 2 | 3 | 4; label: string; metric?: string }
+export interface StudioHeat { level: 0 | 1 | 2 | 3 | 4 | 'unknown' | 'off'; label: string; metric?: string }
+type NodeMeta = SceneNode['metadata'];
 
 export interface StudioOptions {
   onNavigate(focus: FreeflowFocus): void;
@@ -110,6 +111,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   let warnExpanded = false;
   let currentKey = '';
   let fitPending = false;
+  let canvasShown = true;
   let capsFn = options.capabilities ?? null;
   const storage = options.storage === undefined ? undefined : options.storage;
   const cams = new Map<string, Camera>();
@@ -134,32 +136,60 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     onThreadSelect: (t) => { selectedThread = t ? t.id : null; syncInspector(); },
     onViewportChange: () => { if (fitPending) tryFit(); },
   });
+  const onRes = () => { if (fitPending) tryFit(); };
+  const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(onRes) : null;
+  ro?.observe(canvasHost);
+  const onDocVis = () => { if (!document.hidden && fitPending) tryFit(); };
+  document.addEventListener('visibilitychange', onDocVis);
   let controls: Controls = mountControls(canvasHost, {
     viewport: canvasHost,
     getViewportSize: () => sceneR.getViewport(),
     getCamera: () => sceneR.getCamera(),
     setCamera: (c) => sceneR.setCamera(c),
-    onCameraChange: (c, ph) => { if (ph === 'end') cams.set(currentKey, c); },
+    onCameraChange: (c, ph) => { if (ph === 'end' && currentKey) cams.set(currentKey, c); },
     getBounds: () => (scene ? (scene.bounds as Rect) : null),
     focusKey: 'pending',
-    active,
+    active: false,
     storage,
+    ownsCamera: false,
   });
+  function syncControlsActive(): void { controls.setActive(active && canvasShown && !listMode); }
+  function readStored(key: string): Camera | null {
+    try {
+      const st = storage === undefined ? (typeof localStorage !== 'undefined' ? localStorage : null) : storage;
+      return loadCameraPref(key, st);
+    } catch { return null; }
+  }
+  function realCanvas(): boolean {
+    const vp = sceneR.getViewport();
+    return canvasHost.clientWidth > 0 && canvasHost.clientHeight > 0 && vp.width > 0 && vp.height > 0 && canvasHost.getClientRects().length > 0;
+  }
 
   function tryFit(): void {
-    const vp = sceneR.getViewport();
-    if (!scene || !(vp.width > 0 && vp.height > 0) || canvasHost.clientWidth <= 0) { fitPending = true; return; }
+    if (!scene) { fitPending = false; return; }
+    const mem = cams.get(currentKey);
+    if (mem) { fitPending = false; sceneR.setCamera(mem); controls.sync(); return; }
+    const saved = readStored(currentKey);
+    if (saved) { fitPending = false; const c = normalizeCamera(saved); cams.set(currentKey, c); sceneR.setCamera(c); controls.sync(); return; }
+    if (!active || !canvasShown || listMode || !realCanvas()) { fitPending = true; return; }
     fitPending = false;
-    const saved = cams.get(currentKey) ?? loadCameraPref(currentKey, storage === undefined ? (typeof localStorage !== 'undefined' ? localStorage : null) : storage);
-    sceneR.setCamera(saved ? normalizeCamera(saved) : fitBounds(sceneR.getCamera(), vp, scene.bounds as Rect, 48));
+    const c = fitBounds(sceneR.getCamera(), sceneR.getViewport(), scene.bounds as Rect, 48);
+    cams.set(currentKey, c);
+    sceneR.setCamera(c);
+    controls.sync();
   }
 
   function applyHeat(sc: FreeflowScene): FreeflowScene {
     const nodes = sc.nodes.map((n) => {
       const h = options.heat?.(n) ?? null;
-      const ok = h && Number.isInteger(h.level) && h.level >= 0 && h.level <= 4 && typeof h.label === 'string' && h.label.length > 0;
-      const metadata = { ...n.metadata, heatLabel: ok ? h!.label.slice(0, 80) : 'Unknown (no metric)' };
-      if (ok) { metadata['heatLevel'] = h!.level; if (h!.metric) metadata['heatMetric'] = h!.metric.slice(0, 120); }
+      const metadata: NodeMeta = { ...n.metadata };
+      const lv = h ? h.level : undefined;
+      const labelOk = !!h && typeof h.label === 'string' && h.label.length > 0;
+      if (h && labelOk && lv === 'off') { metadata['heatLabel'] = h.label.slice(0, 80); metadata['heatLevel'] = 'off'; }
+      else if (h && labelOk && typeof lv === 'number' && Number.isInteger(lv) && lv >= 0 && lv <= 4) {
+        metadata['heatLabel'] = h.label.slice(0, 80); metadata['heatLevel'] = lv;
+        if (h.metric) metadata['heatMetric'] = h.metric.slice(0, 120);
+      } else { metadata['heatLabel'] = h && labelOk && lv === 'unknown' ? h.label.slice(0, 80) : 'Unknown (no metric)'; metadata['heatLevel'] = 'unknown'; }
       return { ...n, metadata };
     });
     return { ...sc, nodes };
@@ -178,12 +208,22 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     if (from !== 'list') list.setSelected(id);
     if (id && from === 'list' && !listMode && scene) {
       const n = scene.nodes.find((x) => x.id === id);
-      if (n) {
+      if (n && canvasShown && realCanvas()) {
         const vp = sceneR.getViewport();
         const cam = sceneR.getCamera();
-        const cx = n.rect.x + n.rect.width / 2, cy = n.rect.y + n.rect.height / 2;
-        const dx = Math.abs(cx - cam.x) * cam.zoom, dy = Math.abs(cy - cam.y) * cam.zoom;
-        if (dx > vp.width / 2 - 40 || dy > vp.height / 2 - 40) sceneR.setCamera({ ...cam, x: cx, y: cy });
+        const c = { x: n.rect.x + n.rect.width / 2, y: n.rect.y + n.rect.height / 2 };
+        const vis = isVisible(cam, vp, c);
+        const s = worldToScreen(cam, vp, c);
+        const m = 40;
+        if (!vis || s.x < m || s.y < m || s.x > vp.width - m || s.y > vp.height - m) {
+          // shift camera so the node's projected point lands at viewport center (translation only)
+          const here = screenToWorld(cam, vp, { x: vp.width / 2, y: vp.height / 2 });
+          const there = screenToWorld(cam, vp, s);
+          const next = normalizeCamera({ ...cam, x: vis ? cam.x + (there.x - here.x) : c.x, y: vis ? cam.y + (there.y - here.y) : c.y });
+          sceneR.setCamera(next);
+          cams.set(currentKey, next);
+          controls.sync();
+        }
       }
     }
     syncInspector();
@@ -227,13 +267,15 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   }
 
   function layout(): void {
-    canvasHost.style.display = listMode ? 'none' : '';
-    listHost.style.display = listMode ? 'block' : '';
+    canvasShown = !listMode;
+    canvasHost.hidden = listMode;
+    listHost.hidden = !listMode;
     inspHost.hidden = !inspectorOpen;
+    syncControlsActive();
     viewBtn.textContent = listMode ? 'Canvas view' : 'List view';
     viewBtn.setAttribute('aria-pressed', String(listMode));
     inspBtn.setAttribute('aria-pressed', String(inspectorOpen));
-    if (!listMode && fitPending) tryFit();
+    if (!listMode && fitPending) { tryFit(); if (fitPending) requestAnimationFrame(() => { if (!destroyed && fitPending) tryFit(); }); }
   }
 
   const onView = () => { userToggled = true; listMode = !listMode; layout(); };
@@ -261,9 +303,9 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
       const built = applyHeat(buildScene(snapshot, focus));
       scene = built;
       if (changed) {
-        if (currentKey) cams.set(currentKey, sceneR.getCamera());
         currentKey = key;
         selectedId = null; selectedThread = null;
+        fitPending = true;
         controls.setBounds(built.bounds as Rect);
         sceneR.update(built);
         controls.setFocusKey(key);
@@ -284,8 +326,9 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     setActive(a) {
       if (destroyed) return;
       active = a;
-      controls.setActive(a);
       root.hidden = !a;
+      syncControlsActive();
+      if (a) { tryFit(); if (fitPending) requestAnimationFrame(() => { if (!destroyed && fitPending) tryFit(); }); }
     },
     setCapabilities(fn) { capsFn = fn; inspector.setCapabilities(fn); },
     destroy() {
@@ -295,6 +338,8 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
       inspBtn.removeEventListener('click', onInsp);
       noticeBtn.removeEventListener('click', onWarn);
       mq?.removeEventListener('change', onMq);
+      document.removeEventListener('visibilitychange', onDocVis);
+      ro?.disconnect();
       controls.destroy();
       sceneR.destroy();
       list.destroy();
