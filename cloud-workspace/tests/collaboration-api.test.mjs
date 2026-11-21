@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import fs from 'node:fs';
 import { handleCollaborationApi } from '../lib/collaboration-api.ts';
+import { handleAtlasApi } from '../lib/atlas-api.ts';
 
 const origin = 'https://atlas.example';
 const T = '2026-01-01T00:00:00.000Z';
@@ -87,7 +88,7 @@ test('two companies, roles, private messages hidden', async () => {
   assert.equal((await t.call('/api/collaboration/companies/c2', alice)).status, 404);
   assert.equal((await t.call('/api/collaboration/companies/c1/messages', alice, 'POST', { content: 'hi' })).status, 403);
   assert.equal((await t.call('/api/collaboration/companies/c2/messages', bob, 'POST', { content: 'team note' })).status, 201);
-  t.DB.raw.prepare("INSERT INTO daftar_member_messages (id,company_id,author_user_id,visibility,role,content,created_at) VALUES ('p1','c2',?,'private','user','PRIVATE',?)").run(uid(t, bob), T);
+  t.DB.raw.prepare("INSERT INTO daftar_member_messages (id,company_id,author_user_id,visibility,role,content,created_at) VALUES ('p1','c2',?,'personal','user','PRIVATE',?)").run(uid(t, bob), T);
   const list = await t.call('/api/collaboration/companies/c2/messages', bob);
   assert.equal(JSON.stringify(list.body).includes('PRIVATE'), false);
   assert.equal((await t.call('/api/collaboration/invitations/accept', alice, 'POST', { token: 'z' })).status, 400);
@@ -106,9 +107,10 @@ test('invite: wrong email, expiry, revoke, replay, other user', async () => {
   const tok2 = await invite(t, 'c1', 'viewer', carol.email);
   t.DB.raw.prepare("UPDATE daftar_invitations SET expires_at=? WHERE status='pending'").run('2020-01-01T00:00:00.000Z');
   assert.equal((await t.call('/api/collaboration/invitations/accept', carol, 'POST', { token: tok2 })).status, 410);
-  const tok3 = await invite(t, 'c1', 'viewer', carol.email);
-  const inv = t.DB.raw.prepare('SELECT id FROM daftar_invitations WHERE status=\'pending\'').get();
-  assert.equal((await t.call('/api/collaboration/invitations/' + inv.id, owner, 'DELETE')).status, 200);
+  const r3 = await t.call('/api/collaboration/companies/c1/invitations', owner, 'POST', { role: 'viewer', intendedEmail: carol.email, expiresAt: new Date(Date.now() + 3600e3).toISOString() });
+  assert.equal(r3.status, 201);
+  const tok3 = r3.body.token;
+  assert.equal((await t.call('/api/collaboration/invitations/' + r3.body.invitation.id, owner, 'DELETE')).status, 200);
   assert.equal((await t.call('/api/collaboration/invitations/accept', carol, 'POST', { token: tok3 })).status, 409);
   t.restore();
 });
@@ -156,6 +158,87 @@ test('concurrent accepters: one winner; two pending invites same member does not
   const r2 = await t.call('/api/collaboration/invitations/accept', carol, 'POST', { token: t2 });
   assert.equal(r1.status, 201); assert.ok(r2.status < 500);
   assert.equal(t.DB.raw.prepare("SELECT COUNT(*) n FROM daftar_company_memberships WHERE company_id='c2'").get().n, 1);
+  t.restore();
+});
+
+test('membership revoked between precheck and accept batch: no accept event, state preserved, invite pending', async () => {
+  const t = await boot();
+  await join(t, alice, 'c1', 'viewer');
+  const m = t.DB.raw.prepare('SELECT id FROM daftar_company_memberships').get();
+  const tok = await invite(t, 'c1', 'contributor', alice.email);
+  const before = events(t, 'invitation.accept');
+  const rev0 = t.DB.raw.prepare('SELECT acl_revision r FROM daftar_company_memberships WHERE id=?').get(m.id).r;
+  let intercepted = false;
+  t.DB.hooks.beforeBatch = (db) => { intercepted = true; db.prepare("UPDATE daftar_company_memberships SET status='revoked',revoked_at=?,acl_revision=acl_revision+1 WHERE id=?").run(new Date(Date.now() + 1000).toISOString(), m.id); };
+  const r = await t.call('/api/collaboration/invitations/accept', alice, 'POST', { token: tok });
+  assert.equal(intercepted, true);
+  assert.equal(r.status, 409);
+  assert.equal(events(t, 'invitation.accept'), before);
+  const row = t.DB.raw.prepare('SELECT status,revoked_at,acl_revision FROM daftar_company_memberships WHERE id=?').get(m.id);
+  assert.equal(row.status, 'revoked'); assert.ok(row.revoked_at); assert.equal(row.acl_revision, rev0 + 1);
+  assert.equal(t.DB.raw.prepare("SELECT COUNT(*) n FROM daftar_invitations WHERE status='pending'").get().n, 1);
+  t.restore();
+});
+
+test('same-clock concurrent acceptance of two pending invites for existing member: one winner, one ACL increment', async () => {
+  const t = await boot();
+  await join(t, alice, 'c1', 'viewer');
+  const t1 = await invite(t, 'c1', 'contributor', alice.email), t2 = await invite(t, 'c1', 'contributor', alice.email);
+  const rev0 = t.DB.raw.prepare('SELECT acl_revision r FROM daftar_company_memberships').get().r;
+  const before = events(t, 'invitation.accept');
+  const [a, b] = await Promise.all([
+    t.call('/api/collaboration/invitations/accept', alice, 'POST', { token: t1 }),
+    t.call('/api/collaboration/invitations/accept', alice, 'POST', { token: t2 }),
+  ]);
+  assert.deepEqual([a.status, b.status].sort(), [201, 409]);
+  assert.equal(events(t, 'invitation.accept'), before + 1);
+  assert.equal(t.DB.raw.prepare('SELECT acl_revision r FROM daftar_company_memberships').get().r, rev0 + 1);
+  assert.equal(t.DB.raw.prepare("SELECT COUNT(*) n FROM daftar_invitations WHERE status='accepted' AND accepted_by_user_id=?").get(uid(t, alice)).n, 2);
+  assert.equal(t.DB.raw.prepare("SELECT COUNT(*) n FROM daftar_invitations WHERE status='pending'").get().n, 1);
+  t.restore();
+});
+
+test('concurrent same-key proposal submission: one row, one event, one replay', async () => {
+  const t = await boot();
+  await join(t, alice, 'c1', 'contributor');
+  const send = () => t.call('/api/collaboration/companies/c1/proposals', alice, 'POST', { brief: 'Same brief', idempotencyKey: 'dup' });
+  const [a, b] = await Promise.all([send(), send()]);
+  assert.deepEqual([a.status, b.status].sort(), [200, 201]);
+  assert.equal([a, b].filter((x) => x.body.replay === true).length, 1);
+  assert.equal(t.DB.raw.prepare('SELECT COUNT(*) n FROM daftar_task_proposals').get().n, 1);
+  assert.equal(events(t, 'proposal.create'), 1);
+  t.restore();
+});
+
+test('repeated membership revoke and concurrent reject add no extra success events', async () => {
+  const t = await boot();
+  await join(t, alice, 'c1', 'contributor');
+  const mid = t.DB.raw.prepare('SELECT id FROM daftar_company_memberships').get().id;
+  const r1 = await t.call('/api/collaboration/memberships/' + mid, owner, 'DELETE');
+  const r2 = await t.call('/api/collaboration/memberships/' + mid, owner, 'DELETE');
+  assert.equal(r1.body.revoked, true); assert.equal(r2.body.revoked, false);
+  assert.equal(events(t, 'membership.revoke'), 1);
+  await join(t, bob, 'c1', 'contributor');
+  const pid = await proposal(t, bob, 'rj');
+  const rej = () => t.call('/api/collaboration/proposals/' + pid + '/decision', owner, 'POST', { decision: 'reject' });
+  const [x, y] = await Promise.all([rej(), rej()]);
+  assert.deepEqual([x.status, y.status].sort(), [200, 409]);
+  assert.equal(events(t, 'proposal.reject'), 1);
+  t.restore();
+});
+
+test('legacy owner-only API denies genuine members; owner remains valid', async () => {
+  const t = await boot();
+  await join(t, alice, 'c1', 'contributor');
+  const legacy = async (path, who, method = 'GET') => {
+    const headers = { 'content-type': 'application/json', 'oai-authenticated-user-id': who.sub, 'oai-authenticated-user-email': who.email, ...(method !== 'GET' ? { origin } : {}) };
+    const r = await handleAtlasApi(new Request(origin + path, { method, headers }), t.env);
+    return r.status;
+  };
+  assert.equal(await legacy('/api/workspace', alice), 403);
+  assert.equal(await legacy('/api/commands', alice), 403);
+  assert.equal(await legacy('/api/workspace', owner), 200);
+  assert.equal(await legacy('/api/commands', owner), 200);
   t.restore();
 });
 

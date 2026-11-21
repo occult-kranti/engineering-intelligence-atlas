@@ -77,7 +77,7 @@ async function createInvitation(env: AtlasEnv, user: CollabUser, companyId: stri
     env.DB!.prepare("INSERT INTO daftar_invitations (id,company_id,role,token_digest,intended_email,invited_by_user_id,status,expires_at,created_at) SELECT ?,?,?,?,?,?,'pending',?,? WHERE " + admit).bind(id, companyId, b.role, await sha256(token), intended, user.id, exps, now(), ...admitArgs),
     event(env, user.id, 'invitation.create', companyId, id, `Created ${b.role} invitation`, "changes() = 1 AND EXISTS (SELECT 1 FROM daftar_invitations WHERE id=? AND status='pending')", [id]),
   ]);
-  if ((createResults[0].meta?.changes ?? 0) !== 1) throw new CollabError('Invitation capacity reached or company unavailable.', 429, 'capacity');
+  if ((createResults[0].meta?.changes ?? 0) !== 1) throw new CollabError(429, 'capacity', 'Invitation capacity reached or company unavailable.');
   return json({ ok: true, invitation: { id, companyId, role: b.role, intendedEmail: intended, expiresAt: exps }, token, joinPath: `/join#invite=${token}`, shownOnce: true, siteAccessNote: 'The invitee must also be granted access to this Site through its custom-access settings; no bypass token is provided.' }, 201);
 }
 async function listInvitations(env: AtlasEnv, user: CollabUser, companyId: string): Promise<Response> {
