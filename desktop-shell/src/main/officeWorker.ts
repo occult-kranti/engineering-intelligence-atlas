@@ -42,6 +42,20 @@ function unwrap(result: OfficeResult): OfficeSnapshot {
 }
 function redact(text: string): string { return text.replace(/(?:sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}/g, '[redacted]'); }
 function hash(value: string | Buffer): string { return crypto.createHash('sha256').update(value).digest('hex'); }
+/** Longest valid UTF-8 prefix within maxBytes; never splits a code point and never exceeds the byte bound. */
+function utf8Prefix(text: string, maxBytes: number): string {
+  if (maxBytes <= 0) return '';
+  let bytes = 0;
+  let out = '';
+  for (const ch of text) {
+    const size = Buffer.byteLength(ch, 'utf8');
+    if (bytes + size > maxBytes) break;
+    bytes += size;
+    out += ch;
+  }
+  return out;
+}
+const EMPTY_RESULT_SUMMARY = 'No text deliverable was returned (the model may have used its entire output allowance on internal reasoning). Usage was recorded; no retry was made. Retry deliberately with a narrower task or a larger allowance.';
 
 /** One bounded worker. Definitions persist; execution runs only while explicitly enabled. */
 export class OfficeWorker {
@@ -247,7 +261,7 @@ export class OfficeWorker {
       this.activeController = controller;
       const inputBound = Buffer.byteLength(system + prompt, 'utf8') + 1024;
       // Ceiling only: publishing jobs may reserve more room; spend stays bounded by limits.
-      const outputCeiling = job.allowedTools.includes('github.publish_changes') ? 16384 : 8192;
+      const outputCeiling = job.allowedTools.includes('github.publish_changes') ? 32768 : 8192;
       let outputBound = Math.min(outputCeiling, Math.floor(job.limits.maxTokens - inputBound));
       if (outputBound < 1) throw new Error('Token budget does not fit the role and task context. Increase the limit or shorten the brief.');
       const rates = job.priceRates;
@@ -315,10 +329,10 @@ export class OfficeWorker {
         toolSummary = `${outcome.summary}\n${outcome.evidenceUrl}\n`;
         fs.appendFileSync(artifact, `\n\n## Managed action\n${toolSummary}`);
       }
-      const final = unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: usageObserved && body.trim() ? 'completed' : 'failed', inputTokens: usageObserved ? result.inputTokens : inputBound, outputTokens: usageObserved ? result.outputTokens : outputBound, costUsd, costStatus: usageObserved ? 'observed' : 'estimated', artifactUri: artifact, summary: (toolSummary + body).slice(0,800), error: !usageObserved ? 'Provider usage is unavailable. Deliverable preserved; reservation retained for reconciliation.' : body.trim() ? undefined : 'Provider returned no text deliverable.' }));
+      const final = unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: usageObserved && body.trim() ? 'completed' : 'failed', inputTokens: usageObserved ? result.inputTokens : inputBound, outputTokens: usageObserved ? result.outputTokens : outputBound, costUsd, costStatus: usageObserved ? 'observed' : 'estimated', artifactUri: artifact, summary: body.trim() ? (utf8Prefix(toolSummary + body, 800) || 'Deliverable preserved in the private artifact.') : EMPTY_RESULT_SUMMARY, error: !usageObserved ? 'Provider usage is unavailable. Deliverable preserved; reservation retained for reconciliation.' : body.trim() ? undefined : 'Provider returned no text deliverable.' }));
       settled = true;
       if (body.trim() && job.allowedTools.includes('github.read_repository') && final.jobs.find(j => j.id === job!.id)?.status === 'completed') {
-        unwrap(await this.options.command({ action: 'add_knowledge', companyId: job.companyId, title: `Repository review proposal · ${new Date().toISOString().slice(0, 10)}`, summary: `Model-authored proposal from a commit-pinned repository read. This is not build or publication evidence.\n${body.slice(0, 3500)}`, artifactUri: artifact }));
+        unwrap(await this.options.command({ action: 'add_knowledge', companyId: job.companyId, title: `Repository review proposal · ${new Date().toISOString().slice(0, 10)}`, summary: utf8Prefix(`Model-authored proposal from a commit-pinned repository read. This is not build or publication evidence.\n${body}`, 3900), artifactUri: artifact }));
       }
       if (body.trim() && job.allowedTools.length === 0 && final.jobs.find(j=>j.id===job!.id)?.status === 'completed' && final.cache.enabled) {
         await this.options.command({ action: 'put_cache', companyId: job.companyId, key: cacheKey, artifactUri: artifact, bytes: Buffer.byteLength(header + body), contentSha256: hash(header + body) });
