@@ -169,7 +169,7 @@ function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs:
   const threads = sortThreads(portfolioContractThreads(snap, known));
   return {
     title: 'Conference table', breadcrumbs: [{ label: 'Portfolio', focus }], focus,
-    bounds: unionBounds(nodes.map((n) => n.rect), 200), nodes, threads,
+    bounds: unionBounds(nodes.map((n) => n.rect), nodes.length <= 6 ? 60 : nodes.length <= 24 ? 110 : 200), nodes, threads,
     counts: { companies: companies.length, folios: nodes.length, threads: threads.length, runningJobs: jobs.filter((j) => j.status === 'running').length, hiredEmployees: (snap.employees ?? []).filter((e) => e.status !== 'fired').length },
     warnings,
   };

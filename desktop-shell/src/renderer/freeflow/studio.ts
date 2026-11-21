@@ -75,7 +75,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   viewBtn.setAttribute('aria-pressed', 'false');
   const inspBtn = mk('button', '', 'Inspector');
   inspBtn.type = 'button';
-  inspBtn.setAttribute('aria-pressed', 'true');
+  inspBtn.setAttribute('aria-pressed', 'false');
   tools.append(viewBtn, inspBtn);
   header.append(left, tools);
   const notice = mk('div', 'ff-notice');
@@ -107,7 +107,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   let narrow = false;
   let listMode = false;
   let userToggled = false;
-  let inspectorOpen = true;
+  let inspectorOpen = false;
   let warnExpanded = false;
   let currentKey = '';
   let fitPending = false;
@@ -133,7 +133,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   let sceneR: SceneRenderer = mountScene(canvasHost, {
     onSelect: (id) => selectNode(id, 'canvas'),
     onOpen: openNode,
-    onThreadSelect: (t) => { selectedThread = t ? t.id : null; syncInspector(); },
+    onThreadSelect: (t) => { selectedThread = t ? t.id : null; if (t && !inspectorOpen) { inspectorOpen = true; layout(); } syncInspector(); },
     onViewportChange: () => { if (fitPending) tryFit(); },
   });
   const onRes = () => { if (fitPending) tryFit(); };
@@ -173,7 +173,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     if (saved) { fitPending = false; const c = normalizeCamera(saved); cams.set(currentKey, c); sceneR.setCamera(c); controls.sync(); return; }
     if (!active || !canvasShown || listMode || !realCanvas()) { fitPending = true; return; }
     fitPending = false;
-    const c = fitBounds(sceneR.getCamera(), sceneR.getViewport(), scene.bounds as Rect, 48);
+    const c = fitBounds(sceneR.getCamera(), sceneR.getViewport(), scene.bounds as Rect, 24);
     cams.set(currentKey, c);
     sceneR.setCamera(c);
     controls.sync();
@@ -204,6 +204,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   function selectNode(id: string | null, from: 'canvas' | 'list' | 'api'): void {
     selectedId = id;
     selectedThread = null;
+    if (id && !inspectorOpen) { inspectorOpen = true; layout(); }
     if (from !== 'canvas') sceneR.select(id);
     if (from !== 'list') list.setSelected(id);
     if (id && from === 'list' && !listMode && scene) {

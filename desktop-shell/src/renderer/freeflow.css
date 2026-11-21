@@ -18,6 +18,36 @@ body.ff-canvas-mode #office-view #company-workspace > :not(#donna-chat-home-wrap
 body.ff-canvas-mode #donna-dock-toggle { bottom: 16px; }
 @media (max-height: 800px) { .ff-surface { height: calc(100vh - 190px); min-height: 420px; } }
 
+/* Scoped Freeflow controls: outrank global :root[data-theme] button rules without touching other app buttons. */
+:root[data-theme] .ff-surface :is(.ff-nav-btn, .ff-ctl, .ff-list-button, .ff-list-pager button),
+:root[data-theme] .ff-studio :is(.ff-tools button, .ff-inspector-actions button, .ff-breadcrumbs button, .ff-notice button, .ff-ctl, .ff-list-button, .ff-list-pager button) {
+  background: var(--elevated); color: var(--ink); border: 1px solid var(--line-strong); box-shadow: none;
+}
+:root[data-theme] .ff-studio .ff-breadcrumbs button { background: transparent; color: var(--accent); border-color: transparent; }
+:root[data-theme] .ff-surface :is(.ff-nav-btn, .ff-ctl):hover:not(:disabled),
+:root[data-theme] .ff-studio :is(.ff-tools button, .ff-inspector-actions button, .ff-notice button, .ff-ctl, .ff-list-pager button):hover:not(:disabled) {
+  background: var(--info-soft); border-color: var(--connection); color: var(--ink);
+}
+:root[data-theme] .ff-studio .ff-list-button:hover { background: var(--info-soft); border-color: var(--connection); }
+:root[data-theme] .ff-studio .ff-breadcrumbs button:hover { background: var(--info-soft); }
+:root[data-theme] .ff-surface :is(.ff-nav-btn, .ff-ctl):active:not(:disabled),
+:root[data-theme] .ff-studio :is(.ff-tools button, .ff-inspector-actions button, .ff-ctl):active:not(:disabled) {
+  background: var(--emphasis-surface); color: var(--emphasis-ink); border-color: var(--connection);
+}
+:root[data-theme] .ff-surface :is(.ff-nav-btn, .ff-ctl):disabled,
+:root[data-theme] .ff-studio :is(.ff-tools button, .ff-inspector-actions button, .ff-ctl, .ff-list-pager button):disabled {
+  background: var(--surface-soft); color: var(--muted); border-style: dashed; opacity: 0.6;
+}
+:root[data-theme] .ff-surface .ff-nav-btn.active,
+:root[data-theme] .ff-studio .ff-tools button[aria-pressed='true'],
+:root[data-theme] .ff-studio .ff-list-button.is-selected {
+  background: var(--accent); color: var(--accent-ink); border-color: var(--accent);
+}
+:root[data-theme] .ff-studio .ff-list-button.is-selected { background: var(--accent-soft); color: var(--ink); border-width: 2px; }
+:root[data-theme] .ff-studio .ff-inspector-actions button.ff-primary { background: var(--brand-gold); color: var(--canvas); border-color: var(--brand-gold); }
+:root[data-theme] .ff-surface :is(.ff-nav-btn, .ff-ctl):focus-visible,
+:root[data-theme] .ff-studio :is(button, .ff-list-button):focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
 /* Freeflow blueprint studio: drafting-table scene, list fallback and studio shell.
  * Uses studio-tokens.css semantic tokens only. Presentation-only; no indefinite animation. */
 
@@ -103,7 +133,9 @@ body.ff-canvas-mode #donna-dock-toggle { bottom: 16px; }
 /* Heat: labels and pattern always accompany color. */
 .ff-node[data-heat-level] .ff-node-paper { background-color: var(--heat-fill); background-image: var(--heat-pattern); }
 .ff-node[data-heat-level] .ff-node-paper::before { content: attr(data-heat-text); }
-.ff-node[data-heat-level='unknown'] .ff-node-paper { border-style: dashed; }
+/* Unknown: honest dashed edge plus a restrained corner hatch; text area stays clear. */
+.ff-node[data-heat-level='unknown'] .ff-node-paper { border-style: dashed; background-image: none; }
+.ff-node[data-heat-level='unknown'] .ff-node-paper::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: var(--heat-pattern); opacity: 0.6; pointer-events: none; }
 .ff-node-heat { position: relative; display: inline-block; margin-top: 4px; padding: 1px 6px; border: 1px solid var(--heat-color); border-radius: 3px; background: var(--heat-fill); color: var(--ink); font-size: 11px; font-weight: 700; }
 .ff-node[data-heat-level='unknown'] .ff-node-heat { border-style: dashed; }
 
@@ -137,6 +169,7 @@ body.ff-canvas-mode #donna-dock-toggle { bottom: 16px; }
 .ff-list-pager button:disabled { opacity: 0.55; cursor: not-allowed; }
 
 /* Narrow screens: list fallback, stacked panels. */
+.ff-canvas-host.has-inspector-closed { min-width: 0; }
 @media (max-width: 720px) {
   .ff-workbench { grid-template-columns: minmax(0, 1fr); grid-auto-rows: auto; }
   .ff-inspector { width: auto; max-width: none; border-left: 0; border-top: 1px solid var(--line-strong); }
