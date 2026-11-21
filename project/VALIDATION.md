@@ -1,12 +1,44 @@
 # Integrated validation record
 
-## Company-kit patch candidate · v0.6.1
+## Released company kits · v0.6.1
 
-Reviewed 21 November 2026 (America/New_York). The two-company installer and context fixes passed local validation: **9 real-native installer tests;411 desktop tests across28 files;230 renderer assertions;29 cloud API/directory tests**. All eight domain specialist contracts also resolved against the actual private state without model requests.
+Checkpoint: **21 November 2026 (America/New_York)**. [Daftar 0.6.1](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.1) was published at `2026-11-21T06:34:19Z` from exact source [`600d5fc`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/600d5fcca67b76e515833e0d1d6e4138b7e1fc3c). [Verify 44875955652](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44875955652) passed all seven component jobs and release; [Pages 44875955682](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44875955682) passed and deployed. The [machine-readable receipt](release-0.6.1.json) retains exact source, artifacts and verification limits.
 
-Actual private setup created the requested two companies,17 departments,8 new domain specialties,10 shared-service contracts and owned roadmap/whiteboard records. The native bootstrap supplied additional leadership and assistant definitions. A second apply produced **zero mutations**. Source records retain private provenance and evidence limitations. The explicit production sync finished at `2026-11-21T06:21:32.866Z` with matching native/cloud projection hashes, workspace revision 8 and directory revision 2. The temporary pairing was revoked and its writer released. No provider call, social action or schedule dispatch occurred. Production browser sign-in and actual owner-device keychain setup remain separate.
+| Gate | Final result | Scope |
+| --- | --- | --- |
+| Rust core |70 tests passed|State/control schema retained|
+| Desktop services |411 tests /28 files passed|Includes focused specialist-context tests|
+| Renderer |230 assertions passed|Knowledge filtering, source actions, scope and existing controls|
+| Company-kit installer |9 real-native tests passed|Replay, interrupted response, owner edits and capacity|
+| Cloud API/directory |29 tests passed|Native/cloud contract and context bounds|
+| MCP/editor |26 MCP /13 editor tests passed|Six installed VSIX host checks also passed|
+| Static/public browser |171 files, 115 precache; 76 checks, 74 screenshots|Public isolated starter; both themes and narrow/laptop gates|
+| Cloud browser |42 checks, 18 screenshots|Synthetic API fixtures; no production login claim|
+| Packaged desktop |Native state and local goal saved;4 screenshots|Isolated Linux CI, not owner-device/keychain acceptance|
+| Other required gates |Web,MySQL, Android, design passed|Web 75 passed / 22 external integration skips; Android debug|
+| Downloads |All 3 sizes/SHA-256 matched GitHub|Exact versioned packages below|
 
-The candidate includes generic guides and source fixtures in the installer. Client records and the private archive remain excluded. Final exact-source CI, package publication, website deployment and recovery evidence are pending and will be recorded below when observed.
+The owner-private website deployed at `2026-11-21T06:32:37.412813+00:00`, hosted source `5d88285a13a2a0f4067aa5f3747e1280df8fb458`, deployment `appgdep_6b013affbf788191a57abd342602118f`. All 143 mirrored application source files matched before updating the deployment receipt. Site identity, audience and D1 data were preserved.
+
+Actual private setup created both requested companies,17 departments,8 new domain specialties,10 shared-service contracts and owned roadmaps/whiteboards. Bootstrap supplied leadership and assistants. Reapplying the private plan produced **zero mutations**; all 8 specialist contracts resolved against actual state without model requests. First-cycle goals and scoped chat handoffs are saved drafts. No job, schedule or external social action was started.
+
+Explicit production sync at `2026-11-21T06:21:32.866Z` produced matching native/cloud canonical hashes, workspace revision 8 and directory revision 2. The temporary device was revoked and its writer released. Post-deployment service readback confirmed both saved projections unchanged. This does not substitute for owner-browser login or actual-device keychain acceptance.
+
+The private recovery archive passed every SHA-256 and ZIP CRC check. Archived state bytes equal the source; the full restored state differs only through documented artifact-path relocations. No missing structured artifact references were found. Credentials are excluded; linked external assets are not automatically embedded. Restore preserves policy fields, so review existing destination worker settings separately.
+
+### Verified 0.6.1 downloads
+
+|Artifact|Bytes|SHA-256|
+|---|---:|---|
+|[app-debug.apk](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.6.1/app-debug.apk)|8,604,729|`81a65a4113d6a28d01d1509d98c94f21bc5ecae72ed30af9110b233a572833c0`|
+|[atlas-office-0.6.1.vsix](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.6.1/atlas-office-0.6.1.vsix)|18,277|`c115e764ed511d964fc1b1835cb5985cf107b45cc7ce8444b5536aeec86ffc17`|
+|[daftar-desktop-0.6.1-x86_64.AppImage](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.6.1/daftar-desktop-0.6.1-x86_64.AppImage)|136,197,276|`7cd8847294b1bcaaba3e98a2a0bbfe78b9886fe607e3ad7b5912ed197a9a8779`|
+
+### Corrected candidate and remaining work
+
+Initial candidate `7e789c5` passed six component jobs but failed the public DOM-only compile because `URLSearchParams.keys` was unavailable. Verify 44875534319 and Pages 44875534327 retain that failure; release was skipped. Final code uses DOM-compatible `forEach`, keeps credential-query filtering, passed a compile without ambient Node types and all 230 renderer assertions, then passed unchanged CI/browser gates.
+
+No new provider API calls were made for this company-kit increment. Definitions and guides do not imply connected financial/social accounts, event enrollment, a completed fintech demo or measured campaign outcomes. Typed marketing records, eligible adapters, external publication receipts and the synthetic reconciliation prototype remain roadmap work. The Windows-first freeflow redesign requested after this release is a separate next phase.
 
 ## Released command studio · v0.6.0
 

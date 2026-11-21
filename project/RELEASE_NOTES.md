@@ -22,6 +22,8 @@ Creating these companies does not connect financial/social accounts, start backg
 
 ## Verification and compatibility
 
+Published 21 November 2026 from `600d5fcca67b76e515833e0d1d6e4138b7e1fc3c`. All seven verification jobs, release and Pages passed. Checks include 70 Rust, 411 desktop, 230 renderer, 9 real-native installer, 29 cloud API/directory and 13 editor tests. Public browser 76 checks / 74 screenshots and synthetic cloud 42 checks / 18 screenshots passed. Packaged Linux and installed VSIX passed; all three package sizes/hashes matched GitHub. Matching private Site deployment and private export/restore passed. [Exact receipt](release-0.6.1.json).
+
 The release workflow publishes this version only after its seven required jobs succeed, including the new real-native company-kit suite and focused worker-context tests. The existing Rust state schema, website API and explicit desktop sync protocol are retained. The Linux AppImage remains unsigned; actual owner-device keychain acceptance and signed cross-platform packaging are separate work. The VS Code attachment is the thin client, and Android carries the research atlas rather than the full native Office.
 
 See the [company-kit guide](../company/company-kits/README.md), [roadmap](../ROADMAP.md), [handoff](../HANDOFF.md) and [validation](VALIDATION.md) for current evidence and remaining work.

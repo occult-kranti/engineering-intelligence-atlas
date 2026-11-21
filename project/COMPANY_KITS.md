@@ -93,13 +93,11 @@ audience. A live strategy dashboard does not establish an active campaign.
 
 ## Verification and remaining work
 
-The local candidate passed nine real-native installer tests, 411 desktop tests,
+The released 0.6.1 source passed nine real-native installer tests,411 desktop tests,
 230 renderer assertions and 29 cloud API/directory tests. These include
 interrupted creation, replay, preserved owner edits, near-capacity no-ops,
 metadata flooding, exact task-contract selection, source actions, scope limits
-and unchanged authority. Exact final CI and publication evidence belong in
-[validation](VALIDATION.md); these local counts are not a claim that a pending
-release has already been published.
+and unchanged authority. All final CI jobs, release and Pages passed; the matching private Site is deployed. [Validation](VALIDATION.md) and the [release receipt](release-0.6.1.json) retain exact source, package hashes and recovery evidence.
 
 The specialized operating guides are intentionally broader than the current
 native record model. Typed marketing account/campaign/approval/receipt tables,

@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "version": "0.6.1",
+  "codeCommit": "600d5fcca67b76e515833e0d1d6e4138b7e1fc3c",
+  "releaseUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.1",
+  "publishedAt": "2026-11-21T06:34:19Z",
+  "displayDate": "2026-11-21",
+  "displayTimezone": "America/New_York",
+  "verification": {
+    "combinedCi": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44875955652",
+    "combinedCiStatus": "success",
+    "jobs": [
+      "cloud",
+      "editor",
+      "desktop",
+      "web",
+      "android",
+      "design-tools",
+      "mysql-connectors",
+      "release"
+    ],
+    "pagesCi": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44875955682",
+    "pagesCiStatus": "success",
+    "rustTests": 70,
+    "desktopTests": 411,
+    "desktopTestFiles": 28,
+    "rendererAssertions": 230,
+    "companyKitNativeTests": 9,
+    "cloudApiAndDirectoryTests": 29,
+    "editorClientTests": 13,
+    "mcpTests": 26,
+    "staticFiles": 171,
+    "precacheEntries": 115,
+    "webTests": 75,
+    "webIntegrationSkips": 22
+  },
+  "downloads": [
+    {
+      "name": "app-debug.apk",
+      "bytes": 8604729,
+      "sha256": "81a65a4113d6a28d01d1509d98c94f21bc5ecae72ed30af9110b233a572833c0",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.6.1/app-debug.apk",
+      "matchesPublishedGitHubDigest": true
+    },
+    {
+      "name": "atlas-office-0.6.1.vsix",
+      "bytes": 18277,
+      "sha256": "c115e764ed511d964fc1b1835cb5985cf107b45cc7ce8444b5536aeec86ffc17",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.6.1/atlas-office-0.6.1.vsix",
+      "matchesPublishedGitHubDigest": true
+    },
+    {
+      "name": "daftar-desktop-0.6.1-x86_64.AppImage",
+      "bytes": 136197276,
+      "sha256": "7cd8847294b1bcaaba3e98a2a0bbfe78b9886fe607e3ad7b5912ed197a9a8779",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.6.1/daftar-desktop-0.6.1-x86_64.AppImage",
+      "matchesPublishedGitHubDigest": true
+    }
+  ],
+  "website": {
+    "url": "https://atlas-command-office.whatswrong-inc.chatgpt.site/",
+    "audience": "owner-only",
+    "sourceCommit": "5d88285a13a2a0f4067aa5f3747e1280df8fb458",
+    "deploymentId": "appgdep_6b013affbf788191a57abd342602118f",
+    "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_888f53c462a08191a6c6e3a0e9d5cb7a",
+    "versionNumber": 10,
+    "deploymentStatus": "succeeded",
+    "deployedAt": "2026-11-21T06:32:37.412813+00:00",
+    "sourceMirrorFilesMatched": 143,
+    "postDeploymentServiceReadback": "Workspace revision8 and directory revision2 unchanged; temporary writer released. Not a browser sign-in test."
+  },
+  "browserEvidence": {
+    "public": {
+      "checks": 76,
+      "screenshots": 74,
+      "interactionGroups": 10,
+      "contrastChecks": [
+        {
+          "theme": "blueprint",
+          "target": "inactive navigation",
+          "ratio": 9.142271345699069
+        },
+        {
+          "theme": "blueprint",
+          "target": "active navigation",
+          "ratio": 8.873654725485402
+        },
+        {
+          "theme": "blueprint",
+          "target": "save status",
+          "ratio": 8.370668793286557
+        },
+        {
+          "theme": "blueprint",
+          "target": "blueprint description",
+          "ratio": 9.345692485634666
+        },
+        {
+          "theme": "drafting",
+          "target": "inactive navigation",
+          "ratio": 5.125322293625095
+        },
+        {
+          "theme": "drafting",
+          "target": "active navigation",
+          "ratio": 6.500018489288026
+        },
+        {
+          "theme": "drafting",
+          "target": "save status",
+          "ratio": 6.00091572621501
+        },
+        {
+          "theme": "drafting",
+          "target": "blueprint description",
+          "ratio": 5.450257084147674
+        }
+      ],
+      "data": "Public isolated starter only; no private user data"
+    },
+    "cloud": {
+      "checks": 42,
+      "screenshots": 18,
+      "data": "Test-only Fixture companies; no owner portfolio, credentials, private source metadata or production API responses",
+      "providerCalls": 0,
+      "pageErrors": [],
+      "unexpectedRequests": [],
+      "productionAuthenticationVerified": false,
+      "productionPersistenceVerified": false
+    },
+    "desktop": {
+      "screenshots": 4,
+      "nativeStateLoaded": true,
+      "localGoalPersisted": true,
+      "providerSpendChanged": false,
+      "nativeBinarySha256": "7e51cee7a09427aced1df2ca15ba42389eaeecd96169740655a79869a0cea491",
+      "scope": "Linux unpacked release in CI; not an owner-laptop installation, signing or OS-keychain acceptance test."
+    },
+    "installedEditor": {
+      "vscodeVersion": "1.147.0",
+      "extensionVersion": "0.6.1",
+      "checks": 6,
+      "commands": 7,
+      "runtimeFilesVerified": 5,
+      "networkRequests": 0,
+      "vsixSha256": "c115e764ed511d964fc1b1835cb5985cf107b45cc7ce8444b5536aeec86ffc17"
+    }
+  },
+  "privateIntegration": {
+    "actualCompanySetup": true,
+    "replayMutations": 0,
+    "scopedSpecialistContractsResolved": 8,
+    "nativeCloudProjectionMatch": true,
+    "temporaryDeviceRevoked": true,
+    "sourceRegistersPublished": false,
+    "firstCycleGoals": "saved drafts; no worker job or schedule started",
+    "backup": "Every checksum passed; canonical state retained except documented artifact-path relocations; credentials excluded."
+  },
+  "providerUsageThisIncrement": {
+    "newProviderApiRequests": 0,
+    "note": "Does not claim zero ChatGPT, hosting or historical API cost."
+  },
+  "priorFailedCandidates": [
+    {
+      "commit": "7e789c5bc1d2afc47a98a74c4d5b59e1be7cfa0e",
+      "verifyRun": 44875534319,
+      "pagesRun": 44875534327,
+      "reason": "DOM-only renderer lacked URLSearchParams.keys; corrected with forEach while preserving credential-query filtering. Release skipped."
+    }
+  ],
+  "remainingAcceptance": [
+    "Actual owner Windows/macOS installation and OS keychain",
+    "Production browser sign-in with owner session",
+    "Typed marketing records and an eligible social adapter",
+    "External publication receipts and analytics imports",
+    "Runnable fintech prototype and event-specific eligibility verification"
+  ],
+  "recordedAt": "2026-11-21T06:40:39.608355+00:00"
+}

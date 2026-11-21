@@ -1,6 +1,6 @@
 # Timeline index
 
-Current published release: **[Daftar 0.6.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.0)**. Company-kit patch 0.6.1 is being verified; entries 040–044 record the new work. Dates use America/New_York, with exact receipt timestamps retained. See [validation](project/VALIDATION.md).
+Current published release: **[Daftar 0.6.1](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.1)**. Entries 040–044 record the completed company-kit delivery. Dates use America/New_York, with exact receipt timestamps retained. See [validation](project/VALIDATION.md).
 
 Follow the numbered records for the delivery sequence. The repository import and rebuild began on 20 November 2026; remote publication results below were recorded on 21 November 2026 (UTC). Exact runtime event timestamps are recorded by the application.
 
@@ -67,4 +67,4 @@ Related: [Roadmap](ROADMAP.md) · [Handoff](HANDOFF.md) · [Backend research](pr
 
 - **043: Independent context and interface reviewers** — Found that machine identity notes displaced useful source records from bounded prompt and UI windows. Added same-company employee-contract selection, filtered metadata before native/cloud context and UI limits, and exposed safe source links through the existing external-link bridge. Focused worker tests passed 60; full desktop suite passed 411; renderer assertions passed 230; cloud API/directory suite passed 29. No new privileges or provider calls. ([ledger](project/WORKER_LEDGER.md))
 
-- **044: Director / private company integration and release** — Applied both companies through native commands; repeated setup made zero mutations. Imported private source provenance without committing client content. Added two draft first-cycle goals and scoped setup handoffs. Production explicit sync reached matching native/cloud projection hashes, saved company directory links and revoked the temporary sync device. Source and package release verification is running. ([ledger](project/WORKER_LEDGER.md))
+- **044: Director / private company integration and release** — Created both companies through native commands; zero-mutation replay passed. Saved roadmaps, source knowledge, first-cycle draft goals and scoped handoffs; matched native/cloud projections and private directory. Corrected the static compiler failure found by CI. Released 0.6.1 from 600d5fc after all seven jobs, release and Pages passed; deployed matching private Site, verified downloaded digests and independently checked private export/restore. No new provider calls or external social actions. ([ledger](project/WORKER_LEDGER.md))

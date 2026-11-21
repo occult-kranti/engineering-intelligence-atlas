@@ -13,7 +13,7 @@ manager, project runner and Android source remain available. The architecture is
 Electron/TypeScript with a Rust state and control core, plus the deployed owner-private Sites/Vinext/D1 companion. The earlier
 React/TypeScript/MySQL runtime remains available as a separate deployment option.
 
-## Company kits 0.6.1 integration
+## Company kits 0.6.1 — released
 
 The reusable catalog is [company/company-kits/index.json](company/company-kits/index.json); [the installer guide](company/company-kits/README.md) specifies preview, apply, limits and restart behavior. Run it against the same private company-state directory used by the desktop. It adds records through the native command boundary and never runs the global optimizer or replaces existing groups. Client/source data belongs in a private plan; public templates and installers contain generic guidance only.
 
@@ -25,15 +25,15 @@ The existing explicit desktop sync protocol carries the companies into the priva
 
 Daftar 0.6.0 adds Violet studio / Golden drafting themes, a scoped ownership hierarchy, roadmap status lanes, derived heat maps and the same Donna conversation docked beside visual work. All seven CI gates, release publication, Pages and the owner-private website deployment passed. The [release receipt](project/release-0.6.0.json) records exact source, downloadable hashes, browser measurements and remaining acceptance boundaries.
 
-Theme and heat-mode settings stay in local presentation storage. They do not write the native state, spend tokens or enqueue cloud commands. Both website routes and the shared renderer use `daftar-studio-theme`. The desktop/browser view uses `daftar-studio-heat`. Existing archives, native identity and D1 schema remain unchanged. Heat maps use actual snapshot receipts, explicit unknown states and labeled job allowances, not unmeasured utilization or company budgets.
+Theme and heat-mode settings stay in local presentation storage. They do not write the native state, spend tokens or enqueue cloud commands. Both website routes and the shared renderer use `daftar-studio-theme`. The desktop/browser view uses `daftar-studio-heat `. Existing archives, native identity and D1 schema remain unchanged. Heat maps use actual snapshot receipts, explicit unknown states and labeled job allowances, not unmeasured utilization or company budgets.
 
 After a renderer edit, build `desktop-shell`, regenerate the static preview, and run `cloud-workspace/scripts/sync-desktop.mjs` from the cloud directory with the absolute repository path. This updates content-addressed assets and the cloud app's shared token stylesheet. The authored cloud bridge is `cloud-workspace/scripts/cloud-bridge.js`. See [studio decisions](project/STUDIO_REDESIGN.md), [signal contract](project/OFFICE_SIGNALS.md) and [color contract](project/STUDIO_COLOR_SYSTEM.md).
 
 ## Install a published build and restore personal work
 
-Use the assets attached to [v0.6.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.0): an unsigned Linux x86_64 AppImage, a VS Code VSIX and an Android debug APK. The exact release source is [`5b661e5`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/5b661e57a2ac68530e50a7f452d912f169495ef5). All three downloaded assets match the published sizes and SHA-256 digests. Actual packaged Electron startup, native state and local-goal persistence passed; the installed VSIX activated in VS Code 1.147.0. [Validation](project/VALIDATION.md) separates these checks from owner-laptop, keychain and production sign-in acceptance.
+Use the assets attached to [v0.6.1](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.1): unsigned Linux x86_64 AppImage, VS Code VSIX and Android debug APK. Exact release source is [`600d5fc`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/600d5fcca67b76e515833e0d1d6e4138b7e1fc3c). All seven verification jobs, release and Pages passed; all downloaded sizes/SHA-256 matched GitHub. Packaged native state/local-goal persistence and six installed VSIX checks passed. [The receipt](project/release-0.6.1.json) separates these from owner-laptop, keychain and production browser sign-in acceptance.
 
-The existing private archive and native schema remain compatible with this presentation update. The complete personal restore and production pairing rehearsal is historical 0.5.0 evidence, not a newly performed 0.6.0 owner-device test. The mobile shell carries the research atlas; the complete personal Office runtime is in the desktop application. Packages exclude personal company records and keys.
+The latest private recovery export passed checksums and isolated restore with only documented artifact-path relocations. Existing destination worker settings require review because restore preserves policy fields. Public packages exclude personal records and keys. Android carries the research atlas; the complete Office runtime is desktop-based. The subsequently requested Windows-first freeflow rebuild is a separate workstream.
 
 For a private workspace archive, first launch the desktop app and find its user
 data directory in Models & system. Close the app, then run the release's restore
@@ -92,7 +92,7 @@ Open [Daftar](https://atlas-command-office.whatswrong-inc.chatgpt.site) and sign
 
 The website saves its office snapshot and cloud conversation in D1. Native repository work, job execution and files remain on the laptop. Restore the supplied personal workspace before first pairing so a fresh empty desktop cannot overwrite an existing cloud portfolio. Create a desktop pairing on the website, paste it into Settings → Account & cloud connection, and choose **Sync now**. Connection itself does not upload or start an unattended loop. A conflict preserves both sides until reviewed.
 
-Install the published `atlas-office-0.6.0.vsix` through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page. The installed VSIX passed its isolated CI activation checks; the owner's editor session and credential store remain a separate setup context.
+Install the published `atlas-office-0.6.1.vsix` through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page. The installed VSIX passed its isolated CI activation checks; the owner's editor session and credential store remain a separate setup context.
 
 Cloud model calls use a separate atomic admission ledger funded by an allocation held in the native global budget. Do not release that allocation while the cloud runtime can still spend it. Unknown provider outcomes keep their reservations. [Full protocol and verification](project/EDITOR_AND_CLOUD.md).
 
