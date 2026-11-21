@@ -1,5 +1,13 @@
 # Integrated validation record
 
+## Company-kit patch candidate · v0.6.1
+
+Reviewed 21 November 2026 (America/New_York). The two-company installer and context fixes passed local validation: **9 real-native installer tests;411 desktop tests across28 files;230 renderer assertions;29 cloud API/directory tests**. All eight domain specialist contracts also resolved against the actual private state without model requests.
+
+Actual private setup created the requested two companies,17 departments,8 new domain specialties,10 shared-service contracts and owned roadmap/whiteboard records. The native bootstrap supplied additional leadership and assistant definitions. A second apply produced **zero mutations**. Source records retain private provenance and evidence limitations. The explicit production sync finished at `2026-11-21T06:21:32.866Z` with matching native/cloud projection hashes, workspace revision 8 and directory revision 2. The temporary pairing was revoked and its writer released. No provider call, social action or schedule dispatch occurred. Production browser sign-in and actual owner-device keychain setup remain separate.
+
+The candidate includes generic guides and source fixtures in the installer. Client records and the private archive remain excluded. Final exact-source CI, package publication, website deployment and recovery evidence are pending and will be recorded below when observed.
+
 ## Released command studio · v0.6.0
 
 Checkpoint: **20 November 2026 (America/New_York)**; evidence timestamps retain UTC. [Daftar 0.6.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.0) was published at `2026-11-21T04:39:10Z` from exact source [`5b661e57a2ac68530e50a7f452d912f169495ef5`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/5b661e57a2ac68530e50a7f452d912f169495ef5). [Verify 44866920958](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920958) passed all seven verification jobs and release; [Pages 44866920872](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920872) passed and deployed. The [machine-readable receipt](release-0.6.0.json) retains source, measurements, downloads and limits.

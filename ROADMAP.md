@@ -4,6 +4,18 @@ This file distinguishes implemented behavior from deployment and validation work
 The detailed worker asks and returns are in [the shared ledger](project/WORKER_LEDGER.md),
 with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
+## Company kits 0.6.1 — implementation and verification
+
+| Outcome | Owner | Acceptance |
+| --- | --- | --- |
+| Additive company installer | Platform engineering | Real native setup, replay with zero mutations, interruption recovery, scope/capacity preflight and preserved owner edits |
+| Fintech & Hackathon Studio | Studio director | Nine-department template, four domain specialties, eight dependent milestones, qualified opportunity sources and a synthetic first-demo brief |
+| Social & Digital Presence | Presence director | Eight-department template, four domain specialties, ten common milestones, detailed client/channel workflows and source-qualified platform constraints |
+| Useful source and specialist context | Worker engineering / QA | Internal recovery metadata excluded; unique same-company task contract retained within six records; no new authority or tools |
+| Private owner integration | Donna / directory steward | Actual source register remains private; native and hosted projections match; company links and source application read back from the saved directory |
+
+The next product work is an explicit marketing-record model, a single eligible account adapter, evidence-bearing publication receipts and measured campaign reporting. Those are planned capabilities. The current company setup supplies persistent organization, reference knowledge, roadmap ownership, blueprint/whiteboard records and scoped chats. The fintech first demo remains a proposed synthetic reconciliation tool until implemented and verified.
+
 ## Command studio 0.6.0 — released and verified
 
 | Outcome | Owner | Evidence and acceptance |

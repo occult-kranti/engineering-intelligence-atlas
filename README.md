@@ -13,6 +13,12 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
+## Company kits — 0.6.1 integration
+
+Two reusable company templates add a Fintech & Hackathon Studio and a Social & Digital Presence organization. The [company-kit catalog and installer](company/company-kits/README.md) define seventeen departments, eight domain specialties, scoped shared-service contracts, owned roadmap items and office whiteboards. The detailed [fintech guide](company/company-kits/fintech-hackathon/README.md) and [social-presence guide](company/company-kits/social-presence/README.md) include bounded roles, evidence rules and current official integration references. Personal client records remain in the owner workspace.
+
+An independent review found that internal identity bindings could displace useful worker knowledge. The patch excludes that metadata from native/cloud prompts and human knowledge views, while resolving a specialist's same-company task contract within bounded context. Persistent employee definitions do not start paid workers or connect external accounts. Publication and exact release evidence will be recorded in [validation](project/VALIDATION.md).
+
 ## Studio redesign — 0.6.0 released
 
 The shared desktop and website office now has **Violet studio** and **Golden drafting** themes: deep violet, electric green, warm gold and an ivory drawing surface. Blueprint rooms, an Ownership / Soft Board hierarchy, real roadmap status lanes and the ownership whiteboard use the same saved scope. Donna's dock contains the existing conversation and preserves an unsent draft when changing views.

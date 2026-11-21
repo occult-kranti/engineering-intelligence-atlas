@@ -4,6 +4,7 @@ import path from 'node:path';
 import type { OfficeCommand, OfficeJob, OfficeResult, OfficeSnapshot, OfficeWorkerStatus } from '../shared/office';
 import type { GenerateFn } from './projects';
 import { loadRoleReference } from './roleReferences';
+import { selectCompanyKitKnowledge } from './companyKitKnowledge';
 
 export interface OfficeWorkerOptions {
   snapshot: () => Promise<OfficeResult>;
@@ -134,8 +135,10 @@ export class OfficeWorker {
         redacted: safeText !== fullText,
       };
     });
-    const knowledge = snapshot.knowledge.filter(k => k.companyId === job.companyId).slice(-6)
-      .map(k => ({ title: k.title, summary: k.summary.slice(0, 1000), artifactUri: k.artifactUri, contentSha256: this.artifactHash(k.artifactUri) }));
+    const selectedKnowledge = selectCompanyKitKnowledge(snapshot.knowledge, job.companyId, employee.id);
+    const knowledge = selectedKnowledge.records
+      .map(k => ({ title: k.title, summary: k.summary.slice(0, 1000), artifactUri: k.artifactUri, contentSha256: this.artifactHash(k.artifactUri),
+        ...(k.id === selectedKnowledge.taskContractId ? { selection: 'employee-task-contract-data' } : {}) }));
     // A shared employee does not inherit its home company's private context.
     // Only explicitly selected, currently granted transfer references cross scope.
     const transferredKnowledge = (job.knowledgeTransferIds ?? []).map(id => {

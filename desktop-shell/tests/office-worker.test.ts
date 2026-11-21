@@ -70,6 +70,32 @@ describe('managed source context and bounded parallel workers',()=>{
  it('executes at most two distinct leased jobs in parallel and retains both artifacts',async()=>{let release!:()=>void;let both!:()=>void;const ready=new Promise<void>(r=>both=r);const barrier=new Promise<void>(r=>release=r);let calls=0;const f=fixture({jobs:[job(),job(),job()],generate:async()=>{calls++;if(calls===2)both();await barrier;return{text:'Parallel fixture deliverable',inputTokens:20,outputTokens:20};}});const pool=new OfficeWorkerPool({snapshot:f.snapshot,command:f.command,generate:f.generate,artifactRoot:f.artifactRoot,seedDir:f.seedDir},2);const pending=pool.runOnce();await ready;expect(pool.status().activeJobIds).toHaveLength(2);expect(new Set(pool.status().activeJobIds).size).toBe(2);expect(calls).toBe(2);expect(f.state.jobs[2]?.status).toBe('queued');release();await pending;expect(f.state.jobs.filter(j=>j.status==='completed')).toHaveLength(2);expect(f.state.jobs.filter(j=>j.artifactUri&&fs.existsSync(j.artifactUri))).toHaveLength(2);pool.stop();});
 });
 
+describe('company-kit task context in actual worker prompts', () => {
+ const binding = (entityType:string,key:string,entityId:string) => ({id:`binding-${entityType}-${key}`,companyId:'company-a',title:`Company kit identity: ${entityType} / ${key}`,summary:JSON.stringify({kind:'daftar-company-kit-binding',schemaVersion:1,companyId:'company-a',kitKey:'social-presence',entityType,key,entityId}),artifactUri:`daftar-kit://company-a/social-presence/binding/${entityType}/${key}`,createdAt:new Date().toISOString()});
+ it('includes the exact installed specialty contract despite room metadata flooding, without changing allowed tools',async()=>{
+  const f=fixture({jobs:[job({employeeId:'specialist'})]});
+  f.state.employees.push({...f.state.employees[0]!,id:'specialist',companyId:'company-a',officeId:'office-a',name:'Editorial producer',role:'Editorial specialist',kind:'specialist',assignmentKey:null});
+  f.state.knowledge.push({id:'editorial-contract',companyId:'company-a',title:'Editorial contract',summary:'EXACT_EDITORIAL_CONTRACT: return source-linked variants and verified review state.',artifactUri:'https://example.test/editorial',createdAt:new Date().toISOString()},binding('employee','producer','specialist'),binding('knowledge','prompt-producer','editorial-contract'));
+  for(let i=0;i<8;i++)f.state.knowledge.push({id:`source-${i}`,companyId:'company-a',title:`Source ${i}`,summary:`Useful source ${i}`,artifactUri:'https://example.test/source',createdAt:new Date().toISOString()});
+  for(let i=0;i<20;i++)f.state.knowledge.push(binding('room',`room-${i}`,`room-id-${i}`));
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();
+  const request=f.generate.mock.calls[0]![0];
+  expect(request.prompt).toContain('EXACT_EDITORIAL_CONTRACT');
+  expect(request.prompt).toContain('employee-task-contract-data');
+  expect(request.prompt).not.toContain('daftar-company-kit-binding');
+  expect(request.prompt).not.toContain('Company kit identity:');
+  expect(request.prompt).toContain('"allowedActions":[]');
+  expect(request.system).toContain('This job produces text; it cannot execute code or publish externally.');
+ });
+ it('does not invalidate an ordinary worker cache just because internal identity records are added',async()=>{
+  const f=fixture({cache:true});await f.worker.runOnce();
+  for(let i=0;i<12;i++)f.state.knowledge.push(binding('room',`room-${i}`,`room-id-${i}`));
+  f.state.jobs.push(job());await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();
+ });
+});
+
 describe('verified dependency evidence for panel synthesis', () => {
  function handoffs(prompt: string): Array<{ id: string; contentSha256: string | null; excerpt: string | null; excerptBytes: number; artifactBytes: number | null; readingStatus: string; redacted: boolean }> {
   const section = prompt.indexOf('\nDependency handoffs (');

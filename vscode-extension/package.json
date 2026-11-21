@@ -2,7 +2,7 @@
   "name": "atlas-office",
   "displayName": "Daftar \u2014 Donna and One Office",
   "description": "Control your Daftar companies, Donna chat, decision panels, roadmaps and bounded jobs from VS Code.",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "publisher": "occult-kranti",
   "license": "UNLICENSED",
   "engines": {

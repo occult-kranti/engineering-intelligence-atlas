@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "classification": "synthetic",
+  "status": "proposed-fixture-not-executed",
+  "briefKey": "synthetic-reconciliation-demo",
+  "currency": "USD",
+  "amountUnit": "minor-unit-integer",
+  "invoices": [
+    { "invoiceId": "INV-100", "customerRef": "SAMPLE-A", "currency": "USD", "billedMinor": 10000 },
+    { "invoiceId": "INV-200", "customerRef": "SAMPLE-B", "currency": "USD", "billedMinor": 10000 },
+    { "invoiceId": "INV-300", "customerRef": "SAMPLE-C", "currency": "USD", "billedMinor": 8000 },
+    { "invoiceId": "INV-400", "customerRef": "SAMPLE-D", "currency": "USD", "billedMinor": 5000 }
+  ],
+  "events": [
+    { "eventId": "EV-P100", "transactionId": "PAY-100", "kind": "payment_posted", "invoiceRef": "INV-100", "amountMinor": 10000, "currency": "USD", "occurredAt": "2026-01-01T10:00:00Z" },
+    { "eventId": "EV-P200", "transactionId": "PAY-200", "kind": "payment_posted", "invoiceRef": "INV-200", "amountMinor": 4000, "currency": "USD", "occurredAt": "2026-01-01T10:01:00Z" },
+    { "eventId": "EV-P300", "transactionId": "PAY-300", "kind": "payment_posted", "invoiceRef": "INV-300", "amountMinor": 8000, "currency": "USD", "occurredAt": "2026-01-01T10:02:00Z" },
+    { "eventId": "EV-R300", "transactionId": "REF-300", "kind": "refund_posted", "parentPaymentId": "PAY-300", "amountMinor": 2000, "currency": "USD", "occurredAt": "2026-01-01T10:03:00Z" },
+    { "eventId": "EV-P404", "transactionId": "PAY-404", "kind": "payment_posted", "invoiceRef": "INV-404", "amountMinor": 3000, "currency": "USD", "occurredAt": "2026-01-01T10:04:00Z" },
+    { "eventId": "EV-P100-RETRY", "transactionId": "PAY-100", "kind": "payment_posted", "invoiceRef": "INV-100", "amountMinor": 10000, "currency": "USD", "occurredAt": "2026-01-01T10:00:00Z" }
+  ],
+  "deliveryOrder": ["EV-P100", "EV-P100", "EV-P200", "EV-R300", "EV-P300", "EV-P404", "EV-P100-RETRY"],
+  "expectedBaseline": {
+    "billedMinor": 33000,
+    "grossReceiptsMinor": 25000,
+    "refundsMinor": 2000,
+    "netReceiptsMinor": 23000,
+    "allocatedNetMinor": 20000,
+    "unallocatedNetMinor": 3000,
+    "outstandingMinor": 13000,
+    "invoiceOutstandingMinor": { "INV-100": 0, "INV-200": 6000, "INV-300": 2000, "INV-400": 5000 }
+  },
+  "negativeCandidatesAfterBaseline": [
+    {
+      "case": "conflicting-event-id",
+      "event": { "eventId": "EV-P100", "transactionId": "PAY-100", "kind": "payment_posted", "invoiceRef": "INV-100", "amountMinor": 11000, "currency": "USD", "occurredAt": "2026-01-01T10:00:00Z" },
+      "expected": "quarantine-conflict-and-preserve-baseline"
+    },
+    {
+      "case": "excess-refund",
+      "event": { "eventId": "EV-R300-EXCESS", "transactionId": "REF-300-EXCESS", "kind": "refund_posted", "parentPaymentId": "PAY-300", "amountMinor": 9000, "currency": "USD", "occurredAt": "2026-01-01T11:00:00Z" },
+      "expected": "quarantine-over-refund-and-preserve-baseline"
+    },
+    {
+      "case": "currency-mismatch",
+      "event": { "eventId": "EV-P400-EUR", "transactionId": "PAY-400-EUR", "kind": "payment_posted", "invoiceRef": "INV-400", "amountMinor": 1000, "currency": "EUR", "occurredAt": "2026-01-01T11:01:00Z" },
+      "expected": "reject-currency-without-conversion-and-preserve-baseline"
+    }
+  ],
+  "proposedManualCorrection": {
+    "paymentId": "PAY-404",
+    "oldInvoiceId": null,
+    "newInvoiceId": "INV-400",
+    "amountMinor": 3000,
+    "reason": "Synthetic reviewer resolves the intentionally missing invoice reference.",
+    "expectedRevision": "replace-with-observed-demo-state-revision",
+    "expectedAfter": {
+      "grossReceiptsMinor": 25000,
+      "refundsMinor": 2000,
+      "allocatedNetMinor": 23000,
+      "unallocatedNetMinor": 0,
+      "outstandingMinor": 10000,
+      "invoice400OutstandingMinor": 2000
+    }
+  },
+  "execution": { "implemented": false, "tested": false, "providerCalls": 0, "moneyMovement": false }
+}

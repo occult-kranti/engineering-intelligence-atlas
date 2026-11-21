@@ -313,3 +313,43 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Returned:** Preserved two failed candidates: a 507.19px mobile room, then a 1024px first action ending at 817.75px. Corrected employee-card compaction, legacy saved-content colors, and laptop scope/composer spacing without weakening any gate. Final 5b661e5 passed all seven verification jobs, release and Pages. Public browser: 76 checks, 74 screenshots, 10 interaction groups and eight measured contrast pairs. Cloud: 42 checks and 18 screenshots with zero provider calls. Packaged desktop: real Rust state and saved local goal, four screenshots. Installed VSIX: six checks in VS Code 1.147.0. All three downloaded asset sizes/hashes matched GitHub. The owner-private website deployment succeeded; live public Blueprint, Donna ownership inspector and Golden drafting roadmap were reviewed, with two additional screenshots saved.
 - **Evidence:** project/release-0.6.0.json; project/VALIDATION.md; project/STUDIO_REDESIGN.md; project/STUDIO_COLOR_SYSTEM.md; https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920958; https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44866920872; https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.6.0
 - **Next handoff:** Owner-device acceptance, actual production browser sign-in, signed distribution, deliberate scheduled roadmap schema, account preference sync, measured large-canvas virtualization, activity-scope label clarification and narrow Donna-launcher layout review.
+
+## 040 · Fintech studio researcher and company designer · complete
+
+- **Ask:** Create a detailed fintech and hackathon company with current official opportunity sources, reusable specialists and a concrete first work item.
+- **Expected return:** Evidence-qualified event radar, native-aligned departments and roles, dependent roadmap, bounded workflow and a synthetic demo packet.
+- **Returned:** Authored a nine-department company kit, four domain task contracts, eight canonical roadmap milestones, current organizer and sandbox references, and a proposed invoice/payment reconciliation brief with a known-answer fixture. Corrected guide-to-catalog ownership and dependency mismatches. No event enrollment, financial account connection or prototype execution was claimed.
+- **Evidence:** company/company-kits/fintech-hackathon/README.md; company/company-kits/fintech-hackathon/opportunity-sources.md; company/company-kits/fintech-hackathon/first-demo-brief.md
+- **Next handoff:** Qualify the chosen event and select one bounded first implementation; keep the supplied fixture synthetic.
+
+## 041 · Social presence operating-model and platform researcher · complete
+
+- **Ask:** Create a detailed company for authorized personal through organization-wide social and digital presence, informed by official integration capabilities.
+- **Expected return:** Eight native-aligned departments, four specialty contracts, client modes, editorial/distribution/measurement states, platform constraints and acceptance-based roadmap.
+- **Returned:** Delivered company, role and platform guides plus a synthetic editorial packet. Distinguished client isolation from department filters, drafts from publish receipts and assumptions from measured outcomes. Recorded current TikTok internal-use constraints and YouTube privacy/API changes from primary sources. Reused existing services rather than cloning a staff member for every channel.
+- **Evidence:** company/company-kits/social-presence/README.md; company/company-kits/social-presence/roles.md; company/company-kits/social-presence/platform-capabilities.md
+- **Next handoff:** Implement typed marketing records and one eligible, authorized connector after a complete manual delivery packet.
+
+## 042 · Company-kit integration engineer · complete
+
+- **Ask:** Install detailed company templates through the real native/MCP boundary while preserving existing ownership, progress and identity across reruns.
+- **Expected return:** Read-only preview, full-plan validation, additive commands, stable bindings, private-safe receipts and meaningful native recovery tests.
+- **Returned:** Implemented the catalog installer with scope/dependency checks, bootstrap staff reuse, existing-service contracts, roadmap/knowledge bindings, blueprint layout and whiteboard ownership. Independent review corrected capacity projection and incompatible bootstrap office handling. Nine real-native tests passed, including zero-mutation replay, lost hire-response recovery, owner edits, private receipts and all capacity boundaries.
+- **Evidence:** scripts/apply-company-kits.mjs; scripts/test-company-kits.mjs; company/company-kits/README.md; company/company-kits/index.json
+- **Next handoff:** Use explicit cloud sync after private application; preserve bindings as control metadata and never treat them as source evidence.
+
+## 043 · Independent context and interface reviewers · complete
+
+- **Ask:** Find functional flaws in the installed company workflow and fix source/context displacement before workers or users rely on it.
+- **Expected return:** Actual worker task-contract selection, useful knowledge cards, protected company scope and unchanged authority.
+- **Returned:** Found that machine identity notes displaced useful source records from bounded prompt and UI windows. Added same-company employee-contract selection, filtered metadata before native/cloud context and UI limits, and exposed safe source links through the existing external-link bridge. Focused worker tests passed 60; full desktop suite passed 411; renderer assertions passed 230; cloud API/directory suite passed 29. No new privileges or provider calls.
+- **Evidence:** desktop-shell/src/main/companyKitKnowledge.ts; desktop-shell/tests/company-kit-knowledge.test.ts; desktop-shell/src/main/officeWorker.ts; desktop-shell/src/renderer/chrome.ts; cloud-workspace/lib/atlas-api.ts
+- **Next handoff:** Verify packaged/deployed exact source and preserve the actual owner-device acceptance boundary.
+
+## 044 · Director / private company integration and release · in-progress
+
+- **Ask:** Create both requested companies, preserve private source evidence, connect the website and directory, and publish the corrected software and handoff.
+- **Expected return:** Actual native records, owned roadmaps/blueprints, source index, verified explicit sync, reproducible release and private recovery export.
+- **Returned:** Applied both companies through native commands; repeated setup made zero mutations. Imported private source provenance without committing client content. Added two draft first-cycle goals and scoped setup handoffs. Production explicit sync reached matching native/cloud projection hashes, saved company directory links and revoked the temporary sync device. Source and package release verification is running.
+- **Evidence:** project/COMPANY_KITS.md; company/company-kits/README.md; project/VALIDATION.md
+- **Next handoff:** Finish exact-source CI, website deployment, download integrity and private archive restoration.

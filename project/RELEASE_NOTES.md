@@ -1,41 +1,27 @@
-# Daftar 0.6.0 — Violet command studio
+# Daftar 0.6.1 — company kits and useful worker context
 
-Daftar's desktop and private website share a redesigned office inspired by architectural blueprints, ownership boards and drafting surfaces. Deep violet, electric green and warm gold define **Violet studio**; an ivory canvas and darker green/gold controls define **Golden drafting**. The names and company records remain Daftar, with existing native identities and archive compatibility preserved.
+This patch adds reusable Fintech & Hackathon Studio and Social & Digital Presence company kits, a validated additive installer, and a worker-context correction found during the independent setup review.
 
-## One office, connected views
+## Company setup
 
-- **Blueprint:** saved rooms and employee desks, architectural grid, keyboard movement and a compact accessible list alternative.
-- **Ownership / Soft Board:** the actual company, office, department and employee hierarchy, search, an employee inspector and links to existing chat and authority controls.
-- **Roadmap:** recorded outcomes grouped by their real status, with ownership, dependencies, evidence and update dates. No invented start/end dates or Gantt intervals.
-- **Whiteboard:** owned cards and existing goal/job mappings on the same studio surface.
-- **Donna dock:** the existing conversation moves beside visual work. One composer and one thread preserve the unsent draft while changing views.
+The public catalog contains two generic companies, seventeen departments, eight domain specialties, eighteen owned roadmap steps, shared-service contracts, blueprint rooms, whiteboards and detailed operating guides. The native core supplies its normal director, specialist and assistant definitions; the installer reuses those records where appropriate. Personal source registers and company records are installed only in the owner's private workspace and are excluded from public installers and previews.
 
-Unsaved room edits survive heat-map changes and state refreshes. Paused employees remain inspectable and cannot become an invalid active chat target. Existing native authorization, revision checks and queued-command behavior remain the action boundary.
+The installer previews without writes, validates references and capacity before applying, preserves owner names/progress/layout/status and reuses stable identities across reruns or an interrupted operation. It uses the existing MCP/native command API, with no provider request or external social action. The importer is additive, not an all-or-nothing database transaction; retained bindings allow a validated restart.
 
-## Heat maps with explicit meaning
+## Worker-context correction
 
-Choose Workload, Job allowance, Attention or Off. The data layer derives each view from saved records without a provider call or database migration:
+Company-kit identity bindings are control metadata. They must not crowd source knowledge out of a specialist's bounded prompt. The worker excludes those binding records and resolves the selected specialist's same-company task contract where valid. Role descriptions and source knowledge do not grant tools or authority. Full reference documents remain links rather than automatically fetched files.
 
-- Workload counts unfinished saved jobs; it is not employee utilization or CPU telemetry.
-- Job allowance compares recorded commitment with the sum of individual job ceilings. Native reservations already reflected in job usage are counted once. The global budget remains separately labeled and includes external allocations.
-- Attention counts distinct jobs with recorded conditions requiring review, such as failures, waiting budget or expired running leases. Earliest dispatch time is not treated as a deadline.
-- Missing, stale or unusable evidence is **unknown**, visibly different from a confirmed zero. Fixed legend bins, numbers and patterns accompany color.
-- Shared employees and duplicate placements cannot multiply work across the selected execution scope. Oversized inputs fail visibly rather than returning a partial heat map.
+## Operating guides
 
-[Signal contract](OFFICE_SIGNALS.md) records the exact thresholds, ownership rules, bounds and limitations. [Color system](STUDIO_COLOR_SYSTEM.md) records the calculated foreground/background pairs; those calculations are not a blanket accessibility certification.
+- Fintech: opportunity qualification, current official event sources, sandbox product lanes, prototype verification, demo/submission readiness and continuity.
+- Social presence: individuals through organizations, brand/editorial and creative production, channels/community, growth/lifecycle, account trust, provenance, measurement, supported platform capabilities and client separation.
+- Existing private source material remains evidence-qualified: source input, draft, user-reported action, publication receipt and measured outcome are separate states.
 
-## Website, editor and shared design role
+Creating these companies does not connect financial/social accounts, start background workers, submit to a hackathon, buy advertising or publish messages. Those actions remain separately supported runtime operations with their existing scope and authorization.
 
-The private homepage and application directory use the same studio tokens and appearance preference. Each company has direct links to Donna, Blueprint, Ownership, Roadmap, Whiteboard and expert panels. VS Code adds company-scoped studio links for its connected website, with strict origin/view validation and no credentials in navigation URLs. The extension preserves the editor's high-contrast theme behavior.
+## Verification and compatibility
 
-The existing Design & Architecture role now includes color-system responsibilities, contrast examples and truthful heat-map acceptance. All 23 role definitions remain; no duplicate employee or paid provider task is created by the redesign.
+The release workflow publishes this version only after its seven required jobs succeed, including the new real-native company-kit suite and focused worker-context tests. The existing Rust state schema, website API and explicit desktop sync protocol are retained. The Linux AppImage remains unsigned; actual owner-device keychain acceptance and signed cross-platform packaging are separate work. The VS Code attachment is the thin client, and Android carries the research atlas rather than the full native Office.
 
-Public and private renderer assets use content-addressed names. The cloud transport's authored source is now `cloud-workspace/scripts/cloud-bridge.js`; the shared synchronization script generates its hashed distribution together with the renderer, signal engine and styles.
-
-## Installation and verification
-
-All seven verification gates, release publication and Pages passed for source `5b661e5`; the owner-private website is deployed. All three downloaded asset sizes and SHA-256 hashes match GitHub metadata. Use the assets attached to this version: the Linux x86_64 AppImage, `atlas-office-0.6.0.vsix`, and the Android debug APK. The AppImage remains unsigned; Windows/macOS signing and owner-device keychain acceptance are separate work. The Android attachment carries the research atlas rather than the full native Office runtime.
-
-The redesign introduces no native schema migration or provider request. Desktop scheduling still runs while the app is open. Website controls still queue native changes for explicit **Sync now**; hosted Donna is text-only. Theme and heat preferences are local to the current browser/app, while office state follows the existing D1/native synchronization protocol.
-
-[Validation](VALIDATION.md) and the [0.6.0 release receipt](release-0.6.0.json) record actual test, browser, package, deployment and download evidence. Earlier release receipts remain historical and do not certify this version. [Studio review](STUDIO_REDESIGN.md), [handoff](../HANDOFF.md) and [roadmap](../ROADMAP.md) explain the decisions and next acceptance work.
+See the [company-kit guide](../company/company-kits/README.md), [roadmap](../ROADMAP.md), [handoff](../HANDOFF.md) and [validation](VALIDATION.md) for current evidence and remaining work.

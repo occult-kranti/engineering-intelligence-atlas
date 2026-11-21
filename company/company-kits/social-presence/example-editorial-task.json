@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "classification": "synthetic",
+  "description": "Shape example only. This is not an admitted job or authorization to contact a provider, post, send a message, buy media or read private accounts.",
+  "taskId": "example-social-editorial-001",
+  "roleKey": "design-architecture",
+  "specialty": "editorial-producer",
+  "scope": {
+    "companyId": "example-social-company",
+    "sourceRepositoryId": null,
+    "classification": "synthetic"
+  },
+  "goal": "Prepare a source-linked three-asset launch packet for a fictional scheduling tool using only the supplied approved brief.",
+  "inputs": [
+    { "ref": "example://brief-v1", "kind": "approved-brief", "sha256": null },
+    { "ref": "example://brand-master-v1", "kind": "brand-master", "sha256": null },
+    { "ref": "example://claim-register-v1", "kind": "source-register", "sha256": null }
+  ],
+  "allowedCapabilities": [],
+  "limits": { "usdCeiling": 0, "maxIterations": 1, "maxOutputTokens": 1600 },
+  "acceptance": [
+    "Return one master idea and three channel variants with source references, copy, CTA and required accessibility text.",
+    "Record exact artifact revisions; identify unknown dates or claims instead of inventing them.",
+    "Keep production state in-review and delivery state not-scheduled.",
+    "List the next reviewer and exact decision needed; do not imply that an account is connected or an external action occurred."
+  ],
+  "output": {
+    "envelope": "company/role-library/result.schema.json",
+    "payloadFields": ["masterRef", "variants", "claimRefs", "accessibility", "revisionManifest", "reviewRequests", "deliveryChecklist"]
+  },
+  "handoff": {
+    "toRole": "subdirector",
+    "nextAction": "Review the exact proposed packet against the supplied fictional brief."
+  }
+}

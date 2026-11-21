@@ -13,6 +13,14 @@ manager, project runner and Android source remain available. The architecture is
 Electron/TypeScript with a Rust state and control core, plus the deployed owner-private Sites/Vinext/D1 companion. The earlier
 React/TypeScript/MySQL runtime remains available as a separate deployment option.
 
+## Company kits 0.6.1 integration
+
+The reusable catalog is [company/company-kits/index.json](company/company-kits/index.json); [the installer guide](company/company-kits/README.md) specifies preview, apply, limits and restart behavior. Run it against the same private company-state directory used by the desktop. It adds records through the native command boundary and never runs the global optimizer or replaces existing groups. Client/source data belongs in a private plan; public templates and installers contain generic guidance only.
+
+Recovery bindings are persisted knowledge metadata. Native/cloud prompt selection and the human knowledge/index views must filter those records before applying their display/context limits. Native workers additionally resolve the selected employee's `prompt-<key>` task contract through validated same-company bindings. Full documents are references, not automatically fetched content; role metadata does not grant capabilities. Keep these contracts aligned if the binding schema changes.
+
+The existing explicit desktop sync protocol carries the companies into the private website and editor. Desktop installation still requires restoring the latest private archive and reconnecting credentials on the actual device. Social APIs, campaign scheduling and hackathon enrollment remain distinct operations; their operating guides must not imply connected accounts or externally completed work.
+
 ## Command studio 0.6.0 integration
 
 Daftar 0.6.0 adds Violet studio / Golden drafting themes, a scoped ownership hierarchy, roadmap status lanes, derived heat maps and the same Donna conversation docked beside visual work. All seven CI gates, release publication, Pages and the owner-private website deployment passed. The [release receipt](project/release-0.6.0.json) records exact source, downloadable hashes, browser measurements and remaining acceptance boundaries.

@@ -48,3 +48,13 @@ test('malformed link records are validation errors and cannot mutate the directo
 test('credential-bearing URL fragments never enter the application index',async()=>{const t=setup();await t.seed();const r=await t.call('/api/applications','PUT',{expectedRevision:0,entries:[{id:'bad',companyId:'atlas',name:'Bad',kind:'repository',status:'unverified',links:[{label:'Bad',url:'https://synthetic.pages.dev/#access_token=fixture-value',kind:'application',verification:'reported'}]}]});assert.equal(r.status,400);assert.equal((await t.call('/api/applications')).body.entries.length,0);});
 
 test('chunked index uploads stop reading at the byte limit',async()=>{const t=setup();await t.seed();let cancelled=false;const stream=new ReadableStream({start(controller){controller.enqueue(new Uint8Array(1024*1024));controller.enqueue(new Uint8Array(1024*1024));controller.enqueue(new Uint8Array(1));},cancel(){cancelled=true;}});const request=new Request(origin+'/api/applications',{method:'PUT',headers:{authorization:'Bearer '+t.env.ATLAS_ADMIN_TOKEN,'content-type':'application/json'},duplex:'half',body:stream});const r=await handleAtlasApi(request,t.env);assert.equal(r.status,413);assert.equal(cancelled,true);assert.equal((await t.call('/api/applications')).body.revision,0);});
+
+test('cloud Donna ignores company-kit metadata before bounding source context',()=>{
+ const fixture=structuredClone(state);
+ fixture.knowledge=[...fixture.knowledge,...Array.from({length:40},(_,i)=>({id:'binding-'+i,companyId:'atlas',title:'Company kit identity: room '+i,summary:JSON.stringify({kind:'daftar-company-kit-binding',schemaVersion:1,companyId:'atlas',kitKey:'fixture',entityType:'room',key:'room-'+i,entityId:'room-'+i}),artifactUri:null})),
+ {companyId:'atlas',title:'Malformed internal binding',summary:'{"kind":"daftar-company-kit-binding",',artifactUri:null},
+ {companyId:'atlas',title:'Reserved URI',summary:'Internal recovery record',artifactUri:'daftar-kit://atlas/binding'},
+ {companyId:'secret-other',title:'Foreign source',summary:'PRIVATE FOREIGN SOURCE'}];
+ const before=JSON.stringify(fixture);const result=scopedContext(fixture,{kind:'company',id:'atlas'});
+ assert.deepEqual(result.knowledge,[{title:'Selected',summary:'Allowed'}]);assert.equal(JSON.stringify(fixture),before);assert.equal(JSON.stringify(result).includes('PRIVATE FOREIGN SOURCE'),false);
+});

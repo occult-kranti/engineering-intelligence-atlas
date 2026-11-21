@@ -213,4 +213,39 @@ await ac('workspace-tab-timeline');check(ae('workspace-timeline').querySelectorA
 await ach('studio-roadmap-status','blocked');check(ae('workspace-timeline').querySelectorAll('.roadmap-lane').length===1,'roadmap filter narrows to one actual delivery state');
 check(af.office.jobs.length===1,'view, theme and overlay controls never enqueue extra jobs');atlasStudio.window.close();
 const mapRoute=await makeDom(true,undefined,'?workspace=softboard');check(mapRoute.window.document.getElementById('workspace-tab-softboard').getAttribute('aria-selected')==='true','soft board has a working allowlisted deep link');mapRoute.window.close();
+// Company-kit identities stay in native history without hiding useful source
+// notes behind the last-100 display limit or taking over the human index.
+const knowledgeView=await makeDom(true,'cloud-browser','',window=>{
+  const office=window.__atlasFixture.office,at='2026-11-21T10:00:00Z';
+  const source=(id,title,summary,artifactUri=null,companyId='fixture-company')=>({id,title,summary,artifactUri,companyId,createdAt:at});
+  office.knowledge.push(
+    source('source-atlas','Verified source atlas','Review the reference (https://finopsly-growth-atlas.whatswrong-inc.chatgpt.site).'),
+    source('source-api','API reference','Reference https://docs.stripe.com/testing and https://docs.stripe.com/testing.','https://docs.stripe.com/testing'),
+    source('source-contract','Domain task contract','Produce the accepted deliverable and retain its evidence.'),
+    source('source-unsafe','Literal source text','<img src=x onerror=alert(1)> https://user:secret@unsafe.invalid/read http://unsafe.invalid/read https://unsafe.invalid/read?token=private https://unsafe.invalid/read#api_key=private','javascript:alert(1)'),
+    source('source-foreign','Other company source','Do not render in this company memory.',null,'fixture-other-company')
+  );
+  for(let i=0;i<130;i++)office.knowledge.push(source(`binding-${i}`,'Company kit identity: room / test',JSON.stringify({kind:'daftar-company-kit-binding',schemaVersion:1,companyId:'fixture-company',kitKey:'fixture',entityType:'room',key:`room-${i}`,entityId:`room-${i}`})));
+  office.knowledge.push(source('binding-uri','Imported identity','Malformed internal record','daftar-kit://fixture/binding/room'));
+  office.knowledge.push(source('binding-malformed','Recovered identity','{"kind":"daftar-company-kit-binding",BROKEN'));
+  office.authority.index.push(...office.knowledge.map(note=>({id:`knowledge:${note.id}`,entityId:note.id,kind:'knowledge',title:note.title,companyId:note.companyId,parentId:note.companyId,ownerEmployeeId:'donna',status:'saved',updatedAt:at,relatedIds:[]})));
+  office.events.push({id:'binding-event',at,actor:'owner',action:'add_knowledge',entityId:'binding-0',summary:'Retained importer identity event'});
+  office.authority.ledger.push({id:'binding-decision',at,actor:'owner',action:'knowledge_import',targetId:'binding-0',scope:{kind:'company',id:'fixture-company'},summary:'Retained importer history decision',grantId:null,outcome:'applied'});
+});
+const kw=knowledgeView.window,kd=kw.document,kf=kw.__atlasFixture,ke=id=>kd.getElementById(id);
+ke('office-tab-memory').click();await flush();
+check(ke('office-knowledge').querySelectorAll('.knowledge-note').length===4&&ke('office-knowledge').textContent.includes('Domain task contract'),'filtering before the display cap keeps real source and task-contract notes visible');
+check(!ke('office-knowledge').textContent.includes('Company kit identity:')&&!ke('office-knowledge').textContent.includes('Recovered identity')&&!ke('office-knowledge').textContent.includes('Other company source'),'memory hides valid and malformed internal bindings while retaining company scope');
+check(!ke('office-knowledge').querySelector('img')&&ke('office-knowledge').textContent.includes('<img src=x onerror=alert(1)>'),'source prose remains text rather than executable markup');
+const sourceButtons=Array.from(ke('office-knowledge').querySelectorAll('button'));
+check(sourceButtons.length===2&&sourceButtons.every(button=>button.type==='button'&&button.tabIndex===0&&button.getAttribute('aria-label').startsWith('Open source for ')),'deduplicated source controls are keyboard-focusable native buttons with descriptive labels');
+check(sourceButtons.every(button=>!button.title.includes('unsafe.invalid')),'HTTP, credential-bearing and script references never become source actions');
+const atlasSource=sourceButtons.find(button=>button.title.includes('finopsly-growth-atlas'));atlasSource.focus();check(kd.activeElement===atlasSource,'source action participates in normal keyboard focus');atlasSource.click();await flush();
+check(kf.calls.some(call=>call.name==='openExternal'&&call.args.url==='https://finopsly-growth-atlas.whatswrong-inc.chatgpt.site/'),'cloud-projected source URL opens through the existing bridge after removing prose punctuation');
+ke('ceo-toggle').click();ke('ceo-authority-editor').open=true;await flush();
+check(!ke('authority-index').querySelector('[data-entity-id="binding-0"]')&&Boolean(ke('authority-index').querySelector('[data-entity-id="source-atlas"]')),'human authority index filters metadata identities before its row limit');
+check(ke('authority-summary').textContent.includes('7 indexed records')&&ke('authority-register-count').textContent.startsWith('7 indexed'),'management counts agree with the human-visible records');
+check(ke('authority-ledger').textContent.includes('Retained importer history decision'),'authority decision history remains intact');
+ke('office-tab-ledger').click();await flush();check(ke('office-ledger').textContent.includes('Retained importer identity event')&&kf.office.knowledge.length===137,'full event history and persisted knowledge records remain available');
+check(!kf.calls.some(call=>call.name==='officeCommand'),'viewing source notes and opening references never mutates company state');knowledgeView.window.close();
 console.log(JSON.stringify({suite:'renderer pure-DOM interaction',checks,passed:true,fixtureOnly:true,networkCalls:0,providerCalls:0,visualVerification:false},null,2));

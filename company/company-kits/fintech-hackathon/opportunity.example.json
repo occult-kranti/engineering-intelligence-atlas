@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "classification": "synthetic",
+  "recordType": "opportunity-evidence-packet",
+  "id": "example-opportunity-001",
+  "companyId": "example-fintech-studio",
+  "organizer": "Example organizer",
+  "eventName": "Example fintech challenge",
+  "edition": "unverified",
+  "canonicalUrl": "https://example.com/event",
+  "source": {
+    "retrievedAt": null,
+    "sha256": null,
+    "status": "not-retrieved",
+    "factualSummary": null
+  },
+  "applicationDeadline": {
+    "sourceWording": null,
+    "timezone": null,
+    "utc": null,
+    "verified": false
+  },
+  "submissionDeadline": {
+    "sourceWording": null,
+    "timezone": null,
+    "utc": null,
+    "verified": false
+  },
+  "eligibility": {
+    "requirements": [],
+    "userFit": "unknown",
+    "evidenceRefs": []
+  },
+  "rules": {
+    "priorCode": "unknown",
+    "aiAssistance": "unknown",
+    "teamSize": null,
+    "ipAndLicense": "unknown",
+    "attendance": "unknown",
+    "requiredArtifacts": [],
+    "evidenceRefs": []
+  },
+  "estimatedExpenses": {
+    "entryUsd": null,
+    "travelUsd": null,
+    "infrastructureUsd": null,
+    "inferenceUsd": null,
+    "cashPrizesReceivedUsd": 0
+  },
+  "qualification": "needs-information",
+  "fitScore": null,
+  "ownerEmployeeId": "example-opportunity-scout",
+  "nextAction": "Retrieve official current-edition rules and confirm eligibility before scoring or dispatching entry work.",
+  "submission": {
+    "status": "not-submitted",
+    "receiptRef": null
+  },
+  "runtimeMappingNote": "Evidence packet only; map to supported runtime records rather than passing these fields as an office command."
+}

@@ -109,6 +109,7 @@ jobs:
           npm run test:renderer
           node ../scripts/smoke-office.mjs
           node --test ../tools/atlas-mcp.test.mjs
+          node --test ../scripts/test-company-kits.mjs
       - name: Package Linux desktop
         working-directory: desktop-shell
         run: npm run package:linux

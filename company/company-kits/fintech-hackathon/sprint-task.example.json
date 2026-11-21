@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "hackathon",
+  "taskId": "example-fintech-sprint-001",
+  "scope": {
+    "companyId": "example-fintech-studio",
+    "sourceRepositoryId": "example-sandbox-prototype",
+    "classification": "synthetic"
+  },
+  "goal": "Prepare a scoped internal demo plan for matching synthetic invoices and payments with an auditable exception queue.",
+  "inputs": [
+    {
+      "ref": "company/company-kits/fintech-hackathon/first-demo-brief.md",
+      "classification": "synthetic"
+    },
+    {
+      "ref": "company/company-kits/fintech-hackathon/first-demo-fixture.json",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 20,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "The plan names expected outputs for matched/partial payments, a missing invoice, duplicate and conflicting events, out-of-order/excess refunds, currency mismatch and a revision-checked correction.",
+    "All inputs are synthetic and no bank, payment or social account is connected.",
+    "Each implementation job has one owner, bounded input references and an artifact-based join condition.",
+    "The handoff labels this an internal demonstration plan, not an eligible event submission or a verified implementation."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Prepare the smallest useful internal-demo plan using the supplied synthetic brief and fixture. Identify the workflow, state contract, success and failure checks, owners and dependency joins. Preserve unknowns and do not call external services, move money, enroll anyone or claim the prototype is already built. Return the plan and a concise implementation handoff."
+}

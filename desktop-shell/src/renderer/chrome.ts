@@ -1865,6 +1865,35 @@ function renderOfficeSchedules(): void {
   }
   if (!schedules.length) noData(container, 'No schedules for this company.');
 }
+/** Mirror the worker's metadata classifier; never remove persisted records. */
+function isInternalKitKnowledge(note: OfficeKnowledge): boolean {
+  let tagged = false;
+  if (new TextEncoder().encode(note.summary).length <= 4000) {
+    try { const value: unknown = JSON.parse(note.summary); tagged = Boolean(value && typeof value === 'object' && !Array.isArray(value) && (value as Record<string, unknown>).kind === 'daftar-company-kit-binding'); } catch { /* ordinary source prose */ }
+  }
+  return tagged || (typeof note.artifactUri === 'string' && /^daftar-kit:/i.test(note.artifactUri))
+    || note.title.startsWith('Company kit identity:') || /"kind"\s*:\s*"daftar-company-kit-binding"/.test(note.summary);
+}
+function knowledgeSourceUrls(note: OfficeKnowledge): string[] {
+  const candidates = [note.artifactUri, ...(note.summary.match(/https:\/\/[^\s<>"'`]+/gi) || [])];
+  const urls = new Set<string>();
+  for (const candidate of candidates) {
+    if (typeof candidate !== 'string' || candidate.length > 3000) continue;
+    let reference = candidate.trim().replace(/[.,;!?]+$/, '');
+    // Prose and Markdown commonly wrap a URL in brackets. Preserve balanced
+    // parentheses within genuine URLs while removing unmatched closing marks.
+    for (const [open, close] of [['(', ')'], ['[', ']'], ['{', '}']]) {
+      while (reference.endsWith(close!) && reference.split(close!).length > reference.split(open!).length) reference = reference.slice(0, -1).replace(/[.,;!?]+$/, '');
+    }
+    try {
+      const url = new URL(reference);
+      const secretParameter = [...url.searchParams.keys(), ...new URLSearchParams(url.hash.slice(1)).keys()].some(key => /token|secret|password|api[-_]?key/i.test(key));
+      if (url.protocol === 'https:' && !url.username && !url.password && !secretParameter) urls.add(url.href);
+    } catch { /* local references and malformed URLs remain plain text */ }
+    if (urls.size === 8) break;
+  }
+  return [...urls];
+}
 function renderOfficeMemory(): void {
   if (!officeState) return; const entries = officeState.cache.entries.filter((e) => e.companyId === officeCompany()?.id);
   $('cache-entries').textContent = number(entries.length); $('cache-size').textContent = formatBytes(entries.reduce((total,e) => total + e.bytes,0)); $('cache-hits').textContent = number(officeState.cache.hits); $('cache-misses').textContent = number(officeState.cache.misses);
@@ -1872,9 +1901,19 @@ function renderOfficeMemory(): void {
     ($('cache-enabled') as HTMLInputElement).checked = officeState.cache.enabled; ($('cache-max-entries') as HTMLInputElement).value = String(officeState.cache.maxEntries); ($('cache-ttl') as HTMLInputElement).value = String(officeState.cache.ttlMinutes);
   }
   const container = $('office-knowledge'); container.replaceChildren();
-  for (const note of officeState.knowledge.filter((k) => k.companyId === officeCompany()?.id).slice(-100).reverse()) {
+  for (const note of officeState.knowledge.filter((k) => k.companyId === officeCompany()?.id && !isInternalKitKnowledge(k)).slice(-100).reverse()) {
     const item = textElement('article', '', 'knowledge-note'); item.append(textElement('h3', note.title), textElement('p', note.summary), textElement('small', dateLabel(note.createdAt,true)));
-    if (note.artifactUri) item.append(textElement('div', note.artifactUri, 'queue-artifact')); container.append(item);
+    if (note.artifactUri) item.append(textElement('div', note.artifactUri, 'queue-artifact'));
+    const urls = knowledgeSourceUrls(note);
+    if (urls.length) {
+      const links = textElement('div', '', 'queue-actions');
+      for (const url of urls) {
+        const link = textElement('button', `Open source · ${new URL(url).hostname}`, 'secondary small'); link.type = 'button'; link.title = url;
+        link.setAttribute('aria-label', `Open source for ${note.title}: ${url}`); link.onclick = () => openExternal(url); links.append(link);
+      }
+      item.append(links);
+    }
+    container.append(item);
   }
   if (!container.children.length) noData(container, 'No reviewed knowledge notes for this company yet.');
 }
@@ -2538,10 +2577,14 @@ function renderAuthorityGrants():void{
   }
   if(!grants.length)noData(area,authorityReady()?'No timed grants for this employee. Choose a scope and duration to assign responsibility.':'Load a desktop version with authority support to manage permissions.');
 }
+function humanAuthorityIndex():OfficeIndexEntry[]{
+  const internalIds=new Set((officeState?.knowledge||[]).filter(isInternalKitKnowledge).map(note=>note.id));
+  return (officeState?.authority?.index||[]).filter(row=>row.kind!=='knowledge'||!internalIds.has(row.entityId));
+}
 function renderAuthorityRegister():void{
   const query=value('authority-search').toLocaleLowerCase(),filter=value('authority-record-filter');
   const matches=(parts:unknown[])=>parts.map(x=>String(x??'')).join(' ').toLocaleLowerCase().includes(query);
-  const index=(officeState?.authority?.index||[]).filter(r=>matches([r.kind,r.title,r.entityId,r.status,authorityName(r.companyId),authorityName(r.ownerEmployeeId),r.relatedIds.join(' ')]));
+  const index=humanAuthorityIndex().filter(r=>matches([r.kind,r.title,r.entityId,r.status,authorityName(r.companyId),authorityName(r.ownerEmployeeId),r.relatedIds.join(' ')]));
   const ledger=(officeState?.authority?.ledger||[]).filter(r=>matches([r.action,r.summary,r.targetId,authorityName(r.targetId),authorityName(r.actor),authorityScopeLabel(r.scope),r.outcome]));
   $('authority-index-section').classList.toggle('hidden',filter==='ledger');$('authority-ledger-section').classList.toggle('hidden',filter==='index');
   $('authority-register-count').textContent=`${filter==='ledger'?0:index.length} indexed · ${filter==='index'?0:ledger.length} decisions`;
@@ -2562,7 +2605,7 @@ function renderAuthorityRegister():void{
 }
 function renderAuthority():void{
   const authority=officeState?.authority,available=authorityReady()&&!workspaceReadOnly();
-  $('authority-summary').textContent=authority?`${authority.grants.filter(g=>authorityGrantState(g)==='active').length} active grants · ${authority.managedEmployeeIds.length} managed employees · ${authority.index.length} indexed records`:'Current native version required · saved work remains available';
+  $('authority-summary').textContent=authority?`${authority.grants.filter(g=>authorityGrantState(g)==='active').length} active grants · ${authority.managedEmployeeIds.length} managed employees · ${humanAuthorityIndex().length} indexed records`:'Current native version required · saved work remains available';
   populateSelect($('authority-employee') as HTMLSelectElement,(officeState?.employees||[]).filter(e=>e.status!=='fired'),value('authority-employee')||'donna');
   authorityTargets();renderAuthorityForm();renderAuthorityGrants();renderAuthorityRegister();
   for(const id of ['authority-grant-submit','authority-enforcement-submit'])($(id) as HTMLButtonElement).disabled=!available;

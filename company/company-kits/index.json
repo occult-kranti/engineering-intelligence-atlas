@@ -1,0 +1,589 @@
+{
+  "schemaVersion": 1,
+  "classification": "public-generic-preset",
+  "companies": [
+    {
+      "key": "fintech-hackathon",
+      "id": "fintech-hackathon-studio",
+      "name": "Fintech & Hackathon Studio",
+      "office": {
+        "key": "main",
+        "name": "Main office"
+      },
+      "departments": [
+        {
+          "key": "engineering",
+          "name": "Engineering"
+        },
+        {
+          "key": "research",
+          "name": "Research"
+        },
+        {
+          "key": "direction",
+          "name": "Studio Direction"
+        },
+        {
+          "key": "payments",
+          "name": "Payments & Open Finance"
+        },
+        {
+          "key": "finops",
+          "name": "Financial Operations"
+        },
+        {
+          "key": "risk",
+          "name": "Risk & Quality"
+        },
+        {
+          "key": "arena",
+          "name": "Hackathon Arena"
+        },
+        {
+          "key": "growth",
+          "name": "Demo & Growth"
+        },
+        {
+          "key": "knowledge",
+          "name": "Knowledge & Continuity"
+        }
+      ],
+      "employees": [
+        {
+          "key": "director",
+          "name": "Company director",
+          "role": "Scoped company director",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "subdirector"
+        },
+        {
+          "key": "knowledge",
+          "name": "Knowledge curator",
+          "role": "Knowledge and delivery curator",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "knowledge-curator"
+        },
+        {
+          "key": "qa",
+          "name": "Quality reviewer",
+          "role": "Independent acceptance reviewer",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "qa-lead"
+        },
+        {
+          "key": "blueprint",
+          "name": "Office steward",
+          "role": "Blueprint and ownership steward",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "blueprint-steward"
+        },
+        {
+          "key": "scout",
+          "name": "Opportunity scout",
+          "role": "Fintech opportunity and hackathon qualification specialist",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "departmentKey": "research"
+        },
+        {
+          "key": "analyst",
+          "name": "Product discovery analyst",
+          "role": "Fintech user research and experiment analyst",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "departmentKey": "direction"
+        },
+        {
+          "key": "integrator",
+          "name": "Fintech integration specialist",
+          "role": "Payments, open finance and reconciliation sandbox engineer",
+          "skillPaths": [
+            "skills/engineering-organization-architect/SKILL.md",
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "departmentKey": "payments"
+        },
+        {
+          "key": "producer",
+          "name": "Hackathon sprint producer",
+          "role": "Bounded sprint, submission and demo producer",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "departmentKey": "arena"
+        }
+      ],
+      "services": [
+        {
+          "key": "engineering"
+        },
+        {
+          "key": "design-architecture"
+        },
+        {
+          "key": "research-knowledge"
+        },
+        {
+          "key": "security"
+        },
+        {
+          "key": "hackathon"
+        }
+      ],
+      "group": {
+        "id": "growth-and-ventures",
+        "name": "Growth & Ventures",
+        "description": "Fintech product experiments, hackathon delivery and evidence-led digital presence. Shared services retain their identities; client data is shared only through explicit scope."
+      },
+      "board": {
+        "title": "Fintech venture and hackathon roadmap"
+      },
+      "roadmap": [
+        {
+          "key": "charter",
+          "title": "Confirm the first fintech problem and success measure",
+          "description": "Choose one target user and problem. Record discovery evidence, an accountable product owner, a measurable outcome, excluded scope and a fixed experiment allowance. Acceptance: a signed-off experiment brief with a baseline or an explicit unknown; no real-money flow is activated.",
+          "ownerKey": "director",
+          "departmentKey": "direction",
+          "dependsOn": []
+        },
+        {
+          "key": "radar",
+          "title": "Qualify the opportunity radar",
+          "description": "Review official organizer rules, eligibility, geography, team size, dates and timezone, allowed prior work, IP terms, submission needs and cost. Separate open-confirmed opportunities from incomplete listings and a future watchlist. Acceptance: a dated scorecard and a go/no-go decision with source links.",
+          "ownerKey": "scout",
+          "departmentKey": "research",
+          "dependsOn": [
+            "charter"
+          ]
+        },
+        {
+          "key": "discovery",
+          "title": "Validate the user journey and sandbox choice",
+          "description": "Map user pain, workflow, competing solutions, API support and test data. Select a synthetic-data problem in payments, open finance, reconciliation, lending support, risk or insurance operations. Acceptance: problem interview/research evidence, integration boundary and smallest useful vertical slice.",
+          "ownerKey": "analyst",
+          "departmentKey": "direction",
+          "dependsOn": [
+            "charter"
+          ]
+        },
+        {
+          "key": "architecture",
+          "title": "Design the integration and risk boundary",
+          "description": "Create a data-flow diagram, idempotent event/ledger design, environment separation and recovery plan. Contract shared engineering, design and security. Acceptance: adapter contracts, threat review and tested failure-case design; no production customer records or payment privileges.",
+          "ownerKey": "integrator",
+          "departmentKey": "payments",
+          "dependsOn": [
+            "discovery"
+          ]
+        },
+        {
+          "key": "prototype",
+          "title": "Build and verify a runnable prototype",
+          "description": "Implement the scoped sandbox flow, deterministic fixtures, meaningful failure tests and replay/reconciliation checks. Acceptance: exact source revision, reproducible setup, measured behavior, known limitations and clear demo data labels.",
+          "ownerKey": "integrator",
+          "departmentKey": "engineering",
+          "dependsOn": [
+            "architecture"
+          ]
+        },
+        {
+          "key": "submission",
+          "title": "Prepare the event-specific submission",
+          "description": "Use the qualified rules to produce repository access, license/dependency attribution, runnable demo, accessible pitch, screenshots/video and a submission checklist. Acceptance: every rule maps to an artifact; submission remains prepared until an actual organizer receipt is recorded.",
+          "ownerKey": "producer",
+          "departmentKey": "arena",
+          "dependsOn": [
+            "radar",
+            "prototype"
+          ]
+        },
+        {
+          "key": "growth",
+          "title": "Test the proposition and economics",
+          "description": "Create an audience-specific demo and landing-page draft, distinguish assumptions from measured demand, calculate experiment cost and cost per useful result. Acceptance: an evidence-backed next decision; no advertising allocation or external posting follows from the roadmap alone.",
+          "ownerKey": "analyst",
+          "departmentKey": "growth",
+          "dependsOn": [
+            "prototype"
+          ]
+        },
+        {
+          "key": "handoff",
+          "title": "Decide what graduates and archive the rest",
+          "description": "Review acceptance, source provenance, integration risk, event outcome and verified usage. Acceptance: continue/pivot/archive decision, owner, next milestone, reusable components and a compact handoff; awards and revenue require evidence.",
+          "ownerKey": "knowledge",
+          "departmentKey": "knowledge",
+          "dependsOn": [
+            "submission",
+            "growth"
+          ]
+        }
+      ],
+      "knowledge": [
+        {
+          "key": "charter",
+          "title": "Fintech & Hackathon Studio operating charter",
+          "summary": "Purpose: research fintech opportunities, qualify hackathons, build sandbox prototypes and turn supported experiments into maintained products. The first office has nine departments. Four new domain specialists join existing director, knowledge, QA and blueprint definitions; engineering, design, research, security and hackathon services are reused. Employee records are persistent definitions, not continuously running model processes. Event listings need current rule and eligibility checks. All tasks name a deliverable, evidence, acceptance, owner and budget. Public operating guide: https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/README.md",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/README.md"
+        },
+        {
+          "key": "roles",
+          "title": "Fintech role prompts and handoff contracts",
+          "summary": "Director chooses one measurable outcome and dispatches the smallest dependency graph. Scout returns official sources, deadline/timezone, eligibility, rules and opportunity score; missing rules remain unknown. Analyst returns a problem brief, evidence, assumptions and a smallest test. Integrator returns sandbox contracts, reproducible prototype, ledger/replay failures and test receipts. Sprint producer returns scope freeze, ownership, demo assets and prepared/submitted receipt state. Shared QA checks actual outputs; knowledge curator archives artifacts and unresolved questions. Full prompts: https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/roles.md",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/roles.md"
+        },
+        {
+          "key": "sources",
+          "title": "Official opportunity radar and fintech sandbox references",
+          "summary": "Opportunity sources are reviewed and dated, never a fabricated ranking. Research must distinguish an event announcement from verified open eligibility. Fintech scope includes payments/open finance, financial operations, risk/regtech, insurance and infrastructure; Web3 is one optional track. Current source register: https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/opportunity-sources.md",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/opportunity-sources.md"
+        },
+        {
+          "key": "operating-state",
+          "title": "Execution and budget state",
+          "summary": "This company kit creates definitions, contracts, planned milestones, a blueprint and knowledge references. It does not launch provider jobs, enroll in events, open financial accounts, move money or activate schedules. Jobs use existing global budget admission and explicit execution. A parent allocation is not extra spending permission. Shared specialists receive a scoped task packet rather than the entire portfolio.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/project/PORTFOLIO_ARCHITECTURE.md"
+        },
+        {
+          "key": "prompt-scout",
+          "title": "Opportunity scout task contract",
+          "summary": "Find at most five relevant fintech or hackathon opportunities from official organizers. Record exact edition, deadline and timezone, eligibility, prior-code/AI rules, submission artifacts and costs. Preserve unknowns; rank only after hard rule checks. Return dated evidence and next review, without enrolling anyone. Input packet: company scope, source references, accepted prerequisite, deliverable, success checks and bounded budget. Return a concise artifact summary, evidence, limitations and next decision. Persistent identity does not imply an active background worker.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/roles.md"
+        },
+        {
+          "key": "prompt-analyst",
+          "title": "Product discovery analyst task contract",
+          "summary": "Turn one sourced financial problem into a minimal user journey with known-answer synthetic fixtures, one success case and a material failure case. Separate facts, assumptions and measured outcomes. Return acceptance, alternatives, data definitions and excluded scope; do not infer demand from a demo. Input packet: company scope, source references, accepted prerequisite, deliverable, success checks and bounded budget. Return a concise artifact summary, evidence, limitations and next decision. Persistent identity does not imply an active background worker.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/roles.md"
+        },
+        {
+          "key": "prompt-integrator",
+          "title": "Fintech integration specialist task contract",
+          "summary": "Design or implement the selected sandbox integration from current official product docs. Pin environment, scope, typed events, idempotency, consent/credential expiry and reconciliation. Keep secrets out of artifacts. Return runnable fixtures or observed sandbox receipts, failure evidence and gaps; no real account or money operation. Input packet: company scope, source references, accepted prerequisite, deliverable, success checks and bounded budget. Return a concise artifact summary, evidence, limitations and next decision. Persistent identity does not imply an active background worker.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/roles.md"
+        },
+        {
+          "key": "prompt-producer",
+          "title": "Hackathon sprint producer task contract",
+          "summary": "Coordinate the accepted sprint as a bounded dependency graph. Reuse shared contracts, name an owner and artifact at each join, reserve verification/packaging time and checkpoint before limits. Block successors on failed prerequisites and reconcile uncertain writes. Return actual completion, remaining costs and handoff. Input packet: company scope, source references, accepted prerequisite, deliverable, success checks and bounded budget. Return a concise artifact summary, evidence, limitations and next decision. Persistent identity does not imply an active background worker.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/roles.md"
+        },
+        {
+          "key": "first-demo",
+          "title": "First proposed build \u2014 synthetic invoice/payment reconciliation",
+          "summary": "Proposed internal demo; not implemented or submitted to an event. Use synthetic integer-minor-unit records for invoices,payments,refunds and manual allocation. Cover duplicate events/transactions,conflicting IDs,missing/partial matches,refund ordering,excess refund,currency mismatch and revision-checked corrections. Acceptance: repeatable totals,transparent exception queue,recorded evidence and no real accounts. Brief and known-answer fixture: https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/first-demo-brief.md",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/first-demo-brief.md"
+        }
+      ]
+    },
+    {
+      "key": "social-presence",
+      "id": "social-digital-presence",
+      "name": "Social & Digital Presence",
+      "office": {
+        "key": "main",
+        "name": "Main office"
+      },
+      "departments": [
+        {
+          "key": "research",
+          "name": "Research"
+        },
+        {
+          "key": "engineering",
+          "name": "Engineering"
+        },
+        {
+          "key": "brand",
+          "name": "Brand & Editorial"
+        },
+        {
+          "key": "creative",
+          "name": "Creative Production"
+        },
+        {
+          "key": "channels",
+          "name": "Channels & Community"
+        },
+        {
+          "key": "growth",
+          "name": "Growth & Lifecycle"
+        },
+        {
+          "key": "trust",
+          "name": "Account Trust"
+        },
+        {
+          "key": "knowledge",
+          "name": "Knowledge & Delivery"
+        }
+      ],
+      "employees": [
+        {
+          "key": "director",
+          "name": "Company director",
+          "role": "Scoped company director",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "subdirector"
+        },
+        {
+          "key": "knowledge",
+          "name": "Knowledge curator",
+          "role": "Knowledge and delivery curator",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "knowledge-curator"
+        },
+        {
+          "key": "qa",
+          "name": "Quality reviewer",
+          "role": "Independent acceptance reviewer",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "qa-lead"
+        },
+        {
+          "key": "blueprint",
+          "name": "Office steward",
+          "role": "Blueprint and ownership steward",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "blueprint-steward"
+        },
+        {
+          "key": "strategist",
+          "name": "Brand and presence strategist",
+          "role": "Personal-to-enterprise positioning and editorial strategist",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "departmentKey": "brand"
+        },
+        {
+          "key": "producer",
+          "name": "Editorial and creative producer",
+          "role": "Content calendar, creative brief and asset version producer",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "departmentKey": "creative"
+        },
+        {
+          "key": "steward",
+          "name": "Channel and community steward",
+          "role": "Authorized account operations and publication evidence steward",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "departmentKey": "channels"
+        },
+        {
+          "key": "analyst",
+          "name": "Growth and measurement analyst",
+          "role": "SEO, lifecycle, ABM, paid experiment and attribution analyst",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "departmentKey": "growth"
+        }
+      ],
+      "services": [
+        {
+          "key": "engineering"
+        },
+        {
+          "key": "design-architecture"
+        },
+        {
+          "key": "research-knowledge"
+        },
+        {
+          "key": "security"
+        },
+        {
+          "key": "music-arts"
+        }
+      ],
+      "group": {
+        "id": "growth-and-ventures",
+        "name": "Growth & Ventures",
+        "description": "Fintech product experiments, hackathon delivery and evidence-led digital presence. Shared services retain their identities; client data is shared only through explicit scope."
+      },
+      "board": {
+        "title": "Presence strategy, content and growth roadmap"
+      },
+      "roadmap": [
+        {
+          "key": "scope",
+          "title": "Create the client and account ownership register",
+          "description": "Choose personal, creator, professional, small-business or organization scope. Record authorized identity/account owners, audience, goals, channels, brand boundaries, client data separation and what can be published. Acceptance: account register and named accountable owner; account access remains unconnected until verified.",
+          "ownerKey": "director",
+          "departmentKey": "research",
+          "dependsOn": []
+        },
+        {
+          "key": "evidence",
+          "title": "Reconcile inherited projects and asset versions",
+          "description": "Index existing plans, source inputs, drafts, approved masters and published receipts separately. Keep financial scenarios separate from performance. Acceptance: one source-linked register with owner, version, supported status, next action and unresolved gaps.",
+          "ownerKey": "knowledge",
+          "departmentKey": "knowledge",
+          "dependsOn": [
+            "scope"
+          ]
+        },
+        {
+          "key": "brand",
+          "title": "Create positioning, audience and channel briefs",
+          "description": "Define the offer, voice, message hierarchy, audience needs, editorial pillars, visual identity, accessibility and channel purpose. Acceptance: approved brand brief and per-channel role; personal reputation and organization positioning have distinct goals.",
+          "ownerKey": "strategist",
+          "departmentKey": "brand",
+          "dependsOn": [
+            "scope",
+            "evidence"
+          ]
+        },
+        {
+          "key": "access",
+          "title": "Verify accounts and integration capabilities",
+          "description": "Check official OAuth scopes, account type, platform review requirements, supported actions, token storage, revocation and least-privilege roles. Acceptance: capability matrix with connected/manual/not-supported states; no passwords or tokens in chat, code or the asset ledger.",
+          "ownerKey": "steward",
+          "departmentKey": "trust",
+          "dependsOn": [
+            "scope"
+          ]
+        },
+        {
+          "key": "calendar",
+          "title": "Prepare the first content production cycle",
+          "description": "Create a rolling calendar with briefs, copy, artwork/video, captions/transcripts, alt text, rights and source checks. Route each item through named review and retain an immutable approved version. Acceptance: one complete small campaign pack with no implied publication.",
+          "ownerKey": "producer",
+          "departmentKey": "creative",
+          "dependsOn": [
+            "brand"
+          ]
+        },
+        {
+          "key": "distribution",
+          "title": "Establish publishing and community handoffs",
+          "description": "For supported authorized connections, bind the approved asset version, account, timezone, schedule and idempotency key. Otherwise export a manual handoff. Acceptance: status remains scheduled only after platform acceptance and published only after a platform ID/URL or verified manual receipt; community replies have explicit scope.",
+          "ownerKey": "steward",
+          "departmentKey": "channels",
+          "dependsOn": [
+            "access",
+            "calendar"
+          ]
+        },
+        {
+          "key": "measurement",
+          "title": "Connect a trustworthy measurement baseline",
+          "description": "Define outcome, time window, source account, cohort, attribution limits, UTMs and deduplication. Keep reach, engagement, leads, accepted opportunities and recognized revenue separate. Acceptance: measured series have source timestamps; absent metrics stay unknown; forecast scenarios remain labeled.",
+          "ownerKey": "analyst",
+          "departmentKey": "research",
+          "dependsOn": [
+            "scope",
+            "access"
+          ]
+        },
+        {
+          "key": "growth",
+          "title": "Run one bounded growth experiment",
+          "description": "Choose the smallest relevant SEO/content, conversion, lifecycle, ABM or paid experiment. Predefine success and failure checks, spend authorization, owner and stop/review conditions. Acceptance: attributable evidence and a continue/change/stop decision; a draft paid-media plan is not a funded live campaign.",
+          "ownerKey": "analyst",
+          "departmentKey": "growth",
+          "dependsOn": [
+            "calendar",
+            "measurement"
+          ]
+        },
+        {
+          "key": "reputation",
+          "title": "Exercise the account and reputation response playbook",
+          "description": "Prepare support routing, harassment/spam handling, public correction, compromise response, evidence retention and escalation. Acceptance: a tabletop scenario with named owners and recovery steps; private account data is limited to the authorized client context.",
+          "ownerKey": "steward",
+          "departmentKey": "trust",
+          "dependsOn": [
+            "access"
+          ]
+        },
+        {
+          "key": "handoff",
+          "title": "Deliver the client report and next cycle",
+          "description": "Publish an internal handoff of accepted artifacts, receipts, measured outcomes, open decisions and the next proposed calendar. Acceptance: every claim traces to evidence; unresolved approvals, account access and metrics remain visible and no cross-client knowledge is shared by default.",
+          "ownerKey": "knowledge",
+          "departmentKey": "knowledge",
+          "dependsOn": [
+            "distribution",
+            "growth",
+            "reputation"
+          ]
+        }
+      ],
+      "knowledge": [
+        {
+          "key": "charter",
+          "title": "Social and digital presence operating charter",
+          "summary": "Purpose: manage the complete authorized brand presence for private individuals, creators, professionals, businesses and organizations. Eight initial departments cover client research/insights, technical integrations, brand/editorial, creative production, channels/community, growth/lifecycle, account trust and knowledge/delivery. Client Strategy and Insights are subteams within Research. Department labels are not separate client access controls; use separate client companies when confidentiality needs enforced separation. Guide: https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/README.md",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/README.md"
+        },
+        {
+          "key": "roles",
+          "title": "Presence role prompts and accountability",
+          "summary": "Director sets client scope, outcomes and task budgets. Brand strategist returns evidence-led positioning, voice and channel briefs. Editorial producer returns versioned campaign packs with source, rights and accessibility fields. Channel steward returns actual connection status, authorized publishing/community handoffs and receipts. Growth analyst returns measurement definitions, a bounded experiment and evidence-qualified results. Shared engineering, design, security, QA and knowledge support the work without cloning specialists. Full prompts: https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/roles.md",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/roles.md"
+        },
+        {
+          "key": "platforms",
+          "title": "Social platform capability and connection register",
+          "summary": "Consult current official platform documentation for account types, scopes, app review, publishing, analytics, moderation and rate limits. Every connection must say disconnected, read-only, publish-authorized, manual-handoff or unsupported with its verification time. Daftar has not connected any social account or sent a post/message through this company kit. Research matrix: https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/platform-capabilities.md",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/platform-capabilities.md"
+        },
+        {
+          "key": "evidence-policy",
+          "title": "Asset, campaign and outcome states",
+          "summary": "Source input -> draft -> review -> approved version -> scheduled with acceptance -> published with receipt -> measured with source/window/cohort. Rejected, cancelled, failed and unknown are separate states. A source register proves a record was referenced, not that the underlying artifact was re-opened or a campaign launched. Targets, scenario budgets, vendor case metrics and user-reported submissions retain their exact evidence labels. This operating policy is a role guide; native roadmap status remains planned/in-progress/blocked/done.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/README.md"
+        },
+        {
+          "key": "prompt-strategist",
+          "title": "Brand and presence strategist task contract",
+          "summary": "Define positioning, voice, audience needs and content pillars from the scoped source register. Preserve facts, hypotheses and unknowns separately. Return a source-linked proof bank, campaign brief and next test; do not invent approvals, results or biographies. Route claims requiring qualified review to Account Trust. Input packet: company scope, source references, accepted prerequisite, deliverable, success checks and bounded budget. Return a concise artifact summary, evidence, limitations and next decision. Persistent identity does not imply an active background worker.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/roles.md"
+        },
+        {
+          "key": "prompt-producer",
+          "title": "Editorial and creative producer task contract",
+          "summary": "Turn an approved brief into a master and channel variants with copy, source references, accessible text, previews and version hashes. Preserve dates, offers, logos and qualifiers. Return a reviewable delivery packet; keep draft, approved and published states distinct. Input packet: company scope, source references, accepted prerequisite, deliverable, success checks and bounded budget. Return a concise artifact summary, evidence, limitations and next decision. Persistent identity does not imply an active background worker.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/roles.md"
+        },
+        {
+          "key": "prompt-steward",
+          "title": "Channel and community steward task contract",
+          "summary": "Maintain account identity, calendar state, community handoffs and publication evidence. Validate the exact account, variant, audience, time and current authorization. Use only supported adapters; otherwise return a labeled manual package. Preserve uncertain attempts and reconcile before retry; a plan is not a publish receipt. Input packet: company scope, source references, accepted prerequisite, deliverable, success checks and bounded budget. Return a concise artifact summary, evidence, limitations and next decision. Persistent identity does not imply an active background worker.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/roles.md"
+        },
+        {
+          "key": "prompt-analyst",
+          "title": "Growth and measurement analyst task contract",
+          "summary": "Check metric provenance, reporting windows, units and completeness. Separate paid/organic, attention, qualified demand and realized outcomes. Return reproducible findings with attribution limits and one measurable next experiment. Unknown is not zero; correlation alone is not lift. Input packet: company scope, source references, accepted prerequisite, deliverable, success checks and bounded budget. Return a concise artifact summary, evidence, limitations and next decision. Persistent identity does not imply an active background worker.",
+          "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/roles.md"
+        }
+      ]
+    }
+  ]
+}
