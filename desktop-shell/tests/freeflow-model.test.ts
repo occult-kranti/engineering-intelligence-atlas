@@ -69,6 +69,51 @@ describe('freeflow model', () => {
     expect(JSON.stringify(buildScene(many(200), { kind: 'portfolio' }))).toBe(JSON.stringify(big));
   });
 
+  it('seats: one unique finite nonoverlapping folio per company for 0/1/2/200, with finite expanding table', () => {
+    const widths: number[] = [];
+    for (const n of [0, 1, 2, 200]) {
+      const sc = buildScene(many(n), { kind: 'portfolio' });
+      const folios = sc.nodes.filter((x) => x.kind === 'folio');
+      expect(folios).toHaveLength(n);
+      expect(new Set(folios.map((f) => f.id)).size).toBe(n);
+      for (const f of folios) {
+        for (const v of [f.rect.x, f.rect.y, f.rect.width, f.rect.height]) expect(Number.isFinite(v)).toBe(true);
+      }
+      for (let i = 0; i < folios.length; i++) {
+        for (let j = i + 1; j < folios.length; j++) {
+          const a = folios[i]!.rect, b = folios[j]!.rect;
+          const overlap = a.x < b.x + b.width && b.x < a.x + a.width && a.y < b.y + b.height && b.y < a.y + a.height;
+          expect(overlap).toBe(false);
+        }
+      }
+      const tb = sc.tableBounds!;
+      expect(Number.isFinite(tb.width) && Number.isFinite(tb.height) && tb.width > 0 && tb.height > 0).toBe(true);
+      for (const f of folios) {
+        expect(f.rect.x).toBeGreaterThanOrEqual(sc.bounds.x);
+        expect(f.rect.x + f.rect.width).toBeLessThanOrEqual(sc.bounds.x + sc.bounds.width);
+      }
+      widths.push(tb.width);
+    }
+    expect(widths[3]!).toBeGreaterThan(widths[1]!);
+  });
+
+  it('seat geometry is deterministic under input reorder and parent edges keep exact ids without group inference', () => {
+    const s: FreeflowSnapshot = {
+      companies: [
+        { id: 'b', name: 'B', status: 'active', parentCompanyId: 'a' },
+        { id: 'a', name: 'A', status: 'active' },
+        { id: 'c', name: 'C', status: 'active' },
+      ],
+      portfolio: { groups: [{ id: 'g', name: 'G', companyIds: ['a', 'c'] }] },
+    };
+    const p = buildScene(s, { kind: 'portfolio' });
+    const r = buildScene({ ...s, companies: [...s.companies!].reverse() }, { kind: 'portfolio' });
+    expect(JSON.stringify(p)).toBe(JSON.stringify(r));
+    expect(p.threads.filter((t) => t.kind === 'company-parent').map((t) => `${t.fromId}>${t.toId}`)).toEqual(['folio:a>folio:b']);
+    expect(p.nodes.find((n) => n.entityId === 'c')!.parentId).toBeNull();
+    expect(buildScene(s, { kind: 'company', companyId: 'a' }).tableBounds).toBeUndefined();
+  });
+
   it('renders 100 rooms and 200 whiteboards without cuts', () => {
     const rooms = Array.from({ length: 100 }, (_, i) => ({ id: `r${i}`, name: `R${i}`, departmentId: null, x: (i % 10) * 100, y: Math.floor(i / 10) * 100, width: 90, height: 90 }));
     const boards = Array.from({ length: 200 }, (_, i) => ({ id: `w${i}`, roomId: `r${i % 100}`, ownerEmployeeId: 'e', title: `B${i}`, goalIds: [], jobIds: [], x: 5, y: 5 }));

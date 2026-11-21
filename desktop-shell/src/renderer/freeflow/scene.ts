@@ -107,6 +107,19 @@ function detailSvg(n: SceneNode, lod: 'rich' | 'simple'): SVGSVGElement {
   return s;
 }
 
+/** Bounded inline SVG chair, decorative only; rotated by seat side, never the label. */
+function chairSvg(side: string): SVGSVGElement {
+  const s = svg('svg', { class: 'ff-chair-svg', viewBox: '0 0 48 48', 'aria-hidden': 'true', focusable: 'false' });
+  const rot = side === 'south' ? 180 : side === 'east' ? 90 : side === 'west' ? -90 : 0;
+  const g = svg('g', { transform: `rotate(${rot} 24 24)` });
+  g.appendChild(svg('rect', { class: 'ff-chair-back', x: '8', y: '4', width: '32', height: '10', rx: '4' }));
+  g.appendChild(svg('rect', { class: 'ff-chair-seat', x: '10', y: '16', width: '28', height: '26', rx: '6' }));
+  g.appendChild(svg('rect', { class: 'ff-chair-arm', x: '4', y: '18', width: '5', height: '20', rx: '2' }));
+  g.appendChild(svg('rect', { class: 'ff-chair-arm', x: '39', y: '18', width: '5', height: '20', rx: '2' }));
+  s.appendChild(g);
+  return s;
+}
+
 function buildNode(n: SceneNode): HTMLElement {
   const e = el('div', `ff-node ff-node--${n.kind}`);
   e.setAttribute('role', 'button');
@@ -162,6 +175,19 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   if (e.dataset.sig === key) return;
   e.dataset.sig = key;
   paper.replaceChildren(detailSvg(n, lod));
+  if (n.kind === 'folio' && n.metadata['seat'] === true) {
+    const chair = el('div', 'ff-chair');
+    chair.setAttribute('aria-hidden', 'true');
+    chair.appendChild(chairSvg(String(n.metadata['seatSide'] ?? 'north')));
+    paper.appendChild(chair);
+    e.classList.add('ff-node--seat');
+  }
+  if ((n.kind === 'room' || n.kind === 'office') && n.kind === 'room') {
+    const dept = n.departmentId ? n.label : 'Unassigned department';
+    const tag = el('div', 'ff-segment-tag', dept);
+    tag.setAttribute('aria-hidden', 'true');
+    paper.appendChild(tag);
+  }
   const title = el('div', 'ff-node-title', n.label);
   paper.appendChild(title);
   if (lod === 'rich' || n.kind === 'folio') {
@@ -189,13 +215,28 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
   root.tabIndex = -1;
   root.addEventListener('keydown', (ev) => { if (ev.target === root && ['ArrowRight', 'ArrowDown', 'ArrowLeft', 'ArrowUp', 'Home', 'End'].includes(ev.key)) ev.stopPropagation(); }, { capture: false });
   const table = el('div', 'ff-table');
+  table.setAttribute('aria-hidden', 'true');
   table.appendChild(el('div', 'ff-grid'));
   const world = el('div', 'ff-world');
+  const worldTable = el('div', 'ff-world-table');
+  worldTable.setAttribute('aria-hidden', 'true');
+  worldTable.hidden = true;
   world.style.cssText = 'position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform';
   const threadsSvg = svg('svg', { class: 'ff-threads', width: '1', height: '1', 'aria-hidden': 'true', focusable: 'false' });
   threadsSvg.style.cssText = 'position:absolute;left:0;top:0;overflow:visible;pointer-events:none';
   const nodeLayer = el('div', 'ff-nodes');
-  world.append(threadsSvg, nodeLayer);
+  world.append(worldTable, threadsSvg, nodeLayer);
+  let tableSig = '';
+  function paintWorldTable(): void {
+    const tb = scene?.tableBounds;
+    const sig = tb ? `${tb.x}|${tb.y}|${tb.width}|${tb.height}|${scene?.nodes.length ?? 0}` : '';
+    if (sig === tableSig) return;
+    tableSig = sig;
+    if (!tb || !Number.isFinite(tb.width) || !Number.isFinite(tb.height)) { worldTable.hidden = true; return; }
+    worldTable.hidden = false;
+    worldTable.style.cssText = `position:absolute;left:0;top:0;width:${Math.max(1, tb.width)}px;height:${Math.max(1, tb.height)}px;transform:translate(${tb.x}px,${tb.y}px);pointer-events:none`;
+  }
+  root.dataset.scope = 'portfolio';
   const caption = el('div', 'ff-caption');
   caption.setAttribute('aria-live', 'polite');
   const capTitle = el('div', 'ff-caption-title'), capSub = el('div', 'ff-caption-sub');
@@ -257,6 +298,8 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
   function render(): void {
     if (destroyed) return;
     st.updates++;
+    root.dataset.scope = scene ? (scene.focus.kind === 'portfolio' ? 'portfolio' : 'company') : 'portfolio';
+    paintWorldTable();
     if (!scene) {
       for (const [, e] of live) { e.remove(); st.domRemoved++; }
       live.clear();

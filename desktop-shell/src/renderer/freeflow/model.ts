@@ -64,6 +64,8 @@ export interface SceneNode {
 }
 
 export interface FreeflowScene {
+  /** Presentation-only conference table geometry (portfolio scope), computed from the same seat geometry. */
+  tableBounds?: LRect;
   title: string;
   breadcrumbs: Array<{ label: string; focus: FreeflowFocus }>;
   focus: FreeflowFocus;
@@ -189,21 +191,16 @@ function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs:
       if (!groupOf.has(cid)) groupOf.set(cid, g);
     }
   }
-  const clusters = new Map<string, RO<SCompany>[]>();
-  for (const c of companies) {
-    const key = groupOf.get(c.id)?.id ?? '~ungrouped';
-    clusters.set(key, [...(clusters.get(key) ?? []), c]);
-  }
   const forest = projectForest(companies);
   for (const w of forest.warnings) warnings.push(w);
   const nameById = new Map(companies.map((c) => [c.id, c.name]));
-  const keys = [...clusters.keys()].sort(cmp);
-  const packed = packClusters(keys.map((k) => clusters.get(k)!.length), FOLIO_W, FOLIO_H, GAP);
   const shared = snap.portfolio?.ceo?.sharedServicesCompanyId ?? null;
   const nodes: SceneNode[] = [];
-  keys.forEach((k, ki) => {
-    const members = clusters.get(k)!;
-    members.forEach((c, i) => {
+  // Deterministic seats around one table: one seat per visible company, sorted by id.
+  const seatRects = seatLayout(companies.length);
+  {
+    companies.forEach((c, i) => {
+      const k = groupOf.get(c.id)?.id ?? '~ungrouped';
       const emps = (snap.employees ?? []).filter((e) => e.companyId === c.id && e.status !== 'fired');
       const cj = jobs.filter((j) => j.companyId === c.id);
       const running = cj.filter((j) => j.status === 'running').length;
@@ -213,8 +210,8 @@ function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs:
       nodes.push({
         id: `folio:${c.id}`, kind: 'folio', entityId: c.id, companyId: c.id, parentId: parentId ? `folio:${parentId}` : null,
         label: c.name, subtitle: [parentId ? `Subcompany of ${nameById.get(parentId) ?? parentId}` : '', isShared ? 'Shared services' : '', c.status === 'paused' ? 'Paused' : ''].filter(Boolean).join(' · '),
-        status: c.status, rect: packed.rects[ki]![i]!,
-        metadata: { groupIds: memberships.get(c.id) ?? [], cluster: k === '~ungrouped' ? null : k, sharedServices: isShared, parentCompanyId: parentId, parentCompanyName: parentId ? (nameById.get(parentId) ?? parentId) : null, childCompanyIds: kids, childCompanyNames: kids.map((x) => nameById.get(x) ?? x) },
+        status: c.status, rect: seatRects.seats[i]!.rect,
+        metadata: { seat: true, seatSide: seatRects.seats[i]!.side, seatIndex: i, groupIds: memberships.get(c.id) ?? [], cluster: k === '~ungrouped' ? null : k, sharedServices: isShared, parentCompanyId: parentId, parentCompanyName: parentId ? (nameById.get(parentId) ?? parentId) : null, childCompanyIds: kids, childCompanyNames: kids.map((x) => nameById.get(x) ?? x) },
         counts: { employees: emps.length, jobs: cj.length, running, queued: cj.filter((j) => j.status === 'queued').length, offices: (snap.offices ?? []).filter((o) => o.companyId === c.id).length, subcompanies: kids.length },
       });
     });
@@ -227,10 +224,34 @@ function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs:
   const threads = sortThreads([...portfolioContractThreads(snap, known), ...hierarchyThreads]);
   return {
     title: 'Conference table', breadcrumbs: [{ label: 'Portfolio', focus }], focus,
-    bounds: unionBounds(nodes.map((n) => n.rect), nodes.length <= 6 ? 60 : nodes.length <= 24 ? 110 : 200), nodes, threads,
+    tableBounds: seatRects.table,
+    bounds: unionBounds([...nodes.map((n) => n.rect), seatRects.table], 120), nodes, threads,
     counts: { companies: companies.length, folios: nodes.length, threads: threads.length, runningJobs: jobs.filter((j) => j.status === 'running').length, hiredEmployees: (snap.employees ?? []).filter((e) => e.status !== 'fired').length },
     warnings,
   };
+}
+
+const SEAT_W = 260, SEAT_H = 150, SEAT_GAP = 36, TABLE_PAD = 70, TABLE_MIN_W = 520, TABLE_MIN_H = 220;
+type SeatSide = 'north' | 'south' | 'east' | 'west';
+
+/** Deterministic perimeter layout: seats alternate north/south along a table that lengthens with count; overflow beyond two long sides adds end seats. Table bounds derive from the same geometry. */
+function seatLayout(count: number): { seats: Array<{ rect: LRect; side: SeatSide }>; table: LRect } {
+  const n = Math.max(0, count);
+  const perSide = Math.max(1, Math.ceil(n / 2));
+  const span = perSide * SEAT_W + (perSide - 1) * SEAT_GAP;
+  const tableW = Math.max(TABLE_MIN_W, span + TABLE_PAD * 2);
+  const tableH = Math.max(TABLE_MIN_H, n > 2 * 24 ? 320 : TABLE_MIN_H);
+  const table: LRect = { x: -tableW / 2, y: -tableH / 2, width: tableW, height: tableH };
+  const seats: Array<{ rect: LRect; side: SeatSide }> = [];
+  const startX = -span / 2;
+  for (let i = 0; i < n; i++) {
+    const col = Math.floor(i / 2);
+    const north = i % 2 === 0;
+    const x = startX + col * (SEAT_W + SEAT_GAP);
+    const y = north ? table.y - SEAT_H - 24 : table.y + table.height + 24;
+    seats.push({ rect: { x, y, width: SEAT_W, height: SEAT_H }, side: north ? 'north' : 'south' });
+  }
+  return { seats, table };
 }
 
 function portfolioContractThreads(snap: FreeflowSnapshot, known: Set<string>): SceneThread[] {
