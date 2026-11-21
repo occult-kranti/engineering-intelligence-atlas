@@ -499,4 +499,39 @@ release();await flush();
 check(sd.getElementById('office-company-select').value==='fixture-company'&&sd.getElementById('locator-company').textContent==='Fixture Engineering'&&new URL(sw.location.href).searchParams.get('company')==='fixture-company','a stale pre-switch snapshot cannot split panel scope from the focused world and URL');
 scope.window.close();
 }
+// Initial routes wait for the coalesced native read and frame the actual requested
+// surface after scope resolution. Geometry here checks camera coordination only;
+// the browser release gate measures the real first-viewport composer rectangle.
+for(const interacted of [false,true]){
+ let releaseInitial,reads=0;
+ const initial=await makeDom(true,undefined,'?company=initial-company-b&workspace=chat#office',w=>{
+  const office=w.__atlasFixture.office;
+  office.companies.push({...office.companies[0],id:'initial-company-b',name:'Initial company B'});
+  office.offices.push({...office.offices[0],id:'initial-office-b',companyId:'initial-company-b',name:'Initial office B'});
+  const snapshot=w.desktopBridge.officeSnapshot;
+  w.desktopBridge.officeSnapshot=()=>{reads++;return new Promise(resolve=>{releaseInitial=async()=>resolve(await snapshot());});};
+  Object.defineProperty(w.HTMLElement.prototype,'clientWidth',{configurable:true,get:()=>1280});
+  Object.defineProperty(w.HTMLElement.prototype,'clientHeight',{configurable:true,get:()=>720});
+  w.Element.prototype.getClientRects=function(){return[this.getBoundingClientRect()];};
+  w.matchMedia=query=>({matches:query.includes('prefers-reduced-motion'),media:query,addEventListener(){},removeEventListener(){}});
+ });
+ const iw=initial.window,idoc=iw.document,world=idoc.querySelector('.ff-world');
+ check(reads===1&&typeof releaseInitial==='function','startup waits on one shared native snapshot request');
+ if(interacted){
+  idoc.querySelector('.canvas-shortcut[data-canvas-open="scope"]').dispatchEvent(new iw.Event('pointerdown',{bubbles:true}));
+  idoc.querySelector('.canvas-shortcut[data-canvas-open="scope"]').click();
+ }
+ await releaseInitial();await flush();await flush();
+ check(idoc.getElementById('office-company-select').value==='initial-company-b'&&new URL(iw.location.href).searchParams.get('company')==='initial-company-b','a delayed startup snapshot resolves the requested company before the deep link settles');
+ if(interacted){
+  check(idoc.querySelector('.canvas-panel[data-panel-id="scope"]').classList.contains('is-active'),'startup completion does not reactivate Donna after a user chooses another surface');
+ }else{
+  const framed=world.style.transform;
+  idoc.querySelector('.canvas-shortcut[data-canvas-open="donna"]').click();await flush();
+  check(framed===world.style.transform&&!framed.includes('rotateX'),'resolved chat deep link uses the same readable camera as opening Donna explicitly');
+  const before=world.style.transform;idoc.getElementById('office-refresh').click();await flush();await releaseInitial();await flush();
+  check(world.style.transform===before,'later native refresh retains the settled Donna camera');
+ }
+ initial.window.close();
+}
 console.log(JSON.stringify({suite:'renderer pure-DOM interaction',checks,passed:true,fixtureOnly:true,networkCalls:0,providerCalls:0,visualVerification:false},null,2));

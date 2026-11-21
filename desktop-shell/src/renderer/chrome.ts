@@ -1751,7 +1751,7 @@ let officeWorker: OfficeWorkerStatus | null = null;
 let selectedOfficeId = '';
 let selectedDepartmentId = '';
 let officeTab = 'overview';
-let officeRefreshing = false;
+let officeRefreshing: Promise<void> | null = null;
 let officeWriteRevision = 0;
 let officePoll: ReturnType<typeof setInterval> | null = null;
 let officeObservation: OfficeResult['observer'];
@@ -1768,12 +1768,13 @@ function requireOfficeScope(): { companyId: string; officeId: string; department
   return { companyId: company.id, officeId: selectedOfficeId, ...(selectedDepartmentId ? { departmentId: selectedDepartmentId } : {}) };
 }
 async function refreshOffice(): Promise<void> {
-  if (officeRefreshing) return;
+  if (officeRefreshing) return officeRefreshing;
   if (!bridge?.officeSnapshot) { $('office-native-status').textContent = 'Desktop required'; noData($('office-employees'), 'Open the desktop app to load your permanent employees.'); return; }
-  officeRefreshing = true;
   const readRevision=officeWriteRevision;
-  try {
-    const [state, worker] = await Promise.allSettled([bridge.officeSnapshot(), bridge.officeWorkerStatus ? bridge.officeWorkerStatus() : Promise.resolve(null)]);
+  const snapshotRead=bridge.officeSnapshot();
+  const workerRead=bridge.officeWorkerStatus ? bridge.officeWorkerStatus() : Promise.resolve(null);
+  officeRefreshing = (async () => {
+    const [state, worker] = await Promise.allSettled([snapshotRead, workerRead]);
     if (readRevision===officeWriteRevision && state.status === 'fulfilled' && state.value.ok && state.value.snapshot) {
       officeObservation = state.value.observer;
       officeState = state.value.snapshot; officeSampledAt = new Date().toISOString(); $('office-native-status').textContent = workspaceReadOnly() ? 'Example workspace · read only' : bridge?.transport==='cloud-browser' ? 'Cloud workspace · desktop projection' : 'Local state loaded'; $('office-native-status').className = 'pill ok';
@@ -1784,7 +1785,8 @@ async function refreshOffice(): Promise<void> {
     }
     if (worker.status === 'fulfilled') officeWorker = worker.value;
     renderOffice();
-  } finally { officeRefreshing = false; }
+  })().finally(() => { officeRefreshing = null; });
+  return officeRefreshing;
 }
 async function performOffice(command: OfficeCommand, success = 'Workspace updated.'): Promise<void> {
   if(workspaceReadOnly())throw new Error('The starter office preview is read only. Open your private workspace to save changes.');
@@ -3747,6 +3749,10 @@ function boot(): void {
     $('core-label').textContent='Starter office preview';$('core-note').textContent='Example state · read only';
   } else if (bridge?.transport === 'personal-browser') { $('core-label').textContent='Private browser workspace'; $('core-note').textContent='Connected to your desktop app'; }
   const route = location.hash.replace('#', '') as ViewName;const params=new URLSearchParams(location.search);const requested=params.get('workspace')||'';const workspaceRoute=['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(requested)?requested:null;const ceoRoute=params.get('ceo')==='true';
+  const initialSurface=ceoRoute?'portfolio':workspaceRoute?(workspaceRoute==='chat'?'donna':`workspace-${workspaceRoute}`):params.get('surface')||(route in VIEW_IDS&&route!=='office'?route:null);
+  let initialViewChanged=false;
+  const onInitialInteraction=()=>{initialViewChanged=true;};
+  for(const event of ['pointerdown','keydown','wheel'])window.addEventListener(event,onInitialInteraction,{capture:true,passive:true});
   if(workspaceRoute||ceoRoute)ffOperations=true;ffFocus=params.get('company')||params.get('companyId')?{kind:'company',companyId:params.get('company')||params.get('companyId')||''}:{kind:'portfolio'};
   navigate(workspaceRoute||ceoRoute?'office':route in VIEW_IDS?route:'office',false);if(workspaceRoute)switchWorkspaceTab(workspaceRoute);if(ceoRoute)setPortfolioOpen(true);
   if(workspaceRoute||ceoRoute){const navName=ceoRoute?'operations':workspaceRoute==='softboard'?'team':workspaceRoute==='timeline'?'roadmap':workspaceRoute==='whiteboard'?'whiteboard':'operations';ffSetNav(navName);}
@@ -3755,10 +3761,17 @@ function boot(): void {
   { const status=document.getElementById('workspace-action-status'),bar=document.querySelector('#freeflow-surface .ff-surface-bar');
     if(status&&bar&&!bar.contains(status)){status.classList.add('ff-nav-status');status.setAttribute('role','status');status.setAttribute('aria-live','polite');bar.append(status);} }
   void safeTask(async()=>{
-    await refreshWorkspace();
-    if(!officeState&&bridge?.officeSnapshot)await refreshOffice();
-    try{if(deepLinkFocus.kind!=='portfolio')await ffTransitionScope(deepLinkFocus,null);}
-    finally{ffBootSettled=true;ffCanonicalizeUrl();}
+    try{
+      await refreshWorkspace();
+      if(!officeState&&bridge?.officeSnapshot)await refreshOffice();
+      if(deepLinkFocus.kind!=='portfolio')await ffTransitionScope(deepLinkFocus,null);
+    }finally{
+      for(const event of ['pointerdown','keydown','wheel'])window.removeEventListener(event,onInitialInteraction,true);
+      ffBootSettled=true;ffCanonicalizeUrl();
+      // A company deep link resolves asynchronously and may frame its floor.
+      // Finish at the requested live surface, unless the user has taken over.
+      if(initialSurface&&!initialViewChanged&&endlessWorkspace?.isOpen(initialSurface))endlessWorkspace.open(initialSurface);
+    }
   });
 }
 boot();

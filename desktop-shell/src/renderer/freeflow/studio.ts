@@ -123,6 +123,9 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   let inspectorOpen = false;
   let warnExpanded = false;
   let currentKey = '';
+  // A deep-linked panel can frame before the first snapshot assigns a scope.
+  // Adopt that explicit choice once; subsequent scope changes keep normal restore/fit behavior.
+  let initialCamera: Camera | null = null;
   let fitPending = false;
   let canvasShown = true;
   let capsFn = options.capabilities ?? null;
@@ -181,11 +184,11 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
 
   function tryFit(): void {
     if (!scene) { fitPending = false; return; }
+    const mem = cams.get(currentKey);
+    if (mem) { fitPending = false; sceneR.setCamera(mem); controls.sync(); return; }
     // An empty loading projection has placeholder extents, not a useful saved
     // camera. Wait for actual nodes and the full-size canvas before framing.
     if (!scene.nodes.length) { fitPending = true; return; }
-    const mem = cams.get(currentKey);
-    if (mem) { fitPending = false; sceneR.setCamera(mem); controls.sync(); return; }
     const saved = readStored(currentKey);
     if (saved) { fitPending = false; const c = normalizeCamera(saved); cams.set(currentKey, c); sceneR.setCamera(c); controls.sync(); return; }
     if (!active || !canvasShown || listMode || !realCanvas()) { fitPending = true; return; }
@@ -323,7 +326,14 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     elements: { root, canvasHost, listHost, world: sceneR.elements.world, inspectorHost: inspHost },
     getCamera: () => sceneR.getCamera(),
     getViewport: () => sceneR.getViewport(),
-    setCamera(c) { if (!destroyed) { sceneR.setCamera(c); controls.sync(); if (currentKey) cams.set(currentKey, c); } },
+    setCamera(c) {
+      if (destroyed) return;
+      const camera = normalizeCamera(c);
+      fitPending = false;
+      if (currentKey) cams.set(currentKey, camera); else initialCamera = camera;
+      sceneR.setCamera(camera);
+      controls.sync();
+    },
     stopMotion() { controls.stopMotion(); },
     showCanvas() { userToggled = true; listMode = false; layout(); },
     frame() { if (focusBounds) controls.goTo(fitBounds(sceneR.getCamera(), sceneR.getViewport(), focusBounds, 80)); },
@@ -341,6 +351,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
       controls.setBrowseBounds(focus.kind === 'portfolio' && built.nodes.length > 1 ? built.tableBounds ?? null : null);
       if (changed) {
         currentKey = key;
+        if (initialCamera) { cams.set(key, initialCamera); initialCamera = null; }
         selectedId = null; selectedThread = null;
         fitPending = true;
         controls.setBounds(focusBounds);

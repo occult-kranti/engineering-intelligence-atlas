@@ -2,6 +2,8 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { installDom, type FreeflowDom } from './fixtures/freeflow-dom.js';
 import { buildScene, type FreeflowSnapshot } from '../src/renderer/freeflow/model.js';
+import { buildUniverse } from '../src/renderer/freeflow/universe.js';
+import { worldToScreen } from '../src/renderer/freeflow/camera.js';
 import { mountStudio, type Studio, type StudioActionKind, type StudioActionContext } from '../src/renderer/freeflow/studio.js';
 import { mountScene, RICH_NODE_BUDGET, THREAD_BUDGET, type SceneRenderer } from '../src/renderer/freeflow/scene.js';
 import { mountA11yList, type A11yList } from '../src/renderer/freeflow/a11y-list.js';
@@ -37,11 +39,11 @@ function small(extra: Partial<FreeflowSnapshot> = {}): FreeflowSnapshot {
 
 interface Mounted { studio: Studio; host: HTMLElement; actions: Array<{ a: StudioActionKind; c: StudioActionContext }>; nav: unknown[] }
 
-function mountS(storage: Pick<Storage, 'getItem' | 'setItem'> | null = null, caps?: Parameters<typeof mountStudio>[1]['capabilities']): Mounted {
+function mountS(storage: Pick<Storage, 'getItem' | 'setItem'> | null = null, caps?: Parameters<typeof mountStudio>[1]['capabilities'], continuousCanvas = false): Mounted {
   const host = document.createElement('div');
   document.body.appendChild(host);
   const m: Mounted = { host, actions: [], nav: [], studio: null as never };
-  m.studio = mountStudio(host, { onNavigate: (f) => m.nav.push(f), onAction: (a, c) => m.actions.push({ a, c }), storage, capabilities: caps });
+  m.studio = mountStudio(host, { onNavigate: (f) => m.nav.push(f), onAction: (a, c) => m.actions.push({ a, c }), storage, capabilities: caps, continuousCanvas });
   cleanups.push(() => m.studio.destroy());
   return m;
 }
@@ -89,6 +91,85 @@ describe('freeflow studio (mounted)', () => {
     expect(fitted).toContain('translate(800px, 450px)');
     m.studio.update(small(), { kind: 'company', companyId: 'a' });
     expect(worldTransform(m)).toBe(fitted);
+  });
+
+  it.each(['before first update', 'after empty update'])('retains explicit panel framing %s through first data, visibility and refresh', (when) => {
+    const m = mountS(null, undefined, true);
+    const focus = { kind: 'portfolio' } as const;
+    // A deep-linked surface can frame before an office snapshot or measured canvas exists.
+    m.studio.setActive(false);
+    if (when === 'after empty update') m.studio.update({}, focus);
+    const requested = { x: -180, y: 1440, zoom: 1.1, yaw: 0, pitch: 0, distance: 1800 };
+    m.studio.setCamera(requested);
+    m.studio.update({}, focus);
+    m.studio.setActive(true);
+    measure(m, 1280, 720);
+    dom.raf.drain();
+    expect(m.studio.getCamera()).toEqual(requested);
+
+    m.studio.update(small(), focus);
+    expect(m.studio.getCamera()).toEqual(requested);
+    m.studio.setActive(false);
+    dom.setHidden(true);
+    m.studio.update(small(), focus);
+    m.studio.setActive(true);
+    dom.setHidden(false);
+    measure(m, 1280, 760);
+    dom.raf.drain();
+    expect(m.studio.getCamera()).toEqual(requested);
+    // The host's camera is remembered as a value, not as a mutable caller-owned object.
+    requested.y = 9000;
+    m.studio.setActive(false);
+    m.studio.setActive(true);
+    expect(m.studio.getCamera().y).toBe(1440);
+  });
+
+  it('consumes pre-snapshot framing for only the initial scope, allowing later company navigation', () => {
+    const m = mountS(null, undefined, true);
+    measure(m, 1280, 720);
+    const requested = { x: -180, y: 1440, zoom: 1.1, yaw: 0, pitch: 0, distance: 1800 };
+    m.studio.setCamera(requested);
+    m.studio.update({}, { kind: 'portfolio' });
+    m.studio.update(small(), { kind: 'portfolio' });
+    expect(m.studio.getCamera()).toEqual(requested);
+
+    m.studio.update(small(), { kind: 'company', companyId: 'a' });
+    const companyCamera = m.studio.getCamera();
+    expect(companyCamera).not.toEqual(requested);
+    expect(companyCamera.pitch).toBe(0);
+    m.studio.update(small(), { kind: 'portfolio' });
+    expect(m.studio.getCamera()).toEqual(requested);
+    m.studio.update(small(), { kind: 'company', companyId: 'a' });
+    expect(m.studio.getCamera()).toEqual(companyCamera);
+  });
+
+  it('still fits the readable table after loading when no explicit host camera was chosen', () => {
+    const m = mountS(null, undefined, true);
+    m.studio.setActive(false);
+    const initial = m.studio.getCamera();
+    m.studio.update({}, { kind: 'portfolio' });
+    m.studio.setActive(true);
+    measure(m, 1280, 720);
+    dom.raf.drain();
+    expect(m.studio.getCamera()).toEqual(initial);
+
+    const snap = small();
+    m.studio.update(snap, { kind: 'portfolio' });
+    const fitted = m.studio.getCamera();
+    expect(fitted.pitch).toBe(26);
+    expect(fitted.yaw).toBe(-3);
+    const bounds = buildUniverse(snap, { kind: 'portfolio' }).focusBounds;
+    for (const x of [bounds.x, bounds.x + bounds.width]) for (const y of [bounds.y, bounds.y + bounds.height]) {
+      const point = worldToScreen(fitted, m.studio.getViewport(), { x, y });
+      expect(point.x).toBeGreaterThanOrEqual(89.98);
+      expect(point.x).toBeLessThanOrEqual(1190.02);
+      expect(point.y).toBeGreaterThanOrEqual(89.98);
+      expect(point.y).toBeLessThanOrEqual(630.02);
+    }
+    m.studio.update(snap, { kind: 'portfolio' });
+    m.studio.setActive(false);
+    m.studio.setActive(true);
+    expect(m.studio.getCamera()).toEqual(fitted);
   });
 
   it('list mode stops canvas controls; narrow Canvas view usable; inactive studio is disabled', () => {
