@@ -15,15 +15,19 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 
 ## Current product — connected office 0.5.0
 
-The private website update is deployed. Desktop/editor release candidate
-[`8415213`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d)
-passed its installed desktop and editor gates in [Verify](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405),
-but the cloud UI gate still failed and publication was skipped. A fully passing
-candidate and final [Pages](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
-review are required before 0.5.0 is called a verified release. Local checks include 70 Rust
-tests, 375 desktop tests and 192 renderer assertions. The live API/native sync
-and portable-state checks have separate observed evidence in
-[validation](project/VALIDATION.md).
+[v0.5.0 is released](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0)
+from exact source
+[`0b87469`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/0b87469ba14864959bd5ec70dd323ce909904faa).
+All seven verification gates and the release job passed in
+[Verify 44860194825](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194825),
+including packaged desktop operation, installed VSIX activation and the cloud UI
+fixture. The private website and public Pages update are deployed. Checks include
+70 Rust tests, 375 desktop tests and 192 renderer assertions. All three downloaded
+release assets match their published SHA-256 digests. The final personal archive
+was restored with the published Rust binary and paired to the deployed API;
+original, restored and cloud projections matched without duplicate messages or
+provider calls. [Validation](project/VALIDATION.md) records the exact evidence,
+download hashes and remaining owner-laptop/keychain acceptance.
 
 - **Donna workspace:** company/office/department/employee conversation scope, local plans, actual provider returns, and one place to inspect progress.
 - **Office and whiteboard:** persistent rooms, employee positions, keyboard movement, boards and goal/job ownership mappings.

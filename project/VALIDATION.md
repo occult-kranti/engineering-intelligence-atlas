@@ -1,46 +1,50 @@
 # Integrated validation record
 
-## Current connected release draft · v0.5.0
+## Released connected office · v0.5.0
 
 Checkpoint: **20 November 2026 (America/New_York)**. Evidence timestamps retain
-UTC. The checks below are observed component and protocol results. Candidate
-installed desktop/editor gates passed, while **final combined CI, cloud UI,
-final browser inspection and 0.5.0 release publication remain pending**.
-Owner-laptop/keychain acceptance is separate. Historical v0.4.x receipts below
-do not certify this candidate.
+UTC. **All seven verification gates, release publication and the separate Pages
+workflow passed.** The three downloaded release assets match published digests;
+the final personal archive restored and paired to the deployed API using the
+published Rust binary. Owner-laptop/keychain acceptance and production browser
+sign-in remain separate. Historical v0.4.x receipts below do not certify 0.5.0.
 
-The current source candidate is
-[`841521320e56f9402566164393cac66208c9590d`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d).
-[Verify 44858908405](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405)
-passed its desktop installed smoke, web, editor, Android, design and MySQL gates,
-but its cloud UI gate failed again and the release job was skipped. The cloud
-build/API checks passed; this does not establish browser UI acceptance. The
-second UI failure was traced to a strict redirect assertion, described below;
-this candidate is not release-approved.
-[Pages 44858909265](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
-retains its separate completed-receipt/review gate. The latest private website deployment succeeded
+The [v0.5.0 release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0)
+is built from exact source
+[`0b87469ba14864959bd5ec70dd323ce909904faa`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/0b87469ba14864959bd5ec70dd323ce909904faa).
+[Verify 44860194825](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194825)
+passed `web`, `mysql-connectors`, `desktop`, `android`, `cloud`, `editor`,
+`design-tools` and `release`. The release was published at
+`2026-11-21T03:18:09Z`; the release job completed at `2026-11-21T03:18:11Z`.
+[Pages 44860194823](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194823)
+also passed. Later documentation-only commits preserve this code tag. The
+[release receipt](release-0.5.0.json) records the exact publication and downloads.
+
+The latest private website deployment succeeded
 at `2026-11-21T03:00:33.507277Z`, from hosted source
 `03b9264757c38ae86689cc03f23defed39383498`, deployment
 `appgdep_6b01094b1bf48191b53b9b012252ce89`. These hosted identifiers are distinct
-from the GitHub candidate and are not a release tag.
+from the GitHub release source and are not a release tag.
 
 | Current gate | Observed result | Evidence / practical limit |
 | --- | --- | --- |
 | Rust control core | **70 passed** | Native grants, parent expiry/revocation, scope checks, migrations, remote receipts and full cloud-message import; [native source](../native-core/src/) |
-| Desktop TypeScript/build and renderer compilation | **Passed; candidate installed smoke also passed** | Main, preload and shared renderer compile; Verify 44858908405 exercised the packaged desktop/native form path; owner-laptop/keychain acceptance remains separate |
+| Desktop TypeScript/build and renderer compilation | **Passed; final packaged desktop smoke passed** | Verify 44860194825 launched the packaged application, loaded real native state and persisted a local goal without changing provider spend; four screenshots retained |
 | Desktop service tests | **375 passed / 26 files** | Includes sync, real native contract, worker admission, accounting and profile migration; [tests](../desktop-shell/tests/) |
 | Real JS ↔ Rust cloud contract | **3 passed** | Canonical hash agreement and durable cloud message import without provider dispatch; included in the desktop total, not added again |
 | Renderer behavior | **192 assertions passed** | Synthetic pure-DOM behavior including timed authority, delegation controls and existing office/decision flows; not visual browser evidence |
 | Static site typecheck and tests | **Passed; 75 tests passed, 22 skipped** | Nine passing and four skipped test files; skips retain their integration-environment limits |
-| Static build integrity | **169 files checked** | Current public build integrity; remote Pages/browser acceptance remains pending |
+| Static build integrity and public browser sweep | **169 files checked; 68 browser checks passed; 66 screenshots** | Four generated assets use content-addressed names, with 113 precache entries; final Verify and Pages workflows passed on the exact release source |
 | Cloud API and directory tests | **28 passed: 21 API + 7 directory** | [Cloud tests](../cloud-workspace/tests/); admission, scoped data and directory projection checks |
 | Cloud TypeScript and build | **Passed** | Strict checking and Vinext build, including `/` and `/applications`; source/build success is distinct from browser sign-in acceptance |
-| VS Code client and package | **11 client tests, syntax and packaging passed; candidate editor job passed** | [Extension](../vscode-extension/); exact installed-host details belong to the candidate receipt, not a claim about the owner's editor session |
+| Cloud browser acceptance | **24 checks passed; 11 screenshots** | Final synthetic-fixture receipt completed at `2026-11-21T03:16:34.550Z`; zero provider calls, with production authentication and persistence explicitly outside that fixture |
+| VS Code client and package | **11 client tests and 6 installed-host checks passed** | Syntax, VSIX packaging and activation in isolated VS Code passed; seven commands and five runtime files verified with zero network requests; owner-session setup remains separate |
 | Python preparation, restore and directory | **25 passed, including 10 indexer tests** | [Indexer tests](../scripts/test_index_github_applications.py): bounded reads, global deduplication/cap, timeout, cache freshness and atomic private checkpoints |
 | MCP protocol and scale/query boundaries | **26 passed** | Fifteen existing plus eleven new checks: successful large-response compaction, 16 MiB native ceiling, complete bounded metadata pagination, stale-cursor detection and no mutation/replay during reads |
 | Live large-state MCP protocol | **Passed** | Actual approximately 1.9 MiB native state returned a successful compact JSON-RPC response; read-only metadata pagination covered the selected collection exactly once, with no mutation or provider call; private record counts omitted |
 | OpenPencil adapter | **6 boundary tests and 4 real local operations passed** | Pinned `@open-pencil/cli` 0.16.0; [receipt](../design-tools/examples/receipt.json), one page/12 nodes, `.fig` roundtrip and SVG export; zero network attempts/provider calls |
-| OpenPencil artifact integrity | **3 example sizes and SHA-256 hashes matched** | Published `.fig`, inspection JSON and SVG match the receipt; import into the Figma application remains unverified |
+| OpenPencil artifact integrity | **3 example sizes and SHA-256 hashes matched** | Published `.fig`, inspection JSON and SVG match the receipt; final design gate passed; import into the Figma application remains unverified |
+| Android and MySQL integration | **Final CI gates passed** | Android verification/debug APK packaging and disposable-database connector checks passed; physical mobile-device use and production signing remain separate |
 | Security curriculum routing | **15 role-loader tests passed; 46 local links checked** | Updated Security role loads through the actual compiled loader; three synthetic scope/expiry cases and missing-telemetry expectation checked; no upstream lab run |
 | Native Donna planning | **Seven provider jobs completed with retained artifacts** | Two roadmaps, two independent experts plus Donna synthesis, and two Daftar reviews; [sanitized usage](claude-usage.json), [worker ledger](WORKER_LEDGER.md) |
 | Hosted Donna reply | **One successful request with observed usage** | 7,800 input/654 output tokens, $0.022140; two earlier preflight reservations remain uncertain, not successful replies |
@@ -84,20 +88,61 @@ receipt establishes the particular path exercised above.
 
 The director’s real private export/restore rehearsal exposed three panel evidence paths that changed with the destination directory and content-hash filenames. The TypeScript and Rust cloud projections now replace only structured absolute local evidence references with an explicit omission marker. Authored chat, decision summaries, HTTPS sources and relative references remain exact. A real export→restore integration test retains the artifact bytes and proves that a Rust transaction accepts the pre-restore TypeScript hash. The actual owner workspace and restored candidate also matched after this correction, with no provider calls.
 
-### Pending final acceptance
+### Final published-binary restore and restored-device sync
+
+**Passed at `2026-11-21T03:20:41.131Z`.** The final personal archive was restored
+into an isolated directory. The actual Rust helper extracted from the downloaded
+v0.5.0 AppImage loaded the restored state; its SHA-256 matched the final CI binary:
+`7e51cee7a09427aced1df2ca15ba42389eaeecd96169740655a79869a0cea491`.
+Every included managed artifact resolved; no missing artifact references or
+embedded credentials were found. The archive's private catalog and identities
+are excluded from this document.
+
+The production `CloudSyncService` then paired the restored workspace to the
+latest deployed owner-private API, claimed the writer and performed an explicit
+sync. Original, restored and cloud projections were identical, messages were
+not duplicated, and no provider calls occurred. The verification device was
+revoked and its writer assignment released afterward. This verifies a real
+private-state recovery and server pairing using AES-GCM test storage; it does
+not establish the owner's actual OS keychain or interactive browser sign-in.
+
+Exports must pass the directory containing managed artifacts directly, such as
+`/path/to/user-data/office-artifacts`, as `--artifact-root`. Passing its parent
+directory does not identify those artifact files. [Handoff](../HANDOFF.md)
+documents restoration and credential reconnection.
+
+### Verified v0.5.0 downloads
+
+All three release assets were downloaded and their byte sizes and SHA-256 hashes
+matched the published GitHub digest metadata. The [release receipt](release-0.5.0.json)
+retains the exact source, publication time and integrity result.
+
+| Artifact | Downloaded size | SHA-256 |
+| --- | ---: | --- |
+| [daftar-desktop-0.5.0-x86_64.AppImage](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.5.0/daftar-desktop-0.5.0-x86_64.AppImage) | 136,094,973 bytes | `5dcb7ebbbab552cd6306800ed5baa16c54955cfbfd0d247ade7a67fe8f75cd36` |
+| [atlas-office-0.5.0.vsix](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.5.0/atlas-office-0.5.0.vsix) | 17,504 bytes | `0b093a79e3421be2486c3e7c53266554ad2d22f600c8181842697849bd9824ea` |
+| [app-debug.apk](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.5.0/app-debug.apk) | 8,579,001 bytes | `50190dcf51a55a68d7b0dea79dffcef83c27e51d776157207c4d40af7403b19c` |
+
+The desktop is an unsigned Linux x86_64 build; Android remains a debug APK.
+Installed VSIX acceptance used an isolated VS Code host. These results do not
+claim signed Windows/macOS packages or acceptance on the owner's physical devices.
+
+### Earlier candidate failures and corrections
 
 The first candidate's real cloud and desktop checks found defects that the
 earlier pure-DOM suite had not established: ambiguous directory select labels
 prevented the cloud test from resolving controls, and the desktop's default USD
-values failed native HTML min/step validation. The current candidate adds
+values failed native HTML min/step validation. The release adds
 explicit visible-label references, aligned steps, a native form-validity
 diagnostic and default-value regressions; **192 renderer assertions pass**.
 Brand/disclosure glyphs and sidebar clipping were also corrected. Capture waits,
-scroll reset and explicit retention of OpenPencil outputs improve the next
+scroll reset and explicit retention of OpenPencil outputs improved the final
 evidence package without bypassing its assertions. Entry 033 in the
 [worker ledger](WORKER_LEDGER.md) preserves the failed first-run findings.
 
-The second cloud gate stopped at a harness URL assumption: the Worker returned
+Candidate `8415213`, [Verify 44858908405](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405),
+passed its installed desktop and other component gates but stopped the second
+cloud UI sweep at a harness URL assumption: the Worker returned
 HTTP 307 from `/workspace/chrome.html` to `/workspace/chrome`, preserving the
 exact company and workspace query values, and the actual Blueprint loaded.
 The corrected gate accepts only those two paths, retains the scoped DOM checks
@@ -105,18 +150,33 @@ and records the final page URL. This explains the failed assertion without
 claiming that the remainder of that stopped browser sweep passed.
 
 Live public-preview inspection also exposed new HTML arriving with cached older
-CSS. Generated preview assets are being changed to content-addressed URLs for
-the next candidate. That source/build correction and its fresh exact-candidate
-browser/CI receipts are still required before release approval.
+CSS. The generated preview now uses four content-addressed assets and a rebuilt
+113-entry precache. The director inspected the deployed DAFTAR hero and sidebar
+after the correction. Candidate `639c5d9`,
+[Verify 44859884805](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44859884805),
+then hit a system-Chromium timeout before any cloud UI checks or screenshots.
+The smoke scripts were corrected to prefer the installed Playwright browser.
+None of the failed candidates published a release. Final `0b87469` passed all gates,
+including the full cloud-fixture sweep; the prior stopped sweeps remain failed
+historical evidence.
 
-| Gate | Current boundary |
+### Final acceptance and remaining boundaries
+
+| Gate | Observed result and boundary |
 | --- | --- |
-| Combined candidate CI and release | Verify 44858908405 passed the listed component jobs but failed cloud UI; its release job was skipped. A fully passing candidate and published tag remain pending |
-| Packaged desktop activation | Candidate 8415213 installed desktop smoke passed, including the corrected form/native path; owner-laptop installation and OS-keychain acceptance remain separate |
-| Installed VSIX activation | Candidate editor job passed; retain its installed-host receipt before final delivery, and distinguish CI activation from the owner's session |
-| Current browser/visual sweep | Pages 44858909265 and the current cloud/desktop checks await completion and review of their resulting screenshots; earlier screenshots do not certify the corrected candidate |
-| Owner sign-in UI and writer recovery | API protocol passed; browser interaction and replacement-writer recovery remain separate checks |
-| Downloaded 0.5.0 assets and final owner bundle | Pending published binaries, downloaded hashes and the final delivered owner bundle; the existing real export/restore projection regression already passed |
+| Combined CI and release | All seven verification jobs and release passed for `0b87469`; v0.5.0 was published and all three downloaded asset digests matched |
+| Packaged desktop activation | Passed at `2026-11-21T03:17:45.700Z`: native state loaded, local goal persisted, provider spend unchanged, four screenshots; actual owner-laptop/keychain acceptance remains separate |
+| Installed VSIX activation | Six checks passed at `2026-11-21T03:16:06.700Z` with zero network requests; the owner's editor session and SecretStorage remain a separate setup context |
+| Public and cloud browser sweeps | Public: 68 checks/66 screenshots, successful Pages deployment. Cloud: 24 checks/11 screenshots using synthetic fixtures, with production authentication/persistence explicitly unverified by that fixture |
+| Final private restore and device pairing | Passed against the production API with the published Rust binary, equal original/restored/cloud projections and no duplicate messages; test device revoked and writer released |
+| Production owner sign-in | Interactive browser sign-in is not verified by either the fixture browser or device-token protocol test |
+| Figma and device distribution | Actual Figma application import, signed cross-platform installers and physical mobile-device acceptance remain future work |
+
+Screenshots are retained evidence for the named workflows; their counts are not
+a claim that every screen was manually inspected or that a synthetic fixture
+contains the owner's live data. Closing the desktop still stops its local
+scheduler. General isolated code execution, an OS background service, group-chat
+import and optional Supabase collaboration remain roadmap work.
 
 The observed usage checkpoint is **$0.776748 native + $0.022140 cloud =
 $0.798888**, with **$0.285266 retained uncertainty**, for **$1.084154 conservative

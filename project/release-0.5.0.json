@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "version": "0.5.0",
+  "codeCommit": "0b87469ba14864959bd5ec70dd323ce909904faa",
+  "releaseUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0",
+  "publishedAt": "2026-11-21T03:18:09Z",
+  "displayDate": "2026-11-20",
+  "displayTimezone": "America/New_York",
+  "verification": {
+    "combinedCi": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194825",
+    "combinedCiStatus": "success",
+    "jobs": [
+      "web",
+      "mysql-connectors",
+      "desktop",
+      "android",
+      "cloud",
+      "editor",
+      "design-tools",
+      "release"
+    ],
+    "pagesCi": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194823",
+    "pagesCiStatus": "success"
+  },
+  "downloads": [
+    {
+      "name": "app-debug.apk",
+      "bytes": 8579001,
+      "sha256": "50190dcf51a55a68d7b0dea79dffcef83c27e51d776157207c4d40af7403b19c",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.5.0/app-debug.apk",
+      "matchesPublishedGitHubDigest": true
+    },
+    {
+      "name": "atlas-office-0.5.0.vsix",
+      "bytes": 17504,
+      "sha256": "0b093a79e3421be2486c3e7c53266554ad2d22f600c8181842697849bd9824ea",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.5.0/atlas-office-0.5.0.vsix",
+      "matchesPublishedGitHubDigest": true
+    },
+    {
+      "name": "daftar-desktop-0.5.0-x86_64.AppImage",
+      "bytes": 136094973,
+      "sha256": "5dcb7ebbbab552cd6306800ed5baa16c54955cfbfd0d247ade7a67fe8f75cd36",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.5.0/daftar-desktop-0.5.0-x86_64.AppImage",
+      "matchesPublishedGitHubDigest": true
+    }
+  ],
+  "website": {
+    "url": "https://atlas-command-office.whatswrong-inc.chatgpt.site",
+    "audience": "owner-only",
+    "sourceCommit": "03b9264757c38ae86689cc03f23defed39383498",
+    "deploymentId": "appgdep_6b01094b1bf48191b53b9b012252ce89",
+    "deploymentStatus": "succeeded",
+    "database": "Cloudflare D1"
+  },
+  "browserEvidence": {
+    "public": {
+      "checks": 68,
+      "screenshots": 66,
+      "data": "Public isolated starter only; no private user data"
+    },
+    "cloud": {
+      "checks": 24,
+      "screenshots": 11,
+      "browserSource": "playwright-managed",
+      "browserVersion": "159.0.8154.6",
+      "data": "Test-only Fixture companies; no owner portfolio, credentials, private source metadata or production API responses",
+      "productionAuthenticationVerified": false
+    },
+    "desktop": {
+      "screenshots": 4,
+      "nativeStateLoaded": true,
+      "localGoalPersisted": true,
+      "providerSpendChanged": false,
+      "nativeBinarySha256": "7e51cee7a09427aced1df2ca15ba42389eaeecd96169740655a79869a0cea491"
+    },
+    "installedEditor": {
+      "vscodeVersion": "1.147.0",
+      "extensionVersion": "0.5.0",
+      "checks": 6,
+      "commands": 7,
+      "runtimeFilesVerified": 5,
+      "vsixSha256": "0b093a79e3421be2486c3e7c53266554ad2d22f600c8181842697849bd9824ea"
+    }
+  },
+  "privateBackup": {
+    "companies": 39,
+    "managedArtifacts": 7,
+    "missingArtifactReferences": 0,
+    "credentialsIncluded": false,
+    "bytes": 502948,
+    "restoreAndProductionPairing": {
+      "status": "passed",
+      "releaseCommit": "0b87469ba14864959bd5ec70dd323ce909904faa",
+      "nativeBinarySha256": "7e51cee7a09427aced1df2ca15ba42389eaeecd96169740655a79869a0cea491",
+      "finishedAt": "2026-11-21T03:20:41.131Z",
+      "originalRestoredAndCloudProjectionMatch": true,
+      "restoredDeviceClaimedAndSynced": true,
+      "noDuplicateMessages": true,
+      "directoryEntries": 51,
+      "directoryRevision": 1,
+      "providerCalls": 0,
+      "storageBoundary": "AES-GCM test storage; actual owner OS-keychain acceptance remains separate.",
+      "scope": "Final private export restored with the release Rust binary, then paired to the production owner-private API with the production CloudSyncService.",
+      "verificationDeviceRevoked": true,
+      "writerReleased": true,
+      "finalRevision": 6
+    }
+  },
+  "usageUsd": {
+    "observed": 0.798888,
+    "uncertaintyRetained": 0.285266,
+    "conservativeTotal": 1.084154,
+    "globalCeiling": 100,
+    "newDonnaReviewCeilingEach": 20
+  },
+  "remainingAcceptance": [
+    "Owner laptop installation and actual OS-keychain acceptance",
+    "Production owner browser sign-in session",
+    "Actual owned Figma application import",
+    "Signed Windows/macOS packages and production-signed Android build",
+    "Isolated general code-execution adapter and optional OS background service"
+  ],
+  "recordedAt": "2026-11-21T03:21:52.971527+00:00"
+}

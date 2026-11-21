@@ -6,23 +6,27 @@ with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
 ## Connected office 0.5.0
 
-Release candidate
-[`8415213`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d)
-has local implementation checks, passed installed desktop/editor candidate
-gates and a deployed website update. Its cloud UI gate failed, so final
-Verify/Pages/browser approval and release publication remain pending in
-[validation](project/VALIDATION.md); a completed implementation row is not a
-claim that the final installer was accepted.
+[v0.5.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0)
+was released from
+[`0b87469`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/0b87469ba14864959bd5ec70dd323ce909904faa)
+after all seven gates and release passed in
+[Verify 44860194825](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194825).
+This includes packaged desktop operation, installed editor activation and the
+cloud UI fixture. Pages passed, all three downloaded assets matched published
+digests, and the final personal archive restored and paired to the deployed API
+using the published Rust binary. Original, restored and cloud projections matched.
+Exact evidence and the remaining owner-device limits are recorded in
+[validation](project/VALIDATION.md).
 
 Donna completed two real Claude roadmap requests, a three-request expert panel, and two further reviews for Daftar management and its application directory. Their recommendations are accepted as planning evidence; release checks have separate receipts. The current delivery adds adaptive panels, five reusable research lenses, a VS Code client, a private signed-in website, explicit conflict-aware desktop sync, and the shared working-studio redesign.
 
 | Outcome | Owner | Current acceptance |
 | --- | --- | --- |
 | Decision panel DAG and research staff reuse | Donna / Research & Knowledge | Real provider artifacts, native lifecycle tests, whole-panel budget and explicit evidence decision |
-| Thin VS Code client | Platform engineering | Packaged VSIX, 11 protocol tests and candidate editor job passed; owner-session acceptance remains separate |
+| Thin VS Code client | Platform engineering | Published VSIX, 11 protocol tests and six isolated installed-host checks passed; owner-session acceptance remains separate |
 | Private website and saved cloud chat | Cloud platform | Deployed owner-private Sites app, D1 migrations, server API and live Claude handoff |
-| Explicit desktop communication | Platform engineering / QA | Live queued-command/native-effect and bidirectional supported-scope chat checks passed; restore-stable hashes and local replay/size regressions passed; group-chat import remains separate |
-| Compact shared studio | Design Studio / QA | Shared composer, hierarchy, blueprint, whiteboard and decision room implemented; 192 renderer assertions and candidate packaged-form acceptance passed; current cloud UI/visual review remains a release gate |
+| Explicit desktop communication | Platform engineering / QA | Live queued-command/native-effect and bidirectional supported-scope chat checks passed; final release-binary restore and restored-device sync passed with matching projections and no duplicate messages; group-chat import remains separate |
+| Compact shared studio | Design Studio / QA | Shared composer, hierarchy, blueprint, whiteboard and decision room; 192 renderer assertions, real packaged-form acceptance and cloud UI fixture passed; final captures retain their review evidence |
 | Timed permissions and promotions | Donna / Security | Scope, expiry, live parent revocation, default-deny managed policy, native side-effect checks and cross-office regression |
 | Private application catalog | Directory steward | Recorded repository/Site sources, separate dates, unconfirmed associations, revision checks, bounded URL validation |
 | Figma and OpenPencil handoff | Design interoperability lead | Official per-client authentication path; real bounded HTML → `.fig` → SVG smoke with no network or provider calls |
@@ -55,8 +59,8 @@ See [connected release evidence](project/CONNECTED_RELEASE.md), [editor/cloud se
 
 ### 1. Validate the installed personal workspace
 
-- Resolve the remaining cloud UI failure and complete final Verify/Pages and visual approval, then retain the exact source tag, screenshots and downloaded-asset integrity receipts. Candidate installed desktop/editor gates passed; the owner's laptop and keychain remain a separate acceptance context.
-- Run the packaged application on the owner's actual laptop and import credentials into that machine's keychain.
+- Run the verified published application on the owner's actual laptop, restore the verified personal archive, and import credentials into that machine's keychain. Installed desktop/editor CI and final restored-device API sync passed; actual owner-device acceptance remains separate.
+- Complete the owner's production browser sign-in and editor connection, preserving the explicit-sync and single-writer rules.
 - Reconnect GitHub with the owner's token, refresh all repositories, and verify private-company visibility from that machine.
 - Exercise a small provider-backed goal with observed accounting, a deliberately exhausted global budget, and a deliberate resume.
 - Exercise a changeset against a disposable branch, verify resulting CI, then use the selected approval policy for routine work.
@@ -80,7 +84,7 @@ See [connected release evidence](project/CONNECTED_RELEASE.md), [editor/cloud se
 
 - Validate Windows and macOS builds and their native credential stores.
 - Add signed releases and an authenticated update channel; unsigned local builds are not a signed production installer.
-- Android JVM tests and debug APK packaging passed in [run 44846695687](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846695687). Complete emulator/device interaction flows and signing before a production mobile release.
+- Android verification and debug APK packaging passed in the final [v0.5.0 run](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194825). Complete emulator/device interaction flows and signing before a production mobile release.
 - Benchmark an optional Tauri shell against Electron before choosing a full migration. Rust currently owns the native control core; this release is not a complete Rust UI rewrite.
 
 ## Completion rules

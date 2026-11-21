@@ -85,16 +85,19 @@ Use the same company-state directory as the desktop to avoid a separate workspac
 
 ## Verification and remaining acceptance
 
-Current source candidate:
-[`8415213`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d).
+Released source:
+[`0b87469`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/0b87469ba14864959bd5ec70dd323ce909904faa),
+tagged [v0.5.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0).
 The latest hosted source `03b9264757c38ae86689cc03f23defed39383498` was deployed
 at `2026-11-21T03:00:33.507277Z` (20 November, America/New_York).
-Candidate [Verify](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405)
-passed installed desktop and editor gates plus web, Android, design and MySQL;
-cloud build/API tests passed but cloud UI failed and release was skipped.
-A fully passing candidate and final
-[Pages review](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
-remain outstanding.
+[Verify 44860194825](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194825)
+passed all seven gates and release, including packaged desktop operation,
+installed editor activation and cloud UI. The release job completed at
+`2026-11-21T03:18:11Z`. The release was published at `2026-11-21T03:18:09Z`. The separate
+[Pages run](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194823)
+also passed. All three downloaded release assets match published digests;
+the [release record](release-0.5.0.json) and [validation](VALIDATION.md) retain the
+exact hashes and final owner-archive restore/pairing receipt.
 
 The extension's Node tests exercise endpoint validation, exact-Origin desktop pairing, token headers, revision-aware queueing, no optimistic completion, no paid retry, and response-size bounds. Desktop tests exercise encrypted origin-bound credentials, explicit-only transfer, native receipts after a lost acknowledgement, stale local state, seed protection, writer conflicts, disconnection and projection limits. The native integration test executes a real Rust binary and verifies matching canonical hashes and stale-state rejection.
 
@@ -107,11 +110,24 @@ calls and used test encryption storage rather than the installed OS keychain.
 The real export/restore regression also preserves hash equality when artifact
 directories and filenames change. See [the exact evidence and dates](VALIDATION.md).
 
+Final recovery passed at `2026-11-21T03:20:41.131Z` using the Rust helper extracted
+from the published AppImage and the production `CloudSyncService`. The final
+personal archive restored with all included managed artifacts and no embedded
+credentials. The restored device claimed the writer and synced to the latest
+deployed API; original, restored and cloud projection hashes matched and no
+messages were duplicated. No provider calls occurred. The verification device
+was revoked and its writer assignment released afterward. This exercised actual
+private state and the production API through AES-GCM test storage, separately
+from the owner's installed OS keychain.
+
 The first candidate's ambiguous cloud filter labels and invalid default USD
-min/step combinations have code and regression corrections. Candidate installed
-desktop/editor jobs passed; cloud UI, current visual review and production owner
-sign-in retain their own acceptance gates. A CI editor result does not establish
-the owner's editor session. Marketplace submission,
+min/step combinations were corrected and verified by the final gates. The cloud
+fixture passed 24 checks with 11 screenshots and zero provider calls; production
+authentication/persistence were explicitly outside that fixture. Installed VSIX
+activation passed six checks with no network requests; packaged desktop smoke
+loaded native state and persisted a local goal without changing provider spend.
+Production owner browser sign-in remains unverified. A CI editor result does not
+establish the owner's editor session or credential store. Marketplace submission,
 the owner's laptop keychain and signed cross-platform installers remain separate
 delivery work.
 

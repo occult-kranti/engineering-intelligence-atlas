@@ -1,18 +1,20 @@
-# Daftar connected office · 0.5.0 draft
+# Daftar connected office · 0.5.0
 
 Daftar is the new product name for the personal company and agent workspace in this repository. The repository URL, native data format, API paths and existing Atlas package identifiers remain stable for compatibility. The public research atlas remains available alongside the private operating product.
 
 This document explains the integrated architecture and accepted decisions. [VALIDATION.md](VALIDATION.md) is the authority for executed build, installation, provider, browser and publication checks. A feature described here does not substitute for an acceptance receipt. Historical 0.4.3 results remain historical.
 
-Checkpoint: **20 November 2026 (America/New_York)**. The live deployed API/native sync protocol passed at `2026-11-21T02:33:46.715Z`. Candidate installed desktop/editor gates passed; cloud UI and final visual/release approval remain pending. Exact evidence timestamps below stay in UTC.
+Release checkpoint: **20 November 2026 (America/New_York)**. All seven verification gates and the release job passed; the release was published at `2026-11-21T03:18:09Z` and the release job completed at `2026-11-21T03:18:11Z`. All three downloaded assets match their published digests. Final owner-archive restore and production pairing passed at `2026-11-21T03:20:41.131Z` using the published Rust binary. Exact evidence timestamps below stay in UTC.
 
-The current GitHub candidate is
-[`841521320e56f9402566164393cac66208c9590d`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d).
-[Verify 44858908405](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405)
-passed its desktop, web, editor, Android, design and MySQL gates but failed cloud
-UI, so release was skipped. Cloud build/API checks passed. The final
-[Pages review](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
-and a fully passing release candidate remain outstanding. The latest hosted source is separately
+The [v0.5.0 release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0)
+is built from exact GitHub source
+[`0b87469ba14864959bd5ec70dd323ce909904faa`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/0b87469ba14864959bd5ec70dd323ce909904faa).
+[Verify 44860194825](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194825)
+passed web, MySQL, desktop, Android, cloud, editor and design gates plus release.
+The separate [Pages run](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194823)
+also passed. Final delivery receipts and download hashes are in
+[validation](VALIDATION.md) and the [release record](release-0.5.0.json). Later documentation-only
+commits do not change the release's code tag. The latest hosted source is separately
 `03b9264757c38ae86689cc03f23defed39383498`, deployed as
 `appgdep_6b01094b1bf48191b53b9b012252ce89` at
 `2026-11-21T03:00:33.507277Z`. The earlier live protocol receipt below retains
@@ -123,6 +125,18 @@ The actual deployed API, production `CloudSyncService` and real compiled Rust co
 
 The test used an AES-GCM storage adapter in the protocol harness, **not an installed OS-keychain acceptance test**. The verification device was revoked and its writer assignment released afterward. The earlier production deployment exercised by this receipt used source revision `1f850c42b14739ce62d3b9b6562680bcdc5afdbd` and completed at `2026-11-21T02:33:20Z`. This is a hosted deployment revision, not a claim about a GitHub release tag. Browser sign-in interactions, packaged desktop activation and installed VSIX acceptance retain their own gates.
 
+### Final published-binary restore and pairing
+
+The final owner archive restored successfully with the Rust helper extracted
+from the downloaded v0.5.0 AppImage. At `2026-11-21T03:20:41.131Z`, production
+`CloudSyncService` paired that restored workspace to the latest deployed API,
+claimed the writer and completed an explicit sync. Original, restored and cloud
+projections matched; messages were not duplicated and no provider call occurred.
+All included managed artifacts resolved and the credential scan found none in
+the archive. The verification device was then revoked and the writer released.
+This was an actual private-state/API recovery check using AES-GCM test storage;
+it does not establish the owner's laptop keychain or interactive browser sign-in.
+
 ## Budget checkpoint and failure handling
 
 The authorized development-session ceiling is **$100**. The website has a **$5 allocation reserved from that same ceiling in the native ledger**. It does not create additional budget. The cloud request ledger consumes that allocation through atomic admission, with conservative input/output reservations and no automatic paid retry.
@@ -152,7 +166,7 @@ Supabase remains an optional adapter for future PostgreSQL collaboration, member
 
 The first candidate built but exposed real browser/desktop acceptance failures:
 ambiguous directory select labels and default USD inputs inconsistent with their
-min/step constraints. The current candidate fixes the labels and numeric steps
+min/step constraints. The release fixes the labels and numeric steps
 and passes **192 renderer assertions**, including default validity regressions.
 Branding, sidebar subtitle layout and disclosure glyphs were corrected; smoke
 captures now wait for transient notices and reset scroll without hiding controls.
@@ -161,14 +175,22 @@ packaged desktop form path. Its second cloud failure was a strict URL assertion:
 the Worker canonicalized `/workspace/chrome.html` to `/workspace/chrome` with
 the same company/workspace queries and the Blueprint loaded. The corrected gate
 accepts exactly those paths and retains its DOM checks; the remainder of the
-stopped sweep is not claimed as passed. A separately observed public HTML/CSS
-cache mismatch is prompting content-addressed generated assets and another
-candidate. Final visual review and release approval remain outstanding; see
-[validation](VALIDATION.md).
+stopped sweep is not claimed as passed. Content-addressed generated assets fix
+the separately observed public HTML/CSS cache mismatch. Candidate 639c5d9 then
+hit a system-Chromium timeout before any cloud UI checks; the smoke scripts now
+prefer installed Playwright. Final candidate 0b87469 passed all gates, including
+24 cloud UI checks and 11 fixture screenshots. See [validation](VALIDATION.md)
+for the distinct final receipts and acceptance boundaries.
 
-The release workflow has separate gates for the web renderer, database connectors, native desktop, Android, cloud API/build and VS Code package. The desktop acceptance script launches the packaged Linux application and exercises its real Rust state. The editor acceptance script installs the VSIX into an isolated VS Code instance before activation. These checks must actually pass on the candidate commit; the scripts' presence alone is not evidence of success.
+The release workflow has separate gates for the web renderer, database connectors, native desktop, Android, cloud API/build/UI, VS Code and design adapter. The final desktop acceptance launched the packaged Linux application and persisted a local goal through its real Rust state. The editor acceptance installed the VSIX into an isolated VS Code instance and passed six checks without network requests. Cloud browser acceptance used synthetic fixtures; it does not certify production identity or private persistence.
 
-The hosted reply and the live snapshot/command/chat protocol have observed receipts. Production browser sign-in, replacement-writer recovery, installed package operation, final visual inspection and downloaded release artifact integrity have separate acceptance gates. Follow [VALIDATION.md](VALIDATION.md) for their current result. Do not reuse 0.4.3 receipts to certify 0.5.0.
+The hosted reply, live snapshot/command/chat protocol, installed-package checks,
+published-download integrity and final restored-device pairing all have
+observed receipts. The final workflows retained 66 public, 11 cloud-fixture and
+four desktop screenshots. These captures and the deployed public review do not
+certify production owner sign-in or the owner's laptop keychain. Follow
+[VALIDATION.md](VALIDATION.md) for each result and its limits. Historical 0.4.3
+receipts do not certify 0.5.0.
 
 Remaining product work includes a tested general code-execution adapter, signed cross-platform installers, measured native-store optimization, an optional background service, richer conflict review and any future Supabase collaboration. Group-chat import and automatic background synchronization remain separate tasks; explicit bidirectional supported-scope chat is implemented and the selected live path passed. A complete Rust UI rewrite requires a measured case against the working Electron renderer.
 

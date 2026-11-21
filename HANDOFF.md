@@ -15,13 +15,17 @@ React/TypeScript/MySQL runtime remains available as a separate deployment option
 
 ## Install a published build and restore personal work
 
-Use the assets attached to a [published release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases)
-whose tag and acceptance receipts are recorded in [validation](project/VALIDATION.md).
-The 0.5.0 candidate produces an unsigned Linux x86_64 AppImage, a VS Code VSIX
-and an Android debug APK; its final CI/publication receipts are pending. Do not
-infer that an older release contains the new editor package. The mobile shell
-carries the research atlas; the complete personal Office runtime is in the
-desktop application. Packages exclude personal company records and keys.
+Use the assets attached to [v0.5.0](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.5.0):
+an unsigned Linux x86_64 AppImage, a VS Code VSIX and an Android debug APK.
+The exact release source is
+[`0b87469`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/0b87469ba14864959bd5ec70dd323ce909904faa),
+whose seven verification gates and release job passed. All three downloaded
+assets match their published digests. The final personal archive was restored
+using the published Rust binary and successfully paired to the deployed API;
+original, restored and cloud projections matched. Exact download hashes and
+restore evidence are in [validation](project/VALIDATION.md). The mobile shell carries the research atlas;
+the complete personal Office runtime is in the desktop application. Packages
+exclude personal company records and keys.
 
 For a private workspace archive, first launch the desktop app and find its user
 data directory in Models & system. Close the app, then run the release's restore
@@ -39,6 +43,13 @@ a timestamped backup. The tool verifies checksums and references before writing.
 Reopen Daftar, reconnect credentials in Settings and review the paused schedules.
 The archive's `PORTFOLIO.md`, `companies/` records and `RESTORE.md` provide readable
 roadmaps and detailed restoration instructions.
+
+For a new export, `--artifact-root` must point directly at the managed artifact
+directory, such as `/path/to/user-data/office-artifacts`, rather than its parent
+runtime directory. The final release rehearsal restored every included managed
+artifact with no missing references or embedded credentials. Its pairing test
+used AES-GCM test storage; the destination laptop still needs its own OS-keychain
+and provider-credential setup.
 
 ## Start from a clean checkout
 
@@ -73,7 +84,7 @@ Open [Daftar](https://atlas-command-office.whatswrong-inc.chatgpt.site) and sign
 
 The website saves its office snapshot and cloud conversation in D1. Native repository work, job execution and files remain on the laptop. Restore the supplied personal workspace before first pairing so a fresh empty desktop cannot overwrite an existing cloud portfolio. Create a desktop pairing on the website, paste it into Settings → Account & cloud connection, and choose **Sync now**. Connection itself does not upload or start an unattended loop. A conflict preserves both sides until reviewed.
 
-The editor candidate package is `atlas-office-0.5.0.vsix`; once its release gate passes, install the published asset through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page.
+Install the published `atlas-office-0.5.0.vsix` through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page. The installed VSIX passed its isolated CI activation checks; the owner's editor session and credential store remain a separate setup context.
 
 Cloud model calls use a separate atomic admission ledger funded by an allocation held in the native global budget. Do not release that allocation while the cloud runtime can still spend it. Unknown provider outcomes keep their reservations. [Full protocol and verification](project/EDITOR_AND_CLOUD.md).
 
@@ -178,26 +189,33 @@ from application spending limits; see [the research](project/PROMPT_BUDGET_RESEA
 
 ## Release record and remaining work
 
-The current source candidate is
-[`841521320e56f9402566164393cac66208c9590d`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/841521320e56f9402566164393cac66208c9590d).
-[Verify 44858908405](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858908405)
-passed the installed desktop, web, editor, Android, design and MySQL gates, but
-failed cloud UI and skipped release. Cloud build/API success is recorded
-separately. A corrected cloud gate and final
-[Pages review](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44858909265)
-remain pending. The separate hosted website deployment of
+The released source is
+[`0b87469ba14864959bd5ec70dd323ce909904faa`](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/0b87469ba14864959bd5ec70dd323ce909904faa).
+[Verify 44860194825](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194825)
+passed all seven gates and the release job, which completed at
+`2026-11-21T03:18:11Z` (20 November, America/New_York). The separate
+[Pages run](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44860194823)
+also passed. The release was published at `2026-11-21T03:18:09Z`; all three
+downloaded artifacts match their published digests. Final restore and production
+pairing passed at `2026-11-21T03:20:41.131Z` using the published Rust helper, with
+no duplicate messages or provider calls. The verification device was revoked
+and its writer assignment released afterward. See
+[the release record](project/release-0.5.0.json) and validation for the receipts
+and owner-device acceptance limits.
+The separate hosted website deployment of
 source `03b9264757c38ae86689cc03f23defed39383498` succeeded at
 `2026-11-21T03:00:33.507277Z` (20 November, America/New_York).
 
 The first candidate exposed two real acceptance failures: ambiguous directory
 select labels and a desktop form whose default USD values violated its min/step
 rules. Explicit filter labels and aligned numeric steps are now implemented;
-the 192-assertion renderer suite includes default-value regressions. Candidate
-8415213 passed the real packaged desktop form path. Its second cloud failure was
-a strict URL assertion after the Worker redirected to its extensionless
-workspace path with the same scope and the Blueprint loaded. The gate correction
-preserves scoped DOM checks. A live public HTML/CSS cache mismatch also requires
-content-addressed generated assets and a new exact-candidate acceptance run.
+the 192-assertion renderer suite includes default-value regressions. The later
+strict workspace-redirect assertion now accepts exactly the supported paths and
+preserves scope/DOM checks. Generated public preview assets are content-addressed
+to prevent stale HTML/CSS combinations, and the smoke scripts prefer the
+installed Playwright browser after a system-browser timeout. The final release
+passed the packaged form, cloud UI and browser gates; prior failures remain in
+[validation](project/VALIDATION.md) rather than being described as passing runs.
 
 See [validation](project/VALIDATION.md), [panel decisions](project/PANEL_DECISIONS.md),
 [worker ledger](project/WORKER_LEDGER.md), [timeline](TIMELINE.md) and
