@@ -75,6 +75,136 @@ mod tests {
             .unwrap()
             .into()
     }
+    fn two_companies() -> (OfficeSnapshot, String) {
+        let mut s = state();
+        s.apply(&json!({"action":"create_company","name":"Child","id":"child-co"}))
+            .unwrap();
+        s.apply(&json!({"action":"create_company","name":"Other","id":"other-co"}))
+            .unwrap();
+        let employee = hire(&mut s);
+        (s, employee)
+    }
+    fn reparent(employee: &str, child: &str, parent: Value) -> Value {
+        json!({"action":"apply_employee_command","employeeId":employee,"command":{"action":"set_company_parent","companyId":child,"parentCompanyId":parent}})
+    }
+    fn company_grant(s: &mut OfficeSnapshot, employee: &str, company: &str, expires: OffsetDateTime) -> String {
+        grant(
+            s,
+            employee,
+            json!({"kind":"company","id":company}),
+            json!(["team.manage"]),
+            "owner",
+            expires,
+        )
+    }
+    fn parent_of(s: &OfficeSnapshot, id: &str) -> Option<String> {
+        s.companies
+            .iter()
+            .find(|c| c.id == id)
+            .unwrap()
+            .parent_company_id
+            .clone()
+    }
+    #[test]
+    fn reparent_requires_child_and_every_affected_parent_grant() {
+        let (mut s, e) = two_companies();
+        let soon = OffsetDateTime::now_utc() + Duration::hours(1);
+        company_grant(&mut s, &e, "child-co", soon);
+        assert_eq!(
+            s.apply(&reparent(&e, "child-co", json!("atlas"))).unwrap_err().code,
+            "AUTHORITY_DENIED"
+        );
+        assert_eq!(parent_of(&s, "child-co"), None);
+        let (mut s, e) = two_companies();
+        company_grant(&mut s, &e, "atlas", soon);
+        assert_eq!(
+            s.apply(&reparent(&e, "child-co", json!("atlas"))).unwrap_err().code,
+            "AUTHORITY_DENIED"
+        );
+        assert_eq!(parent_of(&s, "child-co"), None);
+    }
+    #[test]
+    fn all_affected_grants_allow_reparent_detach_and_update_index() {
+        let (mut s, e) = two_companies();
+        let soon = OffsetDateTime::now_utc() + Duration::hours(1);
+        for c in ["child-co", "atlas", "other-co"] {
+            company_grant(&mut s, &e, c, soon);
+        }
+        s.apply(&reparent(&e, "child-co", json!("atlas"))).unwrap();
+        assert_eq!(parent_of(&s, "child-co").as_deref(), Some("atlas"));
+        let entry = |s: &OfficeSnapshot| {
+            s.authority
+                .index
+                .iter()
+                .find(|i| i.id == "company:child-co")
+                .unwrap()
+                .clone()
+        };
+        assert_eq!(entry(&s).parent_id.as_deref(), Some("atlas"));
+        assert_eq!(entry(&s).company_id.as_deref(), Some("child-co"));
+        s.apply(&reparent(&e, "child-co", json!("other-co"))).unwrap();
+        assert_eq!(entry(&s).parent_id.as_deref(), Some("other-co"));
+        s.apply(&reparent(&e, "child-co", Value::Null)).unwrap();
+        assert_eq!(entry(&s).parent_id, None);
+        assert!(s
+            .authority
+            .ledger
+            .iter()
+            .any(|l| l.actor == e && l.action == "set_company_parent" && l.target_id == "child-co"));
+    }
+    #[test]
+    fn detach_needs_old_parent_grant() {
+        let (mut s, e) = two_companies();
+        s.apply(&json!({"action":"set_company_parent","companyId":"child-co","parentCompanyId":"atlas"}))
+            .unwrap();
+        let soon = OffsetDateTime::now_utc() + Duration::hours(1);
+        company_grant(&mut s, &e, "child-co", soon);
+        assert_eq!(
+            s.apply(&reparent(&e, "child-co", Value::Null)).unwrap_err().code,
+            "AUTHORITY_DENIED"
+        );
+        assert_eq!(parent_of(&s, "child-co").as_deref(), Some("atlas"));
+        company_grant(&mut s, &e, "atlas", soon);
+        s.apply(&reparent(&e, "child-co", Value::Null)).unwrap();
+        assert_eq!(parent_of(&s, "child-co"), None);
+    }
+    #[test]
+    fn expired_or_revoked_extra_grant_denies_reparent() {
+        let (mut s, e) = two_companies();
+        let soon = OffsetDateTime::now_utc() + Duration::hours(1);
+        company_grant(&mut s, &e, "child-co", soon);
+        let parent_grant = company_grant(&mut s, &e, "atlas", soon);
+        s.apply(&json!({"action":"revoke_authority","grantId":parent_grant,"reason":"Fixture stop"}))
+            .unwrap();
+        assert_eq!(
+            s.apply(&reparent(&e, "child-co", json!("atlas"))).unwrap_err().code,
+            "AUTHORITY_DENIED"
+        );
+        let (mut s, e) = two_companies();
+        company_grant(&mut s, &e, "child-co", soon);
+        let g = company_grant(&mut s, &e, "atlas", soon);
+        let i = s.authority.grants.iter().position(|x| x.id == g).unwrap();
+        s.authority.grants[i].expires_at = at(OffsetDateTime::now_utc() - Duration::seconds(1));
+        s.authority.grants[i].granted_at = at(OffsetDateTime::now_utc() - Duration::hours(1));
+        assert_eq!(
+            s.apply(&reparent(&e, "child-co", json!("atlas"))).unwrap_err().code,
+            "AUTHORITY_DENIED"
+        );
+        assert_eq!(parent_of(&s, "child-co"), None);
+    }
+    #[test]
+    fn parent_company_grant_does_not_authorize_child_company_command() {
+        let (mut s, e) = two_companies();
+        s.apply(&json!({"action":"set_company_parent","companyId":"child-co","parentCompanyId":"atlas"}))
+            .unwrap();
+        company_grant(&mut s, &e, "atlas", OffsetDateTime::now_utc() + Duration::hours(1));
+        assert_eq!(
+            s.apply(&json!({"action":"apply_employee_command","employeeId":e,"command":{"action":"rename_company","companyId":"child-co","name":"Renamed"}}))
+                .unwrap_err()
+                .code,
+            "AUTHORITY_DENIED"
+        );
+    }
     #[test]
     fn historic_state_migrates_index_without_inventing_permissions() {
         let original = state();
@@ -812,9 +942,8 @@ impl OfficeSnapshot {
             Ok(s)
         };
         match action {
-            "rename_company" | "create_office" | "pause_company" | "resume_company" => {
-                Ok(("team.manage", scope("company", "companyId")?))
-            }
+            "rename_company" | "create_office" | "pause_company" | "resume_company"
+            | "set_company_parent" => Ok(("team.manage", scope("company", "companyId")?)),
             "create_department" | "pause_office" | "resume_office" => {
                 Ok(("team.manage", scope("office", "officeId")?))
             }
@@ -1247,6 +1376,47 @@ impl OfficeSnapshot {
                     if !self.authority_has_location(&employee, &location, capability, clock, None) {
                         return Err(fail("AUTHORITY_DENIED","Employee authority is missing, expired, revoked or outside this command scope"));
                     }
+                    if name == "set_company_parent" {
+                        let child = self.company(&scope.id)?;
+                        let old_parent = child.parent_company_id.clone();
+                        let new_parent = match command.get("parentCompanyId") {
+                            Some(Value::Null) => None,
+                            Some(Value::String(v)) if safe_id(v) => Some(v.clone()),
+                            _ => {
+                                return Err(fail(
+                                    "INVALID_INPUT",
+                                    "Missing or invalid parentCompanyId",
+                                ))
+                            }
+                        };
+                        if let Some(parent) = &new_parent {
+                            self.company(parent)?;
+                        }
+                        let mut affected: Vec<String> = Vec::new();
+                        for parent in [old_parent, new_parent].into_iter().flatten() {
+                            if !affected.contains(&parent) {
+                                affected.push(parent);
+                            }
+                        }
+                        for parent in affected {
+                            let parent_location = Location {
+                                company: Some(parent),
+                                ..Location::default()
+                            };
+                            if !self.authority_has_location(
+                                &employee,
+                                &parent_location,
+                                "team.manage",
+                                clock,
+                                None,
+                            ) {
+                                return Err(fail(
+                                    "AUTHORITY_DENIED",
+                                    "Reparenting also requires current scoped team.manage authority on each affected parent company",
+                                ));
+                            }
+                        }
+                    }
                     for extra in self.authority_dispatch_capabilities(&name, command) {
                         if !self.authority_has_location(&employee, &location, &extra, clock, None) {
                             return Err(fail(
@@ -1302,7 +1472,7 @@ impl OfficeSnapshot {
                 &c.id,
                 &c.name,
                 Some(&c.id),
-                None,
+                c.parent_company_id.as_deref().filter(|p| *p != c.id),
                 Some(&c.assistant_id),
                 &c.status,
                 &c.created_at,
