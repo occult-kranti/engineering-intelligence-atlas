@@ -215,7 +215,7 @@ function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs:
         counts: { employees: emps.length, jobs: cj.length, running, queued: cj.filter((j) => j.status === 'queued').length, offices: (snap.offices ?? []).filter((o) => o.companyId === c.id).length, subcompanies: kids.length },
       });
     });
-  });
+  }
   const hierarchyThreads: SceneThread[] = [];
   for (const [childId, parentId] of forest.parentOf) {
     const t = projectThread({ kind: 'company-parent', fromId: `folio:${parentId}`, toId: `folio:${childId}`, label: 'Organizational parent → subcompany' });
