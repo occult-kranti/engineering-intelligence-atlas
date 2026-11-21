@@ -45,6 +45,25 @@ test('roadmap changes use only the native state command',async()=>{
 test('office command cannot override the action or choose paths/commands',async()=>{
   const f=fixture();await assert.rejects(f.handler('office_command',{action:'hire_employee',payload:{action:'evil'}}));await assert.rejects(f.handler('office_command',{action:'shell',payload:{}}));await f.handler('office_command',{action:'pause_employee',payload:{employeeId:'e'}});assert.equal(f.calls[0].payload.action,'pause_employee');
 });
+test('set_company_parent is advertised and forwarded unchanged; null and missing stay distinct',async()=>{
+  const def=TOOL_DEFINITIONS.find(t=>t.name==='office_command');
+  assert.ok(def.inputSchema.properties.action.enum.includes('set_company_parent'));
+  const f=fixture();
+  await f.handler('office_command',{action:'set_company_parent',payload:{companyId:'child',parentCompanyId:'parent'}});
+  await f.handler('office_command',{action:'set_company_parent',payload:{companyId:'child',parentCompanyId:null}});
+  await f.handler('office_command',{action:'set_company_parent',payload:{companyId:'child'}});
+  assert.deepEqual(f.calls[0].payload,{action:'set_company_parent',companyId:'child',parentCompanyId:'parent'});
+  assert.ok(Object.prototype.hasOwnProperty.call(f.calls[1].payload,'parentCompanyId'));
+  assert.equal(f.calls[1].payload.parentCompanyId,null);
+  assert.equal('parentCompanyId' in f.calls[2].payload,false);
+});
+test('native invalid-cycle errors from set_company_parent propagate as tool errors',async()=>{
+  const handler=createToolHandler({nativeCall:async()=>({ok:false,error:'Company hierarchy contains a cycle',code:'OFFICE_STATE_INVALID'}),fetchImpl:async()=>{throw new Error('no network');}});
+  const p=createMessageProcessor({handleTool:handler});
+  const r=await p(JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'office_command',arguments:{action:'set_company_parent',payload:{companyId:'a',parentCompanyId:'a'}}}}));
+  assert.equal(r.result.isError,true);
+  assert.match(r.result.structuredContent.error,/cycle/);
+});
 test('GitHub account import requires matching public metadata before state writes',async()=>{
   const f=fixture(async()=>json([{name:'atlas',owner:{login:'occult-kranti'},private:false,html_url:'https://github.com/occult-kranti/atlas'}]));const r=await f.handler('github_import_account',{owner:'occult-kranti'});assert.equal(r.imported,1);assert.equal(f.calls.at(-1).payload.action,'import_repositories');
 });

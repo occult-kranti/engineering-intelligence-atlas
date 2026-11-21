@@ -165,6 +165,7 @@ fn permitted(action: &str) -> bool {
         action,
         "create_company"
             | "rename_company"
+            | "set_company_parent"
             | "select_company"
             | "create_office"
             | "create_department"
@@ -347,6 +348,56 @@ mod tests {
         assert_eq!(state.companies.len(), before + 1);
         assert_eq!(state.remote_receipts.len(), 1);
         assert_eq!(state.last_action.as_ref().unwrap()["replayed"], true);
+    }
+    #[test]
+    fn remote_set_company_parent_attach_detach_replay_and_errors() {
+        let mut state = fixture();
+        state
+            .apply(&json!({"action":"create_company","name":"Remote child","id":"remote-child"}))
+            .unwrap();
+        let parent = state.active_company_id.clone();
+        let wrap = |id: &str, parent_value: Value| {
+            json!({"action":"apply_remote_command","id":id,"command":{"action":"set_company_parent","companyId":"remote-child","parentCompanyId":parent_value}})
+        };
+        let attach = wrap("remote-parent-attach", json!(parent));
+        state.apply(&attach).unwrap();
+        let receipts = state.remote_receipts.len();
+        let events = state.events.len();
+        state.apply(&attach).unwrap();
+        assert_eq!(state.remote_receipts.len(), receipts);
+        assert_eq!(state.events.len(), events);
+        assert_eq!(
+            state
+                .companies
+                .iter()
+                .find(|c| c.id == "remote-child")
+                .unwrap()
+                .parent_company_id
+                .as_deref(),
+            Some(parent.as_str())
+        );
+        state
+            .apply(&wrap("remote-parent-detach", Value::Null))
+            .unwrap();
+        assert!(state
+            .companies
+            .iter()
+            .find(|c| c.id == "remote-child")
+            .unwrap()
+            .parent_company_id
+            .is_none());
+        // Missing field is an error and consumes no receipt.
+        let receipts = state.remote_receipts.len();
+        let missing = json!({"action":"apply_remote_command","id":"remote-parent-missing","command":{"action":"set_company_parent","companyId":"remote-child"}});
+        assert!(state.apply(&missing).is_err());
+        // Self-parent (cycle) is an error and creates no receipt.
+        let cyc = wrap("remote-parent-cycle", json!("remote-child"));
+        assert!(state.apply(&cyc).is_err());
+        assert_eq!(state.remote_receipts.len(), receipts);
+        // Stale expected hash conflicts before mutation.
+        let stale = json!({"action":"apply_remote_command","id":"remote-parent-stale","expectedStateHash":"0".repeat(64),"command":{"action":"set_company_parent","companyId":"remote-child","parentCompanyId":parent}});
+        assert_eq!(state.apply(&stale).unwrap_err().code, "CONFLICT");
+        assert_eq!(state.remote_receipts.len(), receipts);
     }
     #[test]
     fn reused_id_with_changed_payload_is_rejected() {
