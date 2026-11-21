@@ -1,4 +1,9 @@
-/** Collaboration identity and authorization helpers. Legacy owner authenticate() is untouched. */
+/** Collaboration identity and authorization helpers. Legacy owner authenticate() is untouched.
+ *
+ * Issuer note: for this release the issuer is this Site's single canonical origin
+ * (new URL(request.url).origin). There is NO configurable or unauthenticated issuer; the same
+ * subject reached via a different origin is a different principal. Trusted identity headers
+ * must be injected by the Sites platform. */
 import type { AtlasEnv } from './atlas-api.ts';
 type Row = Record<string, any>;
 export class CollabError extends Error {
@@ -25,35 +30,51 @@ export async function resolveUser(request: Request, env: AtlasEnv): Promise<Coll
   const DB = env.DB!;
   let user = await DB.prepare('SELECT * FROM daftar_users WHERE issuer = ? AND subject = ?').bind(issuer, subject).first<Row>();
   const stamp = now();
+  let currentEmail: string | null = user?.email ?? null;
   if (!user) {
     const id = crypto.randomUUID();
     await DB.prepare('INSERT OR IGNORE INTO daftar_users (id,issuer,subject,email,display_name,status,created_at,updated_at) VALUES (?,?,?,?,?,?,?,?)').bind(id, issuer, subject, email, null, 'active', stamp, stamp).run();
     user = await DB.prepare('SELECT * FROM daftar_users WHERE issuer = ? AND subject = ?').bind(issuer, subject).first<Row>();
+    currentEmail = user?.email ?? null;
   } else if (email && user.email !== email) {
     await DB.prepare('UPDATE daftar_users SET email = ?, updated_at = ? WHERE id = ?').bind(email, stamp, user.id).run();
+    currentEmail = email;
   }
   insist(user && user.status === 'active', 'Account is not active.', 403, 'inactive');
   const ownerEmail = env.ATLAS_OWNER_EMAIL?.trim().toLowerCase();
   let ownerRow = await DB.prepare("SELECT * FROM daftar_workspace_owners WHERE workspace_id = 'owner'").first<Row>();
-  if (!ownerRow && ownerEmail && email && email.toLowerCase() === ownerEmail) {
+  if (!ownerRow && ownerEmail && currentEmail && currentEmail.toLowerCase() === ownerEmail) {
     await DB.prepare("INSERT OR IGNORE INTO daftar_workspace_owners (workspace_id,user_id,bound_at) VALUES ('owner',?,?)").bind(user.id, stamp).run();
     ownerRow = await DB.prepare("SELECT * FROM daftar_workspace_owners WHERE workspace_id = 'owner'").first<Row>();
   }
-  return { id: user.id, issuer, subject, email: user.email ?? null, isOwner: !!ownerRow && ownerRow.user_id === user.id };
+  return { id: user.id, issuer, subject, email: currentEmail, isOwner: !!ownerRow && ownerRow.user_id === user.id };
 }
 export function requireOwner(user: CollabUser): void {
   insist(user.isOwner, 'Workspace owner required.', 403, 'owner_required');
 }
-/** New browser writes require exact same Origin. */
+/** Writes require exact same Origin (this Site's canonical origin). */
 export function requireSameOrigin(request: Request): void {
   if (['GET', 'HEAD', 'OPTIONS'].includes(request.method)) return;
   insist(request.headers.get('origin') === new URL(request.url).origin, 'Same-origin request required.', 403, 'origin_mismatch');
 }
+/** Bounded streaming JSON reader: never buffers past `max` bytes; cancels the stream on overflow. */
 export async function readJsonBody(request: Request, max = 100000): Promise<Row> {
   insist(request.headers.get('content-type')?.startsWith('application/json'), 'JSON is required.', 415, 'unsupported_media');
-  insist(Number(request.headers.get('content-length') || 0) <= max, 'Request too large.', 413, 'too_large');
-  const raw = await request.text();
-  insist(new TextEncoder().encode(raw).length <= max, 'Request too large.', 413, 'too_large');
+  const declared = request.headers.get('content-length');
+  if (declared !== null) { const n = Number(declared); insist(Number.isFinite(n) && n >= 0 && n <= max, 'Request too large.', 413, 'too_large'); }
+  insist(request.body, 'Object body required.', 400, 'invalid_body');
+  const reader = request.body.getReader();
+  const chunks: Uint8Array[] = []; let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (total > max) { try { await reader.cancel(); } catch { /* ignore */ } throw new CollabError(413, 'too_large', 'Request too large.'); }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(total); let off = 0; for (const c of chunks) { bytes.set(c, off); off += c.byteLength; }
+  let raw: string;
+  try { raw = new TextDecoder('utf-8', { fatal: true }).decode(bytes); } catch { throw new CollabError(400, 'invalid_utf8', 'Invalid UTF-8.'); }
   let parsed: unknown;
   try { parsed = JSON.parse(raw); } catch { throw new CollabError(400, 'invalid_json', 'Invalid JSON.'); }
   insist(parsed && typeof parsed === 'object' && !Array.isArray(parsed), 'Object body required.', 400, 'invalid_body');
@@ -72,11 +93,11 @@ export async function companyExists(env: AtlasEnv, companyId: string): Promise<b
   } catch { return false; }
 }
 export type Membership = { id: string; companyId: string; role: 'viewer' | 'contributor' | 'owner'; expiresAt: string | null; aclRevision: number };
-/** Current company membership only: active, unexpired, unrevoked. No hierarchy inheritance. Owner is implicit. */
+/** Current company membership only: workspace 'owner', active, unexpired, unrevoked. No hierarchy inheritance. Owner is implicit. */
 export async function currentMembership(env: AtlasEnv, user: CollabUser, companyId: string): Promise<Membership | null> {
   if (!(await companyExists(env, companyId))) return null;
   if (user.isOwner) return { id: 'owner', companyId, role: 'owner', expiresAt: null, aclRevision: 0 };
-  const m = await env.DB!.prepare("SELECT * FROM daftar_company_memberships WHERE company_id = ? AND user_id = ? AND status = 'active' AND revoked_at IS NULL").bind(companyId, user.id).first<Row>();
+  const m = await env.DB!.prepare("SELECT * FROM daftar_company_memberships WHERE workspace_id = 'owner' AND company_id = ? AND user_id = ? AND status = 'active' AND revoked_at IS NULL").bind(companyId, user.id).first<Row>();
   if (!m) return null;
   if (m.expires_at && !(Date.parse(m.expires_at) > Date.now())) return null;
   if (m.role !== 'viewer' && m.role !== 'contributor') return null;
