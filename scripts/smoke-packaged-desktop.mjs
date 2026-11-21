@@ -8,6 +8,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { basename, dirname, join, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { runPackagedFreeflowCheck } from './freeflow-browser-checks.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const require = createRequire(join(root, 'site-source', 'package.json'));
@@ -275,9 +276,11 @@ try {
   assert.equal(cloud.configured, false);
   assert.equal(cloud.lastSyncedAt, null);
   await capture('settings');
+  const freeflowReceipt = await runPackagedFreeflowCheck({ page, capture });
   assert.deepEqual(errors, [], 'Packaged renderer raised an unhandled error.');
 
   receipt = {
+    freeflow: freeflowReceipt,
     schemaVersion: 1,
     status: 'passed',
     at: new Date().toISOString(),

@@ -14,6 +14,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { installRendererFixture } from '../desktop-shell/tests/fixtures/renderer-bridge.mjs';
+import { runFreeflowCloudChecks } from './freeflow-browser-checks.mjs';
 
 const repository = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const cloudRoot = path.resolve(process.env.DAFTAR_CLOUD_UI_SOURCE || path.join(repository, 'cloud-workspace'));
@@ -482,6 +483,8 @@ try {
     assert.deepEqual(pageErrors, [], 'Cloud UI emitted browser exceptions');
     await context.close(); activePage = null;
   }
+  stage = 'freeflow-matrix';
+  receipt.freeflow = await runFreeflowCloudChecks({ browser, base, makeState: fixture, installApiFixture, outDir: artifactRoot });
   assert.deepEqual(unexpectedRequests, [], 'Cloud UI made an unhandled API request or failed to load a built asset');
   assert.equal(screenshots.length >= 4, true);
   receipt.status = 'passed';
