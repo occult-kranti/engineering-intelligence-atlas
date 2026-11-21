@@ -1969,8 +1969,8 @@ function initOffice(): void {
   document.querySelectorAll<HTMLButtonElement>('[data-open-office-tab]').forEach((button) => button.onclick = () => switchOfficeTab(button.dataset.openOfficeTab || 'overview'));
   $('office-company-search').addEventListener('input',renderOfficeScope);
   $('office-company-select').addEventListener('change',() => {
-    if(workspaceReadOnly()&&officeState){officeState.activeCompanyId=value('office-company-select');renderOffice();return;}
-    void safeTask(() => performOffice({action:'select_company',companyId:value('office-company-select')},'Company selected.'));
+    const companyId=value('office-company-select');if(!companyId)return;
+    void ffTransitionScope({kind:'company',companyId},null);
   });
   $('office-office-select').addEventListener('change',() => { selectedOfficeId=value('office-office-select'); selectedDepartmentId=''; renderOffice(); });
   $('office-department-select').addEventListener('change',() => { selectedDepartmentId=value('office-department-select'); renderOffice(); });
@@ -2409,8 +2409,10 @@ function portfolioNavigation(label:string,companyId:string,tab='chat',kind='text
 }
 async function openPortfolioCompany(companyId:string,tab='chat',officeId?:string,departmentId?:string):Promise<void>{
   if(!officeState?.companies.some(company=>company.id===companyId))throw new Error('This company is no longer in the workspace.');
-  if(workspaceReadOnly()){officeState.activeCompanyId=companyId;renderOffice();}else await workspaceCommand({action:'select_company',companyId},'Company selected.');
-  if(officeId)selectedOfficeId=officeId;selectedDepartmentId=departmentId||'';($('chat-scope') as HTMLSelectElement).value=departmentId?'department':officeId?'office':'company';
+  const focus:FreeflowFocus=departmentId&&officeId?{kind:'department',companyId,officeId,departmentId}:officeId?{kind:'office',companyId,officeId}:{kind:'company',companyId};
+  await ffTransitionScope(focus,true);
+  if(officeState?.activeCompanyId!==companyId||ffFocus.kind==='portfolio'||ffFocus.companyId!==companyId)return;
+  ($('chat-scope') as HTMLSelectElement).value=departmentId?'department':officeId?'office':'company';
   renderOffice();setPortfolioOpen(false);switchWorkspaceTab(tab);$(tab==='chat'?'chat-message':`workspace-tab-${tab}`).focus();
 }
 function scopeCompanies(item:PortfolioRoadmapItem):string[]{
@@ -2958,20 +2960,75 @@ function ffRefresh(): void {
   $('ff-surface-heat').textContent = studioHeatMode() === 'off' ? 'Heat off' : `Heat: ${studioHeatMode()}`;
   ffApplyMode();
 }
-function ffNavigate(focus: FreeflowFocus): void {
-  ffFocus = focus;
-  const url = new URL(location.href);
-  if (focus.kind === 'portfolio') url.searchParams.delete('company'); else url.searchParams.set('company', focus.companyId);
-  history.replaceState(null, '', url.toString());
-  if (focus.kind !== 'portfolio') {
-    if (officeState?.companies.some((c) => c.id === focus.companyId) && officeState.activeCompanyId !== focus.companyId) {
-      if (workspaceReadOnly()) { officeState.activeCompanyId = focus.companyId; } else void safeTask(() => performOffice({ action: 'select_company', companyId: focus.companyId }, 'Company selected.'));
+/** Serialized, latest-intent company-scope transition. Applies state only after native confirmation. */
+interface FfScopeIntent { focus: FreeflowFocus; operations: boolean | null; token: number }
+let ffScopeSeq = 0;
+let ffScopeChain: Promise<void> = Promise.resolve();
+function ffValidateFocus(focus: FreeflowFocus): string | null {
+  if (focus.kind === 'portfolio') return null;
+  const s = officeState; if (!s) return 'The workspace is not loaded yet.';
+  if (!s.companies.some((c) => c.id === focus.companyId)) return 'That company is not in this workspace.';
+  if ('officeId' in focus && focus.officeId) {
+    const o = s.offices.find((x) => x.id === focus.officeId);
+    if (!o || o.companyId !== focus.companyId) return 'That office does not belong to the selected company.';
+    if (focus.kind === 'department') {
+      const d = s.departments.find((x) => x.id === focus.departmentId);
+      if (!d || d.companyId !== focus.companyId || d.officeId !== focus.officeId) return 'That department does not belong to the selected office.';
     }
-    if ('officeId' in focus) selectedOfficeId = focus.officeId;
-    selectedDepartmentId = focus.kind === 'department' ? focus.departmentId : '';
-    renderOffice();
   }
+  return null;
+}
+function ffCanonicalizeUrl(): void {
+  const url = new URL(location.href);
+  url.searchParams.delete('companyId');
+  if (ffFocus.kind === 'portfolio') url.searchParams.delete('company'); else url.searchParams.set('company', ffFocus.companyId);
+  history.replaceState(null, '', url.toString());
+}
+async function ffRunScopeIntent(intent: FfScopeIntent): Promise<void> {
+  if (intent.token !== ffScopeSeq) return; // superseded before it started
+  const focus = intent.focus;
+  const problem = ffValidateFocus(focus);
+  if (problem) { setStatus($('workspace-action-status'), problem, 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
+  if (focus.kind !== 'portfolio' && officeState && officeState.activeCompanyId !== focus.companyId) {
+    if (workspaceReadOnly()) officeState.activeCompanyId = focus.companyId;
+    else {
+      if (!bridge?.officeCommand) { setStatus($('workspace-action-status'), 'Open the installed desktop app to switch companies.', 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
+      let result: OfficeResult;
+      try { result = await bridge.officeCommand({ action: 'select_company', companyId: focus.companyId }); }
+      catch (error) { setStatus($('workspace-action-status'), error instanceof Error ? error.message : 'Company selection failed.', 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
+      if (!result.ok || !result.snapshot) { setStatus($('workspace-action-status'), result.error || 'Company selection failed.', 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
+      if (result.queued) {
+        officeState = result.snapshot; officeSampledAt = new Date().toISOString();
+        setStatus($('workspace-action-status'), `Queued for desktop confirmation${result.commandId ? ` · ${result.commandId}` : ''}. The company has not been switched yet.`);
+        renderOffice(); ffCanonicalizeUrl(); ffRefresh(); return;
+      }
+      officeState = result.snapshot; officeSampledAt = new Date().toISOString();
+      if (result.snapshot.activeCompanyId !== focus.companyId) { setStatus($('workspace-action-status'), 'The workspace did not confirm the requested company.', 'error'); renderOffice(); ffCanonicalizeUrl(); ffRefresh(); return; }
+    }
+  }
+  if (intent.token !== ffScopeSeq) return; // a newer intent supersedes the confirmed result
+  const recheck = ffValidateFocus(focus);
+  if (recheck) { setStatus($('workspace-action-status'), recheck, 'error'); ffCanonicalizeUrl(); ffRefresh(); return; }
+  ffFocus = focus;
+  if (focus.kind !== 'portfolio') {
+    if ('officeId' in focus && focus.officeId) selectedOfficeId = focus.officeId;
+    selectedDepartmentId = focus.kind === 'department' ? focus.departmentId : '';
+  }
+  if (intent.operations !== null) { ffOperations = intent.operations; ffSetNav(intent.operations ? 'operations' : 'table'); }
+  ffCanonicalizeUrl();
+  renderOffice();
   ffRefresh();
+}
+/** Awaitable entry point: resolves after this intent (or a newer one) has been settled. */
+function ffTransitionScope(focus: FreeflowFocus, operations: boolean | null = null): Promise<void> {
+  const intent: FfScopeIntent = { focus: { ...focus } as FreeflowFocus, operations, token: ++ffScopeSeq };
+  ffScopeChain = ffScopeChain.then(() => ffRunScopeIntent(intent)).catch((error: unknown) => {
+    toast(error instanceof Error ? error.message : 'The company scope could not be changed.');
+  });
+  return ffScopeChain;
+}
+function ffNavigate(focus: FreeflowFocus): void {
+  void ffTransitionScope(focus, null);
 }
 function ffOpenPanel(selector: string, focusId: string): void {
   let el: HTMLElement | null = document.getElementById(focusId);
@@ -3063,7 +3120,14 @@ function boot(): void {
   } else if (bridge?.transport === 'personal-browser') { $('core-label').textContent='Private browser workspace'; $('core-note').textContent='Connected to your desktop app'; }
   const route = location.hash.replace('#', '') as ViewName;const params=new URLSearchParams(location.search);const requested=params.get('workspace')||'';const workspaceRoute=['chat','blueprint','softboard','timeline','whiteboard','decisions'].includes(requested)?requested:null;const ceoRoute=params.get('ceo')==='true';
   if(workspaceRoute||ceoRoute)ffOperations=true;ffFocus=params.get('company')||params.get('companyId')?{kind:'company',companyId:params.get('company')||params.get('companyId')||''}:{kind:'portfolio'};
-  navigate(workspaceRoute||ceoRoute?'office':route in VIEW_IDS?route:'office',false);if(workspaceRoute)switchWorkspaceTab(workspaceRoute);if(ceoRoute)setPortfolioOpen(true);ffApplyMode();void safeTask(refreshWorkspace);
+  navigate(workspaceRoute||ceoRoute?'office':route in VIEW_IDS?route:'office',false);if(workspaceRoute)switchWorkspaceTab(workspaceRoute);if(ceoRoute)setPortfolioOpen(true);ffApplyMode();
+  const deepLinkFocus=ffFocus;ffFocus={kind:'portfolio'};
+  void safeTask(async()=>{
+    await refreshWorkspace();
+    if(!officeState&&bridge?.officeSnapshot)await refreshOffice();
+    if(deepLinkFocus.kind!=='portfolio')await ffTransitionScope(deepLinkFocus,null);
+    else ffCanonicalizeUrl();
+  });
 }
 boot();
 export {};
