@@ -1,4 +1,4 @@
-import { app, dialog, safeStorage, session } from 'electron';
+import { app, clipboard, dialog, safeStorage, session } from 'electron';
 import path from 'node:path';
 import fs from 'node:fs';
 import { WindowManager, openExternalUrl } from './windows';
@@ -14,9 +14,11 @@ import { OfficeService } from './office';
 import { OfficeWorkerPool } from './officeWorker';
 import { PersonalDashboardServer } from './personalDashboard';
 import { withGlobalBudget } from './globalBudget';
+import { CloudSyncService } from './cloudSync';
+import { existingUserDataPath } from './profileMigration';
 
 /**
- * Research Director Desktop — main process entry.
+ * Daftar — main process entry.
  *
  * Security posture:
  *  - contextIsolation: true, nodeIntegration: false, sandbox: true everywhere.
@@ -41,6 +43,9 @@ function applySessionHardening(): void {
 }
 
 async function main(): Promise<void> {
+  const currentProfile = app.getPath('userData');
+  const preservedProfile = existingUserDataPath(currentProfile, app.getPath('appData'), app.commandLine.hasSwitch('user-data-dir'), fs.existsSync);
+  if (preservedProfile !== currentProfile) app.setPath('userData', preservedProfile);
   await app.whenReady();
   applySessionHardening();
 
@@ -90,6 +95,11 @@ async function main(): Promise<void> {
     binaryPath: findNativeCore(app.getAppPath(), app.isPackaged ? process.resourcesPath : undefined),
   });
   const projectRunner = new ProjectRunner(projectStore, withGlobalBudget(generate, request => officeService.workerCommand(request)));
+  const cloudSync = new CloudSyncService({
+    userDataPath, safeStorage,
+    snapshot: () => officeService.officeSnapshot(),
+    command: request => officeService.officeCommand(request),
+  });
   const officeWorker = new OfficeWorkerPool({
     prepareContext: (job) => officeService.prepareWorkerContext(job),
     executeTool: async (job, text) => {
@@ -121,7 +131,11 @@ async function main(): Promise<void> {
       return handler(...args);
     },
   });
-  browserHandlers = registerIpc({ windowManager, jobManager, settings, vault, projectStore, projectRunner, companyService, officeService, officeWorker, catalogPath, userDataPath,
+  browserHandlers = registerIpc({ windowManager, jobManager, settings, vault, projectStore, projectRunner, companyService, officeService, officeWorker, cloudSync, catalogPath, userDataPath,
+    copyEditorPairing: async () => {
+      try { clipboard.writeText(await personalDashboard.launchUrl()); return { ok: true, expiresAt: new Date(Date.now() + 5 * 60000).toISOString() }; }
+      catch { return { ok: false, error: 'The editor pairing link could not be copied.' }; }
+    },
     openPersonalDashboard: async () => {
       try { const url = await personalDashboard.launchUrl(); const opened = await openExternalUrl(url); return { ...opened, url: new URL(url).origin }; }
       catch { return { ok: false, error: 'The personal browser dashboard could not start.' }; }

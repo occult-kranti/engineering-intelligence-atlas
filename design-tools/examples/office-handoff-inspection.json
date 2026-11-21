@@ -1,0 +1,14 @@
+{
+  "pages": 1,
+  "totalNodes": 12,
+  "types": {
+    "FRAME": 7,
+    "TEXT": 5
+  },
+  "fonts": [
+    "Inter"
+  ],
+  "pageCounts": {
+    "DOM/CSS": 12
+  }
+}

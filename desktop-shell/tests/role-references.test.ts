@@ -2,6 +2,7 @@ import { describe, it, expect, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { loadRoleReference } from '../src/main/roleReferences';
 
 const dirs: string[] = [];
@@ -47,6 +48,18 @@ function idx(roles: unknown[]) {
 }
 
 describe('loadRoleReference', () => {
+  it('loads the bundled research lenses through the same bounded runtime loader', () => {
+    const seed = fileURLToPath(new URL('../../company/', import.meta.url));
+    const repo = path.dirname(seed.replace(/[\\/]$/, ''));
+    for (const key of ['newton', 'tesla', 'research-skeptic', 'resonance-advisor', 'paired-research']) {
+      const result = loadRoleReference(seed, key);
+      expect(result, `Missing or invalid runtime research role: ${key}`).not.toBeNull();
+      expect(result!.sha256).toMatch(/^[0-9a-f]{64}$/);
+      expect(fs.existsSync(path.join(repo, result!.document))).toBe(true);
+      for (const example of result!.examples) expect(fs.existsSync(path.join(repo, example))).toBe(true);
+      expect(result!.brief.length).toBeLessThan(8000);
+    }
+  });
   it('loads a valid role with links only', () => {
     const seed = tmp();
     writeIndex(seed, idx([role()]));

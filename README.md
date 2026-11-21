@@ -1,4 +1,4 @@
-# Atlas — Personal Agent Office
+# Daftar — personal agent office
 
 **A personal workspace for Donna, your permanent agent team, and the repositories they maintain.**
 
@@ -6,13 +6,14 @@ One scoped chat connects to an interactive office blueprint and an ownership
 whiteboard. Companies contain offices, departments and employees; goals become
 bounded dependency graphs with queues, checkpoints, budgets and evidence.
 
+[Private signed-in office](https://atlas-command-office.whatswrong-inc.chatgpt.site) ·
 [Public atlas](https://occult-kranti.github.io/engineering-intelligence-atlas/) ·
 [Desktop starter preview](https://occult-kranti.github.io/engineering-intelligence-atlas/desktop-preview/chrome.html) ·
-[Desktop and Android downloads](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/latest) ·
+[Desktop, VS Code and Android downloads](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/latest) ·
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
-## Current product
+## Current product — connected office 0.5.0
 
 - **Donna workspace:** company/office/department/employee conversation scope, local plans, actual provider returns, and one place to inspect progress.
 - **Office and whiteboard:** persistent rooms, employee positions, keyboard movement, boards and goal/job ownership mappings.
@@ -22,12 +23,16 @@ bounded dependency graphs with queues, checkpoints, budgets and evidence.
 - **GitHub companies:** public/private owner discovery, branch inspection, comparisons and bounded text changesets published against a checked branch head.
 - **Private browser:** open the same owner workspace on your laptop through the desktop app's authenticated loopback server.
 - **Credentials and models:** OS-backed credential storage and native file import; live provider discovery; existing local hardware/model and Ollama controls.
+- **Decision expert panels:** Donna selects reusable specialists, queues independent reviews followed by synthesis, and records evidence, disagreements and bounded decisions. Newton, Tesla, skeptic, resonance and paired-research lenses extend the role library.
+- **VS Code:** an installable thin client with SecretStorage, scoped Donna, teams, roadmaps, queued commands and local/website pairing.
+- **Private website:** ChatGPT sign-in, durable D1 workspace and conversations, server-held Claude credentials, explicit revision-safe desktop sync and a separately reserved cloud allocation.
 - **Rust core:** durable control state, cross-process locking, atomic writes and bounded parallel repository metadata indexing.
+- **Timed management:** scoped grants, Donna delegation, temporary promotions, searchable control history and an indexed company hierarchy.
+- **Application directory and design:** private source-linked dashboard catalog, distinct publication/verification dates, Figma client setup and a bounded OpenPencil handoff adapter.
 
 Provider workers start disabled. A permanent role record does not consume tokens
 while idle. Public pages and their starter preview contain no personal account
-state or credentials. Actual private controls run in the desktop/local browser;
-the separately deployed server runtime has its own authentication and database.
+state or credentials. Private website controls enqueue commands; the desktop validates and applies them on an explicit sync. Cloud Donna chat works independently within its reserved allocation.
 
 ### Build and run
 
@@ -51,7 +56,7 @@ CEO mode adds an application-group → repository-company → office → departm
 The private owner portfolio is organized into application groups with shared specialists and source-linked proposed next steps. Optimization can pause idle duplicate assignments without deleting history. Proposed work is distinct from executed builds. The public starter preview contains isolated example data only; private portfolio records and counts are excluded from this repository.
 
 - [Portfolio architecture](project/PORTFOLIO_ARCHITECTURE.md) and [role routing/reference index](project/ROLE_REFERENCE_INDEX.md)
-- [16 role guides and sample task packets](company/role-library/index.json), including browser-extension research, exact geometry, architecture/art and music examples
+- [23 role guides and sample task packets](company/role-library/index.json), including browser-extension research, exact geometry, architecture/art and music examples
 - `scripts/prepare-portfolio.py` prepares a private plan; `scripts/apply-portfolio.mjs` applies it through the MCP/native boundary and retains existing roadmap progress.
 - Two bounded worker slots share the native lease and budget ledger. Recurring repository reviews fetch a verified head and commit-pinned README, preserve a proposal artifact and add a labeled knowledge handoff. Publication requires its separately granted GitHub capability.
 - `scripts/export-personal-workspace.py` and `scripts/restore-personal-workspace.py` move personal state and included artifacts between owner devices without credentials.
@@ -69,6 +74,9 @@ A research-backed reference organization, agent-skill library, public-careers ev
 - `data/` — structured workbooks, data dictionaries, acquisition notes, and analysis artifacts.
 - `scientific-research-library/` — dedicated charters for mathematics, physics, chemistry, biology, science history, game reconstruction, and AI open-model research.
 - `desktop-shell/` — Electron desktop source with safeStorage, local projects, hardware/model manager, and Ollama support.
+- `vscode-extension/` — installable editor workspace with protected device credentials.
+- `cloud-workspace/` — owner-private Sites/Vinext/D1 website, API, shared renderer and cloud budget ledger.
+- `design-tools/` — bounded OpenPencil import, inspection and export, source/license records and design handoff examples.
 - `android-shell/` — Capacitor Android source with Keystore-backed credentials, local projects, and the offline atlas.
 - `site-source/` — React/TypeScript source for the research atlas and orchestration product.
 - `docs/` — reviewed static atlas and Science & Models build for GitHub Pages. The dynamic orchestration product requires its server, database, and object-storage runtime; GitHub Pages alone cannot provide those services.
@@ -97,4 +105,12 @@ Public job and repository records are time-stamped snapshots, not permanent clai
 
 ## Publication and runtime
 
-The static atlas can be hosted from `docs/` on GitHub Pages after a reviewed build is copied there. Provider-backed agent execution, authentication, database persistence, and uploaded skill/artifact storage require the dynamic application runtime. Provider credentials must never be embedded in this repository or client bundles: use the encrypted owner-scoped server vault, Electron safeStorage, or Android Keystore as appropriate. Live model/API calls follow the owner’s configured review or autonomous policy and budget; platform storage and external managed-runtime charges require their own accounting.
+The static atlas can be hosted from `docs/` on GitHub Pages after a reviewed build is copied there. Provider-backed agent execution, authentication, database persistence, and uploaded skill/artifact storage require the dynamic application runtime. Provider credentials must never be embedded in this repository or client bundles: use Sites runtime secrets, the encrypted owner-scoped server vault, Electron safeStorage, or Android Keystore as appropriate. Live model/API calls follow the owner’s configured review or autonomous policy and budget; platform storage and external managed-runtime charges require their own accounting.
+
+## Daftar management and directory
+
+The Daftar name replaces the product label while existing repository URLs, workspace IDs and backups remain compatible. CEO → Director → Donna → scoped assistants and shared employees operate through the same office blueprint, conversation and ownership whiteboard. Timed grants, temporary promotions, a searchable management ledger and a derived office index make current authority visible.
+
+The private [application directory](https://atlas-command-office.whatswrong-inc.chatgpt.site/applications) links known repository apps and dashboards using recorded source URLs and dates; private metadata is never included in the public preview. The [Figma and open design guide](project/FIGMA_AND_DESIGN.md) documents separate MCP client sign-in and the bounded local adapter.
+
+See [Daftar management](project/DAFTAR_MANAGEMENT.md) for the complete role, permission, promotion, directory and control flow. The shared Security specialist now includes the source-reviewed [Clouds Against Humanity learning path](company/role-library/references/clouds-against-humanity.md) and its zero-dollar access-control exercise.

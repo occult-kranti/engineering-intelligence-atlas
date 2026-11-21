@@ -1,26 +1,28 @@
 #!/usr/bin/env node
-// Engineering Intelligence Atlas - local stdio MCP server (Node >= 22, built-ins only).
-// Local state is owned by the native Rust core; the only external call is a
-// read-only, unauthenticated fetch of public GitHub repo metadata during company_register.
+// Daftar - local stdio MCP server (Node >= 22, built-ins only).
+// Local state is owned by the native Rust core. External calls only discover
+// public GitHub metadata; this server does not execute provider jobs or code.
 
 import { spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { homedir } from 'node:os';
 import { dirname, resolve, join, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const SERVER_INFO = Object.freeze({ name: 'atlas-company', version: '0.4.0' });
+export const SERVER_INFO = Object.freeze({ name: 'atlas-company', version: '0.5.0' });
 export const SUPPORTED_PROTOCOL_VERSIONS = Object.freeze(['2025-11-25', '2025-06-18']);
 export const LATEST_PROTOCOL_VERSION = SUPPORTED_PROTOCOL_VERSIONS[0];
 
 export const NATIVE_TIMEOUT_MS = 25_000;
-export const NATIVE_OUTPUT_LIMIT = 2 * 1024 * 1024;
+export const NATIVE_OUTPUT_LIMIT = 16 * 1024 * 1024;
 export const REQUEST_LIMIT = 1024 * 1024;
 export const GITHUB_BODY_LIMIT = 1024 * 1024;
 export const GITHUB_TIMEOUT_MS = 12_000;
 export const TOOL_OUTPUT_LIMIT = 1024 * 1024;
+export const OFFICE_QUERY_PAGE_BYTES = 128 * 1024;
 
 const GITHUB_API = 'https://api.github.com';
-const USER_AGENT = 'engineering-intelligence-atlas-mcp/0.3.0';
+const USER_AGENT = 'daftar-mcp/0.5.0';
 const TASK_STATUSES = Object.freeze(['todo', 'in-progress', 'blocked', 'done']);
 const SEGMENT_RE = /^[A-Za-z0-9](?:[A-Za-z0-9._-]{0,98}[A-Za-z0-9])?$|^[A-Za-z0-9]$/;
 const OWNER_RE = /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/;
@@ -149,7 +151,7 @@ export function createNativeCall(config, { spawnImpl = spawn } = {}) {
         outBytes += chunk.length;
         if (outBytes > NATIVE_OUTPUT_LIMIT) {
           try { child.kill('SIGKILL'); } catch { /* ignore */ }
-          finish(rejectPromise, new ToolError('native core output exceeded limit', 'native_output_too_large'));
+          finish(rejectPromise, new ToolError('Native response exceeded 16 MiB. State may already be saved; inspect it before replaying any mutation.', 'native_output_too_large'));
           return;
         }
         out.push(chunk);
@@ -279,12 +281,15 @@ export function validateCommit(commit) {
 // ---------------------------------------------------------------------------
 
 const EMPTY_SCHEMA = Object.freeze({ type: 'object', properties: {}, additionalProperties: false });
+export const OFFICE_COLLECTIONS = Object.freeze(['companies','offices','departments','employees','jobs','schedules','knowledge','events','chatThreads','goals','checkpoints','blueprints','groups','services','contracts','transfers','roadmap','decisionPanels','authorityGrants','authorityLedger','index']);
+const QUERY_SCOPE_KINDS = Object.freeze(['company','office','department','employee','goal','group']);
 
-export const OFFICE_ACTIONS = Object.freeze(['create_company','select_company','create_office','create_department','hire_employee','pause_employee','resume_employee','fire_employee','pause_company','resume_company','pause_office','resume_office','pause_department','resume_department','enqueue_job','claim_job','reserve_job','finish_job','heartbeat_job','cancel_job','pause_job','resume_job','create_schedule','pause_schedule','resume_schedule','tick_schedules','configure_cache','clear_cache','get_cache','put_cache','add_knowledge','configure_policy','reserve_external','settle_external','approve_job','bootstrap_directors','post_chat','post_assistant_message','create_goal','plan_goal','set_goal_plan','execute_goal','advance_goal','tick_goals','pause_goal','resume_goal','checkpoint_goal','ensure_blueprint','save_blueprint','upsert_room','place_employee','upsert_whiteboard','configure_ceo','upsert_portfolio_group','ensure_shared_services','optimize_portfolio','contract_service','share_knowledge','upsert_roadmap_item']);
+export const OFFICE_ACTIONS = Object.freeze(['create_company','select_company','create_office','create_department','hire_employee','pause_employee','resume_employee','fire_employee','pause_company','resume_company','pause_office','resume_office','pause_department','resume_department','enqueue_job','claim_job','reserve_job','finish_job','heartbeat_job','cancel_job','pause_job','resume_job','create_schedule','pause_schedule','resume_schedule','tick_schedules','configure_cache','clear_cache','get_cache','put_cache','add_knowledge','configure_policy','reserve_external','settle_external','approve_job','bootstrap_directors','post_chat','post_assistant_message','create_goal','plan_goal','set_goal_plan','execute_goal','advance_goal','tick_goals','pause_goal','resume_goal','checkpoint_goal','ensure_blueprint','save_blueprint','upsert_room','place_employee','upsert_whiteboard','configure_ceo','upsert_portfolio_group','ensure_shared_services','optimize_portfolio','contract_service','share_knowledge','upsert_roadmap_item','convene_panel','start_panel_round','record_panel_decision','pause_panel','resume_panel','grant_authority','promote_employee','revoke_authority','set_authority_enforcement','rebuild_office_index','apply_employee_command','check_worker_authority','rename_company']);
 
 export const TOOL_DEFINITIONS = Object.freeze([
-  { name:'office_snapshot', title:'Office control snapshot', description:'Read persistent companies, offices, departments, Donna and employees, jobs, schedules, cache and event ledger. Local state only.', inputSchema:EMPTY_SCHEMA, annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false} },
-  { name:'office_command', title:'Office control operation', description:'Apply an explicit local office state command. This tool cannot execute code or issue provider calls; provider jobs require a separately enabled worker and budget authorization.', inputSchema:{type:'object',properties:{action:{type:'string',enum:[...OFFICE_ACTIONS]},payload:{type:'object'}},required:['action'],additionalProperties:false},annotations:{readOnlyHint:false,destructiveHint:true,idempotentHint:false,openWorldHint:false} },
+  { name:'office_snapshot', title:'Office control snapshot', description:'Read the local office. Large wire results are successful metadata summaries with snapshotOmitted:true; use office_query for paginated metadata. No provider calls.', inputSchema:EMPTY_SCHEMA, annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false} },
+  { name:'office_query', title:'Query office metadata', description:'Read bounded metadata pages from a collection, optionally by scope or metadata search. Omits chat/prompt bodies, local paths and worker credentials. Reuse nextCursor with the same filters; query_changed means restart this read. Local state only.', inputSchema:{type:'object',properties:{collection:{type:'string',enum:[...OFFICE_COLLECTIONS]},scope:{type:'object',properties:{kind:{type:'string',enum:[...QUERY_SCOPE_KINDS]},id:{type:'string',minLength:1,maxLength:150}},required:['kind','id'],additionalProperties:false},search:{type:'string',maxLength:200},pageSize:{type:'integer',minimum:1,maximum:100,default:25},cursor:{type:'string',maxLength:1024}},required:['collection'],additionalProperties:false},annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false} },
+  { name:'office_command', title:'Office control operation', description:'Apply an explicit local state command. A large result returns a successful receipt with snapshotOmitted:true: do not replay that mutation; use office_query. No code or provider execution; jobs require a separately enabled worker and budget authorization.', inputSchema:{type:'object',properties:{action:{type:'string',enum:[...OFFICE_ACTIONS]},payload:{type:'object'}},required:['action'],additionalProperties:false},annotations:{readOnlyHint:false,destructiveHint:true,idempotentHint:false,openWorldHint:false} },
   { name:'github_import_account',title:'Import public repositories as companies',description:'Read public repositories for one GitHub account and create corresponding local company/office/assistant definitions. No private repositories, provider calls, or external writes.',inputSchema:{type:'object',properties:{owner:{type:'string',maxLength:39}},required:['owner'],additionalProperties:false},annotations:{readOnlyHint:false,destructiveHint:false,idempotentHint:true,openWorldHint:true} },
 
   {
@@ -369,6 +374,155 @@ function unwrapNative(result) {
   throw new ToolError(message, typeof result?.code === 'string' ? result.code : 'native_error');
 }
 
+const SECRET_TEXT = /(?:sk-ant-|sk-proj-|sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}|\bBearer\s+[A-Za-z0-9._~-]+/gi;
+const ID_FIELDS = ['id','entityId','parentId','companyId','officeId','departmentId','employeeId','ownerEmployeeId','assistantId','goalId','jobId','scheduleId','panelId','grantId','blueprintId','roomId','whiteboardId','roadmapItemId','serviceId','serviceContractId','contractId','transferId','knowledgeId','groupId','recipientCompanyId','recipientOfficeId','recipientDepartmentId','sourceCompanyId','targetId'];
+const TEXT_FIELDS = ['name','title','role','kind','status','action','actor','outcome','type','preset','issuer','mode','provider','model','costStatus','source','visibility','githubStatus'];
+const DATE_FIELDS = ['at','createdAt','updatedAt','importedAt','grantedAt','expiresAt','revokedAt','dueAt','startedAt','finishedAt','nextRunAt','lastEnqueuedAt'];
+const NUMBER_FIELDS = ['iteration','maxIterations','round','maxRounds','everyMinutes','indexEntries','imported','created'];
+const BOOL_FIELDS = ['enabled','authorized','allowed','revoked','requiresGrants','rebuilt','queued'];
+const ARRAY_COUNTS = ['messages','steps','jobs','jobIds','goalIds','dependencies','members','decisions','rooms','desks','whiteboards','companyIds','employeeIds','relatedIds','parentGrantIds','skillPaths'];
+const hash = value => createHash('sha256').update(value).digest('hex');
+const list = value => Array.isArray(value) ? value : [];
+
+function summaryText(value, limit = 240) {
+  return String(value).replace(SECRET_TEXT, '[credential omitted]')
+    .replace(/\b(?:token|secret|password|api[_-]?key)\s*[:=]\s*\S+/gi, '[credential omitted]')
+    .replace(/(?:file:\/\/|\/home\/|\/Users\/|\/workspace\/|[A-Z]:\\)[^\s<>"']+/gi, '[local path omitted]')
+    .replace(/[\u0000-\u001f\u007f]/g, ' ').slice(0, limit);
+}
+
+function summaryId(value) {
+  if (typeof value !== 'string' || !/^[A-Za-z0-9_.:-]{1,160}$/.test(value)) return undefined;
+  return summaryText(value, 160);
+}
+
+function collectionRows(snapshot, name) {
+  if (['groups','services','contracts','transfers','roadmap'].includes(name)) return list(snapshot.portfolio?.[name]);
+  if (name === 'authorityGrants') return list(snapshot.authority?.grants);
+  if (name === 'authorityLedger') return list(snapshot.authority?.ledger);
+  if (name === 'index') return list(snapshot.authority?.index);
+  return list(snapshot[name]);
+}
+
+/** Deliberately a metadata allowlist, not a recursively redacted full record. */
+function metadataSummary(row) {
+  const out = {};
+  if (!row || typeof row !== 'object') return out;
+  for (const key of ID_FIELDS) { const value = summaryId(row[key]); if (value !== undefined) out[key] = value; }
+  for (const key of TEXT_FIELDS) if (typeof row[key] === 'string') out[key] = summaryText(row[key]);
+  for (const key of DATE_FIELDS) if (isIsoDate(row[key])) out[key] = row[key];
+  for (const key of NUMBER_FIELDS) if (Number.isFinite(row[key])) out[key] = row[key];
+  for (const key of BOOL_FIELDS) if (typeof row[key] === 'boolean') out[key] = row[key];
+  for (const key of ARRAY_COUNTS) if (Array.isArray(row[key])) out[`${key}Count`] = row[key].length;
+  if (row.scope && typeof row.scope.kind === 'string' && summaryId(row.scope.id)) out.scope = { kind: summaryText(row.scope.kind, 30), id: summaryId(row.scope.id) };
+  if (Array.isArray(row.capabilities)) out.capabilities = row.capabilities.filter(c => typeof c === 'string').slice(0, 20).map(c => summaryText(c, 80));
+  if (row.usage && typeof row.usage === 'object') {
+    out.usage = {};
+    for (const key of ['inputTokens','outputTokens','costUsd']) if (Number.isFinite(row.usage[key])) out.usage[key] = row.usage[key];
+  }
+  return out;
+}
+
+/** Scope is a read filter. It never grants permission to execute an operation. */
+function scopeMatcher(snapshot, scope) {
+  if (!scope) return () => true;
+  const kinds = { company:'companies', office:'offices', department:'departments', employee:'employees', goal:'goals', group:'groups', job:'jobs', knowledge:'knowledge', roadmap:'roadmap', authority:'authorityGrants' };
+  const maps = Object.fromEntries(Object.entries(kinds).map(([kind, name]) => [kind, new Map(collectionRows(snapshot, name).map(row => [row.id, row]))]));
+  const ownKind = Object.fromEntries(Object.entries(kinds).map(([kind, name]) => [name, kind]));
+  return (row, collection) => {
+    const references = new Set();
+    const add = (kind, id, ancestors = true) => {
+      if (typeof id !== 'string' || references.has(`${kind}:${id}`)) return;
+      references.add(`${kind}:${id}`);
+      if (!ancestors) return;
+      const entity = maps[kind]?.get(id);
+      if (entity) location(entity);
+    };
+    const location = entity => {
+      for (const key of ['companyId','recipientCompanyId','sourceCompanyId']) add('company', entity[key]);
+      for (const key of ['officeId','recipientOfficeId']) add('office', entity[key]);
+      for (const key of ['departmentId','recipientDepartmentId']) add('department', entity[key]);
+      const located = entity.companyId || entity.officeId || entity.departmentId;
+      add('employee', entity.employeeId, !located);
+      add('employee', entity.ownerEmployeeId, !located && !entity.scope);
+      add('goal', entity.goalId, !located);
+      for (const id of list(entity.goalIds)) add('goal', id, false);
+      for (const id of list(entity.employeeIds)) add('employee', id, false);
+      for (const id of list(entity.companyIds)) add('company', id);
+      if (entity.scope) add(entity.scope.kind, entity.scope.id);
+    };
+    location(row);
+    if (ownKind[collection]) add(ownKind[collection], row.id);
+    if (collection === 'index') add(row.kind === 'artifact' ? 'job' : row.kind, row.entityId);
+    if (collection === 'events') for (const [kind, map] of Object.entries(maps)) if (map.has(row.entityId)) add(kind, row.entityId);
+    if (scope.kind === 'group') return references.has(`group:${scope.id}`) || list(maps.group.get(scope.id)?.companyIds).some(id => references.has(`company:${id}`));
+    return references.has(`${scope.kind}:${scope.id}`);
+  };
+}
+
+function validateOfficeQuery(args) {
+  const a = assertPlainObject(args, 'office_query');
+  assertNoKeys(a, ['collection','scope','search','pageSize','cursor'], 'office_query');
+  if (!OFFICE_COLLECTIONS.includes(a.collection)) throw new InvalidParams('office_query: choose a supported collection');
+  if (a.pageSize !== undefined && (!Number.isSafeInteger(a.pageSize) || a.pageSize < 1 || a.pageSize > 100)) throw new InvalidParams('office_query: pageSize must be 1–100');
+  if (a.search !== undefined && (typeof a.search !== 'string' || a.search.length > 200)) throw new InvalidParams('office_query: search must be up to 200 characters');
+  if (a.scope !== undefined) {
+    if (!a.scope || typeof a.scope !== 'object' || Array.isArray(a.scope)) throw new InvalidParams('office_query: invalid scope');
+    assertNoKeys(a.scope, ['kind','id'], 'office_query scope');
+    if (!QUERY_SCOPE_KINDS.includes(a.scope.kind) || !summaryId(a.scope.id) || a.scope.id.length > 150) throw new InvalidParams('office_query: scope needs a supported kind and identifier');
+  }
+  let cursor;
+  if (a.cursor !== undefined) {
+    if (typeof a.cursor !== 'string' || a.cursor.length > 1024 || !/^[A-Za-z0-9_-]+$/.test(a.cursor)) throw new InvalidParams('office_query: invalid cursor');
+    try { cursor = JSON.parse(Buffer.from(a.cursor, 'base64url').toString('utf8')); } catch { throw new InvalidParams('office_query: invalid cursor'); }
+    if (!cursor || cursor.v !== 1 || typeof cursor.query !== 'string' || typeof cursor.revision !== 'string' || !Number.isSafeInteger(cursor.offset) || cursor.offset < 0) throw new InvalidParams('office_query: invalid cursor');
+  }
+  return { collection:a.collection, scope:a.scope || null, search:(a.search || '').trim().toLowerCase(), pageSize:a.pageSize || 25, cursor };
+}
+
+function queryOffice(snapshot, query) {
+  const matches = scopeMatcher(snapshot, query.scope);
+  const rows = collectionRows(snapshot, query.collection).filter(row => row && typeof row === 'object' && matches(row, query.collection))
+    .map(metadataSummary).filter(row => !query.search || JSON.stringify(row).toLowerCase().includes(query.search));
+  rows.sort((a, b) => String(a.id || '') < String(b.id || '') ? -1 : String(a.id || '') > String(b.id || '') ? 1 : 0);
+  const identity = hash(JSON.stringify([query.collection, query.scope?.kind || null, query.scope?.id || null, query.search]));
+  const revision = hash(JSON.stringify(rows));
+  if (query.cursor && (query.cursor.query !== identity || query.cursor.revision !== revision)) throw new ToolError('Office query changed. Restart this read without a cursor; no mutation was requested.', 'query_changed');
+  const offset = query.cursor?.offset || 0;
+  if (offset > rows.length) throw new InvalidParams('office_query: cursor is outside this result');
+  const items = []; let size = 0;
+  for (let i = offset; i < rows.length && items.length < query.pageSize; i++) {
+    const bytes = Buffer.byteLength(JSON.stringify(rows[i]));
+    if (size + bytes > OFFICE_QUERY_PAGE_BYTES) break;
+    items.push(rows[i]); size += bytes;
+  }
+  const next = offset + items.length;
+  const nextCursor = next < rows.length ? Buffer.from(JSON.stringify({ v:1, query:identity, revision, offset:next })).toString('base64url') : null;
+  return { ok:true, metadataOnly:true, collection:query.collection, scope:query.scope, search:query.search, total:rows.length,
+    pageSize:query.pageSize, returned:items.length, items, nextCursor, revision,
+    omitted:'Prompts, chat messages, free-form summaries, reasons, local paths, worker leases and credentials are not included.' };
+}
+
+function compactOfficeResult(structured, context, fullResultBytes) {
+  if (!['office_snapshot','office_command','github_import_account'].includes(context?.name) || !structured?.snapshot || Array.isArray(structured.snapshot)) return null;
+  const snapshot = structured.snapshot;
+  const summary = { counts:Object.fromEntries(OFFICE_COLLECTIONS.map(name => [name, collectionRows(snapshot, name).length])) };
+  const activeCompanyId = summaryId(snapshot.activeCompanyId); if (activeCompanyId) summary.activeCompanyId = activeCompanyId;
+  if (Number.isSafeInteger(snapshot.schemaVersion)) summary.schemaVersion = snapshot.schemaVersion;
+  summary.lastAction = metadataSummary(snapshot.lastAction);
+  if (snapshot.budget) {
+    summary.budget = {};
+    for (const key of ['observedUsd','estimatedUsd','reservedUsd','committedUsd','remainingUsd','committedTokens','remainingTokens']) if (Number.isFinite(snapshot.budget[key])) summary.budget[key] = snapshot.budget[key];
+    for (const key of ['warning','atCap']) if (typeof snapshot.budget[key] === 'boolean') summary.budget[key] = snapshot.budget[key];
+  }
+  const mutation = context.name !== 'office_snapshot';
+  return { ok:true, operationSucceeded:true, mutationApplied:mutation, snapshotOmitted:true, fullResultBytes, tool:context.name,
+    ...(context.name === 'office_command' && OFFICE_ACTIONS.includes(context.args?.action) ? { action:context.args.action } : {}),
+    ...(Number.isSafeInteger(structured.imported) ? { imported:structured.imported } : {}), summary,
+    next:{ tool:'office_query', arguments:{ collection:'index', pageSize:25 } },
+    guidance:mutation ? 'The native state operation succeeded. Do not replay it to retrieve its output; use office_query. This is a metadata receipt, not a complete snapshot or evidence of provider/code execution.' : 'The read succeeded. Use office_query for bounded metadata pages; a complete snapshot is omitted from this wire result.' };
+}
+
 /**
  * Returns async handler(name, args) -> structured result object (throws InvalidParams for
  * bad input, ToolError for application failures).
@@ -382,6 +536,10 @@ export function createToolHandler({ nativeCall, fetchImpl = globalThis.fetch } =
     async office_snapshot(args) {
       assertNoKeys(assertPlainObject(args,'office_snapshot'),[],'office_snapshot');
       return {snapshot:unwrapNative(await nativeCall('office_snapshot',{}))};
+    },
+    async office_query(args) {
+      const query = validateOfficeQuery(args);
+      return queryOffice(unwrapNative(await nativeCall('office_snapshot', {})), query);
     },
     async office_command(args) {
       const a=assertPlainObject(args,'office_command');
@@ -542,14 +700,22 @@ function isValidId(id) {
   return (typeof id === 'string' && id.length <= 256) || (typeof id === 'number' && Number.isFinite(id));
 }
 
-function toolResult(structured, isError = false) {
+function toolResult(structured, isError = false, context = null) {
   let text = JSON.stringify(structured);
-  if (Buffer.byteLength(text) > TOOL_OUTPUT_LIMIT) {
-    isError = true;
-    structured = { error: 'tool output exceeded size limit', code: 'output_too_large' };
+  const wrapped = () => ({ content: [{ type: 'text', text }], structuredContent: structured, isError });
+  const fullResultBytes = Buffer.byteLength(text);
+  // Both MCP representations count toward the wire ceiling. Never turn an
+  // already-successful office mutation into a false failure just to fit them.
+  if (fullResultBytes > TOOL_OUTPUT_LIMIT || Buffer.byteLength(JSON.stringify(wrapped())) > TOOL_OUTPUT_LIMIT) {
+    const receipt = !isError && compactOfficeResult(structured, context, fullResultBytes);
+    if (receipt) structured = receipt;
+    else {
+      isError = true;
+      structured = { error: 'tool output exceeded size limit', code: 'output_too_large' };
+    }
     text = JSON.stringify(structured);
   }
-  return { content: [{ type: 'text', text }], structuredContent: structured, isError };
+  return wrapped();
 }
 
 /**
@@ -605,7 +771,7 @@ export function createMessageProcessor({ handleTool }) {
           }
           try {
             const out = await handleTool(p.name, p.arguments ?? {});
-            return { jsonrpc: '2.0', id, result: toolResult(out) };
+            return { jsonrpc: '2.0', id, result: toolResult(out, false, { name:p.name, args:p.arguments }) };
           } catch (err) {
             if (err instanceof InvalidParams) return rpcError(id, -32602, err.message);
             const message = err instanceof ToolError ? err.message : 'internal tool failure';

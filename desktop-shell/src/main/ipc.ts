@@ -26,6 +26,7 @@ import { isTrustedLocalSender, UntrustedSenderError } from './senderGuard';
 import { CompanyService } from './company';
 import { OfficeService } from './office';
 import type { OfficeWorkerController } from './officeWorker';
+import type { CloudSyncService } from './cloudSync';
 
 export interface IpcContext {
   windowManager: WindowManager;
@@ -39,7 +40,9 @@ export interface IpcContext {
   officeWorker: OfficeWorkerController;
   catalogPath: string;
   userDataPath: string;
+  cloudSync?: CloudSyncService;
   openPersonalDashboard?: () => Promise<{ ok: boolean; url?: string; error?: string }>;
+  copyEditorPairing?: () => Promise<{ ok: boolean; expiresAt?: string; error?: string }>;
 }
 
 type Handler = (event: IpcMainInvokeEvent, ...args: any[]) => unknown;
@@ -90,6 +93,23 @@ export function registerIpc(ctx: IpcContext): Map<string, (...args: unknown[]) =
   });
 
   register(CHANNELS.getSystemInfo, guard(() => getSystemInfo(userDataPath)));
+  register(CHANNELS.copyEditorPairing, guard(() => ctx.copyEditorPairing?.() ?? {ok:false,error:'Editor pairing is unavailable.'}));
+  register(CHANNELS.cloudStatus, guard(() => {
+    if (!ctx.cloudSync) throw new Error('Cloud connection is unavailable.');
+    return ctx.cloudSync.status();
+  }));
+  register(CHANNELS.configureCloud, guard((_event, request) => {
+    if (!ctx.cloudSync) throw new Error('Cloud connection is unavailable.');
+    return ctx.cloudSync.configure(request);
+  }));
+  register(CHANNELS.syncCloud, guard(() => {
+    if (!ctx.cloudSync) throw new Error('Cloud connection is unavailable.');
+    return ctx.cloudSync.sync();
+  }));
+  register(CHANNELS.disconnectCloud, guard(() => {
+    if (!ctx.cloudSync) throw new Error('Cloud connection is unavailable.');
+    return ctx.cloudSync.disconnect();
+  }));
 
   register(CHANNELS.companySnapshot, guard(() => companyService.companySnapshot()));
   register(CHANNELS.registerCompany, guard((_event, request) => companyService.registerCompany(request)));

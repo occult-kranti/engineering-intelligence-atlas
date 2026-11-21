@@ -46,7 +46,7 @@ try {
     checks.push({workspaceView:'ceo-portfolio',viewport:viewport.width});
     const portfolioScreenshot=`ceo-portfolio-${viewport.width}.png`;await page.screenshot({path:path.join(output,portfolioScreenshot),fullPage:true});screenshots.push(portfolioScreenshot);
     await page.locator('#ceo-toggle').click();
-    for(const workspaceTab of ['chat','blueprint','whiteboard']) {
+    for(const workspaceTab of ['chat','blueprint','whiteboard','decisions']) {
       await page.locator(`[data-workspace-tab="${workspaceTab}"]`).click();
       assert.equal(await page.locator(`#workspace-panel-${workspaceTab}`).isVisible(),true);
       assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth+1),false,`Workspace ${workspaceTab} overflows at ${viewport.width}`);
@@ -68,6 +68,10 @@ try {
     await page.locator('#run-start').click();assert.match(await page.locator('#run-status').innerText(),/positive provider pricing/);
     checks.push({flow:'project creation and unpriced cloud-run rejection',viewport:viewport.width});
     await page.close();
+  }
+  for(const viewport of [{width:1280,height:720},{width:1024,height:768},{width:900,height:700}]) {
+    const page=await browser.newPage({viewport,reducedMotion:'reduce'});await page.addInitScript(`(${installRendererFixture.toString()})(window)`);await page.goto(base,{waitUntil:'networkidle'});await page.locator('#chat-send').waitFor({state:'visible'});
+    const composer=await page.locator('#chat-message').boundingBox();const send=await page.locator('#chat-send').boundingBox();assert(composer&&send,'Donna composer and send action have layout bounds');assert(composer.y>=0&&send.y+send.height<=viewport.height,`Donna send action below first viewport at ${viewport.width}×${viewport.height}: ${send.y+send.height}`);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1),false,'laptop command deck has no horizontal overflow');checks.push({flow:'first-viewport Donna composer',viewport,composer,send});const screenshot=`composer-${viewport.width}x${viewport.height}.png`;await page.screenshot({path:path.join(output,screenshot),fullPage:false});screenshots.push(screenshot);await page.close();
   }
   const starter=await browser.newPage({viewport:{width:1440,height:1000}});await starter.addInitScript(`(${installRendererFixture.toString()})(window);window.desktopBridge.transport='public-preview';`);await starter.goto(base,{waitUntil:'networkidle'});assert.match(await starter.locator('#bridge-notice').innerText(),/data is an example workspace/);assert.equal(await starter.locator('#chat-send').isDisabled(),true);await starter.close();
   const preview=await browser.newPage({viewport:{width:1440,height:1000}});preview.on('pageerror',error=>errors.push({surface:'unconnected-preview',message:error.message}));await preview.goto(base,{waitUntil:'networkidle'});assert.equal(await preview.locator('#bridge-notice').isVisible(),true);await preview.screenshot({path:path.join(output,'preview-unconnected-1440.png'),fullPage:true});await preview.close();

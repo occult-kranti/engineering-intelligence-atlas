@@ -67,7 +67,7 @@ export function createShellWindow(): BrowserWindow {
     height: 840,
     minWidth: 760,
     minHeight: 600,
-    title: 'Research Director Desktop',
+    title: 'Daftar',
     backgroundColor: '#f6f7f4',
     webPreferences: {
       preload: path.join(__dirname, '..', 'preload', 'index.js'),

@@ -62,7 +62,7 @@ export interface OfficeExternalAttempt {
   costStatus: 'reserved' | 'observed' | 'estimated'; settled: boolean; createdAt: string; updatedAt: string;
 }
 export interface OfficeChatMessage {
-  id: string; role: 'user' | 'assistant' | 'system'; content: string; createdAt: string; source: 'user' | 'local' | 'provider';
+  id: string; role: 'user' | 'assistant' | 'system'; content: string; createdAt: string; source: 'user' | 'local' | 'provider' | 'cloud';
 }
 export interface OfficeChatThread { id: string; scope: OfficeScope; messages: OfficeChatMessage[] }
 export interface OfficeGoalStep { id: string; title: string; employeeId: string; goal: string; dependsOn: string[]; serviceContractId?: string | null; knowledgeTransferIds?: string[] }
@@ -107,6 +107,46 @@ export interface OfficePortfolio {
   transfers: PortfolioKnowledgeTransfer[]; roadmap: PortfolioRoadmapItem[];
   recommendations: Array<{ employeeId: string; serviceId: string; reason: string }>;
 }
+export type DecisionPanelRoleKey = 'engineering' | 'frontend-extensions' | 'backend' | 'database-cache' | 'github-release'
+  | 'qa' | 'security' | 'research-knowledge' | 'knowledge' | 'design-architecture' | 'math-geometry' | 'music-arts'
+  | 'hackathon' | 'newton' | 'tesla' | 'research-skeptic' | 'resonance-advisor' | 'paired-research' | 'figma-design-systems' | 'directory-steward';
+export interface DecisionPanelMember {
+  employeeId: string; roleKey: DecisionPanelRoleKey; serviceContractId: string | null; selection: 'reused' | 'hired';
+}
+export interface DecisionPanelDecision {
+  id: string; round: number; verdict: 'accepted' | 'revise' | 'defer' | 'reject';
+  summary: string; evidence: string[]; createdAt: string;
+}
+export interface DecisionPanel {
+  id: string; companyId: string; scope: { kind: 'company' | 'group' | 'office' | 'department'; id: string };
+  title: string; task: string; focus: 'software' | 'design' | 'research' | 'data';
+  status: 'draft' | 'running' | 'review' | 'decided' | 'paused'; members: DecisionPanelMember[];
+  round: number; maxRounds: number;
+  /** maxUsd bounds the entire panel; maxTokens and maxMinutes bound each request. */
+  limits: { maxUsd: number; maxTokens: number; maxMinutes: number };
+  goalIds: string[]; roadmapItemIds: string[]; decisions: DecisionPanelDecision[];
+  createdAt: string; updatedAt: string;
+}
+export type AuthorityCapability = 'team.manage' | 'work.manage' | 'knowledge.manage' | 'layout.manage' | 'roadmap.manage' | 'cache.manage' | 'authority.manage' | 'provider.run' | 'github.read_repository' | 'github.publish_changes';
+export interface AuthorityScope { kind: 'company' | 'office' | 'department' | 'employee' | 'goal'; id: string }
+export interface AuthorityGrant {
+  id: string; employeeId: string; scope: AuthorityScope; preset: 'full' | 'partial'; capabilities: AuthorityCapability[];
+  type: 'permission' | 'promotion'; title: string | null; issuer: 'owner' | 'donna';
+  grantedAt: string; expiresAt: string; revokedAt: string | null; reason: string;
+  revokedBy: string | null; revokeReason: string | null; parentGrantIds: string[];
+}
+export interface AuthorityLedgerEntry {
+  id: string; at: string; actor: string; action: string; targetId: string; scope: AuthorityScope | null;
+  summary: string; grantId: string | null; outcome: 'applied' | 'denied';
+}
+export interface OfficeIndexEntry {
+  id: string; entityId: string; kind: 'company' | 'office' | 'department' | 'employee' | 'goal' | 'job' | 'knowledge' | 'artifact' | 'roadmap' | 'operation' | 'authority';
+  title: string; companyId: string | null; parentId: string | null; ownerEmployeeId: string | null;
+  status: string; updatedAt: string; relatedIds: string[];
+}
+export interface OfficeAuthority {
+  schemaVersion: 1; managedEmployeeIds: string[]; grants: AuthorityGrant[]; ledger: AuthorityLedgerEntry[]; index: OfficeIndexEntry[];
+}
 export interface OfficeSnapshot {
   schemaVersion: 1; activeCompanyId: string;
   companies: OfficeCompany[]; offices: OfficeLocation[]; departments: OfficeDepartment[]; employees: OfficeEmployee[];
@@ -117,6 +157,8 @@ export interface OfficeSnapshot {
   policy?: OfficePolicy; budget?: OfficeBudget; externalAttempts?: OfficeExternalAttempt[];
   chatThreads?: OfficeChatThread[]; goals?: OfficeGoal[]; checkpoints?: OfficeCheckpoint[]; blueprints?: OfficeBlueprint[];
   portfolio?: OfficePortfolio;
+  decisionPanels?: DecisionPanel[];
+  authority?: OfficeAuthority;
 }
 export type OfficeAction = 'create_company' | 'select_company' | 'import_repositories' | 'import_github_account'
   | 'create_office' | 'create_department' | 'hire_employee' | 'pause_employee' | 'resume_employee' | 'fire_employee'
@@ -129,7 +171,9 @@ export type OfficeAction = 'create_company' | 'select_company' | 'import_reposit
   | 'pause_goal' | 'resume_goal' | 'checkpoint_goal' | 'tick_goals' | 'ensure_blueprint' | 'save_blueprint' | 'upsert_room'
   | 'place_employee' | 'upsert_whiteboard' | 'record_github_activity' | 'github_operation'
   | 'configure_ceo' | 'upsert_portfolio_group' | 'ensure_shared_services' | 'optimize_portfolio'
-  | 'contract_service' | 'share_knowledge' | 'upsert_roadmap_item' | 'schedule_repository_reviews';
+  | 'contract_service' | 'share_knowledge' | 'upsert_roadmap_item' | 'schedule_repository_reviews'
+  | 'convene_panel' | 'start_panel_round' | 'record_panel_decision' | 'pause_panel' | 'resume_panel' | 'apply_remote_command'
+  | 'grant_authority' | 'promote_employee' | 'revoke_authority' | 'set_authority_enforcement' | 'apply_employee_command' | 'rebuild_office_index' | 'rename_company' | 'check_worker_authority';
 /** Every action has a fixed Rust-side schema; unknown fields are never executed. */
 export interface OfficeCommand { action: OfficeAction; [key: string]: unknown }
 export interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: string; code?: string }

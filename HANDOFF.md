@@ -1,8 +1,8 @@
-# Atlas maintainer handoff
+# Daftar maintainer handoff
 
 ## Product contract
 
-Atlas is an owner-operated personal agent office. Donna is the single user-facing
+Daftar is an owner-operated personal agent office. Donna is the single user-facing
 coordinator. The office map and whiteboard expose the same company, employee,
 goal, job and artifact records as the chat. Ordinary hiring, layout, queue, cache,
 policy and schedule changes are deterministic local operations and do not consume
@@ -10,13 +10,13 @@ provider tokens.
 
 The original research atlas, 109 role charters, 15 skill packages, local model
 manager, project runner and Android source remain available. The architecture is
-Electron/TypeScript with a Rust state and control core, plus the separately
-deployable React/TypeScript/MySQL web runtime.
+Electron/TypeScript with a Rust state and control core, plus the deployed owner-private Sites/Vinext/D1 companion. The earlier
+React/TypeScript/MySQL runtime remains available as a separate deployment option.
 
 ## Install a published build and restore personal work
 
 The [latest verified release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/latest)
-contains an unsigned Linux x86_64 AppImage and an Android debug APK. The mobile
+contains an unsigned Linux x86_64 AppImage, a VS Code VSIX, and an Android debug APK. The mobile
 shell carries the research atlas; the complete personal Office runtime is in the
 desktop application. Neither download contains personal company records or keys.
 
@@ -33,7 +33,7 @@ python3 scripts/restore-personal-workspace.py \
 The destination is the application directory, not its `company` subdirectory.
 Existing state is preserved unless `--replace` is specified; replacement creates
 a timestamped backup. The tool verifies checksums and references before writing.
-Reopen Atlas, reconnect credentials in Settings and review the paused schedules.
+Reopen Daftar, reconnect credentials in Settings and review the paused schedules.
 The archive's `PORTFOLIO.md`, `companies/` records and `RESTORE.md` provide readable
 roadmaps and detailed restoration instructions.
 
@@ -64,6 +64,16 @@ are never copied into `docs/`. The public desktop starter preview is compiled
 from the actual renderer and contains only the isolated starter workspace.
 Private company catalogs and credentials must never be copied into that preview.
 
+## Private website and VS Code
+
+Open [Daftar](https://atlas-command-office.whatswrong-inc.chatgpt.site) and sign in with ChatGPT. The public GitHub Pages view links to this private runtime; provider keys never enter the static website.
+
+The website saves its office snapshot and cloud conversation in D1. Native repository work, job execution and files remain on the laptop. Restore the supplied personal workspace before first pairing so a fresh empty desktop cannot overwrite an existing cloud portfolio. Create a desktop pairing on the website, paste it into Settings → Account & cloud connection, and choose **Sync now**. Connection itself does not upload or start an unattended loop. A conflict preserves both sides until reviewed.
+
+Install `atlas-office-0.5.0.vsix` through VS Code → Extensions → Install from VSIX. Run **Daftar: Connect to Desktop** for the local application, or **Daftar: Connect to Signed-in Website** for cloud chat and queued controls. Local pairing links expire after five minutes and may be consumed once. Website devices can be revoked from the signed-in page.
+
+Cloud model calls use a separate atomic admission ledger funded by an allocation held in the native global budget. Do not release that allocation while the cloud runtime can still spend it. Unknown provider outcomes keep their reservations. [Full protocol and verification](project/EDITOR_AND_CLOUD.md).
+
 ## Credentials and private GitHub
 
 Use Settings → provider credentials → Import file, or the password input. The
@@ -92,6 +102,7 @@ non-force update. A failed/ambiguous write is not automatically retried.
 - `desktop-shell/src/main/globalBudget.ts` shares the same admission ledger with the older local Project runner.
 - `desktop-shell/src/main/personalDashboard.ts` serves the same renderer on `127.0.0.1` with expiring one-use launch links, authenticated cookies and strict host/origin checks. Closing the desktop app closes this endpoint.
 - `tools/atlas-mcp.mjs` exposes stdio MCP operations over the same Rust core. Set `ATLAS_STATE_DIR` to the desktop's actual `userData/company` directory to share one workspace. Its default headless directory is separate.
+- `cloud-workspace/` is the deployed private website with ChatGPT sign-in, D1 persistence, bounded cloud chat and the desktop command relay.
 - `site-source/api/` is a separate authenticated web runtime, requiring the database/environment described in [site-source/README.md](site-source/README.md). GitHub Pages cannot run this server.
 
 ## MCP setup
@@ -170,6 +181,8 @@ See [validation](project/VALIDATION.md), [panel decisions](project/PANEL_DECISIO
 never report skipped live-service checks as passing.
 
 ## CEO portfolio application and reusable services
+
+The current [management guide](project/DAFTAR_MANAGEMENT.md) documents timed scope grants, temporary promotions, Donna's bounded delegation, the private application directory and Figma client connections. Expired or revoked grants do not restore a managed employee's legacy permissions. Renew the intended scoped grant from CEO controls when a time-limited assignment needs to continue.
 
 The additive native `portfolio` record holds CEO settings, application groups, services, contracts, granted knowledge references and owned roadmap items. Repository companies remain immutable source identities. `optimize_portfolio` creates the common service office, reuses existing matching employee IDs and contracts them to explicitly grouped recipients. `pauseRedundant:true` pauses only idle duplicate specialties without owned work; the operation never deletes employee or evidence records. A repeated operation preserves revoked/paused contracts and existing identities.
 

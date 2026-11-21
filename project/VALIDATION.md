@@ -1,5 +1,92 @@
 # Integrated validation record
 
+## Current connected release draft · v0.5.0
+
+Checkpoint: **20 November 2026 (America/New_York)**. Evidence timestamps retain
+UTC. The checks below are observed component and protocol results; **final
+combined CI, installed-package acceptance, final browser inspection and 0.5.0
+release publication are still pending**. Historical v0.4.x receipts below do not
+certify this candidate.
+
+| Current gate | Observed result | Evidence / practical limit |
+| --- | --- | --- |
+| Rust control core | **70 passed** | Native grants, parent expiry/revocation, scope checks, migrations, remote receipts and full cloud-message import; [native source](../native-core/src/) |
+| Desktop TypeScript/build and renderer compilation | **Passed** | Main, preload, shared types and renderer compile; installed application behavior is a separate gate |
+| Desktop service tests | **375 passed / 26 files** | Includes sync, real native contract, worker admission, accounting and profile migration; [tests](../desktop-shell/tests/) |
+| Real JS ↔ Rust cloud contract | **3 passed** | Canonical hash agreement and durable cloud message import without provider dispatch; included in the desktop total, not added again |
+| Renderer behavior | **187 assertions passed** | Synthetic pure-DOM behavior including timed authority, delegation controls and existing office/decision flows; not visual browser evidence |
+| Static site typecheck and tests | **Passed; 75 tests passed, 22 skipped** | Nine passing and four skipped test files; skips retain their integration-environment limits |
+| Static build integrity | **169 files checked** | Current public build integrity; remote Pages/browser acceptance remains pending |
+| Cloud API and directory tests | **28 passed: 21 API + 7 directory** | [Cloud tests](../cloud-workspace/tests/); admission, scoped data and directory projection checks |
+| Cloud TypeScript and build | **Passed** | Strict checking and Vinext build, including `/` and `/applications`; source/build success is distinct from browser sign-in acceptance |
+| VS Code client and package | **11 client tests passed; syntax and VSIX packaging passed** | [Extension](../vscode-extension/); installed Extension Host activation awaits CI |
+| Python preparation, restore and directory | **25 passed, including 10 indexer tests** | [Indexer tests](../scripts/test_index_github_applications.py): bounded reads, global deduplication/cap, timeout, cache freshness and atomic private checkpoints |
+| MCP protocol and scale/query boundaries | **26 passed** | Fifteen existing plus eleven new checks: successful large-response compaction, 16 MiB native ceiling, complete bounded metadata pagination, stale-cursor detection and no mutation/replay during reads |
+| Live large-state MCP protocol | **Passed** | Actual approximately 1.9 MiB native state returned a successful compact JSON-RPC response; read-only metadata pagination covered the selected collection exactly once, with no mutation or provider call; private record counts omitted |
+| OpenPencil adapter | **6 boundary tests and 4 real local operations passed** | Pinned `@open-pencil/cli` 0.16.0; [receipt](../design-tools/examples/receipt.json), one page/12 nodes, `.fig` roundtrip and SVG export; zero network attempts/provider calls |
+| OpenPencil artifact integrity | **3 example sizes and SHA-256 hashes matched** | Published `.fig`, inspection JSON and SVG match the receipt; import into the Figma application remains unverified |
+| Security curriculum routing | **15 role-loader tests passed; 46 local links checked** | Updated Security role loads through the actual compiled loader; three synthetic scope/expiry cases and missing-telemetry expectation checked; no upstream lab run |
+| Native Donna planning | **Seven provider jobs completed with retained artifacts** | Two roadmaps, two independent experts plus Donna synthesis, and two Daftar reviews; [sanitized usage](claude-usage.json), [worker ledger](WORKER_LEDGER.md) |
+| Hosted Donna reply | **One successful request with observed usage** | 7,800 input/654 output tokens, $0.022140; two earlier preflight reservations remain uncertain, not successful replies |
+| Timed portfolio management setup | **Applied with retained authority history** | Owner-authorized 24-hour Donna grants and two child promotions; receipt `2026-11-21T02:32:31.533Z`; zero provider calls, no private catalog enumeration here |
+
+These totals record their named suites, not a sum of independent guarantees.
+The role-loader and native-contract checks overlap the desktop suite. Source
+changes after a component checkpoint require the affected gate to run again.
+
+### Live deployed API ↔ desktop/native protocol
+
+**Passed at `2026-11-21T02:33:46.715Z`** (20 November, New York), using the
+deployed API, production `CloudSyncService` and the real compiled Rust binary.
+The owner-retained protocol receipt records:
+
+- One queued command, **one native effect**, and a completed server acknowledgment.
+- **Four cloud messages imported** on the first sync; **zero duplicate imports**
+  on the second sync, with no pending commands afterward.
+- A saved native brief visible through the hosted chat GET endpoint, confirming
+  the native-to-cloud direction for the tested scope.
+- Matching final native/cloud projection hashes and successful private
+  application-directory seeding, with catalog records omitted from this report.
+- **Zero provider calls** during the synchronization test.
+
+The production deployment used hosted source revision
+`1f850c42b14739ce62d3b9b6562680bcdc5afdbd`, completed at
+`2026-11-21T02:33:20Z`. The protocol harness used AES-GCM test storage, not the
+installed desktop's OS keychain. Its verification device was revoked and the
+writer assignment released after the check. This does not establish a complete
+replacement-device recovery exercise or a production browser sign-in review.
+
+Supported exact-scope company/office/department/employee chat is implemented in
+both directions through explicit sync. Full native threads are projected; cloud
+messages have stable IDs, provenance and durable import receipts. The final
+page cursor is persisted. Oversized snapshots fail before upload rather than
+truncating content. Group-scoped cloud messages remain hosted and are reported
+as skipped. Scope, Unicode/size and replay regressions are local tests; the live
+receipt establishes the particular path exercised above.
+
+### Portable evidence after restore
+
+The director’s real private export/restore rehearsal exposed three panel evidence paths that changed with the destination directory and content-hash filenames. The TypeScript and Rust cloud projections now replace only structured absolute local evidence references with an explicit omission marker. Authored chat, decision summaries, HTTPS sources and relative references remain exact. A real export→restore integration test retains the artifact bytes and proves that a Rust transaction accepts the pre-restore TypeScript hash. The actual owner workspace and restored candidate also matched after this correction, with no provider calls.
+
+### Pending final acceptance
+
+| Gate | Current boundary |
+| --- | --- |
+| Combined candidate CI and release | Pending exact-candidate remote run, release job and published tag |
+| Packaged desktop activation | Smoke harness exists; real installed launch, native operation and OS-keychain behavior still need their own receipt |
+| Installed VSIX activation | Isolated installed-extension harness exists; actual Extension Host acceptance awaits CI |
+| Current browser/visual sweep | Pending completed cloud/public/desktop browser checks and review of the resulting current screenshots |
+| Owner sign-in UI and writer recovery | API protocol passed; browser interaction and replacement-writer recovery remain separate checks |
+| Downloaded 0.5.0 assets and restore | Pending published binaries, downloaded hashes and current portable restore evidence |
+
+The observed usage checkpoint is **$0.776748 native + $0.022140 cloud =
+$0.798888**, with **$0.285266 retained uncertainty**, for **$1.084154 conservative
+usage accounting against $100**. The $5 external cloud allocation is reserved
+capacity inside that ceiling, not additional spend. The two new Donna goals each
+had a $20 cap and together used $0.093502. See [Claude usage](CLAUDE_USAGE.md).
+
+## Historical local checkpoint · v0.4.x
+
 Local validation checkpoint: 20 November 2026 (America/New_York). Remote publication update: 21 November 2026 (UTC). This records executed checks and separates local results from remote publication evidence.
 
 | Gate | Result | Scope |
@@ -76,7 +163,12 @@ The downloaded [Pages evidence archive](https://github.com/occult-kranti/enginee
 - Unsigned Linux x86_64 development build; no credentials or private portfolio state embedded.
 - Personal state and included managed artifacts are exported separately for the owner, with checksums and a portable restore tool.
 
-## Remaining verification boundaries
+## Historical verification boundaries · v0.4.x
+
+The following paragraphs preserve the limits at the historical v0.4.x
+checkpoint. The current hosted deployment, approved provider rounds and tested
+sync path are recorded above; the older absence of hosted execution is not the
+current 0.5.0 implementation status.
 
 Local Chromium could not start because its required Unix socket was denied. The final remote Pages workflow completed browser smoke, offline and blueprint geometry checks, captured 60 screenshots and passed 62 route/reload checks. The director and designer then inspected the actual final screenshots and the deployed public flows described above. Pure-DOM assertions remain distinct from this observed browser evidence.
 
@@ -101,7 +193,7 @@ The integrated rebuild was published to `main` at [6447754](https://github.com/o
 
 The first [Verify run 44846291141](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44846291141) remains the historical record of the Android setup failure; the successful corrected run above supersedes its pending Android status. These results record the v0.4.0 checkpoint only. Subsequent visual polish, expanded screenshot coverage and later releases require their own observed results. The local Linux artifact remains unsigned.
 
-## Review outcomes
+## Historical review outcomes · v0.4.x
 
 Independent reviews fixed artifact-cache tampering, unknown USD/token accounting, terminal dependencies, paused schedules, exact catalog pagination, stale-head publication, embedded credential rejection, concurrent HTTP startup, review-mode goal approval, fresh-install registration state, custom-model pricing, shared-service revocation and global conversation isolation. All accepted corrections were tested before this checkpoint.
 

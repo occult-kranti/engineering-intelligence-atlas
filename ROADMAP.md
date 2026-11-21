@@ -1,17 +1,35 @@
-# Atlas product roadmap
+# Daftar product roadmap
 
 This file distinguishes implemented behavior from deployment and validation work.
 The detailed worker asks and returns are in [the shared ledger](project/WORKER_LEDGER.md),
 with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
-## Current release: personal agent office
+## Connected office 0.5.0
+
+Donna completed two real Claude roadmap requests, a three-request expert panel, and two further reviews for Daftar management and its application directory. Their recommendations are accepted as planning evidence; release checks have separate receipts. The current delivery adds adaptive panels, five reusable research lenses, a VS Code client, a private signed-in website, explicit conflict-aware desktop sync, and the shared working-studio redesign.
+
+| Outcome | Owner | Current acceptance |
+| --- | --- | --- |
+| Decision panel DAG and research staff reuse | Donna / Research & Knowledge | Real provider artifacts, native lifecycle tests, whole-panel budget and explicit evidence decision |
+| Thin VS Code client | Platform engineering | Packaged VSIX, protocol tests; installed-host gate recorded in validation |
+| Private website and saved cloud chat | Cloud platform | Deployed owner-private Sites app, D1 migrations, server API and live Claude handoff |
+| Explicit desktop communication | Platform engineering / QA | One writer, compare-and-set snapshots, native idempotency receipts, preserved conflicts, explicit sync |
+| Compact shared studio | Design Studio / QA | One composer, hierarchy, blueprint, ownership whiteboard, decision room, laptop and mobile captures |
+| Timed permissions and promotions | Donna / Security | Scope, expiry, live parent revocation, default-deny managed policy, native side-effect checks and cross-office regression |
+| Private application catalog | Directory steward | Recorded repository/Site sources, separate dates, unconfirmed associations, revision checks, bounded URL validation |
+| Figma and OpenPencil handoff | Design interoperability lead | Official per-client authentication path; real bounded HTML → `.fig` → SVG smoke with no network or provider calls |
+| Security learning reference | Shared Security specialist | Source-reviewed Clouds Against Humanity guide, three beginner primers, explicit lab status and synthetic access-control exercise |
+
+See [connected release evidence](project/CONNECTED_RELEASE.md), [editor/cloud setup](project/EDITOR_AND_CLOUD.md), [panel design](project/DECISION_PANELS.md) and [management controls](project/DAFTAR_MANAGEMENT.md).
+
+## Earlier accepted baseline
 
 | Area | Implemented behavior | Acceptance evidence |
 | --- | --- | --- |
 | First company | GitHub employee verified and registered Engineering Intelligence Atlas through the local MCP server | [Registration receipt](project/MCP_REGISTRATION.json) |
 | Company portfolio | Public account discovery; authenticated owner-only public/private import; per-company office, departments and permanent role records | Importer tests, native provenance/hierarchy tests; private account state is excluded from this repository |
 | CEO and shared services | Explicit company groups, reusable employee IDs, scoped contracts, granted knowledge references, company/group/global roadmaps and department ownership | 44 native tests; private owner plan applied; 125 renderer checks |
-| Role and reference routing | 16 compact role briefs, dedicated guides, task packets and bounded samples; only selected role context enters a job | Claude-created loader reviewed and tested; role path/privacy checks |
+| Role and reference routing | 21 compact role briefs, dedicated guides, task packets and bounded samples; only selected role context enters a job | Claude-created loader reviewed and tested; role path/privacy checks |
 | Parallel maintenance | Two worker slots with atomic reservations; commit-pinned GitHub review schedules and preserved proposal handoffs | Worker, maintenance and post-generation capability-revocation regressions |
 | Donna workspace | One chat surface with company/office/department/employee scope; local plans are labeled separately from provider replies | Renderer behavior checks and native chat provenance tests |
 | Office blueprint | Persistent rooms, employee desks, keyboard/pointer placement, employee selection and accessible list alternatives | Blueprint reference validation and renderer tests |

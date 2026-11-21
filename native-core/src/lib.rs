@@ -527,6 +527,11 @@ pub fn execute(request: Request) -> Result<Snapshot> {
         office_changed |= snapshot.office.as_mut().unwrap().expire_leases();
         office_changed |= snapshot.office.as_mut().unwrap().migrate_governance()?;
         office_changed |= snapshot.office.as_mut().unwrap().migrate_portfolio();
+        office_changed |= snapshot
+            .office
+            .as_mut()
+            .unwrap()
+            .refresh_authority_index()?;
     }
     match request.command.as_str() {
         "snapshot" => {}

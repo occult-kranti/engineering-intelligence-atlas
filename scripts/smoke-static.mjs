@@ -121,6 +121,17 @@ try {
     await page.locator('#ceo-toggle').click();
     await page.locator('#ceo-panel').waitFor({ state: 'visible' });
     await capture('portfolio', 'ceo', true);
+    await page.locator('#ceo-authority-editor > summary').click();
+    await page.locator('#authority-grant-form').waitFor({ state: 'visible' });
+    assert(await page.locator('#authority-grant-submit').isDisabled(), 'Public management preview must remain read only.');
+    assert(await page.locator('#authority-grants .authority-grant').count() > 0, 'Management preview should expose the synthetic timed grant history.');
+    await capture('management', 'ceo', true);
+    await page.locator('#authority-search').fill('Donna');
+    assert(await page.locator('#authority-index .authority-index-row').count() > 0, 'Management directory should search saved employee names.');
+    await page.locator('#authority-search').fill('no-matching-example-record');
+    assert.equal(await page.locator('#authority-index .authority-index-row').count(), 0, 'Management search must not leave unrelated records visible.');
+    await page.locator('#authority-search').fill('');
+    await page.locator('#ceo-authority-editor > summary').click();
     await page.locator('#ceo-toggle').click();
     await page.locator('#workspace-policy > summary').click();
     await capture('budget-autonomy', 'workspace', true);
@@ -132,6 +143,20 @@ try {
       await page.locator(`#office-panel-${tab}`).waitFor({ state: 'visible' });
       await capture(tab, 'office-tools', true);
     }
+    await context.close();
+  }
+  // A brief must be reachable in the first laptop viewport, without scrolling
+  // past the scope controls. These sizes cover the new compact command deck.
+  for (const viewport of [{width:1280,height:720},{width:1024,height:768}]) {
+    const context=await browser.newContext({viewport,reducedMotion:'reduce'});
+    const page=await context.newPage();
+    await page.goto(`${base}desktop-preview/chrome.html?workspace=chat#office`,{waitUntil:'networkidle'});
+    await page.locator('#chat-send').waitFor({state:'visible'});
+    const box=await page.locator('#chat-send').boundingBox();
+    assert(box&&box.y>=0&&box.y+box.height<=viewport.height,`Donna composer must fit first laptop viewport ${viewport.width}: ${JSON.stringify(box)}`);
+    const filename=`workspace-first-brief-${viewport.width}.png`;
+    await page.screenshot({path:join(screenshotRoot,filename)});
+    screenshots.push({file:filename,surface:'workspace',route:'first-brief',width:viewport.width});checked++;
     await context.close();
   }
   writeFileSync(join(screenshotRoot, 'index.json'), JSON.stringify({ generatedAt: new Date().toISOString(), screenshots, checks: checked, data: 'Public isolated starter only; no private user data', limitations: 'Browser-rendered shell; native OS keychain and desktop window controls are not exercised.' }, null, 2) + '\n');

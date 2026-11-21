@@ -81,11 +81,11 @@ function CorpusNote() {
 export function SideRail({ route }: { route: RouteId }) {
   return (
     <aside className="atlas-sidebar sticky top-0 hidden h-screen w-[248px] shrink-0 flex-col overflow-y-auto border-r border-[hsl(var(--line))] bg-[hsl(var(--paper))] lg:flex">
-      <a href="#/workspace" className="flex items-center gap-3 px-5 py-6" aria-label="Atlas — company workspace">
+      <a href="#/workspace" className="flex items-center gap-3 px-5 py-6" aria-label="Daftar — company workspace">
         <BrandMark />
         <span className="leading-tight">
-          <span className="block text-xl font-extrabold tracking-tight">Atlas<span className="atlas-brand-dot">.</span></span>
-          <span className="block text-[10px] font-medium uppercase tracking-[.14em] text-[hsl(var(--ink-soft))]">Research Director</span>
+          <span className="block text-xl font-extrabold tracking-tight">Daftar<span className="atlas-brand-dot">.</span></span>
+          <span className="block text-[10px] font-medium uppercase tracking-[.14em] text-[hsl(var(--ink-soft))]">Personal agent office</span>
         </span>
       </a>
       <div className="atlas-company-chip"><span className="employee-avatar">EI</span><div><strong>Engineering Intelligence</strong><span>Company workspace</span></div></div>
@@ -94,6 +94,7 @@ export function SideRail({ route }: { route: RouteId }) {
         <ChapterList route={route} />
       </nav>
       <div className="mt-auto pb-6">
+        <a className="atlas-release-link" href="https://atlas-command-office.whatswrong-inc.chatgpt.site" target="_blank" rel="noreferrer">Sign in to office</a>
         <a className="atlas-release-link" href="https://github.com/occult-kranti/engineering-intelligence-atlas/releases/latest" target="_blank" rel="noreferrer">Desktop releases <ArrowUpRight size={15}/></a>
         <CorpusNote />
       </div>
@@ -120,9 +121,9 @@ export function MobileTopbar({ route }: { route: RouteId }) {
   return (
     <div className="sticky top-0 z-40 border-b border-[hsl(var(--line))] bg-[hsl(var(--paper))] lg:hidden">
       <div className="flex items-center justify-between gap-2 px-4 py-2">
-        <a href="#/workspace" className="flex min-h-[44px] items-center gap-2" aria-label="Atlas — company workspace">
+        <a href="#/workspace" className="flex min-h-[44px] items-center gap-2" aria-label="Daftar — company workspace">
           <BrandMark size={24} />
-          <span className="text-sm font-extrabold tracking-tight">Atlas · Research Director</span>
+          <span className="text-sm font-extrabold tracking-tight">Daftar · Agent office</span>
         </a>
         <button
           type="button"

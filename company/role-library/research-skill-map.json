@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "integratedAt": "2026-11-20",
+  "timezone": "America/New_York",
+  "readingStatus": "Enabled skill instructions and the named references were read; original external texts remain task-specific source leads unless an evidence record states otherwise.",
+  "roles": [
+    {
+      "roleKey": "newton",
+      "skillName": "newton-analysis-synthesis",
+      "cloudPackage": "c32/6ab167744cd481919333118f9f25a3dc/newton-analysis-synthesis",
+      "bundledBrief": "company/role-library/newton.md",
+      "runtimeSelection": "assignmentKey -> bounded index brief -> exact-context prompt hash",
+      "authority": "descriptive; no capability grant"
+    },
+    {
+      "roleKey": "tesla",
+      "skillName": "tesla-mechanism-resonance",
+      "cloudPackage": "c32/6ab167e59d648191af3a345b31efd208/tesla-mechanism-resonance",
+      "bundledBrief": "company/role-library/tesla.md",
+      "runtimeSelection": "assignmentKey -> bounded index brief -> exact-context prompt hash",
+      "authority": "descriptive; no capability grant"
+    },
+    {
+      "roleKey": "research-skeptic",
+      "skillName": "historical-physics-panel",
+      "cloudPackage": "c32/6ab1f0bc6b14819183a4ad9f42da820c/historical-physics-panel",
+      "bundledBrief": "company/role-library/research-skeptic.md",
+      "runtimeSelection": "assignmentKey -> bounded index brief -> exact-context prompt hash",
+      "authority": "descriptive; no capability grant"
+    },
+    {
+      "roleKey": "resonance-advisor",
+      "skillName": "resonance-research-advisor",
+      "cloudPackage": "c32/6ab848296eb48191b758a0999ac9ec22/resonance-research-advisor",
+      "bundledBrief": "company/role-library/resonance-advisor.md",
+      "runtimeSelection": "assignmentKey -> bounded index brief -> exact-context prompt hash",
+      "authority": "descriptive; no capability grant"
+    },
+    {
+      "roleKey": "paired-research",
+      "skillName": "paired-physics-research",
+      "cloudPackage": "c32/6aa703b7e6f48191a700951cb36ce6a2/paired-physics-research",
+      "bundledBrief": "company/role-library/paired-research.md",
+      "runtimeSelection": "assignmentKey -> bounded index brief -> exact-context prompt hash",
+      "authority": "descriptive; no capability grant"
+    }
+  ],
+  "referencesRead": [
+    "newton-analysis-synthesis/references/research.md",
+    "tesla-mechanism-resonance/references/research.md",
+    "historical-physics-panel/references/lenses-and-evidence.md",
+    "resonance-research-advisor/references/contracts.md"
+  ],
+  "claims": [
+    "Historical people are research lenses, not participants.",
+    "Provider/model identity and actual executed evidence are recorded separately.",
+    "Prompt limits bound runtime admission; no measured reasoning-quality improvement is claimed."
+  ]
+}

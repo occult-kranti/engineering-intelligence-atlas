@@ -1,0 +1,29 @@
+{
+  "taskId": "example-directory-steward",
+  "roleKey": "directory-steward",
+  "scope": {
+    "companyId": "example-company",
+    "departmentId": "example-shared-department"
+  },
+  "goal": "Maintain the private application index using authenticated GitHub metadata and explicitly sourced deployment URLs. Keep repository creation, publication and last verification dates distinct. Preserve source provenance, stale results and unknown dates. Check reachability without credentials and never equate a login page or HTTP200 with verified application behavior. Use compare-and-set revisions and retained event history. A partial source failure must not erase records; do not invent application URLs.",
+  "authorization": {
+    "capabilities": [],
+    "maxUsd": 0,
+    "maxTokens": 0,
+    "expiresAt": null
+  },
+  "inputs": [],
+  "acceptance": [
+    "Source provenance present",
+    "No credentials or guessed URLs",
+    "Actual checks distinguished from proposals"
+  ],
+  "expectedPayload": [
+    "proposedEntries",
+    "sourceEvidence",
+    "staleFlags",
+    "checkedLinks",
+    "conflicts",
+    "nextReview"
+  ]
+}

@@ -3,6 +3,7 @@ export function installRendererFixture(target) {
   const copy = (value) => JSON.parse(JSON.stringify(value));
   const at = '2026-11-20T12:00:00.000Z';
   const calls = [];
+  const cloud = {configured:false,connected:false,url:null,revision:null,lastSyncedAt:null,pendingCommands:0,error:null,capability:'snapshot-and-commands',encryptionAvailable:true};
   const projects = [];
   const runs = [];
   const company = {
@@ -14,7 +15,8 @@ export function installRendererFixture(target) {
     usage:{inputTokens:0,outputTokens:0,costUsd:0,runCount:0,completedRuns:0,failedRuns:0,source:'local-project-runs'}, index:null,
   };
   const office = {
-    schemaVersion:1,activeCompanyId:'fixture-company',
+    schemaVersion:1,activeCompanyId:'fixture-company',decisionPanels:[],
+    authority:{schemaVersion:1,managedEmployeeIds:[],grants:[],ledger:[],index:[{id:'company:fixture-company',entityId:'fixture-company',kind:'company',title:'Fixture Engineering',companyId:'fixture-company',parentId:null,ownerEmployeeId:'donna',status:'active',updatedAt:at,relatedIds:[]},{id:'employee:donna',entityId:'donna',kind:'employee',title:'Donna',companyId:null,parentId:null,ownerEmployeeId:null,status:'active',updatedAt:at,relatedIds:[]}]},
     companies:[{id:'fixture-company',name:'Fixture Engineering',repoUrl:'https://github.com/fixture/engineering',status:'active',assistantId:'assistant-company',createdAt:at,source:'fixture',importedAt:null,githubStatus:'unchecked'}],
     offices:[{id:'fixture-office',companyId:'fixture-company',name:'Product studio',status:'active',assistantId:'assistant-office',createdAt:at}],
     departments:[{id:'fixture-department',companyId:'fixture-company',officeId:'fixture-office',name:'Engineering',status:'active',assistantId:'donna',createdAt:at}],
@@ -42,6 +44,24 @@ export function installRendererFixture(target) {
     const base={createdAt:at,updatedAt:at};
     office.lastAction={action:req.action};
     switch(req.action) {
+      case 'grant_authority': case 'promote_employee': {
+        const grant={id:`grant-${id}`,employeeId:req.employeeId,scope:req.scope,type:req.action==='promote_employee'?'promotion':'permission',preset:req.preset,capabilities:req.preset==='full'?['team.manage','work.manage','knowledge.manage','layout.manage','roadmap.manage','cache.manage','authority.manage','provider.run','github.read_repository','github.publish_changes']:req.capabilities,title:req.title||null,issuer:req.issuer,grantedAt:at,expiresAt:req.expiresAt,revokedAt:null,reason:req.reason,revokedBy:null,revokeReason:null};office.authority.grants.push(grant);if(!office.authority.managedEmployeeIds.includes(req.employeeId))office.authority.managedEmployeeIds.push(req.employeeId);office.lastAction={grantId:grant.id};
+        office.authority.ledger.push({id:`authority-${id}`,at,actor:req.issuer,action:req.action,targetId:req.employeeId,scope:req.scope,summary:req.reason,grantId:grant.id,outcome:'applied'});
+        office.authority.index.push({id:`authority:${grant.id}`,entityId:grant.id,kind:'authority',title:grant.title||'Permission grant',companyId:'fixture-company',parentId:req.scope.id,ownerEmployeeId:req.employeeId,status:'active',updatedAt:at,relatedIds:[req.employeeId]});break;
+      }
+      case 'revoke_authority': {const grant=office.authority.grants.find(g=>g.id===req.grantId);grant.revokedAt=at;grant.revokedBy=req.issuer;grant.revokeReason=req.reason;office.authority.ledger.push({id:`authority-${id}`,at,actor:req.issuer,action:req.action,targetId:grant.employeeId,scope:grant.scope,summary:req.reason,grantId:grant.id,outcome:'applied'});break;}
+      case 'set_authority_enforcement': {office.authority.managedEmployeeIds=office.authority.managedEmployeeIds.filter(id=>id!==req.employeeId);if(req.requireGrants)office.authority.managedEmployeeIds.push(req.employeeId);office.authority.ledger.push({id:`authority-${id}`,at,actor:'owner',action:req.action,targetId:req.employeeId,scope:null,summary:req.reason,grantId:null,outcome:'applied'});break;}
+      case 'convene_panel': {
+        const members=req.roleKeys.map(roleKey=>{const employeeId=`panel-${roleKey}`;const existing=office.employees.find(e=>e.id===employeeId);if(!existing)office.employees.push({id:employeeId,name:`Fixture ${roleKey}`,role:roleKey,companyId:req.companyId,officeId:'fixture-office',departmentId:null,kind:'specialist',status:'active',skillPaths:[],...base});return{employeeId,roleKey,serviceContractId:null,selection:existing?'reused':'hired'};});
+        office.decisionPanels.push({id:`panel-${id}`,companyId:req.companyId,scope:req.scope,title:req.title,task:req.task,focus:req.focus,status:'draft',members,round:0,maxRounds:req.maxRounds,limits:{maxUsd:req.maxUsd,maxTokens:req.maxTokens,maxMinutes:req.maxMinutes},goalIds:[],roadmapItemIds:req.roadmapItemIds||[],decisions:[],...base});break;
+      }
+      case 'start_panel_round': {
+        const panel=office.decisionPanels.find(p=>p.id===req.panelId);panel.round++;panel.status='running';const jobIds=[];
+        for(const employeeId of [...panel.members.map(m=>m.employeeId),'donna']){const jobId=`review-${id}-${employeeId}`;jobIds.push(jobId);office.jobs.push({id:jobId,companyId:panel.companyId,officeId:'fixture-office',departmentId:null,employeeId,goal:panel.task,mode:'provider',provider:req.runSettings.provider,model:req.runSettings.model,status:'queued',limits:{...panel.limits},usage:{inputTokens:0,outputTokens:0,costUsd:0},costStatus:'none',reservation:null,artifactUri:null,summary:null,error:null,...base});}
+        const goalId=`panel-goal-${id}`;panel.goalIds.push(goalId);office.goals.push({id:goalId,companyId:panel.companyId,scope:{kind:'company',id:panel.companyId},title:panel.title,description:panel.task,mode:'execute',status:'running',maxIterations:1,iteration:1,jobIds,steps:[],runSettings:req.runSettings,...base});break;
+      }
+      case 'pause_panel': case 'resume_panel': {const panel=office.decisionPanels.find(p=>p.id===req.panelId);panel.status=req.action==='pause_panel'?'paused':panel.round?'running':'draft';break;}
+      case 'record_panel_decision': {const panel=office.decisionPanels.find(p=>p.id===req.panelId);panel.decisions.push({id:`decision-${id}`,round:panel.round,verdict:req.verdict,summary:req.summary,evidence:req.evidence,createdAt:at});panel.status=req.verdict==='revise'?'draft':'decided';break;}
       case 'configure_ceo': Object.assign(office.portfolio.ceo,{enabled:req.enabled,title:req.title,focusGroupId:req.focusGroupId,updatedAt:at});break;
       case 'upsert_portfolio_group': {const group={id:req.id||`group-${id}`,name:req.name,description:req.description||'',companyIds:req.companyIds||[],status:req.status||'active',createdAt:at,updatedAt:at};const index=office.portfolio.groups.findIndex(g=>g.id===group.id);if(index<0)office.portfolio.groups.push(group);else office.portfolio.groups[index]=group;break;}
       case 'ensure_shared_services': prepareSharedServices();break;
@@ -85,6 +105,12 @@ export function installRendererFixture(target) {
   }
   const bridge={
     version:3,
+    cloudStatus:async()=>copy(cloud),
+    configureCloud:async(req)=>{record('configureCloud',req);Object.assign(cloud,{configured:true,connected:true,url:req.url});return{ok:true,status:copy(cloud)};},
+    syncCloud:async()=>{record('syncCloud');Object.assign(cloud,{connected:true,revision:(cloud.revision||0)+1,lastSyncedAt:at,error:null});return{ok:true,status:copy(cloud)};},
+    disconnectCloud:async()=>{record('disconnectCloud');Object.assign(cloud,{configured:false,connected:false,url:null});return{ok:true,status:copy(cloud)};},
+    copyEditorPairing:async()=>{record('copyEditorPairing');return{ok:true,expiresAt:at};},
+    sendCloudChat:async(req)=>{record('sendCloudChat',req);const reply='Fixture Donna cloud reply. No real provider request occurred.';office.chatThreads.push({id:'fixture-cloud-thread',scope:req.scope,messages:[{id:'cloud-user',role:'user',content:req.message,source:'user',createdAt:at},{id:'cloud-assistant',role:'assistant',content:reply,source:'provider',createdAt:at}]});return{ok:true,snapshot:copy(office),reply,jobId:'fixture-cloud-reply'};},
     getSettings:async()=>({runtimeUrl:null}),
     getVaultStatus:async()=>({encryptionAvailable:true,providers:{github:{configured:false,readable:false,updatedAt:null},anthropic:{configured:false,readable:false,updatedAt:null},openai:{configured:false,readable:false,updatedAt:null}}}),
     importCredentialFile:async(provider)=>{record('importCredentialFile',{provider});return{ok:true};},openPersonalDashboard:async()=>{record('openPersonalDashboard');return{ok:true,url:'http://127.0.0.1:9999'};},
@@ -107,5 +133,5 @@ export function installRendererFixture(target) {
     onModeChanged:()=>()=>{},onJobEvent:()=>()=>{},onProjectEvent:()=>()=>{},
   };
   function baseProject(req,at) {return {...req,nodes:req.nodes.map((node,i)=>({...node,id:`n${i}`,dependsOn:node.dependsOn.map(j=>`n${j}`),status:'pending',budget:{maxTokens:4096,maxMinutes:5,maxUsd:.25}})),createdAt:at,updatedAt:at};}
-  target.desktopBridge=bridge;target.__atlasFixture={calls,company,office,projects,runs};return target.__atlasFixture;
+  target.desktopBridge=bridge;target.__atlasFixture={calls,company,office,projects,runs,cloud};return target.__atlasFixture;
 }

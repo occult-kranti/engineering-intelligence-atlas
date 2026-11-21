@@ -12,6 +12,15 @@ pub use governance::*;
 #[path = "portfolio.rs"]
 mod portfolio;
 pub use portfolio::*;
+#[path = "decision_panels.rs"]
+mod decision_panels;
+pub use decision_panels::*;
+#[path = "remote_commands.rs"]
+mod remote_commands;
+pub use remote_commands::*;
+#[path = "authority.rs"]
+mod authority;
+pub use authority::*;
 
 fn id(prefix: &str) -> String {
     format!("{prefix}-{}", Uuid::new_v4())
@@ -318,6 +327,12 @@ pub struct OfficeSnapshot {
     pub blueprints: Vec<Blueprint>,
     #[serde(default)]
     pub portfolio: Portfolio,
+    #[serde(default)]
+    pub decision_panels: Vec<DecisionPanel>,
+    #[serde(default)]
+    pub remote_receipts: Vec<RemoteCommandReceipt>,
+    #[serde(default)]
+    pub authority: OfficeAuthority,
 }
 
 impl OfficeSnapshot {
@@ -541,6 +556,9 @@ impl OfficeSnapshot {
         }
         self.validate_governance()?;
         self.validate_portfolio()?;
+        self.validate_decision_panels()?;
+        self.validate_remote_receipts()?;
+        self.validate_authority()?;
         Ok(())
     }
     pub fn seeded(company: &Company, specialists: &[Employee]) -> Result<Self> {
@@ -572,6 +590,9 @@ impl OfficeSnapshot {
             checkpoints: vec![],
             blueprints: vec![],
             portfolio: Portfolio::default(),
+            decision_panels: vec![],
+            remote_receipts: vec![],
+            authority: OfficeAuthority::default(),
         };
         let stamp = now();
         state.employees.push(Staff {
@@ -617,6 +638,7 @@ impl OfficeSnapshot {
         state.refresh_budget();
         state.last_action = None;
         state.events.clear();
+        state.refresh_authority_index()?;
         Ok(state)
     }
     fn log(&mut self, actor: &str, action: &str, entity: &str, summary: String) {
@@ -1044,6 +1066,7 @@ impl OfficeSnapshot {
     fn eligible(&self, job: &Job, clock: OffsetDateTime) -> std::result::Result<(), String> {
         self.governance_allows_dispatch(job)?;
         self.portfolio_allows_dispatch(job)?;
+        self.authority_allows_dispatch(job, clock)?;
         if self
             .companies
             .iter()
@@ -1177,9 +1200,31 @@ impl OfficeSnapshot {
         changed
     }
     pub fn apply(&mut self, p: &Value) -> Result<()> {
+        let action = string(p, "action", 50)?;
+        let audit = Self::authority_audits_owner_action(&action);
+        if audit {
+            self.authority_prepare_owner_action()?;
+        }
+        self.apply_inner(p)?;
+        if audit {
+            self.authority_record_owner_action(&action, p)?;
+        }
+        self.refresh_authority_index()?;
+        Ok(())
+    }
+    fn apply_inner(&mut self, p: &Value) -> Result<()> {
         self.last_action = None;
         self.expire_leases();
         let action = string(p, "action", 50)?;
+        if self.apply_authority(&action, p)? {
+            return Ok(());
+        }
+        if self.apply_remote_command(&action, p)? {
+            return Ok(());
+        }
+        if self.apply_decision_panel(&action, p)? {
+            return Ok(());
+        }
         if self.apply_governance(&action, p)? {
             return Ok(());
         }
@@ -1187,6 +1232,23 @@ impl OfficeSnapshot {
             return Ok(());
         }
         match action.as_str() {
+            "rename_company" => {
+                let company_id = string(p, "companyId", 100)?;
+                let name = string(p, "name", 200)?;
+                self.company(&company_id)?;
+                self.companies
+                    .iter_mut()
+                    .find(|c| c.id == company_id)
+                    .unwrap()
+                    .name = name;
+                self.log(
+                    "owner",
+                    &action,
+                    &company_id,
+                    "Renamed the company while preserving repository identity and history".into(),
+                );
+                self.last_action = Some(json!({"companyId":company_id,"renamed":true}));
+            }
             "create_company" => {
                 let company_id = self.add_company(
                     &string(p, "name", 200)?,
@@ -1464,6 +1526,15 @@ impl OfficeSnapshot {
                 let input = integer(p, "inputTokens", 0, 1000000)?;
                 let output = integer(p, "maxOutputTokens", 1, 1000000)?;
                 let cost = number(p, "costUsd", 0.0, 1000.0)?;
+                let existing = self
+                    .jobs
+                    .iter()
+                    .find(|job| job.id == job_id)
+                    .ok_or_else(|| fail("NOT_FOUND", "Job not found"))?;
+                if existing.reservation.is_none() {
+                    self.authority_allows_dispatch(existing, OffsetDateTime::now_utc())
+                        .map_err(|reason| fail("AUTHORITY_DENIED", reason))?;
+                }
                 let limits = &self
                     .jobs
                     .iter()
@@ -1912,6 +1983,7 @@ impl OfficeSnapshot {
         }
         self.expire_leases();
         self.sync_goal_checkpoints()?;
+        self.sync_decision_panels();
         self.requeue_waiting_admission();
         self.refresh_budget();
         Ok(())

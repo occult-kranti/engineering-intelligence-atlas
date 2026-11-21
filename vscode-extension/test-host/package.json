@@ -1,0 +1,9 @@
+{
+  "name": "atlas-installed-smoke-host",
+  "publisher": "atlas-test",
+  "version": "0.0.0",
+  "private": true,
+  "engines": { "vscode": "^1.95.0" },
+  "main": "./index.js",
+  "activationEvents": []
+}

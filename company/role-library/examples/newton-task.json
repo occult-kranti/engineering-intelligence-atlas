@@ -1,0 +1,36 @@
+{
+  "taskId": "example-newton-001",
+  "roleKey": "newton",
+  "scope": {
+    "companyId": "example-research-company",
+    "departmentId": null
+  },
+  "goal": "Reconstruct candidate causes from an observation, then derive a discriminating forward consequence under explicit assumptions.",
+  "inputRefs": [
+    {
+      "uri": "research/contract.json",
+      "sha256": "replace-with-actual-verified-input-sha256",
+      "classification": "owner-authorized"
+    }
+  ],
+  "allowedCapabilities": [],
+  "limits": {
+    "maxUsd": 0,
+    "maxTokens": 2000,
+    "maxMinutes": 10,
+    "maxIterations": 1
+  },
+  "acceptance": [
+    "State what the observations cannot identify.",
+    "Check units, support, limiting assumptions and a degenerate case.",
+    "Give a public derivation and a falsifier; preserve unresolved proof obligations."
+  ],
+  "expectedOutput": [
+    "phenomenon",
+    "inverseConstraints",
+    "forwardPrediction",
+    "identifiability",
+    "acceptanceTest"
+  ],
+  "synthetic": true
+}

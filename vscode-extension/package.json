@@ -1,0 +1,115 @@
+{
+  "name": "atlas-office",
+  "displayName": "Daftar — Donna and One Office",
+  "description": "Control your Daftar companies, Donna chat, decision panels, roadmaps and bounded jobs from VS Code.",
+  "version": "0.5.0",
+  "publisher": "occult-kranti",
+  "license": "UNLICENSED",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other",
+    "Visualization"
+  ],
+  "keywords": [
+    "daftar",
+    "atlas",
+    "agents",
+    "donna",
+    "roadmap",
+    "office"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/occult-kranti/engineering-intelligence-atlas.git",
+    "directory": "vscode-extension"
+  },
+  "homepage": "https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/vscode-extension",
+  "main": "./src/extension.js",
+  "extensionKind": [
+    "ui"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": false,
+      "description": "Daftar can enqueue agent work and control the connected workspace. Trust the VS Code folder before connecting."
+    },
+    "virtualWorkspaces": true
+  },
+  "activationEvents": [
+    "onView:atlas.office"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "atlas.openOffice",
+        "title": "Daftar: Open Office"
+      },
+      {
+        "command": "atlas.connectDesktop",
+        "title": "Daftar: Connect to Desktop"
+      },
+      {
+        "command": "atlas.connectCloud",
+        "title": "Daftar: Connect to Signed-in Website"
+      },
+      {
+        "command": "atlas.disconnect",
+        "title": "Daftar: Disconnect This Editor"
+      },
+      {
+        "command": "atlas.refresh",
+        "title": "Daftar: Refresh Workspace"
+      },
+      {
+        "command": "atlas.openWebsite",
+        "title": "Daftar: Open Connected Website"
+      },
+      {
+        "command": "atlas.openMcpGuide",
+        "title": "Daftar: Open MCP Setup Guide"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "atlas",
+          "title": "Daftar",
+          "icon": "media/atlas.svg"
+        }
+      ]
+    },
+    "views": {
+      "atlas": [
+        {
+          "id": "atlas.office",
+          "name": "Companies and work",
+          "type": "webview"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Daftar Office",
+      "properties": {
+        "atlas.websiteUrl": {
+          "type": "string",
+          "default": "",
+          "scope": "application",
+          "description": "HTTPS origin of your private Daftar website. Device secrets are stored separately in VS Code SecretStorage."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "check": "node --check src/extension.js && node --check src/client.js && node --check media/office.js && node --check scripts/smoke-installed.mjs && node --check test-host/index.js && node --check test-host/suite.js",
+    "test": "node --test test/*.test.js",
+    "test:installed": "node scripts/smoke-installed.mjs",
+    "vscode:prepublish": "npm run check && npm test",
+    "package": "vsce package --no-dependencies --out atlas-office-0.5.0.vsix"
+  },
+  "devDependencies": {
+    "@vscode/test-electron": "3.1.0",
+    "@vscode/vsce": "4.1.1"
+  }
+}

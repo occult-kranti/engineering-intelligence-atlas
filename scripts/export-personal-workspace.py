@@ -18,18 +18,18 @@ spec = importlib.util.spec_from_file_location('atlas_workspace_restore', Path(__
 restore = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(restore)
 
-RESTORE = '''# Restore your private Atlas workspace
+RESTORE = '''# Restore your private Daftar workspace
 
 This archive contains the complete company-state JSON, readable portfolio/company records, and the managed Markdown artifacts included during export. It does not include the credential vault, API tokens, model downloads, or executable code. Treat all workspace text and repository names as private.
 
-1. Close Atlas and stop any headless worker using this workspace.
-2. Use the restore script from the same Atlas release:
+1. Close Daftar and stop any headless worker using this workspace.
+2. Use the restore script from the same Daftar release:
 
-   python3 scripts/restore-personal-workspace.py --archive /path/to/workspace.zip --user-data-path /path/to/Atlas-user-data
+   python3 scripts/restore-personal-workspace.py --archive /path/to/workspace.zip --user-data-path /path/to/Daftar-user-data
 
-The destination is the application user-data directory, not its company subdirectory. Atlas shows this location in its System panel. The command validates every checksum, JSON limits, archive path and managed artifact before writing state. It restores artifacts under office-artifacts/ and rewrites structured artifact references to their new paths. It never executes archive content or extracts arbitrary paths.
+The destination is the application user-data directory, not its company subdirectory. Daftar shows this location in its System panel. The command validates every checksum, JSON limits, archive path and managed artifact before writing state. It restores artifacts under office-artifacts/ and rewrites structured artifact references to their new paths. It never executes archive content or extracts arbitrary paths.
 
-An existing company/company-state.json is preserved by default. To intentionally replace it, add --replace. The prior state receives a timestamped private backup. Existing artifacts are retained. A conflicting artifact or symlink destination is refused. Open Atlas afterward; its Rust core performs its normal state validation. Review policies and reconnect credentials through the destination computer's OS-backed keychain. Workers start disabled.
+An existing company/company-state.json is preserved by default. To intentionally replace it, add --replace. The prior state receives a timestamped private backup. Existing artifacts are retained. A conflicting artifact or symlink destination is refused. Open Daftar afterward; its Rust core performs its normal state validation. Review policies and reconnect credentials through the destination computer's OS-backed keychain. Workers start disabled.
 
 PORTFOLIO.md and companies/*.md are readable archive views; company-state.json is the complete canonical record. artifact-map.json lists included artifacts and any referenced files that were unavailable or outside the selected managed artifact root. Missing artifacts are not silently replaced. Textual history is preserved; structured artifact references are relocated. Checksums detect corruption, not who created the archive. Restore only your own trusted export. Never commit this archive to a public repository.
 '''
@@ -59,7 +59,7 @@ def readable_records(data, mapping):
     roadmap = portfolio.get('roadmap') or []
     knowledge = office.get('knowledge') or []
     records = {}
-    lines = ['# Private Atlas portfolio', '', f'Companies: {len(companies)}', '', 'This is a readable view of the canonical company-state.json. No credentials are included by the exporter.', '', '| Company | Repository | Status |', '| --- | --- | --- |']
+    lines = ['# Private Daftar portfolio', '', f'Companies: {len(companies)}', '', 'This is a readable view of the canonical company-state.json. No credentials are included by the exporter.', '', '| Company | Repository | Status |', '| --- | --- | --- |']
     for company in companies:
         company_id = str(company['id'])
         filename = hashlib.sha256(company_id.encode()).hexdigest() + '.md'

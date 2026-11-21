@@ -1,0 +1,36 @@
+{
+  "taskId": "example-paired-research-001",
+  "roleKey": "paired-research",
+  "scope": {
+    "companyId": "example-research-company",
+    "departmentId": null
+  },
+  "goal": "Coordinate a forward derivation and a reverse reconstruction of the same frozen mathematical or physical problem.",
+  "inputRefs": [
+    {
+      "uri": "research/contract.json",
+      "sha256": "replace-with-actual-verified-input-sha256",
+      "classification": "owner-authorized"
+    }
+  ],
+  "allowedCapabilities": [],
+  "limits": {
+    "maxUsd": 0,
+    "maxTokens": 2000,
+    "maxMinutes": 10,
+    "maxIterations": 1
+  },
+  "acceptance": [
+    "Match observable, domain, scale and boundary conditions before comparing results.",
+    "Separate arithmetic, truncation, sampling and model errors.",
+    "Bind actual executed source and outputs to the claim and preserve unsuccessful controls."
+  ],
+  "expectedOutput": [
+    "forwardContract",
+    "reverseContract",
+    "matchingMap",
+    "evidenceComparison",
+    "openObligations"
+  ],
+  "synthetic": true
+}

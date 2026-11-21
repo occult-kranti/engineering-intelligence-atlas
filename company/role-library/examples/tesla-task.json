@@ -1,0 +1,36 @@
+{
+  "taskId": "example-tesla-001",
+  "roleKey": "tesla",
+  "scope": {
+    "companyId": "example-research-company",
+    "departmentId": null
+  },
+  "goal": "Turn a mechanism into inspectable components, couplings, states and measurements with a complete energy and loading budget.",
+  "inputRefs": [
+    {
+      "uri": "research/contract.json",
+      "sha256": "replace-with-actual-verified-input-sha256",
+      "classification": "owner-authorized"
+    }
+  ],
+  "allowedCapabilities": [],
+  "limits": {
+    "maxUsd": 0,
+    "maxTokens": 2000,
+    "maxMinutes": 10,
+    "maxIterations": 1
+  },
+  "acceptance": [
+    "Name the observable and measurement chain.",
+    "Detune or remove a coupling; include the load and omitted channels.",
+    "Separate exact identity, simulation, measured result and conjecture."
+  ],
+  "expectedOutput": [
+    "mechanism",
+    "energyBudget",
+    "loading",
+    "controls",
+    "limitations"
+  ],
+  "synthetic": true
+}

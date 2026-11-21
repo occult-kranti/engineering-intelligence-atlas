@@ -2,6 +2,24 @@
 //! goal graphs and spatial ownership. No credentials or provider calls live here.
 use super::*;
 
+// The hosted API retains at most 60,000 JavaScript string units per reply.
+// Preserve those records exactly, including non-ASCII and escaped line endings.
+// Local chat creation retains its smaller, printable 12,000-byte contract.
+const MAX_CLOUD_MESSAGE_BYTES: usize = 240_000;
+const MAX_CLOUD_MESSAGE_UTF16_UNITS: usize = 60_000;
+fn cloud_message_text(value: &str) -> Result<()> {
+    if value.trim().is_empty()
+        || value.len() > MAX_CLOUD_MESSAGE_BYTES
+        || value.encode_utf16().count() > MAX_CLOUD_MESSAGE_UTF16_UNITS
+    {
+        return Err(fail(
+            "INVALID_INPUT",
+            "Cloud message exceeds 60,000 text units or 240,000 UTF-8 bytes; the full cloud record is preserved",
+        ));
+    }
+    Ok(())
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BudgetPolicy {
@@ -378,7 +396,7 @@ impl OfficeSnapshot {
         }
         Ok(())
     }
-    fn scope_company(&self, scope: &Scope) -> Result<String> {
+    pub(super) fn scope_company(&self, scope: &Scope) -> Result<String> {
         match scope.kind.as_str() {
             "company" => Ok(self.company(&scope.id)?.id.clone()),
             "office" => Ok(self.office(&scope.id)?.company_id.clone()),
@@ -396,7 +414,7 @@ impl OfficeSnapshot {
             _ => Err(fail("INVALID_INPUT", "Unknown conversation or goal scope")),
         }
     }
-    fn goal_employee_scope(
+    pub(super) fn goal_employee_scope(
         &self,
         goal: &Goal,
         employee_id: &str,
@@ -561,7 +579,9 @@ impl OfficeSnapshot {
         {
             self.bootstrap_directors(&company)?;
         }
-        let changed = self.sync_goal_checkpoints()? | self.requeue_waiting_admission();
+        let changed = self.sync_goal_checkpoints()?
+            | self.requeue_waiting_admission()
+            | self.sync_decision_panels();
         self.refresh_budget();
         Ok(changed
             || before
@@ -762,7 +782,7 @@ impl OfficeSnapshot {
         }
         Ok(())
     }
-    fn validate_goal_steps(&self, goal: &Goal) -> Result<()> {
+    pub(super) fn validate_goal_steps(&self, goal: &Goal) -> Result<()> {
         if goal.steps.len() > 12 {
             return Err(fail("CAPACITY", "A goal plan may contain at most 12 steps"));
         }
@@ -798,7 +818,7 @@ impl OfficeSnapshot {
         }
         Ok(())
     }
-    fn validate_run_settings(&self, goal: &Goal) -> Result<()> {
+    pub(super) fn validate_run_settings(&self, goal: &Goal) -> Result<()> {
         let r = &goal.run_settings;
         if !["manual", "provider"].contains(&r.mode.as_str())
             || !["anthropic", "openai", "ollama"].contains(&r.provider.as_str())
@@ -1045,7 +1065,11 @@ impl OfficeSnapshot {
         source: &str,
     ) -> Result<String> {
         self.scope_company(&scope)?;
-        bounded_text(&content, 12000, "message")?;
+        if source == "cloud" {
+            cloud_message_text(&content)?;
+        } else {
+            bounded_text(&content, 12000, "message")?;
+        }
         if self
             .chat_threads
             .iter()
@@ -1261,6 +1285,63 @@ impl OfficeSnapshot {
                     },
                 )?;
                 self.last_action = Some(json!({"messageId":message_id}));
+            }
+            "import_cloud_message" => {
+                // Data-only ingestion: a saved website message cannot start a
+                // provider, create a goal, or settle native usage accounting.
+                let message_id = string(p, "id", 100)?;
+                if message_id
+                    .strip_prefix("cloud-")
+                    .and_then(|value| Uuid::parse_str(value).ok())
+                    .is_none()
+                {
+                    return Err(fail("INVALID_INPUT", "Expected a cloud message UUID"));
+                }
+                let scope: Scope = decode(p.get("scope").unwrap_or(&Value::Null), "scope")?;
+                self.scope_company(&scope)?;
+                let role = string(p, "role", 20)?;
+                if !["user", "assistant"].contains(&role.as_str()) {
+                    return Err(fail("INVALID_INPUT", "Unsupported cloud message role"));
+                }
+                let content = p
+                    .get("content")
+                    .and_then(Value::as_str)
+                    .ok_or_else(|| fail("INVALID_INPUT", "Missing cloud message content"))?
+                    .to_owned();
+                cloud_message_text(&content)?;
+                let created_at = string(p, "createdAt", 64)?;
+                timestamp(&created_at)?;
+                if let Some((thread, message)) = self.chat_threads.iter().find_map(|thread| {
+                    thread
+                        .messages
+                        .iter()
+                        .find(|m| m.id == message_id)
+                        .map(|m| (thread, m))
+                }) {
+                    if thread.scope != scope
+                        || message.role != role
+                        || message.content != content
+                        || message.created_at != created_at
+                        || message.source != "cloud"
+                    {
+                        return Err(fail(
+                            "REMOTE_RECEIPT_MISMATCH",
+                            "Cloud message identity already has different content",
+                        ));
+                    }
+                    self.last_action = Some(json!({"messageId":message_id,"imported":false}));
+                } else {
+                    let local_id = self.append_chat(scope, content, &role, "cloud")?;
+                    let saved = self
+                        .chat_threads
+                        .iter_mut()
+                        .flat_map(|thread| &mut thread.messages)
+                        .find(|message| message.id == local_id)
+                        .expect("append_chat added the message");
+                    saved.id = message_id.clone();
+                    saved.created_at = created_at;
+                    self.last_action = Some(json!({"messageId":message_id,"imported":true}));
+                }
             }
             "create_goal" => {
                 if self.goals.len() >= 2000 {
@@ -1746,6 +1827,7 @@ impl OfficeSnapshot {
             _ => return Ok(false),
         }
         self.sync_goal_checkpoints()?;
+        self.sync_decision_panels();
         self.requeue_waiting_admission();
         self.refresh_budget();
         Ok(true)
@@ -1800,11 +1882,15 @@ impl OfficeSnapshot {
             messages += thread.messages.len();
             for message in &thread.messages {
                 if !["user", "assistant", "system"].contains(&message.role.as_str())
-                    || !["user", "local", "provider"].contains(&message.source.as_str())
+                    || !["user", "local", "provider", "cloud"].contains(&message.source.as_str())
                 {
                     return Err(fail("OFFICE_STATE_INVALID", "Invalid message provenance"));
                 }
-                bounded_text(&message.content, 12000, "message")?;
+                if message.source == "cloud" {
+                    cloud_message_text(&message.content)?;
+                } else {
+                    bounded_text(&message.content, 12000, "message")?;
+                }
             }
         }
         if messages > 10000 {

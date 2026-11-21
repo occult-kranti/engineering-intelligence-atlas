@@ -1,11 +1,11 @@
 {
   "name": "research-director-desktop-shell",
-  "productName": "Research Director Desktop",
-  "version": "0.4.3",
+  "productName": "Daftar",
+  "version": "0.5.0",
   "private": true,
-  "description": "Electron desktop shell for the Research Director product: offline atlas, online runtime connection, and local System & Models panel.",
+  "description": "Daftar personal agent office: one Donna chat, scoped employee authority, an interactive office blueprint and native execution control.",
   "main": "dist/main/index.js",
-  "author": "Research Director",
+  "author": "Daftar contributors",
   "license": "UNLICENSED",
   "scripts": {
     "build": "tsc -p tsconfig.json && tsc -p tsconfig.renderer.json && node scripts/copy-renderer-assets.mjs",

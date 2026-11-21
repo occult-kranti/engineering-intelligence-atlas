@@ -1,0 +1,16 @@
+{
+  "name": "daftar-design-tools",
+  "version": "0.5.0",
+  "private": true,
+  "type": "module",
+  "description": "Bounded local OpenPencil inspection and Figma-compatible design handoffs for Daftar.",
+  "engines": { "node": ">=22.13.0" },
+  "scripts": {
+    "check": "node --check scripts/daftar-design.mjs && node --check scripts/smoke.mjs && node --check scripts/network-guard.mjs",
+    "test": "node --test test/*.test.mjs",
+    "smoke": "node scripts/smoke.mjs"
+  },
+  "dependencies": {
+    "@open-pencil/cli": "0.16.0"
+  }
+}

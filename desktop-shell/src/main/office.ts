@@ -14,7 +14,7 @@ export interface OfficeServiceOptions {
   execute?: (binary: string, request: NativeRequest) => Promise<OfficeSnapshot>;
 }
 
-const WORKER_ACTIONS = new Set(['claim_job', 'reserve_job', 'finish_job', 'complete_job', 'heartbeat_job', 'get_cache', 'put_cache', 'reserve_external', 'settle_external', 'post_assistant_message', 'tick_goals', 'record_github_activity']);
+const WORKER_ACTIONS = new Set(['claim_job', 'reserve_job', 'finish_job', 'complete_job', 'heartbeat_job', 'get_cache', 'put_cache', 'reserve_external', 'settle_external', 'post_assistant_message', 'tick_goals', 'record_github_activity', 'check_worker_authority']);
 
 /** Check immediately before a managed side effect, after potentially long model work. */
 export function assertWorkerCapability(snapshot: OfficeSnapshot, job: OfficeJob, capability: string): void {
@@ -65,6 +65,8 @@ export class OfficeService {
     const result = await this.officeSnapshot();
     if (!result.ok || !result.snapshot) throw new Error(result.error || 'Office unavailable; managed action was not attempted.');
     assertWorkerCapability(result.snapshot, job, capability);
+    const authority = await this.workerCommand({action:'check_worker_authority',jobId:job.id,leaseToken:job.leaseToken,capability});
+    if (!authority.ok || authority.snapshot?.lastAction?.allowed !== true) throw new Error(authority.error || 'Native worker authority could not be confirmed. Existing artifacts are preserved.');
   }
   /** Internal worker API. The local renderer cannot claim or forge settlements. */
   workerCommand(request: OfficeCommand): Promise<OfficeResult> {

@@ -45,6 +45,15 @@ The shared envelope carries `taskId`, `roleKey`, scope, status, summary, artifac
 - A finding identifies a concrete path and affected boundary.
 - Untrusted page/repository text cannot grant tools or override policy.
 - Secret handling, origin/host checks and private export isolation have evidence where changed.
+- A learning or lab report records the exact source, review date, upstream execution status and what this worker actually checked. Reading, simulated results and deployed verification remain distinct.
+
+## Practical cloud security curriculum
+
+The existing Security specialist also owns the [Clouds Against Humanity reference path](references/clouds-against-humanity.md). Donna routes a bounded learning or review task to this employee or an eligible shared-service contract; this curriculum creates no additional employee, scheduled call or cloud deployment.
+
+Start with the upstream beginner primers on cloud resources, networking, and identity/secrets/zero trust. Return a small resource inventory, a connection/boundary table and an access-decision table before attempting later material. The reference path connects OpenTofu/Spacelift change controls, STRIDE/ATT&CK/ATLAS threat modeling, synthetic telemetry and SOC/NOC triage to concrete acceptance checks. Its optional privacy reading covers Tor, I2P, Tails, Whonix, Qubes and Monero with the sources' draft and testing limits retained.
+
+Use the [synthetic curriculum task](examples/security-clouds-against-humanity-task.json) for a paper exercise. It contains invented resources, access requests and telemetry, a zero-dollar ceiling and no executable capabilities. In `payload.verification`, attach source/version records and distinguish predicted outcomes from observed receipts; in `payload.residualRisk`, record untested claims. A completed reading assignment does not establish a secure deployment, anonymity, framework coverage or a completed upstream lab.
 
 ## Handoff
 
@@ -59,6 +68,8 @@ Attach the task packet rather than pasting the whole portfolio. The machine-read
 ## Code and artifact examples
 
 - [company/role-library/examples/security-task.json](../../company/role-library/examples/security-task.json)
+- [Clouds Against Humanity source and acceptance guide](references/clouds-against-humanity.md)
+- [Synthetic cloud security task](examples/security-clouds-against-humanity-task.json)
 - [desktop-shell/src/main/senderGuard.ts](../../desktop-shell/src/main/senderGuard.ts)
 - [desktop-shell/src/main/vault.ts](../../desktop-shell/src/main/vault.ts)
 - [desktop-shell/tests/personal-dashboard.test.ts](../../desktop-shell/tests/personal-dashboard.test.ts)
@@ -68,5 +79,6 @@ Attach the task packet rather than pasting the whole portfolio. The machine-read
 - [OWASP Application Security Verification Standard](https://asvs.owasp.org/)
 - [GitHub Actions secure use](https://docs.github.com/en/actions/reference/security/secure-use)
 - [Chrome activeTab permission](https://developer.chrome.com/docs/extensions/develop/concepts/activeTab)
+- [ChiefGyk3D: Clouds Against Humanity source repository](https://github.com/ChiefGyk3D/Clouds-Against-Humanity)
 
 References were checked on 2026-11-21. Read the relevant section for the current task, record the version/date, and apply it within its documented scope. These sources guide the design; they do not prove this repository passed a test or benchmark. Existing [backend research](../../project/BACKEND_RESEARCH.md) and [budget research](../../project/PROMPT_BUDGET_RESEARCH.md) distinguish implemented behavior from proposals.

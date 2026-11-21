@@ -5,11 +5,17 @@
  * tests/contract-sync.test.ts keeps the two copies in sync.
  */
 import type { OfficeCommand, OfficeResult, OfficeWorkerStatus } from './office';
+import type { CloudConnectionResult, CloudConnectionStatus, ConfigureCloudRequest } from './cloud';
 
 export const BRIDGE_VERSION = 3 as const;
 
 export const CHANNELS = {
   openPersonalDashboard: 'desktop:open-personal-dashboard',
+  copyEditorPairing: 'desktop:copy-editor-pairing',
+  cloudStatus: 'desktop:cloud:status',
+  configureCloud: 'desktop:cloud:configure',
+  syncCloud: 'desktop:cloud:sync',
+  disconnectCloud: 'desktop:cloud:disconnect',
   getSystemInfo: 'desktop:get-system-info',
   getModelCatalog: 'desktop:get-model-catalog',
   checkModelRequirements: 'desktop:check-model-requirements',
@@ -456,6 +462,11 @@ export interface UpdateCompanyTaskRequest { id: string; status: CompanyTaskStatu
 
 /** The versioned bridge exposed to local file:// launcher content only. */
 export interface DesktopBridge {
+  copyEditorPairing(): Promise<{ ok: boolean; expiresAt?: string; error?: string }>;
+  cloudStatus(): Promise<CloudConnectionStatus>;
+  configureCloud(request: ConfigureCloudRequest): Promise<CloudConnectionResult>;
+  syncCloud(): Promise<CloudConnectionResult>;
+  disconnectCloud(): Promise<CloudConnectionResult>;
   version: typeof BRIDGE_VERSION;
   openPersonalDashboard(): Promise<{ ok: boolean; url?: string; error?: string }>;
   getSystemInfo(): Promise<SystemInfo>;

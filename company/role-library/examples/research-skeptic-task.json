@@ -1,0 +1,36 @@
+{
+  "taskId": "example-research-skeptic-001",
+  "roleKey": "research-skeptic",
+  "scope": {
+    "companyId": "example-research-company",
+    "departmentId": null
+  },
+  "goal": "Challenge the proposed conclusion with an alternative explanation, source audit and discriminating control before admission.",
+  "inputRefs": [
+    {
+      "uri": "research/contract.json",
+      "sha256": "replace-with-actual-verified-input-sha256",
+      "classification": "owner-authorized"
+    }
+  ],
+  "allowedCapabilities": [],
+  "limits": {
+    "maxUsd": 0,
+    "maxTokens": 2000,
+    "maxMinutes": 10,
+    "maxIterations": 1
+  },
+  "acceptance": [
+    "Point to a concrete missing hypothesis or failure path.",
+    "Retain negative results and failed certificates.",
+    "Classify the result as accepted narrow claim, conditional claim, rejected interpretation or unresolved target."
+  ],
+  "expectedOutput": [
+    "claimClass",
+    "counterexample",
+    "sourceAudit",
+    "control",
+    "admissionVerdict"
+  ],
+  "synthetic": true
+}

@@ -1,0 +1,36 @@
+{
+  "taskId": "example-resonance-advisor-001",
+  "roleKey": "resonance-advisor",
+  "scope": {
+    "companyId": "example-research-company",
+    "departmentId": null
+  },
+  "goal": "Choose one source-bound research question and compare producer and critic evidence before authorizing the next bounded round.",
+  "inputRefs": [
+    {
+      "uri": "research/contract.json",
+      "sha256": "replace-with-actual-verified-input-sha256",
+      "classification": "owner-authorized"
+    }
+  ],
+  "allowedCapabilities": [],
+  "limits": {
+    "maxUsd": 0,
+    "maxTokens": 2000,
+    "maxMinutes": 10,
+    "maxIterations": 1
+  },
+  "acceptance": [
+    "Give every accepted result a source, executable artifact, control and limitation.",
+    "Keep failed trials and repairs visible.",
+    "Check accounting independently and keep historical assertions separate from present evidence."
+  ],
+  "expectedOutput": [
+    "frozenContract",
+    "disagreement",
+    "selectedQuestion",
+    "decision",
+    "nextMissingPremise"
+  ],
+  "synthetic": true
+}

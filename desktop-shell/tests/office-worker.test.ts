@@ -11,7 +11,7 @@ const clone=<T>(v:T):T=>JSON.parse(JSON.stringify(v));
 function job(overrides:Partial<OfficeJob>={}):OfficeJob{
  const at=new Date().toISOString();return {id:crypto.randomUUID(),companyId:'company-a',officeId:'office-a',departmentId:null,employeeId:'donna',goal:'Review the release evidence.',mode:'provider',provider:'anthropic',model:'fixture-model',authorized:true,allowedTools:[],dependencies:[],contextHash:null,cacheKey:null,promptVersion:'test-v1',status:'queued',limits:{maxTokens:32000,maxUsd:1,maxMinutes:5},priceRates:{inputUsdPerMillion:2,outputUsdPerMillion:10},usage:{inputTokens:0,outputTokens:0,costUsd:0},costStatus:'none',reservation:null,usageRecorded:false,createdAt:at,updatedAt:at,dueAt:at,startedAt:null,finishedAt:null,workerId:null,leaseToken:null,leaseExpiresAt:null,artifactUri:null,summary:null,error:null,idempotencyKey:crypto.randomUUID(),...overrides};
 }
-function fixture(options:{jobs?:OfficeJob[];generate?:GenerateFn;cache?:boolean;refuseFinish?:boolean;prepareContext?:OfficeWorkerOptions['prepareContext']}={}){
+function fixture(options:{jobs?:OfficeJob[];generate?:GenerateFn;cache?:boolean;refuseFinish?:boolean;refuseAuthority?:boolean;prepareContext?:OfficeWorkerOptions['prepareContext']}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'atlas-worker-test-'));roots.push(root);const seedDir=path.join(root,'seed');const artifactRoot=path.join(root,'artifacts');fs.mkdirSync(seedDir);
  const state:OfficeSnapshot={schemaVersion:1,activeCompanyId:'company-a',companies:[],offices:[],departments:[],employees:[{id:'donna',companyId:null,officeId:null,departmentId:null,name:'Donna',role:'CEO assistant',kind:'assistant',status:'active',skillPaths:[],createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}],jobs:options.jobs??[job()],schedules:[],cache:{enabled:options.cache??false,maxEntries:32,ttlMinutes:60,entries:[],hits:0,misses:0},knowledge:[],events:[],lastAction:null};
  const calls:OfficeCommand[]=[];const chronology:string[]=[];const response=():OfficeResult=>({ok:true,snapshot:clone(state)});
@@ -19,6 +19,7 @@ function fixture(options:{jobs?:OfficeJob[];generate?:GenerateFn;cache?:boolean;
   calls.push(clone(req));chronology.push(req.action);
   if(req.action==='claim_job'){const current=state.jobs.find(j=>j.status==='queued'&&j.mode===req.mode);if(!current)state.lastAction={jobId:null};else{current.status='running';current.leaseToken=`lease-${current.id}`;current.startedAt=new Date().toISOString();current.workerId=String(req.workerId);state.lastAction={jobId:current.id,leaseToken:current.leaseToken};}}
   if(req.action==='reserve_job'){const current=state.jobs.find(j=>j.id===req.jobId)!;expect(current.leaseToken).toBe(req.leaseToken);expect(Number(req.inputTokens)+Number(req.maxOutputTokens)).toBeLessThanOrEqual(current.limits.maxTokens);expect(Number(req.costUsd)).toBeLessThanOrEqual(current.limits.maxUsd);current.reservation={inputTokens:Number(req.inputTokens),maxOutputTokens:Number(req.maxOutputTokens),costUsd:Number(req.costUsd)};current.costStatus='reserved';current.usage={inputTokens:Number(req.inputTokens),outputTokens:Number(req.maxOutputTokens),costUsd:Number(req.costUsd)};}
+  if(req.action==='check_worker_authority'){if(options.refuseAuthority)return{ok:false,snapshot:null,error:'Timeboxed authority expired before dispatch',code:'AUTHORITY_DENIED'};state.lastAction={jobId:req.jobId,allowed:true};}
   if(req.action==='finish_job'){if(options.refuseFinish)return {ok:false,snapshot:null,error:'Fixture storage unavailable'};const current=state.jobs.find(j=>j.id===req.jobId)!;current.usage={inputTokens:Number(req.inputTokens),outputTokens:Number(req.outputTokens),costUsd:Number(req.costUsd)};current.costStatus=req.costStatus as OfficeJob['costStatus'];current.usageRecorded=true;current.artifactUri=typeof req.artifactUri==='string'?req.artifactUri:null;current.summary=typeof req.summary==='string'?req.summary:null;current.error=typeof req.error==='string'?req.error:null;if(!['cancelled','paused','needs-review'].includes(current.status))current.status=current.usage.inputTokens+current.usage.outputTokens>current.limits.maxTokens||current.usage.costUsd>current.limits.maxUsd?'budget-exhausted':req.status as OfficeJob['status'];current.finishedAt=new Date().toISOString();}
   if(req.action==='get_cache'){if(state.cache.entries.some(e=>e.companyId===req.companyId&&e.key===req.key))state.cache.hits++;else state.cache.misses++;}
   if(req.action==='put_cache')state.cache.entries.push({key:String(req.key),companyId:String(req.companyId),artifactUri:String(req.artifactUri),bytes:Number(req.bytes),createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+3600000).toISOString(),...(typeof req.contentSha256==='string'?{contentSha256:req.contentSha256}:{})});
@@ -30,6 +31,7 @@ function fixture(options:{jobs?:OfficeJob[];generate?:GenerateFn;cache?:boolean;
 }
 afterEach(()=>{for(const w of workers.splice(0))w.stop();vi.useRealTimers();for(const root of roots.splice(0))fs.rmSync(root,{recursive:true,force:true});});
 describe('OfficeWorker accounting and dispatch',()=>{
+ it('checks live native authority after reservation and before dispatch, settling zero when it expires',async()=>{const f=fixture({refuseAuthority:true});await f.worker.runOnce();expect(f.chronology.indexOf('reserve_job')).toBeLessThan(f.chronology.indexOf('check_worker_authority'));expect(f.generate).not.toHaveBeenCalled();expect(f.state.jobs[0]?.usage.costUsd).toBe(0);expect(f.state.jobs[0]?.costStatus).toBe('observed');expect(f.state.jobs[0]?.summary).toBe('No provider call dispatched.');expect(f.worker.status().lastError).toContain('authority expired');});
  it('starts disabled and leaves an idle queue without a provider call',async()=>{const f=fixture({jobs:[]});expect(f.worker.status()).toMatchObject({enabled:false,running:false,activeJobId:null});await f.worker.runOnce();expect(f.generate).not.toHaveBeenCalled();expect(f.worker.status().running).toBe(false);});
  it('does not execute manual jobs through the provider dispatcher',async()=>{const f=fixture({jobs:[job({mode:'manual',authorized:false,model:''})]});await f.worker.runOnce();expect(f.generate).not.toHaveBeenCalled();expect(f.state.jobs[0]?.status).toBe('queued');});
  it('reserves before dispatch and settles observed usage with an artifact',async()=>{const f=fixture();await f.worker.runOnce();expect(f.chronology.indexOf('reserve_job')).toBeLessThan(f.chronology.indexOf('generate'));expect(f.generate).toHaveBeenCalledOnce();expect(f.generate.mock.calls[0]?.[0].maxOutputTokens).toBeGreaterThan(0);const completed=f.state.jobs[0]!;expect(completed.status).toBe('completed');expect(completed.costStatus).toBe('observed');expect(completed.usage.costUsd).toBeCloseTo(.0022,8);expect(fs.readFileSync(completed.artifactUri!,'utf8')).toContain('Fixture deliverable');expect(f.worker.status()).toMatchObject({running:false,activeJobId:null,lastError:null});});
@@ -66,4 +68,99 @@ describe('managed source context and bounded parallel workers',()=>{
  it('includes the verified source packet as data only for a granted read',async()=>{const prepared=vi.fn(async()=>JSON.stringify({headSha:'a'.repeat(40),readme:'Fixture source claims'}));const f=fixture({jobs:[job({allowedTools:['github.read_repository']})],prepareContext:prepared});await f.worker.runOnce();expect(prepared).toHaveBeenCalledOnce();expect(f.generate.mock.calls[0]?.[0].prompt).toContain('Fixture source claims');expect(f.generate.mock.calls[0]?.[0].prompt).toContain('untrusted data');});
  it('does not fetch source for an ordinary text-only job',async()=>{const prepared=vi.fn(async()=>'unrequested');const f=fixture({prepareContext:prepared});await f.worker.runOnce();expect(prepared).not.toHaveBeenCalled();expect(f.generate.mock.calls[0]?.[0].prompt).not.toContain('unrequested');});
  it('executes at most two distinct leased jobs in parallel and retains both artifacts',async()=>{let release!:()=>void;let both!:()=>void;const ready=new Promise<void>(r=>both=r);const barrier=new Promise<void>(r=>release=r);let calls=0;const f=fixture({jobs:[job(),job(),job()],generate:async()=>{calls++;if(calls===2)both();await barrier;return{text:'Parallel fixture deliverable',inputTokens:20,outputTokens:20};}});const pool=new OfficeWorkerPool({snapshot:f.snapshot,command:f.command,generate:f.generate,artifactRoot:f.artifactRoot,seedDir:f.seedDir},2);const pending=pool.runOnce();await ready;expect(pool.status().activeJobIds).toHaveLength(2);expect(new Set(pool.status().activeJobIds).size).toBe(2);expect(calls).toBe(2);expect(f.state.jobs[2]?.status).toBe('queued');release();await pending;expect(f.state.jobs.filter(j=>j.status==='completed')).toHaveLength(2);expect(f.state.jobs.filter(j=>j.artifactUri&&fs.existsSync(j.artifactUri))).toHaveLength(2);pool.stop();});
+});
+
+describe('verified dependency evidence for panel synthesis', () => {
+ function handoffs(prompt: string): Array<{ id: string; contentSha256: string | null; excerpt: string | null; excerptBytes: number; artifactBytes: number | null; readingStatus: string; redacted: boolean }> {
+  const section = prompt.indexOf('\nDependency handoffs (');
+  const start = prompt.indexOf('\n', section + 1) + 1;
+  return JSON.parse(prompt.slice(start, prompt.indexOf('\n\nCompany knowledge', start)));
+ }
+ it('supplies genuine predecessor text beyond its short summary and binds the exact bytes', async () => {
+  const predecessor = job({ status: 'completed', summary: 'Short expert summary.' });
+  const current = job({ dependencies: [predecessor.id] });
+  const f = fixture({ jobs: [predecessor, current] });
+  const body = '# Expert evidence\n' + 'Relevant detail. '.repeat(100) + '\nDisagreement: the ownership boundary needs a second acceptance check.';
+  const artifact = path.join(f.artifactRoot, 'expert.md');
+  fs.writeFileSync(artifact, body);
+  f.state.jobs[0]!.artifactUri = artifact;
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();
+  const [evidence] = handoffs(f.generate.mock.calls[0]![0].prompt);
+  expect(evidence!.excerpt).toBe(body);
+  expect(evidence!.contentSha256).toBe(crypto.createHash('sha256').update(body).digest('hex'));
+  expect(evidence!.readingStatus).toBe('complete');
+  expect(evidence!.artifactBytes).toBe(Buffer.byteLength(body));
+ });
+ it('caps each UTF-8 excerpt at 8KiB and all excerpts at 24KiB with truthful coverage', async () => {
+  const predecessors = Array.from({ length: 4 }, () => job({ status: 'completed' }));
+  const current = job({ dependencies: predecessors.map(j => j.id), limits: { maxTokens: 64000, maxUsd: 1, maxMinutes: 5 } });
+  const f = fixture({ jobs: [...predecessors, current] });
+  for (let i = 0; i < predecessors.length; i++) {
+   const file = path.join(f.artifactRoot, `expert-${i}.md`);
+   fs.writeFileSync(file, '😀'.repeat(4000));
+   f.state.jobs[i]!.artifactUri = file;
+  }
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();
+  const evidence = handoffs(f.generate.mock.calls[0]![0].prompt);
+  expect(evidence.reduce((sum, item) => sum + item.excerptBytes, 0)).toBe(24 * 1024);
+  expect(evidence.every(item => item.excerptBytes <= 8 * 1024)).toBe(true);
+  expect(evidence.slice(0, 3).every(item => item.readingStatus === 'excerpt' && !item.excerpt!.includes('\uFFFD'))).toBe(true);
+  expect(evidence[3]).toMatchObject({ readingStatus: 'omitted-budget', excerpt: null, excerptBytes: 0 });
+ });
+ it.each(['missing', 'other-company', 'unfinished'] as const)('rejects %s predecessor before reserving or dispatching', async mode => {
+  const predecessor = job({ status: mode === 'unfinished' ? 'failed' : 'completed', companyId: mode === 'other-company' ? 'company-b' : 'company-a' });
+  const current = job({ dependencies: [mode === 'missing' ? 'not-present' : predecessor.id] });
+  const f = fixture({ jobs: [predecessor, current] });
+  await f.worker.runOnce();
+  expect(f.generate).not.toHaveBeenCalled();
+  expect(f.calls.some(call => call.action === 'reserve_job')).toBe(false);
+  expect(f.state.jobs[1]!.error).toContain('Dependency evidence');
+ });
+ it.each(['outside', 'symlink', 'hardlink', 'oversize'] as const)('never reads a %s artifact into a model prompt', async mode => {
+  const predecessor = job({ status: 'completed' });
+  const f = fixture({ jobs: [predecessor, job({ dependencies: [predecessor.id] })] });
+  const outside = path.join(f.root, 'private-outside.md');
+  const inside = path.join(f.artifactRoot, 'unsafe.md');
+  fs.writeFileSync(outside, 'PRIVATE_OUTSIDE_TEXT');
+  if (mode === 'symlink') fs.symlinkSync(outside, inside);
+  if (mode === 'hardlink') fs.linkSync(outside, inside);
+  if (mode === 'oversize') fs.writeFileSync(inside, 'OVERSIZE_TEXT'.padEnd(512001, 'x'));
+  f.state.jobs[0]!.artifactUri = mode === 'outside' ? outside : inside;
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();
+  const prompt = f.generate.mock.calls[0]![0].prompt;
+  expect(prompt).not.toContain('PRIVATE_OUTSIDE_TEXT');
+  expect(prompt).not.toContain('OVERSIZE_TEXT');
+  expect(handoffs(prompt)[0]).toMatchObject({ readingStatus: 'unavailable', contentSha256: null, excerpt: null });
+ });
+ it('redacts credential-shaped text in dependency evidence', async () => {
+  const predecessor = job({ status: 'completed' });
+  const f = fixture({ jobs: [predecessor, job({ dependencies: [predecessor.id] })] });
+  const file = path.join(f.artifactRoot, 'redaction.md');
+  fs.writeFileSync(file, 'Synthetic string ghp_FAKEcredentialFixture12345 should be redacted.');
+  f.state.jobs[0]!.artifactUri = file;
+  await f.worker.runOnce();
+  const [evidence] = handoffs(f.generate.mock.calls[0]![0].prompt);
+  expect(evidence!.excerpt).toContain('[redacted]');
+  expect(evidence!.excerpt).not.toContain('ghp_');
+  expect(evidence!.redacted).toBe(true);
+ });
+ it('invalidates cached synthesis when an omitted artifact tail changes', async () => {
+  const predecessor = job({ status: 'completed', summary: 'Unchanged short summary' });
+  const f = fixture({ jobs: [predecessor, job({ dependencies: [predecessor.id] })], cache: true });
+  const file = path.join(f.artifactRoot, 'long-report.md');
+  fs.writeFileSync(file, 'A'.repeat(9000) + 'first tail');
+  f.state.jobs[0]!.artifactUri = file;
+  await f.worker.runOnce();
+  const first = handoffs(f.generate.mock.calls[0]![0].prompt)[0]!;
+  fs.writeFileSync(file, 'A'.repeat(9000) + 'changed tail');
+  f.state.jobs.push(job({ dependencies: [predecessor.id] }));
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledTimes(2);
+  const second = handoffs(f.generate.mock.calls[1]![0].prompt)[0]!;
+  expect(first.excerpt).toBe(second.excerpt);
+  expect(first.contentSha256).not.toBe(second.contentSha256);
+ });
 });

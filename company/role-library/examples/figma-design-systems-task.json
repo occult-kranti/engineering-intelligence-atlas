@@ -1,0 +1,29 @@
+{
+  "taskId": "example-figma-design-systems",
+  "roleKey": "figma-design-systems",
+  "scope": {
+    "companyId": "example-company",
+    "departmentId": "example-shared-department"
+  },
+  "goal": "Translate owned design references into accessible reusable components and code handoffs. Use the official Figma MCP through its authorized client, and the pinned OpenPencil local adapter for allowed inspect/export operations. Preserve node IDs, source file links, design tokens and license evidence. Never treat a connected ChatGPT account as a desktop or website OAuth credential. Do not execute arbitrary scripts extracted from design files.",
+  "authorization": {
+    "capabilities": [],
+    "maxUsd": 0,
+    "maxTokens": 0,
+    "expiresAt": null
+  },
+  "inputs": [],
+  "acceptance": [
+    "Source provenance present",
+    "No credentials or guessed URLs",
+    "Actual checks distinguished from proposals"
+  ],
+  "expectedPayload": [
+    "designEvidence",
+    "sourceNodes",
+    "tokenMap",
+    "artifacts",
+    "checks",
+    "connectionBoundary"
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "synthetic": true,
+  "claimId": "example-controlled-claim",
+  "claim": "A bounded model predicts a specified observable under explicit assumptions.",
+  "classification": "model-prediction",
+  "source": {
+    "url": "https://example.org/replace-with-primary-source",
+    "version": "replace-with-version",
+    "section": "replace-with-actual-section",
+    "readingDepth": "not-read-example-only"
+  },
+  "model": {
+    "variables": [
+      {
+        "name": "q",
+        "unit": "m",
+        "classification": "state"
+      }
+    ],
+    "assumptions": [
+      "State the actual domain and boundary conditions"
+    ],
+    "observationMap": "Specify actual measured or computed channel"
+  },
+  "control": {
+    "name": "wrong-model or null comparison",
+    "expectedDiscriminator": "Freeze before running",
+    "observedResult": null
+  },
+  "execution": {
+    "sourceCommit": null,
+    "artifactUri": null,
+    "sha256": null,
+    "status": "not-run"
+  },
+  "decision": {
+    "status": "unresolved",
+    "reason": "Synthetic shape example; no result is claimed"
+  },
+  "nextMissingPremise": "Replace fixture fields with source-bound evidence before admission."
+}

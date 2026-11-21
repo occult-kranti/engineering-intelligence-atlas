@@ -2,6 +2,9 @@
 
 User-visible task briefs and result summaries. This is a delivery record, not a transcript of private model reasoning. Credentials and raw internal reasoning are excluded.
 
+
+Current 0.5.0 draft entries begin at **021**; entries 001–020 preserve the historical delivery record. A completed entry means its stated task returned, not that the overall release passed. User-facing dates use **America/New_York**; source event timestamps remain UTC. Final CI/installed-package/publication acceptance is still pending in entry 031.
+
 ## 001 · Director · complete
 
 - **Ask:** Audit the imported repository and find its roadmap and next steps.
@@ -162,3 +165,111 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Evidence:** [v0.4.2 candidate](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/5627c846c09b0e717f0763d202ae2054772af0c5); [Pages run 44847753403](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44847753403); [verified browser archive](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44847753403/artifacts/14684216139); `.github/workflows/ci.yml`; `scripts/smoke-static.mjs`; [interface validation](DESKTOP_UI_VALIDATION.md); [validation record](VALIDATION.md).
 - **Final result:** Released [v0.4.3](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.4.3) is tagged at exact commit [eb5f25073a2c1c3377068b6d30c5743a729305b1](https://github.com/occult-kranti/engineering-intelligence-atlas/commit/eb5f25073a2c1c3377068b6d30c5743a729305b1). All five jobs in [Verify run 44848307218](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44848307218) passed. [Pages run 44848307180](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44848307180) passed 62 route/reload checks and the 390-pixel list geometry regression, captured 60 screenshots and deployed. Director and designer confirmed the narrow blueprint; final live review verified Settings guidance, focused roster, CEO, correctly linked ownership editor with read-only Save, navigation and download entry. Downloaded APK and AppImage sizes and hashes matched published metadata. The actual owner export restored into an isolated directory, was read through MCP/Rust and passed artifact-reference and credential-byte checks.
 - **Next handoff:** Release owner publishes this evidence and delivers the verified artifacts. Future source or layout changes require fresh release and browser verification.
+
+## 021 · Donna / native Claude worker · complete
+
+- **Date:** 2026-11-20 (America/New_York); receipt `2026-11-21T01:28:42.866Z`
+- **Ask:** Review the platform and design workstreams in their actual native company scopes and return the first actionable roadmaps.
+- **Expected return:** Two bounded, retained planning artifacts with observed provider usage and explicit implementation handoffs.
+- **Returned:** Both native jobs completed with retained artifacts. The two requests used 16,415 input and 6,472 output tokens, totaling $0.097550. They recommended shared state, thin editor integration, explicit sync, reusable specialists and evidence-based acceptance. These are planning reports, not autonomous code execution.
+- **Evidence:** `project/claude-usage.json`; `project/CONNECTED_RELEASE.md`; `project/DESKTOP_STUDIO_HANDOFF.md`
+- **Next handoff:** Implement accepted recommendations and verify their actual behavior separately.
+
+## 022 · Engineering / QA expert panel and Donna · complete
+
+- **Date:** 2026-11-20 (America/New_York); receipt `2026-11-21T01:40:26.032617+00:00`
+- **Ask:** Run independent implementation reviews and then synthesize the actual predecessor artifacts through a bounded panel DAG.
+- **Expected return:** Two specialist reports, one dependent synthesis, retained ownership and an explicit decision record.
+- **Returned:** All three native provider jobs completed; the synthesis received the bounded expert artifacts. Observed usage totaled $0.106378. The round retained evidence and separated model recommendations from code/test/release acceptance; another round is an explicit bounded decision.
+- **Evidence:** `project/claude-usage.json`; `project/DECISION_PANELS.md`; `native-core/src/decision_panels.rs`
+- **Next handoff:** Carry accepted decisions into owned implementation tasks and retain unresolved disagreements.
+
+## 023 · Desktop studio designer / renderer engineer · complete
+
+- **Date:** 2026-11-20 (America/New_York)
+- **Ask:** Rebuild the shared laptop workspace around one Donna conversation, the office blueprint, ownership whiteboard, decision room and clear connection states.
+- **Expected return:** Working shared renderer, accessible controls, accurate queued/persisted feedback and regression evidence.
+- **Returned:** Paper-and-pine studio layout, decision flows, explicit pairing/sync controls and management UI are implemented. The latest renderer checkpoint passed 187 pure-DOM assertions and strict compilation. Current browser screenshots and installed rendering remain separate acceptance gates.
+- **Evidence:** `project/DESKTOP_STUDIO_HANDOFF.md`; `desktop-shell/src/renderer/chrome.html`; `desktop-shell/src/renderer/chrome.css`; `desktop-shell/tests/renderer-behavior.mjs`
+- **Next handoff:** Inspect the current desktop/laptop/narrow browser captures and correct any observed layout defects before release.
+
+## 024 · Cloud / editor / native synchronization engineers · complete
+
+- **Date:** 2026-11-20 (America/New_York)
+- **Ask:** Connect the owner website, desktop and VS Code to the same saved office with explicit revision-aware sync, durable command receipts and scoped chat.
+- **Expected return:** Owner/device authentication, bounded D1 APIs, thin editor integration, safe native application and faithful conversation transfer.
+- **Returned:** Implemented owner-private hosted state/chat, paired-device access, durable command relay and explicit full supported-scope chat in both directions. Stable native receipts prevent duplicate effects; final cursors persist; oversized transfers fail without truncation; group chat remains hosted. Local gates passed 28 cloud tests, 11 VS Code client tests, VSIX packaging and the desktop/native suites. Live protocol acceptance is recorded separately in entry 030.
+- **Evidence:** `project/EDITOR_AND_CLOUD.md`; `desktop-shell/src/main/cloudSync.ts`; `desktop-shell/tests/cloud-native-contract.test.ts`; `cloud-workspace/`; `vscode-extension/`
+- **Next handoff:** Complete installed desktop/Extension Host and browser sign-in acceptance, then the final combined CI/release gates.
+
+## 025 · Donna / Daftar management and directory reviewers · complete
+
+- **Date:** 2026-11-20 (America/New_York); receipt `2026-11-21T02:07:06.861Z`
+- **Ask:** Review temporary employee authority, Donna delegation, organization indexing and the private application directory as two separate workstreams.
+- **Expected return:** Two saved reviews, each capped at $20 within the existing $100 ceiling, with evidence and practical next changes.
+- **Returned:** Both native Claude jobs completed with retained artifacts, 18,501 input and 5,650 output tokens, and $0.093502 observed usage. Recommendations included one native authority evaluator, scope/expiry/revocation tests, execution-time reauthorization and evidence-linked directory work. Reviews did not execute code or deploy systems.
+- **Evidence:** `project/claude-usage.json`; `project/CONNECTED_RELEASE.md`; `project/VALIDATION.md`
+- **Next handoff:** Use the accepted recommendations in native enforcement, UI controls and the directory; preserve separate implementation/test receipts.
+
+## 026 · Native governance engineer / independent authority auditor / owner · complete
+
+- **Date:** 2026-11-20 (America/New_York); receipt `2026-11-21T02:32:31.533Z`
+- **Ask:** Implement scoped time-limited grants and promotions, audit their actual command/worker boundaries, and apply the owner-authorized Donna management setup.
+- **Expected return:** Persistent parent-linked authority, no scope escape or fallback after expiry/revocation, preserved service-contract gates and an auditable setup.
+- **Returned:** Implemented grants, delegation, temporary titles, owner enforcement controls, company rename continuity and a persistent index/ledger. The independent audit found an officeId/blueprintId authorization mismatch; authorization now follows the mutated office and the cross-office regression passes. Latest gates passed 69 Rust tests, 373 desktop tests and 187 renderer assertions. Owner-authorized 24-hour Donna grants cover the imported portfolio with two child promotions; setup made zero provider calls. These are in-app rights, not OS/provider/credential access.
+- **Evidence:** `native-core/src/authority.rs`; `native-core/src/governance.rs`; `desktop-shell/src/main/officeWorker.ts`; `desktop-shell/src/shared/office.ts`; `project/VALIDATION.md`
+- **Next handoff:** Keep rechecking authority at dispatch, preserve underlying contracts/knowledge gates and record subsequent changes in the authority ledger.
+
+## 027 · Application directory steward / indexer engineer · complete
+
+- **Date:** 2026-11-20 (America/New_York)
+- **Ask:** Index the owner repository/application portfolio privately, reuse existing company identities and expose a useful saved application directory.
+- **Expected return:** Bounded metadata reads, useful dates/status/deep links, safe URL handling, incremental caching and no public disclosure of private catalog records.
+- **Returned:** Private indexer uses global deduplication/cap, a bounded dispatch deadline, bounded API/probe reads, timestamp-preserving TTL cache and atomic private checkpoints. The directory separates repository, website and publication dates, marks stale observations and supports filtering/deep links. Twenty-five Python tests (including ten indexer tests) and seven directory-model tests passed; owner-private catalog seeding succeeded in the live protocol checkpoint. No private repository/site names are copied into this ledger.
+- **Evidence:** `scripts/index_github_applications.py`; `scripts/test_index_github_applications.py`; `cloud-workspace/`; `project/VALIDATION.md`
+- **Next handoff:** Keep observations dated, retain ownership and scope, and review the signed-in directory UI without publishing its private contents.
+
+## 028 · Figma / open design interoperability engineer · complete
+
+- **Date:** 2026-11-20 (America/New_York); receipt `2026-11-21T02:16:34.584Z`
+- **Ask:** Create a bounded local design handoff using OpenPencil and document Figma connection/import boundaries.
+- **Expected return:** Pinned dependency/license provenance, real import/inspect/roundtrip/export artifacts, and explicit network/provider limits.
+- **Returned:** OpenPencil CLI 0.16.0 passed six boundary tests and four real local operations: HTML import, inspection, .fig roundtrip and SVG export. The synthetic document has one page and 12 nodes; all three retained example sizes/hashes match the receipt. The smoke recorded zero network attempts and provider calls. Actual import into the Figma application is unverified.
+- **Evidence:** `design-tools/README.md`; `design-tools/examples/receipt.json`; `design-tools/examples/office-handoff.fig`; `design-tools/examples/office-handoff.svg`; `project/FIGMA_AND_DESIGN.md`
+- **Next handoff:** Use the local handoff as a verified example; require a separate authorized client/import receipt for actual Figma operations.
+
+## 029 · Shared Security specialist / source reviewer · complete
+
+- **Date:** 2026-11-20 (America/New_York)
+- **Ask:** Study ChiefGyk3D Clouds Against Humanity and enrich the existing Security role with useful beginner modules, source status and safe exercises.
+- **Expected return:** Exact primary references, honest draft/test boundaries, three real beginner modules and an original zero-cost synthetic task.
+- **Returned:** Added cloud, networking and identity/secrets/zero-trust assignments; OpenTofu/Spacelift, threat-framework, SOC/NOC and optional privacy reading paths retain source execution limits. The supplied tips URL resolves to a tipping page; the guide links the exact primary repository/wiki. All 23 roles remain, with only the Security object enriched. Fifteen loader tests, actual runtime loading, 46 local links and synthetic access/telemetry expectations passed. No external lab, employee hire, deployment or provider call was made.
+- **Evidence:** `company/role-library/security.md`; `company/role-library/references/clouds-against-humanity.md`; `company/role-library/examples/security-clouds-against-humanity-task.json`; `project/ROLE_REFERENCE_INDEX.md`
+- **Next handoff:** Donna routes a bounded learning task to the existing specialist; reading evidence does not certify deployed security controls.
+
+## 030 · Director / live connected-protocol verifier · complete
+
+- **Date:** 2026-11-20 (America/New_York); receipt `2026-11-21T02:33:46.715Z`
+- **Ask:** Exercise the deployed API with the production CloudSyncService and real Rust binary, checking durable commands and both chat directions.
+- **Expected return:** One command effect, completed acknowledgment, no duplicate imports, visible native-to-cloud chat and equal final projection hashes.
+- **Returned:** The live test passed: one queued command produced one native effect and completed ACK; four cloud messages imported; a second sync imported zero duplicates; a saved native brief appeared in hosted chat GET; final projection hashes matched. Private directory seeding also succeeded. The test made zero provider calls. It used AES-GCM harness storage rather than installed OS-keychain acceptance; the verification device was revoked and writer assignment released afterward.
+- **Evidence:** `project/CONNECTED_RELEASE.md`; `project/VALIDATION.md`; `desktop-shell/src/main/cloudSync.ts`; `desktop-shell/tests/cloud-native-contract.test.ts`
+- **Next handoff:** Complete browser sign-in, installed package/Extension Host, replacement-writer recovery and final CI/release acceptance independently.
+
+## 031 · Director / release integration and documentation team · in-progress
+
+- **Date:** 2026-11-20 (America/New_York)
+- **Ask:** Reconcile actual usage and all worker results, preserve historical evidence, and publish only after current release gates complete.
+- **Expected return:** Accurate current documents, linked validation, sanitized ledger and exact-candidate CI/package/publication receipts.
+- **Returned:** Reconciled observed usage to $0.798888 ($0.776748 native + $0.022140 cloud), retained uncertainty to $0.285266 and conservative usage accounting to $1.084154 of $100. The $5 cloud allocation remains reserved capacity, not spend. Current component tests and the live protocol are recorded; final combined CI, installed UI/package acceptance and 0.5.0 release publication remain pending. MCP scale/query regressions now pass 26 tests, including bounded successful responses and read-only pagination. A live approximately 1.9 MiB native state also returned a successful compact response; read-only collection pagination completed exactly once without mutation or provider calls.
+- **Evidence:** `project/CLAUDE_USAGE.md`; `project/claude-usage.json`; `project/CONNECTED_RELEASE.md`; `project/VALIDATION.md`; `tools/atlas-mcp.test.mjs`
+- **Next handoff:** Attach the final current-candidate CI, browser, installer and download-integrity receipts before marking the release complete.
+
+## 032 · Director / native synchronization engineer · complete
+
+- **Date:** 2026-11-20 (America/New_York)
+- **Ask:** Fix a concrete backup-restore mismatch that prevented a restored laptop from matching the saved cloud fingerprint.
+- **Expected return:** Stable private evidence projection across directory and filename relocation, retained artifact bytes and matching real Rust/TypeScript hashes.
+- **Returned:** A real export and restore exposed machine-specific paths in three structured panel evidence references. Matching Rust and TypeScript normalization now omits absolute local evidence paths only. A real export/restore regression retained content, chat and HTTPS/relative references, and a real Rust command accepted the original TypeScript hash. The actual private runtime and restored candidate also matched. Rust70 and desktop375 passed; no provider calls.
+- **Evidence:** `desktop-shell/src/main/cloudSync.ts`; `native-core/src/remote_commands.rs`; `desktop-shell/tests/cloud-native-contract.test.ts`; `project/VALIDATION.md`
+- **Next handoff:** Publish the candidate, refresh the owner-private cloud projection and verify the final restored-device pairing.

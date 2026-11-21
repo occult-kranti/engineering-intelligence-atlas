@@ -1,6 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { createToolHandler, createMessageProcessor, parseRepository, TOOL_DEFINITIONS, InvalidParams } from './atlas-mcp.mjs';
+import { EventEmitter } from 'node:events';
+import { PassThrough } from 'node:stream';
+import { createToolHandler, createMessageProcessor, createNativeCall, parseRepository, TOOL_DEFINITIONS, InvalidParams, SERVER_INFO, NATIVE_OUTPUT_LIMIT, TOOL_OUTPUT_LIMIT, OFFICE_QUERY_PAGE_BYTES } from './atlas-mcp.mjs';
 
 const seed = { company:{owner:'occult-kranti',repo:'engineering-intelligence-atlas'},employees:[{id:'github'}],tasks:[{id:'repair'}],milestones:[] };
 function fixture(fetchImpl=async()=>{throw new Error('unexpected network');}) {
@@ -57,4 +59,122 @@ test('malformed requests, unknown methods and notifications obey JSON-RPC',async
 });
 test('tool input errors are protocol errors; application failure is a tool error',async()=>{
   const p=createMessageProcessor({handleTool:fixture().handler});const invalid=await p(JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/call',params:{name:'roadmap_update',arguments:{}}}));assert.equal(invalid.error.code,-32602);const failed=await p(JSON.stringify({jsonrpc:'2.0',id:2,method:'tools/call',params:{name:'company_register',arguments:{repository:'o/r'}}}));assert.equal(failed.result.isError,true);
+});
+
+function officeFixture(count=235) {
+  return {schemaVersion:1,activeCompanyId:'company-a',companies:[{id:'company-a',name:'Synthetic A'},{id:'company-b',name:'Synthetic B'}],
+    offices:[{id:'office-a',companyId:'company-a'},{id:'office-b',companyId:'company-b'}],departments:[{id:'department-a',companyId:'company-a',officeId:'office-a'}],
+    employees:Array.from({length:count},(_,i)=>({id:`employee-${String(i).padStart(4,'0')}`,companyId:i%2?'company-b':'company-a',officeId:i%2?'office-b':'office-a',departmentId:i%2?null:'department-a',name:`Synthetic ${i}`,role:i%3?'Engineer':'Analyst',status:'active'})).reverse(),
+    jobs:[{id:'job-a',companyId:'company-a',officeId:'office-a',employeeId:'employee-0001',goal:'PRIVATE PROMPT BODY',status:'running',leaseToken:'sensitive-worker-lease',artifactUri:'/private/example-deliverable.md',apiKey:'never-return-this-key'}],
+    chatThreads:[{id:'thread-a',scope:{kind:'company',id:'company-a'},messages:[{id:'message-a',content:'PRIVATE CHAT BODY'}]}],
+    authority:{grants:[],ledger:[],index:[{id:'employee:employee-0000',kind:'employee',entityId:'employee-0000',title:'Synthetic zero',companyId:'company-a'}]},
+    lastAction:{grantId:'grant-new',employeeId:'employee-0000',requiresGrants:true,leaseToken:'sensitive-worker-lease',artifactUri:'/private/example-deliverable.md',secret:'never-return-this-key'}};
+}
+function officeHarness(snapshot) {
+  const calls=[];
+  const handler=createToolHandler({nativeCall:async(command,payload)=>{calls.push({command,payload});return {ok:true,snapshot};},fetchImpl:async()=>{throw new Error('No network expected');}});
+  const processor=createMessageProcessor({handleTool:handler});
+  const wire=(name,args={})=>processor(JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/call',params:{name,arguments:args}}));
+  return {calls,handler,wire};
+}
+
+test('Daftar server keeps its protocol name and advertises bounded read-only queries',()=>{
+  assert.deepEqual(SERVER_INFO,{name:'atlas-company',version:'0.5.0'});
+  const query=TOOL_DEFINITIONS.find(t=>t.name==='office_query');
+  assert.equal(query.annotations.readOnlyHint,true);assert.equal(query.inputSchema.properties.pageSize.maximum,100);
+  assert.equal(NATIVE_OUTPUT_LIMIT,16*1024*1024);
+});
+test('2 MiB successful command stays successful on the wire and is never replayed to read it',async()=>{
+  const snapshot=officeFixture();snapshot.chatThreads[0].messages[0].content='z'.repeat(2*1024*1024);
+  const f=officeHarness(snapshot);
+  assert.equal((await f.handler('office_snapshot',{})).snapshot,snapshot,'direct handler retains the complete snapshot');
+  const response=await f.wire('office_command',{action:'grant_authority',payload:{employeeId:'employee-0000'}});
+  const receipt=response.result.structuredContent;
+  assert.equal(response.result.isError,false);assert.equal(receipt.ok,true);assert.equal(receipt.mutationApplied,true);
+  assert.equal(receipt.snapshotOmitted,true);assert.equal('snapshot' in receipt,false);assert.equal(receipt.action,'grant_authority');
+  assert.equal(receipt.summary.lastAction.grantId,'grant-new');assert.equal(receipt.summary.lastAction.requiresGrants,true);
+  assert.match(receipt.guidance,/Do not replay/);assert.equal(receipt.next.tool,'office_query');
+  const text=JSON.stringify(response);
+  assert.ok(Buffer.byteLength(text)<TOOL_OUTPUT_LIMIT);
+  for(const secret of ['sensitive-worker-lease','example-deliverable','never-return-this-key','PRIVATE PROMPT BODY']) assert.equal(text.includes(secret),false);
+  await f.wire('office_query',{collection:'authorityGrants'});
+  assert.equal(f.calls.filter(c=>c.command==='office_command').length,1,'querying the receipt must not replay the mutation');
+  const read=await f.wire('office_snapshot');assert.equal(read.result.isError,false);assert.equal(read.result.structuredContent.mutationApplied,false);
+});
+test('small snapshot responses retain their existing full response contract',async()=>{
+  const snapshot=officeFixture(2),f=officeHarness(snapshot);
+  const response=await f.wire('office_snapshot');assert.equal(response.result.isError,false);
+  assert.deepEqual(response.result.structuredContent,{snapshot});
+});
+test('pagination returns every metadata record exactly once and calls only native reads',async()=>{
+  const f=officeHarness(officeFixture());let cursor;const ids=[];let pages=0;
+  do {
+    const page=await f.handler('office_query',{collection:'employees',pageSize:37,...(cursor?{cursor}:{})});
+    assert.equal(page.total,235);assert.equal(page.metadataOnly,true);assert.ok(page.returned<=37);
+    ids.push(...page.items.map(row=>row.id));cursor=page.nextCursor;pages++;
+  } while(cursor);
+  assert.equal(ids.length,235);assert.equal(new Set(ids).size,235);assert.deepEqual(ids,[...ids].sort());assert.equal(pages,7);
+  assert.ok(f.calls.every(call=>call.command==='office_snapshot'));
+});
+test('scope and metadata search follow the company hierarchy and actual job location',async()=>{
+  const snapshot=officeFixture(),f=officeHarness(snapshot);
+  const page=await f.handler('office_query',{collection:'employees',scope:{kind:'department',id:'department-a'},search:'Analyst',pageSize:100});
+  assert.equal(page.total,snapshot.employees.filter(e=>e.departmentId==='department-a'&&e.role==='Analyst').length);
+  assert.ok(page.items.every(row=>row.companyId==='company-a'&&row.role==='Analyst'));
+  assert.equal((await f.handler('office_query',{collection:'jobs',scope:{kind:'company',id:'company-b'}})).total,0,'shared employee home does not replace the actual job company');
+  assert.equal((await f.handler('office_query',{collection:'jobs',scope:{kind:'employee',id:'employee-0001'}})).total,1);
+  assert.equal((await f.handler('office_query',{collection:'index',scope:{kind:'office',id:'office-a'}})).total,1);
+});
+test('query metadata omits bodies, credentials, local artifacts and worker leases',async()=>{
+  const snapshot=officeFixture(2);snapshot.employees[0].name='Example sk-ant-12345678901234567890 /workspace/private/file.md';
+  const f=officeHarness(snapshot);
+  for(const collection of ['employees','jobs','chatThreads']) {
+    const response=await f.wire('office_query',{collection});const text=JSON.stringify(response);
+    assert.equal(response.result.isError,false);
+    for(const secret of ['PRIVATE CHAT BODY','PRIVATE PROMPT BODY','sensitive-worker-lease','example-deliverable','never-return-this-key','sk-ant-12345678901234567890','/workspace/private']) assert.equal(text.includes(secret),false,secret);
+  }
+  const chat=await f.handler('office_query',{collection:'chatThreads'});assert.equal(chat.items[0].messagesCount,1);assert.equal('messages' in chat.items[0],false);
+});
+test('stale or differently filtered cursors fail explicitly without mutating state',async()=>{
+  const snapshot=officeFixture(3),f=officeHarness(snapshot);
+  const page=await f.handler('office_query',{collection:'employees',pageSize:1});
+  await assert.rejects(f.handler('office_query',{collection:'employees',cursor:page.nextCursor,search:'Engineer'}),error=>error.code==='query_changed');
+  snapshot.employees[0].status='paused';
+  await assert.rejects(f.handler('office_query',{collection:'employees',cursor:page.nextCursor}),error=>error.code==='query_changed');
+  assert.ok(f.calls.every(call=>call.command==='office_snapshot'));
+});
+test('query validation rejects oversized or malformed requests before native reads',async()=>{
+  const f=officeHarness(officeFixture(2));
+  for(const args of [{collection:'secrets'},{collection:'jobs',pageSize:0},{collection:'jobs',pageSize:101},{collection:'jobs',search:'a'.repeat(201)},{collection:'jobs',cursor:'not a cursor'},{collection:'jobs',scope:{kind:'global',id:'all'}},{collection:'jobs',scope:{kind:'company',id:'company-a',extra:true}},{collection:'jobs',shell:'anything'}]) await assert.rejects(f.handler('office_query',args),InvalidParams);
+  assert.equal(f.calls.length,0);
+});
+test('byte-bounded pages shorten the page without losing the remaining records',async()=>{
+  const snapshot=officeFixture(100);
+  for(const row of snapshot.employees) {row.name='n'.repeat(9000);row.title='t'.repeat(9000);row.role='r'.repeat(9000);row.capabilities=Array.from({length:20},()=> 'c'.repeat(80));}
+  const f=officeHarness(snapshot);let cursor;const ids=[];let first=true;
+  do {
+    const response=await f.wire('office_query',{collection:'employees',pageSize:100,...(cursor?{cursor}:{})});
+    assert.equal(response.result.isError,false);assert.ok(Buffer.byteLength(JSON.stringify(response))<TOOL_OUTPUT_LIMIT);
+    const page=response.result.structuredContent;
+    if(first){assert.ok(page.returned<100);first=false;}
+    assert.ok(Buffer.byteLength(JSON.stringify(page.items))<OFFICE_QUERY_PAGE_BYTES+1000);
+    ids.push(...page.items.map(row=>row.id));cursor=page.nextCursor;
+  }while(cursor);
+  assert.equal(ids.length,100);assert.equal(new Set(ids).size,100);
+});
+
+function nativeProcessFixture(buffer) {
+  const child=new EventEmitter();child.stdin=new PassThrough();child.stdout=new PassThrough();child.stderr=new PassThrough();let killed=false;
+  child.kill=()=>{killed=true;};child.stdin.on('finish',()=>queueMicrotask(()=>{child.stdout.emit('data',buffer);child.emit('close',0);}));
+  const call=createNativeCall({binary:'/synthetic/core',stateDir:'/synthetic/state',seedDir:'/synthetic/seed',repoRoot:'/synthetic/repo'},{spawnImpl:()=>child});
+  return {call,wasKilled:()=>killed};
+}
+test('native reader accepts a synthetic 2 MiB snapshot within its new bounded ceiling',async()=>{
+  const f=nativeProcessFixture(Buffer.from(JSON.stringify({ok:true,snapshot:{content:'x'.repeat(2*1024*1024)}})));
+  const result=await f.call('office_snapshot');assert.equal(result.snapshot.content.length,2*1024*1024);assert.equal(f.wasKilled(),false);
+});
+test('native reader still rejects responses above 16 MiB with uncertain outcome guidance',async()=>{
+  const f=nativeProcessFixture(Buffer.alloc(NATIVE_OUTPUT_LIMIT+1,120));
+  await assert.rejects(f.call('office_command',{action:'create_company'}),error=>error.code==='native_output_too_large'&&/State may already be saved/.test(error.message));
+  assert.equal(f.wasKilled(),true);
 });

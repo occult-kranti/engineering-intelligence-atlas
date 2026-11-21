@@ -112,6 +112,19 @@ jobs:
       - name: Package Linux desktop
         working-directory: desktop-shell
         run: npm run package:linux
+      - name: Install the browser test driver for the packaged application
+        run: npm --prefix site-source ci
+      - name: Launch the packaged Electron app and exercise its real Rust core
+        env:
+          ATLAS_CI_NO_SANDBOX: '1'
+        run: xvfb-run -a node scripts/smoke-packaged-desktop.mjs
+      - name: Retain packaged desktop evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: packaged-desktop-ui
+          path: desktop-shell/.work/packaged-ui
+          if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         with:
           name: desktop-linux
@@ -153,8 +166,99 @@ jobs:
           name: android-debug
           path: android-shell/android/app/build/outputs/apk/debug/app-debug.apk
 
+  cloud:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: cloud-workspace/package-lock.json
+      - run: npm ci
+        working-directory: cloud-workspace
+      - name: Verify owner access, atomic budgets, revisions, device claims and queue recovery
+        working-directory: cloud-workspace
+        run: |
+          npx tsc --noEmit
+          node --experimental-strip-types --test tests/*.test.mjs
+          npm run build
+      - name: Install the browser test driver
+        run: npm ci --prefix site-source
+      - name: Install Chromium for the cloud interface gate
+        working-directory: site-source
+        run: npx playwright install --with-deps chromium
+      - name: Exercise desktop and narrow cloud interfaces with explicit synthetic API fixtures
+        timeout-minutes: 5
+        run: node scripts/smoke-cloud-ui.mjs
+      - name: Retain cloud interface evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud-ui-screenshots
+          path: cloud-workspace/outputs/ui-smoke/
+          if-no-files-found: warn
+
+  editor:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: vscode-extension/package-lock.json
+      - run: npm ci
+        working-directory: vscode-extension
+      - name: Test and package VS Code extension
+        working-directory: vscode-extension
+        run: |
+          npm run check
+          npm test
+          npm run package
+      - name: Activate the installed VSIX in an isolated VS Code window
+        working-directory: vscode-extension
+        timeout-minutes: 5
+        run: xvfb-run -a npm run test:installed
+      - name: Retain installed editor evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vscode-installed-smoke
+          path: vscode-extension/.work/installed-smoke/
+          if-no-files-found: warn
+      - uses: actions/upload-artifact@v4
+        with:
+          name: vscode-extension
+          path: vscode-extension/*.vsix
+
+  design-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: design-tools/package-lock.json
+      - run: npm ci --ignore-scripts
+        working-directory: design-tools
+      - name: Verify bounded OpenPencil handoff with no network or provider calls
+        working-directory: design-tools
+        run: |
+          npm run check
+          npm test
+          npm run smoke
+      - name: Retain design interoperability evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-handoff
+          path: design-tools/.work/
+          if-no-files-found: warn
+
   release:
-    needs: [web, mysql-connectors, desktop, android]
+    needs: [web, mysql-connectors, desktop, android, cloud, editor, design-tools]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -169,6 +273,10 @@ jobs:
         with:
           name: android-debug
           path: release/android
+      - uses: actions/download-artifact@v4
+        with:
+          name: vscode-extension
+          path: release/editor
       - name: Publish a new verified version without replacing existing releases
         env:
           GH_TOKEN: ${{ github.token }}
@@ -177,5 +285,5 @@ jobs:
           if gh release view "v${release_version}" >/dev/null 2>&1; then
             echo "Version already published; existing release is preserved."
           else
-            gh release create "v${release_version}" release/*.AppImage release/android/*.apk --target "$GITHUB_SHA" --title "Atlas ${release_version} — personal agent office" --notes-file project/RELEASE_NOTES.md
+            gh release create "v${release_version}" release/*.AppImage release/android/*.apk release/editor/*.vsix --target "$GITHUB_SHA" --title "Daftar ${release_version} — connected personal office" --notes-file project/RELEASE_NOTES.md
           fi

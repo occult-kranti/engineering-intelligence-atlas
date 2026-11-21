@@ -790,7 +790,7 @@
         "githubStatus": "unchecked",
         "id": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
         "importedAt": null,
-        "name": "Studio \u2014 example project",
+        "name": "Studio — example project",
         "repoUrl": null,
         "source": "owner",
         "status": "active",
@@ -1521,7 +1521,7 @@
         "at": "2026-11-21T00:35:51.791154268Z",
         "entityId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
         "id": "event-0e80f9bf-e146-46fa-8829-be7222e33d17",
-        "summary": "Created Studio \u2014 example project with a shared company assistant, office and two departments"
+        "summary": "Created Studio — example project with a shared company assistant, office and two departments"
       },
       {
         "action": "company-created",
@@ -1981,6 +1981,834 @@
       "transfers": []
     },
     "schedules": [],
-    "schemaVersion": 1
+    "schemaVersion": 1,
+    "authority": {
+      "schemaVersion": 1,
+      "managedEmployeeIds": [
+        "donna",
+        "employee-dc90ead4-67fa-4e65-8cee-c866696620f0"
+      ],
+      "grants": [
+        {
+          "id": "example-authority-donna",
+          "employeeId": "donna",
+          "scope": {
+            "kind": "company",
+            "id": "engineering-intelligence-atlas"
+          },
+          "type": "permission",
+          "preset": "full",
+          "capabilities": [
+            "team.manage",
+            "work.manage",
+            "knowledge.manage",
+            "layout.manage",
+            "roadmap.manage",
+            "cache.manage",
+            "authority.manage",
+            "provider.run",
+            "github.read_repository",
+            "github.publish_changes"
+          ],
+          "title": null,
+          "issuer": "owner",
+          "grantedAt": "2026-11-21T00:00:00.000Z",
+          "expiresAt": "2026-12-21T00:00:00.000Z",
+          "revokedAt": null,
+          "reason": "Example: coordinate the scoped delivery team for one month. No provider work is started by this grant.",
+          "revokedBy": null,
+          "revokeReason": null,
+          "parentGrantIds": []
+        },
+        {
+          "id": "example-promotion-engineering",
+          "employeeId": "employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+          "scope": {
+            "kind": "department",
+            "id": "department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce"
+          },
+          "type": "promotion",
+          "preset": "partial",
+          "capabilities": [
+            "team.manage",
+            "work.manage",
+            "roadmap.manage"
+          ],
+          "title": "Acting engineering lead",
+          "issuer": "donna",
+          "grantedAt": "2026-11-21T00:00:00.000Z",
+          "expiresAt": "2026-12-21T00:00:00.000Z",
+          "revokedAt": null,
+          "reason": "Example: organize engineering tasks and accountable delivery within the department.",
+          "revokedBy": null,
+          "revokeReason": null,
+          "parentGrantIds": [
+            "example-authority-donna"
+          ]
+        },
+        {
+          "id": "example-authority-expired",
+          "employeeId": "donna",
+          "scope": {
+            "kind": "company",
+            "id": "engineering-intelligence-atlas"
+          },
+          "type": "permission",
+          "preset": "partial",
+          "capabilities": [
+            "knowledge.manage"
+          ],
+          "title": null,
+          "issuer": "owner",
+          "grantedAt": "2026-11-01T00:00:00.000Z",
+          "expiresAt": "2026-11-15T00:00:00.000Z",
+          "revokedAt": null,
+          "reason": "Example: an earlier evidence review has ended. Its grant remains in history.",
+          "revokedBy": null,
+          "revokeReason": null,
+          "parentGrantIds": []
+        }
+      ],
+      "ledger": [
+        {
+          "id": "example-authority-ledger-2",
+          "at": "2026-11-01T00:00:00.000Z",
+          "actor": "owner",
+          "action": "grant_authority",
+          "targetId": "donna",
+          "scope": {
+            "kind": "company",
+            "id": "engineering-intelligence-atlas"
+          },
+          "summary": "Example: an earlier evidence review has ended. Its grant remains in history.",
+          "grantId": "example-authority-expired",
+          "outcome": "applied"
+        },
+        {
+          "id": "example-authority-ledger-0",
+          "at": "2026-11-21T00:00:00.000Z",
+          "actor": "owner",
+          "action": "grant_authority",
+          "targetId": "donna",
+          "scope": {
+            "kind": "company",
+            "id": "engineering-intelligence-atlas"
+          },
+          "summary": "Example: coordinate the scoped delivery team for one month. No provider work is started by this grant.",
+          "grantId": "example-authority-donna",
+          "outcome": "applied"
+        },
+        {
+          "id": "example-authority-ledger-1",
+          "at": "2026-11-21T00:00:00.000Z",
+          "actor": "donna",
+          "action": "promote_employee",
+          "targetId": "employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+          "scope": {
+            "kind": "department",
+            "id": "department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce"
+          },
+          "summary": "Example: organize engineering tasks and accountable delivery within the department.",
+          "grantId": "example-promotion-engineering",
+          "outcome": "applied"
+        }
+      ],
+      "index": [
+        {
+          "id": "company:engineering-intelligence-atlas",
+          "entityId": "engineering-intelligence-atlas",
+          "kind": "company",
+          "title": "Engineering Intelligence Atlas",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": null,
+          "ownerEmployeeId": "employee-6873f003-b02d-4e08-89e9-07407af47ba8",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.78370157Z",
+          "relatedIds": []
+        },
+        {
+          "id": "company:company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "entityId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "kind": "company",
+          "title": "Studio — example project",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": null,
+          "ownerEmployeeId": "employee-e34db1f8-4902-47c0-8a44-a90c652abc06",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791146036Z",
+          "relatedIds": []
+        },
+        {
+          "id": "company:atlas-shared-services",
+          "entityId": "atlas-shared-services",
+          "kind": "company",
+          "title": "Shared Services",
+          "companyId": "atlas-shared-services",
+          "parentId": null,
+          "ownerEmployeeId": "employee-8c205e88-2a14-4066-9439-41c0c5ab1ef0",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798205124Z",
+          "relatedIds": []
+        },
+        {
+          "id": "office:office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "entityId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "kind": "office",
+          "title": "Main office",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "engineering-intelligence-atlas",
+          "ownerEmployeeId": "employee-5131e471-81ee-4a3d-9a17-54785402a7fa",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783709462Z",
+          "relatedIds": []
+        },
+        {
+          "id": "office:office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "entityId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "kind": "office",
+          "title": "Main office",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "ownerEmployeeId": "employee-3b5851c2-4a98-4fed-8501-094d88f69f1a",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.79114885Z",
+          "relatedIds": []
+        },
+        {
+          "id": "office:office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "entityId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "kind": "office",
+          "title": "Main office",
+          "companyId": "atlas-shared-services",
+          "parentId": "atlas-shared-services",
+          "ownerEmployeeId": "employee-78394e59-99a4-4c86-963c-8185dbeef5ab",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798210442Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce",
+          "entityId": "department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce",
+          "kind": "department",
+          "title": "Engineering",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": "employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783711435Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-2718cb94-7600-47d0-bb0b-a3ed36d7054b",
+          "entityId": "department-2718cb94-7600-47d0-bb0b-a3ed36d7054b",
+          "kind": "department",
+          "title": "Research",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": "employee-4c7c563a-6e20-406f-882f-05289da0e11f",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783713107Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-46186676-8bf5-46d4-875d-9eddc0f0bfdb",
+          "entityId": "department-46186676-8bf5-46d4-875d-9eddc0f0bfdb",
+          "kind": "department",
+          "title": "Engineering",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "ownerEmployeeId": "employee-f993f59d-129d-480c-bb34-713e7ae40c2d",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791150993Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-7d912941-ae20-4d2c-8e84-fe24128278b9",
+          "entityId": "department-7d912941-ae20-4d2c-8e84-fe24128278b9",
+          "kind": "department",
+          "title": "Research",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "ownerEmployeeId": "employee-ea8ca188-6aa7-451d-b82c-60fa33d4c2c2",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791152696Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-caf083ad-140a-488d-9904-174b3e2c9b81",
+          "entityId": "department-caf083ad-140a-488d-9904-174b3e2c9b81",
+          "kind": "department",
+          "title": "Engineering",
+          "companyId": "atlas-shared-services",
+          "parentId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "ownerEmployeeId": "employee-7bf44f95-de3b-457b-901e-394fdb91aad3",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798212546Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-d6371fa6-9725-471e-8065-fe12b1b614aa",
+          "entityId": "department-d6371fa6-9725-471e-8065-fe12b1b614aa",
+          "kind": "department",
+          "title": "Research & Knowledge",
+          "companyId": "atlas-shared-services",
+          "parentId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "ownerEmployeeId": "employee-b3313ca8-0de8-4968-875b-be4e42772c17",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798214468Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-8685034f-2063-4a21-b5e8-a9abd2b784b3",
+          "entityId": "department-8685034f-2063-4a21-b5e8-a9abd2b784b3",
+          "kind": "department",
+          "title": "Design & Architecture",
+          "companyId": "atlas-shared-services",
+          "parentId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "ownerEmployeeId": "employee-8fbe4e85-378d-4c44-8751-f3d2bfd68d19",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798219266Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-c46df4e9-d748-4bc8-83c9-3e74f6b73ef3",
+          "entityId": "department-c46df4e9-d748-4bc8-83c9-3e74f6b73ef3",
+          "kind": "department",
+          "title": "Security",
+          "companyId": "atlas-shared-services",
+          "parentId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "ownerEmployeeId": "employee-db0e6144-7967-41e1-b793-818b4ef16583",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798222951Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-602eee16-181c-422d-8f78-7374a243a22d",
+          "entityId": "department-602eee16-181c-422d-8f78-7374a243a22d",
+          "kind": "department",
+          "title": "Hackathon",
+          "companyId": "atlas-shared-services",
+          "parentId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "ownerEmployeeId": "employee-03f8ca59-c6f5-4c18-b172-92e8f2bb930d",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798224634Z",
+          "relatedIds": []
+        },
+        {
+          "id": "department:department-34e1d11a-d67e-4c33-8f9a-a34d4a089d73",
+          "entityId": "department-34e1d11a-d67e-4c33-8f9a-a34d4a089d73",
+          "kind": "department",
+          "title": "Music & Arts",
+          "companyId": "atlas-shared-services",
+          "parentId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "ownerEmployeeId": "employee-07e87b5b-d267-4e3f-89ba-0267bd3d0adf",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.79822863Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:donna",
+          "entityId": "donna",
+          "kind": "employee",
+          "title": "Donna",
+          "companyId": null,
+          "parentId": null,
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783699116Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-6873f003-b02d-4e08-89e9-07407af47ba8",
+          "entityId": "employee-6873f003-b02d-4e08-89e9-07407af47ba8",
+          "kind": "employee",
+          "title": "Company assistant",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "engineering-intelligence-atlas",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.78370812Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-5131e471-81ee-4a3d-9a17-54785402a7fa",
+          "entityId": "employee-5131e471-81ee-4a3d-9a17-54785402a7fa",
+          "kind": "employee",
+          "title": "Office assistant",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783710233Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+          "entityId": "employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+          "kind": "employee",
+          "title": "Engineering assistant",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783712296Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-4c7c563a-6e20-406f-882f-05289da0e11f",
+          "entityId": "employee-4c7c563a-6e20-406f-882f-05289da0e11f",
+          "kind": "employee",
+          "title": "Research assistant",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "department-2718cb94-7600-47d0-bb0b-a3ed36d7054b",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783713698Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:staff-director",
+          "entityId": "staff-director",
+          "kind": "employee",
+          "title": "Director",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783717113Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:staff-github",
+          "entityId": "staff-github",
+          "kind": "employee",
+          "title": "GitHub employee",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783717704Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:staff-design",
+          "entityId": "staff-design",
+          "kind": "employee",
+          "title": "Product & interface",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783718185Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:staff-rust",
+          "entityId": "staff-rust",
+          "kind": "employee",
+          "title": "Native systems",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783718706Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:staff-release",
+          "entityId": "staff-release",
+          "kind": "employee",
+          "title": "Build & release",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783719206Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:staff-review",
+          "entityId": "staff-review",
+          "kind": "employee",
+          "title": "Independent review",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783719797Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:staff-science",
+          "entityId": "staff-science",
+          "kind": "employee",
+          "title": "Scientific research",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783720278Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-0dc4050e-ec1d-476b-8201-f830a90183e1",
+          "entityId": "employee-0dc4050e-ec1d-476b-8201-f830a90183e1",
+          "kind": "employee",
+          "title": "Subdirector",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.78372148Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-d2991300-575b-4bdc-a145-cdcf2ee404f8",
+          "entityId": "employee-d2991300-575b-4bdc-a145-cdcf2ee404f8",
+          "kind": "employee",
+          "title": "Blueprint steward",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783722391Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-30372bd4-8996-4c1b-8bca-43ab57787298",
+          "entityId": "employee-30372bd4-8996-4c1b-8bca-43ab57787298",
+          "kind": "employee",
+          "title": "Knowledge curator",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783724404Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-ea63a4ac-d999-4e0b-aca4-62a7478b0cab",
+          "entityId": "employee-ea63a4ac-d999-4e0b-aca4-62a7478b0cab",
+          "kind": "employee",
+          "title": "QA lead",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783725376Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-47c4daf1-69d0-4ab8-a76b-38780969ea55",
+          "entityId": "employee-47c4daf1-69d0-4ab8-a76b-38780969ea55",
+          "kind": "employee",
+          "title": "GitHub steward",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783726037Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-27d58fe4-f84c-4328-82af-4d0686563545",
+          "entityId": "employee-27d58fe4-f84c-4328-82af-4d0686563545",
+          "kind": "employee",
+          "title": "Code engineer",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "office-012c58a4-fb23-4226-b30b-cb8bfe89f982",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.783728991Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-e34db1f8-4902-47c0-8a44-a90c652abc06",
+          "entityId": "employee-e34db1f8-4902-47c0-8a44-a90c652abc06",
+          "kind": "employee",
+          "title": "Company assistant",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791147748Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-3b5851c2-4a98-4fed-8501-094d88f69f1a",
+          "entityId": "employee-3b5851c2-4a98-4fed-8501-094d88f69f1a",
+          "kind": "employee",
+          "title": "Office assistant",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791149651Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-f993f59d-129d-480c-bb34-713e7ae40c2d",
+          "entityId": "employee-f993f59d-129d-480c-bb34-713e7ae40c2d",
+          "kind": "employee",
+          "title": "Engineering assistant",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "department-46186676-8bf5-46d4-875d-9eddc0f0bfdb",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791152035Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-ea8ca188-6aa7-451d-b82c-60fa33d4c2c2",
+          "entityId": "employee-ea8ca188-6aa7-451d-b82c-60fa33d4c2c2",
+          "kind": "employee",
+          "title": "Research assistant",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "department-7d912941-ae20-4d2c-8e84-fe24128278b9",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791153266Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-e50a405f-269a-4b7b-8447-06f4dcd7acd3",
+          "entityId": "employee-e50a405f-269a-4b7b-8447-06f4dcd7acd3",
+          "kind": "employee",
+          "title": "Subdirector",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.79115544Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-e724ee1b-9c19-4796-aa1c-c4af863cb082",
+          "entityId": "employee-e724ee1b-9c19-4796-aa1c-c4af863cb082",
+          "kind": "employee",
+          "title": "Blueprint steward",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791156401Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-808f8b6d-4c6f-4b9f-9573-307fcf07e2a4",
+          "entityId": "employee-808f8b6d-4c6f-4b9f-9573-307fcf07e2a4",
+          "kind": "employee",
+          "title": "Knowledge curator",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791157403Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-a6e50f59-6149-4b99-a62d-d09e8826b5e8",
+          "entityId": "employee-a6e50f59-6149-4b99-a62d-d09e8826b5e8",
+          "kind": "employee",
+          "title": "QA lead",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791158244Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-e90b32a5-e1ec-4b11-b885-6cc482f230b5",
+          "entityId": "employee-e90b32a5-e1ec-4b11-b885-6cc482f230b5",
+          "kind": "employee",
+          "title": "GitHub steward",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791158975Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-d0d057c0-9266-43d2-9879-59c9474be8c4",
+          "entityId": "employee-d0d057c0-9266-43d2-9879-59c9474be8c4",
+          "kind": "employee",
+          "title": "Code engineer",
+          "companyId": "company-ecefdef4-ed98-45af-9349-99c4ee346c2b",
+          "parentId": "office-0d1438d6-707e-49e7-998c-b793c1801537",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.791159706Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-8c205e88-2a14-4066-9439-41c0c5ab1ef0",
+          "entityId": "employee-8c205e88-2a14-4066-9439-41c0c5ab1ef0",
+          "kind": "employee",
+          "title": "Company assistant",
+          "companyId": "atlas-shared-services",
+          "parentId": "atlas-shared-services",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798209391Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-78394e59-99a4-4c86-963c-8185dbeef5ab",
+          "entityId": "employee-78394e59-99a4-4c86-963c-8185dbeef5ab",
+          "kind": "employee",
+          "title": "Office assistant",
+          "companyId": "atlas-shared-services",
+          "parentId": "office-9dc0246e-9af9-4768-9d63-f64e23b2a1f8",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798211554Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-7bf44f95-de3b-457b-901e-394fdb91aad3",
+          "entityId": "employee-7bf44f95-de3b-457b-901e-394fdb91aad3",
+          "kind": "employee",
+          "title": "Engineering assistant",
+          "companyId": "atlas-shared-services",
+          "parentId": "department-caf083ad-140a-488d-9904-174b3e2c9b81",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798213627Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-b3313ca8-0de8-4968-875b-be4e42772c17",
+          "entityId": "employee-b3313ca8-0de8-4968-875b-be4e42772c17",
+          "kind": "employee",
+          "title": "Research assistant",
+          "companyId": "atlas-shared-services",
+          "parentId": "department-d6371fa6-9725-471e-8065-fe12b1b614aa",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798215149Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-8fbe4e85-378d-4c44-8751-f3d2bfd68d19",
+          "entityId": "employee-8fbe4e85-378d-4c44-8751-f3d2bfd68d19",
+          "kind": "employee",
+          "title": "Design & Architecture assistant",
+          "companyId": "atlas-shared-services",
+          "parentId": "department-8685034f-2063-4a21-b5e8-a9abd2b784b3",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798219927Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-db0e6144-7967-41e1-b793-818b4ef16583",
+          "entityId": "employee-db0e6144-7967-41e1-b793-818b4ef16583",
+          "kind": "employee",
+          "title": "Security assistant",
+          "companyId": "atlas-shared-services",
+          "parentId": "department-c46df4e9-d748-4bc8-83c9-3e74f6b73ef3",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798223502Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-03f8ca59-c6f5-4c18-b172-92e8f2bb930d",
+          "entityId": "employee-03f8ca59-c6f5-4c18-b172-92e8f2bb930d",
+          "kind": "employee",
+          "title": "Hackathon assistant",
+          "companyId": "atlas-shared-services",
+          "parentId": "department-602eee16-181c-422d-8f78-7374a243a22d",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798225545Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-2569042a-cb23-4e73-b9fe-85a169b3ca42",
+          "entityId": "employee-2569042a-cb23-4e73-b9fe-85a169b3ca42",
+          "kind": "employee",
+          "title": "Hackathon",
+          "companyId": "atlas-shared-services",
+          "parentId": "department-602eee16-181c-422d-8f78-7374a243a22d",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798227157Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-07e87b5b-d267-4e3f-89ba-0267bd3d0adf",
+          "entityId": "employee-07e87b5b-d267-4e3f-89ba-0267bd3d0adf",
+          "kind": "employee",
+          "title": "Music & Arts assistant",
+          "companyId": "atlas-shared-services",
+          "parentId": "department-34e1d11a-d67e-4c33-8f9a-a34d4a089d73",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798229271Z",
+          "relatedIds": []
+        },
+        {
+          "id": "employee:employee-921b33fa-5332-4a12-a2cf-cda47e13de1b",
+          "entityId": "employee-921b33fa-5332-4a12-a2cf-cda47e13de1b",
+          "kind": "employee",
+          "title": "Music & Arts",
+          "companyId": "atlas-shared-services",
+          "parentId": "department-34e1d11a-d67e-4c33-8f9a-a34d4a089d73",
+          "ownerEmployeeId": null,
+          "status": "active",
+          "updatedAt": "2026-11-21T00:35:51.798230653Z",
+          "relatedIds": []
+        },
+        {
+          "id": "authority:example-authority-donna",
+          "entityId": "example-authority-donna",
+          "kind": "authority",
+          "title": "Example permission grant",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "engineering-intelligence-atlas",
+          "ownerEmployeeId": "donna",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:00:00.000Z",
+          "relatedIds": [
+            "donna",
+            "engineering-intelligence-atlas"
+          ]
+        },
+        {
+          "id": "authority:example-promotion-engineering",
+          "entityId": "example-promotion-engineering",
+          "kind": "authority",
+          "title": "Acting engineering lead",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce",
+          "ownerEmployeeId": "employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+          "status": "active",
+          "updatedAt": "2026-11-21T00:00:00.000Z",
+          "relatedIds": [
+            "employee-dc90ead4-67fa-4e65-8cee-c866696620f0",
+            "department-4399eb5e-d108-4dd9-9553-a8f24b2c42ce"
+          ]
+        },
+        {
+          "id": "authority:example-authority-expired",
+          "entityId": "example-authority-expired",
+          "kind": "authority",
+          "title": "Example permission grant",
+          "companyId": "engineering-intelligence-atlas",
+          "parentId": "engineering-intelligence-atlas",
+          "ownerEmployeeId": "donna",
+          "status": "expired",
+          "updatedAt": "2026-11-01T00:00:00.000Z",
+          "relatedIds": [
+            "donna",
+            "engineering-intelligence-atlas"
+          ]
+        }
+      ]
+    },
+    "decisionPanels": []
   }
 }

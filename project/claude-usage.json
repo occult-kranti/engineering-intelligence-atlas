@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 0.629318,
+  "accountedUsd": 1.084154,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -72,8 +72,111 @@
       "costUsd": 0.0003,
       "retainedReservationUsd": 0,
       "contribution": "Synthetic public adapter fixture passed with observed usage."
+    },
+    {
+      "number": 7,
+      "jobId": "job-71cb630e-7d19-46f3-b846-3bfd1baca1c1",
+      "model": "claude-sonnet-5-5",
+      "task": "native Donna roadmap",
+      "state": "completed",
+      "inputTokens": 8519,
+      "outputTokens": 3062,
+      "costUsd": 0.047658,
+      "contribution": "Observed provider job completed with a retained artifact; planning/review is distinct from code execution."
+    },
+    {
+      "number": 8,
+      "jobId": "job-f1af2dfa-1072-4031-9563-41610280b9a0",
+      "model": "claude-sonnet-5-5",
+      "task": "native Donna roadmap",
+      "state": "completed",
+      "inputTokens": 7896,
+      "outputTokens": 3410,
+      "costUsd": 0.049892,
+      "contribution": "Observed provider job completed with a retained artifact; planning/review is distinct from code execution."
+    },
+    {
+      "number": 9,
+      "jobId": "job-5a26967b-1411-4d33-90a0-63293b26a167",
+      "model": "claude-sonnet-5-5",
+      "task": "Daftar management/directory review",
+      "state": "completed",
+      "inputTokens": 10454,
+      "outputTokens": 3014,
+      "costUsd": 0.051048,
+      "contribution": "Observed provider job completed with a retained artifact; planning/review is distinct from code execution."
+    },
+    {
+      "number": 10,
+      "jobId": "job-6b15a364-042a-4ea8-983b-df7ddbb0a37a",
+      "model": "claude-sonnet-5-5",
+      "task": "Daftar management/directory review",
+      "state": "completed",
+      "inputTokens": 8047,
+      "outputTokens": 2636,
+      "costUsd": 0.042454,
+      "contribution": "Observed provider job completed with a retained artifact; planning/review is distinct from code execution."
+    },
+    {
+      "number": 11,
+      "jobId": "job-21fb2a2e-84c4-4e88-b51d-c62c2f5b440a",
+      "model": "claude-sonnet-5-5",
+      "task": "native expert panel review/synthesis",
+      "state": "completed",
+      "inputTokens": 7786,
+      "outputTokens": 1690,
+      "costUsd": 0.032472,
+      "contribution": "Completed and retained a real specialist review or Donna synthesis artifact; planning/review is distinct from executing code."
+    },
+    {
+      "number": 12,
+      "jobId": "job-81fc4d03-8dbc-4541-babc-d05ae47bc516",
+      "model": "claude-sonnet-5-5",
+      "task": "native expert panel review/synthesis",
+      "state": "completed",
+      "inputTokens": 5553,
+      "outputTokens": 1841,
+      "costUsd": 0.029516,
+      "contribution": "Completed and retained a real specialist review or Donna synthesis artifact; planning/review is distinct from executing code."
+    },
+    {
+      "number": 13,
+      "jobId": "job-bff424af-7d9b-4135-812c-0bb04d0f16ca",
+      "model": "claude-sonnet-5-5",
+      "task": "native expert panel review/synthesis",
+      "state": "completed",
+      "inputTokens": 11915,
+      "outputTokens": 2056,
+      "costUsd": 0.04439,
+      "contribution": "Completed and retained a real specialist review or Donna synthesis artifact; planning/review is distinct from executing code."
     }
   ],
-  "observedUsd": 0.479318,
-  "retainedReservationUsd": 0.15
+  "observedUsd": 0.798888,
+  "retainedReservationUsd": 0.285266,
+  "cloud": {
+    "allocationUsd": 5,
+    "observedUsd": 0.02214,
+    "retainedReservationUsd": 0.135266,
+    "firstFailures": "Two preflight failures from the edge runtime rejecting redirect:error; conservative reservations remain retained.",
+    "successfulRequestId": "12485433-9c85-4469-a006-7e8e74fd78ca",
+    "successfulUsage": {
+      "input_tokens": 7800,
+      "cache_creation_input_tokens": 0,
+      "cache_read_input_tokens": 0,
+      "cache_creation": {
+        "ephemeral_5m_input_tokens": 0,
+        "ephemeral_1h_input_tokens": 0
+      },
+      "output_tokens": 654,
+      "output_tokens_details": {
+        "thinking_tokens": 0
+      },
+      "service_tier": "standard",
+      "inference_geo": "global",
+      "speed": "standard"
+    },
+    "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
+  },
+  "observedNativeUsd": 0.776748,
+  "newWorkstreamCapUsd": 20
 }

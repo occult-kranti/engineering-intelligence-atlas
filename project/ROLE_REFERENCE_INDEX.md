@@ -26,11 +26,26 @@ model request.
 | Visual architecture, art direction and cultural references | [`design-architecture`](../company/role-library/design-architecture.md) | `design-architecture` |
 | Proof obligations, numerical scope and robust geometry | [`math-geometry`](../company/role-library/math-geometry.md) | `design-architecture`, with research review |
 | Original music, sound interfaces and creative assets | [`music-arts`](../company/role-library/music-arts.md) | `music-arts` |
+| Analyze observations into candidate causes, then test a forward consequence | [`newton`](../company/role-library/newton.md) | Research panel → skeptic |
+| Specify mechanisms, phase, loading and complete energy accounting | [`tesla`](../company/role-library/tesla.md) | Research panel → advisor |
+| Challenge inference, source provenance and unresolved proof obligations | [`research-skeptic`](../company/role-library/research-skeptic.md) | Independent task → Donna |
+| Choose the next source-bound resonance investigation after critique | [`resonance-advisor`](../company/role-library/resonance-advisor.md) | Research panel → Donna |
+| Coordinate matched forward and reverse research contracts | [`paired-research`](../company/role-library/paired-research.md) | Research panel → advisor |
 
 The six canonical service keys match the native shared-service model. Focused
-roles describe specialties of an existing service; they do not require sixteen
+roles describe specialties of an existing service; they do not require twenty-one
 always-running agents. A CEO/Donna/subdirector title does not grant external
 tools or privileged access. The runtime enforces its supported capability list.
+
+Donna's [decision panel runtime](DECISION_PANELS.md) selects only relevant roles,
+reuses eligible contracted or local employees, and hires a missing scoped role
+only when needed. Panel rounds become real queue jobs: parallel expert reports
+followed by a dependent Donna synthesis. A separate decision record preserves
+the verdict, evidence and unresolved disagreements before another round.
+The [research skill map](../company/role-library/research-skill-map.json) records
+which enabled ChatGPT workflows supplied the compact research briefs. Historical
+names identify documented-method lenses; they are not participating people,
+endorsers, human peer reviewers or claims of comprehensive source reading.
 
 ## Use the library in a working handoff
 
@@ -61,6 +76,17 @@ token-saving claim. See [Anthropic context engineering](https://www.anthropic.co
 and the existing [prompt/budget research](PROMPT_BUDGET_RESEARCH.md).
 
 ## Focused examples
+
+The existing [Security specialist](../company/role-library/security.md) owns the
+[Clouds Against Humanity reference path](../company/role-library/references/clouds-against-humanity.md)
+and its [synthetic paper task](../company/role-library/examples/security-clouds-against-humanity-task.json).
+Donna reuses that shared role for the first three upstream beginner primers
+(cloud resources, networking, identity/secrets/zero trust), then scopes later
+IaC, threat-modeling, SOC/NOC or privacy questions to a concrete deliverable.
+The source register distinguishes maintainer-reported tests, unapplied cloud
+designs and reading-based privacy drafts. This addition creates no employee,
+scheduled job or deployment; the task has no capabilities and a zero-dollar
+ceiling. See the guide for exact primary URLs, reviewed revision and acceptance.
 
 The [Manifest V3 source clipper](../company/role-library/examples/source-clipper/README.md)
 demonstrates an explicit **Capture → Review → Export** flow. It requests only

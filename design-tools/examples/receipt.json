@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "tool": "@open-pencil/cli",
+  "toolVersion": "0.16.0",
+  "startedAt": "2026-11-21T02:16:30.784Z",
+  "operations": [
+    {
+      "schemaVersion": 1,
+      "tool": "@open-pencil/cli",
+      "toolVersion": "0.16.0",
+      "operation": "import-html",
+      "input": "fixtures/office-handoff.html",
+      "inputSha256": "f5114b13f6472a9ddc484b636cdfe73bb458ae79082a58fda2eb16cca391cd06",
+      "output": ".work/design-handoffs/office-3bb1a04d.fig",
+      "outputBytes": 29847,
+      "outputSha256": "49b85585bd5769e36e347088e44c2a1c0ed1cc1b91e3593c79942f641774e215",
+      "networkAttempts": 0,
+      "providerCalls": 0,
+      "startedAt": "2026-11-21T02:16:30.787Z",
+      "finishedAt": "2026-11-21T02:16:31.955Z"
+    },
+    {
+      "schemaVersion": 1,
+      "tool": "@open-pencil/cli",
+      "toolVersion": "0.16.0",
+      "operation": "inspect",
+      "input": ".work/design-handoffs/office-3bb1a04d.fig",
+      "inputSha256": "49b85585bd5769e36e347088e44c2a1c0ed1cc1b91e3593c79942f641774e215",
+      "output": ".work/design-handoffs/office-3bb1a04d-inspection.json",
+      "outputBytes": 156,
+      "outputSha256": "5af27f86780e015c8685de6996969c027581c63f441899d5c5bf6829cfcd5b84",
+      "networkAttempts": 0,
+      "providerCalls": 0,
+      "startedAt": "2026-11-21T02:16:31.958Z",
+      "finishedAt": "2026-11-21T02:16:32.932Z"
+    },
+    {
+      "schemaVersion": 1,
+      "tool": "@open-pencil/cli",
+      "toolVersion": "0.16.0",
+      "operation": "convert-fig",
+      "input": ".work/design-handoffs/office-3bb1a04d.fig",
+      "inputSha256": "49b85585bd5769e36e347088e44c2a1c0ed1cc1b91e3593c79942f641774e215",
+      "output": ".work/design-handoffs/office-3bb1a04d-roundtrip.fig",
+      "outputBytes": 29847,
+      "outputSha256": "49b85585bd5769e36e347088e44c2a1c0ed1cc1b91e3593c79942f641774e215",
+      "networkAttempts": 0,
+      "providerCalls": 0,
+      "startedAt": "2026-11-21T02:16:32.934Z",
+      "finishedAt": "2026-11-21T02:16:33.790Z"
+    },
+    {
+      "schemaVersion": 1,
+      "tool": "@open-pencil/cli",
+      "toolVersion": "0.16.0",
+      "operation": "export-svg",
+      "input": ".work/design-handoffs/office-3bb1a04d-roundtrip.fig",
+      "inputSha256": "49b85585bd5769e36e347088e44c2a1c0ed1cc1b91e3593c79942f641774e215",
+      "output": ".work/design-handoffs/office-3bb1a04d.svg",
+      "outputBytes": 1514,
+      "outputSha256": "59550212865c3bd43e73901fb87519087a81f5ce49d2e775c1ed39a90238b94e",
+      "networkAttempts": 0,
+      "providerCalls": 0,
+      "startedAt": "2026-11-21T02:16:33.792Z",
+      "finishedAt": "2026-11-21T02:16:34.582Z"
+    }
+  ],
+  "checks": [
+    "HTML imported into a real .fig file",
+    "CLI inspected the generated document",
+    "CLI converted .fig into a second .fig",
+    "CLI exported the converted file as SVG",
+    "Every operation completed without a network attempt or provider call"
+  ],
+  "finishedAt": "2026-11-21T02:16:34.584Z",
+  "examples": [
+    {
+      "path": "examples/office-handoff.fig",
+      "fromOperation": "import-html",
+      "sha256": "49b85585bd5769e36e347088e44c2a1c0ed1cc1b91e3593c79942f641774e215",
+      "bytes": 29847
+    },
+    {
+      "path": "examples/office-handoff-inspection.json",
+      "fromOperation": "inspect",
+      "sha256": "5af27f86780e015c8685de6996969c027581c63f441899d5c5bf6829cfcd5b84",
+      "bytes": 156
+    },
+    {
+      "path": "examples/office-handoff.svg",
+      "fromOperation": "export-svg",
+      "sha256": "59550212865c3bd43e73901fb87519087a81f5ce49d2e775c1ed39a90238b94e",
+      "bytes": 1514
+    }
+  ]
+}

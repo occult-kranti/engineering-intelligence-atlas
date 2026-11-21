@@ -1,0 +1,18 @@
+{
+  "package": "@open-pencil/cli",
+  "version": "0.16.0",
+  "license": "MIT",
+  "sourceRepository": "https://github.com/open-pencil/open-pencil",
+  "sourceDirectory": "packages/cli",
+  "packageTarball": "https://registry.npmjs.org/@open-pencil/cli/-/cli-0.16.0.tgz",
+  "packageIntegrity": "sha512-UkmJZCtv/dEX0Y3uNVlWu/zyWOM2RVnHrEP93Kx2q53HjZsIJitnezfsidSqNbiiB0REC0hLgcoN+Iz+urj+tA==",
+  "licenseSha256": "38ac54d3b48ccb6b3c0044b37bec1d75c21c3dc38b34a5a8c52a3cea34ba514b",
+  "licenseSource": "LICENSE file distributed in the pinned npm package",
+  "checkedAt": "2026-11-21",
+  "upstreamDocs": [
+    "https://openpencil.dev/reference/cli",
+    "https://openpencil.dev/developers/cli/inspecting",
+    "https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/"
+  ],
+  "cloudScope": "This adapter runs the npm CLI locally; it does not deploy OpenPencil Cloud."
+}

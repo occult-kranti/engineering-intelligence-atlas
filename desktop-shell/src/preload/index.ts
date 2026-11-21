@@ -1,5 +1,6 @@
 import { contextBridge, ipcRenderer } from 'electron';
 import type { OfficeCommand } from '../shared/office';
+import type { ConfigureCloudRequest } from '../shared/cloud';
 import type {
   CredentialProvider,
   CreateProjectRequest,
@@ -33,6 +34,11 @@ import type {
 
 const CHANNELS = {
   openPersonalDashboard: 'desktop:open-personal-dashboard',
+  copyEditorPairing: 'desktop:copy-editor-pairing',
+  cloudStatus: 'desktop:cloud:status',
+  configureCloud: 'desktop:cloud:configure',
+  syncCloud: 'desktop:cloud:sync',
+  disconnectCloud: 'desktop:cloud:disconnect',
   getSystemInfo: 'desktop:get-system-info',
   getModelCatalog: 'desktop:get-model-catalog',
   checkModelRequirements: 'desktop:check-model-requirements',
@@ -77,6 +83,11 @@ const CHANNELS = {
 
 if (window.location.protocol === 'file:') {
   const bridge: DesktopBridge = {
+    copyEditorPairing: () => ipcRenderer.invoke(CHANNELS.copyEditorPairing),
+    cloudStatus: () => ipcRenderer.invoke(CHANNELS.cloudStatus),
+    configureCloud: (request: ConfigureCloudRequest) => ipcRenderer.invoke(CHANNELS.configureCloud, request),
+    syncCloud: () => ipcRenderer.invoke(CHANNELS.syncCloud),
+    disconnectCloud: () => ipcRenderer.invoke(CHANNELS.disconnectCloud),
     version: 3,
     openPersonalDashboard: () => ipcRenderer.invoke(CHANNELS.openPersonalDashboard),
     getSystemInfo: () => ipcRenderer.invoke(CHANNELS.getSystemInfo),

@@ -1,5 +1,5 @@
 appId: com.researchdirector.desktop
-productName: Research Director Desktop
+productName: Daftar
 copyright: Copyright © 2026
 directories:
   output: release
@@ -34,6 +34,7 @@ linux:
     - AppImage
     - dir
   category: Utility
-  artifactName: research-director-desktop-${version}-${arch}.${ext}
+  executableName: research-director-desktop-shell
+  artifactName: daftar-desktop-${version}-${arch}.${ext}
 # Windows (nsis/zip) and macOS (dmg/zip) packaging must be run on their
 # respective host OSes; see README.md "Packaging".

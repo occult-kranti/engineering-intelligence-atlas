@@ -1,0 +1,11 @@
+node_modules/**
+.gitignore
+test/**
+test-host/**
+scripts/**
+.work/**
+.vscode-test/**
+*.vsix
+package-lock.json
+.vscode/**
+**/*.log

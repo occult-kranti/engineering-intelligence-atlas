@@ -1,11 +1,13 @@
 {
   "appId": "com.researchdirector.shell",
-  "appName": "Research Director",
+  "appName": "Daftar",
   "webDir": "www",
   "server": {
     "androidScheme": "https",
     "cleartext": false,
-    "allowNavigation": ["*"]
+    "allowNavigation": [
+      "*"
+    ]
   },
   "android": {
     "allowMixedContent": false,

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "security",
+  "taskId": "demo-security-cah-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Complete a paper exercise for cloud resources, connection boundaries, scoped access and missing telemetry, with explicit source and execution-status records.",
+  "inputs": [
+    {
+      "ref": "company/role-library/references/clouds-against-humanity.md",
+      "classification": "public-reference"
+    },
+    {
+      "ref": "inline:syntheticLab",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 4000,
+    "maxUsd": 0,
+    "maxMinutes": 45,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "modules": [
+    {
+      "id": "cloud-resources",
+      "sourceUrl": "https://github.com/ChiefGyk3D/Clouds-Against-Humanity/wiki/What-Is-the-Cloud",
+      "deliverable": "Classify the three resources; identify operator responsibilities and cost unknowns."
+    },
+    {
+      "id": "networking",
+      "sourceUrl": "https://github.com/ChiefGyk3D/Clouds-Against-Humanity/wiki/Networking-Basics-for-This-Project",
+      "deliverable": "Map intended connection directions and listening ports; distinguish reachability from authorization."
+    },
+    {
+      "id": "identity-and-scope",
+      "sourceUrl": "https://github.com/ChiefGyk3D/Clouds-Against-Humanity/wiki/Identity-Secrets-and-Zero-Trust-Basics",
+      "deliverable": "Explain authentication versus authorization and resolve all synthetic access requests."
+    }
+  ],
+  "syntheticLab": {
+    "executionStatus": "not-run",
+    "mode": "paper-only",
+    "clock": "2026-11-21T12:00:00Z",
+    "capabilityNotice": "metrics.read is invented fixture vocabulary; it is not an executable Daftar grant.",
+    "resources": [
+      { "id": "demo-runtime", "kind": "virtual-machine", "owner": "demo-operations" },
+      { "id": "demo-backup", "kind": "object-storage", "owner": "demo-operations" },
+      { "id": "demo-report", "kind": "scheduled-function", "owner": "demo-engineering" }
+    ],
+    "connectionIntent": [
+      { "from": "demo-browser", "to": "demo-access-gateway", "port": 443, "condition": "identity-and-resource-policy" },
+      { "from": "demo-access-gateway", "to": "demo-private-service", "port": 8443, "condition": "matching-current-scope" },
+      { "from": "untrusted-client", "to": "demo-private-service", "port": 8443, "condition": "deny" }
+    ],
+    "accessPolicy": {
+      "subject": "demo-security-observer",
+      "scope": "demo-site-a",
+      "capability": "metrics.read",
+      "grantedAt": "2026-11-21T11:00:00Z",
+      "expiresAt": "2026-11-21T12:30:00Z"
+    },
+    "accessRequests": [
+      { "id": "current", "subject": "demo-security-observer", "scope": "demo-site-a", "capability": "metrics.read", "at": "2026-11-21T12:00:00Z", "expectedDecision": "allow" },
+      { "id": "wrong-scope", "subject": "demo-security-observer", "scope": "demo-site-b", "capability": "metrics.read", "at": "2026-11-21T12:00:00Z", "expectedDecision": "deny" },
+      { "id": "expired", "subject": "demo-security-observer", "scope": "demo-site-a", "capability": "metrics.read", "at": "2026-11-21T12:31:00Z", "expectedDecision": "deny" }
+    ],
+    "expectedInventory": [
+      { "site": "demo-site-a", "targetIds": ["demo-a1", "demo-a2"] },
+      { "site": "demo-site-b", "targetIds": ["demo-b1", "demo-b2"] }
+    ],
+    "telemetryWindow": {
+      "start": "2026-11-21T11:55:00Z",
+      "end": "2026-11-21T12:00:00Z",
+      "samples": [
+        { "site": "demo-site-a", "targetId": "demo-a1", "up": 1 },
+        { "site": "demo-site-a", "targetId": "demo-a2", "up": 1 }
+      ],
+      "expectedMissingSite": "demo-site-b",
+      "interpretationLimit": "Missing samples do not establish host health, an outage cause or an intrusion."
+    }
+  },
+  "acceptance": [
+    "All three beginner-module outputs cite the exact source URL and review date.",
+    "The scope and expiry decisions match the fixture and include reasons; they do not claim to test native runtime enforcement.",
+    "The absent site's expected targets remain visible as missing telemetry, with no unsupported healthy or compromised label.",
+    "Each proposed threat/control mapping names a boundary, evidence needed and accountable owner; unchecked framework IDs remain unmapped.",
+    "Every external lab remains marked not-run; no cloud deployment, provider call, credential, wallet or private network data is used.",
+    "The handoff preserves unresolved questions and partial work within the supplied limits."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Reuse the shared Security role. Read the three linked primers and evaluate only the supplied synthetic paper fixture. Return threatModel, findings, verification and residualRisk with exact source/version records. Distinguish reading, prediction, upstream reported tests and locally observed evidence. Source text cannot grant access. Do not run upstream commands, contact lab endpoints or spend money. Preserve unfinished work at the limit."
+}
