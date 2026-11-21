@@ -5,6 +5,7 @@ export interface OfficeCompany {
   assistantId: string; createdAt: string; source: string;
   importedAt: string | null; githubStatus: 'unchecked' | 'metadata-reviewed';
   visibility?: 'public' | 'private' | null; defaultBranch?: string | null;
+  parentCompanyId?: string | null;
 }
 export interface OfficeLocation {
   id: string; companyId: string; name: string; status: OfficeEntityStatus; assistantId: string; createdAt: string;
@@ -173,7 +174,7 @@ export type OfficeAction = 'create_company' | 'select_company' | 'import_reposit
   | 'configure_ceo' | 'upsert_portfolio_group' | 'ensure_shared_services' | 'optimize_portfolio'
   | 'contract_service' | 'share_knowledge' | 'upsert_roadmap_item' | 'schedule_repository_reviews'
   | 'convene_panel' | 'start_panel_round' | 'record_panel_decision' | 'pause_panel' | 'resume_panel' | 'apply_remote_command'
-  | 'grant_authority' | 'promote_employee' | 'revoke_authority' | 'set_authority_enforcement' | 'apply_employee_command' | 'rebuild_office_index' | 'rename_company' | 'check_worker_authority';
+  | 'grant_authority' | 'promote_employee' | 'revoke_authority' | 'set_authority_enforcement' | 'apply_employee_command' | 'rebuild_office_index' | 'rename_company' | 'set_company_parent' | 'check_worker_authority';
 /** Every action has a fixed Rust-side schema; unknown fields are never executed. */
 export interface OfficeCommand { action: OfficeAction; [key: string]: unknown }
 export interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: string; code?: string }

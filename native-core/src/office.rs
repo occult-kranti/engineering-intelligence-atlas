@@ -6,6 +6,8 @@ use serde_json::{json, Value};
 use std::collections::{HashMap, HashSet, VecDeque};
 use time::{format_description::well_known::Rfc3339, Duration, OffsetDateTime};
 use uuid::Uuid;
+#[path = "company_hierarchy.rs"]
+mod company_hierarchy;
 #[path = "governance.rs"]
 mod governance;
 pub use governance::*;
@@ -126,6 +128,8 @@ pub struct OfficeCompany {
     pub visibility: Option<String>,
     #[serde(default)]
     pub default_branch: Option<String>,
+    #[serde(default)]
+    pub parent_company_id: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -554,6 +558,7 @@ impl OfficeSnapshot {
         {
             return Err(fail("OFFICE_STATE_INVALID", "Invalid cache bounds"));
         }
+        company_hierarchy::validate_company_forest(self)?;
         self.validate_governance()?;
         self.validate_portfolio()?;
         self.validate_decision_panels()?;
@@ -798,6 +803,7 @@ impl OfficeSnapshot {
                 None
             },
             default_branch: None,
+            parent_company_id: None,
         });
         let assistant = self.add_staff(
             &company_id,
@@ -1232,6 +1238,9 @@ impl OfficeSnapshot {
             return Ok(());
         }
         match action.as_str() {
+            "set_company_parent" => {
+                self.set_company_parent(p)?;
+            }
             "rename_company" => {
                 let company_id = string(p, "companyId", 100)?;
                 let name = string(p, "name", 200)?;
