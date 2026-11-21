@@ -320,10 +320,20 @@ try {
     await page.goto(`${base}desktop-preview/chrome.html?workspace=chat#office`,{waitUntil:'networkidle'});
     await page.locator('#chat-send').waitFor({state:'visible'});
     const box=await page.locator('#chat-send').boundingBox();
-    assert(box&&box.y>=0&&box.y+box.height<=viewport.height,`Donna composer must fit first laptop viewport ${viewport.width}: ${JSON.stringify(box)}`);
     const filename=`workspace-first-brief-${viewport.width}.png`;
+    // Retain the actual first viewport even when its acceptance check fails.
+    // Reading geometry does not scroll, focus, or change the rendered layout.
     await page.screenshot({path:join(screenshotRoot,filename)});
-    screenshots.push({file:filename,surface:'workspace',route:'first-brief',width:viewport.width});checked++;
+    const layout=await page.evaluate(()=>({scroll:{x:scrollX,y:scrollY},elements:Object.fromEntries([
+      ['topbar','.workspace-topbar'],['heading','#office-view > .donna-heading'],['ceoEntry','#office-view > .ceo-entry'],
+      ['scope','.office-scope'],['locator','.workspace-locator'],['tabs','.workspace-control-bar'],
+      ['conversation','#donna-conversation'],['composer','#workspace-chat-form'],['composerContext','#workspace-chat-form .composer-context'],
+      ['message','#chat-message'],['composerFooter','#workspace-chat-form .composer-footer'],
+    ].map(([name,selector])=>{const node=document.querySelector(selector);if(!node)return[name,null];const rect=node.getBoundingClientRect(),style=getComputedStyle(node);return[name,{x:rect.x,y:rect.y,width:rect.width,height:rect.height,bottom:rect.bottom,display:style.display,gridColumns:style.gridTemplateColumns,rowGap:style.rowGap,padding:style.padding,margin:style.margin}];}))}));
+    writeFileSync(join(screenshotRoot,`workspace-first-brief-${viewport.width}.json`),JSON.stringify({viewport,sendButton:box,layout,completedContrastChecks:contrastChecks},null,2)+'\n');
+    screenshots.push({file:filename,surface:'workspace',route:'first-brief',width:viewport.width});
+    assert(box&&box.y>=0&&box.y+box.height<=viewport.height,`Donna composer must fit first laptop viewport ${viewport.width}: ${JSON.stringify(box)}`);
+    checked++;
     await context.close();
   }
   writeFileSync(join(screenshotRoot, 'index.json'), JSON.stringify({ generatedAt: new Date().toISOString(), screenshots, checks: checked, interactionChecks, contrastChecks, data: 'Public isolated starter only; no private user data', limitations: 'Browser-rendered shell; native OS keychain and desktop window controls are not exercised.' }, null, 2) + '\n');
