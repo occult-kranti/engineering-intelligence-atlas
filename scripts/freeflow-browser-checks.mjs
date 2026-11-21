@@ -110,19 +110,25 @@ async function openDepartment(page) {
   await settle(page);
 }
 
-async function listFallbackCheck(page, label) {
+async function listFallbackCheck(page, label, {nodeId, query, destination}) {
   const s = await canvasStats(page);
   assert.ok(s.canvasHidden, `${label}: canvas must be hidden at 390px`);
   await page.locator('#freeflow-host .ff-list-host').waitFor({state: 'visible'});
   const search = page.locator('#freeflow-host .ff-list-search');
-  await search.fill('Fixture');
+  await search.fill(query);
   await settle(page);
-  const first = page.locator('#freeflow-host .ff-list-button').first();
-  await first.waitFor({state: 'visible'});
-  await first.focus();
+  // List order includes employees, whose Enter action intentionally leaves the
+  // studio for their management panel. Exercise the actual scope navigator here.
+  const target = page.locator(`#freeflow-host .ff-list-button[data-node-id="${nodeId}"]`);
+  await target.waitFor({state: 'visible'});
+  await target.focus();
   await page.keyboard.press('Enter');
+  await page.waitForFunction(expected => document.querySelector('#freeflow-host .ff-breadcrumbs button[aria-current="page"]')?.textContent === expected, destination);
   await settle(page);
-  await search.fill('');
+  await page.locator('#freeflow-host .ff-list-host').waitFor({state: 'visible'});
+  await search.waitFor({state: 'visible'});
+  assert.equal(await search.inputValue(), '', `${label}: entering a new scope resets the list filter`);
+  assert.ok((await canvasStats(page)).canvasHidden, `${label}: scope navigation preserves the narrow list view`);
 }
 
 async function cameraCheck(page, label) {
@@ -367,17 +373,12 @@ export async function runFreeflowCloudChecks({browser, base, makeState, installA
           return 'conference top chairs';
         }
         if (row.n === '07') {
-          await listFallbackCheck(page, 'shot07');
+          await listFallbackCheck(page, 'shot07', {nodeId: IDS.company, query: 'Fixture Engineering', destination: 'Fixture Engineering'});
           return 'conference list fallback';
         }
-        await openCompanyViaList(page);
-        await listFallbackCheck(page, 'shot08');
+        await listFallbackCheck(page, 'shot08', {nodeId: IDS.room, query: 'Product studio', destination: 'Engineering'});
         return 'department list fallback';
       })();
-      async function openCompanyViaList(p) {
-        const btn = p.locator('#freeflow-host .ff-list-button[data-node-id="folio:fixture-company"]');
-        if (await btn.count()) { await btn.focus(); await p.keyboard.press('Enter'); await settle(p); }
-      }
       await assertTheme(page, row.theme, `shot ${row.n} post-interaction`);
       const stats = await canvasStats(page);
       if (desktop) {

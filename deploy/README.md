@@ -39,6 +39,15 @@ cp deploy/.env.example deploy/.env
 
 The build uses Node 24 and Rust 1.100.0 images, plus the repository's `package-lock.json` and `Cargo.lock`. Native source declares Rust 1.89 as its minimum. Images use release tags; resolve reviewed image digests in your release pipeline when publishing a production image.
 
+Validate and build the image before creating runtime credentials:
+
+```bash
+docker compose --env-file deploy/.env -f deploy/compose.yaml config --quiet
+docker compose --env-file deploy/.env -f deploy/compose.yaml build
+```
+
+No owner or provider credential is required to build. The build context allows only explicit runtime inputs and excludes `deploy/secrets`; directory permissions stay private on subsequent rebuilds too. Keep `.dockerignore` with the reviewed source checkout. Its exception patterns intentionally use literal paths or complete subtrees so BuildKit can skip protected directories without opening them. See [Docker build-context rules](https://docs.docker.com/build/concepts/context/) and the [BuildKit filesystem filter](https://github.com/tonistiigi/fsutil/blob/master/filter.go).
+
 ## 2. Create the control credential
 
 ```bash
@@ -65,12 +74,11 @@ ANTHROPIC_API_KEY_FILE=/run/secrets/anthropic-api-key
 
 Leave unused provider variables blank. The optional GitHub credential uses `set github` and `GITHUB_TOKEN_FILE=/run/secrets/github-token`; it enables the runtime's existing bounded GitHub operations. Keep organization-wide cloud provisioning credentials outside this runtime until the corresponding scoped adapter exists.
 
-## 3. Build and start, still paused
+## 3. Start the built image, still paused
 
 ```bash
 docker compose --env-file deploy/.env -f deploy/compose.yaml config --quiet
-docker compose --env-file deploy/.env -f deploy/compose.yaml build
-docker compose --env-file deploy/.env -f deploy/compose.yaml up -d
+docker compose --env-file deploy/.env -f deploy/compose.yaml up -d --no-build
 docker compose --env-file deploy/.env -f deploy/compose.yaml ps
 curl --fail --silent --show-error http://127.0.0.1:8788/healthz
 docker compose --env-file deploy/.env -f deploy/compose.yaml exec -T runtime node /app/deploy/runtime-request.mjs status
@@ -166,6 +174,8 @@ docker compose --env-file deploy/.env -f deploy/compose.yaml build
 docker compose --env-file deploy/.env -f deploy/compose.yaml up -d --force-recreate
 docker compose --env-file deploy/.env -f deploy/compose.yaml exec -T runtime node /app/deploy/runtime-request.mjs status
 ```
+
+Leave the existing `deploy/secrets` directory at mode `0700` and its credentials at `0400` while rebuilding. The allowlist excludes that directory before traversal; no credential removal, permission change, or privileged build is necessary. CI exercises a second build after initializing protected synthetic secrets to check this upgrade path. If a modified allowlist causes a permission error, restore the reviewed `.dockerignore` instead of making the credentials readable to the build client.
 
 Do not assume that an older binary can read state written by a newer version. For a rollback that changes state format, restore the matching backup into a separate volume along with the older reviewed image/source. Record the source commit, image identity, and backup filename together in the deployment record.
 

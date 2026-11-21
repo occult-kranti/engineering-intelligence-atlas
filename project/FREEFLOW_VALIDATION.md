@@ -16,7 +16,7 @@ Updated 2026-11-21. This receipt separates implemented and tested behavior from 
 | Gate | Observed result |
 | --- | --- |
 | Rust core | 95/95 tests; optimized release binary built |
-| Desktop unit suite | 503/503 tests |
+| Desktop unit suite | 504/504 tests |
 | Renderer pure-DOM interaction | 294/294 assertions; zero network/provider calls |
 | Final toolbar lifecycle/controls/member slice | 24/24 tests |
 | Cloud API suite | 98/98 tests; TypeScript and production build passed |
@@ -50,3 +50,7 @@ A model pool assignment is explicit. Existing managed Ollama jobs using arbitrar
 The owner-private Site was published from source `88c0c330027d97a6d95f6d17bc7a3fbc9c23bdba` on 2026-11-21. Live acceptance verified the loaded company conference table, automatic browsing stopping on interaction, Donna options, owner access dashboard, restricted visiting-office canvas and invitation review. No membership or Site audience was changed. At the time this source receipt was written, GitHub branch publication, CI, release packages and Pages were pending. Their authoritative outcomes are the [GitHub Actions runs](https://github.com/occult-kranti/engineering-intelligence-atlas/actions), [0.7.0 release](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.7.0), and private Site deployment record. Completed local gates are not evidence of an external publication.
 
 The final independent review reproduced and fixed same-device restored-backup overwrites and the fresh-desktop first-sync identity shortcut. Mismatched revisions now stop before any native command, acknowledgment or upload unless the fetched projection exactly matches local state; first-sync recovery requires the headless encrypted base proof. An interrupted first desktop sync without that proof requires explicit review. The reusable headless workflow is a required dependency of the release job, including its actual container boot check.
+
+## CI corrections before release
+
+The first GitHub run (`44944163515`) passed eight jobs and exposed three concrete gates. The Windows package built but its boot recorder identified an eager, unnecessary `appData` lookup; explicit/current profiles now avoid that lookup. The cloud browser matrix selected an employee and then queried a hidden studio; it now selects explicit company/room targets and asserts their destinations. Docker context traversal attempted to open protected secrets; literal include exceptions preserve directory pruning, and CI now builds both before and after private credential initialization. The corrected candidate must pass these actual gates before merge.

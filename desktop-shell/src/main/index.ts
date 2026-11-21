@@ -111,7 +111,7 @@ function applySessionHardening(): void {
 async function main(): Promise<void> {
   recordStage('profile-resolve', 'start');
   const currentProfile = app.getPath('userData');
-  const preservedProfile = existingUserDataPath(currentProfile, app.getPath('appData'), app.commandLine.hasSwitch('user-data-dir'), fs.existsSync);
+  const preservedProfile = existingUserDataPath(currentProfile, () => app.getPath('appData'), app.commandLine.hasSwitch('user-data-dir'), fs.existsSync);
   if (preservedProfile !== currentProfile) app.setPath('userData', preservedProfile);
   recordStage('profile-resolve', 'ok');
   recordStage('app-ready', 'start');

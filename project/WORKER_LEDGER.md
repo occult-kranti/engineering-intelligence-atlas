@@ -435,3 +435,10 @@ User-visible task briefs and result summaries. This is a delivery record, not a 
 - **Returned:** Confirmed renderer/static asset parity and version consistency. Reproduced and fixed two same-device cloud overwrite paths, preserving exact-state lost-acknowledgment recovery; independent reproductions now perform zero writes. Made real headless/container verification a required installer-release dependency. Final desktop and headless/MCP suites passed 503 and 55 tests respectively. Published and observed the owner-private Site without changing its audience or memberships.
 - **Evidence:** desktop-shell/src/main/cloudSync.ts; desktop-shell/tests/cloud-sync.test.ts; headless-runtime/test/cloud-sync.test.mjs; .github/workflows/ci.yml; project/FREEFLOW_VALIDATION.md
 - **Next handoff:** GitHub release checks and real host/device acceptance retain their explicit evidence gates.
+
+## 056 · Cross-platform CI correction · complete
+
+- **Ask:** Resolve observed container, mobile browser and Windows packaged-boot failures before release.
+- **Returned:** Corrected BuildKit context pruning and added a protected-secrets rebuild gate; targeted explicit navigable mobile fixtures; used retained Windows boot stages to remove an unnecessary eager appData lookup. Preserved test assertions, profile isolation and secret permissions. Local desktop suite passed 504 tests after the Windows correction.
+- **Evidence:** .dockerignore; .github/workflows/headless-runtime.yml; scripts/freeflow-browser-checks.mjs; desktop-shell/src/main/profileMigration.ts; desktop-shell/tests/profile-migration.test.ts
+- **Next handoff:** Require the corrected candidate's full GitHub CI and main release run; initial failures are retained in run44944163515.
