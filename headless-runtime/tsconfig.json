@@ -1,0 +1,17 @@
+{
+  "extends": "../desktop-shell/tsconfig.json",
+  "compilerOptions": {
+    "rootDir": "../desktop-shell/src",
+    "outDir": "../desktop-shell/dist",
+    "typeRoots": ["../desktop-shell/node_modules/@types"]
+  },
+  "include": [
+    "../desktop-shell/src/main/office.ts",
+    "../desktop-shell/src/main/officeWorker.ts",
+    "../desktop-shell/src/main/providers.ts",
+    "../desktop-shell/src/main/ollama.ts",
+    "../desktop-shell/src/main/modelPool.ts",
+    "../desktop-shell/src/main/cloudSync.ts"
+  ],
+  "exclude": []
+}

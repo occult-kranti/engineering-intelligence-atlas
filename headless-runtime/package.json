@@ -1,0 +1,12 @@
+{
+  "name": "daftar-headless-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "node ../desktop-shell/node_modules/typescript/bin/tsc -p tsconfig.json",
+    "start": "node server.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}

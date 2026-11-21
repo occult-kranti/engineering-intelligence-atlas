@@ -80,6 +80,7 @@ export function describeNode(n: SceneNode): string {
     if (md['organizational'] === true || md['portal'] === true) prefix = md['role'] === 'parent' ? 'Parent company link' : md['role'] === 'child' ? 'Subcompany link' : 'Company link';
     else if (md['globalAssistant'] === true) prefix = 'Global assistant reference';
     else if (md['serviceHost'] === true || md['layoutOnly'] === true) prefix = 'Service host reference';
+    else if (md['memberShared'] === true) prefix = 'Shared employee reference';
     else if (n.employeeId || n.contractId) prefix = 'Contracted staff reference';
     else prefix = 'Reference';
   }
@@ -87,6 +88,7 @@ export function describeNode(n: SceneNode): string {
   if (n.subtitle) bits.push(n.subtitle);
   if (n.kind === 'room') bits.push(typeof md['assignment'] === 'string' ? (md['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department'));
   if (n.status) bits.push(`status ${n.status}`);
+  if (typeof md['heatLabel'] === 'string') bits.push(md['heatLabel']);
   const c = countsText(n);
   if (c) bits.push(c);
   return bits.join(', ');
@@ -155,7 +157,7 @@ function applyHeat(e: HTMLElement, paper: HTMLElement, n: SceneNode, lod: 'rich'
   e.dataset.heatLevel = h.level;
   const text = h.metric ? `${h.label} · ${h.metric}` : h.label;
   paper.setAttribute('data-heat-text', text);
-  if (lod === 'rich') {
+  if (lod === 'rich' && h.level !== 'unknown') {
     let badge = old as HTMLElement | null;
     if (!badge) { badge = el('span', 'ff-node-heat'); paper.appendChild(badge); }
     badge.textContent = text;
@@ -169,6 +171,7 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   e.classList.toggle('is-selected', selected);
   e.setAttribute('aria-label', describeNode(n));
   e.setAttribute('aria-pressed', String(selected));
+  if (n.kind === 'restricted') e.setAttribute('aria-disabled', 'true'); else e.removeAttribute('aria-disabled');
   e.tabIndex = tabStop ? 0 : -1;
   const paper = e.firstElementChild as HTMLElement;
   const hk = heatOf(n);
@@ -191,13 +194,19 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   }
   const title = el('div', 'ff-node-title', n.label);
   paper.appendChild(title);
+  if (n.kind === 'restricted') {
+    paper.appendChild(el('div', 'ff-restricted-mark', 'Restricted access'));
+    paper.appendChild(el('div', 'ff-node-sub', n.subtitle));
+    return;
+  }
   if (lod === 'rich' || n.kind === 'folio') {
     if (n.subtitle) paper.appendChild(el('div', 'ff-node-sub', n.subtitle));
     if (n.kind === 'employee' || n.kind === 'reference') {
       const mono = n.metadata['monogram'];
       paper.insertBefore(el('div', 'ff-node-monogram', typeof mono === 'string' ? mono : '?'), title);
     }
-    paper.appendChild(el('div', 'ff-node-status', n.status));
+    const state = n.kind === 'folio' && n.status === 'active' ? `Company ${Number(n.metadata['seatIndex'] ?? 0) + 1}` : n.status;
+    paper.appendChild(el('div', 'ff-node-status', state));
     const c = countsText(n);
     if (c && lod === 'rich') paper.appendChild(el('div', 'ff-node-counts', c));
     if (n.kind === 'folio' || n.kind === 'office' || n.kind === 'room') {

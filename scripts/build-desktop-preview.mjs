@@ -34,6 +34,6 @@ html = rewriteHtml(html, names, roots);
 files.set(hashName('preview-state.json', seedBytes), seedBytes);
 files.set('chrome.html', Buffer.from(html));
 
-const legacy = /^(?:chrome\.html|(?:chrome|browser-bridge|office-signals)(?:\.[a-f0-9]{16})?\.js|(?:chrome|studio-tokens|freeflow)(?:\.[a-f0-9]{16})?\.css|preview-state(?:\.[a-f0-9]{16})?\.json)$/;
+const legacy = /^(?:chrome\.html|(?:chrome|browser-bridge|office-signals|model-pool)(?:\.[a-f0-9]{16})?\.js|(?:chrome|studio-tokens|freeflow)(?:\.[a-f0-9]{16})?\.css|preview-state(?:\.[a-f0-9]{16})?\.json)$/;
 writeAssets(dest, files, { prune: (rel) => legacy.test(rel) });
 console.log('Built desktop preview with content-addressed renderer graph, styles, bridge and starter state.');

@@ -53,6 +53,9 @@ jobs:
       - name: Verify release checksum rules with disposable temp files
         run: node scripts/release-checksums.test.mjs
 
+  headless:
+    uses: ./.github/workflows/headless-runtime.yml
+
   mysql-connectors:
     runs-on: ubuntu-latest
     services:
@@ -119,7 +122,7 @@ jobs:
           npm run test:renderer
           node ../scripts/smoke-office.mjs
           node --test ../tools/atlas-mcp.test.mjs
-          node --test ../scripts/test-company-kits.mjs
+          node --test ../scripts/test-company-kits.mjs ../scripts/reconcile-company-hierarchy.test.mjs
       - name: Package Linux desktop
         working-directory: desktop-shell
         run: npm run package:linux
@@ -347,7 +350,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: [web, release-checksums, mysql-connectors, desktop, desktop-windows, android, cloud, editor, design-tools]
+    needs: [web, release-checksums, headless, mysql-connectors, desktop, desktop-windows, android, cloud, editor, design-tools]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

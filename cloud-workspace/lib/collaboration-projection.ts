@@ -165,8 +165,6 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
   // Roadmap: company-scoped only.
   const allRoad = list(portfolio.roadmap);
   const roadAll = allRoad.filter((r) => obj(r.scope) && r.scope.kind === 'company' && r.scope.id === companyId && str(r.id));
-  const visibleBoardRoad = new Set<string>(); for (const b of blueprints.out) for (const w of list(b.whiteboards)) for (const id of strs(w.roadmapItemIds, 200)) visibleBoardRoad.add(id);
-  const restrictedLinked = allRoad.filter((r) => typeof r.id === 'string' && visibleBoardRoad.has(r.id) && !(obj(r.scope) && r.scope.kind === 'company' && r.scope.id === companyId)).length;
   const road = cap(roadAll, LIMITS.roadmap);
   const retainedRoad = new Set(road.out.map((r) => r.id as string));
   const contractIds = new Set(recipientContracts.map((c) => c.id as string));
@@ -175,12 +173,13 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
   for (const bp of sceneBps) bp.whiteboards = bp.whiteboards.map((w: Row) => { const { _goalIds, _jobIds, _roadmapIds, ...rest } = w; return { ...rest, goalIds: _goalIds.filter((g: string) => retainedGoals.has(g)).slice(0, LIMITS.links), jobIds: _jobIds.filter((j: string) => retainedJobs.has(j)).slice(0, LIMITS.links), roadmapItemIds: _roadmapIds.filter((r: string) => retainedRoad.has(r)).slice(0, LIMITS.links) }; });
 
   const officesOut = offices.out.map((o) => ({ id: o.id, companyId, name: str(o.name, 200), status: str(o.status, 20) }));
-  const deptsOut = departments.out.map((d) => ({ id: d.id, companyId, officeId: d.officeId, name: str(d.name, 200), status: str(d.status, 20) }));
+  const deptsOut = departments.out.map((d) => ({ id: d.id, companyId, officeId: d.officeId, name: str(d.name, 200), status: str(d.status, 20),
+    parentDepartmentId: retainedDepts.has(d.parentDepartmentId) && deptById.get(d.parentDepartmentId)?.officeId === d.officeId && d.parentDepartmentId !== d.id ? d.parentDepartmentId : null }));
   const roleOut = roleCards.out;
   return {
     company: { id: company.id, name: str(company.name, 200), status: str(company.status, 20) },
     offices: officesOut, departments: deptsOut, roleCards: roleOut, blueprints: sceneBps, jobs: jobsOut, goals: goalsOut, roadmap: roadOut,
-    truncation: { offices: meta(officesAll.length, offices.out.length), departments: meta(deptsAll.length, departments.out.length), parentCapOmitted: { blueprints: bpAll.length - bpAll.filter((b) => retainedOffices.has(b.officeId)).length, departments: deptsAll.length - deptsAll.filter((d) => retainedOffices.has(d.officeId)).length }, roleCards: roleCards.m, blueprints: blueprints.m, rooms: meta(roomTotals.matched, roomTotals.returned), desks: meta(deskTotals.matched, deskTotals.returned), whiteboards: meta(boardTotals.matched, boardTotals.returned), jobs: jobs.m, goals: goals.m, roadmap: road.m, restrictedLinkedRoadmap: restrictedLinked },
+    truncation: { offices: meta(officesAll.length, offices.out.length), departments: meta(deptsAll.length, departments.out.length), parentCapOmitted: { blueprints: bpAll.length - bpAll.filter((b) => retainedOffices.has(b.officeId)).length, departments: deptsAll.length - deptsAll.filter((d) => retainedOffices.has(d.officeId)).length }, roleCards: roleCards.m, blueprints: blueprints.m, rooms: meta(roomTotals.matched, roomTotals.returned), desks: meta(deskTotals.matched, deskTotals.returned), whiteboards: meta(boardTotals.matched, boardTotals.returned), jobs: jobs.m, goals: goals.m, roadmap: road.m },
     counts: { offices: officesOut.length, departments: deptsOut.length, roleCards: roleOut.length, jobs: jobsOut.length, goals: goalsOut.length, roadmap: roadOut.length },
   };
 }
@@ -204,7 +203,12 @@ export async function authorizedCompanyView(env: AtlasEnv, user: CollabUser, com
   let snap: unknown; try { snap = JSON.parse(row.snapshot); } catch { snap = null; }
   const view = projectCompanyForMember(snap, companyId);
   insist(view, 'Company not found or access denied.', 404, 'not_found');
-  const body: Row = { ...view, membership: { role: membership.role, expiresAt: membership.expiresAt, aclRevision: membership.aclRevision } };
+  // Recheck after the snapshot read; a grant revoked while it was pending cannot
+  // disclose a response under the old membership. No hidden global counts enter
+  // either this body or its fingerprint.
+  const current = await requireMembership(env, user, companyId);
+  insist(current.id === membership.id && current.aclRevision === membership.aclRevision && current.role === membership.role && current.expiresAt === membership.expiresAt, 'Access changed; refresh the company view.', 409, 'access_changed');
+  const body: Row = { ...view, membership: { role: current.role, expiresAt: current.expiresAt, aclRevision: current.aclRevision }, access: { mode: 'member', role: current.role, restrictedRegions: [{ id: 'private-workspace', label: 'Private workspace', reason: 'A separate company membership is required.' }] } };
   // Owner keeps the exact global revision for proposal-acceptance CAS.
   if (user.isOwner === true) return { ...body, revision: row.revision };
   // Members: no revision property at all; fingerprint is freshness metadata only, never authority for mutations.

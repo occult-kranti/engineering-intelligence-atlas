@@ -290,10 +290,21 @@ const other=Array.from(pel('company-parent-select').options).find(o=>o.value);
 if(other){pel('company-parent-select').value=other.value;pel('company-parent-select').dispatchEvent(new pw.Event('change',{bubbles:true}));await flush();check(pcalls().length===before,'choosing a parent alone sends no command');}
 pel('company-parent-form').dispatchEvent(new pw.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();
 check(pcalls().length===before+1&&pcalls()[before].args.companyId==='fixture-company','explicit submit sends one set_company_parent for the selected child');
+const deptChild=pel('department-parent-child'),deptParent=pel('department-parent-select');
+check(!!deptChild&&!!deptParent,'department hierarchy editor is mounted in the active workspace');
+check(!Array.from(deptParent.options).some(o=>o.value&&o.value===deptChild.value),'department parent options exclude the department itself');
+const deptCalls=()=>pf.calls.filter(c=>c.name==='officeCommand'&&c.args.action==='set_department_parent');
+const departmentId=deptChild.value;
+deptParent.dispatchEvent(new pw.Event('change',{bubbles:true}));await flush();
+check(deptCalls().length===0,'changing department parent sends no command before explicit submit');
+pel('department-parent-form').dispatchEvent(new pw.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();
+check(deptCalls().length===1&&deptCalls()[0].args.departmentId===departmentId&&deptCalls()[0].args.parentDepartmentId===null,'department parent submit uses the selected stable identity and explicit null root');
 pd.window.close();
 const pub=await makeDom(true,'public-preview');pub.window.document.querySelector('.nav-item[data-view="office"]').click();await flush();
 pub.window.document.getElementById('company-parent-form').dispatchEvent(new pub.window.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();
-check(pub.window.__atlasFixture.calls.filter(c=>c.name==='officeCommand'&&c.args.action==='set_company_parent').length===0,'public preview submit makes zero commands');pub.window.close();
+check(pub.window.__atlasFixture.calls.filter(c=>c.name==='officeCommand'&&c.args.action==='set_company_parent').length===0,'public preview submit makes zero commands');
+pub.window.document.getElementById('department-parent-form').dispatchEvent(new pub.window.SubmitEvent('submit',{bubbles:true,cancelable:true}));await flush();
+check(pub.window.__atlasFixture.calls.filter(c=>c.name==='officeCommand'&&c.args.action==='set_department_parent').length===0,'public department hierarchy submit makes zero commands');pub.window.close();
 }
 // Parent portal label via describeNode.
 {
@@ -346,13 +357,13 @@ de('cloud-connect-form').dispatchEvent(new dw.SubmitEvent('submit',{bubbles:true
 check(df.calls.filter(c=>c.name==='configureCloud').length===1&&df.cloud.configured===true,'local cloud form submit configures this fixture exactly once');
 ddoc.querySelector('.nav-item[data-view="office"]').click();await flush();de('donna-dock-toggle').click();await flush();
 de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
-const opens=df.calls.filter(c=>c.name==='openExternal'&&c.args.url.endsWith('/team'));
-check(opens.length===1&&opens[0].args.url==='https://site.example.test/team','configured HTTPS base opens exactly /team without query/hash/token');
+const opens=df.calls.filter(c=>c.name==='openExternal'&&c.args.url.endsWith('/access'));
+check(opens.length===1&&opens[0].args.url==='https://site.example.test/access','configured HTTPS base opens exactly /access without query/hash/token');
 de('cloud-url').value='https://user:pw@site.example.test';
 const before2=df.calls.filter(c=>c.name==='openExternal').length;
 check(df.calls.filter(c=>c.name==='configureCloud').length===1,'unsubmitted invalid draft does not reconfigure the confirmed connection');
 de('donna-options-toggle').click();ddoc.querySelector('[data-donna-option="team"]').click();await flush();
-check(df.calls.filter(c=>c.name==='openExternal').length===before2||df.calls.filter(c=>c.name==='openExternal').every(c=>c.args.url==='https://site.example.test/team'),'invalid draft cannot redirect the confirmed team link');
+check(df.calls.filter(c=>c.name==='openExternal').length===before2||df.calls.filter(c=>c.name==='openExternal').every(c=>c.args.url==='https://site.example.test/access'),'invalid draft cannot redirect the confirmed team link');
 check(df.calls.filter(c=>c.name==='officeCommand').every(c=>c.args.action!=='post_chat'),'Donna options never post chat');
 check(before2===1,'only one external open recorded');
 // Reset clears all four inline edges after an actual move

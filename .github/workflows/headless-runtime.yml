@@ -1,0 +1,61 @@
+name: Verify headless runtime
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  runtime:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: desktop-shell/package-lock.json
+      - name: Select Rust stable
+        run: rustup default stable
+      - name: Install locked dependencies and build portable modules
+        run: |
+          npm ci --prefix desktop-shell --ignore-scripts --no-audit --no-fund
+          npm --prefix desktop-shell run build:native
+          npm --prefix headless-runtime run build
+      - name: Verify native boundary and cancellation behavior
+        working-directory: desktop-shell
+        run: npx vitest run tests/cloud-native-contract.test.ts tests/office-worker.test.ts tests/providers.test.ts
+      - name: Verify private HTTP and stdio control
+        run: |
+          node --test headless-runtime/test/*.test.mjs tools/daftar-runtime-mcp.test.mjs
+          node scripts/smoke-runtime-mcp.mjs
+
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      DAFTAR_VOLUME_NAME: daftar_runtime_ci
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create a synthetic owner credential
+        run: sudo python3 deploy/manage-secrets.py init --directory deploy/secrets --uid 10001 --gid 10001
+      - name: Validate and build the container
+        run: |
+          docker compose -f deploy/compose.yaml config --quiet
+          docker compose -f deploy/compose.yaml build
+      - name: Boot without provider credentials and require healthy state
+        run: docker compose -f deploy/compose.yaml up -d --wait --wait-timeout 120
+      - name: Verify private API and in-container MCP startup
+        run: |
+          docker compose -f deploy/compose.yaml exec -T runtime node /app/deploy/runtime-request.mjs status > /tmp/daftar-status.json
+          node -e "const a=require('/tmp/daftar-status.json'); if(!a.ok || a.worker.enabled || a.execution!=='headless') process.exit(1)"
+          node -e "for (const r of [{jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:'2025-11-25',capabilities:{},clientInfo:{name:'container-check',version:'1'}}},{jsonrpc:'2.0',id:2,method:'tools/call',params:{name:'office_summary',arguments:{}}}]) console.log(JSON.stringify(r))" | docker compose -f deploy/compose.yaml exec -T runtime node /app/tools/daftar-runtime-mcp.mjs > /tmp/daftar-mcp.jsonl
+          node -e "const rows=require('node:fs').readFileSync('/tmp/daftar-mcp.jsonl','utf8').trim().split('\n').map(JSON.parse); const r=rows.find(x=>x.id===2); if(r?.result?.isError!==false || !/^[a-f0-9]{64}$/.test(r.result.structuredContent.stateHash)) process.exit(1)"
+      - name: Remove synthetic container and volume
+        if: always()
+        run: docker compose -f deploy/compose.yaml down --volumes

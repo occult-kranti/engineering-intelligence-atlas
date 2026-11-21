@@ -68,3 +68,23 @@ Related: [Roadmap](ROADMAP.md) · [Handoff](HANDOFF.md) · [Backend research](pr
 - **043: Independent context and interface reviewers** — Found that machine identity notes displaced useful source records from bounded prompt and UI windows. Added same-company employee-contract selection, filtered metadata before native/cloud context and UI limits, and exposed safe source links through the existing external-link bridge. Focused worker tests passed 60; full desktop suite passed 411; renderer assertions passed 230; cloud API/directory suite passed 29. No new privileges or provider calls. ([ledger](project/WORKER_LEDGER.md))
 
 - **044: Director / private company integration and release** — Created both companies through native commands; zero-mutation replay passed. Saved roadmaps, source knowledge, first-cycle draft goals and scoped handoffs; matched native/cloud projections and private directory. Corrected the static compiler failure found by CI. Released 0.6.1 from 600d5fc after all seven jobs, release and Pages passed; deployed matching private Site, verified downloaded digests and independently checked private export/restore. No new provider calls or external social actions. ([ledger](project/WORKER_LEDGER.md))
+
+## Private cloud runtime foundation · 21 November 2026 (America/New_York)
+
+- **045: Cloud architecture and Vast/VPS researcher** — Recommended one CPU VPS authority with optional Vast GPU capacity. Audited actual repository boundaries, current OpenAI plugin/tunnel/authentication routes, provider gaps, state ownership and migration requirements. Added a complete architecture and phased acceptance plan; no cloud rental or account connection was made. ([cloud plan](project/CLOUD_RUNTIME_PLAN.md), [validation](project/CLOUD_RUNTIME_VALIDATION.md))
+
+- **046: Headless runtime and deployment engineers** — Implemented the private HTTP runtime, secret-file adapters, portable TypeScript build, Docker Compose/systemd pack and operator helpers. Thirteen runtime tests passed, including real native mutation replay and injected-provider execution. Provider credentials and synthetic usage were kept separate; no live model call occurred. ([cloud plan](project/CLOUD_RUNTIME_PLAN.md), [validation](project/CLOUD_RUNTIME_VALIDATION.md))
+
+- **047: MCP integration and cancellation reviewer** — Implemented five stdio runtime tools with 17 passing tests. Found and fixed a shared worker pause race before provider dispatch; four regression cases brought the worker suite to 47 passing tests. Documented that an already-entered managed GitHub action can still finish after a pause. ([cloud plan](project/CLOUD_RUNTIME_PLAN.md), [validation](project/CLOUD_RUNTIME_VALIDATION.md))
+
+- **048: Director / integration verifier** — Verified 117 distinct test cases and nine real stdio-to-HTTP-to-Rust smoke checks, including daemon independence and durable replay across restart. Added focused runtime/container CI, updated roadmap/handoff and recorded the deployment limits. Docker was unavailable locally; remote image/boot evidence is a separate gate. No paid resource, real provider request or private-state migration was performed. ([cloud plan](project/CLOUD_RUNTIME_PLAN.md), [validation](project/CLOUD_RUNTIME_VALIDATION.md))
+
+
+## Freeflow 0.7.0 integration · 21 November 2026 (America/New_York)
+
+- **049–050: Director and renderer** — Unified prior Freeflow and cloud work; added legible company seats, automatic browsing, movable Donna, restricted member scenes and model controls. Kept both studio themes and bounded large-scene/deep-hierarchy behavior.
+- **051: Collaboration and native authority** — Added owner/visitor/join dashboards and subdepartment forests; fixed revocation and membership races and checked affected-parent authority.
+- **052–053: Runtime engineers and Sonnet observer** — Added shared local models, encrypted optional website synchronization and deterministic permanent health checks. One bounded Sonnet coding request supplied the observer foundation; ongoing checks require no model call.
+- **054: Portfolio reconciliation** — Applied additive private company-parent relationships, verified zero-change replay and preserved a restorable private workspace. Public fixtures and private state remained separate. [Current validation](project/FREEFLOW_VALIDATION.md).
+
+- **055: Independent release review** — Fixed restored-backup/same-device overwrite cases, made runtime/container checks a release dependency and verified the published private website. Final desktop/headless suites passed 503/55 tests; remote package checks remain authoritative.

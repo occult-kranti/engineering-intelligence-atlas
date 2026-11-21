@@ -11,7 +11,7 @@ const clone=<T>(v:T):T=>JSON.parse(JSON.stringify(v));
 function job(overrides:Partial<OfficeJob>={}):OfficeJob{
  const at=new Date().toISOString();return {id:crypto.randomUUID(),companyId:'company-a',officeId:'office-a',departmentId:null,employeeId:'donna',goal:'Review the release evidence.',mode:'provider',provider:'anthropic',model:'fixture-model',authorized:true,allowedTools:[],dependencies:[],contextHash:null,cacheKey:null,promptVersion:'test-v1',status:'queued',limits:{maxTokens:32000,maxUsd:1,maxMinutes:5},priceRates:{inputUsdPerMillion:2,outputUsdPerMillion:10},usage:{inputTokens:0,outputTokens:0,costUsd:0},costStatus:'none',reservation:null,usageRecorded:false,createdAt:at,updatedAt:at,dueAt:at,startedAt:null,finishedAt:null,workerId:null,leaseToken:null,leaseExpiresAt:null,artifactUri:null,summary:null,error:null,idempotencyKey:crypto.randomUUID(),...overrides};
 }
-function fixture(options:{jobs?:OfficeJob[];generate?:GenerateFn;cache?:boolean;refuseFinish?:boolean;refuseAuthority?:boolean;prepareContext?:OfficeWorkerOptions['prepareContext']}={}){
+function fixture(options:{jobs?:OfficeJob[];generate?:OfficeWorkerOptions['generate'];cache?:boolean;refuseFinish?:boolean;refuseAuthority?:boolean;prepareContext?:OfficeWorkerOptions['prepareContext'];validateJob?:OfficeWorkerOptions['validateJob'];afterCommand?:(request:OfficeCommand)=>Promise<void>;executeTool?:OfficeWorkerOptions['executeTool']}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'atlas-worker-test-'));roots.push(root);const seedDir=path.join(root,'seed');const artifactRoot=path.join(root,'artifacts');fs.mkdirSync(seedDir);
  const state:OfficeSnapshot={schemaVersion:1,activeCompanyId:'company-a',companies:[],offices:[],departments:[],employees:[{id:'donna',companyId:null,officeId:null,departmentId:null,name:'Donna',role:'CEO assistant',kind:'assistant',status:'active',skillPaths:[],createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}],jobs:options.jobs??[job()],schedules:[],cache:{enabled:options.cache??false,maxEntries:32,ttlMinutes:60,entries:[],hits:0,misses:0},knowledge:[],events:[],lastAction:null};
  const calls:OfficeCommand[]=[];const chronology:string[]=[];const response=():OfficeResult=>({ok:true,snapshot:clone(state)});
@@ -23,14 +23,19 @@ function fixture(options:{jobs?:OfficeJob[];generate?:GenerateFn;cache?:boolean;
   if(req.action==='finish_job'){if(options.refuseFinish)return {ok:false,snapshot:null,error:'Fixture storage unavailable'};const current=state.jobs.find(j=>j.id===req.jobId)!;current.usage={inputTokens:Number(req.inputTokens),outputTokens:Number(req.outputTokens),costUsd:Number(req.costUsd)};current.costStatus=req.costStatus as OfficeJob['costStatus'];current.usageRecorded=true;current.artifactUri=typeof req.artifactUri==='string'?req.artifactUri:null;current.summary=typeof req.summary==='string'?req.summary:null;current.error=typeof req.error==='string'?req.error:null;if(!['cancelled','paused','needs-review'].includes(current.status))current.status=current.usage.inputTokens+current.usage.outputTokens>current.limits.maxTokens||current.usage.costUsd>current.limits.maxUsd?'budget-exhausted':req.status as OfficeJob['status'];current.finishedAt=new Date().toISOString();}
   if(req.action==='get_cache'){if(state.cache.entries.some(e=>e.companyId===req.companyId&&e.key===req.key))state.cache.hits++;else state.cache.misses++;}
   if(req.action==='put_cache')state.cache.entries.push({key:String(req.key),companyId:String(req.companyId),artifactUri:String(req.artifactUri),bytes:Number(req.bytes),createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+3600000).toISOString(),...(typeof req.contentSha256==='string'?{contentSha256:req.contentSha256}:{})});
-  return response();
+  const result=response();
+  if(options.afterCommand)await options.afterCommand(req);
+  return result;
  });
  const defaultGenerate:GenerateFn=async()=>({text:'Fixture deliverable with evidence references.',inputTokens:100,outputTokens:200});
- const generate=vi.fn<GenerateFn>(async request=>{chronology.push('generate');return(options.generate??defaultGenerate)(request);});
- const worker=new OfficeWorker({snapshot:async()=>response(),command,generate,artifactRoot,seedDir,intervalMs:5000,prepareContext:options.prepareContext});workers.push(worker);return{worker,state,calls,chronology,command,generate,root,seedDir,artifactRoot,snapshot:async()=>response()};
+ const generate=vi.fn<OfficeWorkerOptions['generate']>(async(request,job)=>{chronology.push('generate');return(options.generate??defaultGenerate)(request,job);});
+ const worker=new OfficeWorker({snapshot:async()=>response(),command,generate,artifactRoot,seedDir,intervalMs:5000,prepareContext:options.prepareContext,validateJob:options.validateJob,executeTool:options.executeTool});workers.push(worker);return{worker,state,calls,chronology,command,generate,root,seedDir,artifactRoot,snapshot:async()=>response()};
 }
 afterEach(()=>{for(const w of workers.splice(0))w.stop();vi.useRealTimers();for(const root of roots.splice(0))fs.rmSync(root,{recursive:true,force:true});});
 describe('OfficeWorker accounting and dispatch',()=>{
+ it('validates the exact model route before cache admission and reservation',async()=>{const f=fixture({cache:true,validateJob:async()=>{throw new Error('Selected local model digest changed');}});await f.worker.runOnce();expect(f.generate).not.toHaveBeenCalled();expect(f.calls.some(c=>['get_cache','reserve_job'].includes(c.action))).toBe(false);expect(f.state.jobs[0]?.usage.costUsd).toBe(0);expect(f.worker.status().lastError).toContain('digest changed');});
+ it('revalidates after reservation and settles zero when the model assignment is revoked',async()=>{let calls=0;const f=fixture({validateJob:async()=>{calls++;if(calls===2)throw new Error('Model assignment revoked');}});await f.worker.runOnce();expect(calls).toBe(2);expect(f.calls.some(c=>c.action==='reserve_job')).toBe(true);expect(f.generate).not.toHaveBeenCalled();expect(f.state.jobs[0]).toMatchObject({costStatus:'observed',usage:{inputTokens:0,outputTokens:0,costUsd:0}});});
+ it('passes internal job scope to the adapter without changing the reserved model',async()=>{const validateJob=vi.fn(async()=>{});const f=fixture({validateJob});await f.worker.runOnce();expect(validateJob).toHaveBeenCalledTimes(2);const [request,scope]=f.generate.mock.calls[0]!;expect(scope?.companyId).toBe('company-a');expect(scope?.employeeId).toBe('donna');expect(request.model).toBe(scope?.model);expect(f.state.jobs[0]?.status).toBe('completed');});
  it('checks live native authority after reservation and before dispatch, settling zero when it expires',async()=>{const f=fixture({refuseAuthority:true});await f.worker.runOnce();expect(f.chronology.indexOf('reserve_job')).toBeLessThan(f.chronology.indexOf('check_worker_authority'));expect(f.generate).not.toHaveBeenCalled();expect(f.state.jobs[0]?.usage.costUsd).toBe(0);expect(f.state.jobs[0]?.costStatus).toBe('observed');expect(f.state.jobs[0]?.summary).toBe('No provider call dispatched.');expect(f.worker.status().lastError).toContain('authority expired');});
  it('starts disabled and leaves an idle queue without a provider call',async()=>{const f=fixture({jobs:[]});expect(f.worker.status()).toMatchObject({enabled:false,running:false,activeJobId:null});await f.worker.runOnce();expect(f.generate).not.toHaveBeenCalled();expect(f.worker.status().running).toBe(false);});
  it('does not execute manual jobs through the provider dispatcher',async()=>{const f=fixture({jobs:[job({mode:'manual',authorized:false,model:''})]});await f.worker.runOnce();expect(f.generate).not.toHaveBeenCalled();expect(f.state.jobs[0]?.status).toBe('queued');});
@@ -43,6 +48,43 @@ describe('OfficeWorker accounting and dispatch',()=>{
  it('rejects invalid usage without erasing a dispatch reservation',async()=>{const f=fixture({generate:async()=>({text:'Result',inputTokens:NaN,outputTokens:20})});await f.worker.runOnce();expect(f.state.jobs[0]?.costStatus).toBe('estimated');expect(f.state.jobs[0]?.usage.costUsd).toBe(f.state.jobs[0]?.reservation?.costUsd);});
  it('keeps a reservation when settlement storage is unavailable',async()=>{const f=fixture({refuseFinish:true});await f.worker.runOnce();expect(f.generate).toHaveBeenCalledOnce();expect(f.state.jobs[0]?.costStatus).toBe('reserved');expect(f.state.jobs[0]?.usage.costUsd).toBeGreaterThan(0);expect(f.worker.status().lastError).toContain('storage unavailable');});
  it('accounts conservatively when the dispatcher is stopped mid-request',async()=>{let started!:()=>void;const ready=new Promise<void>(resolve=>{started=resolve;});const f=fixture({generate:async request=>new Promise((_,reject)=>{request.abortSignal?.addEventListener('abort',()=>reject(new Error('Fixture interrupted')),{once:true});started();})});const pending=f.worker.runOnce();await ready;f.worker.stop();await pending;expect(f.generate).toHaveBeenCalledOnce();expect(f.state.jobs[0]?.costStatus).toBe('estimated');expect(f.state.jobs[0]?.usage.costUsd).toBeGreaterThan(0);expect(f.worker.status()).toMatchObject({enabled:false,running:false});});
+ it.each(['claim_job','check_worker_authority'] as const)('stopping during awaited %s settles the claim without a provider call',async action=>{
+  let entered!:()=>void;let release!:()=>void;
+  const ready=new Promise<void>(resolve=>entered=resolve);const barrier=new Promise<void>(resolve=>release=resolve);
+  const f=fixture({afterCommand:async request=>{if(request.action===action){entered();await barrier;}}});
+  const pending=f.worker.runOnce();await ready;
+  expect(f.state.jobs[0]?.status).toBe('running');
+  f.worker.setEnabled(false);release();await pending;
+  expect(f.generate).not.toHaveBeenCalled();
+  expect(f.state.jobs[0]).toMatchObject({status:'failed',costStatus:'observed',usage:{inputTokens:0,outputTokens:0,costUsd:0},summary:'No provider call dispatched.'});
+  expect(f.state.jobs[0]?.error).toContain('Office worker stopped');
+  expect(f.calls.filter(request=>request.action==='finish_job')).toHaveLength(1);
+  expect(f.worker.status()).toMatchObject({enabled:false,running:false,activeJobId:null});
+ });
+ it('stopping during source preparation closes the claim before reserving or dispatching',async()=>{
+  let entered!:()=>void;let release!:()=>void;
+  const ready=new Promise<void>(resolve=>entered=resolve);const barrier=new Promise<void>(resolve=>release=resolve);
+  const f=fixture({jobs:[job({allowedTools:['github.read_repository']})],prepareContext:async()=>{entered();await barrier;return 'Verified fixture context';}});
+  const pending=f.worker.runOnce();await ready;f.worker.stop();release();await pending;
+  expect(f.generate).not.toHaveBeenCalled();expect(f.calls.some(request=>request.action==='reserve_job')).toBe(false);
+  expect(f.state.jobs[0]).toMatchObject({status:'failed',costStatus:'observed',usage:{inputTokens:0,outputTokens:0,costUsd:0},summary:'No provider call dispatched.'});
+  expect(f.state.jobs[0]?.error).toContain('Office worker stopped');
+  expect(f.worker.status()).toMatchObject({enabled:false,running:false,activeJobId:null});
+  // A deliberate later one-shot remains possible without enabling the pool.
+  f.state.jobs.push(job());await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();expect(f.state.jobs[1]?.status).toBe('completed');expect(f.worker.status().enabled).toBe(false);
+ });
+ it('preserves a late provider result and observed cost without publishing after stop',async()=>{
+  let entered!:()=>void;let release!:()=>void;
+  const ready=new Promise<void>(resolve=>entered=resolve);const barrier=new Promise<void>(resolve=>release=resolve);
+  const executeTool=vi.fn(async()=>({summary:'Published',evidenceUrl:'https://example.test/commit'}));
+  const f=fixture({jobs:[job({allowedTools:['github.publish_changes']})],executeTool,generate:async()=>{entered();await barrier;return{text:'Late fixture changeset',inputTokens:100,outputTokens:200};}});
+  const pending=f.worker.runOnce();await ready;f.worker.stop();release();await pending;
+  expect(f.generate).toHaveBeenCalledOnce();expect(executeTool).not.toHaveBeenCalled();
+  expect(f.state.jobs[0]).toMatchObject({status:'failed',costStatus:'observed'});expect(f.state.jobs[0]?.usage.costUsd).toBeCloseTo(.0022,8);
+  expect(fs.readFileSync(f.state.jobs[0]!.artifactUri!,'utf8')).toContain('Late fixture changeset');
+  expect(f.state.jobs[0]?.summary).toContain('Returned work was preserved');
+ });
  it('observes cancellation and never revives a cancelled job',async()=>{vi.useFakeTimers();let started!:()=>void;const ready=new Promise<void>(resolve=>{started=resolve;});const f=fixture({generate:async request=>new Promise((_,reject)=>{request.abortSignal?.addEventListener('abort',()=>reject(new Error('Fixture cancelled')),{once:true});started();})});const pending=f.worker.runOnce();await ready;f.state.jobs[0]!.status='cancelled';await vi.advanceTimersByTimeAsync(1001);await pending;expect(f.state.jobs[0]?.status).toBe('cancelled');expect(f.state.jobs[0]?.costStatus).toBe('estimated');expect(f.state.jobs[0]?.usage.costUsd).toBeGreaterThan(0);});
  it('prevents overlapping provider requests',async()=>{let release!:(value:{text:string;inputTokens:number;outputTokens:number})=>void;let started!:()=>void;const ready=new Promise<void>(resolve=>{started=resolve;});const f=fixture({jobs:[job(),job()],generate:async()=>new Promise(resolve=>{release=resolve;started();})});const first=f.worker.runOnce();await ready;expect((await f.worker.runOnce()).running).toBe(true);expect(f.generate).toHaveBeenCalledOnce();release({text:'Complete',inputTokens:1,outputTokens:1});await first;});
 });

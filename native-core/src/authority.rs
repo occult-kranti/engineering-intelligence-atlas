@@ -205,6 +205,58 @@ mod tests {
             "AUTHORITY_DENIED"
         );
     }
+    fn department_reparent(employee: &str, child: &str, parent: Value) -> Value {
+        json!({"action":"apply_employee_command","employeeId":employee,"command":{"action":"set_department_parent","departmentId":child,"parentDepartmentId":parent}})
+    }
+    fn department_state() -> (OfficeSnapshot, String, Vec<String>) {
+        let mut s = state(); let office_id = s.offices[0].id.clone();
+        s.apply(&json!({"action":"create_department","officeId":office_id,"name":"Third"})).unwrap();
+        let ids = s.departments.iter().filter(|d| d.office_id == office_id).take(3).map(|d| d.id.clone()).collect();
+        let employee = hire(&mut s); (s, employee, ids)
+    }
+    fn department_grant(s: &mut OfficeSnapshot, employee: &str, department: &str, expires: OffsetDateTime) -> String {
+        grant(s, employee, json!({"kind":"department","id":department}), json!(["team.manage"]), "owner", expires)
+    }
+    #[test]
+    fn department_reparent_requires_child_old_and_new_parent_authority() {
+        let (mut s, employee, ids) = department_state(); let expires = OffsetDateTime::now_utc() + Duration::hours(1);
+        department_grant(&mut s, &employee, &ids[1], expires);
+        assert_eq!(s.apply(&department_reparent(&employee, &ids[1], json!(ids[0]))).unwrap_err().code, "AUTHORITY_DENIED");
+        let old_grant = department_grant(&mut s, &employee, &ids[0], expires);
+        s.apply(&department_reparent(&employee, &ids[1], json!(ids[0]))).unwrap();
+        assert_eq!(s.apply(&department_reparent(&employee, &ids[1], json!(ids[2]))).unwrap_err().code, "AUTHORITY_DENIED");
+        department_grant(&mut s, &employee, &ids[2], expires);
+        s.apply(&json!({"action":"revoke_authority","grantId":old_grant,"reason":"Stop old-parent access"})).unwrap();
+        assert_eq!(s.apply(&department_reparent(&employee, &ids[1], json!(ids[2]))).unwrap_err().code, "AUTHORITY_DENIED");
+        assert_eq!(s.apply(&department_reparent(&employee, &ids[1], Value::Null)).unwrap_err().code, "AUTHORITY_DENIED");
+        assert_eq!(s.departments.iter().find(|d| d.id == ids[1]).unwrap().parent_department_id.as_deref(), Some(ids[0].as_str()));
+    }
+    #[test]
+    fn department_all_grants_allow_reparent_and_index_falls_back_to_office_on_detach() {
+        let (mut s, employee, ids) = department_state(); let expires = OffsetDateTime::now_utc() + Duration::hours(1);
+        for department in &ids { department_grant(&mut s, &employee, department, expires); }
+        let key = format!("department:{}", ids[1]);
+        s.apply(&department_reparent(&employee, &ids[1], json!(ids[0]))).unwrap();
+        assert_eq!(s.authority.index.iter().find(|i| i.id == key).unwrap().parent_id.as_deref(), Some(ids[0].as_str()));
+        s.apply(&department_reparent(&employee, &ids[1], json!(ids[2]))).unwrap();
+        assert_eq!(s.authority.index.iter().find(|i| i.id == key).unwrap().parent_id.as_deref(), Some(ids[2].as_str()));
+        s.apply(&department_reparent(&employee, &ids[1], Value::Null)).unwrap();
+        let office_id = &s.departments.iter().find(|d| d.id == ids[1]).unwrap().office_id;
+        assert_eq!(s.authority.index.iter().find(|i| i.id == key).unwrap().parent_id.as_deref(), Some(office_id.as_str()));
+        assert!(s.authority.ledger.iter().any(|l| l.actor == employee && l.action == "set_department_parent" && l.target_id == ids[1]));
+    }
+    #[test]
+    fn department_parent_grant_never_inherits_to_child_and_expired_parent_blocks_reparent() {
+        let (mut s, employee, ids) = department_state(); let expires = OffsetDateTime::now_utc() + Duration::hours(1);
+        s.apply(&json!({"action":"set_department_parent","departmentId":ids[1],"parentDepartmentId":ids[0]})).unwrap();
+        let parent_grant = department_grant(&mut s, &employee, &ids[0], expires);
+        assert_eq!(s.apply(&json!({"action":"apply_employee_command","employeeId":employee,"command":{"action":"pause_department","departmentId":ids[1]}})).unwrap_err().code, "AUTHORITY_DENIED");
+        department_grant(&mut s, &employee, &ids[1], expires);
+        let grant = s.authority.grants.iter_mut().find(|g| g.id == parent_grant).unwrap();
+        grant.granted_at = at(OffsetDateTime::now_utc() - Duration::hours(1));
+        grant.expires_at = at(OffsetDateTime::now_utc() - Duration::seconds(1));
+        assert_eq!(s.apply(&department_reparent(&employee, &ids[1], Value::Null)).unwrap_err().code, "AUTHORITY_DENIED");
+    }
     #[test]
     fn historic_state_migrates_index_without_inventing_permissions() {
         let original = state();
@@ -947,7 +999,7 @@ impl OfficeSnapshot {
             "create_department" | "pause_office" | "resume_office" => {
                 Ok(("team.manage", scope("office", "officeId")?))
             }
-            "pause_department" | "resume_department" => {
+            "pause_department" | "resume_department" | "set_department_parent" => {
                 Ok(("team.manage", scope("department", "departmentId")?))
             }
             "hire_employee" => Ok(("team.manage", self.scoped_payload(p)?)),
@@ -1416,6 +1468,30 @@ impl OfficeSnapshot {
                                 ));
                             }
                         }
+                    } else if name == "set_department_parent" {
+                        let child = self.departments.iter().find(|d| d.id == scope.id)
+                            .ok_or_else(|| fail("NOT_FOUND", "Department not found"))?;
+                        let old_parent = child.parent_department_id.clone();
+                        let new_parent = match command.get("parentDepartmentId") {
+                            Some(Value::Null) => None,
+                            Some(Value::String(v)) if safe_id(v) => Some(v.clone()),
+                            _ => return Err(fail("INVALID_INPUT", "Missing or invalid parentDepartmentId")),
+                        };
+                        if let Some(parent_id) = &new_parent {
+                            let parent = self.departments.iter().find(|d| &d.id == parent_id)
+                                .ok_or_else(|| fail("NOT_FOUND", "Parent department not found"))?;
+                            if parent.company_id != child.company_id || parent.office_id != child.office_id {
+                                return Err(fail("SCOPE_MISMATCH", "Parent department must belong to the same company and office"));
+                            }
+                        }
+                        let mut affected = HashSet::new();
+                        for parent in [old_parent, new_parent].into_iter().flatten() {
+                            if !affected.insert(parent.clone()) { continue; }
+                            let parent_location = self.authority_location(&Scope { kind: "department".into(), id: parent })?;
+                            if !self.authority_has_location(&employee, &parent_location, "team.manage", clock, None) {
+                                return Err(fail("AUTHORITY_DENIED", "Reparenting also requires current scoped team.manage authority on each affected parent department"));
+                            }
+                        }
                     }
                     for extra in self.authority_dispatch_capabilities(&name, command) {
                         if !self.authority_has_location(&employee, &location, &extra, clock, None) {
@@ -1498,7 +1574,7 @@ impl OfficeSnapshot {
                 &d.id,
                 &d.name,
                 Some(&d.company_id),
-                Some(&d.office_id),
+                d.parent_department_id.as_deref().filter(|p| *p != d.id).or(Some(d.office_id.as_str())),
                 Some(&d.assistant_id),
                 &d.status,
                 &d.created_at,

@@ -12,6 +12,7 @@ import { ProjectRunner, ProjectStore, type GenerateFn } from './projects';
 import { CompanyService, findNativeCore } from './company';
 import { OfficeService } from './office';
 import { OfficeWorkerPool } from './officeWorker';
+import { ModelPoolService } from './modelPool';
 import { PersonalDashboardServer } from './personalDashboard';
 import { withGlobalBudget } from './globalBudget';
 import { CloudSyncService } from './cloudSync';
@@ -169,6 +170,12 @@ async function main(): Promise<void> {
     binaryPath: findNativeCore(app.getAppPath(), app.isPackaged ? process.resourcesPath : undefined),
   });
   const projectRunner = new ProjectRunner(projectStore, withGlobalBudget(generate, request => officeService.workerCommand(request)));
+  const modelPool = new ModelPoolService({
+    stateDir: userDataPath,
+    snapshot: () => officeService.officeSnapshot(),
+    localOnlyConfirmed: process.env.DAFTAR_OLLAMA_LOCAL_ONLY === '1',
+  });
+  officeService.startObserving();
   const cloudSync = new CloudSyncService({
     userDataPath, safeStorage,
     snapshot: () => officeService.officeSnapshot(),
@@ -190,11 +197,12 @@ async function main(): Promise<void> {
     },
     snapshot: () => officeService.officeSnapshot(),
     command: (request) => officeService.workerCommand(request),
-    generate,
+    validateJob: job => modelPool.validateJob(job),
+    generate: (request, job) => request.provider === 'ollama' ? modelPool.generateForJob(job, request) : generate(request),
     artifactRoot: path.join(userDataPath, 'office-artifacts'),
     seedDir: app.isPackaged ? path.join(process.resourcesPath, 'company') : path.join(checkoutRoot, 'company'),
   });
-  app.once('before-quit', () => officeWorker.stop());
+  app.once('before-quit', () => { officeService.stopObserving(); officeWorker.stop(); void modelPool.close(); });
 
   let browserHandlers = new Map<string, (...args: unknown[]) => unknown>();
   const personalDashboard = new PersonalDashboardServer({
@@ -205,7 +213,7 @@ async function main(): Promise<void> {
       return handler(...args);
     },
   });
-  browserHandlers = registerIpc({ windowManager, jobManager, settings, vault, projectStore, projectRunner, companyService, officeService, officeWorker, cloudSync, catalogPath, userDataPath,
+  browserHandlers = registerIpc({ windowManager, jobManager, settings, vault, projectStore, projectRunner, companyService, officeService, officeWorker, modelPool, cloudSync, catalogPath, userDataPath,
     copyEditorPairing: async () => {
       try { clipboard.writeText(await personalDashboard.launchUrl()); return { ok: true, expiresAt: new Date(Date.now() + 5 * 60000).toISOString() }; }
       catch { return { ok: false, error: 'The editor pairing link could not be copied.' }; }

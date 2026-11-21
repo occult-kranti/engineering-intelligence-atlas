@@ -1,0 +1,58 @@
+# Optional managed local inference. Include together with compose.yaml.
+# The daemon shares runtime's network namespace so loopback remains literal.
+services:
+  runtime:
+    environment:
+      DAFTAR_OLLAMA_LOCAL_ONLY: "1"
+      DAFTAR_OLLAMA_BASE_URL: http://127.0.0.1:11434
+
+  ollama:
+    image: daftar-ollama:local
+    build:
+      context: ..
+      dockerfile: deploy/ollama.Dockerfile
+      args:
+        OLLAMA_IMAGE: ${DAFTAR_OLLAMA_IMAGE:-ollama/ollama:latest}
+    user: "10001:10001"
+    init: true
+    restart: unless-stopped
+    network_mode: service:runtime
+    depends_on:
+      runtime:
+        condition: service_healthy
+        restart: true
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 256
+    mem_limit: ${DAFTAR_OLLAMA_MEMORY:-6g}
+    cpus: ${DAFTAR_OLLAMA_CPUS:-4}
+    stop_grace_period: 30s
+    environment:
+      HOME: /var/lib/ollama
+      OLLAMA_MODELS: /var/lib/ollama/models
+      OLLAMA_HOST: 127.0.0.1:11434
+      OLLAMA_NO_CLOUD: "1"
+      OLLAMA_NUM_PARALLEL: "1"
+      OLLAMA_MAX_LOADED_MODELS: "1"
+      OLLAMA_MAX_QUEUE: "8"
+      OLLAMA_KEEP_ALIVE: 2m
+    volumes:
+      - ollama_models:/var/lib/ollama
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=536870912,mode=1777
+    healthcheck:
+      test: [CMD, ollama, list]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+volumes:
+  ollama_models:
+    name: ${DAFTAR_OLLAMA_VOLUME_NAME:-daftar_ollama_models}

@@ -96,8 +96,11 @@ export type Membership = { id: string; companyId: string; role: 'viewer' | 'cont
 /** Current company membership only: workspace 'owner', active, unexpired, unrevoked. No hierarchy inheritance. Owner is implicit. */
 export async function currentMembership(env: AtlasEnv, user: CollabUser, companyId: string): Promise<Membership | null> {
   if (!(await companyExists(env, companyId))) return null;
-  if (user.isOwner) return { id: 'owner', companyId, role: 'owner', expiresAt: null, aclRevision: 0 };
-  const m = await env.DB!.prepare("SELECT * FROM daftar_company_memberships WHERE workspace_id = 'owner' AND company_id = ? AND user_id = ? AND status = 'active' AND revoked_at IS NULL").bind(companyId, user.id).first<Row>();
+  if (user.isOwner) {
+    const current = await env.DB!.prepare("SELECT o.user_id FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner' AND o.user_id=? AND u.status='active'").bind(user.id).first<Row>();
+    return current ? { id: 'owner', companyId, role: 'owner', expiresAt: null, aclRevision: 0 } : null;
+  }
+  const m = await env.DB!.prepare("SELECT m.* FROM daftar_company_memberships m JOIN daftar_users u ON u.id=m.user_id WHERE m.workspace_id = 'owner' AND m.company_id = ? AND m.user_id = ? AND m.status = 'active' AND m.revoked_at IS NULL AND u.status='active'").bind(companyId, user.id).first<Row>();
   if (!m) return null;
   if (m.expires_at && !(Date.parse(m.expires_at) > Date.now())) return null;
   if (m.role !== 'viewer' && m.role !== 'contributor') return null;

@@ -86,6 +86,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   noticeBtn.setAttribute('aria-expanded', 'false');
   notice.append(noticeText, document.createTextNode(' '), noticeBtn);
   const bench = mk('div', 'ff-workbench');
+  const cameraBar = mk('div', 'ff-camera-bar');
   const canvasHost = mk('div', 'ff-canvas-host');
   canvasHost.tabIndex = 0;
   canvasHost.setAttribute('aria-label', 'Office canvas');
@@ -94,7 +95,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   bench.append(canvasHost, listHost, inspHost);
   const status = mk('div', 'ff-status');
   status.setAttribute('role', 'status');
-  root.append(header, notice, bench, status);
+  root.append(header, notice, cameraBar, bench, status);
   host.appendChild(root);
 
   let snapshot: FreeflowSnapshot = {};
@@ -117,6 +118,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   const cams = new Map<string, Camera>();
 
   const openNode = (n: SceneNode) => {
+    if (n.kind === 'restricted') return;
     const f = focusOf(n);
     if (f) { options.onNavigate(f); return; }
     if (n.kind === 'whiteboard') options.onAction('whiteboard', { companyId: n.companyId, officeId: n.officeId, boardId: n.boardId, roomId: n.roomId, employeeId: n.employeeId, nodeId: n.id });
@@ -141,7 +143,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   ro?.observe(canvasHost);
   const onDocVis = () => { if (!document.hidden && fitPending) tryFit(); };
   document.addEventListener('visibilitychange', onDocVis);
-  let controls: Controls = mountControls(canvasHost, {
+  let controls: Controls = mountControls(cameraBar, {
     viewport: canvasHost,
     getViewportSize: () => sceneR.getViewport(),
     getCamera: () => sceneR.getCamera(),
@@ -269,6 +271,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
 
   function layout(): void {
     canvasShown = !listMode;
+    cameraBar.hidden = listMode;
     canvasHost.hidden = listMode;
     listHost.hidden = !listMode;
     inspHost.hidden = !inspectorOpen;
@@ -303,6 +306,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
       focus = nextFocus;
       const built = applyHeat(buildScene(snapshot, focus));
       scene = built;
+      controls.setBrowseBounds(focus.kind === 'portfolio' && built.nodes.length > 1 ? built.tableBounds ?? null : null);
       if (changed) {
         currentKey = key;
         selectedId = null; selectedThread = null;

@@ -50,6 +50,49 @@ beforeEach(() => { dom = installDom(); });
 afterEach(() => { for (const c of mounted) c.destroy(); mounted = []; dom.restore(); });
 
 describe('freeflow controls (mounted)', () => {
+  it('only moves a conference tour after an explicit click and pauses on outside interaction', () => {
+    const r = rig(); const c = r.mount();
+    c.setBrowseBounds({ x: -3000, y: -120, width: 6000, height: 240 });
+    const tour = [...r.host.querySelectorAll('button')].find((b) => b.textContent === 'Auto-pan')!;
+    expect(tour.getAttribute('aria-pressed')).toBe('false');
+    expect(dom.raf.pending()).toBe(0);
+    tour.click(); const x = r.cam.x;
+    dom.raf.step(32); expect(r.cam.x).toBeGreaterThan(x);
+    expect(tour.getAttribute('aria-pressed')).toBe('true');
+    const input = document.createElement('input'); document.body.append(input);
+    dom.key(input, 'a');
+    const stopped = r.cam.x; dom.raf.step(32);
+    expect(r.cam.x).toBe(stopped); expect(dom.raf.pending()).toBe(0);
+    expect(tour.getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('stops a tour at the table edge, on view deactivation, and on reduced motion', () => {
+    const r = rig(); const c = r.mount();
+    c.setBrowseBounds({ x: 0, y: 0, width: 3, height: 3 });
+    const tour = [...r.host.querySelectorAll('button')].find((b) => b.textContent === 'Auto-pan')!;
+    tour.click(); dom.raf.step(40); dom.raf.step(40);
+    expect(r.cam.x).toBe(3); expect(dom.raf.pending()).toBe(0);
+    c.setBrowseBounds({ x: 0, y: 0, width: 10000, height: 200 });
+    tour.click(); dom.raf.step(); c.setActive(false);
+    expect(dom.raf.pending()).toBe(0); expect(tour.getAttribute('aria-pressed')).toBe('false');
+    c.setActive(true); tour.click(); dom.raf.step(); dom.setReducedMotion(true); dom.raf.step();
+    expect(tour.disabled).toBe(true); expect(dom.raf.pending()).toBe(0);
+  });
+
+  it('edge panning is opt-in, ignores touch and nodes, and stops on pointer leave', () => {
+    const r = rig(); const c = r.mount(); c.setBrowseBounds({ x: -10000, y: -10000, width: 20000, height: 20000 });
+    dom.pointer(r.vp, 'pointermove', { x: 1198, y: 400 });
+    expect(dom.raf.pending()).toBe(0);
+    const edge = [...r.host.querySelectorAll('button')].find((b) => b.textContent === 'Edge pan')!; edge.click();
+    dom.pointer(r.vp, 'pointermove', { x: 1198, y: 400, pointerType: 'touch' }); expect(dom.raf.pending()).toBe(0);
+    dom.pointer(r.vp, 'pointermove', { x: 1198, y: 400 }); dom.raf.step(32);
+    expect(r.cam.x).toBeGreaterThan(0);
+    dom.pointer(r.vp, 'pointerleave', { x: 1201, y: 400 }); expect(dom.raf.pending()).toBe(0);
+    const node = document.createElement('div'); node.className = 'ff-node'; r.vp.append(node);
+    dom.pointer(node, 'pointermove', { x: 1198, y: 400 }); expect(dom.raf.pending()).toBe(0);
+    c.setBrowseBounds(null); expect(edge.hidden).toBe(true); expect(dom.raf.pending()).toBe(0);
+  });
+
   it('keeps the grabbed world point under a tilted pointer drag', () => {
     const r = rig({ pitch: 42, distance: 1800 });
     r.mount();

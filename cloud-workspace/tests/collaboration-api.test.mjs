@@ -364,6 +364,160 @@ test('decision: revision race, capacity race, removed company leave no false aud
   t.restore();
 });
 
+test('owner access dashboard includes explicit history and audit, never invitation tokens; members cannot read it', async () => {
+  const t = await boot();
+  try {
+    await join(t, alice, 'c1', 'contributor');
+    const mid = t.DB.raw.prepare('SELECT id FROM daftar_company_memberships').get().id;
+    await t.call('/api/collaboration/memberships/' + mid, owner, 'DELETE');
+    const pending = await invite(t, 'c1', 'viewer', bob.email);
+    const view = await t.call('/api/collaboration/companies/c1/access', owner);
+    assert.equal(view.status, 200);
+    assert.equal(view.body.company.name, 'One');
+    assert.equal(view.body.memberships[0].status, 'revoked');
+    assert.equal(view.body.memberships[0].email, alice.email);
+    assert.ok(view.body.audit.some(e => e.action === 'membership.revoke'));
+    assert.equal(JSON.stringify(view.body).includes(pending), false);
+    assert.equal(JSON.stringify(view.body).includes('token_digest'), false);
+    assert.equal((await t.call('/api/collaboration/companies/c1/access', bob)).status, 403);
+    assert.equal((await t.call('/api/collaboration/audit', bob)).status, 403);
+    assert.equal((await t.call('/api/collaboration/audit?companyId=c1', owner)).status, 200);
+  } finally { t.restore(); }
+});
+
+test('invitation inspection reveals the exact grant only to its intended account and does not accept it', async () => {
+  const t = await boot();
+  try {
+    const token = await invite(t, 'c1', 'contributor', alice.email);
+    const denied = await t.call('/api/collaboration/invitations/inspect', bob, 'POST', { token });
+    assert.equal(denied.status, 403);
+    assert.equal(denied.body.invitation, undefined);
+    const review = await t.call('/api/collaboration/invitations/inspect', alice, 'POST', { token });
+    assert.equal(review.status, 200);
+    assert.equal(review.body.invitation.company.name, 'One');
+    assert.equal(review.body.invitation.role, 'contributor');
+    assert.equal(review.body.invitation.accountEmail, alice.email);
+    assert.ok(Date.parse(review.body.invitation.expiresAt) > Date.now());
+    assert.equal(t.DB.raw.prepare('SELECT COUNT(*) n FROM daftar_company_memberships').get().n, 0);
+    assert.equal(events(t, 'invitation.accept'), 0);
+    assert.equal(JSON.stringify(review.body).includes(token), false);
+  } finally { t.restore(); }
+});
+
+test('membership role/expiry update uses ACL revision, revokes downgraded resources and never restores revoked access', async () => {
+  const t = await boot();
+  try {
+    await join(t, alice, 'c1', 'contributor');
+    const member = t.DB.raw.prepare('SELECT * FROM daftar_company_memberships').get();
+    const pid = await proposal(t, alice, 'membership-change');
+    await t.call('/api/collaboration/proposals/' + pid + '/claim', alice, 'POST', {});
+    t.DB.raw.prepare("INSERT INTO daftar_resource_grants (id,connection_id,owner_user_id,beneficiary_user_id,company_id,operations,created_at) VALUES ('grant-fixture','connection-fixture',?,?,'c1','[]',?)").run(uid(t, owner), uid(t, alice), T);
+    const patch = { role: 'viewer', expiresAt: null, expectedAclRevision: member.acl_revision };
+    assert.equal((await t.call('/api/collaboration/memberships/' + member.id, alice, 'PATCH', patch)).status, 403);
+    const result = await t.call('/api/collaboration/memberships/' + member.id, owner, 'PATCH', patch);
+    assert.equal(result.status, 200);
+    assert.equal(result.body.membership.aclRevision, member.acl_revision + 1);
+    assert.equal(t.DB.raw.prepare('SELECT assigned_user_id FROM daftar_task_proposals WHERE id=?').get(pid).assigned_user_id, null);
+    assert.ok(t.DB.raw.prepare("SELECT revoked_at FROM daftar_resource_grants WHERE id='grant-fixture'").get().revoked_at);
+    assert.equal((await t.call('/api/collaboration/companies/c1/messages', alice, 'POST', { content: 'blocked' })).status, 403);
+    assert.equal((await t.call('/api/collaboration/memberships/' + member.id, owner, 'PATCH', patch)).status, 409);
+    assert.equal(events(t, 'membership.update'), 1);
+    await t.call('/api/collaboration/memberships/' + member.id, owner, 'DELETE');
+    assert.equal((await t.call('/api/collaboration/memberships/' + member.id, owner, 'PATCH', { ...patch, expectedAclRevision: member.acl_revision + 2 })).status, 409);
+    assert.equal((await t.call('/api/collaboration/companies/c1', alice)).status, 404);
+  } finally { t.restore(); }
+});
+
+test('a losing access update cannot clear assignments or write audit under a competing update at the same timestamp', async () => {
+  const resetClock = freezeClock();
+  const t = await boot();
+  try {
+    await join(t, alice, 'c1', 'contributor');
+    const member = t.DB.raw.prepare('SELECT * FROM daftar_company_memberships').get();
+    const pid = await proposal(t, alice, 'competing-access');
+    await t.call('/api/collaboration/proposals/' + pid + '/claim', alice, 'POST', {});
+    t.DB.hooks.beforeBatch = db => db.prepare('UPDATE daftar_company_memberships SET acl_revision=acl_revision+1,updated_at=? WHERE id=?').run(new Date().toISOString(), member.id);
+    const result = await t.call('/api/collaboration/memberships/' + member.id, owner, 'PATCH', { role: 'viewer', expiresAt: null, expectedAclRevision: member.acl_revision });
+    assert.equal(result.status, 409);
+    assert.equal(t.DB.raw.prepare('SELECT role FROM daftar_company_memberships WHERE id=?').get(member.id).role, 'contributor');
+    assert.equal(t.DB.raw.prepare('SELECT assigned_user_id FROM daftar_task_proposals WHERE id=?').get(pid).assigned_user_id, uid(t, alice));
+    assert.equal(events(t, 'membership.update'), 0);
+  } finally { resetClock(); t.restore(); }
+});
+
+test('owner deactivation before proposal admission leaves no queued command or acceptance event', async () => {
+  const t = await boot();
+  try {
+    await join(t, alice, 'c1', 'contributor');
+    const pid = await proposal(t, alice, 'owner-disabled');
+    t.DB.hooks.beforeBatch = db => db.prepare("UPDATE daftar_users SET status='disabled' WHERE id=?").run(uid(t, owner));
+    const result = await t.call('/api/collaboration/proposals/' + pid + '/decision', owner, 'POST', { decision: 'accept', expectedRevision: 3 });
+    assert.equal(result.status, 409);
+    assert.equal(t.DB.raw.prepare('SELECT COUNT(*) n FROM atlas_commands').get().n, 0);
+    assert.equal(t.DB.raw.prepare('SELECT status FROM daftar_task_proposals WHERE id=?').get(pid).status, 'proposed');
+    assert.equal(events(t, 'proposal.accept'), 0);
+  } finally { t.restore(); }
+});
+
+test('revocation while a company snapshot read is pending denies the entire member response', async () => {
+  const t = await boot();
+  try {
+    await join(t, alice, 'c1', 'viewer');
+    const prepare = t.DB.prepare.bind(t.DB);
+    let intercepted = false;
+    t.DB.prepare = sql => {
+      const statement = prepare(sql);
+      if (sql.startsWith('SELECT revision, snapshot FROM atlas_workspace')) {
+        const first = statement.first.bind(statement);
+        statement.first = async () => {
+          const snapshot = await first();
+          intercepted = true;
+          t.DB.raw.prepare("UPDATE daftar_company_memberships SET status='revoked',revoked_at=?,acl_revision=acl_revision+1 WHERE user_id=?").run(new Date().toISOString(), uid(t, alice));
+          return snapshot;
+        };
+      }
+      return statement;
+    };
+    const result = await t.call('/api/collaboration/companies/c1', alice);
+    assert.equal(intercepted, true);
+    assert.equal(result.status, 404);
+    assert.equal(result.body.company, undefined);
+  } finally { t.restore(); }
+});
+
+test('owner company selector includes more than 200 registered companies without broadening a member list', async () => {
+  const t = await boot();
+  try {
+    const state = snap();
+    state.companies.push(...Array.from({ length: 250 }, (_, i) => ({ id: 'company-' + i, name: 'Company ' + i })));
+    t.DB.raw.prepare("UPDATE atlas_workspace SET snapshot=? WHERE id='owner'").run(JSON.stringify(state));
+    assert.equal((await t.call('/api/collaboration/session', owner)).body.companies.length, 252);
+    await join(t, alice, 'c1', 'viewer');
+    const result = await t.call('/api/collaboration/session', alice);
+    assert.deepEqual(result.body.companies.map(c => c.id), ['c1']);
+    assert.equal(result.body.companyListTruncated, undefined);
+  } finally { t.restore(); }
+});
+
+test('latest company notes paginate backward without duplicating or returning another company', async () => {
+  const t = await boot();
+  try {
+    await join(t, alice, 'c1', 'viewer');
+    const insert = t.DB.raw.prepare("INSERT INTO daftar_member_messages (id,company_id,author_user_id,visibility,role,content,created_at) VALUES (?, ?, ?, 'company', 'user', ?, ?)");
+    for (let i = 0; i < 55; i++) insert.run('note-' + String(i).padStart(3, '0'), 'c1', uid(t, owner), 'Shared note ' + i, T);
+    insert.run('hidden-note', 'c2', uid(t, owner), 'HIDDEN OTHER COMPANY', T);
+    const first = await t.call('/api/collaboration/companies/c1/messages?latest=1', alice);
+    assert.equal(first.status, 200);
+    assert.equal(first.body.messages[0].id, 'note-005');
+    assert.equal(first.body.messages.at(-1).id, 'note-054');
+    const older = await t.call('/api/collaboration/companies/c1/messages?latest=1&cursor=' + encodeURIComponent(first.body.nextCursor), alice);
+    assert.deepEqual(older.body.messages.map(m => m.id), ['note-000', 'note-001', 'note-002', 'note-003', 'note-004']);
+    assert.equal(older.body.nextCursor, null);
+    assert.equal(JSON.stringify(first.body).includes('HIDDEN'), false);
+    assert.equal(JSON.stringify(older.body).includes('HIDDEN'), false);
+  } finally { t.restore(); }
+});
+
 test('member write after revocation in-transaction is denied; owner snapshot unchanged', async () => {
   const t = await boot();
   await join(t, alice, 'c1', 'contributor');

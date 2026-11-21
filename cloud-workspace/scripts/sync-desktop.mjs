@@ -20,7 +20,10 @@ if (!fs.existsSync(bridgePath)) {
 }
 let html = fs.readFileSync(path.join(renderer, 'chrome.html'), 'utf8');
 const roots = htmlRoots(html);
-const { files, names } = buildAssetGraph(renderer, roots);
+// The visiting page loads the member-only entry independently of owner chrome.
+// Its dependency graph uses the same content hashes as the main studio.
+const assetRoots = [...new Set([...roots, 'freeflow/member.js', 'studio-tokens.css', 'freeflow.css'])];
+const { files, names } = buildAssetGraph(renderer, assetRoots);
 html = rewriteHtml(html, names, roots);
 const bridgeBytes = fs.readFileSync(bridgePath);
 const bridge = hashName('cloud-bridge.js', bridgeBytes);
@@ -28,6 +31,8 @@ if (!html.includes('</head>')) throw Error('Shared renderer HTML has no head clo
 html = html.replace('</head>', `<script src="./${bridge}"></script></head>`);
 files.set(bridge, bridgeBytes);
 files.set('chrome.html', Buffer.from(html));
-const generated = /^(?:chrome\.html|(?:chrome|browser-bridge|cloud-bridge|office-signals)(?:\.[a-f0-9]{16})?\.js|(?:chrome|studio-tokens|freeflow)(?:\.[a-f0-9]{16})?\.css)$/;
+files.set('member-studio.js', Buffer.from(`export { mountMemberStudio } from './${names.get('freeflow/member.js')}';\n`));
+files.set('member-studio.css', Buffer.from(`@import url('./${names.get('studio-tokens.css')}');\n@import url('./${names.get('freeflow.css')}');\n`));
+const generated = /^(?:chrome\.html|member-studio\.(?:js|css)|(?:chrome|browser-bridge|cloud-bridge|office-signals|model-pool)(?:\.[a-f0-9]{16})?\.js|(?:chrome|studio-tokens|freeflow)(?:\.[a-f0-9]{16})?\.css)$/;
 writeAssets(target, files, { prune: (rel) => generated.test(rel) });
 console.log('Copied the shared renderer graph, derived signals and private transport with content-addressed assets.');

@@ -1,0 +1,42 @@
+[Unit]
+Description=Daftar headless office runtime
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=daftar
+Group=daftar
+WorkingDirectory=/opt/daftar
+Environment=NODE_ENV=production
+Environment=DAFTAR_REPO_ROOT=/opt/daftar
+Environment=DAFTAR_DATA_DIR=/var/lib/daftar
+Environment=DAFTAR_CORE_BINARY=/opt/daftar/native-core/target/release/atlas-core
+Environment=DAFTAR_HOST=127.0.0.1
+Environment=DAFTAR_PORT=8788
+Environment=DAFTAR_CONTROL_TOKEN_FILE=/etc/daftar/secrets/control-token
+EnvironmentFile=/etc/daftar/runtime.env
+ExecStart=/usr/bin/node /opt/daftar/headless-runtime/server.mjs
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+StateDirectory=daftar
+StateDirectoryMode=0700
+UMask=0077
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+CapabilityBoundingSet=
+ReadWritePaths=/var/lib/daftar
+TasksMax=128
+MemoryMax=2G
+
+[Install]
+WantedBy=multi-user.target

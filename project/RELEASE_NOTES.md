@@ -1,29 +1,25 @@
-# Daftar 0.6.1 — company kits and useful worker context
+# Daftar 0.7.0 — Freeflow company studio and private runtimes
 
-This patch adds reusable Fintech & Hackathon Studio and Social & Digital Presence company kits, a validated additive installer, and a worker-context correction found during the independent setup review.
+This release brings the Freeflow conference table, company and subdepartment hierarchy, visiting-employee workspaces, shared local models, a permanent observer and a Linux headless runtime into one source tree.
 
-## Company setup
+## Workspace
 
-The public catalog contains two generic companies, seventeen departments, eight domain specialties, eighteen owned roadmap steps, shared-service contracts, blueprint rooms, whiteboards and detailed operating guides. The native core supplies its normal director, specialist and assistant definitions; the installer reuses those records where appropriate. Personal source registers and company records are installed only in the owner's private workspace and are excluded from public installers and previews.
+Company seats lead into offices and nested departments. The canvas supports top and perspective views, pan/zoom/rotation, optional automatic seat browsing, edge pan, list navigation and bounded rendering. Donna is movable with pointer or keyboard and includes docking, position lock/reset, scope and connection options. Both Violet studio and Golden drafting remain available.
 
-The installer previews without writes, validates references and capacity before applying, preserves owner names/progress/layout/status and reuses stable identities across reruns or an interrupted operation. It uses the existing MCP/native command API, with no provider request or external social action. The importer is additive, not an all-or-nothing database transaction; retained bindings allow a validated restart.
+## Ownership and sharing
 
-## Worker-context correction
+The private website adds People & access, a visiting office and an invitation review screen. Owner membership edits use revision checks; expiry/revocation and owner deactivation are rechecked at admission. Visitor canvases use a restricted projection and mask inaccessible areas. Hidden roadmap changes do not alter a visitor's counts or fingerprint. Company membership still requires access to the private Site; the release does not broaden the Site audience.
 
-Company-kit identity bindings are control metadata. They must not crowd source knowledge out of a specialist's bounded prompt. The worker excludes those binding records and resolves the selected specialist's same-company task contract where valid. Role descriptions and source knowledge do not grant tools or authority. Full reference documents remain links rather than automatically fetched files.
+Native company and department parents are validated as forests. Departments cannot cross company or office boundaries. Parent relationships do not grant permissions or cascade pause/resume. Additive hierarchy reconciliation preserves existing custom parents and existing company records.
 
-## Operating guides
+## Runtime, models and observer
 
-- Fintech: opportunity qualification, current official event sources, sandbox product lanes, prototype verification, demo/submission readiness and continuity.
-- Social presence: individuals through organizations, brand/editorial and creative production, channels/community, growth/lifecycle, account trust, provenance, measurement, supported platform capabilities and client separation.
-- Existing private source material remains evidence-qualified: source input, draft, user-reported action, publication receipt and measured outcome are separate states.
+A Node service reuses the Rust core and worker pool on a Linux VPS or Vast VM. It supplies authenticated private HTTP control, durable command receipts, optional configured cloud-device synchronization, and nine stdio MCP tools. Jobs survive an MCP client disconnect, and workers start paused after a restart.
 
-Creating these companies does not connect financial/social accounts, start background workers, submit to a hackathon, buy advertising or publish messages. Those actions remain separately supported runtime operations with their existing scope and authorization.
+A shared model pool deduplicates approved Ollama pulls, tracks per-company request receipts, verifies installed model digests and binds employee assignments. Shared model bytes do not share private prompts. Runtime operators must explicitly configure local-only Ollama; existing office jobs using other tags need a reviewed model assignment. Host/GPU costs remain separate from token accounting. No model weights or paid infrastructure are included in the release.
 
-## Verification and compatibility
+The permanent observer runs deterministic checks without a model call, uses live lease evidence for running jobs, reports index coverage and recorded ledger problems, and cannot turn a successfully committed command into an apparent failure. Its initial implementation and tests were authored through the configured Sonnet conversation and then independently reviewed and integrated.
 
-Published 21 November 2026 from `600d5fcca67b76e515833e0d1d6e4138b7e1fc3c`. All seven verification jobs, release and Pages passed. Checks include 70 Rust, 411 desktop, 230 renderer, 9 real-native installer, 29 cloud API/directory and 13 editor tests. Public browser 76 checks / 74 screenshots and synthetic cloud 42 checks / 18 screenshots passed. Packaged Linux and installed VSIX passed; all three package sizes/hashes matched GitHub. Matching private Site deployment and private export/restore passed. [Exact receipt](release-0.6.1.json).
+## Verification and setup
 
-The release workflow publishes this version only after its seven required jobs succeed, including the new real-native company-kit suite and focused worker-context tests. The existing Rust state schema, website API and explicit desktop sync protocol are retained. The Linux AppImage remains unsigned; actual owner-device keychain acceptance and signed cross-platform packaging are separate work. The VS Code attachment is the thin client, and Android carries the research atlas rather than the full native Office.
-
-See the [company-kit guide](../company/company-kits/README.md), [roadmap](../ROADMAP.md), [handoff](../HANDOFF.md) and [validation](VALIDATION.md) for current evidence and remaining work.
+See [the 0.7.0 validation receipt](FREEFLOW_VALIDATION.md), [VPS setup](../deploy/README.md), [shared models](../deploy/MODEL_POOL.md), [MCP setup](../tools/DAFTAR_RUNTIME_MCP.md), and [the current handoff](../HANDOFF.md). The release workflow builds Linux, Windows x64, VS Code and the Android atlas and publishes only after its gates pass. Signed installers, an owner-machine keychain test, a real Vast rental and a live ChatGPT tunnel are separate acceptance environments.

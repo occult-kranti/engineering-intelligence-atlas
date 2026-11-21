@@ -27,6 +27,7 @@ import { CompanyService } from './company';
 import { OfficeService } from './office';
 import type { OfficeWorkerController } from './officeWorker';
 import type { CloudSyncService } from './cloudSync';
+import { ModelPoolError, type ModelPoolService } from './modelPool';
 
 export interface IpcContext {
   windowManager: WindowManager;
@@ -41,6 +42,7 @@ export interface IpcContext {
   catalogPath: string;
   userDataPath: string;
   cloudSync?: CloudSyncService;
+  modelPool?: ModelPoolService;
   openPersonalDashboard?: () => Promise<{ ok: boolean; url?: string; error?: string }>;
   copyEditorPairing?: () => Promise<{ ok: boolean; expiresAt?: string; error?: string }>;
 }
@@ -126,6 +128,25 @@ export function registerIpc(ctx: IpcContext): Map<string, (...args: unknown[]) =
     return officeWorker.setEnabled((request as { enabled: boolean }).enabled);
   }));
   register(CHANNELS.runOfficeQueue, guard(() => officeWorker.runOnce()));
+
+  // ModelPoolService validates scope and payload again; browser and desktop use
+  // the same owner-authenticated handlers and durable model registry.
+  for (const [channel, operation] of [
+    [CHANNELS.modelPoolSnapshot, 'snapshot'], [CHANNELS.modelPoolRequest, 'request'],
+    [CHANNELS.modelPoolCancel, 'cancel'], [CHANNELS.modelPoolSelect, 'select'],
+  ] as const) {
+    register(channel, guard(async (_event, request) => {
+      if (!ctx.modelPool) throw new Error('Shared model management is unavailable.');
+      try {
+        return await ctx.modelPool[operation](request);
+      }
+      catch (error) {
+        // No paths, raw daemon output, prompts or credentials cross the bridge.
+        if (error instanceof ModelPoolError) throw new Error(`${error.code}: ${error.message}`);
+        throw new Error('Shared model operation failed. Review the runtime status.');
+      }
+    }));
+  }
 
   register(CHANNELS.getModelCatalog, guard(() => loadCatalog(catalogPath)));
 

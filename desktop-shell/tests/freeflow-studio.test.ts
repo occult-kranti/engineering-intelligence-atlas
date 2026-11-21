@@ -65,7 +65,7 @@ describe('freeflow studio (mounted)', () => {
       m.studio.update(snap, { kind: 'company', companyId: 'a' });
       measure(m);
       const initial = worldTransform(m);
-      const zoomIn = [...m.studio.elements.canvasHost.querySelectorAll('button')].find((b) => b.getAttribute('aria-label') === 'Zoom in')!;
+      const zoomIn = [...m.host.querySelectorAll('.ff-controls button')].find((b) => b.getAttribute('aria-label') === 'Zoom in')!;
       dom.setReducedMotion(true);
       zoomIn.click();
       const changed = worldTransform(m);
@@ -99,10 +99,14 @@ describe('freeflow studio (mounted)', () => {
     toggle.click();
     expect(m.studio.elements.listHost.hidden).toBe(false);
     expect(m.studio.elements.canvasHost.hidden).toBe(true);
-    const ctl = m.studio.elements.canvasHost.querySelector('.ff-controls') as HTMLElement;
+    const ctl = m.host.querySelector('.ff-controls') as HTMLElement;
+    const bar = m.host.querySelector('.ff-camera-bar') as HTMLElement;
+    expect(m.studio.elements.canvasHost.contains(ctl)).toBe(false);
+    expect(bar.hidden).toBe(true);
     expect(ctl.dataset.active).toBe('false');
     toggle.click();
     expect(m.studio.elements.canvasHost.hidden).toBe(false);
+    expect(bar.hidden).toBe(false);
     expect(ctl.dataset.active).toBe('true');
     m.studio.setActive(false);
     expect(m.studio.elements.root.hidden).toBe(true);

@@ -91,6 +91,7 @@ function companyName(scene: FreeflowScene | null, id: string): string {
 
 export function rowsForNode(n: SceneNode, scene: FreeflowScene | null = null): Array<[string, string]> {
   const m = n.metadata;
+  if (n.kind === 'restricted') return [['Access', 'Restricted'], ['Reason', String(m['reason'] ?? 'A separate company membership is required.')]];
   const sub = n.kind === 'reference' ? refSubtype(n) : 'other';
   const kindLabel: Record<string, string> = {
     portal: 'Company navigation reference',
@@ -170,6 +171,7 @@ export function actionsForNode(n: SceneNode): InspectorActionSpec[] {
   const c = ctxOf(n);
   const a = (action: StudioActionKind, label: string, context: StudioActionContext = c): InspectorActionSpec => ({ action, label, context });
   switch (n.kind) {
+    case 'restricted': return [];
     case 'folio': return [a('chat', 'Open company chat'), a('jobs', 'Jobs'), a('roadmap', 'Roadmap'), a('manage', 'Manage company'), a('new-office', 'Add office'), a('hire', 'Hire')];
     case 'office': return [a('chat', 'Chat in office'), a('jobs', 'Jobs'), a('new-department', 'Add department'), a('manage', 'Manage office'), a('hire', 'Hire')];
     case 'department': return [a('chat', 'Chat in department'), a('jobs', 'Jobs'), a('new-job', 'New job'), a('manage', 'Manage department'), a('hire', 'Hire')];

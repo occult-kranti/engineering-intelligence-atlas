@@ -64,6 +64,23 @@ test('native invalid-cycle errors from set_company_parent propagate as tool erro
   assert.equal(r.result.isError,true);
   assert.match(r.result.structuredContent.error,/cycle/);
 });
+test('department parent command preserves explicit null and query metadata retains only parent identifiers',async()=>{
+  const def=TOOL_DEFINITIONS.find(t=>t.name==='office_command');
+  assert.ok(def.inputSchema.properties.action.enum.includes('set_department_parent'));
+  const f=fixture();
+  await f.handler('office_command',{action:'set_department_parent',payload:{departmentId:'child',parentDepartmentId:null}});
+  assert.deepEqual(f.calls[0].payload,{action:'set_department_parent',departmentId:'child',parentDepartmentId:null});
+  const snapshot=officeFixture();
+  snapshot.departments=[{id:'root',companyId:'company-a',officeId:'office-a',parentDepartmentId:null},{id:'child',companyId:'company-a',officeId:'office-a',parentDepartmentId:'root',privateBody:'NEVER EXPOSE'}];
+  snapshot.companies[0].parentCompanyId='company-b';
+  const h=officeHarness(snapshot);
+  const rows=(await h.handler('office_query',{collection:'departments'})).items;
+  assert.equal(rows.find(r=>r.id==='root').parentDepartmentId,null);
+  assert.equal(rows.find(r=>r.id==='child').parentDepartmentId,'root');
+  assert.equal(JSON.stringify(rows).includes('NEVER EXPOSE'),false);
+  const company=(await h.handler('office_query',{collection:'companies'})).items.find(r=>r.id===snapshot.companies[0].id);
+  assert.equal(company.parentCompanyId,'company-b');
+});
 test('GitHub account import requires matching public metadata before state writes',async()=>{
   const f=fixture(async()=>json([{name:'atlas',owner:{login:'occult-kranti'},private:false,html_url:'https://github.com/occult-kranti/atlas'}]));const r=await f.handler('github_import_account',{owner:'occult-kranti'});assert.equal(r.imported,1);assert.equal(f.calls.at(-1).payload.action,'import_repositories');
 });

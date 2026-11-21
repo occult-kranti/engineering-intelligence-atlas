@@ -9,7 +9,7 @@ export type { LRect } from './layout.js';
 type RO<T> = { readonly [K in keyof T]: T[K] };
 interface SCompany { id: string; name: string; status: string; repoUrl?: string | null; parentCompanyId?: string | null }
 interface SOffice { id: string; companyId: string; name: string; status: string }
-interface SDepartment { id: string; companyId: string; officeId: string; name: string; status: string }
+interface SDepartment { id: string; companyId: string; officeId: string; name: string; status: string; parentDepartmentId?: string | null }
 interface SEmployee { id: string; companyId: string | null; officeId: string | null; departmentId: string | null; name: string; role: string; kind: string; status: string }
 interface SJob { id: string; companyId: string; officeId?: string; departmentId?: string | null; employeeId: string; status: string; usage?: { costUsd: number; inputTokens: number; outputTokens: number }; costStatus?: string; serviceContractId?: string | null }
 interface SRoom { id: string; name: string; departmentId: string | null; x: number; y: number; width: number; height: number }
@@ -20,6 +20,10 @@ interface SGroup { id: string; name: string; companyIds: string[]; status?: stri
 interface SService { id: string; key: string; name: string; companyId: string; officeId: string; departmentId: string; employeeIds: string[]; retiredEmployeeIds?: string[]; status: string }
 interface SContract { id: string; serviceId: string; recipientCompanyId: string; recipientOfficeId: string | null; recipientDepartmentId: string | null; employeeIds: string[]; allowedTools: string[]; status: string }
 
+/** Sanitized member projection only. These are visible shared identities, never employment or tool grants. */
+export interface MemberRoleReference { id: string; name: string; role: string; availability: string; provenance: string }
+export interface MemberAccess { mode: 'member'; role: 'viewer' | 'contributor' | 'owner'; restricted: boolean }
+
 export interface FreeflowSnapshot {
   readonly companies?: readonly RO<SCompany>[];
   readonly offices?: readonly RO<SOffice>[];
@@ -27,6 +31,8 @@ export interface FreeflowSnapshot {
   readonly employees?: readonly RO<SEmployee>[];
   readonly jobs?: readonly RO<SJob>[];
   readonly blueprints?: readonly RO<SBlueprint>[];
+  readonly memberReferences?: readonly RO<MemberRoleReference>[];
+  readonly access?: Readonly<MemberAccess>;
   readonly portfolio?: {
     readonly ceo?: { readonly sharedServicesCompanyId?: string | null };
     readonly groups?: readonly RO<SGroup>[];
@@ -41,7 +47,7 @@ export type FreeflowFocus =
   | { kind: 'office'; companyId: string; officeId: string }
   | { kind: 'department'; companyId: string; officeId: string; departmentId: string };
 
-export type SceneNodeKind = 'folio' | 'office' | 'department' | 'room' | 'employee' | 'whiteboard' | 'reference' | 'fallback';
+export type SceneNodeKind = 'folio' | 'office' | 'department' | 'room' | 'employee' | 'whiteboard' | 'reference' | 'fallback' | 'restricted';
 
 export interface SceneNode {
   id: string;
@@ -172,10 +178,26 @@ export function buildScene(snapshot: FreeflowSnapshot, focus: FreeflowFocus): Fr
   const warnings: string[] = [];
   const companies = byId(snapshot.companies);
   const jobs = byId(snapshot.jobs);
-  if (focus.kind === 'portfolio') return portfolioScene(snapshot, companies, jobs, warnings);
+  if (focus.kind === 'portfolio') return applyMemberAccess(portfolioScene(snapshot, companies, jobs, warnings), snapshot);
   const company = companies.find((c) => c.id === focus.companyId);
   if (!company) return empty(focus, 'Missing company', [`Company ${focus.companyId} not found.`]);
-  return companyScene(snapshot, company, focus, jobs, warnings);
+  return applyMemberAccess(companyScene(snapshot, company, focus, jobs, warnings), snapshot);
+}
+
+function applyMemberAccess(scene: FreeflowScene, snapshot: FreeflowSnapshot): FreeflowScene {
+  if (snapshot.access?.mode !== 'member') return scene;
+  // A fixed, generic boundary communicates limited access without revealing whether
+  // hidden companies exist, their names, record identifiers, or their population.
+  scene.breadcrumbs = scene.breadcrumbs.filter((c) => c.focus.kind !== 'portfolio');
+  if (snapshot.access.restricted) {
+    const b = unionBounds(scene.nodes.map((n) => n.rect), 0);
+    scene.nodes.push({ id: 'restricted:private-workspace', kind: 'restricted', entityId: '', companyId: '', parentId: null,
+      label: 'Private workspace', subtitle: 'A separate company membership is required.', status: 'restricted',
+      rect: { x: b.x + b.width + 72, y: b.y, width: 280, height: Math.max(220, Math.min(420, b.height)) },
+      metadata: { restricted: true, reason: 'A separate company membership is required.' }, counts: {} });
+    scene.bounds = unionBounds(scene.nodes.map((n) => n.rect), 48);
+  }
+  return scene;
 }
 
 function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs: RO<SJob>[], warnings: string[]): FreeflowScene {
@@ -225,16 +247,16 @@ function portfolioScene(snap: FreeflowSnapshot, companies: RO<SCompany>[], jobs:
   return {
     title: 'Conference table', breadcrumbs: [{ label: 'Portfolio', focus }], focus,
     tableBounds: seatRects.table,
-    bounds: unionBounds([...nodes.map((n) => n.rect), seatRects.table], 120), nodes, threads,
+    bounds: unionBounds([...nodes.map((n) => n.rect), seatRects.table], 20), nodes, threads,
     counts: { companies: companies.length, folios: nodes.length, threads: threads.length, runningJobs: jobs.filter((j) => j.status === 'running').length, hiredEmployees: (snap.employees ?? []).filter((e) => e.status !== 'fired').length },
     warnings,
   };
 }
 
-const SEAT_W = 260, SEAT_H = 150, SEAT_GAP = 36, TABLE_PAD = 70, TABLE_MIN_W = 520, TABLE_MIN_H = 220;
+const SEAT_W = 260, SEAT_H = 150, SEAT_GAP = 36, TABLE_PAD = 40, TABLE_MIN_W = 520, TABLE_MIN_H = 136;
 type SeatSide = 'north' | 'south' | 'east' | 'west';
 
-/** Deterministic perimeter layout: seats alternate north/south along a table that lengthens with count; overflow beyond two long sides adds end seats. Table bounds derive from the same geometry. */
+/** Deterministic seats alternate along the two long sides; the table lengthens with count. */
 function seatLayout(count: number): { seats: Array<{ rect: LRect; side: SeatSide }>; table: LRect } {
   const n = Math.max(0, count);
   const perSide = Math.max(1, Math.ceil(n / 2));
@@ -248,7 +270,7 @@ function seatLayout(count: number): { seats: Array<{ rect: LRect; side: SeatSide
     const col = Math.floor(i / 2);
     const north = i % 2 === 0;
     const x = startX + col * (SEAT_W + SEAT_GAP);
-    const y = north ? table.y - SEAT_H - 24 : table.y + table.height + 24;
+    const y = north ? table.y - SEAT_H - 12 : table.y + table.height + 12;
     seats.push({ rect: { x, y, width: SEAT_W, height: SEAT_H }, side: north ? 'north' : 'south' });
   }
   return { seats, table };
@@ -296,7 +318,37 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
   const empById = new Map(allEmployees.map((e) => [e.id, e]));
   const employees = allEmployees.filter((e) => e.companyId === cid && e.status !== 'fired');
   const depts = byId(snap.departments).filter((d) => d.companyId === cid);
-  const deptIds = new Set(depts.map((d) => d.id));
+  const departmentById = new Map(depts.map((d) => [d.id, d]));
+  const deptIds = new Set(departmentById.keys());
+  const departmentPath = (id: string): string => {
+    const d = departmentById.get(id); if (!d) return 'Department unavailable';
+    const names = [d.name], seen = new Set([d.id]); let parentId = d.parentDepartmentId;
+    while (parentId && !seen.has(parentId) && names.length < 4) {
+      const parent = departmentById.get(parentId);
+      if (!parent || parent.officeId !== d.officeId) break;
+      seen.add(parent.id); names.unshift(parent.name); parentId = parent.parentDepartmentId;
+    }
+    return `${parentId && !seen.has(parentId) ? '… / ' : ''}${names.join(' / ')}`;
+  };
+  const visibleDepartments = new Set<string>();
+  if (wantDept) {
+    const children = new Map<string, string[]>();
+    for (const d of depts) if (d.officeId === focusOffice && d.parentDepartmentId) {
+      const siblings = children.get(d.parentDepartmentId) ?? []; siblings.push(d.id); children.set(d.parentDepartmentId, siblings);
+    }
+    const queue = [wantDept]; visibleDepartments.add(wantDept);
+    for (let i = 0; i < queue.length && i < depts.length; i++) for (const child of children.get(queue[i]!) ?? []) {
+      if (!visibleDepartments.has(child)) { visibleDepartments.add(child); queue.push(child); }
+    }
+  }
+  const inDepartment = (id: string | null): boolean => !wantDept || id !== null && visibleDepartments.has(id);
+  const memberRefs = new Map((snap.memberReferences ?? []).map((r) => [r.id, r]));
+  const placedMemberRefs = new Set<string>();
+  const memberRefNode = (r: RO<MemberRoleReference>, parentId: string | null, rect: LRect, extra: Partial<SceneNode> = {}): SceneNode => ({
+    id: `reference:${cid}:member:${r.id}`, kind: 'reference', entityId: r.id, companyId: cid, employeeId: r.id, parentId,
+    label: r.name, subtitle: r.role, status: r.availability, rect,
+    metadata: { reference: true, memberShared: true, provenance: r.provenance, toolAccess: false, monogram: initials(r.name) }, counts: {}, ...extra,
+  });
   const services = new Map((snap.portfolio?.services ?? []).map((s) => [s.id, s]));
   const nodes: SceneNode[] = [];
   const nodeIds = new Set<string>();
@@ -357,17 +409,24 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
     if (bp) {
       const norm = looksNormalized(bp.rooms);
       const origin = { x: sheet.x + ROOM_X0, y: sheet.y + ROOM_Y0 };
-      const rooms = [...bp.rooms].sort((a, b) => cmp(a.id, b.id)).filter((r) => !wantDept || r.departmentId === wantDept);
+      const rooms = [...bp.rooms].sort((a, b) => cmp(a.id, b.id)).filter((r) => inDepartment(r.departmentId));
       const roomRect = new Map<string, LRect>();
       for (const r of rooms) {
         const rect = mapRoom(r, origin, norm);
         roomRect.set(r.id, rect);
-        push({ id: roomNodeId(cid, o.id, r.id), kind: 'room', entityId: r.id, companyId: cid, officeId: o.id, departmentId: r.departmentId ?? undefined, roomId: r.id, parentId: oid, label: r.name, subtitle: 'Room', status: 'saved', rect, metadata: { assignment: (() => { if (!r.departmentId) return 'Unassigned department'; const dd = depts.find((x) => x.id === r.departmentId && x.officeId === o.id); return dd ? String(dd.name).slice(0, 80) : 'Department unavailable'; })() }, counts: { desks: bp.desks.filter((d) => d.roomId === r.id).length, whiteboards: bp.whiteboards.filter((w) => w.roomId === r.id).length } });
+        push({ id: roomNodeId(cid, o.id, r.id), kind: 'room', entityId: r.id, companyId: cid, officeId: o.id, departmentId: r.departmentId ?? undefined, roomId: r.id, parentId: oid, label: r.name, subtitle: 'Room', status: 'saved', rect, metadata: { assignment: r.departmentId ? departmentPath(r.departmentId) : 'Unassigned department' }, counts: { desks: bp.desks.filter((d) => d.roomId === r.id).length, whiteboards: bp.whiteboards.filter((w) => w.roomId === r.id).length } });
       }
       for (const d of [...bp.desks].sort((a, b) => cmp(a.id, b.id))) {
         const room = roomRect.get(d.roomId);
         if (!room) continue;
         const e = empById.get(d.employeeId);
+        const memberRef = memberRefs.get(d.employeeId);
+        if (!e && memberRef && !placedMemberRefs.has(memberRef.id)) {
+          placedMemberRefs.add(memberRef.id);
+          push(memberRefNode(memberRef, roomNodeId(cid, o.id, d.roomId), placeInRoom(room, d.x, d.y, EMP_W, EMP_H), { roomId: d.roomId, officeId: o.id }));
+          continue;
+        }
+        if (!e && memberRef) continue;
         if (!e) { warnings.push(`Desk ${d.id} references missing employee ${d.employeeId}.`); continue; }
         const rect = placeInRoom(room, d.x, d.y, EMP_W, EMP_H);
         const parent = roomNodeId(cid, o.id, d.roomId);
@@ -411,13 +470,13 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
 
     // Unplaced departments and employees go to a marked fallback area at the sheet bottom.
     const fb: SceneNode[] = [];
-    for (const d of depts.filter((d) => d.officeId === o.id && (!wantDept || d.id === wantDept))) {
+    for (const d of depts.filter((d) => d.officeId === o.id && inDepartment(d.id))) {
       if (nodes.some((n) => n.kind === 'room' && n.officeId === o.id && n.departmentId === d.id)) continue;
-      fb.push({ id: `fallback:${cid}:${o.id}:dept:${d.id}`, kind: 'fallback', entityId: d.id, companyId: cid, officeId: o.id, departmentId: d.id, parentId: oid, label: d.name, subtitle: 'Unplaced department', status: d.status, rect: sheet, metadata: { fallback: true }, counts: {} });
+      fb.push({ id: `fallback:${cid}:${o.id}:dept:${d.id}`, kind: 'department', entityId: d.id, companyId: cid, officeId: o.id, departmentId: d.id, parentId: oid, label: d.name, subtitle: d.parentDepartmentId ? departmentPath(d.id) : 'Department · no room placed', status: d.status, rect: sheet, metadata: { fallback: true, parentDepartmentId: d.parentDepartmentId ?? null }, counts: {} });
     }
     for (const e of oemps) {
       if (placedLocal.has(e.id)) continue;
-      if (wantDept && e.departmentId !== wantDept) continue;
+      if (!inDepartment(e.departmentId)) continue;
       if (e.departmentId && !deptIds.has(e.departmentId)) warnings.push(`Employee ${e.id} references missing department ${e.departmentId}.`);
       placedLocal.add(e.id);
       fb.push(employeeNode(e, oid, sheet, cid, jobs, { metadata: { monogram: initials(e.name), employeeKind: e.kind, homeCompanyId: e.companyId, fallback: true } }));
@@ -480,6 +539,11 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
     n.counts = { jobs: jobs.filter((j) => j.employeeId === e.id && j.companyId === cid && j.serviceContractId === k.id).length };
     push(n);
   });
+  if (isCompany) {
+    const remaining = [...memberRefs.values()].filter((r) => !placedMemberRefs.has(r.id));
+    const cells = packGrid(remaining.length, 160, 72, 12, 5, baseX + 20, refTop + (refPending.length ? Math.ceil(refPending.length / 8) * 80 : 0));
+    remaining.forEach((r, i) => push(memberRefNode(r, null, cells[i]!)));
+  }
 
   // Threads with real endpoints. Portal anchors carry identity/contract metadata only.
   const threads: SceneThread[] = [];
@@ -540,8 +604,18 @@ function companyScene(snap: FreeflowSnapshot, company: RO<SCompany>, focus: Comp
     if (o) crumbs.push({ label: o.name, focus: { kind: 'office', companyId: cid, officeId: o.id } });
   }
   if (focus.kind === 'department') {
-    const d = depts.find((x) => x.id === focus.departmentId);
-    if (d) crumbs.push({ label: d.name, focus });
+    const d = departmentById.get(focus.departmentId);
+    if (d) {
+      const parents: RO<SDepartment>[] = []; const seen = new Set([d.id]); let parentId = d.parentDepartmentId;
+      while (parentId && !seen.has(parentId) && parents.length < 4) {
+        const p = departmentById.get(parentId); if (!p || p.officeId !== d.officeId) break;
+        seen.add(p.id); parents.unshift(p); parentId = p.parentDepartmentId;
+      }
+      const earlier = parentId && !seen.has(parentId) ? departmentById.get(parentId) : undefined;
+      if (earlier && earlier.officeId === d.officeId) crumbs.push({ label: 'Earlier departments', focus: { kind: 'department', companyId: cid, officeId: earlier.officeId, departmentId: earlier.id } });
+      for (const p of parents) crumbs.push({ label: p.name, focus: { kind: 'department', companyId: cid, officeId: p.officeId, departmentId: p.id } });
+      crumbs.push({ label: d.name, focus });
+    }
     else warnings.push(`Department ${focus.departmentId} not found.`);
   }
   const safeThreads = threads.filter((t) => nodeIds.has(t.fromId) && nodeIds.has(t.toId));

@@ -169,6 +169,7 @@ fn permitted(action: &str) -> bool {
             | "select_company"
             | "create_office"
             | "create_department"
+            | "set_department_parent"
             | "hire_employee"
             | "pause_employee"
             | "resume_employee"

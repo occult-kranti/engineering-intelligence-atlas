@@ -4,6 +4,23 @@ This file distinguishes implemented behavior from deployment and validation work
 The detailed worker asks and returns are in [the shared ledger](project/WORKER_LEDGER.md),
 with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
+## Freeflow and shared cloud execution — 0.7.0
+
+| Outcome | State | Acceptance |
+| --- | --- | --- |
+| Company conference table, Donna dock and accessible navigation | Implemented | Large-scene geometry, pure-DOM behavior and browser viewport gates |
+| Company and subdepartment forest | Implemented | Cycles, cross-office relations, scoped parent authority, replay and 16k-depth stress |
+| Visiting employees and ownership dashboard | Implemented | Scoped projections, revocation during reads, revision-protected membership updates and invitation review |
+| Headless authority and private MCP/HTTP control | Implemented | Real Rust receipts, stale-state rejection, restart and client-disconnect independence |
+| Shared local model pool | Implemented | Deduplicated pulls, cancellation subscriptions, digest checks, scoped assignments and cloud-model rejection |
+| Permanent observer and native indexing | Implemented | Zero-model checks, bounded reports, live lease handling and saved-command integrity |
+| Optional Sites device synchronization | Implemented, configured separately | Real native + synthetic website tests for encryption, writer conflict, revoke and lost acknowledgments |
+| VPS/container packaging | Prepared | Exact local/remote boot evidence in the current validation receipt |
+| Live ChatGPT connection and Vast deployment | Requires chosen account/host | Authenticated tunnel, actual host restart, GPU/model sizing and infrastructure billing |
+| Isolated code/deployment runners | Planned | Worktree, executable tests and publication receipts beyond bounded provider text jobs |
+
+See [0.7.0 validation](project/FREEFLOW_VALIDATION.md) and [deployment instructions](deploy/README.md). No paid infrastructure is purchased by the source or test workflow.
+
 ## Company kits 0.6.1 — released and verified
 
 | Outcome | Owner | Acceptance |

@@ -8,6 +8,8 @@ use time::{format_description::well_known::Rfc3339, Duration, OffsetDateTime};
 use uuid::Uuid;
 #[path = "company_hierarchy.rs"]
 mod company_hierarchy;
+#[path = "department_hierarchy.rs"]
+mod department_hierarchy;
 #[path = "governance.rs"]
 mod governance;
 pub use governance::*;
@@ -151,6 +153,8 @@ pub struct Department {
     pub status: String,
     pub assistant_id: String,
     pub created_at: String,
+    #[serde(default)]
+    pub parent_department_id: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -559,6 +563,7 @@ impl OfficeSnapshot {
             return Err(fail("OFFICE_STATE_INVALID", "Invalid cache bounds"));
         }
         company_hierarchy::validate_company_forest(self)?;
+        department_hierarchy::validate_department_forest(self)?;
         self.validate_governance()?;
         self.validate_portfolio()?;
         self.validate_decision_panels()?;
@@ -878,6 +883,7 @@ impl OfficeSnapshot {
             status: "active".into(),
             assistant_id: String::new(),
             created_at: now(),
+            parent_department_id: None,
         });
         let assistant = self.add_staff(
             &company_id,
@@ -1348,6 +1354,7 @@ impl OfficeSnapshot {
                 );
                 self.last_action = Some(json!({"departmentId":department_id}));
             }
+            "set_department_parent" => self.set_department_parent(p)?,
             "hire_employee" => {
                 let employee_id = self.add_staff(
                     &string(p, "companyId", 100)?,

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { buildScene, type FreeflowSnapshot } from '../src/renderer/freeflow/model.js';
+import { DEFAULT_CAMERA, fitBounds, worldToScreen } from '../src/renderer/freeflow/camera.js';
 
 const SECRET = 'TOPSECRET-goal-text';
 const URI = 'file:///private/secret-artifact.md';
@@ -67,6 +68,41 @@ describe('freeflow model', () => {
     expect(big.nodes).toHaveLength(200);
     expect(new Set(big.nodes.map((n) => n.id)).size).toBe(200);
     expect(JSON.stringify(buildScene(many(200), { kind: 'portfolio' }))).toBe(JSON.stringify(big));
+  });
+
+  it('fits a small conference table at a readable desktop scale without clipping seats', () => {
+    const scene = buildScene(many(3), { kind: 'portfolio' });
+    const viewport = { width: 1000, height: 428 };
+    const camera = fitBounds(DEFAULT_CAMERA, viewport, scene.bounds, 24);
+    expect(camera.zoom).toBeGreaterThanOrEqual(0.75);
+    for (const { rect } of scene.nodes) {
+      const start = worldToScreen(camera, viewport, { x: rect.x, y: rect.y });
+      const end = worldToScreen(camera, viewport, { x: rect.x + rect.width, y: rect.y + rect.height });
+      expect(start.x).toBeGreaterThanOrEqual(24);
+      expect(start.y).toBeGreaterThanOrEqual(24);
+      expect(end.x).toBeLessThanOrEqual(viewport.width - 24);
+      expect(end.y).toBeLessThanOrEqual(viewport.height - 24);
+    }
+  });
+
+  it('supports the 2000-company import ceiling without dropping seats or producing invalid geometry', () => {
+    const scene = buildScene(many(2000), { kind: 'portfolio' });
+    expect(scene.nodes).toHaveLength(2000);
+    expect(new Set(scene.nodes.map((n) => n.id)).size).toBe(2000);
+    expect(scene.tableBounds!.width).toBeGreaterThan(200000);
+    expect(scene.nodes.every((n) => Object.values(n.rect).every(Number.isFinite))).toBe(true);
+    expect(scene.nodes.at(-1)!.label).toBeTruthy();
+  });
+
+  it('bounds deep department display paths while preserving all descendants', () => {
+    const departments = Array.from({ length: 16000 }, (_, i) => ({ id: `d-${i}`, companyId: 'co', officeId: 'office', name: `Department ${i}`, status: 'active', parentDepartmentId: i ? `d-${i - 1}` : null }));
+    const snapshot: FreeflowSnapshot = { companies: [{ id: 'co', name: 'Company', status: 'active' }], offices: [{ id: 'office', companyId: 'co', name: 'Office', status: 'active' }], departments };
+    const deepest = buildScene(snapshot, { kind: 'department', companyId: 'co', officeId: 'office', departmentId: 'd-15999' });
+    expect(deepest.breadcrumbs.length).toBeLessThanOrEqual(9);
+    expect(deepest.breadcrumbs.some((b) => b.label === 'Earlier departments')).toBe(true);
+    expect(deepest.nodes.find((n) => n.departmentId === 'd-15999')!.subtitle.length).toBeLessThan(120);
+    const root = buildScene(snapshot, { kind: 'department', companyId: 'co', officeId: 'office', departmentId: 'd-0' });
+    expect(root.nodes.filter((n) => n.kind === 'department')).toHaveLength(16000);
   });
 
   it('seats: one unique finite nonoverlapping folio per company for 0/1/2/200, with finite expanding table', () => {

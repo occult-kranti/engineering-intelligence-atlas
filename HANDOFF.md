@@ -13,6 +13,16 @@ manager, project runner and Android source remain available. The architecture is
 Electron/TypeScript with a Rust state and control core, plus the deployed owner-private Sites/Vinext/D1 companion. The earlier
 React/TypeScript/MySQL runtime remains available as a separate deployment option.
 
+## Freeflow 0.7.0 integration
+
+The unified branch includes the Freeflow renderer, nested company/department organization, visiting-member API and pages, shared local model control, permanent deterministic observer, headless runtime and optional encrypted cloud-device synchronization. See [the current validation receipt](project/FREEFLOW_VALIDATION.md) for exact checks and deployment status.
+
+A configured VPS can consume the existing website queue through an owner-issued desktop-kind device pairing. Preserve a single writer, restore matching state before the first connection, and review any conflict. [Cloud migration instructions](deploy/CLOUD_DEVICE_SYNC.md) explain device revocation/release and cold-start checks. The shared model registry is host-local and separate from the Site projection; download/assignment controls are exposed in the native/personal-browser UI and private MCP/HTTP bridge.
+
+`node scripts/reconcile-company-hierarchy.mjs --help` describes additive hierarchy setup from saved portfolio groups. It defaults to a private plan, preserves custom parents and applies through native command receipts. No repository source or private company record belongs in the public preview.
+
+The daemon starts paused. No host rental, GPU benchmark, model-weight download or real ChatGPT tunnel is implied by source delivery. Public OAuth, isolated arbitrary-code runners and an installed owner-device check remain separate work.
+
 ## Company kits 0.6.1 — released
 
 The reusable catalog is [company/company-kits/index.json](company/company-kits/index.json); [the installer guide](company/company-kits/README.md) specifies preview, apply, limits and restart behavior. Run it against the same private company-state directory used by the desktop. It adds records through the native command boundary and never runs the global optimizer or replaces existing groups. Client/source data belongs in a private plan; public templates and installers contain generic guidance only.

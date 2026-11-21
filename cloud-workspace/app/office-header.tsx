@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 
-export default function OfficeHeader({signedIn, current = 'office'}: {signedIn: boolean; current?: 'office' | 'directory'}) {
+export default function OfficeHeader({signedIn, current = 'office'}: {signedIn: boolean; current?: 'office' | 'directory' | 'access' | 'visit'}) {
   const [theme, setTheme] = useState<'blueprint' | 'drafting'>('blueprint');
   function applyTheme(value: 'blueprint' | 'drafting', persist = true) {
     setTheme(value);
@@ -19,11 +19,13 @@ export default function OfficeHeader({signedIn, current = 'office'}: {signedIn: 
     <nav aria-label="Daftar workspace">
       <a href="/" aria-current={current === 'office' ? 'page' : undefined}>One Office</a>
       <a href="/applications" aria-current={current === 'directory' ? 'page' : undefined}>Directory</a>
+      <a href="/access" aria-current={current === 'access' ? 'page' : undefined}>People & access</a>
+      <a href="/visit" aria-current={current === 'visit' ? 'page' : undefined}>Visiting office</a>
       <a href="/workspace/chrome.html?workspace=blueprint#office">Blueprint</a>
       <a href="/workspace/chrome.html?workspace=softboard#office">Ownership</a>
       <a href="/workspace/chrome.html?workspace=timeline#office">Roadmap</a>
       <a href="/workspace/chrome.html?workspace=whiteboard#office">Whiteboard</a>
     </nav>
-    <div className="header-tools"><label className="theme-choice" htmlFor="cloud-studio-theme"><span>Canvas</span><select id="cloud-studio-theme" value={theme} onChange={event => applyTheme(event.target.value === 'drafting' ? 'drafting' : 'blueprint')}><option value="blueprint">Violet studio</option><option value="drafting">Golden drafting</option></select></label>{signedIn ? <a className="session-link" href="/signout-with-chatgpt?return_to=%2F" target="_top">Sign out</a> : <a className="session-link" href={'/signin-with-chatgpt?return_to=' + encodeURIComponent(current === 'directory' ? '/applications' : '/')} target="_top">Sign in</a>}</div>
+    <div className="header-tools"><label className="theme-choice" htmlFor="cloud-studio-theme"><span>Canvas</span><select id="cloud-studio-theme" value={theme} onChange={event => applyTheme(event.target.value === 'drafting' ? 'drafting' : 'blueprint')}><option value="blueprint">Violet studio</option><option value="drafting">Golden drafting</option></select></label>{signedIn ? <a className="session-link" href="/signout-with-chatgpt?return_to=%2F" target="_top">Sign out</a> : <a className="session-link" href={'/signin-with-chatgpt?return_to=' + encodeURIComponent(current === 'directory' ? '/applications' : current === 'access' ? '/access' : current === 'visit' ? '/visit' : '/')} target="_top">Sign in</a>}</div>
   </header>;
 }

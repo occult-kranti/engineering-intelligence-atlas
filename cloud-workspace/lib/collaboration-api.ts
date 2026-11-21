@@ -12,12 +12,13 @@ function json(value: unknown, status = 200): Response {
 }
 const ID = /^[A-Za-z0-9_.:-]{1,120}$/;
 function idParam(v: string): string { const s = decodeURIComponent(v); insist(ID.test(s), 'Invalid identifier.', 400, 'bad_id'); return s; }
-function event(env: AtlasEnv, actor: string, action: string, companyId: string | null, scopeId: string | null, summary: string, gateSql?: string, gateArgs: unknown[] = []) {
-  const base = [crypto.randomUUID(), actor, action, companyId, scopeId, summary.slice(0, 900), now()];
+function event(env: AtlasEnv, actor: string, action: string, companyId: string | null, scopeId: string | null, summary: string, gateSql?: string, gateArgs: unknown[] = [], eventId = crypto.randomUUID()) {
+  const base = [eventId, actor, action, companyId, scopeId, summary.slice(0, 900), now()];
   if (!gateSql) return env.DB!.prepare('INSERT INTO daftar_collaboration_events (id,actor_user_id,action,company_id,scope_id,summary,created_at) VALUES (?,?,?,?,?,?,?)').bind(...base);
   return env.DB!.prepare('INSERT INTO daftar_collaboration_events (id,actor_user_id,action,company_id,scope_id,summary,created_at) SELECT ?,?,?,?,?,?,? WHERE ' + gateSql).bind(...base, ...gateArgs);
 }
 const COMPANY_OK = "EXISTS (SELECT 1 FROM atlas_workspace w, json_each(json_extract(w.snapshot,'$.companies')) c WHERE w.id='owner' AND json_extract(c.value,'$.id') = ?)";
+const ACTIVE_OWNER_SQL = "EXISTS (SELECT 1 FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner' AND o.user_id=? AND u.status='active')";
 const ACTIVE_MEMBER_SQL = "EXISTS (SELECT 1 FROM daftar_company_memberships m JOIN daftar_users u ON u.id=m.user_id WHERE m.workspace_id='owner' AND m.company_id=? AND m.user_id=? AND m.status='active' AND m.revoked_at IS NULL AND m.role IN ('contributor') AND (m.expires_at IS NULL OR m.expires_at > ?) AND u.status='active')";
 const ACTIVE_WRITER_SQL = "(EXISTS (SELECT 1 FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner' AND o.user_id=? AND u.status='active') OR " + ACTIVE_MEMBER_SQL + ')';
 async function writerGuard(env: AtlasEnv, user: CollabUser, companyId: string): Promise<{ sql: string; args: unknown[] }> {
@@ -37,7 +38,7 @@ async function session(env: AtlasEnv, user: CollabUser): Promise<Response> {
   const all = await companiesList(env);
   const out: Row[] = [];
   if (user.isOwner) {
-    for (const c of all.slice(0, 200)) out.push({ id: c.id, name: String(c.name ?? '').slice(0, 200), role: 'owner', capabilities: ['read', 'write', 'invite', 'decide'] });
+    for (const c of all.slice(0, 2000)) out.push({ id: c.id, name: String(c.name ?? '').slice(0, 200), role: 'owner', capabilities: ['read', 'write', 'invite', 'decide'] });
   } else {
     const rows = (await env.DB!.prepare("SELECT m.* FROM daftar_company_memberships m JOIN daftar_users u ON u.id=m.user_id WHERE m.workspace_id='owner' AND m.user_id=? AND m.status='active' AND m.revoked_at IS NULL AND m.role IN ('viewer','contributor') AND u.status='active'").bind(user.id).all<Row>()).results;
     for (const m of rows) {
@@ -47,16 +48,17 @@ async function session(env: AtlasEnv, user: CollabUser): Promise<Response> {
     }
   }
   const u = await env.DB!.prepare('SELECT display_name FROM daftar_users WHERE id=?').bind(user.id).first<Row>();
-  return json({ ok: true, user: { id: user.id, displayName: u?.display_name ?? null, isOwner: user.isOwner }, companies: out });
+  return json({ ok: true, user: { id: user.id, displayName: u?.display_name ?? null, isOwner: user.isOwner }, companies: out, ...(user.isOwner ? { companyListTruncated: all.length > out.length } : {}) });
 }
 async function companyMembers(env: AtlasEnv, user: CollabUser, companyId: string): Promise<Response> {
   await requireMembership(env, user, companyId);
-  const rows = (await env.DB!.prepare("SELECT m.id,m.user_id,m.role,m.expires_at,u.display_name,u.email FROM daftar_company_memberships m JOIN daftar_users u ON u.id=m.user_id WHERE m.workspace_id='owner' AND m.company_id=? AND m.status='active' AND m.revoked_at IS NULL AND u.status='active' AND m.role IN ('viewer','contributor') ORDER BY m.created_at,m.id LIMIT 200").bind(companyId).all<Row>()).results;
+  const rows = (await env.DB!.prepare("SELECT m.id,m.user_id,m.role,m.expires_at,u.display_name,u.email FROM daftar_company_memberships m JOIN daftar_users u ON u.id=m.user_id WHERE m.workspace_id='owner' AND m.company_id=? AND m.status='active' AND m.revoked_at IS NULL AND (m.expires_at IS NULL OR m.expires_at > ?) AND u.status='active' AND m.role IN ('viewer','contributor') ORDER BY m.created_at,m.id LIMIT 200").bind(companyId, now()).all<Row>()).results;
   const live = rows.filter((m) => !m.expires_at || Date.parse(m.expires_at) > Date.now());
   const owner = await env.DB!.prepare("SELECT u.id,u.display_name,u.email FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner'").first<Row>();
   type HumanDto = { membershipId: string; userId: string; displayName: string; role: string; expiresAt: string | null; email?: string | null };
   const humans: HumanDto[] = live.map((m): HumanDto => ({ membershipId: m.id, userId: m.user_id, displayName: m.display_name ?? 'Member', role: m.role, expiresAt: m.expires_at ?? null, ...(user.isOwner ? { email: m.email ?? null } : {}) }));
   if (owner) humans.unshift({ membershipId: 'owner', userId: owner.id, displayName: owner.display_name ?? 'Owner', role: 'owner', expiresAt: null, ...(user.isOwner ? { email: owner.email ?? null } : {}) });
+  await requireMembership(env, user, companyId);
   return json({ ok: true, humans, note: 'Human company ownership; AI employees are listed separately in the company view.' });
 }
 async function createInvitation(env: AtlasEnv, user: CollabUser, companyId: string, request: Request): Promise<Response> {
@@ -67,14 +69,15 @@ async function createInvitation(env: AtlasEnv, user: CollabUser, companyId: stri
   const intended = safeEmail(b.intendedEmail);
   const exp = typeof b.expiresAt === 'string' ? Date.parse(b.expiresAt) : NaN;
   insist(Number.isFinite(exp) && exp > Date.now() + 60000 && exp <= Date.now() + 30 * 86400000, 'Expiry must be 1 minute to 30 days ahead.');
-  const pending = await env.DB!.prepare("SELECT COUNT(*) n FROM daftar_invitations WHERE company_id=? AND status='pending'").bind(companyId).first<Row>();
+  const stamp = now();
+  const pending = await env.DB!.prepare("SELECT COUNT(*) n FROM daftar_invitations WHERE company_id=? AND status='pending' AND expires_at > ?").bind(companyId, stamp).first<Row>();
   insist((pending?.n ?? 0) < 100, 'Too many pending invitations.', 429, 'capacity');
   const token = [...crypto.getRandomValues(new Uint8Array(32))].map((n) => n.toString(16).padStart(2, '0')).join('');
   const id = crypto.randomUUID(); const exps = new Date(exp).toISOString();
-  const admit = "(SELECT COUNT(*) FROM daftar_invitations WHERE company_id=? AND status='pending') < 100 AND " + COMPANY_OK + " AND EXISTS (SELECT 1 FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner' AND o.user_id=? AND u.status='active')";
-  const admitArgs = [companyId, companyId, user.id];
+  const admit = "(SELECT COUNT(*) FROM daftar_invitations WHERE company_id=? AND status='pending' AND expires_at > ?) < 100 AND " + COMPANY_OK + " AND EXISTS (SELECT 1 FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner' AND o.user_id=? AND u.status='active')";
+  const admitArgs = [companyId, stamp, companyId, user.id];
   const createResults = await env.DB!.batch([
-    env.DB!.prepare("INSERT INTO daftar_invitations (id,company_id,role,token_digest,intended_email,invited_by_user_id,status,expires_at,created_at) SELECT ?,?,?,?,?,?,'pending',?,? WHERE " + admit).bind(id, companyId, b.role, await sha256(token), intended, user.id, exps, now(), ...admitArgs),
+    env.DB!.prepare("INSERT INTO daftar_invitations (id,company_id,role,token_digest,intended_email,invited_by_user_id,status,expires_at,created_at) SELECT ?,?,?,?,?,?,'pending',?,? WHERE " + admit).bind(id, companyId, b.role, await sha256(token), intended, user.id, exps, stamp, ...admitArgs),
     event(env, user.id, 'invitation.create', companyId, id, `Created ${b.role} invitation`, "changes() = 1 AND EXISTS (SELECT 1 FROM daftar_invitations WHERE id=? AND status='pending')", [id]),
   ]);
   if ((createResults[0].meta?.changes ?? 0) !== 1) throw new CollabError(429, 'capacity', 'Invitation capacity reached or company unavailable.');
@@ -82,6 +85,7 @@ async function createInvitation(env: AtlasEnv, user: CollabUser, companyId: stri
 }
 async function listInvitations(env: AtlasEnv, user: CollabUser, companyId: string): Promise<Response> {
   requireOwner(user);
+  await requireMembership(env, user, companyId);
   const rows = (await env.DB!.prepare('SELECT id,role,intended_email,status,expires_at,accepted_by_user_id,accepted_at,created_at FROM daftar_invitations WHERE company_id=? ORDER BY created_at DESC,id LIMIT 200').bind(companyId).all<Row>()).results;
   return json({ ok: true, invitations: rows.map((r) => ({ id: r.id, role: r.role, intendedEmail: r.intended_email, status: r.status, expiresAt: r.expires_at, acceptedAt: r.accepted_at, createdAt: r.created_at })) });
 }
@@ -90,10 +94,25 @@ async function revokeInvitation(env: AtlasEnv, user: CollabUser, id: string): Pr
   const inv = await env.DB!.prepare('SELECT company_id FROM daftar_invitations WHERE id=?').bind(id).first<Row>();
   insist(inv, 'Invitation not found.', 404, 'not_found');
   const [r] = await env.DB!.batch([
-    env.DB!.prepare("UPDATE daftar_invitations SET status='revoked' WHERE id=? AND status='pending'").bind(id),
+    env.DB!.prepare("UPDATE daftar_invitations SET status='revoked' WHERE id=? AND status='pending' AND " + ACTIVE_OWNER_SQL).bind(id, user.id),
     event(env, user.id, 'invitation.revoke', inv.company_id, id, 'Revoked invitation', "changes() = 1 AND EXISTS (SELECT 1 FROM daftar_invitations WHERE id=? AND status='revoked')", [id]),
   ]);
   return json({ ok: true, revoked: (r.meta?.changes ?? 0) === 1 });
+}
+/** A signed-in invitee reviews the exact grant before choosing to accept it. */
+async function inspectInvitation(env: AtlasEnv, user: CollabUser, request: Request): Promise<Response> {
+  const b = await readJsonBody(request, 2000);
+  insist(typeof b.token === 'string' && /^[a-f0-9]{64}$/.test(b.token), 'Invalid invitation.', 400, 'invalid_invitation');
+  const inv = await env.DB!.prepare('SELECT * FROM daftar_invitations WHERE token_digest=?').bind(await sha256(b.token)).first<Row>();
+  insist(inv && (inv.status === 'pending' || inv.status === 'accepted' && inv.accepted_by_user_id === user.id), 'Invitation is not valid.', 404, 'invalid_invitation');
+  insist(Date.parse(inv.expires_at) > Date.now(), 'Invitation expired.', 410, 'expired');
+  if (inv.intended_email) insist(user.email && user.email.toLowerCase() === String(inv.intended_email).toLowerCase(), 'Invitation is for a different account.', 403, 'wrong_email');
+  const company = (await companiesList(env)).find((c) => c.id === inv.company_id);
+  insist(company && ['viewer', 'contributor'].includes(inv.role), 'Invitation is not valid.', 404, 'invalid_invitation');
+  if (inv.status === 'accepted') await requireMembership(env, user, inv.company_id);
+  return json({ ok: true, invitation: { id: inv.id, company: { id: company.id, name: String(company.name ?? '').slice(0, 200) },
+    role: inv.role, expiresAt: inv.expires_at, status: inv.status, accountEmail: user.email },
+    siteAccessNote: 'This invitation grants company access only. It does not change the private Site audience.' });
 }
 async function acceptInvitation(env: AtlasEnv, user: CollabUser, request: Request): Promise<Response> {
   const b = await readJsonBody(request, 2000);
@@ -156,22 +175,97 @@ async function revokeMembership(env: AtlasEnv, user: CollabUser, id: string): Pr
   insist(m, 'Membership not found.', 404, 'not_found');
   const stamp = now();
   const results = await env.DB!.batch([
-    env.DB!.prepare("UPDATE daftar_company_memberships SET status='revoked',revoked_at=?,revoked_by_user_id=?,acl_revision=acl_revision+1,updated_at=? WHERE id=? AND workspace_id='owner' AND status='active'").bind(stamp, user.id, stamp, id),
+    env.DB!.prepare("UPDATE daftar_company_memberships SET status='revoked',revoked_at=?,revoked_by_user_id=?,acl_revision=acl_revision+1,updated_at=? WHERE id=? AND workspace_id='owner' AND status='active' AND " + ACTIVE_OWNER_SQL).bind(stamp, user.id, stamp, id, user.id),
     event(env, user.id, 'membership.revoke', m.company_id, id, `Revoked membership of ${m.user_id}`, "changes() = 1 AND EXISTS (SELECT 1 FROM daftar_company_memberships WHERE id=? AND workspace_id='owner' AND status='revoked' AND revoked_at=?)", [id, stamp]),
     env.DB!.prepare("UPDATE daftar_resource_grants SET revoked_at=? WHERE (beneficiary_user_id=? OR owner_user_id=?) AND company_id=? AND revoked_at IS NULL AND EXISTS (SELECT 1 FROM daftar_company_memberships WHERE id=? AND workspace_id='owner' AND status='revoked' AND revoked_at=?)").bind(stamp, m.user_id, m.user_id, m.company_id, id, stamp),
     env.DB!.prepare("UPDATE daftar_task_proposals SET assigned_user_id=NULL WHERE company_id=? AND assigned_user_id=? AND status='proposed' AND EXISTS (SELECT 1 FROM daftar_company_memberships WHERE id=? AND workspace_id='owner' AND status='revoked' AND revoked_at=?)").bind(m.company_id, m.user_id, id, stamp),
   ]);
   return json({ ok: true, revoked: (results[0].meta?.changes ?? 0) === 1 });
 }
+
+function membershipDto(m: Row): Row {
+  const status = m.status === 'revoked' || m.revoked_at ? 'revoked'
+    : m.user_status !== 'active' ? 'account-disabled'
+    : m.expires_at && !(Date.parse(m.expires_at) > Date.now()) ? 'expired' : 'active';
+  return { id: m.id, userId: m.user_id, displayName: m.display_name ?? 'Member', email: m.email ?? null, role: m.role,
+    status, expiresAt: m.expires_at ?? null, revokedAt: m.revoked_at ?? null, aclRevision: m.acl_revision,
+    createdAt: m.created_at, updatedAt: m.updated_at };
+}
+
+/** The owner reviews exact company/role/expiry before an optimistic ACL update. */
+async function updateMembership(env: AtlasEnv, user: CollabUser, id: string, request: Request): Promise<Response> {
+  requireOwner(user);
+  const b = await readJsonBody(request, 3000);
+  insist(b.role === 'viewer' || b.role === 'contributor', 'Role must be viewer or contributor.');
+  insist(Number.isSafeInteger(b.expectedAclRevision) && b.expectedAclRevision > 0, 'Expected access revision required.');
+  let expiresAt: string | null = null;
+  if (b.expiresAt !== null) {
+    const expires = typeof b.expiresAt === 'string' ? Date.parse(b.expiresAt) : NaN;
+    insist(Number.isFinite(expires) && expires > Date.now() + 60000 && expires <= Date.now() + 30 * 86400000, 'Expiry must be 1 minute to 30 days ahead, or explicitly null for no expiry.');
+    expiresAt = new Date(expires).toISOString();
+  }
+  const m = await env.DB!.prepare("SELECT * FROM daftar_company_memberships WHERE id=? AND workspace_id='owner'").bind(id).first<Row>();
+  insist(m, 'Membership not found.', 404, 'not_found');
+  await requireMembership(env, user, m.company_id);
+  insist(m.status === 'active' && !m.revoked_at, 'A revoked membership requires a new invitation.', 409, 'revoked');
+  insist(m.acl_revision === b.expectedAclRevision, 'Access changed; refresh before saving.', 409, 'access_changed');
+  const stamp = now(), nextRevision = b.expectedAclRevision + 1, auditId = crypto.randomUUID();
+  // A transaction-specific audit ID distinguishes a successful mutation from a
+  // competing update at the same timestamp/revision, including a frozen clock.
+  const changed = "EXISTS (SELECT 1 FROM daftar_collaboration_events WHERE id=?)";
+  const changedArgs = [auditId];
+  const results = await env.DB!.batch([
+    env.DB!.prepare("UPDATE daftar_company_memberships SET role=?,expires_at=?,acl_revision=acl_revision+1,updated_at=? WHERE id=? AND workspace_id='owner' AND status='active' AND revoked_at IS NULL AND acl_revision=? AND EXISTS (SELECT 1 FROM daftar_users u WHERE u.id=user_id AND u.status='active') AND " + COMPANY_OK + ' AND ' + ACTIVE_OWNER_SQL).bind(b.role, expiresAt, stamp, id, b.expectedAclRevision, m.company_id, user.id),
+    event(env, user.id, 'membership.update', m.company_id, id, `Set ${b.role} access until ${expiresAt ?? 'no expiry'}`, 'changes() = 1', [], auditId),
+    // Removing contributor rights also removes permission to keep working under
+    // an old resource grant or assignment. An in-flight billed result still settles.
+    env.DB!.prepare("UPDATE daftar_resource_grants SET revoked_at=? WHERE beneficiary_user_id=? AND company_id=? AND revoked_at IS NULL AND ?='viewer' AND " + changed).bind(stamp, m.user_id, m.company_id, b.role, ...changedArgs),
+    env.DB!.prepare("UPDATE daftar_task_proposals SET assigned_user_id=NULL WHERE assigned_user_id=? AND company_id=? AND status='proposed' AND ?='viewer' AND " + changed).bind(m.user_id, m.company_id, b.role, ...changedArgs),
+  ]);
+  insist((results[0].meta?.changes ?? 0) === 1, 'Access changed; refresh before saving.', 409, 'access_changed');
+  return json({ ok: true, membership: { id, companyId: m.company_id, role: b.role, expiresAt, aclRevision: nextRevision } });
+}
+
+async function auditRows(env: AtlasEnv, companyId: string | null): Promise<Row[]> {
+  const condition = companyId === null ? '1=1' : 'e.company_id=?';
+  const query = env.DB!.prepare('SELECT e.id,e.actor_user_id,e.action,e.company_id,e.scope_id,e.summary,e.created_at,u.display_name FROM daftar_collaboration_events e LEFT JOIN daftar_users u ON u.id=e.actor_user_id WHERE ' + condition + ' ORDER BY e.created_at DESC,e.id DESC LIMIT 100');
+  const rows = (await (companyId === null ? query : query.bind(companyId)).all<Row>()).results;
+  return rows.map((r) => ({ id: r.id, actorUserId: r.actor_user_id, actorName: r.display_name ?? 'Member', action: r.action,
+    companyId: r.company_id, scopeId: r.scope_id, summary: r.summary, createdAt: r.created_at }));
+}
+
+async function accessDashboard(env: AtlasEnv, user: CollabUser, companyId: string): Promise<Response> {
+  requireOwner(user);
+  await requireMembership(env, user, companyId);
+  const company = (await companiesList(env)).find((c) => c.id === companyId);
+  insist(company, 'Company not found.', 404, 'not_found');
+  const [members, invites, audit] = await Promise.all([
+    env.DB!.prepare("SELECT m.*,u.display_name,u.email,u.status AS user_status FROM daftar_company_memberships m JOIN daftar_users u ON u.id=m.user_id WHERE m.workspace_id='owner' AND m.company_id=? ORDER BY m.updated_at DESC,m.id LIMIT 201").bind(companyId).all<Row>(),
+    env.DB!.prepare('SELECT id,role,intended_email,status,expires_at,accepted_at,created_at FROM daftar_invitations WHERE company_id=? ORDER BY created_at DESC,id LIMIT 201').bind(companyId).all<Row>(),
+    auditRows(env, companyId),
+  ]);
+  await requireMembership(env, user, companyId);
+  return json({ ok: true, company: { id: company.id, name: String(company.name ?? '').slice(0, 200) },
+    memberships: members.results.slice(0, 200).map(membershipDto),
+    invitations: invites.results.slice(0, 200).map((r) => ({ id: r.id, role: r.role, intendedEmail: r.intended_email,
+      status: r.status === 'pending' && !(Date.parse(r.expires_at) > Date.now()) ? 'expired' : r.status,
+      expiresAt: r.expires_at, acceptedAt: r.accepted_at, createdAt: r.created_at })),
+    audit, truncation: { memberships: members.results.length > 200, invitations: invites.results.length > 200 },
+    siteAccessNote: 'Company invitations do not change the private Site audience. Site access is managed separately.' });
+}
 function credentialLike(s: string): boolean { return hasSecret(s) || /-----BEGIN [A-Z ]*PRIVATE KEY-----/.test(s) || /\b(?:password|passwd|secret|api[_-]?key|token)\s*[:=]\s*\S{8,}/i.test(s); }
 async function listMessages(env: AtlasEnv, user: CollabUser, companyId: string, url: URL): Promise<Response> {
   await requireMembership(env, user, companyId);
+  const latest = url.searchParams.get('latest') === '1';
   const cursor = url.searchParams.get('cursor') ?? '';
   let stamp = '', cid = '';
   if (cursor) { const i = cursor.indexOf('|'); stamp = cursor.slice(0, i); cid = cursor.slice(i + 1); insist(i > 0 && Number.isFinite(Date.parse(stamp)) && ID.test(cid), 'Invalid cursor.'); }
-  const rows = (await env.DB!.prepare("SELECT m.id,m.author_user_id,m.content,m.created_at,u.display_name FROM daftar_member_messages m LEFT JOIN daftar_users u ON u.id=m.author_user_id WHERE m.company_id=? AND m.visibility='company' AND (?='' OR m.created_at > ? OR (m.created_at = ? AND m.id > ?)) ORDER BY m.created_at,m.id LIMIT 51").bind(companyId, stamp, stamp, stamp, cid).all<Row>()).results;
+  const comparison = latest ? '<' : '>';
+  const order = latest ? 'DESC' : 'ASC';
+  const rows = (await env.DB!.prepare("SELECT m.id,m.author_user_id,m.content,m.created_at,u.display_name FROM daftar_member_messages m LEFT JOIN daftar_users u ON u.id=m.author_user_id WHERE m.company_id=? AND m.visibility='company' AND (?='' OR m.created_at " + comparison + ' ? OR (m.created_at = ? AND m.id ' + comparison + ' ?)) ORDER BY m.created_at ' + order + ',m.id ' + order + ' LIMIT 51').bind(companyId, stamp, stamp, stamp, cid).all<Row>()).results;
   const page = rows.slice(0, 50); const last = page.at(-1);
-  return json({ ok: true, messages: page.map((r) => ({ id: r.id, authorUserId: r.author_user_id, authorName: r.display_name ?? 'Member', content: r.content, createdAt: r.created_at })), nextCursor: rows.length > 50 && last ? `${last.created_at}|${last.id}` : null });
+  await requireMembership(env, user, companyId);
+  return json({ ok: true, messages: (latest ? page.reverse() : page).map((r) => ({ id: r.id, authorUserId: r.author_user_id, authorName: r.display_name ?? 'Member', content: r.content, createdAt: r.created_at })), nextCursor: rows.length > 50 && last ? `${last.created_at}|${last.id}` : null });
 }
 async function postMessage(env: AtlasEnv, user: CollabUser, companyId: string, request: Request): Promise<Response> {
   await requireMembership(env, user, companyId, true);
@@ -201,6 +295,7 @@ function proposalDto(r: Row): Row { let links: string[] = []; try { links = r.ev
 async function listProposals(env: AtlasEnv, user: CollabUser, companyId: string): Promise<Response> {
   await requireMembership(env, user, companyId);
   const rows = (await env.DB!.prepare('SELECT * FROM daftar_task_proposals WHERE company_id=? ORDER BY created_at DESC,id LIMIT 100').bind(companyId).all<Row>()).results;
+  await requireMembership(env, user, companyId);
   return json({ ok: true, proposals: rows.map(proposalDto) });
 }
 async function createProposal(env: AtlasEnv, user: CollabUser, companyId: string, request: Request): Promise<Response> {
@@ -278,7 +373,7 @@ async function decideProposal(env: AtlasEnv, user: CollabUser, id: string, reque
   const stamp = now();
   if (b.decision === 'reject') {
     const [r] = await env.DB!.batch([
-      env.DB!.prepare("UPDATE daftar_task_proposals SET status='rejected',approver_user_id=?,decided_at=? WHERE id=? AND status='proposed'").bind(user.id, stamp, id),
+      env.DB!.prepare("UPDATE daftar_task_proposals SET status='rejected',approver_user_id=?,decided_at=? WHERE id=? AND status='proposed' AND " + ACTIVE_OWNER_SQL).bind(user.id, stamp, id, user.id),
       event(env, user.id, 'proposal.reject', p.company_id, id, 'Rejected proposal', 'changes() = 1'),
     ]);
     insist((r.meta?.changes ?? 0) === 1, 'Proposal already decided.', 409, 'closed');
@@ -292,7 +387,7 @@ async function decideProposal(env: AtlasEnv, user: CollabUser, id: string, reque
   const command = { action: 'create_goal', payload: { scope: { kind: 'company', id: p.company_id }, title, description: p.brief.slice(0, 4000), mode: 'plan', maxIterations: 1 } };
   const cid = crypto.randomUUID(); const key = 'proposal-accept-' + id;
   const results = await env.DB!.batch([
-    env.DB!.prepare("INSERT INTO atlas_commands (id,idempotency_key,command,status,created_at,base_revision) SELECT ?,?,?,'queued',?,? WHERE (SELECT COUNT(*) FROM atlas_commands WHERE status='queued') < 1000 AND (SELECT revision FROM atlas_workspace WHERE id='owner') = ? AND EXISTS (SELECT 1 FROM daftar_task_proposals WHERE id=? AND status='proposed') AND " + COMPANY_OK).bind(cid, key, JSON.stringify(command), stamp, ws.revision, ws.revision, id, p.company_id),
+    env.DB!.prepare("INSERT INTO atlas_commands (id,idempotency_key,command,status,created_at,base_revision) SELECT ?,?,?,'queued',?,? WHERE (SELECT COUNT(*) FROM atlas_commands WHERE status='queued') < 1000 AND (SELECT revision FROM atlas_workspace WHERE id='owner') = ? AND EXISTS (SELECT 1 FROM daftar_task_proposals WHERE id=? AND status='proposed') AND " + COMPANY_OK + ' AND ' + ACTIVE_OWNER_SQL).bind(cid, key, JSON.stringify(command), stamp, ws.revision, ws.revision, id, p.company_id, user.id),
     env.DB!.prepare("UPDATE daftar_task_proposals SET status='queued',queued_command_id=?,approver_user_id=?,decided_at=? WHERE id=? AND status='proposed' AND EXISTS (SELECT 1 FROM atlas_commands WHERE id=?) AND EXISTS (SELECT 1 FROM daftar_workspace_owners o JOIN daftar_users u ON u.id=o.user_id WHERE o.workspace_id='owner' AND o.user_id=? AND u.status='active')").bind(cid, user.id, stamp, id, cid, user.id),
     event(env, user.id, 'proposal.accept', p.company_id, id, 'Accepted proposal; queued fixed plan-only create_goal for desktop', 'changes() = 1'),
   ]);
@@ -316,14 +411,23 @@ export async function handleCollaborationApi(request: Request, env: AtlasEnv): P
     let x: RegExpMatchArray | null;
     if (path === '/api/collaboration/session' && m === 'GET') return await session(env, user);
     if (path === '/api/collaboration/me' && m === 'PATCH') return await patchMe(env, user, request);
+    if (path === '/api/collaboration/audit' && m === 'GET') {
+      requireOwner(user);
+      const companyId = url.searchParams.has('companyId') ? idParam(url.searchParams.get('companyId')!) : null;
+      if (companyId) await requireMembership(env, user, companyId);
+      return json({ ok: true, events: await auditRows(env, companyId) });
+    }
     if (path === '/api/collaboration/invitations/accept' && m === 'POST') return await acceptInvitation(env, user, request);
+    if (path === '/api/collaboration/invitations/inspect' && m === 'POST') return await inspectInvitation(env, user, request);
     if ((x = path.match(/^\/api\/collaboration\/invitations\/([^/]+)$/)) && m === 'DELETE') return await revokeInvitation(env, user, idParam(x[1]));
     if ((x = path.match(/^\/api\/collaboration\/memberships\/([^/]+)$/)) && m === 'DELETE') return await revokeMembership(env, user, idParam(x[1]));
+    if ((x = path.match(/^\/api\/collaboration\/memberships\/([^/]+)$/)) && m === 'PATCH') return await updateMembership(env, user, idParam(x[1]), request);
     if ((x = path.match(/^\/api\/collaboration\/proposals\/([^/]+)\/claim$/)) && m === 'POST') return await claimProposal(env, user, idParam(x[1]), request);
     if ((x = path.match(/^\/api\/collaboration\/proposals\/([^/]+)\/decision$/)) && m === 'POST') return await decideProposal(env, user, idParam(x[1]), request);
-    if ((x = path.match(/^\/api\/collaboration\/companies\/([^/]+)(?:\/(members|invitations|messages|proposals))?$/))) {
+    if ((x = path.match(/^\/api\/collaboration\/companies\/([^/]+)(?:\/(members|invitations|messages|proposals|access))?$/))) {
       const cid = idParam(x[1]); const sub = x[2];
       if (!sub && m === 'GET') return json({ ok: true, ...(await authorizedCompanyView(env, user, cid)) });
+      if (sub === 'access' && m === 'GET') return await accessDashboard(env, user, cid);
       if (sub === 'members' && m === 'GET') return await companyMembers(env, user, cid);
       if (sub === 'invitations' && m === 'POST') return await createInvitation(env, user, cid, request);
       if (sub === 'invitations' && m === 'GET') return await listInvitations(env, user, cid);

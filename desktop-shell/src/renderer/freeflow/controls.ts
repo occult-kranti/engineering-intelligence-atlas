@@ -1,5 +1,5 @@
 // Freeflow camera controls. Presentation-only: never touches rooms, staff, permissions or jobs.
-// No office/provider commands. Nothing executes on import. No idle RAF.
+// No office/provider commands. Nothing executes on import. No idle RAF: browsing is opt-in.
 //
 // API for the studio orchestrator:
 //   const c = mountControls(host, {
@@ -30,6 +30,7 @@ export interface ControlsOptions {
 export interface Controls {
   setBounds(bounds: Rect | null): void;
   setFocusKey(key: string): void;
+  setBrowseBounds(bounds: Rect | null): void;
   setActive(active: boolean): void;
   fit(): void;
   reset(): void;
@@ -109,13 +110,22 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   let pinch: { dist: number; anchor: Point } | null = null;
   let dirty = false;
   let restored = false; // owned restore/fit satisfied for current focus
+  let browseBounds: Rect | null = null;
+  let autoPan = false;
+  let edgePan = false;
+  let edgeVelocity: Point | null = null;
+  let browseLast = 0;
   const priorTouch = vp.style.touchAction;
-  const reduce = () => typeof matchMedia !== 'undefined' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const motionQuery = typeof matchMedia !== 'undefined' ? matchMedia('(prefers-reduced-motion: reduce)') : null;
+  const reduce = () => motionQuery?.matches === true;
 
   const root = document.createElement('div');
   root.className = 'ff-controls';
   root.setAttribute('role', 'toolbar');
   root.setAttribute('aria-label', 'Camera controls');
+  const buttons = document.createElement('div');
+  buttons.className = 'ff-controls-buttons';
+  root.appendChild(buttons);
   const angle = document.createElement('span');
   angle.className = 'ff-controls-angle';
   angle.setAttribute('role', 'status');
@@ -125,7 +135,7 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'ff-ctl'; b.textContent = label; b.title = title; b.setAttribute('aria-label', title);
     b.addEventListener('click', fn);
-    btns.push(b); root.appendChild(b); return b;
+    btns.push(b); buttons.appendChild(b); return b;
   }
   const readAngle = () => { const c = o.getCamera(); angle.textContent = `Rotation ${Math.round(c.yaw)}° · Tilt ${Math.round(c.pitch)}° · Zoom ${Math.round(c.zoom * 100)}%`; };
 
@@ -143,6 +153,7 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   function tick(now: number): void {
     raf = 0;
     if (destroyed || !active || document.hidden) { stopMotion(); commit(); return; }
+    if ((autoPan || edgeVelocity) && (reduce() || isTyping(document.activeElement))) pauseBrowsing();
     if (anim) {
       const t = clampN((now - anim.t0) / DUR, 0, 1);
       emit(interpolateCamera(anim.from, anim.to, easeSpring(t)), t >= 1 ? 'end' : 'frame');
@@ -153,11 +164,23 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
       emit(anchorTo(o.getCamera(), o.getViewportSize(), inertia.anchor, inertia.pt), 'frame');
       inertia.vx *= 0.9; inertia.vy *= 0.9;
       if (Math.hypot(inertia.vx, inertia.vy) < 0.02) { inertia = null; commit(); }
+    } else if ((autoPan || edgeVelocity) && browseBounds) {
+      const dt = Math.min(40, Math.max(0, now - browseLast)); browseLast = now;
+      const c = o.getCamera(), s = o.getViewportSize();
+      const velocity = edgeVelocity ?? { x: 0.075, y: 0 };
+      const center = { x: s.width / 2, y: s.height / 2 };
+      const anchor = screenToWorld(c, s, { x: center.x + velocity.x * dt, y: center.y + velocity.y * dt });
+      const moved = anchorTo(c, s, anchor, center);
+      const b = browseBounds;
+      const next = normalizeCamera({ ...moved, x: clampN(moved.x, b.x, b.x + b.width), y: clampN(moved.y, b.y, b.y + b.height) });
+      if (next.x === c.x && next.y === c.y) { pauseBrowsing(); }
+      else emit(next, 'frame');
     }
-    if ((anim || inertia) && !raf) raf = requestAnimationFrame(tick);
+    if ((anim || inertia || autoPan || edgeVelocity) && !raf) raf = requestAnimationFrame(tick);
   }
   function go(to: Camera): void {
     if (!active || destroyed) return;
+    pauseBrowsing();
     const target = normalizeCamera(to);
     stopMotion();
     if (reduce() || document.hidden) { emit(target, 'end'); return; }
@@ -165,8 +188,8 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
     raf = requestAnimationFrame(tick);
   }
   const curBounds = () => bounds ?? o.getBounds?.() ?? null;
-  function fit(): void { const b = curBounds(); if (b) go(fitBounds(o.getCamera(), o.getViewportSize(), b, 48)); }
-  function reset(): void { const b = curBounds(); go(b ? fitBounds({ ...DEFAULT_CAMERA }, o.getViewportSize(), b, 48) : { ...DEFAULT_CAMERA }); }
+  function fit(): void { const b = curBounds(); if (b) go(fitBounds(o.getCamera(), o.getViewportSize(), b, 24)); }
+  function reset(): void { const b = curBounds(); go(b ? fitBounds({ ...DEFAULT_CAMERA }, o.getViewportSize(), b, 24) : { ...DEFAULT_CAMERA }); }
   function topView(): void { go({ ...o.getCamera(), pitch: 0, yaw: 0 }); }
   function perspective(): void { go({ ...o.getCamera(), pitch: PERSPECTIVE_PITCH }); }
   function rotate(d: number): void { const c = o.getCamera(); go({ ...c, yaw: wrapDegrees(c.yaw + d) }); }
@@ -179,6 +202,40 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   btn('⟳', 'Rotate right 15 degrees', () => rotate(15));
   btn('−', 'Zoom out', () => zoomStep(1 / 1.25));
   btn('+', 'Zoom in', () => zoomStep(1.25));
+  const edgeButton = btn('Edge pan', 'Toggle edge panning: move the pointer near a canvas edge', () => {
+    if (!browseBounds || reduce()) return;
+    pauseBrowsing(); edgePan = !edgePan; updateBrowseButtons();
+  });
+  const browseButton = btn('Auto-pan', 'Browse company seats automatically. Interact or press again to pause.', () => {
+    if (!browseBounds || reduce()) return;
+    if (autoPan) { pauseBrowsing(); return; }
+    stopMotion(); edgeVelocity = null;
+    const c = o.getCamera(), b = browseBounds;
+    // A whole-portfolio fit can make hundreds of company names too small to read.
+    // Explicit browsing opens a readable, top-down tour; no camera moves on page load.
+    const restart = c.zoom < 0.6 || c.x >= b.x + b.width - 1;
+    emit(normalizeCamera({ ...c, zoom: Math.max(0.8, c.zoom), yaw: 0, pitch: 0,
+      x: restart ? b.x : clampN(c.x, b.x, b.x + b.width), y: b.y + b.height / 2 }), 'end');
+    autoPan = true; browseLast = performance.now(); updateBrowseButtons();
+    if (!raf) raf = requestAnimationFrame(tick);
+  });
+  edgeButton.classList.add('ff-ctl-browse'); browseButton.classList.add('ff-ctl-browse');
+  function updateBrowseButtons(): void {
+    edgeButton.hidden = browseButton.hidden = !browseBounds;
+    edgeButton.disabled = browseButton.disabled = !active || !browseBounds || reduce();
+    edgeButton.setAttribute('aria-pressed', String(edgePan));
+    browseButton.setAttribute('aria-pressed', String(autoPan));
+    browseButton.textContent = autoPan ? 'Pause tour' : 'Auto-pan';
+    edgeButton.title = reduce() ? 'Automatic movement is disabled by reduced-motion preferences.' : 'Move the pointer near an empty canvas edge to pan. Arrow keys also move the view.';
+    browseButton.title = reduce() ? 'Automatic movement is disabled by reduced-motion preferences.' : 'Browse company seats. Click, type, or press Escape to pause.';
+    vp.classList.toggle('has-edge-pan', edgePan && !!browseBounds && active && !reduce());
+  }
+  function pauseBrowsing(): void {
+    autoPan = false; edgeVelocity = null;
+    if (!anim && !inertia && raf) { cancelAnimationFrame(raf); raf = 0; }
+    updateBrowseButtons(); commit();
+  }
+  updateBrowseButtons();
   root.appendChild(angle);
   host.appendChild(root);
   readAngle();
@@ -194,6 +251,7 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   function onWheel(e: WheelEvent): void {
     if (!active || destroyed) return;
     e.preventDefault();
+    pauseBrowsing();
     stopMotion();
     const d = normalizeWheelDelta(e, vp.clientHeight);
     const base = e.ctrlKey ? 0.01 : 0.0022;
@@ -206,7 +264,7 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   function pinchMid(): Point { const [a, b] = [...pointers.values()]; return { x: ((a?.x ?? 0) + (b?.x ?? 0)) / 2, y: ((a?.y ?? 0) + (b?.y ?? 0)) / 2 }; }
   function onDown(e: PointerEvent): void {
     if (!active || destroyed || !onBackground(e) || (e.pointerType === 'mouse' && e.button !== 0)) return;
-    stopMotion(); clearTimeout(wheelTimer); wheelTimer = 0;
+    pauseBrowsing(); stopMotion(); clearTimeout(wheelTimer); wheelTimer = 0;
     pointers.set(e.pointerId, rectPt(e));
     try { vp.setPointerCapture(e.pointerId); captured.add(e.pointerId); } catch { /* not capturable */ }
     const size = o.getViewportSize();
@@ -221,7 +279,21 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
     }
   }
   function onMove(e: PointerEvent): void {
-    if (!pointers.has(e.pointerId) || !active || destroyed) return;
+    if (!active || destroyed) return;
+    if (!pointers.has(e.pointerId)) {
+      if (!edgePan || !browseBounds || reduce() || e.pointerType === 'touch' || !onBackground(e) || isTyping(document.activeElement)) {
+        if (edgeVelocity) pauseBrowsing();
+        return;
+      }
+      const p = rectPt(e), size = o.getViewportSize(), band = 44;
+      const edge = (v: number, max: number) => v < band ? -0.32 * (1 - Math.max(0, v) / band) : v > max - band ? 0.32 * (1 - Math.max(0, max - v) / band) : 0;
+      const velocity = { x: edge(p.x, size.width), y: edge(p.y, size.height) };
+      if (!velocity.x && !velocity.y) { if (edgeVelocity) pauseBrowsing(); return; }
+      autoPan = false; anim = null; inertia = null; edgeVelocity = velocity;
+      browseLast = performance.now(); updateBrowseButtons();
+      if (!raf) raf = requestAnimationFrame(tick);
+      return;
+    }
     const p = rectPt(e);
     pointers.set(e.pointerId, p);
     const size = o.getViewportSize();
@@ -265,10 +337,17 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
     for (const id of [...captured]) releaseCapture(id);
     pointers.clear(); pinch = null; panAnchor = null;
     clearTimeout(wheelTimer); wheelTimer = 0;
-    vp.classList.remove('is-panning'); stopMotion(); commit();
+    vp.classList.remove('is-panning'); pauseBrowsing(); stopMotion(); commit();
   }
   const onVis = () => { if (document.hidden) cancelAll(); };
   const onBlur = () => cancelAll();
+  const onInteraction = (e: Event) => {
+    const target = e.target as HTMLElement | null;
+    if (target && (edgeButton.contains(target) || browseButton.contains(target))) return;
+    if (autoPan || edgeVelocity) pauseBrowsing();
+  };
+  const onLeave = () => { if (edgeVelocity) pauseBrowsing(); };
+  const onMotionPreference = () => { if (reduce()) { edgePan = false; pauseBrowsing(); } updateBrowseButtons(); };
 
   function onKey(e: KeyboardEvent): void {
     if (!active || destroyed || e.defaultPrevented || e.ctrlKey || e.metaKey || e.altKey || isTyping(e.target)) return;
@@ -301,15 +380,21 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
   vp.addEventListener('wheel', onWheel, { passive: false });
   vp.addEventListener('pointerdown', onDown);
   vp.addEventListener('pointermove', onMove);
+  vp.addEventListener('pointerleave', onLeave);
   vp.addEventListener('pointerup', onUp);
   vp.addEventListener('pointercancel', onUp);
   vp.addEventListener('lostpointercapture', onLost);
   vp.addEventListener('keydown', onKey);
   document.addEventListener('visibilitychange', onVis);
   window.addEventListener('blur', onBlur);
+  document.addEventListener('pointerdown', onInteraction, true);
+  document.addEventListener('keydown', onInteraction, true);
+  document.addEventListener('focusin', onInteraction, true);
+  motionQuery?.addEventListener('change', onMotionPreference);
 
   function applyActive(): void {
     for (const b of btns) b.disabled = !active;
+    updateBrowseButtons();
     root.dataset.active = String(active);
     if (active) vp.style.touchAction = 'none';
     else { cancelAll(); vp.style.touchAction = priorTouch; }
@@ -325,13 +410,14 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
     const size = o.getViewportSize();
     if (!b || !realSize(size)) return; // wait; never persist a fallback zero-size fit
     restored = true;
-    emit(fitBounds(o.getCamera(), size, b, 48), 'end');
+    emit(fitBounds(o.getCamera(), size, b, 24), 'end');
   }
   tryOwnedInit(false);
 
   return {
     elements: { root, angle },
     setBounds(b) { bounds = b; if (owns && !restored) tryOwnedInit(false); },
+    setBrowseBounds(b) { browseBounds = b; if (!b) { edgePan = false; pauseBrowsing(); } updateBrowseButtons(); },
     setFocusKey(k) {
       if (k === focusKey) return;
       cancelAll();
@@ -348,12 +434,17 @@ export function mountControls(host: HTMLElement, o: ControlsOptions): Controls {
       vp.removeEventListener('wheel', onWheel);
       vp.removeEventListener('pointerdown', onDown);
       vp.removeEventListener('pointermove', onMove);
+      vp.removeEventListener('pointerleave', onLeave);
       vp.removeEventListener('pointerup', onUp);
       vp.removeEventListener('pointercancel', onUp);
       vp.removeEventListener('lostpointercapture', onLost);
       vp.removeEventListener('keydown', onKey);
       document.removeEventListener('visibilitychange', onVis);
       window.removeEventListener('blur', onBlur);
+      document.removeEventListener('pointerdown', onInteraction, true);
+      document.removeEventListener('keydown', onInteraction, true);
+      document.removeEventListener('focusin', onInteraction, true);
+      motionQuery?.removeEventListener('change', onMotionPreference);
       vp.style.touchAction = priorTouch;
       root.remove();
     },

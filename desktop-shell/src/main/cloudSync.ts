@@ -24,6 +24,10 @@ export interface CloudSyncOptions {
   userDataPath: string; safeStorage: SafeStorageLike; fetch?: typeof fetch;
   snapshot: () => Promise<OfficeResult>;
   command: (request: OfficeCommand) => Promise<OfficeResult>;
+  /** Explicit server migration only: absent hierarchy parents -> null, with no other change. */
+  allowKnownSchemaDefaultsMigration?: boolean;
+  /** Internal headless recovery only: an encrypted, credential-bound first-sync base. */
+  isVerifiedBootstrapBase?: (base: { revision: number; snapshotSha256: string }) => boolean;
 }
 
 export function normalizeCloudUrl(raw: unknown): string {
@@ -78,6 +82,29 @@ export function syncStateHash(snapshot: OfficeSnapshot): string {
     throw new Error('Workspace contains an unsupported sync value.');
   };
   return crypto.createHash('sha256').update(canonical(cloudSnapshot(snapshot))).digest('hex');
+}
+
+/** Strict known-version bridge. Does not normalize any other content or reorder records. */
+export function knownParentDefaultsMatch(remote: OfficeSnapshot, local: OfficeSnapshot): boolean {
+  try {
+    const before = cloudSnapshot(remote); const after = cloudSnapshot(local); let additions = 0;
+    for (const [collection, field] of [['companies', 'parentCompanyId'], ['departments', 'parentDepartmentId']] as const) {
+      const oldRows = before[collection]; const newRows = after[collection];
+      if (!Array.isArray(oldRows) || !Array.isArray(newRows) || oldRows.length !== newRows.length) return false;
+      const current = new Map<string, Record<string, unknown>>();
+      for (const row of newRows) {
+        if (!row || typeof row.id !== 'string' || current.has(row.id)) return false;
+        current.set(row.id, row as unknown as Record<string, unknown>);
+      }
+      const seen = new Set<string>();
+      for (const row of oldRows) {
+        if (!row || typeof row.id !== 'string' || seen.has(row.id) || !current.has(row.id)) return false;
+        seen.add(row.id); const value = row as unknown as Record<string, unknown>;
+        if (!Object.hasOwn(value, field) && current.get(row.id)![field] === null) { value[field] = null; additions++; }
+      }
+    }
+    return additions > 0 && syncStateHash(before) === syncStateHash(after);
+  } catch { return false; }
 }
 
 /** Full cloud records use the hosted API's text ceiling; imports never truncate. */
@@ -204,13 +231,29 @@ export class CloudSyncService {
       const remote = await this.request(connection, '/api/workspace');
       remote.clientId = remote.clientId ?? remote.sourceClientId;
       if (!Number.isSafeInteger(remote.revision) || remote.revision < 0) throw new Error('Cloud workspace revision is invalid.');
-      if (this.meta.revision !== null && remote.revision !== this.meta.revision && remote.clientId !== this.meta.clientId) throw new Error('Cloud revision changed on another device. Local work is preserved; resolve the owning desktop before syncing.');
       if (this.meta.revision === null && remote.revision > 0 && remote.clientId && remote.clientId !== this.meta.clientId) throw new Error('The cloud already has a workspace from another desktop. It was preserved; pair the original desktop to continue execution.');
       let local = await this.options.snapshot();
       if (!local.ok || !local.snapshot) throw new Error(local.error ?? 'Local workspace could not be read.');
       let expectedStateHash = syncStateHash(local.snapshot);
       const cloudBaseHash = remote.snapshot ? syncStateHash(remote.snapshot) : this.meta.snapshotSha256;
-      if (this.meta.revision === null && remote.revision > 0 && !remote.clientId && cloudBaseHash !== expectedStateHash) throw new Error('Restore your latest private workspace bundle before the first sync. The populated cloud workspace was preserved; a default local office cannot replace it.');
+      if (this.meta.revision !== null && remote.revision !== this.meta.revision) {
+        if (remote.clientId !== this.meta.clientId) throw new Error('Cloud revision changed on another device. Local work is preserved; resolve the owning desktop before syncing.');
+        // Identity alone cannot distinguish a lost PUT acknowledgment from an old
+        // restored backup. Only an exact fetched projection makes that retry safe.
+        // Reject before writer claims, native effects or any command acknowledgment.
+        if (!remote.snapshot || cloudBaseHash !== expectedStateHash) throw new Error('Cloud revision differs from this device’s saved revision and its workspace no longer matches. Local and cloud work were preserved; restore and review the correct workspace before syncing.');
+      }
+      const schemaOnly = this.options.allowKnownSchemaDefaultsMigration === true && this.meta.revision === null && remote.revision > 0
+        && remote.clientId == null && remote.snapshot && knownParentDefaultsMatch(remote.snapshot, local.snapshot);
+      const verifiedBootstrapBase = this.meta.revision === null && remote.revision > 0 && remote.clientId === this.meta.clientId
+        && remote.snapshot && typeof cloudBaseHash === 'string'
+        && this.options.isVerifiedBootstrapBase?.({ revision: remote.revision, snapshotSha256: cloudBaseHash }) === true;
+      if (this.meta.revision === null && remote.revision > 0 && (!remote.snapshot || cloudBaseHash !== expectedStateHash) && !schemaOnly && !verifiedBootstrapBase) throw new Error('Restore your latest private workspace bundle before the first sync. The populated cloud workspace and local work were preserved; review an interrupted first sync before retrying.');
+      const requireEmptyMigrationQueue = async () => {
+        const queue = await this.request(connection, '/api/commands');
+        if (!Array.isArray(queue.commands) || queue.commands.length !== 0) throw new Error('Known-schema migration requires an empty command queue. Review queued website changes before migration.');
+      };
+      if (schemaOnly) await requireEmptyMigrationQueue();
       const changedLocally = cloudBaseHash !== expectedStateHash;
       // An empty website has no workspace row to claim. Its first PUT creates
       // and claims that row atomically; populated seeds must be claimed before ACKs.
@@ -221,6 +264,7 @@ export class CloudSyncService {
       }
       const queued = await this.request(connection, '/api/commands');
       if (!Array.isArray(queued.commands) || queued.commands.length > 100) throw new Error('Cloud command queue is invalid or exceeds 100 items per sync.');
+      if (schemaOnly && queued.commands.length !== 0) throw new Error('Website commands arrived during schema migration. No command was executed; review the queue and writer before continuing.');
       this.pendingCommands = queued.commands.length;
       for (const item of queued.commands) {
         if (!item || typeof item.id !== 'string' || !/^[A-Za-z0-9_-]{1,100}$/.test(item.id) || !item.command || typeof item.command.action !== 'string') throw new Error('Cloud command envelope is invalid.');
@@ -235,6 +279,7 @@ export class CloudSyncService {
         if (applied.ok && applied.snapshot) { local = applied; expectedStateHash = syncStateHash(applied.snapshot); }
         this.pendingCommands -= 1;
       }
+      if (!schemaOnly) {
       const conversation = await this.request(connection, `/api/cloud-threads?cursor=${encodeURIComponent(this.meta.chatCursor ?? '')}`);
       if (!Array.isArray(conversation.messages) || conversation.messages.length > 100 || typeof conversation.cursor !== 'string' || conversation.cursor.length > 1000 || (conversation.nextCursor !== null && typeof conversation.nextCursor !== 'string')) throw new Error('The cloud conversation cursor response is invalid. Saved local work was preserved.');
       for (const message of conversation.messages) {
@@ -255,14 +300,19 @@ export class CloudSyncService {
       }
       this.meta.chatCursor = conversation.cursor;
       this.chatHasMore = conversation.nextCursor !== null;
+      }
       local = await this.options.snapshot();
       if (!local.ok || !local.snapshot) throw new Error(local.error ?? 'Local workspace could not be read.');
+      if (schemaOnly) {
+        if (!knownParentDefaultsMatch(remote.snapshot, local.snapshot)) throw new Error('Local work changed during known-schema migration. No snapshot was uploaded.');
+        await requireEmptyMigrationQueue();
+      }
       const saved = await this.request(connection, '/api/workspace', 'PUT', { expectedRevision: remote.revision, clientId: this.meta.clientId, snapshot: cloudSnapshot(local.snapshot) });
       if (!Number.isSafeInteger(saved.revision) || saved.revision <= remote.revision) throw new Error('Cloud did not acknowledge the saved revision. Retry is safe; commands have native receipts.');
       this.meta.revision = saved.revision; this.meta.lastSyncedAt = typeof saved.updatedAt === 'string' ? saved.updatedAt : new Date().toISOString();
       this.meta.snapshotSha256 = syncStateHash(local.snapshot);
       this.persist(); this.connected = true;
-      return { ...this.result(true), notice: `Office synced. Imported ${this.chatImported} cloud conversation message${this.chatImported===1?'':'s'}.${this.chatSkipped ? ` ${this.chatSkipped} unsupported-scope message${this.chatSkipped===1?' remains':'s remain'} on the website.` : ''}${this.chatHasMore ? ' More messages await the next sync.' : ''}` };
+      return { ...this.result(true), notice: schemaOnly ? 'Known null hierarchy defaults migrated. No queued command or cloud conversation was imported during migration.' : `Office synced. Imported ${this.chatImported} cloud conversation message${this.chatImported===1?'':'s'}.${this.chatSkipped ? ` ${this.chatSkipped} unsupported-scope message${this.chatSkipped===1?' remains':'s remain'} on the website.` : ''}${this.chatHasMore ? ' More messages await the next sync.' : ''}` };
     } catch (err) { this.connected = false; return this.result(false, err instanceof Error ? err.message : 'Cloud sync failed; local work is preserved.'); }
   }
 }

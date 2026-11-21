@@ -9,7 +9,7 @@ if (!browserWindow.desktopBridge && personalBrowser) {
         throw new Error('Open a fresh dashboard link from the desktop app.'); }) : Promise.resolve();
     const call = async (method, ...args) => { await ready; const response = await fetch('/api/call', { method: 'POST', headers: { 'content-type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ method, args }) }); const payload = await response.json(); if (!response.ok || payload.error)
         throw new Error(payload.error || 'Private workspace is locked. Reopen it from the desktop app.'); return payload.result; };
-    const methods = ['cloudStatus', 'configureCloud', 'syncCloud', 'disconnectCloud', 'copyEditorPairing', 'getSystemInfo', 'getModelCatalog', 'checkModelRequirements', 'createVenv', 'downloadModel', 'getJobStatus', 'cancelJob', 'getSettings', 'getVaultStatus', 'setApiKey', 'revokeApiKey', 'importCredentialFile', 'listProviderModels', 'detectOllama', 'companySnapshot', 'registerCompany', 'refreshCompany', 'updateCompanyTask', 'indexCompanyRepository', 'officeSnapshot', 'officeCommand', 'officeWorkerStatus', 'setOfficeWorker', 'runOfficeQueue', 'listProjects', 'createProject', 'getProject', 'startRun', 'pauseRun', 'resumeRun', 'cancelRun', 'listRuns', 'readArtifact'];
+    const methods = ['cloudStatus', 'configureCloud', 'syncCloud', 'disconnectCloud', 'copyEditorPairing', 'getSystemInfo', 'getModelCatalog', 'checkModelRequirements', 'createVenv', 'downloadModel', 'getJobStatus', 'cancelJob', 'getSettings', 'getVaultStatus', 'setApiKey', 'revokeApiKey', 'importCredentialFile', 'listProviderModels', 'detectOllama', 'companySnapshot', 'registerCompany', 'refreshCompany', 'updateCompanyTask', 'indexCompanyRepository', 'officeSnapshot', 'officeCommand', 'officeWorkerStatus', 'setOfficeWorker', 'runOfficeQueue', 'modelPoolSnapshot', 'modelPoolRequest', 'modelPoolCancel', 'modelPoolSelect', 'listProjects', 'createProject', 'getProject', 'startRun', 'pauseRun', 'resumeRun', 'cancelRun', 'listRuns', 'readArtifact'];
     const bridge = { version: 3, transport: 'personal-browser' };
     for (const method of methods)
         bridge[method] = (...args) => call(method, ...args);
@@ -27,7 +27,7 @@ if (!browserWindow.desktopBridge && personalBrowser) {
     browserWindow.desktopBridge = bridge;
 }
 if (!browserWindow.desktopBridge && ['http:', 'https:'].includes(location.protocol) && !personalBrowser) {
-    const preview = fetch('./preview-state.6339761d7902456b.json').then(async (response) => { if (!response.ok)
+    const preview = fetch('./preview-state.json').then(async (response) => { if (!response.ok)
         throw new Error('Starter preview is unavailable.'); return response.json(); });
     const bridge = { version: 3, transport: 'public-preview' };
     const unavailable = async () => ({ ok: false, snapshot: null, error: 'This is a read-only starter preview. Open the private desktop/browser workspace to make changes.' });

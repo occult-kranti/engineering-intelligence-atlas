@@ -9,11 +9,13 @@ import { selectCompanyKitKnowledge } from './companyKitKnowledge';
 export interface OfficeWorkerOptions {
   snapshot: () => Promise<OfficeResult>;
   command: (request: OfficeCommand) => Promise<OfficeResult>;
-  generate: GenerateFn;
+  generate: (request: Parameters<GenerateFn>[0], job?: OfficeJob) => ReturnType<GenerateFn>;
   artifactRoot: string;
   seedDir: string;
   intervalMs?: number;
   prepareContext?: (job: OfficeJob, snapshot: OfficeSnapshot) => Promise<string>;
+  /** Validate the exact route and assignment before cache/budget admission and again at dispatch. */
+  validateJob?: (job: OfficeJob) => Promise<void>;
   executeTool?: (job: OfficeJob, text: string) => Promise<{ summary: string; evidenceUrl: string }>;
 }
 
@@ -230,6 +232,11 @@ export class OfficeWorker {
     if (this.running) return this.status();
     this.running = true;
     this.lastError = null;
+    // Install cancellation before the first await. A stop during a native claim
+    // or source read must also stop this attempt before any provider dispatch.
+    // Do not gate on enabled: an explicitly requested one-shot can start paused.
+    const controller = new AbortController();
+    this.activeController = controller;
     let job: OfficeJob | undefined;
     let leaseToken = '';
     let reservedUsd = 0;
@@ -243,9 +250,11 @@ export class OfficeWorker {
     let deadline: NodeJS.Timeout | null = null;
     try {
       unwrap(await this.options.command({ action: 'tick_schedules' }));
+      controller.signal.throwIfAborted();
       // New cores materialize bounded goal iterations only after predecessor
       // checkpoints pass. Old injected fixtures can safely ignore this action.
       unwrap(await this.options.command({ action: 'tick_goals' }));
+      controller.signal.throwIfAborted();
       const claimed = unwrap(await this.options.command({ action: 'claim_job', workerId: this.workerId, mode: 'provider' }));
       const id = claimed.lastAction?.jobId;
       if (typeof id !== 'string') return { ...this.status(), running: false, activeJobId: null };
@@ -253,15 +262,19 @@ export class OfficeWorker {
       if (!job || !job.leaseToken) throw new Error('Claimed job or lease missing');
       this.activeJobId = job.id;
       leaseToken = job.leaseToken;
+      // Capture a successful claim first so the catch path can settle it even
+      // if cancellation arrived while the claim response was pending.
+      controller.signal.throwIfAborted();
       if ((!job.authorized && (claimed as OfficeSnapshot & { policy?: { approvalMode: string } }).policy?.approvalMode !== 'autonomous') || job.mode !== 'provider') throw new Error('Provider execution is not authorized for this job');
+      await this.options.validateJob?.(job);
+      controller.signal.throwIfAborted();
       const preparedContext = job.allowedTools.includes('github.read_repository')
         ? await this.options.prepareContext?.(job, claimed) : '';
+      controller.signal.throwIfAborted();
       if (job.allowedTools.includes('github.read_repository') && !preparedContext) throw new Error('GitHub source-read capability is not connected. No provider request was sent.');
       const preparedContextLimit = job.allowedTools.includes('github.publish_changes') ? 600000 : 200000;
       if (preparedContext && Buffer.byteLength(preparedContext, 'utf8') > preparedContextLimit) throw new Error(`Prepared source context exceeds its bounded size (${preparedContextLimit} UTF-8 bytes).`);
       const { system, prompt, contextHash } = this.prompts(job, claimed, preparedContext);
-      const controller = new AbortController();
-      this.activeController = controller;
       const inputBound = Buffer.byteLength(system + prompt, 'utf8') + 1024;
       // Ceiling only: publishing jobs may reserve more room; spend stays bounded by limits.
       const outputCeiling = job.allowedTools.includes('github.publish_changes') ? 32768 : 8192;
@@ -278,6 +291,7 @@ export class OfficeWorker {
       const cacheKey = hash(`${contextHash}:${outputBound}`);
       if (claimed.cache.enabled && job.allowedTools.length === 0) {
         const cached = unwrap(await this.options.command({ action: 'get_cache', companyId: job.companyId, key: cacheKey }));
+        controller.signal.throwIfAborted();
         const entry = cached.cache.entries.find(e => e.key === cacheKey && e.companyId === job!.companyId && Date.parse(e.expiresAt) > Date.now());
         const cachedPath = entry ? this.safeArtifact(entry.artifactUri) : null;
         if (cachedPath && entry?.contentSha256 && this.artifactHash(cachedPath) === entry.contentSha256) {
@@ -296,8 +310,12 @@ export class OfficeWorker {
       if (admitted?.status !== 'running' || admitted.leaseToken !== leaseToken || admitted.costStatus !== 'reserved' || admitted.reservation?.inputTokens !== inputBound || admitted.reservation.maxOutputTokens !== outputBound || Math.abs(admitted.reservation.costUsd - reservedUsd) > 1e-9) throw new Error('The persisted reservation could not be verified. No provider request was sent.');
       reservedInputTokens = inputBound;
       reservedOutputTokens = outputBound;
+      controller.signal.throwIfAborted();
       const authority = unwrap(await this.options.command({ action: 'check_worker_authority', jobId: job.id, leaseToken, capability: 'provider.run' }));
       if (authority.lastAction?.allowed !== true) throw new Error('Native provider authority was not confirmed. No provider request was sent.');
+      controller.signal.throwIfAborted();
+      await this.options.validateJob?.(job);
+      controller.signal.throwIfAborted();
       const minutes = Math.min(job.limits.maxMinutes, 4.5);
       deadline = setTimeout(() => controller.abort(new Error('Job time limit reached')), minutes * 60000);
       let checking = false;
@@ -310,7 +328,7 @@ export class OfficeWorker {
         }).catch(() => controller.abort(new Error('Office state unavailable'))).finally(() => { checking = false; });
       }, 1000);
       dispatched = true;
-      const result = await this.options.generate({ provider: job.provider, model: job.model, system, prompt, maxOutputTokens: outputBound, abortSignal: controller.signal });
+      const result = await this.options.generate({ provider: job.provider, model: job.model, system, prompt, maxOutputTokens: outputBound, abortSignal: controller.signal }, job);
       const usageObserved = result.usageObserved !== false && [result.inputTokens, result.outputTokens].every(n => Number.isSafeInteger(n) && n >= 0);
       const costUsd = !usageObserved ? reservedUsd : job.provider === 'ollama' ? 0 : (result.inputTokens * rates.inputUsdPerMillion! + result.outputTokens * rates.outputUsdPerMillion!) / 1e6;
       if (usageObserved) observedUsage = { inputTokens: result.inputTokens, outputTokens: result.outputTokens, costUsd };
@@ -321,6 +339,9 @@ export class OfficeWorker {
       fs.writeFileSync(artifact + '.tmp', header + body, { mode: 0o600 });
       fs.renameSync(artifact + '.tmp', artifact);
       producedArtifact = artifact;
+      // Preserve a late provider result and its observed usage, but do not
+      // publish or mark it completed after the owner has stopped the attempt.
+      controller.signal.throwIfAborted();
       let toolSummary = '';
       if (usageObserved && body.trim() && job.allowedTools.includes('github.publish_changes')) {
         if (result.inputTokens + result.outputTokens > job.limits.maxTokens || costUsd > job.limits.maxUsd) throw new Error('Provider exceeded the approved allocation. Artifact preserved; publishing was not attempted.');
