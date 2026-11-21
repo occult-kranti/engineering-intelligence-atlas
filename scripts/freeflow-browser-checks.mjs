@@ -518,7 +518,7 @@ export async function runPackagedFreeflowCheck({page, capture}) {
   const snapshot = () => page.evaluate(async () => {
     const r = await window.desktopBridge.officeSnapshot();
     const s = r.snapshot;
-    return {ok: r.ok, activeCompanyId: s.activeCompanyId, jobs: s.jobs.length, goals: s.goals.length, schedules: s.schedules.length, committedUsd: s.budget.committedUsd, companies: s.companies.map(c => c.id), employees: s.employees.map(e => ({id: e.id, companyId: e.companyId, status: e.status}))};
+    return {ok: r.ok, nativeSnapshot: s, activeCompanyId: s.activeCompanyId, jobs: s.jobs.length, goals: s.goals.length, schedules: s.schedules.length, committedUsd: s.budget.committedUsd, companies: s.companies.map(c => c.id), employees: s.employees.map(e => ({id: e.id, name: e.name, companyId: e.companyId, status: e.status}))};
   });
   const before = await snapshot();
   assert.equal(before.ok, true);
@@ -544,8 +544,22 @@ export async function runPackagedFreeflowCheck({page, capture}) {
   const emp = before.employees.find(e => e.companyId === activeId && e.status !== 'fired');
   let selected = null;
   if (emp) {
-    const en = page.locator(`#freeflow-host .ff-node[data-node-id^="universe:blueprint:employee:"][data-node-id$=":${emp.id}"]`).first();
-    if (await en.count()) { await en.click(); await settle(page); selected = emp.id; }
+    // Previously opened live panels may legitimately cover a scene card. Use
+    // the same visible directory a user can reach, then verify exact identity
+    // and the real inspector instead of forcing a click through another form.
+    await openCanvasSurface(page, 'company-directory');
+    await page.locator('#freeflow-host .ff-list-search').fill(emp.name);
+    const en = page.locator(`#freeflow-host .ff-list-button[data-node-id="universe:blueprint:employee:${activeId}:${emp.id}"]`);
+    await en.waitFor({state: 'visible'}); await en.focus(); await page.keyboard.press('Space');
+    await settle(page);
+    assert.equal(await en.getAttribute('aria-pressed'), 'true', 'The native employee is selected through its stable directory identity');
+    const inspector = await openCanvasSurface(page, 'object-inspector');
+    assert.equal(await inspector.locator('.ff-inspector-header').innerText(), emp.name, 'The actual native employee reaches the ownership inspector');
+    await inspector.locator('.canvas-panel-close').click();
+    await openCanvasSurface(page, 'company-directory');
+    await directory.locator('.canvas-panel-close').click();
+    await page.locator('#freeflow-host .ff-controls').getByRole('button', {name: 'Fit scene to view'}).click();
+    await settle(page); selected = emp.id;
   }
   const ctl = page.locator('#freeflow-host .ff-controls');
   const worldBefore = await page.locator('#freeflow-host .ff-world').evaluate(e => e.style.transform);
@@ -568,6 +582,7 @@ export async function runPackagedFreeflowCheck({page, capture}) {
   assert.equal(after.activeCompanyId, before.activeCompanyId, 'company unchanged');
   assert.deepEqual(after.companies, before.companies, 'companies unchanged');
   assert.deepEqual(after.employees, before.employees, 'employee scope and status unchanged');
+  assert.deepEqual(after.nativeSnapshot, before.nativeSnapshot, 'Canvas navigation, selection and camera controls leave the complete native snapshot unchanged');
   timings.push({label: 'native-freeflow', ms: Date.now() - t0});
   return {status: 'passed', activeCompanyId: activeId, selectedEmployee: selected, nodes, cameraChanged: worldBefore !== worldAfter, screenshot: 'freeflow-native-studio.png', timings, nativeRecordsUnchanged: true};
 }
