@@ -1,4 +1,4 @@
-# Atlas 0.4.1 — Personal agent office
+# Atlas 0.4.2 — Personal agent office
 
 Donna's unified workspace links scoped chat, an interactive office blueprint and
 owned roadmap whiteboards. Companies contain offices, departments, shared
@@ -41,3 +41,5 @@ and [prompt/budget research](PROMPT_BUDGET_RESEARCH.md) for evidence and limits.
 ## Visual review follow-up
 
 This patch follows the verified 0.4.0 release. It makes room membership totals visible, keeps long room rosters within the inspector, corrects singular portfolio counts and uses portable vector decorations. Browser coverage now includes the CEO portfolio, budget policy and every office administration tab in wide and narrow layouts.
+
+The expanded panel sweep exposed intrinsic-width overflow in the narrow queue and schedule forms. Their grid tracks and native controls now fit the available width, and queue filters wrap. The release workflow also runs the browser layout/offline gate before publishing binaries; a layout failure blocks the release as well as Pages.

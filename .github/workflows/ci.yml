@@ -28,6 +28,20 @@ jobs:
           npm run check:migrations
           npm run build
           npm test
+      - name: Build the public renderer for release verification
+        run: node scripts/build-static.mjs
+      - name: Install browser for the release gate
+        working-directory: site-source
+        run: npx playwright install --with-deps chromium
+      - name: Verify all workspace panels before publishing a release
+        run: node scripts/smoke-static.mjs
+      - name: Retain release browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-ui-screenshots
+          path: site-source/.work/ui-screenshots
+          if-no-files-found: warn
 
   mysql-connectors:
     runs-on: ubuntu-latest

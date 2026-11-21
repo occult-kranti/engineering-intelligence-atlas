@@ -80,11 +80,17 @@ try {
     await page.locator('#office-native-status').filter({ hasNotText: 'Checking' }).waitFor({ state: 'visible' });
     const capture = async (route, surface = 'desktop', fullPage = false) => {
       const dimensions = await page.evaluate(() => ({ actual: document.documentElement.scrollWidth, expected: innerWidth }));
-      assert(dimensions.actual <= dimensions.expected + 1, `${surface}/${route}/${viewport.width}: horizontal overflow ${dimensions.actual}`);
-      assert.deepEqual(errors, [], `${surface}/${route}/${viewport.width}: page errors`);
       const filename = `${surface}-${route}-${viewport.width}.png`;
       await page.screenshot({ path: join(screenshotRoot, filename), fullPage });
       screenshots.push({ file: filename, surface, route, width: viewport.width });
+      if (dimensions.actual > dimensions.expected + 1) {
+        const outside = await page.locator('body *').evaluateAll(nodes => nodes.filter(node => {
+          const rect = node.getBoundingClientRect();
+          return rect.width > 0 && rect.right > innerWidth + 1 && getComputedStyle(node).visibility !== 'hidden';
+        }).slice(-12).map(node => ({tag: node.tagName, id: node.id, className: node.getAttribute('class'), right: Math.round(node.getBoundingClientRect().right), width: Math.round(node.getBoundingClientRect().width)})));
+        assert.fail(`${surface}/${route}/${viewport.width}: horizontal overflow ${dimensions.actual}; ${JSON.stringify(outside)}`);
+      }
+      assert.deepEqual(errors, [], `${surface}/${route}/${viewport.width}: page errors`);
       checked++;
     };
     const views = await page.locator('.sidebar .nav-item[data-view]').evaluateAll(nodes => nodes.map(node => node.dataset.view));
