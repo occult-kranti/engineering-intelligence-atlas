@@ -6,7 +6,7 @@ import {
   type AiSdkLike,
 } from '../src/main/providers';
 
-const KEY = 'sk-live-secret-abcdef1234567890';
+const KEY = '[redacted]';
 
 function fakeResponse(body: unknown, ok = true, status = 200): Response {
   return { ok, status, json: async () => body } as unknown as Response;
@@ -122,11 +122,68 @@ describe('generateWithProvider (AI SDK, injected fake)', () => {
   });
 });
 
+describe('Anthropic version-specific request shapes', () => {
+  function capture() {
+    const calls: Record<string, unknown>[] = [];
+    const sdk: AiSdkLike = {
+      createOpenAI: () => (modelId: string) => ({ provider: 'openai', modelId }),
+      createAnthropic: () => (modelId: string) => ({ provider: 'anthropic', modelId }),
+      generateText: async (args) => {
+        calls.push(args as unknown as Record<string, unknown>);
+        return { text: 'ok', usage: { inputTokens: 1, outputTokens: 1 } };
+      },
+    };
+    return { sdk, calls };
+  }
+
+  async function run(provider: 'anthropic' | 'openai', model: string) {
+    const { sdk, calls } = capture();
+    await generateWithProvider(provider, KEY, { model, prompt: 'p', maxOutputTokens: 5 }, sdk);
+    expect(calls).toHaveLength(1); // exactly one SDK call
+    expect(calls[0]?.maxRetries).toBe(0);
+    return calls[0]?.providerOptions as Record<string, Record<string, unknown>> | undefined;
+  }
+
+  const sonnet = { anthropic: { thinking: { type: 'between_tools' }, effort: 'medium' } };
+  const opus = { anthropic: { effort: 'medium' } };
+
+  it('Sonnet 5.5 keeps between_tools with medium effort', async () => {
+    expect(await run('anthropic', 'claude-sonnet-5-5')).toEqual(sonnet);
+  });
+
+  it('dated Sonnet 5.5 keeps between_tools with medium effort', async () => {
+    expect(await run('anthropic', 'claude-sonnet-5-5-20261101')).toEqual(sonnet);
+  });
+
+  it('Opus 5.5 never sends between_tools and omits thinking', async () => {
+    const opts = await run('anthropic', 'claude-opus-5-5');
+    expect(opts).toEqual(opus);
+    expect(opts?.anthropic).not.toHaveProperty('thinking');
+  });
+
+  it('dated Opus 5.5 never sends between_tools and omits thinking', async () => {
+    const opts = await run('anthropic', 'claude-opus-5-5-20261101');
+    expect(opts).toEqual(opus);
+    expect(opts?.anthropic).not.toHaveProperty('thinking');
+  });
+
+  it('older, unknown and lookalike models receive no provider options', async () => {
+    for (const model of ['claude-opus-4', 'claude-sonnet-4-5', 'claude-opus-5-50', 'claude-sonnet-5-55', 'claude-haiku-5-5', 'mystery']) {
+      expect(await run('anthropic', model)).toBeUndefined();
+    }
+  });
+
+  it('OpenAI never receives Anthropic options even with a lookalike model id', async () => {
+    expect(await run('openai', 'claude-sonnet-5-5')).toBeUndefined();
+    expect(await run('openai', 'gpt-5')).toBeUndefined();
+  });
+});
+
 describe('sanitizeError', () => {
   it('redacts exact key and sk-* shaped strings', () => {
-    const err = sanitizeError(new Error(`bad key ${KEY} and sk-ant-other-secret-123`), KEY);
+    const err = sanitizeError(new Error(`bad key ${KEY} and [redacted]`), KEY);
     expect(err.message).not.toContain(KEY);
-    expect(err.message).not.toContain('sk-ant-other-secret-123');
+    expect(err.message).not.toContain('[redacted]');
     expect(err.message).toContain('[redacted]');
   });
 });
