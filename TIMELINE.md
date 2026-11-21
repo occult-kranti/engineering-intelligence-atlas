@@ -41,4 +41,6 @@ Follow the numbered records for the delivery sequence. The repository import and
 
 - **032: Director / native synchronization engineer** — Fixed portable evidence projection after an actual export/restore exposed path-dependent hashes. Real restored artifacts and native/TypeScript hash acceptance passed; Rust70 and desktop375 passed. ([validation](project/VALIDATION.md))
 
+- **033: Release reviewer / interface engineer / Director** — Real package smoke exposed invalid default USD steps; cloud UI gate exposed ambiguous filter labels. Both corrected, 192 DOM assertions passed, diagnostic checks retained and design artifact retention fixed. Final candidate CI follows. ([ledger](project/WORKER_LEDGER.md))
+
 Related: [Roadmap](ROADMAP.md) · [Handoff](HANDOFF.md) · [Backend research](project/BACKEND_RESEARCH.md) · [Claude usage](project/CLAUDE_USAGE.md)

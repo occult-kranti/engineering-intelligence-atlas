@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "buildMode": "static",
-  "sourceSha256": "b132fd9b5470eba991085b0590633d637b6afb203e27be4b4a19dd78297e1e2f",
+  "sourceSha256": "6bb7ef7c97a62b986678d3f5e5b624201deb90885136b72cee070c0a0c5d55c6",
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "assets/DirectorShell-CINQMSLb.css": "145efbe4f7b92c3fd193d3bb3f2f12d8d18394b2fef43c37795552e532f41803",
@@ -102,8 +102,8 @@
     "assets/reverse-G1Cd91PM.js": "377791bfbe851ff6a5e0270286e6f33f5a752125917a59eb8e13bc3fc3bb450d",
     "assets/science-DIbnrChB.js": "5c849b3253fd47cc8e842bc7505bed76118f9899d83ac4c6944485516fad8b44",
     "desktop-preview/browser-bridge.js": "32a9686e9952cf96e12c856e36b81590e78a7e2078a32a3aa27d56f84b04a043",
-    "desktop-preview/chrome.css": "d2d8985f69cd91debb3fbfac3c20f79937c1b14cb28d90594ec5a8ab3eb02667",
-    "desktop-preview/chrome.html": "c54fb65d7123489e9e6c6391be83bc972e7e666e61ac1e74981f15673b8a0ade",
+    "desktop-preview/chrome.css": "f1507c2b389da6b460ad0d131241f40adb5fe84e03e31693bcb6666039545d75",
+    "desktop-preview/chrome.html": "744de1a703a6f321932da1aff697ae3ce7aec443f9f2b8be53a5d8af3db73d57",
     "desktop-preview/chrome.js": "2c236ee112c70afaa5eee998b38ce51900f5214ae9bb4f26268cd3d57722dfd3",
     "desktop-preview/preview-state.json": "6339761d7902456b252e8db4b6ffe71ed5ebecd45e908e7bab6d90eb5a5bdb68",
     "icon-192.png": "3530145f3a794daabd8395da4630c9ddb232ddd7f38920f700c42678a5a385fa",
@@ -170,7 +170,7 @@
     "research/sota_multimodal_media_models.md": "8b6763168b2a4426a227d3411a3363842ff00d31cc706c878f56379136524b0c",
     "research/sota_open_model_landscape.md": "952f46c03cd69b3177870e5f98a632c0ff7f887d44bc2a3683c5ee74c6dee888",
     "research/sota_scientific_models.md": "18c8695ad1487ccad36e48b91708ca3bc6bee0049a041a0f9abed81d99559e76",
-    "sw.js": "1d4020233820ca46d86e7b8397c132fdf09f83cff836463266b99c897d82140d",
+    "sw.js": "7e50ffcca6e60d2494bec16b127ba9e7883833e4ec584d239efe77cd644167dc",
     "workbox-051dea9f.js": "954497c1756c293988d7e65d0f9a74b9d965bbbbdeed268b4e567b66febc149a"
   }
 }

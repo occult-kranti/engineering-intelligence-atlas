@@ -79,6 +79,13 @@ try {
     await page.goto(`${base}desktop-preview/chrome.html`, { waitUntil: 'networkidle' });
     await page.locator('#office-native-status').filter({ hasNotText: 'Checking' }).waitFor({ state: 'visible' });
     const capture = async (route, surface = 'desktop', fullPage = false) => {
+      // Let the application's transient status finish naturally; do not hide
+      // notices or focused accessibility controls just to produce a capture.
+      await page.locator('#global-status').waitFor({ state: 'hidden', timeout: 10000 });
+      if (fullPage) {
+        await page.evaluate(() => window.scrollTo({ top: 0, left: 0, behavior: 'instant' }));
+        await page.waitForFunction(() => window.scrollY === 0 && window.scrollX === 0);
+      }
       const dimensions = await page.evaluate(() => ({ actual: document.documentElement.scrollWidth, expected: innerWidth }));
       const filename = `${surface}-${route}-${viewport.width}.png`;
       await page.screenshot({ path: join(screenshotRoot, filename), fullPage });

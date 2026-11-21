@@ -92,6 +92,18 @@ try {
   await page.locator('#chat-goal-mode').selectOption('manual');
   const title = 'Packaged smoke: create a local delivery plan';
   await page.locator('#chat-message').fill(title);
+  // Use the browser's actual submission constraints. Dispatching a synthetic
+  // submit event would bypass hidden numeric controls with invalid defaults.
+  const invalidControls = await page.locator('#workspace-chat-form').evaluate(form =>
+    [...form.elements].filter(control => control.willValidate && !control.checkValidity()).map(control => ({
+      id: control.id,
+      message: control.validationMessage,
+      min: control.getAttribute('min'),
+      max: control.getAttribute('max'),
+      step: control.getAttribute('step'),
+    }))
+  );
+  assert.deepEqual(invalidControls, [], 'The real composer must be valid before a local plan can be submitted.');
   await page.locator('#chat-send').click();
   await page.locator('#chat-status').filter({ hasText: 'Brief and plan saved.' }).waitFor({ state: 'visible' });
   await page.locator('#workspace-goals').getByText(title, { exact: true }).waitFor({ state: 'visible' });

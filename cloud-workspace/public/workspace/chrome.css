@@ -618,7 +618,7 @@ progress::-webkit-progress-value { background: #548744; border-radius: 3px; }
 .sidebar { background: #193b31; border-color: #284b3e; padding: 25px 14px 16px; }
 .brand { color: #f5f5e9; margin-bottom: 26px; }
 .brand-dot, .brand-mark { color: #c5d9ac; stroke: #c5d9ac; }
-.brand-label { color: #b4c3ad; letter-spacing: 1.3px; }
+.brand-label { color: #b4c3ad; letter-spacing: .3px; margin-left: 0; }
 .workspace-picker { background: #244739; border-color: #42604f; color: #f5f7ed; }
 .workspace-picker:hover { background: #2b5141; }
 .workspace-picker-copy small, .nav-caption { color: #b7c5b0; }

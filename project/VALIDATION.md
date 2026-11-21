@@ -14,7 +14,7 @@ certify this candidate.
 | Desktop TypeScript/build and renderer compilation | **Passed** | Main, preload, shared types and renderer compile; installed application behavior is a separate gate |
 | Desktop service tests | **375 passed / 26 files** | Includes sync, real native contract, worker admission, accounting and profile migration; [tests](../desktop-shell/tests/) |
 | Real JS ↔ Rust cloud contract | **3 passed** | Canonical hash agreement and durable cloud message import without provider dispatch; included in the desktop total, not added again |
-| Renderer behavior | **187 assertions passed** | Synthetic pure-DOM behavior including timed authority, delegation controls and existing office/decision flows; not visual browser evidence |
+| Renderer behavior | **192 assertions passed** | Synthetic pure-DOM behavior including timed authority, delegation controls and existing office/decision flows; not visual browser evidence |
 | Static site typecheck and tests | **Passed; 75 tests passed, 22 skipped** | Nine passing and four skipped test files; skips retain their integration-environment limits |
 | Static build integrity | **169 files checked** | Current public build integrity; remote Pages/browser acceptance remains pending |
 | Cloud API and directory tests | **28 passed: 21 API + 7 directory** | [Cloud tests](../cloud-workspace/tests/); admission, scoped data and directory projection checks |

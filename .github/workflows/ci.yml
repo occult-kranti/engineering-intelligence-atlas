@@ -255,7 +255,8 @@ jobs:
         with:
           name: design-handoff
           path: design-tools/.work/
-          if-no-files-found: warn
+          include-hidden-files: true
+          if-no-files-found: error
 
   release:
     needs: [web, mysql-connectors, desktop, android, cloud, editor, design-tools]

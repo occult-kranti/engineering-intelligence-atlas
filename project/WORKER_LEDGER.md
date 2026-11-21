@@ -273,3 +273,12 @@ Current 0.5.0 draft entries begin at **021**; entries 001–020 preserve the his
 - **Returned:** A real export and restore exposed machine-specific paths in three structured panel evidence references. Matching Rust and TypeScript normalization now omits absolute local evidence paths only. A real export/restore regression retained content, chat and HTTPS/relative references, and a real Rust command accepted the original TypeScript hash. The actual private runtime and restored candidate also matched. Rust70 and desktop375 passed; no provider calls.
 - **Evidence:** `desktop-shell/src/main/cloudSync.ts`; `native-core/src/remote_commands.rs`; `desktop-shell/tests/cloud-native-contract.test.ts`; `project/VALIDATION.md`
 - **Next handoff:** Publish the candidate, refresh the owner-private cloud projection and verify the final restored-device pairing.
+
+## 033 · Release reviewer / interface engineer / Director · complete
+
+- **Date:** 2026-11-20 (America/New_York)
+- **Ask:** Use real browser and installed-package evidence to fix concrete release failures and improve final screenshots.
+- **Expected return:** A working native plan submission, precisely labeled web filters, legible branding and retained design artifacts without weakening acceptance checks.
+- **Returned:** The first candidate built but failed two acceptance gates: ambiguous select labels blocked the cloud UI test, and min/step-mismatched USD defaults blocked the real desktop form. Explicit visible-label references and aligned numeric steps fix those defects. Added a native form-validity diagnostic and default-value regressions; 192 renderer assertions pass. Corrected remaining hero branding, sidebar subtitle clipping and portable disclosure glyphs; screenshots wait for transient notices and reset full-page scroll without hiding controls. Hidden OpenPencil outputs are now explicitly retained by CI. The next combined CI still must verify the candidate.
+- **Evidence:** `scripts/smoke-packaged-desktop.mjs`; `desktop-shell/src/renderer/chrome.html`; `desktop-shell/tests/renderer-behavior.mjs`; `cloud-workspace/app/applications/application-directory.tsx`; `.github/workflows/ci.yml`
+- **Next handoff:** Run the corrected candidate through all gates and retain exact-commit screenshots and package receipts.
