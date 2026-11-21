@@ -4,7 +4,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 export interface DashboardOptions { rendererRoot: string; dispatch: (method: string, args: unknown[]) => Promise<unknown> | unknown }
-const ALLOWED_FILES: Record<string,string> = {'/':'chrome.html','/chrome.html':'chrome.html','/chrome.css':'chrome.css','/chrome.js':'chrome.js','/browser-bridge.js':'browser-bridge.js'};
+const STATIC_ASSETS = ['chrome.html','chrome.css','chrome.js','browser-bridge.js','studio-tokens.css','office-signals.js','freeflow.css',
+  ...['camera','layout','model','threads','scene','controls','a11y-list','inspector','studio','intake','staffing-plan','manage'].map(n=>`freeflow/${n}.js`)];
+/** Explicit manifest: only these compiled renderer files are ever served. */
+const ALLOWED_FILES: Record<string,string> = Object.freeze({'/':'chrome.html',...Object.fromEntries(STATIC_ASSETS.map(f=>['/'+f,f]))});
+const has = (o:object,k:string)=>Object.prototype.hasOwnProperty.call(o,k);
 const digest = (s:string) => crypto.createHash('sha256').update(s).digest('hex');
 /** Same private workspace in the owner's browser; never binds to a public interface. */
 export class PersonalDashboardServer {
@@ -46,9 +50,15 @@ export class PersonalDashboardServer {
     res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'; form-action 'none'");
     if(req.headers.host!==new URL(this.origin).host){res.writeHead(403);res.end('Invalid host');return;}
     const url=new URL(req.url||'/',this.origin);this.expire();
-    if(req.method==='GET'&&ALLOWED_FILES[url.pathname]){
+    if(req.method==='GET'&&has(ALLOWED_FILES,url.pathname)){
       const file=ALLOWED_FILES[url.pathname]!;res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8');
-      const bytes = await fs.promises.readFile(path.join(this.options.rendererRoot,file));
+      let bytes:Buffer;
+      try{
+        const base=await fs.promises.realpath(this.options.rendererRoot);
+        const real=await fs.promises.realpath(path.join(this.options.rendererRoot,file));
+        if(real!==base&&!real.startsWith(base+path.sep)){res.removeHeader('Content-Type');res.writeHead(404);res.end('Not found');return;}
+        bytes=await fs.promises.readFile(real);
+      }catch(e){if((e as NodeJS.ErrnoException)?.code==='ENOENT'||(e as NodeJS.ErrnoException)?.code==='ENOTDIR'||(e as NodeJS.ErrnoException)?.code==='EISDIR'){res.removeHeader('Content-Type');res.writeHead(404);res.end('Not found');return;}throw e;}
       res.end(file.endsWith('.html') ? bytes.toString('utf8').replace('</head>', '<meta name="atlas-personal-dashboard" content="1"></head>') : bytes);return;
     }
     if(req.method!=='POST'||req.headers.origin!==this.origin||!req.headers['content-type']?.startsWith('application/json')){res.writeHead(403);res.end('Origin and JSON request required');return;}

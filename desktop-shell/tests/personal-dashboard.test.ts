@@ -185,6 +185,50 @@ describe('personal dashboard request boundaries', () => {
     expect((await send(f.origin, '/browser-bridge.js')).headers['content-type']).toMatch(/javascript/);
   });
 
+  it('serves nested Freeflow JS/CSS and old assets with correct MIME; missing allowed files are 404', async () => {
+    const f = await fixture();
+    const root = roots[roots.length - 1]!;
+    const renderer = path.join(root, 'renderer');
+    fs.mkdirSync(path.join(renderer, 'freeflow'));
+    fs.writeFileSync(path.join(renderer, 'freeflow', 'studio.js'), 'export const studio = 1;');
+    fs.writeFileSync(path.join(renderer, 'freeflow.css'), '.ff{color:red}');
+    fs.writeFileSync(path.join(renderer, 'studio-tokens.css'), ':root{--t:1}');
+    fs.writeFileSync(path.join(renderer, 'office-signals.js'), 'void 0;');
+    const js = await send(f.origin, '/freeflow/studio.js');
+    expect(js.status).toBe(200);
+    expect(js.headers['content-type']).toMatch(/text\/javascript/);
+    expect(js.body).toContain('studio');
+    const css = await send(f.origin, '/freeflow.css');
+    expect(css.status).toBe(200);
+    expect(css.headers['content-type']).toMatch(/text\/css/);
+    expect((await send(f.origin, '/studio-tokens.css')).status).toBe(200);
+    expect((await send(f.origin, '/office-signals.js')).headers['content-type']).toMatch(/javascript/);
+    expect((await send(f.origin, '/chrome.js')).status).toBe(200);
+    for (const missing of ['/freeflow/manage.js', '/freeflow/intake.js', '/freeflow/camera.js']) {
+      const reply = await send(f.origin, missing);
+      expect(reply.status).toBe(404);
+    }
+  });
+
+  it('rejects arbitrary nested paths, traversal and symlink breakout', async () => {
+    const f = await fixture();
+    const root = roots[roots.length - 1]!;
+    const renderer = path.join(root, 'renderer');
+    fs.mkdirSync(path.join(renderer, 'freeflow'));
+    fs.writeFileSync(path.join(renderer, 'freeflow', 'secret.js'), 'unlisted');
+    for (const pathname of ['/freeflow/secret.js', '/freeflow/../chrome.js', '/freeflow/%2e%2e/outside-secret.txt', '/freeflow/', '/freeflow', '/__proto__', '/constructor', '/freeflow/studio.js.map']) {
+      const reply = await send(f.origin, pathname);
+      expect(reply.status).toBeGreaterThanOrEqual(400);
+      expect(reply.body).not.toContain('unlisted');
+      expect(reply.body).not.toContain('Private fixture outside renderer');
+    }
+    // A whitelisted name that is a symlink to a file outside the renderer root must not be served.
+    fs.symlinkSync(path.join(root, 'outside-secret.txt'), path.join(renderer, 'freeflow', 'model.js'));
+    const escaped = await send(f.origin, '/freeflow/model.js');
+    expect(escaped.status).toBe(404);
+    expect(escaped.body).not.toContain('Private fixture outside renderer');
+  });
+
   it('does not return backend errors or credentials to browser callers', async () => {
     const f = await fixture();
     const { cookie } = await f.authenticate();

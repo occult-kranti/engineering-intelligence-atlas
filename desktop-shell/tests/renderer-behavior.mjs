@@ -5,15 +5,20 @@ import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {installRendererFixture} from './fixtures/renderer-bridge.mjs';
+import {createModuleLoader} from './renderer-module-loader.mjs';
 const require=createRequire(import.meta.url);
 const {JSDOM}=require(process.env.ATLAS_JSDOM_MODULE || 'jsdom');
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const html=readFileSync(path.join(root,'dist/renderer/chrome.html'),'utf8');
 const signalScript=readFileSync(path.join(root,'dist/renderer/office-signals.js'),'utf8');
-const script=readFileSync(path.join(root,'dist/renderer/chrome.js'),'utf8').replace(/export\s*\{\s*\};?\s*$/,'');
+const rendererRoot=path.join(root,'dist/renderer');
 let checks=0;
 function check(condition,message){assert.ok(condition,message);checks++;}
-async function makeDom(fixture=true,transport,query='',beforeBoot){const dom=new JSDOM(html,{url:'https://fixture.invalid/chrome.html'+query,runScripts:'outside-only',pretendToBeVisual:true});const w=dom.window;w.scrollTo=()=>{};w.TextEncoder=TextEncoder;w.HTMLElement.prototype.scrollIntoView=()=>{};if(fixture){installRendererFixture(w);if(transport)w.desktopBridge.transport=transport;}beforeBoot?.(w);w.eval(signalScript);w.eval(script);await flush();return dom;}
+async function makeDom(fixture=true,transport,query='',beforeBoot){const dom=new JSDOM(html,{url:'https://fixture.invalid/chrome.html'+query,runScripts:'outside-only',pretendToBeVisual:true});const w=dom.window;w.scrollTo=()=>{};w.TextEncoder=TextEncoder;w.HTMLElement.prototype.scrollIntoView=()=>{};if(fixture){installRendererFixture(w);if(transport)w.desktopBridge.transport=transport;}beforeBoot?.(w);
+// JSDOM has no layout: stub geometry/ResizeObserver only so Freeflow can mount; this does not prove visual layout.
+if(!w.ResizeObserver)w.ResizeObserver=class{observe(){}unobserve(){}disconnect(){}};
+if(!w.Element.prototype.getBoundingClientRect.__stub){const orig=w.Element.prototype.getBoundingClientRect;const stub=function(){const r=orig.call(this);return r.width||r.height?r:{x:0,y:0,left:0,top:0,right:1200,bottom:800,width:1200,height:800,toJSON(){return this;}};};stub.__stub=true;w.Element.prototype.getBoundingClientRect=stub;}
+w.eval(signalScript);createModuleLoader(w,rendererRoot).run('chrome.js');await flush();return dom;}
 const flush=()=>new Promise(resolve=>setTimeout(resolve,12));
 const dom=await makeDom();const w=dom.window;const d=w.document;const fixture=w.__atlasFixture;
 const el=(id)=>d.getElementById(id);
