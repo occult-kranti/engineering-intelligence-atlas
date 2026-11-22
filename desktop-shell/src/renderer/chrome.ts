@@ -2467,7 +2467,7 @@ function wireSpatialMove(handle: HTMLButtonElement,element:HTMLElement,x:number,
     const scrollParents:HTMLElement[]=[];for(let ancestor:HTMLElement|null=parent;ancestor&&ancestor!==ffStudio?.elements.world;ancestor=ancestor.parentElement)scrollParents.push(ancestor);
     const scroll=()=>scrollParents.reduce((sum,item)=>({x:sum.x+item.scrollLeft,y:sum.y+item.scrollTop}),{x:0,y:0});const scrollStart=scroll();
     const panel=element.closest<HTMLElement>('.canvas-panel');
-    const cleanup=()=>{if(finished)return;finished=true;spatialGestureCancels.delete(cancel);window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',end);window.removeEventListener('pointercancel',cancel);window.removeEventListener('blur',cancel);window.removeEventListener('keydown',escape);handle.removeEventListener('lostpointercapture',cancel);observer?.disconnect();element.classList.remove('is-moving');try{handle.releasePointerCapture?.(pointerId);}catch{/* capture already released */}};
+    const cleanup=()=>{if(finished)return;finished=true;spatialGestureCancels.delete(cancel);window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',end);window.removeEventListener('pointercancel',cancel);window.removeEventListener('blur',cancel);window.removeEventListener('keydown',escape,true);handle.removeEventListener('lostpointercapture',cancel);observer?.disconnect();element.classList.remove('is-moving');try{handle.releasePointerCapture?.(pointerId);}catch{/* capture already released */}};
     const cancel=()=>{cleanup();paint({x,y});};
     const move=(e:PointerEvent)=>{if(e.pointerId!==pointerId)return;if(!element.isConnected||panel?.hidden){cancel();return;}if(Math.abs(e.clientX-start.x)+Math.abs(e.clientY-start.y)<5&&!moved)return;moved=true;element.classList.add('is-moving');const delta=camera&&viewport&&bounds?projectedDelta(camera,viewport,{x:start.x-bounds.left,y:start.y-bounds.top},{x:e.clientX-bounds.left,y:e.clientY-bounds.top}):{x:e.clientX-start.x,y:e.clientY-start.y};const currentScroll=scroll();next=moveOnBoard({x,y},{x:delta.x+currentScroll.x-scrollStart.x,y:delta.y+currentScroll.y-scrollStart.y},size,map,{x:maxX,y:maxY});paint(next);};
     const end=(e:PointerEvent)=>{if(e.pointerId!==pointerId)return;cleanup();if(moved){handle.addEventListener('click',suppressClick,{capture:true,once:true});workspaceTask(()=>commit(next),element.classList.contains('ownership-card')?'node-save-status':'room-status');}};
@@ -2475,7 +2475,9 @@ function wireSpatialMove(handle: HTMLButtonElement,element:HTMLElement,x:number,
     const escape=(e:KeyboardEvent)=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();cancel();handle.focus({preventScroll:true});}};
     const observer=typeof MutationObserver!=='undefined'&&panel?new MutationObserver(()=>{if(panel.hidden||!element.isConnected||element.closest('[hidden]'))cancel();}):null;
     observer?.observe(panel!,{attributes:true,subtree:true,attributeFilter:['hidden']});
-    spatialGestureCancels.add(cancel);window.addEventListener('pointermove',move);window.addEventListener('pointerup',end);window.addEventListener('pointercancel',cancel);window.addEventListener('blur',cancel);window.addEventListener('keydown',escape);handle.addEventListener('lostpointercapture',cancel);
+    // An active inner-board gesture owns Escape before the outer scene's
+    // selection/navigation handlers consume it during bubbling.
+    spatialGestureCancels.add(cancel);window.addEventListener('pointermove',move);window.addEventListener('pointerup',end);window.addEventListener('pointercancel',cancel);window.addEventListener('blur',cancel);window.addEventListener('keydown',escape,true);handle.addEventListener('lostpointercapture',cancel);
     try{handle.setPointerCapture?.(pointerId);}catch{/* keyboard movement remains available */}
   });
 }

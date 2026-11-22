@@ -29,7 +29,7 @@ Additional counterreview corrections include actual-byte revalidation of accepte
 | --- | --- |
 | Rust native core | 118 passed; no failures or skips |
 | Desktop/portable backend | 740 passed in 50 test files |
-| Shared renderer interactions | 420 passed; DOM fixtures, not visual acceptance |
+| Shared renderer interactions | 422 passed; DOM fixtures, not visual acceptance |
 | ETA planner | 17 passed, included in the desktop count |
 | Board geometry | 7 passed, included in the desktop count |
 | Headless runtime + both MCP suites | 188 passed, 2 explicitly skipped for unavailable tmux, 0 failures; 190 total |
@@ -64,6 +64,12 @@ Run [44989411163](https://github.com/occult-kranti/engineering-intelligence-atla
 The live form layer now composes its coplanar panels with normal stacking before the shared world camera transform. Architectural relief retains its 3D rendering context, and no artificial depth offset changes pointer projection. The browser now records the real element hit at the pointer location, checks that Whiteboard remains active after tilt, and keeps all overlapping panels present. Its existing nonzero drag-preview and Escape/no-native-write assertions remain.
 
 The screenshots also showed that the long inspector scrolled the board itself out of view. Whiteboard now constrains the work area and scrolls its inspector independently. The browser requires Save to leave the board body at its original scroll position. Actual acceptance of these final visual changes remains pending.
+
+## Inner-card Escape event correction
+
+Run [44990066263](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44990066263) tested `65809cd5a5ef7c0d9a5c45249efb1dab6ad32f31`. All installed-platform and native/backend suites passed. The browser confirmed the long-inspector scroll correction, active Whiteboard ordering, an actual hit on the tilted card title and a nonzero drag. Escape still left the preview displaced. The failed receipt is retained as `evidence/ci-65809cd-browser.json`; no native rollback assertion is claimed for that failed attempt.
+
+The cause was event ownership: the outer scene consumed a bubbling Escape before the temporary window bubble listener for the inner-card gesture. That active gesture now listens in window capture and removes its listener with the matching flag. It cancels before outer selection/navigation, restores its original paint and removes the pointer-release handler. The regression sends Escape from the real card element through the mounted scene and checks that a later pointerup cannot save. An independent helper reviewed the correction and both actual screenshots. The full browser gate remains pending the next source run.
 
 ## Boundaries
 

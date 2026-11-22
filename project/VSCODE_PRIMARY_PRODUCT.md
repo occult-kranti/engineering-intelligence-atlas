@@ -6,6 +6,8 @@ The VS Code extension now owns the full desktop office canvas and can launch its
 
 The later `design/infinite-blueprint-canvas` source removes the physical table presentation and uses one continuous blueprint plane. Canonical company floorplans, flat employee circles, optional 3D partitions and live popups use the same packaged renderer. The [three-round design/build plan](../design/endless-blueprint/PLAN.md) and [verification record](../design/endless-blueprint/VALIDATION.md) describe this newer source. The published preview and its receipts below remain tied to their original commit.
 
+The subsequent [board workflow plan](../design/board-workflows/PLAN.md) adds Whiteboard multi-links, the Greenboard people/ownership view, duration forecasts and native primary/helper review gates. Its [validation record](../design/board-workflows/VALIDATION.md) identifies the exact tested source, platform packages, browser receipts and remaining boundaries. These changes require the matching schema2 native core; the older `v0.9.0-preview.1` packages do not contain them. Use the matching platform artifact from that validation record when continuing this branch in VS Code.
+
 ## Choose where the workspace runs
 
 | Entry | Runtime location | Editor closes | Prerequisites |

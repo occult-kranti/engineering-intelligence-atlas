@@ -578,6 +578,10 @@ for(const interacted of [false,true]){
  const pointer=(type,x,y)=>{const event=new bw.MouseEvent(type,{button:0,clientX:x,clientY:y,bubbles:true,cancelable:true});Object.defineProperty(event,'pointerId',{value:17});return event;};
  handle.dispatchEvent(pointer('pointerdown',100,100));bw.dispatchEvent(pointer('pointermove',145,135));bw.dispatchEvent(pointer('pointercancel',145,135));bw.dispatchEvent(pointer('pointerup',145,135));await flush();
  check(attempts.length===count&&card.style.left===left&&card.style.top===top,'cancelled board drag restores paint and never submits a mutation');
+ handle.dispatchEvent(pointer('pointerdown',100,100));bw.dispatchEvent(pointer('pointermove',145,135));
+ check(card.classList.contains('is-moving')&&(card.style.left!==left||card.style.top!==top),'Escape regression begins with a nonzero inner-card preview');
+ handle.dispatchEvent(new bw.KeyboardEvent('keydown',{key:'Escape',bubbles:true,cancelable:true}));bw.dispatchEvent(pointer('pointerup',145,135));await flush();
+ check(attempts.length===count&&!card.classList.contains('is-moving')&&card.style.left===left&&card.style.top===top,'card-targeted Escape wins over the surrounding scene and a later pointerup cannot save');
  handle.dispatchEvent(pointer('pointerdown',100,100));bw.dispatchEvent(pointer('pointermove',150,140));await press('office-refresh');bw.dispatchEvent(pointer('pointerup',150,140));await flush();
  check(attempts.length===count,'snapshot replacement disposes an active board gesture before a late pointerup');
  const movedHandle=bd.querySelector('[data-board-id="linked-board"] .card-title');movedHandle.click();movedHandle.dispatchEvent(new bw.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));await flush();const movedRevision=bf.office.blueprints[0].whiteboards[0].revision;type('node-title','Edit after acknowledged movement');await save();check(attempts.at(-1).expectedRevision===movedRevision,'an acknowledged own movement updates a clean editor base without creating a false stale edit');

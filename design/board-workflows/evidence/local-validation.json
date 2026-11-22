@@ -7,7 +7,7 @@
       "files": 50
     },
     "renderer": {
-      "passed": 420,
+      "passed": 422,
       "kind": "DOM fixture, not visual acceptance"
     },
     "planner": {
@@ -68,7 +68,7 @@
     "native-core/src/remote_commands.rs": "c15bb8a552214359c8491f574d4e07667cec354c9f184388347a8a38f80b1991",
     "desktop-shell/src/main/officeWorker.ts": "127b6b80d07b70fdbf33045a5c90090b34ce4c047bceef21813b38666c16958d",
     "desktop-shell/src/main/pairedReview.ts": "c6bcbf4c9b7b11770ed103235468e16186dc4813ca0da08788024790c7a07427",
-    "desktop-shell/src/renderer/chrome.ts": "e4bb76b5ca2cad56ee5905d4176b1997fc8521b81436cd45b2c6f1d324db6911",
+    "desktop-shell/src/renderer/chrome.ts": "7d3fcae8b0026156246bc5504422944d1db5e9cfa30a0f74e436fc5f62e81273",
     "desktop-shell/src/renderer/boards/planning.ts": "1a37d954e11b7b91775ee622737326b088521a82978b6a0936c88cd842e45e12",
     "desktop-shell/src/renderer/boards/geometry.ts": "da16726d1a3c6b498674dc1bed9f3c4d61b24d38adf6ff1cf56cc612f449cad5",
     "vscode-extension/src/runtime-client.js": "ee2d8ddf9483dbed5cbacd6e59a2497a87b41ade8bd33c8f19e95b94c3c0e3c4",
