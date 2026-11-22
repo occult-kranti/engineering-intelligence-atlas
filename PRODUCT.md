@@ -2,11 +2,11 @@
 
 ## Product outcome
 
-Turn repositories into companies on one continuous operating canvas. The conference table, company seats, office blueprints, Donna conversation and work controls occupy the same spatial world. Choosing a company or department moves the focus within that world. Donna coordinates saved assistants and shared specialists through goals, scoped authority, queues, budgets, evidence and handoffs. Company parent relationships and departments within departments organize the portfolio without transferring ownership or permissions.
+Turn repositories into companies on one continuous blueprint plane. Company boundaries, offices, departments, flat employee circles, Donna conversation and work controls occupy the same spatial world. The latest laptop direction removes the physical conference-table underlay. Choosing a company or department moves the focus within that world. Donna coordinates saved assistants and shared specialists through goals, scoped authority, queues, budgets, evidence and handoffs. Company parent relationships and departments within departments organize the portfolio without transferring ownership or permissions.
 
 ## Audiences and surfaces
 
-- The owner uses the Freeflow conference table, company offices, roadmap, people, model pool and ledger as elements of the same canvas in the desktop or private website. Panels can be found, moved, resized, pinned, collapsed and reopened without replacing their underlying forms.
+- The owner uses the Freeflow blueprint world, company offices, roadmap, people, model pool and ledger as elements of the same canvas in the desktop or private website. Panels can be found, moved, resized, pinned, collapsed and reopened without replacing their underlying forms.
 - Signed-in website owners enter the canvas by default. Connections, access and applications open within it. Standalone sign-in, invitation and visiting-employee entry flows retain their own authentication and restricted-data behavior.
 - Visiting employees receive an explicit company role and expiry. Their canvas, notes and proposals use a restricted server projection; unavailable areas remain greyed out without exposing hidden content.
 - The headless service runs the Rust core and worker pool on a persistent Linux host. Website and MCP clients control bounded work while jobs remain owned by that runtime.

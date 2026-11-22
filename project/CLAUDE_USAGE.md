@@ -1,14 +1,14 @@
 # Claude development usage
 
-Current checkpoint: **VS Code compute source and owner operations added; Blueprint World Studio completed and published as owner-private Site version 17, with a graphics verification gap; outside the released 0.8.0 binary source**. The [0.8.0 release receipt](release-0.8.0.json) retains its original source and accounting boundary. Historical request receipts retain their original UTC timestamps. The historical development ceiling remains **$100 USD**; the latest Studio expansion has a separately recorded **additional $20 USD workstream ceiling**, of which **$0.623718** has now been observed across Studio, host control and the VS Code connection source. A ceiling is not a spend target. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
+Current checkpoint: **Endless blueprint three-round laptop pass in progress**, separately from the already published0.9.0-preview.1. Historical receipts keep their original source and UTC timestamps. The historical **$100** ceiling and previous additional$20 workstream remain recorded. The latest user-authorized **another$20** is a new bounded ceiling for this pass, not a spend target. Its observed use is **$0.125006**. This ledger contains sanitized request accounting, not credentials or private prompts.
 
 | Accounting category | USD | Interpretation |
 | --- | ---: | --- |
-| Observed development requests | **2.523932** | Recorded non-hosted requests, including external frontend authorship; not evidence of native Donna execution |
+| Observed development requests | **2.648938** | Recorded non-hosted requests, including external frontend authorship; not evidence of native Donna execution |
 | Observed successful hosted request | **0.022140** | Confirmed cloud reply and usage |
-| Total observed usage | **2.546072** | Development plus cloud; no allocation added |
+| Total observed usage | **2.671078** | Development plus cloud; no allocation added |
 | Retained uncertain attempts | **0.769716** | Earlier 0.495762 plus the renderer process reservation 0.273954 after polling was blocked |
-| Conservative usage accounting | **3.315788** | Observed usage plus retained uncertainty; historical 100.000000 ledger ceiling retained |
+| Conservative usage accounting | **3.440794** | Observed usage plus retained uncertainty; historical 100.000000 ledger ceiling retained |
 | Cloud allocation | **5.000000 reserved capacity** | Held inside the same global ceiling; contains cloud usage and is not an additional charge |
 | Latest Studio expansion | **0.446882 observed / 20.000000 cap** | Four completed provider requests, including two incomplete source responses; no new uncertain reservation |
 | Subsequent host-control development | **0.068450 observed** | One completed Sonnet request; shared incremental ceiling now accounts for 0.515332 of 20.000000 |
@@ -148,3 +148,9 @@ Request 28 (`11444cac-b59f-4523-9eea-f560e87b6b7f`, Claude Sonnet 5.5) returned 
 The shared additional $20 ceiling now has **$0.623718** of observed source-generation usage and **$19.376282** remaining. This is development authorship accounting, not a claim that native Donna employees ran those calls or that VPS infrastructure is free. Earlier unresolved reservations remain preserved in the ledger.
 
 The subsequent God mode, activity journal, adaptive worker, setup flow and installed-package verification work introduced no additional Claude API request. Current totals retain all earlier uncertain reservations.
+
+## Endless blueprint: three-round laptop pass
+
+The new user-authorized **additional $20** ceiling is recorded separately for `laptop-blueprint-20261122`, retaining all historical accounting and uncertain reservations. Request29 (`d477db0c-77e3-46ae-b9d0-3bb690926d43`) used actual Claude Sonnet5.5: **3,138 input /11,873 output tokens**, `end_turn`, **$0.125006 observed**. This pass has **$19.874994** remaining; there was no automatic retry. Updated observed total is **$2.671078**, retained uncertainty **$0.769716**, conservative total **$3.440794**.
+
+Claude supplied the rendering/projection modules. Independent integration removed the superseded table geometry, repaired a recursive error helper, aligned normalization and floating origins, and added failure/resource controls. Authorship does not certify GPU rendering or complete product acceptance; the [three-round plan](../design/endless-blueprint/PLAN.md) records those gates separately. Image-generation tool output has no billing receipt here and is excluded from Claude API token-derived totals.

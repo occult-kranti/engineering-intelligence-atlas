@@ -8,6 +8,8 @@ if (!existsSync(compiler)) throw new Error('Install locked web dependencies to b
 const shell = join(repoRoot, 'desktop-shell');
 const compiled = spawnSync(process.execPath, [compiler, '-p', join(shell, 'tsconfig.renderer.json')], { cwd: repoRoot, stdio: 'inherit' });
 if (compiled.status !== 0) process.exit(compiled.status ?? 1);
+const copied = spawnSync(process.execPath, [join(shell, 'scripts/copy-renderer-assets.mjs')], { cwd: repoRoot, stdio: 'inherit' });
+if (copied.status !== 0) process.exit(copied.status ?? 1);
 const dest = join(webRoot, 'public/desktop-preview');
 const renderer = join(shell, 'dist/renderer');
 const source = join(shell, 'src/renderer');

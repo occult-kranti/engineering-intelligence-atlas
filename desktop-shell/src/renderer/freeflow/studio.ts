@@ -131,6 +131,8 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
   let capsFn = options.capabilities ?? null;
   const storage = options.storage === undefined ? undefined : options.storage;
   const cams = new Map<string, Camera>();
+  let detailTimer: ReturnType<typeof setTimeout> | null = null;
+  let detailCenter: { x: number; y: number } | null = null;
 
   const openNode = (n: SceneNode) => {
     if (n.kind === 'restricted') return;
@@ -148,6 +150,8 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
 
   let list: A11yList = mountA11yList(listHost, { onSelect: (id) => selectNode(id, 'list'), onOpen: openNode });
   let sceneR: SceneRenderer = mountScene(canvasHost, {
+    graphics: options.continuousCanvas === true,
+    onCanvasAction: (action, node) => options.onAction(action, { companyId: node.companyId, nodeId: node.id }),
     onSelect: (id) => selectNode(id, 'canvas'),
     onOpen: openNode,
     onThreadSelect: (t) => { selectedThread = t ? t.id : null; if (t && !inspectorOpen) { inspectorOpen = true; layout(); } syncInspector(); },
@@ -163,14 +167,14 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     getViewportSize: () => sceneR.getViewport(),
     getCamera: () => sceneR.getCamera(),
     setCamera: (c) => sceneR.setCamera(c),
-    onCameraChange: (c, ph) => { if (ph === 'end' && currentKey) cams.set(currentKey, c); },
+    onCameraChange: (c, ph) => { if (ph === 'end' && currentKey) { cams.set(currentKey, c); scheduleDetails(); } },
     getBounds: () => focusBounds ?? (scene ? (scene.bounds as Rect) : null),
     focusKey: 'pending',
     active: false,
     storage,
     ownsCamera: false,
   });
-  function syncControlsActive(): void { controls.setActive(active && canvasShown && !listMode); }
+  function syncControlsActive(): void { controls.setActive(active && canvasShown && !listMode); sceneR.setActive(active && canvasShown && !listMode); }
   function readStored(key: string): Camera | null {
     try {
       const st = storage === undefined ? (typeof localStorage !== 'undefined' ? localStorage : null) : storage;
@@ -193,7 +197,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     if (saved) { fitPending = false; const c = normalizeCamera(saved); cams.set(currentKey, c); sceneR.setCamera(c); controls.sync(); return; }
     if (!active || !canvasShown || listMode || !realCanvas()) { fitPending = true; return; }
     fitPending = false;
-    const base = options.continuousCanvas ? normalizeCamera({ ...sceneR.getCamera(), pitch: focus.kind === 'portfolio' ? 26 : 0, yaw: focus.kind === 'portfolio' ? -3 : 0 }) : sceneR.getCamera();
+    const base = options.continuousCanvas ? normalizeCamera({ ...sceneR.getCamera(), pitch: 0, yaw: 0 }) : sceneR.getCamera();
     const c = fitBounds(base, sceneR.getViewport(), focusBounds ?? scene.bounds as Rect, options.continuousCanvas ? 90 : 24);
     cams.set(currentKey, c);
     sceneR.setCamera(c);
@@ -220,6 +224,23 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     const node = selectedId && scene ? scene.nodes.find((n) => n.id === selectedId) ?? null : null;
     const thread = selectedThread && scene ? scene.threads.find((t) => t.id === selectedThread) ?? null : null;
     inspector.setSelection(node, thread as SceneThread | null, scene);
+  }
+
+  // Recompose detailed company geometry after navigation settles. Its anchor
+  // never changes, and real forms are not rebuilt while someone pans a popup.
+  function scheduleDetails(): void {
+    if (!options.continuousCanvas || destroyed || !active) return;
+    if (detailTimer !== null) clearTimeout(detailTimer);
+    detailTimer = setTimeout(() => {
+      detailTimer = null;
+      if (destroyed || !active || !scene) return;
+      const c = sceneR.getCamera();
+      if (detailCenter && Math.hypot(c.x - detailCenter.x, c.y - detailCenter.y) < 600) return;
+      detailCenter = { x: c.x, y: c.y };
+      const next = applyHeat(buildUniverse(snapshot, focus, { detailCenter }));
+      scene = next; sceneR.update(next); list.update(next);
+      sceneR.select(selectedId); list.setSelected(selectedId); syncInspector();
+    }, 180);
   }
 
   function selectNode(id: string | null, from: 'canvas' | 'list' | 'api'): void {
@@ -333,6 +354,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
       if (currentKey) cams.set(currentKey, camera); else initialCamera = camera;
       sceneR.setCamera(camera);
       controls.sync();
+      scheduleDetails();
     },
     stopMotion() { controls.stopMotion(); },
     showCanvas() { userToggled = true; listMode = false; layout(); },
@@ -344,11 +366,11 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
       const key = (options.continuousCanvas ? 'universe:' : '') + focusKey(nextFocus);
       const changed = key !== currentKey;
       focus = nextFocus;
-      const raw = options.continuousCanvas ? buildUniverse(snapshot, focus) : buildScene(snapshot, focus);
+      const raw = options.continuousCanvas ? buildUniverse(snapshot, focus, !changed && detailCenter ? { detailCenter } : {}) : buildScene(snapshot, focus);
       focusBounds = 'focusBounds' in raw ? raw.focusBounds as Rect : raw.bounds;
       const built = applyHeat(raw);
       scene = built;
-      controls.setBrowseBounds(focus.kind === 'portfolio' && built.nodes.length > 1 ? built.tableBounds ?? null : null);
+      controls.setBrowseBounds(focus.kind === 'portfolio' && built.nodes.length > 1 ? built.bounds : null);
       if (changed) {
         currentKey = key;
         if (initialCamera) { cams.set(key, initialCamera); initialCamera = null; }
@@ -375,6 +397,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     setActive(a) {
       if (destroyed) return;
       active = a;
+      if (!a && detailTimer !== null) { clearTimeout(detailTimer); detailTimer = null; }
       root.hidden = !a;
       syncControlsActive();
       if (a) { tryFit(); if (fitPending) requestAnimationFrame(() => { if (!destroyed && fitPending) tryFit(); }); }
@@ -383,6 +406,8 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      if (detailTimer !== null) clearTimeout(detailTimer);
+      detailTimer = null;
       viewBtn.removeEventListener('click', onView);
       inspBtn.removeEventListener('click', onInsp);
       noticeBtn.removeEventListener('click', onWarn);

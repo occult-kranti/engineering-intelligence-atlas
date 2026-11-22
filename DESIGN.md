@@ -2,11 +2,11 @@
 
 ## Direction
 
-A game-like operating studio on one continuous spatial canvas. The conference table, company seats, department rooms, employee roles and connected work remain in the same world as the forms used to manage them. Perspective and camera motion communicate depth; readable, semantic controls remain ordinary interactive content. Ownership is legible through position, labels and connections, with real permissions and evidence visible.
+A game-like operating studio on one continuous spatial canvas. Company-contained floorplans, department rooms, flat employee circles and connected work remain in the same world as the forms used to manage them. Perspective and camera motion communicate depth; readable, semantic controls remain ordinary interactive content. Ownership is legible through position, labels and connections, with real permissions and evidence visible.
 
 ## Surfaces
 
-- **Conference table:** companies occupy seats. Pan, zoom, rotate, fit and optional automatic browsing scale the view from a small team to a large portfolio. The table remains present when a selected company's blueprint is laid into the world. Keyboard and list alternatives remain available.
+- **Endless blueprint plane:** company footprints and compact identity circles sit directly on one continuous drafting grid. There is no physical table, furniture, exterior chair or floating sheet. Top-down is the default; pan, zoom, optional tilt/rotation and fit move through the same world. Keyboard and searchable-list alternatives remain available.
 - **Company blueprint:** offices, nested departments, employees, goals, roadmaps and whiteboards share saved identities. Department focus moves the camera without relocating the company's rooms. Connections describe actual relationships; parent relations do not imply inherited authority.
 - **Canvas elements:** conversation, crew, scope, roadmap, whiteboard, hiring, queue, ledger, integrations and settings are movable panels inside the world. A searchable surface finder and Home action keep closed or distant panels reachable. Moving, resizing, pinning or collapsing affects presentation only.
 - **Donna and sub-Donnas:** the conversation and crew are separate elements within the same canvas. Crew labels distinguish saved employees, missing configuration and deterministic runtime checks. Running counts require job evidence. Scoped actions describe their actual effect, including the possibility that resumed queued work can start.
@@ -19,7 +19,7 @@ Reparent existing application elements into the canvas rather than cloning their
 
 The signed-in website owner lands on the canvas. Connections, applications and access forms use compact same-origin embedded presentations within it. Existing deep links still select the intended company or surface. Sign-in remains reachable when signed out, and invitation/visitor routes preserve their restricted entry and token-consumption semantics.
 
-The infinite-canvas effect comes from continuous navigation over a bounded, virtualized world. Do not render every hidden record or use distant coordinates as an information boundary. The camera frames the relevant content at a readable scale, with explicit routes back to the table and the surface finder.
+The infinite-canvas effect comes from continuous navigation over a bounded, virtualized world. Do not render every hidden record or use distant coordinates as an information boundary. The camera frames the relevant content at a readable scale, with explicit routes back to the blueprint world and the surface finder.
 
 ## Visual foundations
 
@@ -46,3 +46,9 @@ Drafts survive rejected stale edits and require an explicit base refresh; curren
 [Blueprint World](design/blueprint-world/README.md) records the implemented flows, project-skill swarm, Claude authorship and exact-source verification. The current Studio command layer passed 17 independent groups, the final integrated UI passed 14 DOM groups, and the renderer passed 21 non-GPU groups, including 4,100 occlusion rays and dense/capacity layouts. Native published-site review covered scoped Donna/sub-Donna editing, immediate revocation, history/undo, persisted state, keyboard focus and popup dragging. Version 16 findings led to the actual-move reorder probe, removal of the redundant CEO actor toast and a more compact popup; final version 17 observations are retained separately at a 1363 × 936 viewport with no HTML-page scroll.
 
 The [owner-private Site version 17](https://atlas-command-office.whatswrong-inc.chatgpt.site/concepts/blueprint-world) is published, with its exact source and audience in [publication.json](design/blueprint-world/publication.json). The local-preview reload was rejected by browser URL policy and was not retried or bypassed; the published HTTPS destination was accepted for live review. Managed Chrome still cannot create WebGL 2, so GPU painting, shaders, rendered-scene picking and frame rate remain unverified. Native form observations and CPU geometry results do not close that gap. The earlier CSS prototype, its historical browser observations and the 0.8.0 runtime release remain separate, unchanged checkpoints.
+
+## Current laptop implementation: one blueprint plane
+
+The [three-round plan](design/endless-blueprint/PLAN.md) supersedes the physical table and the earlier standalone Studio direction for the shared product renderer. Stable company footprints now contain full native room/employee/board projections; a bounded detail set follows the camera without creating another account or authority store. The local Three.js layer renders shallow partitions behind semantic controls, using the same camera projection. The absence of WebGL retains the usable DOM plan. Exact-source visual acceptance and graphics capability belong to the new run receipt, not earlier release screenshots.
+
+[The selected concept](design/endless-blueprint/assets/01-blueprint-plane-concept.png) is generated inspiration with illustrative labels and dimensions. It is not a screenshot, native company data or a physical floorplan. Roadmap and activity are existing time-aware work elements; historical reconstruction of a past office is a separate future feature.

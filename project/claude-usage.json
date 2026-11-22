@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 3.315788,
+  "accountedUsd": 3.440794,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -382,9 +382,24 @@
       "costUsd": 0.108386,
       "retainedReservationUsd": 0,
       "contribution": "Complete manager and truncated tests returned. Local repairs covered cancellation, host validation, profile identity, cleanup and metadata; no billed retry."
+    },
+    {
+      "number": 29,
+      "model": "claude-sonnet-5-5",
+      "workstream": "laptop-blueprint-three-rounds",
+      "requestId": "d477db0c-77e3-46ae-b9d0-3bb690926d43",
+      "task": "Shared WebGL blueprint relief and pure projection source",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 3138,
+      "outputTokens": 11873,
+      "costUsd": 0.125006,
+      "retainedReservationUsd": 0,
+      "executionContext": "External bounded source authorship, not a native Donna employee run. Generic interfaces and public presentation requirements only.",
+      "contribution": "Complete modules returned. Independent integration removed the superseded table, normalized camera bounds, repaired a recursive error helper, shader failure behavior, cleanup and floating origin. Acceptance recorded separately."
     }
   ],
-  "observedUsd": 2.546072,
+  "observedUsd": 2.671078,
   "retainedReservationUsd": 0.769716,
   "cloud": {
     "allocationUsd": 5,
@@ -410,7 +425,7 @@
     },
     "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
   },
-  "observedNativeUsd": 2.523932,
+  "observedNativeUsd": 2.648938,
   "newWorkstreamCapUsd": 20,
   "observedNativeUsdScope": "Historical field for all non-hosted development requests, including external provider authorship. It does not imply execution by native Donna.",
   "laterFrontendDesign": {
@@ -547,5 +562,21 @@
     "sharedIncrementalAccountedUsd": 0.623718,
     "sharedIncrementalRemainingUsd": 19.376282,
     "validationEvidence": "project/VSCODE_PRIMARY_PRODUCT.md"
+  },
+  "laptopBlueprintDevelopment": {
+    "runId": "laptop-blueprint-20261122",
+    "requestNumbers": [
+      29
+    ],
+    "incrementalAuthorizedCapUsd": 20,
+    "budgetInterpretation": "User requested another USD20 for this round. A separate bounded ledger enforces20; historical conservative accounting3.315788 plus this entire cap remains below100. Prior ceilings and uncertain reservations are retained.",
+    "observedUsd": 0.125006,
+    "retainedReservationUsd": 0,
+    "remainingIncrementalCapUsd": 19.874994,
+    "status": "source-integrated-validation-in-progress",
+    "sourceReleaseExcluded": "0.9.0-preview.1",
+    "authorship": "Claude relief modules with independent repairs; local design, canonical projection, integration and verification team.",
+    "imageAccounting": "Native image generation exposes no provider billing receipt here; excluded from Claude API totals.",
+    "validationEvidence": "design/endless-blueprint/PLAN.md"
   }
 }

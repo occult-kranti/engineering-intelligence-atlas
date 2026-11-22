@@ -1,0 +1,158 @@
+{
+  "run": "laptop-blueprint-20261122",
+  "attempt": 1,
+  "terminationOwner": "root",
+  "skills": [
+    {
+      "name": "agent-research-director",
+      "path": "skills/agent-research-director/SKILL.md",
+      "sha256": "08f4c7621550ddd97f15cc996cc00b9c63b9220e89c0ce17f3896f43506fccdb",
+      "review": "Instructions and relevant named references read. Scripts inactive except reviewed non-executing inventory. Existing user authorization applies.",
+      "inventorySignals": [
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "requests."
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "urllib"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "socket."
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "subprocess"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "os.environ"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "api_key"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "token"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "secret"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "credential"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "eval("
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "exec("
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "rm -rf"
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "sudo "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "chmod "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "docker "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "podman "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "curl "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "wget "
+        },
+        {
+          "file": "scripts/skill_registry_audit.py",
+          "line": 11,
+          "signal": "upload"
+        }
+      ],
+      "licenseNoticeFiles": []
+    },
+    {
+      "name": "spatial-3d-production-engineering",
+      "path": "skills/spatial-3d-production-engineering/SKILL.md",
+      "sha256": "e5c98705a8c04c23e02b9d1006b34c5a1e9e6b549f731c3dcdb1909f2368dc8b",
+      "review": "Instructions and relevant named references read. Scripts inactive except reviewed non-executing inventory. Existing user authorization applies.",
+      "inventorySignals": [],
+      "licenseNoticeFiles": []
+    },
+    {
+      "name": "computational-geometry-engineering",
+      "path": "skills/computational-geometry-engineering/SKILL.md",
+      "sha256": "b8c010435bc591fc4d97ddbf90d560d034ff876264254af7889bfba2cdffbce4",
+      "review": "Instructions and relevant named references read. Scripts inactive except reviewed non-executing inventory. Existing user authorization applies.",
+      "inventorySignals": [],
+      "licenseNoticeFiles": []
+    }
+  ],
+  "protocol": {
+    "path": "organization/skill_collaboration_protocol.md",
+    "sha256": "3df1b739f428bdd9796700e4d7f470271094cc9ec75a8ba471e0b7b82039dade"
+  },
+  "inventory": {
+    "count": 15,
+    "requiringReview": 15,
+    "interpretation": "Static provenance inventory, not certification. Only three selected instruction sets applied. Unused skill scripts were not activated."
+  },
+  "sideEffects": {
+    "sourceEditsAndPush": "authorized",
+    "externalClaude": "authorized under20 ceiling",
+    "vps": "remain stopped",
+    "physicalActions": false
+  },
+  "cost": {
+    "runId": "laptop-blueprint-20261122",
+    "requestNumbers": [
+      29
+    ],
+    "incrementalAuthorizedCapUsd": 20,
+    "budgetInterpretation": "User requested another USD20 for this round. A separate bounded ledger enforces20; historical conservative accounting3.315788 plus this entire cap remains below100. Prior ceilings and uncertain reservations are retained.",
+    "observedUsd": 0.125006,
+    "retainedReservationUsd": 0,
+    "remainingIncrementalCapUsd": 19.874994,
+    "status": "source-integrated-validation-in-progress",
+    "sourceReleaseExcluded": "0.9.0-preview.1",
+    "authorship": "Claude relief modules with independent repairs; local design, canonical projection, integration and verification team.",
+    "imageAccounting": "Native image generation exposes no provider billing receipt here; excluded from Claude API totals.",
+    "validationEvidence": "design/endless-blueprint/PLAN.md"
+  }
+}

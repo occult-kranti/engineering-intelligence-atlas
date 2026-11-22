@@ -3528,6 +3528,10 @@ function ffActionConfirmed(action: StudioActionKind, ctx: StudioActionContext): 
     case 'roadmap': ffOperations = true; ffApplyMode(); setPortfolioOpen(false); switchWorkspaceTab('timeline'); ffSerializeUrl(); break;
     case 'whiteboard': toWorkspace('whiteboard', 'whiteboard-add-node'); if (ctx.boardId) { const b = currentBlueprint()?.whiteboards.find((w) => w.id === ctx.boardId); if (b) selectBoard(b); } ffSerializeUrl(); break;
     case 'ownership': {
+      if (!ctx.employeeId && !ctx.boardId) {
+        ffOperations = true; ffApplyMode(); setPortfolioOpen(false);
+        switchWorkspaceTab('softboard'); ffSerializeUrl(); break;
+      }
       if (ctx.employeeId && !ctx.boardId) {
         if (!officeState?.employees.some((e) => e.id === ctx.employeeId)) { setStatus($('workspace-action-status'), 'That employee is no longer in the workspace.', 'error'); break; }
         ffShowOps(); setPortfolioOpen(true); renderAuthority();
@@ -3553,6 +3557,8 @@ function ffActionConfirmed(action: StudioActionKind, ctx: StudioActionContext): 
   if (readOnly) setStatus($('workspace-action-status'), 'Starter preview: navigation only; changes are disabled.');
 }
 function initFreeflowHost(): void {
+  $('ff-new-company').onclick = () => ffAction('new-company', {});
+  $('ff-open-activity').onclick = () => { ffShowOps(); switchOfficeTab('ledger'); };
   const host = $('freeflow-host');
   document.body.classList.add('endless-canvas');
   ffStudio = mountStudio(host, { continuousCanvas: true, onSurface: (id) => endlessWorkspace?.open(id, {nearCamera:true}), onNavigate: ffNavigate, onAction: ffAction, heat: ffHeat, capabilities: ffReadOnlyCaps });
@@ -3648,7 +3654,7 @@ function initEndlessWorkspace(): void {
   const add=(id:string,title:string,element:HTMLElement,group='Workspace',width=900,height=660)=>{
     const index=panels.length;panels.push({id,title,element,group,rect:{x:-1000+(index%4)*1040,y:1100+Math.floor(index/4)*800,width,height},minWidth:320,minHeight:220});
   };
-  add('donna','Donna · conversation',donna,'Donna',680,400);
+  add('donna','Donna · conversation',donna,'Donna',440,480);
   add('crew','Donna & sub-Donnas',crew,'Donna',800,720);
   add('policy','Budget & autonomy',$('workspace-policy'),'Donna',880,680);
   add('scope','Company & department',scope,'Office',760,510);

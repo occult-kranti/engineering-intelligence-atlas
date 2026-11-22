@@ -41,35 +41,36 @@ describe('buildUniverse', () => {
     expect(u.focusBounds.height).toBeGreaterThan(0);
   });
 
-  it('keeps a readable focus window with 200 seats while retaining the full scene', () => {
+  it('keeps a readable first-plan window with 200 company markers and no table', () => {
     const snap = manyCompanies(200);
     const u = buildUniverse(snap, { kind: 'portfolio' });
     expect(u.nodes.filter((n) => n.kind === 'folio')).toHaveLength(200);
     expect(u.focusBounds.width).toBeLessThanOrEqual(1200 + 1e-6);
-    expect(u.tableBounds).toBeDefined();
-    expect(overlaps(u.focusBounds, u.tableBounds!)).toBe(true);
-    expect(u.nodes.filter((n) => n.kind === 'folio' && overlaps(u.focusBounds, n.rect)).length).toBeGreaterThanOrEqual(3);
+    expect(u.tableBounds).toBeUndefined();
+    expect(u.worldMode).toBe('blueprint');
+    expect(u.nodes.filter((n) => n.kind === 'folio' && overlaps(u.focusBounds, n.rect))).toHaveLength(1);
     expect(contains(u.bounds, u.focusBounds) || u.bounds.width >= u.focusBounds.width).toBe(true);
     expect(fitBounds(DEFAULT_CAMERA, { width: 1000, height: 700 }, u.focusBounds, 24).zoom).toBeGreaterThanOrEqual(.75);
   });
 
-  it('includes the table and a real blueprint when a company is selected', () => {
+  it('keeps real blueprints inside their company footprints when a company is selected', () => {
     const snap = fullSnapshot();
     const u = buildUniverse(snap, { kind: 'company', companyId: 'c1' });
     const direct = buildScene(snap, { kind: 'company', companyId: 'c1' });
-    const nativeTable = buildScene(snap, { kind: 'portfolio' }).tableBounds!;
-    expect(u.tableBounds).toEqual({ ...nativeTable, height: 360, y: -180 });
+    expect(u.tableBounds).toBeUndefined();
     expect(u.nodes.filter((n) => n.kind === 'folio')).toHaveLength(2);
     expect(u.nodes.some((n) => n.kind === 'room')).toBe(true);
     expect(u.nodes.some((n) => n.kind === 'employee' && n.entityId === 'e1')).toBe(true);
-    const bpCount = u.nodes.filter((n) => n.id.startsWith('universe:blueprint:')).length;
-    expect(bpCount).toBe(direct.nodes.length);
+    const nativeDetails = direct.nodes.filter(node => !(node.kind === 'fallback' && node.metadata.companyLevel === true && !node.counts.employees && !node.counts.globalAssistants));
+    const bpNodes = u.nodes.filter((n) => n.id.startsWith('universe:blueprint:') && n.companyId === 'c1');
+    expect(bpNodes).toHaveLength(nativeDetails.length);
     expect(new Set(u.nodes.map((n) => n.id)).size).toBe(u.nodes.length);
-    // blueprint sits below the table
-    expect(u.focusBounds.y).toBeGreaterThanOrEqual(u.tableBounds!.y + u.tableBounds!.height);
+    const footprint = u.nodes.find(node => node.id === 'universe:table-plan:c1')!;
+    expect(bpNodes.every(node => contains(footprint.rect, node.rect))).toBe(true);
+    expect(u.focusBounds).toEqual(footprint.rect);
   });
 
-  it('preserves seat geometry across scope transitions', () => {
+  it('preserves company marker geometry across scope transitions', () => {
     const snap = fullSnapshot();
     const seats = (u: ReturnType<typeof buildUniverse>) =>
       u.nodes.filter((n) => n.kind === 'folio').map((n) => [n.id, n.rect]);
@@ -82,25 +83,29 @@ describe('buildUniverse', () => {
     expect(seats(d)).toEqual(seats(p));
   });
 
-  it('places saved miniature blueprints on both table sides and retains every chair identity', () => {
+  it('preserves bounded saved previews inside separate footprints and every company identity', () => {
     const snap = fullSnapshot(), base = buildScene(snap, { kind: 'portfolio' });
     const scene = buildUniverse(snap, { kind: 'portfolio' });
     const plans = scene.nodes.filter(node => node.metadata.tableBlueprint === true);
     expect(plans).toHaveLength(2);
-    expect(plans.every(node => contains(scene.tableBounds!, node.rect))).toBe(true);
+    expect(plans.every(node => contains(scene.bounds, node.rect))).toBe(true);
     expect(overlaps(plans[0]!.rect, plans[1]!.rect)).toBe(false);
     expect(plans.every(node => node.rect.height >= 140 && node.metadata.portal === true)).toBe(true);
     const saved = plans.find(node => node.companyId === 'c1')!;
-    expect(saved.parentId).toBe('folio:c1');
+    expect(saved.parentId).toBeNull();
     expect(saved.blueprintPreview?.offices[0]?.rooms).toEqual([{ id: 'r1', label: 'Room', rect: { x: 43, y: 22, width: 430, height: 220 } }]);
     const empty = plans.find(node => node.companyId === 'c2')!;
     expect(empty.subtitle).toBe('No saved blueprint');
     expect(empty.blueprintPreview?.offices).toEqual([]);
     for (const seat of base.nodes) {
       const projected = scene.nodes.find(node => node.id === seat.id)!;
-      expect(projected.rect.x).toBe(seat.rect.x);
-      expect(projected.rect.width).toBe(seat.rect.width);
-      expect(projected.rect.y - seat.rect.y).toBe(seat.metadata.seatSide === 'north' ? -112 : 112);
+      const plan = plans.find(node => node.companyId === seat.companyId)!;
+      expect(projected.rect.width).toBe(48);
+      expect(projected.rect.height).toBe(48);
+      expect(projected.metadata.seat).toBe(false);
+      expect(projected.metadata.companyMarker).toBe(true);
+      expect(projected.parentId).toBe(plan.id);
+      expect(contains(plan.rect, projected.rect)).toBe(true);
     }
     expect(base.tableBounds!.height).toBe(136); // buildScene remains unchanged.
   });
@@ -156,13 +161,13 @@ describe('buildUniverse', () => {
     expect(JSON.stringify(scene)).toBe(before);
   });
 
-  it('retains 1000 chairs and bounded per-company previews without framing the whole table', () => {
+  it('retains 1000 company markers and bounded previews without framing the entire world', () => {
     const scene = buildUniverse(manyCompanies(1000), { kind: 'portfolio' });
     expect(scene.nodes.filter(node => node.kind === 'folio')).toHaveLength(1000);
     expect(scene.nodes.filter(node => node.metadata.tableBlueprint)).toHaveLength(1000);
     expect(scene.nodes).toHaveLength(2000);
     expect(scene.focusBounds.width).toBeLessThanOrEqual(1200);
-    expect(scene.focusBounds.height).toBeLessThan(800);
+    expect(scene.focusBounds.height).toBeLessThanOrEqual(800);
     expect(new Set(scene.nodes.map(node => node.id)).size).toBe(2000);
   });
 
@@ -253,7 +258,8 @@ describe('buildUniverse', () => {
     const u = buildUniverse(snap, { kind: 'company', companyId: 'nope' });
     expect(u.warnings.some((w) => w.includes('nope'))).toBe(true);
     expect(u.focusBounds.width).toBeGreaterThan(0);
-    expect(u.nodes.some((n) => n.id.startsWith('universe:blueprint:'))).toBe(false);
+    expect(u.nodes.some((n) => n.companyId === 'nope')).toBe(false);
+    expect(u.nodes.some((n) => n.id.startsWith('universe:blueprint:'))).toBe(true);
   });
 
   it('retains the selected company and warns when an office no longer exists', () => {

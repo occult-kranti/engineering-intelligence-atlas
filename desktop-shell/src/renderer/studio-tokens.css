@@ -5,35 +5,37 @@
 :root:not([data-theme]),
 :root[data-theme='blueprint'] {
   color-scheme: dark;
-  --canvas: #111719;
-  --surface: #20282A;
-  --surface-soft: #192123;
-  --elevated: #2B3435;
-  --sidebar-canvas: #192123;
-  --ink: #F1EEE4;
-  --muted: #B5BDB7;
-  --line: #3C4644;
-  --line-strong: #78877F;
-  --accent: #D6ED9B;
-  --accent-hover: #D3FF85;
-  --accent-ink: #182112;
-  --accent-soft: #35442B;
-  --focus: #D6ED9B;
-  --focus-gap: #111719;
-  --brand-gold: #DBBC7C;
-  --emphasis-surface: #303C36;
-  --emphasis-ink: #F1EEE4;
+  --canvas: #081A2D;
+  --surface: #122A40;
+  --surface-soft: #0D2237;
+  --elevated: #1C354B;
+  --sidebar-canvas: #0D2237;
+  --ink: #F7F1E5;
+  --muted: #BECBD6;
+  --line: #38516A;
+  --line-strong: #8094A6;
+  --accent: #ECD6A7;
+  --accent-hover: #F6E4C1;
+  --accent-ink: #182D42;
+  --accent-soft: #33404B;
+  --focus: #F3D58E;
+  --focus-gap: #081A2D;
+  --brand-gold: #D5B879;
+  --emphasis-surface: #1C354B;
+  --emphasis-ink: #F7F1E5;
   --success: #A5D6A9;
   --success-soft: #263E30;
   --warning: #E8C676;
   --warning-soft: #463722;
   --danger: #FFAA97;
   --danger-soft: #492C32;
-  --info: #B6C7B5;
-  --info-soft: #303D39;
-  --grid-minor: #1D2728;
-  --grid-major: #2C3838;
-  --connection: #9FAE98;
+  --info: #BCD4E7;
+  --info-soft: #233E55;
+  --grid-minor: #142C43;
+  --grid-major: #243F56;
+  --connection: #9BBAD0;
+  --table-top: #102942;
+  --table-edge: #8A7657;
   --shadow-soft: 0 10px 28px rgb(0 8 20 / 18%);
   --shadow-panel: 0 16px 40px rgb(0 8 20 / 28%);
   --heat-fill-0: #241F34;
@@ -50,35 +52,37 @@
 
 :root[data-theme='drafting'] {
   color-scheme: light;
-  --canvas: #E8E5DA;
-  --surface: #FFFDF5;
-  --surface-soft: #F2EEE3;
-  --elevated: #E5DFCF;
-  --sidebar-canvas: #E5DFCF;
-  --ink: #28362F;
-  --muted: #596352;
-  --line: #C5C5B3;
-  --line-strong: #82917C;
-  --accent: #344F34;
-  --accent-hover: #284716;
+  --canvas: #E7E3D9;
+  --surface: #FFFAF0;
+  --surface-soft: #F2ECDD;
+  --elevated: #E6DECB;
+  --sidebar-canvas: #E6DECB;
+  --ink: #17324E;
+  --muted: #51667C;
+  --line: #C7C2B3;
+  --line-strong: #718295;
+  --accent: #173C60;
+  --accent-hover: #0C2D4D;
   --accent-ink: #FFFFFF;
-  --accent-soft: #DBE4CD;
-  --focus: #344F34;
-  --focus-gap: #FFFDF5;
-  --brand-gold: #89662B;
-  --emphasis-surface: #28362F;
-  --emphasis-ink: #FFFDF5;
+  --accent-soft: #DEE8EE;
+  --focus: #173C60;
+  --focus-gap: #FFFAF0;
+  --brand-gold: #88652B;
+  --emphasis-surface: #17324E;
+  --emphasis-ink: #FFFAF0;
   --success: #33613A;
   --success-soft: #DBE4CD;
   --warning: #795618;
   --warning-soft: #FAEDD2;
   --danger: #9B352A;
   --danger-soft: #FBE8E3;
-  --info: #425F4A;
-  --info-soft: #DCE4D2;
+  --info: #385974;
+  --info-soft: #DFE9EE;
   --grid-minor: #DDDCD0;
   --grid-major: #C9CBBC;
-  --connection: #59745D;
+  --connection: #466B88;
+  --table-top: #E4DCC8;
+  --table-edge: #A38B60;
   --shadow-soft: 0 10px 28px rgb(48 42 26 / 7%);
   --shadow-panel: 0 16px 40px rgb(48 42 26 / 12%);
   --heat-fill-0: #EEEAF3;
@@ -95,6 +99,22 @@
 
 :root:not([data-theme]),
 :root[data-theme] {
+  /* Blueprint geometry is warm paper in either workspace theme. These colors
+   * are shared with the optional GPU scene; employee color describes a team,
+   * never permissions or a claim that a saved employee is running. */
+  --plan-paper: #F8F3E7;
+  --plan-ink: #17324E;
+  --plan-muted: #51667C;
+  --plan-line: #526B86;
+  --plan-edge: #CBBFAA;
+  --person-color: #3169AB;
+  --person-ink: #FFFFFF;
+  --department-blue: #3169AB;
+  --department-teal: #217977;
+  --department-coral: #AF5143;
+  --department-purple: #7557A6;
+  --department-gold: #90691E;
+  --department-green: #397346;
   /* Identical ordered swatches in both modes. Use -fill for large room surfaces;
    * solid swatches need their paired -ink, not the page's general text color. */
   --heat-0: #4B3F68;

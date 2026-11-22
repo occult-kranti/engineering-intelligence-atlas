@@ -1097,3 +1097,67 @@ html[data-theme] body { color: var(--ink); background: var(--canvas); }
   :root[data-theme] .office-blueprint.list-mode .room-occupant-more { grid-column: 1/-1; }
 }
 @media (forced-colors:active) { .org-department,.blueprint-room,.ownership-card { border: 2px solid CanvasText; box-shadow: none !important; } .org-root::after,.org-branch::before { background: CanvasText; } .heat-reading { border-color: CanvasText !important; } }
+/* Live canvas work surfaces are compact drafting-paper overlays. Variables stay
+ * local to each moved element, so the same native forms and validation handlers
+ * retain their identities in desktop, browser and VS Code hosts. */
+.endless-canvas .canvas-panel {
+  color-scheme: light;
+  --canvas: #F5F0E5;
+  --surface: #FFFAF0;
+  --surface-soft: #F1EBDD;
+  --elevated: #E7DFCD;
+  --ink: #17324E;
+  --muted: #51667C;
+  --line: #C7C2B3;
+  --line-strong: #718295;
+  --accent: #173C60;
+  --accent-hover: #0C2D4D;
+  --accent-ink: #FFFAF0;
+  --accent-soft: #DEE8EE;
+  --focus: #173C60;
+  --focus-gap: #FFFAF0;
+  --brand-gold: #88652B;
+  --emphasis-surface: #17324E;
+  --emphasis-ink: #FFFAF0;
+  --success: #33613A;
+  --success-soft: #DBE4CD;
+  --warning: #795618;
+  --warning-soft: #FAEDD2;
+  --danger: #9B352A;
+  --danger-soft: #FBE8E3;
+  --info: #385974;
+  --info-soft: #DFE9EE;
+  --connection: #466B88;
+  border-radius: 10px;
+  box-shadow: 0 10px 32px rgb(0 8 20 / 22%);
+}
+.endless-canvas .canvas-panel.is-active { border-color: var(--line-strong); box-shadow: 0 0 0 1px var(--line-strong),0 12px 34px rgb(0 8 20 / 24%); }
+.endless-canvas .canvas-panel .canvas-panel-body > :is(.view,.workspace-tab-panel,.office-tab-panel,#ceo-panel) { padding: 18px; }
+.endless-canvas .canvas-panel .page-heading { margin-bottom: 16px; }
+.endless-canvas .canvas-panel .page-heading h1 { font-size: 25px; line-height: 1.15; }
+.endless-canvas .canvas-panel .panel { padding: 16px; }
+.endless-canvas .canvas-panel :is(.canvas-scope-content,.canvas-crew-content,.canvas-source-content) { padding: 18px; }
+.endless-canvas .canvas-panel .canvas-surface-intro { margin-bottom: 16px; font-size: 13px; }
+.endless-canvas .canvas-panel :is(.canvas-crew-content h2,.canvas-source-content h2) { margin-bottom: 16px; font-size: 26px; }
+.endless-canvas .canvas-panel .canvas-crew-member { padding: 12px 0; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .conversation-header { padding: 14px 16px; gap: 8px; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .assistant-identity { gap: 9px; min-width: 0; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .assistant-identity h2 { font-size: 23px; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .assistant-identity p { font-size: 11px; line-height: 1.35; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .conversation-composer { padding: 14px 16px 16px; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .composer-context { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 9px; margin-bottom: 10px; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .composer-context > .field:last-child { grid-column: 1 / -1; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .composer-context .field { gap: 4px; font-size: 11px; line-height: 1.3; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .composer-context select { width: 100%; min-height: 36px; font-size: 12px; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .conversation-composer textarea { min-height: 88px; font-size: 14px; line-height: 1.55; padding: 10px 12px; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .composer-footer { gap: 10px; margin-top: 12px; align-items: center; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .composer-footer > span { font-size: 11px; line-height: 1.4; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .composer-footer button { min-height: 40px; font-size: 12px; white-space: nowrap; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .conversation-messages { min-height: 100px; padding: 16px; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .conversation-empty h2 { font-size: 21px; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .conversation-empty > p { font-size: 12px; }
+.endless-canvas .canvas-panel[data-panel-id='donna'] .donna-options-menu { margin: 8px; }
+@media (forced-colors: active) {
+  .endless-canvas .canvas-panel { background: Canvas; color: CanvasText; border: 1px solid CanvasText; box-shadow: none; }
+  .endless-canvas .canvas-panel.is-active { outline: 2px solid Highlight; box-shadow: none; }
+}

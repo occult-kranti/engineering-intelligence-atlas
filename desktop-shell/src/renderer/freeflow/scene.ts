@@ -3,7 +3,7 @@
 //
 // DOM CLASS CONTRACT (for the next CSS packet):
 //   .ff-scene                 host root (role=application, tabindex=-1)
-//   .ff-table                 tactile conference table / drafting mat (behind world)
+//   .ff-table                 continuous blueprint grid (no physical table object)
 //   .ff-grid                  coordinate grid inside table
 //   .ff-world                 CSS3D world layer (transform-origin 0 0, inline transform = cameraTransform)
 //   .ff-threads               svg behind cards; .ff-thread[data-kind] + .ff-thread--contract|staff|ownership
@@ -21,12 +21,21 @@ import {
   type Camera, type Rect, type Size, DEFAULT_CAMERA, cameraTransform, normalizeCamera, visibleRect,
 } from './camera.js';
 import type { FreeflowScene, SceneNode, SceneThread } from './model.js';
+import { mountRelief3D, type ReliefHandle } from './relief3d.js';
+
+export type CanvasNodeAction = 'chat' | 'roadmap' | 'whiteboard' | 'ownership' | 'hire';
 
 export const RICH_NODE_BUDGET = 240;
 export const THREAD_BUDGET = 160;
+const GRID_MAX_EXTENT = 150000;
+// Common multiple of the shipped 16/80, 24/120 and 32/160px grid periods.
+// Moving the finite patch must not move its lines relative to native geometry.
+const GRID_PHASE = 480;
 const SVGNS = 'http://www.w3.org/2000/svg';
 
 export interface SceneCallbacks {
+  graphics?: boolean;
+  onCanvasAction?(action: CanvasNodeAction, node: SceneNode): void;
   onSelect?(nodeId: string | null, node: SceneNode | null): void;
   onOpen?(node: SceneNode): void;
   onViewportChange?(size: Size): void;
@@ -45,6 +54,7 @@ export interface SceneRenderer {
   setCamera(camera: Camera): void;
   select(nodeId: string | null): void;
   selectThread(threadId: string | null): void;
+  setActive(active: boolean): void;
   getViewport(): Size;
   getCamera(): Camera;
   destroy(): void;
@@ -197,6 +207,19 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   e.dataset.lod = lod;
   e.dataset.status = n.status;
   e.classList.toggle('ff-node--table-plan', n.metadata['tableBlueprint'] === true);
+  e.classList.toggle('ff-node--company-plan', n.metadata['companyFootprint'] === true);
+  e.classList.toggle('ff-node--company-marker', n.metadata['companyMarker'] === true);
+  e.dataset.companyFootprint = String(n.metadata['companyFootprint'] === true);
+  if (n.metadata['companyFootprint'] === true || n.kind === 'office' || n.kind === 'room') e.dataset.geometry = 'container';
+  else delete e.dataset.geometry;
+  // Department color conveys a saved assignment, never inferred authority.
+  let hue = 2166136261;
+  for (const char of n.departmentId ?? '') { hue ^= char.charCodeAt(0); hue = Math.imul(hue, 16777619); }
+  const swatches = ['#32639a', '#267b73', '#ac5141', '#7953a1', '#89641f', '#4b763c'];
+  e.style.setProperty('--person-color', n.departmentId ? swatches[(hue >>> 0) % swatches.length]! : '#526579');
+  e.style.setProperty('--person-ink', '#fff');
+  e.style.setProperty('--person-diameter', `${Math.max(10, Math.min(32, n.rect.height - 18))}px`);
+  e.style.setProperty('--person-label-size', `${Math.max(9, Math.min(12, n.rect.height * .22))}px`);
   e.classList.toggle('is-selected', selected);
   e.setAttribute('aria-label', describeNode(n));
   e.setAttribute('aria-pressed', String(selected));
@@ -205,9 +228,33 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   const paper = e.firstElementChild as HTMLElement;
   const hk = heatOf(n);
   const assign = typeof n.metadata['assignment'] === 'string' ? (n.metadata['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department');
-  const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}|${n.blueprintPreview ? JSON.stringify(n.blueprintPreview) : ''}`;
+  const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}|${n.metadata['blueprintDetail'] ?? ''}|${n.metadata['companyFootprint'] ?? ''}|${n.blueprintPreview ? JSON.stringify(n.blueprintPreview) : ''}`;
   if (e.dataset.sig === key) return;
   e.dataset.sig = key;
+  if (n.metadata['companyMarker'] === true) {
+    const initials = n.label.trim().split(/\s+/).slice(0, 2).map(word => Array.from(word)[0] ?? '').join('').toUpperCase();
+    paper.replaceChildren(el('div', 'ff-node-title', initials || 'CO'));
+    return;
+  }
+  if (n.metadata['companyFootprint'] === true) {
+    e.setAttribute('role', 'group');
+    const header = el('div', 'ff-company-plan-header');
+    header.append(el('div', 'ff-table-plan-title', n.label), el('div', 'ff-table-plan-caption', n.subtitle));
+    const boards = el('div', 'ff-company-plan-boards');
+    boards.setAttribute('aria-label', `Tools for ${n.label}`);
+    for (const [action, label] of [['chat', 'Donna'], ['roadmap', 'Roadmap'], ['whiteboard', 'Whiteboard'], ['ownership', 'Ownership'], ['hire', 'Hire employee']] as const) {
+      const button = el('button', 'ff-company-board-action', label); button.type = 'button';
+      button.dataset.canvasAction = action;
+      button.setAttribute('aria-label', `${label} · ${n.label}`);
+      boards.append(button);
+    }
+    paper.replaceChildren(header, boards);
+    if (n.metadata['blueprintDetail'] === 'proxy') {
+      const preview = tablePlanSvg(n); if (preview) { preview.classList.add('ff-company-proxy-plan'); paper.append(preview); }
+      paper.append(el('span', 'ff-company-proxy-hint', 'Zoom or open this company to explore its rooms'));
+    }
+    return;
+  }
   if (n.metadata['tableBlueprint'] === true) {
     paper.replaceChildren(el('div', 'ff-table-plan-title', n.label));
     const plan = tablePlanSvg(n);
@@ -303,15 +350,52 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
   let focusedId: string | null = null;
   let tabId: string | null = null; // roving tab stop
   let destroyed = false;
+  let relief: ReliefHandle | null = null;
+  let gpuSurfaces = new Set<string>();
   let silent = 0; // suppress callbacks during internal clears
   const live = new Map<string, HTMLElement>();
   const threadEls = new Map<string, SVGPathElement>();
   const nodesById = new Map<string, SceneNode>();
   let labelEl: SVGTextElement | null = null;
   const st: SceneStats = { total: 0, visible: 0, rich: 0, simple: 0, threads: 0, threadsVisible: 0, domCreated: 0, domRemoved: 0, updates: 0, cameraUpdates: 0, capped: false, message: '' };
+  let themeObserver: MutationObserver | null = null;
+  if (callbacks.graphics) {
+    world.style.zIndex = '1';
+    relief = mountRelief3D(root, value => {
+      root.dataset.graphics = value.state;
+      root.dataset.graphicsReason = value.reason;
+      for (const key of ['frames', 'geometries', 'materials', 'instances', 'drawCalls', 'triangles', 'contextLosses'] as const) {
+        root.dataset[`graphics${key[0]!.toUpperCase()}${key.slice(1)}`] = String(value[key]);
+      }
+      root.dataset.graphicsPending = String(value.pending);
+      gpuSurfaces = new Set(value.state === 'webgl' ? value.surfaceIds : []);
+      for (const [id, node] of live) node.dataset.gpuSurface = String(gpuSurfaces.has(id));
+    });
+    const syncTheme = () => relief?.setTheme(document.documentElement.dataset.theme === 'drafting' ? 'drafting' : 'blueprint');
+    syncTheme();
+    if (typeof MutationObserver !== 'undefined') {
+      themeObserver = new MutationObserver(syncTheme);
+      themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    }
+  }
 
   function paintCamera(): void {
     world.style.transform = cameraTransform(camera, viewport);
+    relief?.setCamera(camera, viewport);
+    // The blueprint grid is in the same world plane as rooms, including tilt.
+    const grid = table.firstElementChild as HTMLElement | null;
+    if (grid && callbacks.graphics) {
+      const vr = visibleRect(camera, viewport, 400);
+      const width = Math.min(GRID_MAX_EXTENT, vr.width + GRID_PHASE);
+      const height = Math.min(GRID_MAX_EXTENT, vr.height + GRID_PHASE);
+      // A capped patch stays around the camera instead of the far corner of an
+      // unbounded horizon extent. Uncapped spans still cover the complete view;
+      // one phase of padding absorbs the origin's downward snap.
+      const snap = (value: number) => Math.floor(value / GRID_PHASE) * GRID_PHASE;
+      const x = snap(vr.width + GRID_PHASE > GRID_MAX_EXTENT ? camera.x - width / 2 : vr.x);
+      const y = snap(vr.height + GRID_PHASE > GRID_MAX_EXTENT ? camera.y - height / 2 : vr.y);
+      grid.style.cssText = `position:absolute;left:0;top:0;transform-origin:0 0;width:${width}px;height:${height}px;transform:${cameraTransform(camera, viewport)} translate(${x}px,${y}px)`;
+    }
   }
 
   function threadPath(t: SceneThread): string | null {
@@ -348,6 +432,7 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
     root.dataset.scope = scene ? (scene.focus.kind === 'portfolio' ? 'portfolio' : 'company') : 'portfolio';
     paintWorldTable();
     if (!scene) {
+      relief?.update(null);
       for (const [, e] of live) { e.remove(); st.domRemoved++; }
       live.clear();
       for (const [, p] of threadEls) p.remove();
@@ -367,9 +452,24 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
     if (!tab) tab = (interactive.find(eligible) ?? null)?.id ?? null;
     tabId = tab;
     const cands = scene.nodes.filter((n) => n.id === selectedId || n.id === focusedId || n.id === tabId || intersects(n.rect, vis));
-    // Selected nodes stay reachable. Decorative blueprint previews cannot displace company chairs.
-    const rank = (n: SceneNode) => (n.id === selectedId || n.id === focusedId || n.id === tabId ? 0 : n.metadata['tableBlueprint'] === true ? 2 : 1);
-    const sorted = [...cands].sort((a, b) => rank(a) - rank(b) || a.rect.width * a.rect.height - b.rect.width * b.rect.height);
+    // Keep the parent footprint and its company marker reachable before detail.
+    // Dense teams still have an independent searchable native record list.
+    const rank = (n: SceneNode) => n.id === selectedId || n.id === focusedId || n.id === tabId ? 0
+      : n.metadata['companyFootprint'] === true || n.metadata['companyMarker'] === true ? 1
+        : n.kind === 'office' || n.kind === 'room' ? 2 : 3;
+    const distance = (r: Rect): number => {
+      const dx = Math.max(r.x - camera.x, 0, camera.x - r.x - r.width);
+      const dy = Math.max(r.y - camera.y, 0, camera.y - r.y - r.height);
+      return dx * dx + dy * dy;
+    };
+    const companyDistance = new Map<string, number>();
+    for (const n of cands) if (n.companyId && n.metadata['companyFootprint'] === true) companyDistance.set(n.companyId, distance(n.rect));
+    const proximity = (n: SceneNode) => companyDistance.get(n.companyId ?? '') ?? distance(n.rect);
+    // Preserve active focus, then spend the budget near the camera. The
+    // conservative horizon extent must not select only the first stored firms.
+    const sorted = [...cands].sort((a, b) => Number(rank(b) === 0) - Number(rank(a) === 0)
+      || proximity(a) - proximity(b) || rank(a) - rank(b) || distance(a.rect) - distance(b.rect)
+      || a.rect.width * a.rect.height - b.rect.width * b.rect.height);
     const chosen = sorted.slice(0, RICH_NODE_BUDGET);
     const chosenIds = new Set(chosen.map((n) => n.id));
     st.capped = cands.length > chosen.length;
@@ -383,6 +483,7 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
       let e = live.get(n.id);
       if (!e) { e = buildNode(n); live.set(n.id, e); nodeLayer.appendChild(e); st.domCreated++; }
       fillNode(e, n, lod, n.id === selectedId, n.id === tabId);
+      e.dataset.gpuSurface = String(gpuSurfaces.has(n.id));
     }
     for (const [id, e] of live) {
       if (chosenIds.has(id)) continue;
@@ -422,6 +523,7 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
     st.threads = scene.threads.length; st.threadsVisible = tv;
     st.message = `Showing ${chosen.length} of ${scene.nodes.length} nodes${st.capped ? ' (render budget reached; use the list for all records)' : ''}`;
     budget.textContent = st.message;
+    relief?.update(scene);
     paintThreadLabel();
     updateCaption();
     paintCamera();
@@ -490,11 +592,17 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
   };
   const onClick = (ev: MouseEvent) => {
     const id = nodeAt(ev.target);
+    const action = (ev.target as HTMLElement).closest<HTMLButtonElement>('button[data-canvas-action]')?.dataset.canvasAction;
+    if (action && id && ['chat', 'roadmap', 'whiteboard', 'ownership', 'hire'].includes(action)) {
+      const node = nodesById.get(id); if (node) callbacks.onCanvasAction?.(action as CanvasNodeAction, node);
+      ev.stopPropagation(); return;
+    }
     if ((ev.target as HTMLElement).closest?.('.ff-node-open') && id) { const n = nodesById.get(id); if (n) callbacks.onOpen?.(n); return; }
     if (id) { doSelect(id, true); live.get(id)?.focus({ preventScroll: true }); }
   };
-  const onDbl = (ev: MouseEvent) => { const id = nodeAt(ev.target); const n = id ? nodesById.get(id) : null; if (n) callbacks.onOpen?.(n); };
+  const onDbl = (ev: MouseEvent) => { if ((ev.target as HTMLElement).closest?.('button[data-canvas-action]')) return; const id = nodeAt(ev.target); const n = id ? nodesById.get(id) : null; if (n) callbacks.onOpen?.(n); };
   const onKey = (ev: KeyboardEvent) => {
+    if ((ev.target as HTMLElement).closest?.('button[data-canvas-action]')) return;
     const id = nodeAt(ev.target);
     const handle = () => { ev.preventDefault(); ev.stopPropagation(); };
     if (!id) {
@@ -611,10 +719,13 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
     },
     getViewport: () => ({ ...viewport }),
     getCamera: () => ({ ...camera }),
+    setActive: (active) => relief?.setActive(active),
     stats: () => ({ ...st }),
     destroy() {
       if (destroyed) return;
       destroyed = true;
+      themeObserver?.disconnect(); themeObserver = null;
+      relief?.destroy(); relief = null;
       silent = 1;
       root.removeEventListener('click', onClick);
       root.removeEventListener('dblclick', onDbl);

@@ -14,4 +14,9 @@ for (const name of ['chrome.html', 'chrome.css', 'studio-tokens.css', 'freeflow.
   if (name === 'freeflow.css' && !fs.existsSync(from)) continue;
   fs.copyFileSync(from, path.join(dest, name));
 }
+// Pinned local graphics dependency; the license is retained in the bundle.
+// Keep it inside the renderer graph so desktop, VS Code and browser use the
+// same content-addressed asset without any runtime CDN request.
+fs.mkdirSync(path.join(dest, 'freeflow', 'vendor'), { recursive: true });
+fs.copyFileSync(path.join(src, 'freeflow', 'vendor', 'three.js'), path.join(dest, 'freeflow', 'vendor', 'three.js'));
 console.log(`Copied renderer assets to ${dest}`);

@@ -11,7 +11,7 @@ import http from 'node:http';
 import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { startServer } from '../../headless-runtime/server.mjs';
-import { assertEndlessShell, openCanvasSurface, settleCanvas, canvasPanelState } from '../../scripts/endless-canvas-browser-checks.mjs';
+import { assertEndlessShell, openCanvasSurface, settleCanvas, canvasPanelState, checkEndlessPanelInteractions } from '../../scripts/endless-canvas-browser-checks.mjs';
 
 const extension=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const repository=path.resolve(extension,'..');
@@ -21,11 +21,12 @@ const {createOfficePanel,readAssets}=require('./src/workbench-panel.js');
 const {RuntimeClient}=require('./src/runtime-client.js');
 const output=path.join(extension,'.work/canvas-smoke');
 const temporary=await fs.mkdtemp(path.join(os.tmpdir(),'daftar-canvas-native-'));
-const receipt={schemaVersion:1,status:'running',startedAt:new Date().toISOString(),
+const receipt={schemaVersion:2,status:'running',startedAt:new Date().toISOString(),
   scope:'Actual bundled shared renderer and workbench bridge in Chromium, connected through an emulated VS Code parent to a real temporary native headless runtime',
   installedVsCodeVerified:false,productionConnectionVerified:false,ownerDataUsed:false,
-  viewport:{width:1440,height:900},browserSandbox:true,providerCalls:0,externalRequests:[],backendNetworkAttempts:[],
+  viewport:{width:1440,height:900},viewports:[{width:1440,height:900},{width:1366,height:768}],browserSandbox:true,providerCalls:0,externalRequests:[],backendNetworkAttempts:[],
   pageErrors:[],consoleErrors:[],cspErrors:[],rpcFailures:[],checks:[],screenshots:[],rpcMethods:[],
+  graphics:[],webglVerified:false,hardwareAccelerationVerified:false,
   controlCredentialInBrowser:false,controlCredentialLocation:'Node harness memory only',
 };
 let browser,page,service,uiServer,controller,client,stage='preflight',token='',html='',uiOrigin='';
@@ -39,6 +40,245 @@ await fs.mkdir(output,{recursive:true});
 try{await fs.copyFile(path.join(output,'receipt.json'),path.join(output,`receipt-prior-${Date.now()}.json`));}catch(error){if(error.code!=='ENOENT')throw error;}
 function cleanEnvironment(){const environment={};for(const key of ['PATH','HOME','LANG','LC_ALL','TMPDIR','LD_LIBRARY_PATH'])if(process.env[key])environment[key]=process.env[key];return environment;}
 async function screenshot(name){if(!page||page.isClosed())return;const filename=`${name}.png`;await page.screenshot({path:path.join(output,filename),fullPage:false,timeout:10000});receipt.screenshots.push(filename);}
+async function cameraState(label){
+  const camera=await page.locator('#freeflow-host .ff-world').evaluate(node=>{
+    const transform=node.style.transform;
+    return {transform,pitch:Number(transform.match(/rotateX\(([-+\d.e]+)deg\)/)?.[1]),yaw:Number(transform.match(/rotate\(([-+\d.e]+)deg\)/)?.[1])};
+  });
+  assert.ok(Number.isFinite(camera.pitch)&&Number.isFinite(camera.yaw),`${label}: shared camera has finite pitch and yaw`);
+  return camera;
+}
+async function assertTopView(label){
+  const camera=await cameraState(label);
+  assert.equal(Math.abs(camera.pitch),0,`${label}: the plan starts directly overhead`);
+  assert.equal(Math.abs(camera.yaw),0,`${label}: the plan starts unrotated`);
+  return camera;
+}
+async function assertBlueprintPlane(label){
+  const plane=await page.evaluate(()=>{
+    const visible=node=>{
+      const rect=node.getBoundingClientRect(),style=getComputedStyle(node);
+      return style.display!=='none'&&style.visibility!=='hidden'&&Number(style.opacity)>0&&rect.width>0&&rect.height>0;
+    };
+    return{tables:[...document.querySelectorAll('#freeflow-host .ff-world-table')].filter(visible).length,
+      chairs:document.querySelectorAll('#freeflow-host .ff-chair-svg').length,
+      worlds:document.querySelectorAll('#freeflow-host .ff-world').length};
+  });
+  assert.equal(plane.tables,0,`${label}: the infinite blueprint plane has no visible conference-table backdrop`);
+  assert.equal(plane.chairs,0,`${label}: company markers do not introduce chair illustrations`);
+  assert.equal(plane.worlds,1,`${label}: all offices remain on one continuous canvas`);
+}
+async function captureGraphics(label){
+  await page.waitForFunction(()=>{
+    const data=document.querySelector('#freeflow-host .ff-scene')?.dataset;
+    return data?.graphics==='webgl'||(data?.graphics==='fallback'&&data.graphicsReason&&data.graphicsReason!=='init'&&['false','0'].includes(data.graphicsPending));
+  });
+  const graphics=await page.evaluate(()=>{
+    const root=document.querySelector('#freeflow-host .ff-scene');
+    const canvases=[...document.querySelectorAll('#freeflow-host canvas.ff-relief3d')];
+    const canvas=canvases[0];
+    const number=key=>root?.dataset[key]===undefined?null:Number(root.dataset[key]);
+    const result={state:root.dataset.graphics,reason:root.dataset.graphicsReason||null,
+      frames:number('graphicsFrames'),geometries:number('graphicsGeometries'),materials:number('graphicsMaterials'),
+      instances:number('graphicsInstances'),pending:root.dataset.graphicsPending,
+      drawCalls:number('graphicsDrawCalls'),triangles:number('graphicsTriangles'),contextLosses:number('graphicsContextLosses'),
+      scene:{width:root.getBoundingClientRect().width,height:root.getBoundingClientRect().height},
+      canvasCount:canvases.length,canvas:canvas?{width:canvas.width,height:canvas.height,
+        cssWidth:canvas.getBoundingClientRect().width,cssHeight:canvas.getBoundingClientRect().height,
+        inTransformedWorld:!!canvas.closest('.ff-world'),pointerEvents:getComputedStyle(canvas).pointerEvents,
+        display:getComputedStyle(canvas).display,visibility:getComputedStyle(canvas).visibility,opacity:Number(getComputedStyle(canvas).opacity)}:null,
+      viewport:{width:innerWidth,height:innerHeight,devicePixelRatio},context:null};
+    // Query only the renderer's existing successful context. Do not try a new
+    // context, change browser flags, or turn a fallback into a graphics pass.
+    if(result.state==='webgl'&&canvas){
+      const gl=canvas.getContext('webgl2');
+      if(gl){
+        const debug=gl.getExtension('WEBGL_debug_renderer_info');
+        const text=value=>String(value??'').slice(0,240);
+        result.context={version:text(gl.getParameter(gl.VERSION)),shadingLanguage:text(gl.getParameter(gl.SHADING_LANGUAGE_VERSION)),
+          vendor:text(gl.getParameter(gl.VENDOR)),renderer:text(gl.getParameter(gl.RENDERER)),
+          unmaskedVendor:debug?text(gl.getParameter(debug.UNMASKED_VENDOR_WEBGL)):null,
+          unmaskedRenderer:debug?text(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)):null,
+          lost:gl.isContextLost(),drawingBufferWidth:gl.drawingBufferWidth,drawingBufferHeight:gl.drawingBufferHeight};
+      }
+    }
+    return result;
+  });
+  graphics.label=label;
+  receipt.graphics.push(graphics);
+  assert.equal(graphics.canvasCount,1,`${label}: one relief drawing layer shares the world`);
+  assert.ok(graphics.canvas&&graphics.canvas.width>0&&graphics.canvas.height>0,`${label}: drawing buffer has a finite size`);
+  assert.equal(graphics.canvas.inTransformedWorld,false,`${label}: the relief layer does not receive the CSS camera a second time`);
+  assert.equal(graphics.canvas.pointerEvents,'none',`${label}: semantic native controls retain picking and keyboard ownership`);
+  for(const key of ['frames','geometries','materials','instances','drawCalls','triangles','contextLosses']){
+    assert.ok(Number.isSafeInteger(graphics[key])&&graphics[key]>=0,`${label}: ${key} is a bounded nonnegative counter`);
+  }
+  assert.ok(['true','false','0','1'].includes(graphics.pending),`${label}: pending rendering is reported explicitly`);
+  if(graphics.state==='webgl'){
+    assert.ok(graphics.context&&!graphics.context.lost,`${label}: reported WebGL has an actual live WebGL2 context`);
+    assert.match(graphics.context.version,/WebGL 2/i,`${label}: graphics are WebGL2`);
+    assert.ok(graphics.canvas.cssWidth>0&&graphics.canvas.cssHeight>0&&graphics.canvas.display!=='none'&&graphics.canvas.visibility!=='hidden'&&graphics.canvas.opacity>0,`${label}: the successful drawing layer is visible`);
+    assert.ok(Math.abs(graphics.canvas.cssWidth-graphics.scene.width)<=1&&Math.abs(graphics.canvas.cssHeight-graphics.scene.height)<=1,`${label}: the drawing layer covers the same viewport as its semantic world`);
+    assert.ok(graphics.frames>0&&graphics.drawCalls>0&&graphics.triangles>0,`${label}: real geometry was submitted to a successful frame`);
+    assert.equal(graphics.geometries,1,`${label}: relief reuses one box geometry`);
+    assert.equal(graphics.materials,3,`${label}: relief retains three fixed material batches`);
+    assert.ok(graphics.instances<=2048&&graphics.drawCalls<=3&&graphics.triangles<=2048*12,`${label}: visible geometry stays within the renderer's admitted resource bounds`);
+    const renderer=graphics.context.unmaskedRenderer||graphics.context.renderer;
+    graphics.reportedRendererKind=/swiftshader|llvmpipe|softpipe|software|microsoft basic render|warp/i.test(renderer)?'software':'unclassified';
+    // A software WebGL result proves rendering, not laptop hardware performance.
+    receipt.webglVerified=true;
+  }else{
+    assert.equal(typeof graphics.reason,'string',`${label}: unavailable graphics have a visible reason`);
+    assert.ok(graphics.reason.length>0,`${label}: fallback is explicit`);
+    assert.equal(graphics.reason,'webgl2 unavailable',`${label}: shader, initialization, render or unexpected context-loss failures cannot pass as missing browser capability`);
+    assert.equal(receipt.webglVerified,false,`${label}: a successful graphics context must not silently disappear during ordinary camera and popup input`);
+    assert.equal(graphics.context,null,`${label}: fallback did not start a second graphics attempt`);
+  }
+  return graphics;
+}
+async function checkGraphicsRecovery(){
+  const before=await captureGraphics('1366×768 final plan before lifecycle checks');
+  if(before.state!=='webgl'){
+    receipt.graphicsRecovery={status:'not-run',reason:'WebGL unavailable; no graphics lifecycle result is claimed'};
+    return;
+  }
+  await page.waitForFunction(()=>['false','0'].includes(document.querySelector('#freeflow-host .ff-scene')?.dataset.graphicsPending));
+  const framesBefore=await page.locator('#freeflow-host .ff-scene').getAttribute('data-graphics-frames');
+  await page.waitForTimeout(300);
+  const framesAfter=await page.locator('#freeflow-host .ff-scene').getAttribute('data-graphics-frames');
+  receipt.idleGraphics={milliseconds:300,frames:Number(framesAfter)-Number(framesBefore)};
+  // Permit up to two coalesced asynchronous snapshot updates, but reject a
+  // continuously running 60 Hz drawing loop when there is no user input.
+  assert.ok(receipt.idleGraphics.frames>=0&&receipt.idleGraphics.frames<=2,'Idle relief does not spin a continuous animation loop');
+  const extension=await page.locator('#freeflow-host canvas.ff-relief3d').evaluateHandle(canvas=>canvas.getContext('webgl2')?.getExtension('WEBGL_lose_context')||null);
+  try{
+    if(!await extension.evaluate(value=>!!value)){
+      receipt.graphicsRecovery={status:'unavailable',reason:'This WebGL context does not expose WEBGL_lose_context'};
+      return;
+    }
+    const draft=await page.locator('#chat-message').inputValue();
+    const canonicalBefore=JSON.stringify((await client.snapshot()).snapshot);
+    const lossCount=before.contextLosses;
+    await extension.evaluate(value=>value.loseContext());
+    await page.waitForFunction(expected=>{
+      const root=document.querySelector('#freeflow-host .ff-scene');
+      return root?.dataset.graphics==='fallback'&&Number(root.dataset.graphicsContextLosses)===expected;
+    },lossCount+1);
+    assert.equal(await page.locator('#chat-message').inputValue(),draft,'Context loss leaves the semantic popup and its draft intact');
+    // Restoration is one explicit standard WebGL lifecycle request, never a
+    // new browser/context, renderer substitute, flag change or automatic retry.
+    await page.waitForTimeout(100);
+    await extension.evaluate(value=>value.restoreContext());
+    await page.waitForFunction(previous=>{
+      const root=document.querySelector('#freeflow-host .ff-scene');
+      return root?.dataset.graphics==='webgl'&&Number(root.dataset.graphicsFrames)>previous;
+    },before.frames);
+    const restored=await captureGraphics('1366×768 actual WebGL context restored');
+    assert.equal(restored.contextLosses,lossCount+1,'One real context loss was observed and recovered');
+    assert.equal(restored.geometries,before.geometries,'Restoration does not accumulate geometry objects');
+    assert.equal(restored.materials,before.materials,'Restoration does not accumulate materials');
+    assert.equal(await page.locator('#chat-message').inputValue(),draft,'Restoration preserves the live popup draft');
+    assert.equal(JSON.stringify((await client.snapshot()).snapshot),canonicalBefore,'A graphics context lifecycle cannot mutate canonical office state');
+    await assertEndlessShell(page,'After real WebGL context restoration');await assertBlueprintPlane('After context restoration');
+    await screenshot('07-webgl-restored-1366x768');
+    receipt.graphicsRecovery={status:'passed',contextLosses:restored.contextLosses,framesBefore:before.frames,framesAfter:restored.frames,nativeStateUnchanged:true,draftRetained:true};
+    receipt.checks.push('Actual WebGL context loss/restoration preserves native state, live drafts and fixed graphics resource bounds');
+  }finally{await extension.dispose();}
+}
+async function checkArrangeControls(){
+  const donna=page.locator('.canvas-panel[data-panel-id="donna"]');
+  const trigger=donna.locator('.canvas-panel-arrange'),popup=donna.locator('.canvas-arrange-popup');
+  const draft=await page.locator('#chat-message').inputValue();
+  const roomDraft=await page.locator('#room-name').inputValue();
+  const original=await canvasPanelState(page,'donna');
+  const world=page.locator('#freeflow-host .ff-world'),camera=await world.evaluate(node=>node.style.transform);
+  const input=await page.locator('#chat-message').elementHandle();assert.ok(input,'Arrange starts with the existing live chat form');
+  try{
+    assert.equal(await trigger.isEnabled(),true,'An expanded unlocked surface can be arranged');
+    await trigger.click();await popup.waitFor({state:'visible'});
+    assert.equal(await trigger.getAttribute('aria-expanded'),'true');
+    assert.equal(await popup.getAttribute('role'),'group','Arrange is a local control group, not a new screen');
+    assert.equal(await popup.evaluate(node=>!!node.closest('.ff-world')),true,'Arrange belongs to the same world as its surface');
+    assert.equal(await page.locator('.canvas-arrange-popup:not([hidden])').count(),1,'Only one Arrange popup is active');
+    assert.equal(await popup.locator('[data-arrange-action]').count(),8,'Arrange exposes all eight movement and sizing actions');
+    for(const [name,axis,delta] of [['left','x',-20],['right','x',20],['up','y',-20],['down','y',20],['narrower','width',-20],['wider','width',20],['shorter','height',-20],['taller','height',20]]){
+      const before=await canvasPanelState(page,'donna');
+      await popup.locator(`[data-arrange-action="${name}"]`).click();
+      const after=await canvasPanelState(page,'donna');
+      assert.deepEqual(after.rect,{...before.rect,[axis]:before.rect[axis]+delta},`${name}: an actual click changes only the requested dimension by 20 world units`);
+      assert.equal(await world.evaluate(node=>node.style.transform),camera,`${name}: popup arrangement does not move the camera`);
+      assert.equal(await page.locator('#chat-message').inputValue(),draft,`${name}: the exact unsent chat draft survives`);
+      assert.equal(await page.locator('#room-name').inputValue(),roomDraft,`${name}: the other live surface retains its draft`);
+    }
+    assert.deepEqual((await canvasPanelState(page,'donna')).rect,original.rect,'Inverse Arrange actions restore the exact starting geometry');
+    assert.equal(await input.evaluate(node=>node===document.getElementById('chat-message')),true,'Arrange preserves the original input element');
+    assert.match(await popup.locator('[role="status"]').innerText(),/Position .*Size /,'Arrange reports the resulting geometry');
+    await screenshot('08-arrange-1366x768');
+    await page.keyboard.press('Escape');
+    assert.equal(await popup.isHidden(),true,'Escape dismisses Arrange');
+    assert.equal(await trigger.evaluate(node=>node===document.activeElement),true,'Escape returns focus to Arrange');
+    assert.equal(await donna.getAttribute('data-open'),'true','Dismissing Arrange keeps the work surface open');
+    await donna.locator('.canvas-panel-pin').click();
+    assert.equal(await trigger.isDisabled(),true,'Pinned surfaces disable click arrangement');
+    assert.deepEqual((await canvasPanelState(page,'donna')).rect,original.rect,'Pinning changes no geometry');
+    await donna.locator('.canvas-panel-pin').click();
+    await trigger.click();await popup.locator('.canvas-arrange-close').click();
+    assert.equal(await popup.isHidden(),true,'The explicit close control dismisses Arrange');
+    assert.equal(await trigger.evaluate(node=>node===document.activeElement),true,'The close control restores focus to Arrange');
+    assert.equal(await page.locator('#chat-message').inputValue(),draft);
+    assert.equal(receipt.providerCalls,0);assert.deepEqual(receipt.backendNetworkAttempts,[]);
+    receipt.arrangeControls={actions:8,stepWorldUnits:20,inverseGeometryRestored:true,liveInputRetained:true,exactDraftsRetained:true,cameraUnchanged:true,pinnedDisabled:true,focusRestored:true};
+    receipt.checks.push('Arrange click controls move/resize in exact steps, preserve live drafts, keep the camera fixed and restore focus');
+  }finally{await input.dispose();}
+}
+async function checkCompanyOwnership(company){
+  const draft=await page.locator('#chat-message').inputValue();
+  const input=await page.locator('#chat-message').elementHandle();
+  const world=await page.locator('#freeflow-host .ff-world').elementHandle();
+  assert.ok(input&&world,'Ownership starts with the existing canvas and live Donna form');
+  try{
+    const before=await client.snapshot();
+    assert.notEqual(before.snapshot.activeCompanyId,company.id,'Ownership exercises a different company scope');
+    await page.locator('.canvas-panel[data-panel-id="donna"] .canvas-panel-close').click();
+    assert.equal(await page.locator('#chat-message').inputValue(),draft,'Closing the chat surface keeps its exact draft');
+    await page.getByRole('button',{name:'Fit scene to view',exact:true}).click();await settleCanvas(page);
+    const footer=page.getByRole('button',{name:`Ownership · ${company.name}`,exact:true});
+    assert.equal(await footer.count(),1,'The selected company has one Ownership footer action');
+    assert.equal(await footer.evaluate(node=>node.closest('.ff-node')?.dataset.companyFootprint),'true','Ownership is attached to its company floorplan');
+    await footer.click();
+    const ownership=page.locator('.canvas-panel[data-panel-id="workspace-softboard"]');
+    await ownership.waitFor({state:'visible'});
+    await page.waitForFunction(expected=>document.getElementById('office-company-select')?.value===expected.id&&document.querySelector('#workspace-softboard .org-company')?.textContent===expected.name,{id:company.id,name:company.name});
+    await settleCanvas(page);
+    assert.equal(await ownership.getAttribute('aria-label'),'People & ownership','Ownership reuses the registered people surface');
+    assert.equal(await ownership.getAttribute('data-open'),'true');
+    assert.equal(await ownership.evaluate(node=>!!node.closest('.ff-world')),true,'People and ownership stays on the infinite canvas');
+    const confirmed=await client.snapshot();
+    assert.equal(confirmed.snapshot.activeCompanyId,company.id,'The footer waits for canonical native company selection');
+    const officeId=await page.locator('#office-office-select').inputValue();
+    const office=confirmed.snapshot.offices.find(item=>item.id===officeId&&item.companyId===company.id);
+    assert.ok(office,'The ownership popup uses an office of the selected company');
+    assert.equal(await ownership.locator('.org-company').innerText(),company.name);
+    assert.equal(await ownership.locator('.org-office').innerText(),office.name);
+    const visibleEmployees=await ownership.locator('.org-person').evaluateAll(nodes=>nodes.map(node=>node.dataset.employeeId));
+    assert.ok(visibleEmployees.length>0,'The ownership popup shows canonical assigned people');
+    for(const id of visibleEmployees){
+      const employee=confirmed.snapshot.employees.find(item=>item.id===id);
+      assert.ok(employee&&(employee.companyId===null||employee.companyId===company.id),`Ownership excludes employees of unrelated companies: ${id}`);
+    }
+    assert.equal(await input.evaluate(node=>node===document.getElementById('chat-message')),true,'Company ownership preserves the same live chat input');
+    assert.equal(await page.locator('#chat-message').inputValue(),draft,'Company ownership preserves the exact unsent draft');
+    assert.equal(await world.evaluate(node=>node===document.querySelector('#freeflow-host .ff-world')),true,'Ownership does not replace the world');
+    await assertEndlessShell(page,'Company Ownership popup');await assertBlueprintPlane('Company Ownership popup');
+    assert.equal(await page.locator('iframe').count(),0,'Ownership does not open another screen or iframe');
+    await screenshot('09-company-ownership-1440x900');
+    await ownership.locator('.canvas-panel-close').click();await openCanvasSurface(page,'donna');
+    assert.equal(await page.locator('#chat-message').inputValue(),draft,'Returning to Donna retains the exact draft');
+    assert.equal(receipt.providerCalls,0);assert.deepEqual(receipt.backendNetworkAttempts,[]);
+    receipt.companyOwnership={companyId:company.id,officeId,visibleEmployees:visibleEmployees.length,nativeScopeConfirmed:true,sameWorld:true,exactDraftRetained:true};
+    receipt.checks.push('Company Ownership footer opens the existing People & ownership popup in confirmed native company scope without replacing the canvas or draft');
+  }finally{await input.dispose();await world.dispose();}
+}
 function blockedFetch(kind){return async()=>{receipt.backendNetworkAttempts.push(kind);throw new Error('The canvas acceptance harness does not permit provider, cloud or model-server network work.');};}
 function fakeVsCode(){
   const panel={visible:true,webview:{cspSource:uiOrigin,asWebviewUri(uri){const relative=path.relative(extension,uri.fsPath).split(path.sep).map(encodeURIComponent).join('/');return{toString:()=>`${uiOrigin}/${relative}`};},
@@ -102,7 +342,18 @@ try{
   });
   await client.command({action:'create_company',name:'Canvas Smoke Office'},{id:'canvas-smoke-seed-1'});
   await client.command({action:'create_company',name:'Canvas Smoke Studio'},{id:'canvas-smoke-seed-2'});
+  const beforeBlueprints=await client.snapshot();
+  const fixtureCompanyIds=new Set(beforeBlueprints.snapshot.companies.filter(company=>['Canvas Smoke Office','Canvas Smoke Studio'].includes(company.name)).map(company=>company.id));
+  assert.equal(fixtureCompanyIds.size,2,'Both synthetic companies were created in native state');
+  const fixtureOffices=beforeBlueprints.snapshot.offices.filter(office=>fixtureCompanyIds.has(office.companyId));
+  assert.ok(fixtureOffices.length>=2&&fixtureOffices.length<=8,'The native fixture has a bounded set of real company offices');
+  for(const [index,office] of fixtureOffices.entries())await client.command({action:'ensure_blueprint',officeId:office.id},{id:`canvas-smoke-blueprint-${index}`});
   const initial=await client.snapshot();const companies=initial.snapshot.companies;
+  receipt.nativeBlueprints=fixtureOffices.map(office=>{
+    const plan=initial.snapshot.blueprints.find(blueprint=>blueprint.officeId===office.id&&blueprint.companyId===office.companyId);
+    assert.ok(plan&&plan.rooms.length>0,'Each fixture floorplan is a saved canonical office blueprint');
+    return{companyId:office.companyId,officeId:office.id,blueprintId:plan.id,rooms:plan.rooms.length,desks:plan.desks.length};
+  });
   const seeded=companies.find(company=>company.name==='Canvas Smoke Office');assert.ok(seeded,'Native company creation returned canonical state');
   await client.command({action:'select_company',companyId:seeded.id},{id:'canvas-smoke-select'});
   receipt.initialCompanyCount=companies.length;receipt.initialCompanyIds=companies.map(company=>company.id);
@@ -139,11 +390,14 @@ try{
   stage='initial-render';
   await page.goto(uiOrigin,{waitUntil:'domcontentloaded',timeout:30000});
   await page.waitForFunction(()=>document.body.classList.contains('endless-canvas')&&document.querySelectorAll('.ff-node').length>0);
-  await page.waitForFunction(names=>[...document.querySelectorAll('.ff-node-title')].some(node=>names.includes(node.textContent)),companies.map(company=>company.name));
+  await page.waitForFunction(names=>[...document.querySelectorAll('.ff-node-title,.ff-table-plan-title')].some(node=>names.includes(node.textContent)),companies.map(company=>company.name));
   await settleCanvas(page);await assertEndlessShell(page,'VS Code canvas browser harness');
   assert.equal(await page.locator('iframe').count(),0,'No iframe or remote screen hosts the office');
   assert.equal(await page.locator('#workbench-controls').count(),1,'One editor connection control overlay');
-  receipt.checks.push('Native canonical companies rendered in one full-size freeflow world at 1440×900');
+  await assertTopView('Fresh 1440×900 session');
+  await assertBlueprintPlane('Fresh 1440×900 session');
+  await captureGraphics('1440×900 default top view');
+  receipt.checks.push('Canonical companies and saved native blueprints share one default top-view world at 1440×900');
   await screenshot('01-native-office');
   stage='camera-and-overlay';
   const world=page.locator('#freeflow-host .ff-world');const beforeZoom=await world.evaluate(node=>node.style.transform);
@@ -155,6 +409,18 @@ try{
   const prior=await canvasPanelState(page,'donna');await donna.locator('.canvas-panel-grip').focus();await page.keyboard.press('ArrowRight');
   const moved=await canvasPanelState(page,'donna');assert.equal(moved.rect.x,prior.rect.x+20,'Movable chat surface uses the shared canvas geometry');
   receipt.checks.push('Real camera zoom/pan and keyboard movement of the live Donna surface');
+  stage='perspective-1440';
+  await page.getByRole('button',{name:'Perspective view',exact:true}).click();await settleCanvas(page);
+  const perspective=await cameraState('1440×900 perspective');
+  assert.ok(Math.abs(perspective.pitch)>0&&Math.abs(perspective.pitch)<=55,'Optional 3D mode tilts the same bounded camera');
+  await captureGraphics('1440×900 perspective with live Donna');
+  assert.equal(await page.locator('#chat-message').inputValue(),'Unsent smoke-test draft','Tilting does not replace the live chat form');
+  await assertEndlessShell(page,'1440×900 perspective');await assertBlueprintPlane('1440×900 perspective');await screenshot('04-perspective-1440x900');
+  await page.getByRole('button',{name:'Top view',exact:true}).click();await settleCanvas(page);await assertTopView('Return from perspective');
+  receipt.checks.push('Optional 3D camera shares the native canvas and preserves the live Donna draft');
+  stage='company-ownership-popup';
+  const ownershipCompany=companies.find(company=>company.name==='Canvas Smoke Studio');assert.ok(ownershipCompany);
+  await checkCompanyOwnership(ownershipCompany);
   stage='native-company-popup';
   const overview=await openCanvasSurface(page,'office-overview');
   const creation=overview.locator('details').filter({has:page.locator('#office-create-company')});
@@ -183,13 +449,41 @@ try{
   assert.equal(await setup.isVisible(),false,'Escape closes setup');
   assert.equal(await page.locator('#workbench-setup').evaluate(node=>node===document.activeElement),true,'Escape returns focus to the setup trigger');
   receipt.checks.push('Six-step setup remains an accessible movable popup with keyboard movement, isolated input and focus restoration');
+  stage='laptop-1366';
+  await page.setViewportSize(receipt.viewports[1]);await settleCanvas(page);
+  await page.getByRole('button',{name:'Top view',exact:true}).click();await settleCanvas(page);
+  await assertTopView('1366×768 top view');await assertEndlessShell(page,'1366×768 laptop');
+  await assertBlueprintPlane('1366×768 laptop');
+  await captureGraphics('1366×768 top view');await screenshot('05-native-office-1366x768');
+  receipt.panelInteractions=await checkEndlessPanelInteractions(page,'1366×768 laptop');
+  receipt.checks.push('1366×768 laptop retains live popup drafts, keyboard move/resize, pinning, pointer Escape rollback and reduced motion');
+  stage='arrange-popup';await checkArrangeControls();
+  stage='perspective-1366';
+  await page.getByRole('button',{name:'Perspective view',exact:true}).click();await settleCanvas(page);
+  const beforeRotation=await cameraState('1366×768 before rotation');
+  await page.getByRole('button',{name:'Rotate right 15 degrees',exact:true}).click();await settleCanvas(page);
+  const rotated=await cameraState('1366×768 rotated perspective');
+  assert.ok(Math.abs(rotated.pitch)>0&&Math.abs(rotated.pitch)<=55,'Laptop relief keeps a bounded tilt');
+  assert.equal(rotated.yaw,beforeRotation.yaw+15,'Rotation changes the one shared camera');
+  const tiltedPanel=await canvasPanelState(page,'donna'),draft=await page.locator('#chat-message').inputValue();
+  const worldBeforeTiltedMove=await world.evaluate(node=>node.style.transform);
+  await donna.locator('.canvas-panel-grip').focus();await page.keyboard.press('ArrowRight');
+  assert.equal((await canvasPanelState(page,'donna')).rect.x,tiltedPanel.rect.x+20,'Keyboard popup movement remains in world coordinates under tilt');
+  assert.equal(await world.evaluate(node=>node.style.transform),worldBeforeTiltedMove,'Moving a tilted popup does not pan the world');
+  assert.equal(await page.locator('#chat-message').inputValue(),draft,'Tilted movement preserves the unsent draft');
+  await captureGraphics('1366×768 rotated perspective with live popups');
+  await assertEndlessShell(page,'1366×768 rotated perspective');await assertBlueprintPlane('1366×768 rotated perspective');await screenshot('06-perspective-1366x768');
+  await page.getByRole('button',{name:'Top view',exact:true}).click();await settleCanvas(page);await assertTopView('1366×768 return to plan');
+  receipt.checks.push('Tilted and rotated laptop view keeps popup keyboard input isolated from the shared camera');
+  stage='graphics-lifecycle';await checkGraphicsRecovery();
   persistedView=await page.evaluate(()=>window.__DAFTAR_VIEW_STATE||null);
-  assert.ok(!JSON.stringify(persistedView).includes('Unsent smoke-test draft'),'Only view preferences persist');
+  assert.ok(!JSON.stringify(persistedView).includes('Unsent'),'Only view preferences persist');
   const rendered=await page.content();receipt.controlCredentialInBrowser=rendered.includes(token)||JSON.stringify(persistedView).includes(token);
   assert.equal(receipt.controlCredentialInBrowser,false,'The runtime control token never enters browser content or persisted state');
   assert.equal(receipt.providerCalls,0);assert.deepEqual(receipt.externalRequests,[]);assert.deepEqual(receipt.backendNetworkAttempts,[]);
   assert.deepEqual(receipt.pageErrors,[]);assert.deepEqual(receipt.cspErrors,[]);assert.deepEqual(receipt.consoleErrors,[]);assert.deepEqual(receipt.rpcFailures,[]);
   receipt.checks.push('No page/CSP/console/RPC errors, external requests, provider calls or credential exposure');
+  receipt.graphicsOutcome=receipt.webglVerified?'Actual sandboxed WebGL2 frames observed; hardware acceleration and GPU frame-time performance are not asserted':'Explicit WebGL fallback observed; native canvas acceptance passed but 3D rendering remains unverified on this browser';
   receipt.status='passed';
 }catch(error){
   receipt.status=stage==='browser-launch'?'blocked':'failed';receipt.failedStage=stage;receipt.error=cleanError(error);

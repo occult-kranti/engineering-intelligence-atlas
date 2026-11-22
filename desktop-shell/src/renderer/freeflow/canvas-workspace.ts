@@ -41,6 +41,11 @@ interface LivePanel {
   pin: HTMLButtonElement;
   collapse: HTMLButtonElement;
   resize: HTMLButtonElement;
+  arrange: HTMLButtonElement;
+  arrangement: HTMLElement;
+  arrangementClose: HTMLButtonElement;
+  arrangementSteps: HTMLButtonElement[];
+  arrangementStatus: HTMLElement;
   marker: Comment;
   wasHidden: boolean;
   hadHiddenClass: boolean;
@@ -66,7 +71,7 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
   layer.style.cssText = 'position:absolute;left:0;top:0;transform-style:preserve-3d';
   options.world.append(layer);
   const launcher = mk('nav', 'canvas-launcher'); launcher.setAttribute('aria-label', 'Workspace surfaces');
-  const home = button('canvas-home', 'Return to the conference table', 'Home');
+  const home = button('canvas-home', 'Return to the blueprint world', 'Home');
   const finder = button('canvas-find', 'Find a surface', 'Find a surface');
   const shortcuts = mk('div', 'canvas-shortcuts');
   const palette = mk('section', 'canvas-palette'); palette.hidden = true;
@@ -92,6 +97,7 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
   let flightFrame = 0, flightId: string | null = null, flightTarget: Camera | null = null;
   let lastPointerAt = -Infinity, suppressClick = false;
   let clickHandle: HTMLElement | null = null, clickUntil = 0, pendingFrame: string | null = null;
+  let arrangedId: string | null = null;
   const mq = typeof win.matchMedia === 'function' ? win.matchMedia('(prefers-reduced-motion: reduce)') : null;
   const current = (id: string): CanvasPanelState | undefined => state.panels.find((p) => p.id === id);
   const size = (): Size => ({ width: Math.max(1, options.viewport.clientWidth), height: Math.max(1, options.viewport.clientHeight) });
@@ -155,6 +161,10 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
       entry.collapse.setAttribute('aria-label', `${panel.collapsed ? 'Expand' : 'Collapse'} ${entry.spec.title || panel.id}`);
       entry.resize.hidden = panel.collapsed; entry.resize.disabled = panel.pinned;
       entry.grip.setAttribute('aria-disabled', String(panel.pinned));
+      entry.arrange.disabled = !panel.open || panel.pinned || panel.collapsed;
+      entry.arrange.title = panel.pinned ? 'Unlock this surface to arrange it.' : panel.collapsed ? 'Expand this surface to arrange it.' : `Arrange ${entry.spec.title || panel.id}`;
+      for (const step of entry.arrangementSteps) step.disabled = entry.arrange.disabled;
+      if (arrangedId === panel.id && entry.arrange.disabled) closeArrangement(entry.arrangement.contains(doc.activeElement));
       const short = shortButtons.get(panel.id);
       short?.setAttribute('aria-pressed', String(panel.open));
       short?.classList.toggle('is-active', state.activeId === panel.id);
@@ -175,8 +185,38 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
     const next = focusPanel(state, id);
     if (next !== state) { state = next; render(); persist(); }
   }
+  function closeArrangement(restoreFocus = false): void {
+    if (!arrangedId) return;
+    const id = arrangedId, entry = live.get(id); arrangedId = null;
+    if (!entry) return;
+    entry.arrangement.hidden = true; entry.arrange.setAttribute('aria-expanded', 'false');
+    if (restoreFocus && !destroyed && current(id)?.open) safeFocus(entry.arrange.disabled ? entry.grip : entry.arrange);
+  }
+  function toggleArrangement(id: string): void {
+    const entry = live.get(id), panel = current(id);
+    if (destroyed || !entry || !panel?.open || panel.pinned || panel.collapsed) return;
+    if (arrangedId === id) { closeArrangement(true); return; }
+    closeArrangement(); cancelFlight(); options.stopMotion(); endGesture(false); activate(id);
+    arrangedId = id; entry.arrangement.hidden = false; entry.arrange.setAttribute('aria-expanded', 'true');
+    entry.arrangementStatus.textContent = 'Each click changes layout by 20 world units.';
+    safeFocus(entry.arrangementSteps[0]!);
+  }
+  function arrangeStep(id: string, axis: keyof CanvasPanelState['rect'], delta: number): void {
+    const entry = live.get(id), panel = current(id);
+    if (destroyed || !entry || arrangedId !== id || entry.arrangement.hidden || !panel?.open || panel.pinned || panel.collapsed) return;
+    cancelFlight(); options.stopMotion(); endGesture(false);
+    const before = state, rect = current(id)!.rect;
+    state = updatePanelRect(state, id, { ...rect, [axis]: rect[axis] + delta }, entry.spec);
+    render();
+    if (state === before) entry.arrangementStatus.textContent = 'The surface has reached its layout limit.';
+    else {
+      persist(); const next = current(id)!.rect;
+      entry.arrangementStatus.textContent = `Position ${Math.round(next.x)}, ${Math.round(next.y)}. Size ${Math.round(next.width)} by ${Math.round(next.height)}.`;
+    }
+  }
   function open(id: string, settings: { frame?: boolean; nearCamera?: boolean } = {}): void {
     if (destroyed || !live.has(id)) return;
+    closeArrangement();
     endGesture(false); options.showCanvas(); options.stopMotion();
     const wasOpen = current(id)!.open;
     // New surfaces start at a usable reading width on phones. A saved or locked
@@ -259,15 +299,45 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
     if (spec.icon) grip.prepend(mk('span', 'canvas-panel-icon', spec.icon));
     const controls = mk('div', 'canvas-panel-controls');
     const focus = button('canvas-panel-focus', `Focus ${spec.title || spec.id}`, '↗');
+    const arrange = button('canvas-panel-arrange', `Arrange ${spec.title || spec.id}`, 'Arrange');
     const pin = button('canvas-panel-pin', `Lock ${spec.title || spec.id} position`, '◇');
     const collapse = button('canvas-panel-collapse', `Collapse ${spec.title || spec.id}`, '−');
     const dismiss = button('canvas-panel-close', `Close ${spec.title || spec.id}`, '×');
-    controls.append(focus, pin, collapse, dismiss); titlebar.append(grip, controls);
+    controls.append(arrange, focus, pin, collapse, dismiss); titlebar.append(grip, controls);
+    const arrangement = mk('section', 'canvas-arrange-popup'); arrangement.hidden = true;
+    arrangement.id = `${palette.id}-arrange-${live.size}`; arrangement.setAttribute('role', 'group'); arrangement.setAttribute('aria-label', `Arrange ${spec.title || spec.id}`);
+    arrange.setAttribute('aria-controls', arrangement.id); arrange.setAttribute('aria-expanded', 'false');
+    const arrangementHeading = mk('div', 'canvas-arrange-heading');
+    const arrangementClose = button('canvas-arrange-close', `Close arrangement controls for ${spec.title || spec.id}`, '×');
+    arrangementHeading.append(mk('h3', '', 'Arrange surface'), arrangementClose);
+    const movement = mk('div', 'canvas-arrange-move'), sizing = mk('div', 'canvas-arrange-size');
+    movement.setAttribute('role', 'group'); movement.setAttribute('aria-label', 'Move surface');
+    sizing.setAttribute('role', 'group'); sizing.setAttribute('aria-label', 'Resize surface');
+    const arrangementSteps: HTMLButtonElement[] = [];
+    const steps: Array<{ name: string; label: string; text: string; axis: keyof CanvasPanelState['rect']; delta: number }> = [
+      { name: 'left', label: 'Move left', text: '← Left', axis: 'x', delta: -20 },
+      { name: 'right', label: 'Move right', text: 'Right →', axis: 'x', delta: 20 },
+      { name: 'up', label: 'Move up', text: '↑ Up', axis: 'y', delta: -20 },
+      { name: 'down', label: 'Move down', text: 'Down ↓', axis: 'y', delta: 20 },
+      { name: 'narrower', label: 'Make narrower', text: 'Narrower', axis: 'width', delta: -20 },
+      { name: 'wider', label: 'Make wider', text: 'Wider', axis: 'width', delta: 20 },
+      { name: 'shorter', label: 'Make shorter', text: 'Shorter', axis: 'height', delta: -20 },
+      { name: 'taller', label: 'Make taller', text: 'Taller', axis: 'height', delta: 20 },
+    ];
+    for (const step of steps) {
+      const control = button('canvas-arrange-step', `${step.label}: ${spec.title || spec.id}`, step.text);
+      control.dataset.arrangeAction = step.name; control.onclick = () => arrangeStep(spec.id, step.axis, step.delta);
+      (step.axis === 'x' || step.axis === 'y' ? movement : sizing).append(control); arrangementSteps.push(control);
+    }
+    const arrangementStatus = mk('p', 'canvas-arrange-status'); arrangementStatus.setAttribute('role', 'status'); arrangementStatus.setAttribute('aria-live', 'polite');
+    arrangement.append(arrangementHeading, mk('p', 'canvas-arrange-label', 'Move'), movement, mk('p', 'canvas-arrange-label', 'Resize'), sizing, arrangementStatus);
     const body = mk('div', 'canvas-panel-body');
     const resize = button('canvas-panel-resize', `Resize ${spec.title || spec.id}. Arrow keys resize; Shift resizes farther.`, '↘');
     const marker = doc.createComment(`canvas surface ${spec.id}`); spec.element.parentNode?.insertBefore(marker, spec.element);
-    const entry: LivePanel = { spec, wrapper, body, grip, pin, collapse, resize, marker, wasHidden: spec.element.hidden, hadHiddenClass: spec.element.classList.contains('hidden') };
-    live.set(spec.id, entry); body.append(spec.element); wrapper.append(titlebar, body, resize); layer.append(wrapper);
+    const entry: LivePanel = { spec, wrapper, body, grip, pin, collapse, resize, arrange, arrangement, arrangementClose, arrangementSteps, arrangementStatus, marker, wasHidden: spec.element.hidden, hadHiddenClass: spec.element.classList.contains('hidden') };
+    live.set(spec.id, entry); body.append(spec.element); wrapper.append(titlebar, arrangement, body, resize); layer.append(wrapper);
+    arrange.onclick = () => toggleArrangement(spec.id);
+    arrangementClose.onclick = () => { if (!destroyed && arrangedId === spec.id) closeArrangement(true); };
     grip.addEventListener('pointerdown', (event) => begin(event, spec.id, 'drag'));
     resize.addEventListener('pointerdown', (event) => begin(event, spec.id, 'resize'));
     grip.addEventListener('keydown', (event) => keyboard(event, spec.id, 'drag'));
@@ -301,15 +371,20 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
     if (event.type === 'pointerdown') {
       lastPointerAt = performance.now();
       if (!palette.hidden && !launcher.contains(event.target as Node)) { palette.hidden = true; finder.setAttribute('aria-expanded', 'false'); }
+      if (arrangedId) {
+        const entry = live.get(arrangedId);
+        if (entry && !entry.arrangement.contains(event.target as Node) && !entry.arrange.contains(event.target as Node)) closeArrangement();
+      }
     } else if (event.type === 'keydown') lastPointerAt = -Infinity;
     cancelFlight();
   }
   function keydown(event: KeyboardEvent): void {
     if (event.key !== 'Escape') return;
     if (gesture) { event.preventDefault(); event.stopPropagation(); endGesture(false); return; }
+    if (arrangedId) { event.preventDefault(); event.stopPropagation(); closeArrangement(true); return; }
     if (!palette.hidden) { event.preventDefault(); event.stopPropagation(); setPalette(false); }
   }
-  const suspend = (): void => { cancelFlight(); endGesture(false); };
+  const suspend = (): void => { cancelFlight(); endGesture(false); closeArrangement(); };
   const hidden = (): void => { if (doc.hidden) suspend(); };
   const motionChange = (): void => { if (mq?.matches && flightTarget) { const target = flightTarget; cancelFlight(); options.setCamera(target); } };
   const clickGuard = (event: MouseEvent): void => {
@@ -360,6 +435,8 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
       doc.removeEventListener('visibilitychange', hidden);
       mq?.removeEventListener('change', motionChange);
       for (const entry of [...live.values()].reverse()) {
+        entry.arrange.onclick = null; entry.arrangementClose.onclick = null;
+        for (const control of entry.arrangementSteps) control.onclick = null;
         entry.spec.element.hidden = entry.wasHidden;
         entry.spec.element.classList.toggle('hidden', entry.hadHiddenClass);
         if (entry.marker.parentNode) entry.marker.parentNode.replaceChild(entry.spec.element, entry.marker);

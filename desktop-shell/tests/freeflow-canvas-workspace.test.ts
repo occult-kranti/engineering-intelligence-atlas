@@ -1,5 +1,5 @@
 // @vitest-environment node
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { installDom, type FreeflowDom } from './fixtures/freeflow-dom.js';
 import { DEFAULT_CAMERA, worldToScreen, type Camera } from '../src/renderer/freeflow/camera.js';
 import { CANVAS_LAYOUT_KEY, mountCanvasWorkspace, type CanvasWorkspace, type CanvasWorkspacePanel } from '../src/renderer/freeflow/canvas-workspace.js';
@@ -131,6 +131,107 @@ describe('one live DOM canvas workspace', () => {
     expect(m.workspace.elements.layer.children).toHaveLength(1);
     expect(m.workspace.isOpen('b')).toBe(false); m.workspace.open('ancestor');
     expect(document.body.contains(m.viewport)).toBe(true);
+  });
+});
+
+describe('single-pointer surface arrangement', () => {
+  const step = (m: ReturnType<typeof mount>, name: string, id = 'donna') => m.control(id, `[data-arrange-action="${name}"]`);
+  const popup = (m: ReturnType<typeof mount>, id = 'donna') => m.panel(id).querySelector('.canvas-arrange-popup') as HTMLElement;
+
+  it('moves and resizes in 20-unit click steps while preserving exact live forms and avoiding authority calls', () => {
+    const saved = store(), m = mount({ storage: saved.storage });
+    const authority = vi.fn(); Object.assign(window, { desktopBridge: { officeCommand: authority, hostSubmit: authority, setOfficeWorker: authority } });
+    const form = document.createElement('form'), submitted = vi.fn(), inputEvents = vi.fn();
+    form.append(m.input); m.first.append(form); form.addEventListener('submit', submitted); m.input.addEventListener('input', inputEvents);
+    m.input.value = 'An unsent scoped Donna draft';
+    m.control('donna', '.canvas-panel-arrange').click();
+    expect(popup(m).hidden).toBe(false);
+    expect(m.control('donna', '.canvas-panel-arrange').getAttribute('aria-expanded')).toBe('true');
+    expect(popup(m).querySelectorAll('[data-arrange-action]')).toHaveLength(8);
+    expect(step(m, 'left').getAttribute('aria-label')).toBe('Move left: Donna');
+    step(m, 'left').click(); expect(m.panel('donna').style.transform.replaceAll(' ', '')).toContain('0px,30px');
+    step(m, 'right').click(); expect(m.panel('donna').style.transform.replaceAll(' ', '')).toContain('20px,30px');
+    step(m, 'up').click(); expect(m.panel('donna').style.transform.replaceAll(' ', '')).toContain('20px,10px');
+    step(m, 'down').click(); expect(m.panel('donna').style.transform.replaceAll(' ', '')).toContain('20px,30px');
+    step(m, 'narrower').click(); expect(m.panel('donna').style.width).toBe('780px');
+    step(m, 'wider').click(); expect(m.panel('donna').style.width).toBe('800px');
+    step(m, 'shorter').click(); expect(m.panel('donna').style.height).toBe('580px');
+    step(m, 'taller').click(); expect(m.panel('donna').style.height).toBe('600px');
+    expect(m.first.querySelector('form')).toBe(form); expect(form.firstElementChild).toBe(m.input);
+    expect(m.input.value).toBe('An unsent scoped Donna draft');
+    m.input.dispatchEvent(new Event('input', { bubbles: true })); expect(inputEvents).toHaveBeenCalledTimes(1);
+    expect(submitted).not.toHaveBeenCalled(); expect(authority).not.toHaveBeenCalled(); expect(m.changes).toEqual([]);
+    expect(saved.values.get(CANVAS_LAYOUT_KEY)).not.toContain('unsent scoped Donna draft');
+    expect(dom.capture.set.size).toBe(0);
+  });
+
+  it('clamps repeated size clicks at registered panel limits and reports the limit', () => {
+    const element = document.createElement('section'); document.body.append(element);
+    const saved = store(), m = mount({ storage: saved.storage, specs: [{ id: 'donna', title: 'Donna', element, initiallyOpen: true,
+      rect: { x: 0, y: 0, width: 440, height: 480 }, minWidth: 400, maxWidth: 460, minHeight: 440, maxHeight: 500 }] });
+    m.control('donna', '.canvas-panel-arrange').click();
+    for (let n = 0; n < 4; n++) step(m, 'narrower').click();
+    expect(m.panel('donna').style.width).toBe('400px');
+    expect(popup(m).querySelector('[role="status"]')!.textContent).toContain('layout limit');
+    const writes = saved.writes(); step(m, 'narrower').click(); expect(saved.writes()).toBe(writes);
+    for (let n = 0; n < 4; n++) step(m, 'wider').click();
+    expect(m.panel('donna').style.width).toBe('460px');
+    for (let n = 0; n < 4; n++) step(m, 'shorter').click();
+    expect(m.panel('donna').style.height).toBe('440px');
+    for (let n = 0; n < 4; n++) step(m, 'taller').click();
+    expect(m.panel('donna').style.height).toBe('500px');
+  });
+
+  it('blocks pinned and collapsed panels, closes controls and restores a usable focus target', () => {
+    const saved = store(), m = mount({ storage: saved.storage });
+    m.control('donna', '.canvas-panel-arrange').click();
+    const before = m.panel('donna').style.cssText;
+    m.control('donna', '.canvas-panel-pin').click();
+    expect(popup(m).hidden).toBe(true); expect(m.control('donna', '.canvas-panel-arrange').disabled).toBe(true);
+    expect(document.activeElement).toBe(m.control('donna', '.canvas-panel-grip'));
+    const writes = saved.writes();
+    step(m, 'right').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    m.control('donna', '.canvas-panel-arrange').dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(m.panel('donna').style.cssText).toBe(before); expect(saved.writes()).toBe(writes);
+    m.control('donna', '.canvas-panel-pin').click(); m.control('donna', '.canvas-panel-arrange').click();
+    expect(popup(m).hidden).toBe(false);
+    m.control('donna', '.canvas-panel-collapse').click(); expect(popup(m).hidden).toBe(true);
+    expect(m.control('donna', '.canvas-panel-arrange').disabled).toBe(true);
+    expect(m.input.value).toBe('Keep this draft');
+  });
+
+  it('Escape or the popup close button returns focus to Arrange without closing the work panel', () => {
+    const m = mount(), trigger = m.control('donna', '.canvas-panel-arrange'); trigger.click();
+    step(m, 'right').click();
+    const event = dom.key(step(m, 'left'), 'Escape');
+    expect(event.defaultPrevented).toBe(true); expect(popup(m).hidden).toBe(true);
+    expect(document.activeElement).toBe(trigger); expect(trigger.getAttribute('aria-expanded')).toBe('false');
+    expect(m.workspace.isOpen('donna')).toBe(true); expect(m.input.value).toBe('Keep this draft');
+    expect(m.panel('donna').style.transform.replaceAll(' ', '')).toContain('40px,30px');
+    trigger.click(); m.control('donna', '.canvas-arrange-close').click();
+    expect(document.activeElement).toBe(trigger); expect(popup(m).hidden).toBe(true); expect(m.workspace.isOpen('donna')).toBe(true);
+  });
+
+  it('keeps one arrangement popup and dismisses it on an outside pointer without altering drafts', () => {
+    const m = mount(); m.workspace.open('models', { frame: false });
+    m.control('donna', '.canvas-panel-arrange').click(); m.control('models', '.canvas-panel-arrange').click();
+    expect(popup(m).hidden).toBe(true); expect(popup(m, 'models').hidden).toBe(false);
+    expect(m.workspace.elements.layer.querySelectorAll('.canvas-arrange-popup:not([hidden])')).toHaveLength(1);
+    dom.pointer(m.input, 'pointerdown', { x: 10, y: 10 });
+    expect(popup(m, 'models').hidden).toBe(true); expect(m.workspace.isOpen('models')).toBe(true);
+    expect(m.input.value).toBe('Keep this draft');
+  });
+
+  it('ignores retained arrangement controls after the surface closes or the workspace is destroyed', () => {
+    const saved = store(), m = mount({ storage: saved.storage });
+    const trigger = m.control('donna', '.canvas-panel-arrange'), action = step(m, 'down'); trigger.click();
+    m.workspace.close('donna'); const writes = saved.writes(), before = m.panel('donna').style.cssText;
+    action.dispatchEvent(new MouseEvent('click', { bubbles: true })); trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(m.panel('donna').style.cssText).toBe(before); expect(saved.writes()).toBe(writes); expect(popup(m).hidden).toBe(true);
+    m.workspace.open('donna', { frame: false }); trigger.click(); m.workspace.destroy(); const finalWrites = saved.writes();
+    action.dispatchEvent(new MouseEvent('click', { bubbles: true })); trigger.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(saved.writes()).toBe(finalWrites); expect(m.input.value).toBe('Keep this draft'); expect(m.first.parentElement).toBe(m.origin);
+    expect(dom.raf.pending()).toBe(0); expect(m.world.children).toHaveLength(0);
   });
 });
 

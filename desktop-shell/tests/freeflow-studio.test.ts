@@ -143,7 +143,7 @@ describe('freeflow studio (mounted)', () => {
     expect(m.studio.getCamera()).toEqual(companyCamera);
   });
 
-  it('still fits the readable table after loading when no explicit host camera was chosen', () => {
+  it('fits the readable blueprint from above after loading when no explicit host camera was chosen', () => {
     const m = mountS(null, undefined, true);
     m.studio.setActive(false);
     const initial = m.studio.getCamera();
@@ -156,8 +156,8 @@ describe('freeflow studio (mounted)', () => {
     const snap = small();
     m.studio.update(snap, { kind: 'portfolio' });
     const fitted = m.studio.getCamera();
-    expect(fitted.pitch).toBe(26);
-    expect(fitted.yaw).toBe(-3);
+    expect(fitted.pitch).toBe(0);
+    expect(fitted.yaw).toBe(0);
     const bounds = buildUniverse(snap, { kind: 'portfolio' }).focusBounds;
     for (const x of [bounds.x, bounds.x + bounds.width]) for (const y of [bounds.y, bounds.y + bounds.height]) {
       const point = worldToScreen(fitted, m.studio.getViewport(), { x, y });
