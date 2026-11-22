@@ -1,0 +1,134 @@
+{
+  "artifactType": "blueprint-studio-independent-validation/v1",
+  "run": "blueprint-studio-20261121",
+  "node": "verification",
+  "attempt": 1,
+  "idempotencyKey": "blueprint-studio-20261121:verification:1",
+  "terminationOwner": "root",
+  "createdAt": "2026-11-21T23:56:00.217Z",
+  "status": "failed",
+  "groups": 17,
+  "passed": 0,
+  "failed": 17,
+  "environment": {
+    "node": "v24.22.3",
+    "execution": "Pure Node module calls; no DOM, browser, GPU, network, provider or storage side effects introduced by harness"
+  },
+  "provenance": {
+    "contract": {
+      "path": "design/blueprint-world/studio-contract.json",
+      "bytes": 19315,
+      "sha256": "1f38c953a415004d66cb4a18f56ad6ff557f3b1ca24e83405cbaa9a7464edbe2"
+    },
+    "module": {
+      "path": "cloud-workspace/public/concepts/blueprint-world-studio-edits.js",
+      "bytes": 39400,
+      "sha256": "8a074c39c2cdeacd9a44dcbd4be7c8b8f4d027a09c096c3086b7e0835d4cf73e"
+    },
+    "core": {
+      "path": "cloud-workspace/public/concepts/blueprint-world-core.js",
+      "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea"
+    },
+    "fixtures": {
+      "path": "design/blueprint-world/validation/fixtures.mjs",
+      "sha256": "235a32d31eeb6d9d65880946ada6bdbeb16eac97f477bf30d9e0170b8838e7fa"
+    },
+    "harness": {
+      "path": "design/blueprint-world/validation/check-studio.mjs",
+      "sha256": "68d0e9477569c35e0a3adf247c18c66aa42c0131b281bb672d6372adba70f7d1"
+    }
+  },
+  "limitations": [
+    "Local Studio capability checks are not server authentication, account grants or secure data ownership.",
+    "Fingerprint is change detection only, not proof against metadata tampering.",
+    "No app form integration, pointer delivery, browser focus, graphics, cross-tab CAS or GPU behavior is exercised.",
+    "The accepted core module is a dependency for canonical state, layout and move clamping; independent fixtures and state-transition expectations do not import Studio implementation helpers."
+  ],
+  "results": [
+    {
+      "name": "Frozen exports, explicit bootstrap and detached canonical metadata",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Roles, parent companies and department ancestry do not infer grants",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Shared placement uses host assignment scope and preserves canonical identity",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Preview and floorplan edits are pure, targeted and generated-patch only",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Reorder requires a complete sibling permutation and every changed scope",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Full company footprints keep the exact 160-unit gutter",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Manual circles reject occupancy and expose the core clamp",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Malformed, prototype, accessor and unknown-field inputs reject atomically",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Only the explicit owner administers policy and cannot lock it out",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "A preview is not authority after revision change and revocation",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "History projection uses current explicit scopes and detached records",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Retained idempotency survives later edits and same-key persistence",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Receipts and journal are bounded while actor cursors survive eviction",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Undo compensates the latest edit under current grants without rewinding policy",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Owner CRUD creates an atomic non-undoable model barrier",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Metadata validation rejects malformed policy, history, fingerprint and caps",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    },
+    {
+      "name": "Legacy decoding, present corruption and the 2-MiB combined byte cap",
+      "status": "failed",
+      "error": "Bootstrap grant has unknown field"
+    }
+  ]
+}

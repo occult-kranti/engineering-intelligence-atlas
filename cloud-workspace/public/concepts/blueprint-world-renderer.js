@@ -2,6 +2,7 @@
 // Plan units are UI design units; X/Z is the plan and Y is elevation.
 import { THREE, OrbitControls } from './blueprint-world-vendor.js';
 import { companyLayout, COLORS } from './blueprint-world-core.js';
+import { createReliefLayer } from './blueprint-world-relief.js';
 
 const INK = '#142c49', PAPER = '#f6f1e5', EPS = 1e-6, DEG = Math.PI / 180;
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -9,7 +10,7 @@ const finite = (...v) => v.every(Number.isFinite);
 const initials = name => String(name || '?').trim().split(/\s+/u).slice(0, 2).map(s => Array.from(s)[0] || '').join('').toUpperCase();
 const safe = (fn, ...args) => { try { return fn?.(...args); } catch { return undefined; } };
 
-export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCameraChange, onReady, onError } = {}) {
+export function mountWorld({ canvas, state: initial, style: initialStyle = 'relief', onSelect, onPlace, onCameraChange, onReady, onError } = {}) {
   let renderer;
   try {
     if (!canvas?.getContext) throw new Error('The blueprint canvas is unavailable.');
@@ -19,10 +20,13 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
   } catch (error) {
     safe(onError, error);
     const no = () => {};
-    return { setState:no, select:no, focusCompany:no, focusDepartment:no, focusEmployee:no, focusBoard:no, setMode:no, top:no, tilt:no, rotate:no, zoom:no, fit:no, home:no, getAnchor:()=>null, project:()=>({x:0,y:0,visible:false}), unproject:()=>null, subscribeFrame:()=>no, getMetrics:()=>({renderer:'unavailable',error:String(error.message || error)}), dispose:no };
+    return { setState:no, select:no, focusCompany:no, focusDepartment:no, focusEmployee:no, focusBoard:no, setMode:no, setStyle:no, overview:no, top:no, tilt:no, rotate:no, zoom:no, fit:no, home:no, getAnchor:()=>null, project:()=>({x:0,y:0,visible:false}), unproject:()=>null, subscribeFrame:()=>no, getMetrics:()=>({renderer:'unavailable',error:String(error.message || error)}), dispose:no };
   }
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor('#071c33');
+  let style = initialStyle === 'plan' ? 'plan' : 'relief';
+  renderer.shadowMap.enabled = style === 'relief';
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   const scene = new THREE.Scene();
   const camera = new THREE.OrthographicCamera(-640, 640, 400, -400, .1, 30000);
   camera.up.set(0, 1, 0);
@@ -42,11 +46,12 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
   if (previousTabIndex === null) canvas.tabIndex = 0;
   const media = matchMedia('(prefers-reduced-motion: reduce)');
   const subscribers = new Set(), listeners = [], materials = new Map(), records = new Map();
-  const owned = new Set(), companyGroups = new Map(), seats = new Map(), labelMeshes = [];
+  const owned = new Set(), companyGroups = new Map(), seats = new Map(), labelMeshes = new Set();
   let state = initial, companies = new Map(), employees = new Map(), assignments = new Map(), departments = new Map(), layouts = new Map();
   let selection = null, focusId = null, mode = 'pan', raf = 0, disposed = false, lost = false, ready = false;
   let frames = 0, lastFrame = 0, flight = null, drag = null, press = null, detailsKey = '', labelDetail = false;
   let width = 1, height = 1, ratio = 1, currentRich = [], mainGroup = new THREE.Group();
+  let cameraDistance=2400,overviewActive=false,overviewIncludesSpine=true;
   const metrics = { mountedDetailedCompanies:0, lightweightCompanyCount:0, visibleAssignments:0, cancelledDrags:0, committedDrags:0 };
   scene.add(mainGroup);
   const raycaster = new THREE.Raycaster(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
@@ -97,11 +102,11 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
     const m=new THREE.MeshBasicMaterial({map:tex,transparent:true,depthWrite:false,alphaTest:.025,side:THREE.DoubleSide});
     const mesh=new THREE.Mesh(unitPlane,m); mesh.scale.set(c.width/2,1,c.height/2);
     mesh.position.set(x+(align==='center'?0:c.width/4),4.8,z); mesh.userData.label=true; mesh.userData.detail=level;
-    group.add(mesh); labelMeshes.push(mesh); return mesh;
+    group.add(mesh); labelMeshes.add(mesh); return mesh;
   }
   function disposeGroup(group) {
     group.traverse(o=>{
-      if(o.userData.label) { o.material.map?.dispose(); o.material.dispose(); }
+      if(o.userData.label) { o.material.map?.dispose(); o.material.dispose();labelMeshes.delete(o); }
       if(o.userData.ownedGeometry) o.geometry.dispose();
       if(o.isInstancedMesh) o.dispose();
     });
@@ -114,6 +119,8 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
   });
   const grid=new THREE.Mesh(unitPlane,gridMaterial); grid.scale.set(50000,1,50000); grid.position.y=-4; scene.add(grid);
   const highlight=new THREE.Group(); ring(highlight,25,'#d6ae57',false,6); scene.add(highlight); highlight.visible=false;
+  const relief=createReliefLayer({scene,invalidate});
+  relief.setStyle(style);grid.position.y=style==='relief'?-24:-4;
 
   function indexState(next) {
     state=next; companies=new Map((state?.companies||[]).map(c=>[c.id,c])); employees=new Map((state?.employees||[]).map(e=>[e.id,e]));
@@ -124,7 +131,8 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
   function buildCompany(co,rich) {
     const l=layouts.get(co.id); if(!l) return;
     const group=new THREE.Group(); group.position.set(co.x,0,co.z); mainGroup.add(group); companyGroups.set(co.id,group);
-    rectMesh(group,6,8,l.width,l.height,-.9,'#040f1e'); rectMesh(group,0,0,l.width,l.height,0,PAPER);
+    group.userData={companyId:co.id,worldRole:'company-plan'};
+    if(style==='plan')rectMesh(group,6,8,l.width,l.height,-.9,'#040f1e'); rectMesh(group,0,0,l.width,l.height,0,PAPER);
     const strokes=[]; outline(strokes,7,7,l.width-14,l.height-14,1.8); outline(strokes,12,12,l.width-24,l.height-24,.65);
     const count=new Set((state.assignments||[]).filter(a=>a.companyId===co.id).map(a=>a.employeeId)).size;
     label(group,co.name.toUpperCase(),40,46,36,INK,770,'left',0,true);
@@ -167,21 +175,20 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
         }
       }
       const valid=l.seats.filter(s=>{const a=assignments.get(s.assignmentId); return a && a.companyId===co.id && employees.has(a.employeeId) && l.rooms.some(r=>r.departmentId===a.departmentId&&!r.restricted);});
-      const instances=new THREE.InstancedMesh(circleGeo,mat('#ffffff'),valid.length); instances.instanceMatrix.setUsage(THREE.DynamicDrawUsage); group.add(instances);
+      const instances=new THREE.InstancedMesh(circleGeo,mat('#ffffff'),valid.length),borders=new THREE.InstancedMesh(circleGeo,mat('#ffffff'),valid.length);
+      instances.instanceMatrix.setUsage(THREE.DynamicDrawUsage);borders.instanceMatrix.setUsage(THREE.DynamicDrawUsage);group.add(borders,instances);
       valid.forEach((s,i)=>{
         const a=assignments.get(s.assignmentId), e=employees.get(a.employeeId), d=departments.get(a.departmentId);
         matrix.makeScale(s.r,1,s.r); matrix.setPosition(s.x,3,s.y); instances.setMatrixAt(i,matrix); instances.setColorAt(i,new THREE.Color(colorFor(e,d)));
+        matrix.makeScale(s.r+1.5,1,s.r+1.5);matrix.setPosition(s.x,2.85,s.y);borders.setMatrixAt(i,matrix);
         const textGroup=new THREE.Group(); textGroup.position.set(s.x,0,s.y); group.add(textGroup);
-        ring(textGroup,s.r+1.5,'#ffffff');
         if(a.kind!=='resident') ring(textGroup,s.r+5,a.kind==='visiting'?COLORS.visiting:COLORS.shared,a.kind==='visiting');
-        label(textGroup,initials(e.name),0,0,16.5,INK,30,'center');
-        const short=e.name.split(/\s+/u)[0]+(a.kind==='shared'?' · S':a.kind==='visiting'?' · V':'');
-        const nameLabel=label(textGroup,short,0,s.r+13,16,INK,61,'center',1);
         const room=l.rooms.find(r=>r.departmentId===a.departmentId&&!r.restricted);
-        seats.set(a.id,{co,a,e,s:{...s},instances,index:i,textGroup,nameLabel,room});
+        seats.set(a.id,{co,a,e,s:{...s},instances,borders,index:i,textGroup,nameLabel:null,initialLabel:null,room});
       });
       instances.instanceMatrix.needsUpdate=true; if(instances.instanceColor) instances.instanceColor.needsUpdate=true;
       instances.computeBoundingSphere(); instances.computeBoundingBox();
+      borders.instanceMatrix.needsUpdate=true;borders.computeBoundingSphere();borders.computeBoundingBox();
     }
     inkMesh(group,strokes);
     // A flat company seat belongs to the shared table spine, not a furniture model.
@@ -200,17 +207,41 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
   }
   function rebuild(force=false) {
     const ids=detailIds(), key=ids.join('|'); if(!force&&key===detailsKey) return;
-    detailsKey=key; currentRich=ids; disposeGroup(mainGroup); mainGroup=new THREE.Group(); scene.add(mainGroup); companyGroups.clear(); seats.clear(); labelMeshes.length=0;
+    detailsKey=key; currentRich=ids; disposeGroup(mainGroup); mainGroup=new THREE.Group(); scene.add(mainGroup); companyGroups.clear(); seats.clear(); labelMeshes.clear();
     for(const co of companies.values()) buildCompany(co,ids.includes(co.id));
     const xs=[...companies.values()].map(c=>c.x+550);
     if(xs.length) { const spine=[]; segment(spine,Math.min(...xs)-60,-80,Math.max(...xs)+60,-80,2.5,.7); inkMesh(mainGroup,spine,'#bb9655'); }
+    relief.setCompanies([...companies.values()].filter(c=>layouts.has(c.id)).map(c=>{
+      const l=layouts.get(c.id),detailed=ids.includes(c.id);
+      return {id:c.id,x:c.x,z:c.z,width:l.width,height:l.height,detailed,rooms:detailed?l.rooms.filter(r=>!r.restricted).map(r=>{
+        let depth=0,parent=departments.get(r.departmentId)?.parentId;while(parent&&depth<2){depth++;parent=departments.get(parent)?.parentId;}
+        return {id:r.id,x:r.x,y:r.y,w:r.w,h:r.h,depth,color:r.color};
+      }):[]};
+    }));
     metrics.mountedDetailedCompanies=ids.length; metrics.lightweightCompanyCount=Math.max(0,companies.size-ids.length); metrics.visibleAssignments=seats.size;
     updateLabels(); updateHighlight();
   }
   function updateLabels() {
     if(camera.zoom>.82) labelDetail=true; else if(camera.zoom<.72) labelDetail=false;
     for(const mesh of labelMeshes) mesh.visible=mesh.userData.detail!==1||labelDetail;
-    for(const v of seats.values()) if(v.nameLabel&&v.room) {
+    // Dense company observation found 2,100 text textures for 1,000 employees.
+    // Keep all canonical circle instances, but allocate readable labels only for
+    // nearby visible assignments; the selected identity is prioritised.
+    const candidates=[];camera.updateMatrixWorld();
+    if(camera.zoom>=.48)for(const v of seats.values()){
+      scratch.set(v.co.x+v.s.x,3,v.co.z+v.s.y).project(camera);
+      if(Math.abs(scratch.x)<1.12&&Math.abs(scratch.y)<1.12&&Math.abs(scratch.z)<=1)candidates.push({v,rank:selection?.assignmentId===v.a.id?-1:Math.hypot(scratch.x,scratch.y)});
+    }
+    const labelled=new Set(candidates.sort((a,b)=>a.rank-b.rank).slice(0,180).map(x=>x.v.a.id));
+    const removeLabel=mesh=>{if(mesh){mesh.removeFromParent();mesh.material.map.dispose();mesh.material.dispose();labelMeshes.delete(mesh);}};
+    for(const v of seats.values()){
+      if(!labelled.has(v.a.id)){removeLabel(v.initialLabel);removeLabel(v.nameLabel);v.initialLabel=v.nameLabel=null;continue;}
+      if(!v.initialLabel){
+        v.initialLabel=label(v.textGroup,initials(v.e.name),0,0,21,INK,30,'center');
+        const short=v.e.name.split(/\s+/u)[0]+(v.a.kind==='shared'?' · S':v.a.kind==='visiting'?' · V':'');
+        v.nameLabel=label(v.textGroup,short,0,v.s.r+13,16,INK,61,'center',1);
+      }
+      if(!v.nameLabel||!v.room)continue;
       const end=v.s.y+v.s.r+13+v.nameLabel.scale.z/2;
       const childTop=Math.min(v.room.y+v.room.h,...layouts.get(v.co.id).rooms.filter(r=>departments.get(r.departmentId)?.parentId===v.room.departmentId).map(r=>r.y));
       v.nameLabel.visible=labelDetail&&end<=childTop-5;
@@ -237,9 +268,9 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
   }
   function cameraState() { const d=camera.position.clone().sub(controls.target), s=new THREE.Spherical().setFromVector3(d); return {x:controls.target.x,z:controls.target.z,zoom:camera.zoom,tilt:s.phi/DEG,yaw:s.theta/DEG}; }
   function pose(p) {
-    const phi=Math.max(1e-6,clamp(p.tilt,0,55)*DEG), yaw=p.yaw*DEG, distance=2400;
+    const phi=Math.max(1e-6,clamp(p.tilt,0,55)*DEG), yaw=p.yaw*DEG, distance=cameraDistance;
     controls.target.set(p.x,0,p.z); camera.position.set(p.x+distance*Math.sin(phi)*Math.sin(yaw),distance*Math.cos(phi),p.z+distance*Math.sin(phi)*Math.cos(yaw));
-    camera.zoom=clamp(p.zoom,.12,3.2); camera.updateProjectionMatrix(); camera.lookAt(controls.target); camera.updateMatrixWorld();
+    camera.zoom=clamp(p.zoom,controls.minZoom,3.2);camera.far=Math.max(30000,distance*4); camera.updateProjectionMatrix(); camera.lookAt(controls.target); camera.updateMatrixWorld();
   }
   function travel(to) {
     if(disposed||lost) return; cancelDrag(); const from=cameraState();
@@ -251,13 +282,41 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
   }
   function frameRect(companyId,rect,minZoom=.12,maxZoom=2.2) {
     const co=companies.get(companyId); if(!co||!rect) return;
+    restoreEditingBounds();
     focusId=companyId; rebuild(); const z=clamp(Math.min((width-150)/Math.max(80,rect.w),(height-170)/Math.max(80,rect.h)),minZoom,maxZoom);
     travel({x:co.x+rect.x+rect.w/2,z:co.z+rect.y+rect.h/2,zoom:z});
   }
   function focusCompany(id) { const l=layouts.get(id); if(l) frameRect(id,{x:-25,y:-145,w:l.width+50,h:l.height+170},.12,1.35); }
   function focusDepartment(id) { const d=departments.get(id); if(!d) return; const r=layouts.get(d.companyId)?.rooms.find(r=>r.departmentId===id&&!r.restricted); if(r) frameRect(d.companyId,{x:r.x-18,y:r.y-18,w:r.w+36,h:r.h+36}); }
-  function focusEmployee(id) { const a=assignments.get(id); if(!a) return; const p=getAnchor({kind:'employee',id,assignmentId:id,companyId:a.companyId}); if(p) { focusId=a.companyId; rebuild(); travel({x:p.x,z:p.z,zoom:1.8}); } }
+  function restoreEditingBounds(){overviewActive=false;controls.minZoom=.12;cameraDistance=2400;}
+  function focusEmployee(id) { const a=assignments.get(id); if(!a) return; const p=getAnchor({kind:'employee',id,assignmentId:id,companyId:a.companyId}); if(p) {restoreEditingBounds(); focusId=a.companyId; rebuild(); travel({x:p.x,z:p.z,zoom:1.8}); } }
   function focusBoard(id,type) { const b=layouts.get(id)?.boards.find(b=>b.type===type); if(b) frameRect(id,{x:b.x-30,y:b.y-30,w:b.w+60,h:b.h+60},.12,2.2); }
+  function setStyle(next) {
+    if(disposed||!['plan','relief'].includes(next)||next===style)return;
+    cancelDrag();style=next;renderer.shadowMap.enabled=style==='relief';
+    relief.setStyle(style);grid.position.y=style==='relief'?-24:-4;rebuild(true);invalidate();
+  }
+  function overview(id=selection?.companyId||focusId) {
+    const co=companies.get(id),l=layouts.get(id);if(!co||!l||disposed)return;
+    focusId=id;rebuild();
+    const tilt=50,yaw=-24,phi=tilt*DEG,theta=yaw*DEG;
+    const separation=Math.max(0,co.z+80,-80-(co.z+l.height));
+    overviewIncludesSpine=separation<=l.height+160;
+    const minZ=overviewIncludesSpine?Math.min(co.z-40,-145):co.z-40;
+    const maxZ=overviewIncludesSpine?Math.max(co.z+l.height+40,-40):co.z+l.height+40;
+    const center={x:co.x+l.width/2,z:(minZ+maxZ)/2};
+    overviewActive=true;controls.minZoom=.001;cameraDistance=Math.max(2400,2*Math.hypot(l.width+340,maxZ-minZ,56));
+    // Fit actual projected envelope, including the paper stack, partitions,
+    // conference label and neighbouring context. Semantic coordinates do not move.
+    let extentX=0,extentY=0;
+    for(const x of [co.x-170,co.x+l.width+170])for(const z of [minZ,maxZ])for(const y of [-24,32]){
+      const dx=x-center.x,dz=z-center.z;
+      extentX=Math.max(extentX,Math.abs(Math.cos(theta)*dx-Math.sin(theta)*dz));
+      extentY=Math.max(extentY,Math.abs(-Math.cos(phi)*Math.sin(theta)*dx+Math.sin(phi)*y-Math.cos(phi)*Math.cos(theta)*dz));
+    }
+    const fitZoom=Math.min(Math.max(1,width-128)/(2*extentX),Math.max(1,height-180)/(2*extentY));
+    travel({...center,tilt,yaw,zoom:clamp(fitZoom,.001,1.6)});
+  }
   function select(sel) { selection=getAnchor(sel)?{...sel}:null; if(selection) focusId=selection.companyId; rebuild(); updateHighlight(); invalidate(); }
   function setMode(next) { if(!['pan','orbit','arrange'].includes(next)) return; cancelDrag(); mode=next; controls.enableRotate=next==='orbit'; controls.enablePan=true; controls.mouseButtons.LEFT=next==='orbit'?THREE.MOUSE.ROTATE:THREE.MOUSE.PAN; controls.mouseButtons.RIGHT=THREE.MOUSE.PAN; controls.touches.ONE=next==='orbit'?THREE.TOUCH.ROTATE:THREE.TOUCH.PAN; canvas.style.cursor=next==='arrange'?'default':'grab'; invalidate(); }
   function pick(clientX,clientY) {
@@ -276,7 +335,7 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
     }
     return null;
   }
-  function moveSeat(v,x,y) { v.s.x=x; v.s.y=y; v.textGroup.position.set(x,0,y); matrix.makeScale(v.s.r,1,v.s.r); matrix.setPosition(x,3,y); v.instances.setMatrixAt(v.index,matrix); v.instances.instanceMatrix.needsUpdate=true; v.instances.computeBoundingSphere(); updateHighlight(); }
+  function moveSeat(v,x,y) { v.s.x=x; v.s.y=y; v.textGroup.position.set(x,0,y); matrix.makeScale(v.s.r,1,v.s.r); matrix.setPosition(x,3,y); v.instances.setMatrixAt(v.index,matrix); v.instances.instanceMatrix.needsUpdate=true; v.instances.computeBoundingSphere();matrix.makeScale(v.s.r+1.5,1,v.s.r+1.5);matrix.setPosition(x,2.85,y);v.borders.setMatrixAt(v.index,matrix);v.borders.instanceMatrix.needsUpdate=true;v.borders.computeBoundingSphere(); updateHighlight(); }
   // Match the core's own-seat strip, so a committed placement does not jump on reload.
   function seatBounds(v,room) {
     const children=layouts.get(v.co.id).rooms.filter(r=>departments.get(r.departmentId)?.parentId===room.departmentId);
@@ -349,16 +408,17 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
     raf=0; if(disposed||lost||document.hidden) return; const dt=lastFrame?Math.min(.066,Math.max(0,(now-lastFrame)/1000)):1/60; lastFrame=now; resize();
     if(flight) { const t=clamp((now-flight.start)/flight.duration,0,1), eased=1-(1-t)**3, p={}; for(const k of ['x','z','zoom','tilt','yaw']) p[k]=flight.from[k]+(flight.to[k]-flight.from[k])*eased; pose(p); if(t===1){flight=null;controls.enableDamping=true;} }
     const moving=dragStep(dt); controls.update(); grid.position.x=Math.round(controls.target.x/1000)*1000;grid.position.z=Math.round(controls.target.z/1000)*1000;
-    rebuild(); updateLabels(); scene.updateMatrixWorld(true); camera.updateMatrixWorld();
+    const gridSpan=Math.max(50000,4*Math.max(width,height)/camera.zoom);grid.scale.set(gridSpan,1,gridSpan);
+    rebuild(); updateLabels(); camera.updateMatrixWorld();relief.updateView(camera,controls.target);scene.updateMatrixWorld(true);
     try {renderer.render(scene,camera);frames++;} catch(error) {lost=true; ready=false; safe(onError,error);return;}
     safe(onCameraChange,cameraState()); for(const fn of subscribers) safe(fn);
     if(!ready){ready=true;safe(onReady);}
     if(flight||moving) invalidate();
   }
   function setState(next) { cancelDrag(); indexState(next); if(selection&&!getAnchor(selection)) selection=null; rebuild(true); invalidate(); }
-  function getMetrics() { const r=renderer.info; return {renderer:'WebGL2',...metrics,mountedAssignments:seats.size,visibleAssignments:[...seats.values()].filter(v=>project({x:v.co.x+v.s.x,y:3,z:v.co.z+v.s.y}).visible).length,renderedFrames:frames,drawCalls:r.render.calls,triangles:r.render.triangles,textures:r.memory.textures,geometries:r.memory.geometries,activeSpringCount:drag?.moved?1:0,rafScheduled:!!raf,mode,camera:cameraState(),selection:selection?{...selection}:null,contextLost:lost,detailCompanyIds:[...currentRich]}; }
+  function getMetrics() { const r=renderer.info; return {renderer:'WebGL2',style,relief:relief.getMetrics(),overviewActive,overviewIncludesSpine,cameraDistance,minimumZoom:controls.minZoom,labelTextures:labelMeshes.size,labelledAssignments:[...seats.values()].filter(v=>v.initialLabel).length,...metrics,mountedAssignments:seats.size,visibleAssignments:[...seats.values()].filter(v=>project({x:v.co.x+v.s.x,y:3,z:v.co.z+v.s.y}).visible).length,renderedFrames:frames,drawCalls:r.render.calls,triangles:r.render.triangles,textures:r.memory.textures,geometries:r.memory.geometries,activeSpringCount:drag?.moved?1:0,rafScheduled:!!raf,mode,camera:cameraState(),selection:selection?{...selection}:null,contextLost:lost,detailCompanyIds:[...currentRich]}; }
   function dispose() {
-    if(disposed) return; cancelDrag(); disposed=true; if(raf) cancelAnimationFrame(raf); raf=0; flight=null; listeners.splice(0).forEach(fn=>fn()); observer.disconnect(); controls.dispose(); disposeGroup(mainGroup); disposeGroup(highlight); gridMaterial.dispose(); for(const g of owned) g.dispose(); for(const m of materials.values()) m.dispose(); renderer.dispose(); subscribers.clear();
+    if(disposed) return; cancelDrag(); disposed=true; if(raf) cancelAnimationFrame(raf); raf=0; flight=null; listeners.splice(0).forEach(fn=>fn()); observer.disconnect(); controls.dispose();relief.dispose(); disposeGroup(mainGroup); disposeGroup(highlight); gridMaterial.dispose(); for(const g of owned) g.dispose(); for(const m of materials.values()) m.dispose(); renderer.dispose(); subscribers.clear();
     if(previousTabIndex===null) canvas.removeAttribute('tabindex'); else canvas.setAttribute('tabindex',previousTabIndex);
   }
   listen(canvas,'pointerdown',pointerDown,true); listen(canvas,'pointermove',pointerMove,true); listen(canvas,'pointerup',pointerUp,true);
@@ -378,9 +438,9 @@ export function mountWorld({ canvas, state: initial, onSelect, onPlace, onCamera
   if(l&&co) pose({x:co.x+l.width/2,z:co.z+(l.height-110)/2,zoom:clamp(Math.min((width-130)/(l.width+90),(height-130)/(l.height+190)),.12,1.35),tilt:0,yaw:0});
   controls.update(); rebuild(true); invalidate();
   return {
-    setState,select,focusCompany,focusDepartment,focusEmployee,focusBoard,setMode,
-    top:()=>travel({tilt:0,yaw:0}), tilt:degrees=>{if(finite(degrees))travel({tilt:clamp(degrees,0,55)});}, rotate:degrees=>{if(finite(degrees))travel({yaw:cameraState().yaw+degrees});},
-    zoom:factor=>{if(finite(factor)&&factor>0)travel({zoom:clamp(camera.zoom*factor,.12,3.2)});},
+    setState,select,focusCompany,focusDepartment,focusEmployee,focusBoard,setMode,setStyle,overview,
+    top:()=>{restoreEditingBounds();travel({tilt:0,yaw:0,zoom:Math.max(.12,camera.zoom)});}, tilt:degrees=>{if(finite(degrees))travel({tilt:clamp(degrees,0,55)});}, rotate:degrees=>{if(finite(degrees))travel({yaw:cameraState().yaw+degrees});},
+    zoom:factor=>{if(finite(factor)&&factor>0)travel({zoom:clamp(camera.zoom*factor,controls.minZoom,3.2)});},
     fit:()=>focusCompany(selection?.companyId||focusId), home:()=>{const id=companies.has('co-studio-north')?'co-studio-north':companies.keys().next().value;focusCompany(id);if(flight){flight.to.tilt=0;flight.to.yaw=0;}},
     getAnchor,project,unproject,subscribeFrame:fn=>{if(typeof fn!=='function')return()=>{};subscribers.add(fn);invalidate();return()=>subscribers.delete(fn);},getMetrics,dispose
   };

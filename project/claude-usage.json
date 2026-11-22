@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 2.69207,
+  "accountedUsd": 3.138952,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -286,9 +286,73 @@
       "costUsd": 0.135618,
       "retainedReservationUsd": 0,
       "contribution": "A separate bounded UI completion ended normally. The resulting UI received local repairs and independent review; provider completion does not establish GPU verification or publication."
+    },
+    {
+      "number": 23,
+      "model": "claude-sonnet-5-5",
+      "workstream": "blueprint-studio-expansion",
+      "releaseScope": "Outside the released 0.8.0 binary source; extends the standalone Blueprint World frontend.",
+      "executionContext": "External development authorship for a standalone synthetic local frontend; Donna chat remains scripted and Studio permissions are local policy only.",
+      "requestId": "c4b6f586-bbbd-4354-915e-a32c1d212158",
+      "task": "architectural relief source",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 4103,
+      "outputTokens": 5549,
+      "costUsd": 0.063696,
+      "retainedReservationUsd": 0,
+      "contribution": "Claude supplied relief source. Local integration corrected geometry containment, door placement, camera cutaway and update costs; provider completion does not establish actual GPU acceptance."
+    },
+    {
+      "number": 24,
+      "model": "claude-sonnet-5-5",
+      "workstream": "blueprint-studio-expansion",
+      "releaseScope": "Outside the released 0.8.0 binary source; extends the standalone Blueprint World frontend.",
+      "executionContext": "External development authorship for a standalone synthetic local frontend; Donna chat remains scripted and Studio permissions are local policy only.",
+      "requestId": "2e4f95d6-8579-424a-95c1-c69c480076f7",
+      "task": "local Studio edit command layer initial source",
+      "state": "incomplete",
+      "stopReason": "max_tokens",
+      "inputTokens": 23670,
+      "outputTokens": 12000,
+      "costUsd": 0.16734,
+      "retainedReservationUsd": 0,
+      "contribution": "The initial edit-layer source reached its output limit. A distinct bounded suffix and local repairs completed the integrated module; its usage remains recorded."
+    },
+    {
+      "number": 25,
+      "model": "claude-sonnet-5-5",
+      "workstream": "blueprint-studio-expansion",
+      "releaseScope": "Outside the released 0.8.0 binary source; extends the standalone Blueprint World frontend.",
+      "executionContext": "External development authorship for a standalone synthetic local frontend; Donna chat remains scripted and Studio permissions are local policy only.",
+      "requestId": "f6190f8a-dbe8-422e-886c-61efdba26a8e",
+      "task": "world-attached Studio UI source",
+      "state": "incomplete",
+      "stopReason": "max_tokens",
+      "inputTokens": 8153,
+      "outputTokens": 11000,
+      "costUsd": 0.126306,
+      "retainedReservationUsd": 0,
+      "contribution": "The Studio UI source reached its output limit. The coordinator completed the tail locally and repaired draft, grant and disclosure behavior."
+    },
+    {
+      "number": 26,
+      "model": "claude-sonnet-5-5",
+      "workstream": "blueprint-studio-expansion",
+      "releaseScope": "Outside the released 0.8.0 binary source; extends the standalone Blueprint World frontend.",
+      "executionContext": "External development authorship for a standalone synthetic local frontend; Donna chat remains scripted and Studio permissions are local policy only.",
+      "requestId": "1c332aa7-d34d-4d9c-b9ee-346f9b04bbc9",
+      "task": "local Studio edit command layer bounded suffix",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 18210,
+      "outputTokens": 5312,
+      "costUsd": 0.08954,
+      "retainedReservationUsd": 0,
+      "contribution": "A separate bounded suffix ended normally. Independent review and local repairs produced the tested edit layer; no uncertain request was retried."
     }
   ],
-  "observedUsd": 1.922354,
+  "observedUsd": 2.369236,
   "retainedReservationUsd": 0.769716,
   "cloud": {
     "allocationUsd": 5,
@@ -314,7 +378,7 @@
     },
     "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
   },
-  "observedNativeUsd": 1.900214,
+  "observedNativeUsd": 2.347096,
   "newWorkstreamCapUsd": 20,
   "observedNativeUsdScope": "Historical field for all non-hosted development requests, including external provider authorship. It does not imply execution by native Donna.",
   "laterFrontendDesign": {
@@ -366,5 +430,65 @@
     "validationEvidence": "design/blueprint-world/validation/README.md",
     "buildEvidence": "design/blueprint-world/BUILD-RUN.json",
     "approvalOutcome": "Automatic approval review blocked polling the renderer request. Later user authorization supported continued development. No platform automatic-approval setting was changed and no uncertain request was retried."
+  },
+  "blueprintStudioDevelopment": {
+    "sourceReleaseExcluded": "0.8.0",
+    "baseCommit": "287dfdf70bcece1960c7bda364e911c82dea37e2",
+    "requestNumbers": [
+      23,
+      24,
+      25,
+      26
+    ],
+    "requestIds": [
+      "c4b6f586-bbbd-4354-915e-a32c1d212158",
+      "2e4f95d6-8579-424a-95c1-c69c480076f7",
+      "f6190f8a-dbe8-422e-886c-61efdba26a8e",
+      "1c332aa7-d34d-4d9c-b9ee-346f9b04bbc9"
+    ],
+    "incrementalAuthorizedCapUsd": 20,
+    "budgetInterpretation": "The additional user-authorized USD 20 is a workstream ceiling, not a spend target or confirmed charge; the historical USD 100 ledger ceiling is retained.",
+    "incrementObservedUsd": 0.446882,
+    "incrementRetainedReservationUsd": 0,
+    "incrementConservativeUsd": 0.446882,
+    "unspentIncrementalCapUsd": 19.553118,
+    "observedBeforeIncrementUsd": 1.922354,
+    "retainedBeforeIncrementUsd": 0.769716,
+    "conservativeBeforeIncrementUsd": 2.69207,
+    "status": "completed-with-graphics-gap",
+    "usageBasis": "Allowlisted request metadata supplied by the coordinator; no private ledger contents exported.",
+    "authorship": {
+      "relief": "Claude source with local containment, door, cutaway and framing repairs.",
+      "studioEdits": "Claude initial partial source and distinct bounded suffix; local normalization and independent repairs.",
+      "studioUI": "Claude partial source with local completion and UX repairs.",
+      "integration": "Local application integration and independent verification."
+    },
+    "prototypeDonnaBehavior": "scripted",
+    "localPolicyBoundary": "Explicit local actor capabilities and scoped grants; no server authentication, production account authority or autonomous worker access.",
+    "scope": "Continuous blueprint frontend with architectural relief, world-attached Studio, explicit local owner/Donna/sub-Donna editing, history, stale-draft checks and combined local persistence. The command layer passed 17 independent groups, final integrated UI passed 14 DOM groups, and renderer passed 21 non-GPU groups including dense/capacity fixtures and 4100 occlusion rays. Published-site native observations distinguish version 16 scope/revocation workflows from final version 17 persistence, actor labels, owner undo after revocation, keyboard focus and popup movement at 1363x936 without HTML-page scroll. Pure/DOM tests establish policy preservation across undo; the revoked actor was not reselected after the final native undo. Owner-private Site version 17 was published. Managed Chrome WebGL2 remains unavailable, so no GPU visual, shader, rendered-scene picking or frame-rate acceptance is claimed.",
+    "validationEvidence": "design/blueprint-world/validation/README.md",
+    "buildEvidence": "design/blueprint-world/STUDIO-RUN.json",
+    "approvalOutcome": "Standing authorization applied within existing platform controls. No platform automatic-approval setting changed and no uncertain billed attempt retried.",
+    "commandEvidence": "design/blueprint-world/validation/studio-receipt-3a586a4d0905.json",
+    "domEvidence": "design/blueprint-world/validation/studio-ui-final.json",
+    "rendererEvidence": "design/blueprint-world/validation/studio-renderer-evidence.json",
+    "nativeBrowserEvidence": "design/blueprint-world/validation/studio-browser-receipt.json",
+    "publicationEvidence": "design/blueprint-world/publication.json",
+    "publication": {
+      "siteVersion": 17,
+      "sourceCommit": "e0a17a669dd359a4346d9ca7c61e11394fa3760b",
+      "deploymentId": "appgdep_6b0233ef6a648191b6527e6cb6ff0811",
+      "status": "succeeded",
+      "succeededAt": "2026-11-22T00:14:45.290141+00:00",
+      "verifiedUrl": "https://atlas-command-office.whatswrong-inc.chatgpt.site/concepts/blueprint-world",
+      "audience": {
+        "owners": 1,
+        "editors": 0,
+        "groups": 0,
+        "externalVisitors": 0
+      },
+      "hasMCP": false
+    },
+    "browserBoundary": "The local-preview reload was rejected by browser URL policy and was not retried or bypassed. The browser subsequently accepted the authorized published HTTPS destination for live review. All native controls were reviewed through the graphics-unavailable path."
   }
 }

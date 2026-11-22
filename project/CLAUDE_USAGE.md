@@ -1,15 +1,16 @@
 # Claude development usage
 
-Current checkpoint: **Blueprint World frontend implementation, outside the released 0.8.0 binary source; publication and GPU verification pending**. The [0.8.0 release receipt](release-0.8.0.json) retains its original source and accounting boundary. Historical request receipts retain their original UTC timestamps. Authorized development ceiling: **$100 USD**. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
+Current checkpoint: **Blueprint World Studio completed and published as owner-private Site version 17, with a graphics verification gap; outside the released 0.8.0 binary source**. The [0.8.0 release receipt](release-0.8.0.json) retains its original source and accounting boundary. Historical request receipts retain their original UTC timestamps. The historical development ceiling remains **$100 USD**; the latest Studio expansion has a separately recorded **additional $20 USD workstream ceiling**, of which **$0.446882** has been observed. A ceiling is not a spend target. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
 
 | Accounting category | USD | Interpretation |
 | --- | ---: | --- |
-| Observed development requests | **1.900214** | Recorded non-hosted requests, including external frontend authorship; not evidence of native Donna execution |
+| Observed development requests | **2.347096** | Recorded non-hosted requests, including external frontend authorship; not evidence of native Donna execution |
 | Observed successful hosted request | **0.022140** | Confirmed cloud reply and usage |
-| Total observed usage | **1.922354** | Development plus cloud; no allocation added |
+| Total observed usage | **2.369236** | Development plus cloud; no allocation added |
 | Retained uncertain attempts | **0.769716** | Earlier 0.495762 plus the renderer process reservation 0.273954 after polling was blocked |
-| Conservative usage accounting | **2.692070** | Observed usage plus retained uncertainty, against the 100.000000 ceiling |
+| Conservative usage accounting | **3.138952** | Observed usage plus retained uncertainty; historical 100.000000 ledger ceiling retained |
 | Cloud allocation | **5.000000 reserved capacity** | Held inside the same global ceiling; contains cloud usage and is not an additional charge |
+| Latest Studio expansion | **0.446882 observed / 20.000000 cap** | Four completed provider requests, including two incomplete source responses; no new uncertain reservation |
 
 The totals reconcile to [claude-usage.json](claude-usage.json). Its historical `observedNativeUsd` field covers all non-hosted development requests, including external provider authorship. A reserved allocation, an uncertain attempt and observed usage are separate records. Do not add the $5 allocation to the observed or conservative usage totals, and do not describe an uncertain reservation as a confirmed provider charge.
 
@@ -41,6 +42,10 @@ The totals reconcile to [claude-usage.json](claude-usage.json). Its historical `
 | Blueprint World renderer · polling blocked | Unobserved | Unobserved | 0.273954 reserved | Process outcome unknown; no output observed, reservation retained and no retry |
 | Blueprint World scoped core | 8,149 | 9,000 | 0.106298 | `max_tokens`; partial Claude source completed locally |
 | Blueprint World UI · bounded completion | 21,954 | 9,171 | 0.135618 | `end_turn`; response returned and received independent local repairs |
+| Studio expansion · architectural relief | 4,103 | 5,549 | 0.063696 | `end_turn`; source integrated with local geometry and framing repairs |
+| Studio expansion · edit layer initial source | 23,670 | 12,000 | 0.167340 | `max_tokens`; partial source, later completed through a distinct suffix and local repairs |
+| Studio expansion · attached UI | 8,153 | 11,000 | 0.126306 | `max_tokens`; partial source completed and repaired locally |
+| Studio expansion · edit layer bounded suffix | 18,210 | 5,312 | 0.089540 | `end_turn`; separate bounded completion, independently reviewed and repaired |
 
 The initial MCP call is recorded as incomplete delivery even though the HTTP call completed. Follow-on MCP requests used supported `between_tools` thinking with medium effort. The integrated server was reviewed and hardened by the director; generated code was not accepted merely because the provider returned it.
 
@@ -79,11 +84,34 @@ These four records concern the new flat-circle Blueprint World frontend, after t
 | `227945a3-4af8-4287-a63b-8b81340656f3` | Core source reached `max_tokens`; incomplete delivery with confirmed usage | $0.106298 observed |
 | `297f67fe-791e-42d7-8a83-a055e28d551d` | Separate bounded UI completion ended with `end_turn` | $0.135618 observed |
 
-The observed increment is **$0.463624**; the additional uncertain reservation is **$0.273954**. Conservative accounting therefore increases by **$0.737578**. Total observed usage is **$1.922354**, retained uncertainty is **$0.769716**, and conservative usage is **$2.692070**. The prior **$0.495762** uncertainty and the existing $5 cloud allocation remain intact. The allocation is capacity inside the same $100 ceiling and is not added to usage.
+At that checkpoint, the observed increment was **$0.463624** and the additional uncertain reservation was **$0.273954**, increasing conservative accounting by **$0.737578**. Total observed usage then stood at **$1.922354**, retained uncertainty at **$0.769716**, and conservative usage at **$2.692070**. The prior **$0.495762** uncertainty and the existing $5 cloud allocation were retained. The allocation is capacity inside the same $100 ceiling and is not added to usage.
 
 The core has partial Claude authorship with local completion. The UI has Claude initial/completion authorship plus independent repairs. The renderer was authored locally after the polling block; there is no observed renderer response to attribute to Claude. No uncertain request was retried. The user's later authorization supported continuation of development, and no platform automatic-approval setting was changed.
 
-The [Blueprint World handoff](../design/blueprint-world/README.md) records an implemented local frontend with 12 independent core groups, 6 independent DOM groups and 11 separate non-GPU renderer mathematics groups passing within their stated scope. The coordinator also observed native-form company creation, local hiring and task ownership/lane/status changes. **Actual WebGL was unavailable in managed Chrome: GPU visuals, shaders and rendered-scene picking remain unverified.** Further browser review and publication are pending. Donna remains scripted; these development calls establish no real employee execution, runtime provider connection or access grant.
+The original Blueprint World checkpoint recorded 12 independent core groups, 6 independent DOM groups and 11 separate non-GPU renderer mathematics groups passing within their stated scope. The coordinator also recorded 20 grouped native-control observations. Those historical receipts remain intact, including the publication-pending state at commit `287dfdf70bcece1960c7bda364e911c82dea37e2`. The [current handoff](../design/blueprint-world/README.md) distinguishes the subsequently published Studio expansion. **Actual WebGL was unavailable in managed Chrome: GPU visuals, shaders and rendered-scene picking remain unverified.** Donna remains scripted; these development calls establish no real employee execution, runtime provider connection or production access grant.
+
+## Blueprint World Studio expansion
+
+The owner authorized an additional **$20 workstream ceiling** for stronger architectural floorplan depth, explicit Donna/sub-Donna editing and independent testing. Four provider requests used **$0.446882** in observed token-derived accounting, leaving **$19.553118** of that ceiling unused. No new uncertain reservation was introduced, and no uncertain earlier attempt was retried or cleared. The separate incremental cap is recorded in `blueprintStudioDevelopment`; the historical top-level $100 ceiling is preserved.
+
+| Request | Provider outcome | Observed USD |
+| --- | --- | ---: |
+| `c4b6f586-bbbd-4354-915e-a32c1d212158` | Architectural relief source ended with `end_turn` | 0.063696 |
+| `2e4f95d6-8579-424a-95c1-c69c480076f7` | Initial edit-layer source reached `max_tokens` | 0.167340 |
+| `f6190f8a-dbe8-422e-886c-61efdba26a8e` | World-attached Studio UI source reached `max_tokens` | 0.126306 |
+| `1c332aa7-d34d-4d9c-b9ee-346f9b04bbc9` | Distinct bounded edit-layer suffix ended with `end_turn` | 0.089540 |
+
+All four used `claude-sonnet-5-5`. The two output-limited responses are retained as incomplete provider deliveries even though their source was subsequently completed locally or through the separate bounded suffix. Local review repaired containment, door placement, cutaway behavior, command validation, grants, drafts and UI integration. Authorship does not by itself establish a tested or published result.
+
+The increment raises cumulative observed accounting from **$1.922354 to $2.369236**. Retained uncertainty remains **$0.769716**, so conservative accounting is **$3.138952**. The cloud allocation remains separate capacity, not another charge. No platform automatic-approval setting was changed.
+
+The exact Studio edit module passed [17 independent command-layer groups](../design/blueprint-world/validation/studio-receipt-3a586a4d0905.json), covering explicit grants, company and department scope, current authorization, stale revisions, idempotency, revocation, undo barriers and bounded storage. The final integrated UI passed [14 DOM workflow groups](../design/blueprint-world/validation/studio-ui-final.json), including six earlier regressions and eight Studio workflows. The renderer was deliberately unavailable in that DOM harness. The renderer's separate [21 non-GPU groups](../design/blueprint-world/validation/studio-renderer-evidence.json) cover capacity/dense layouts, framing and 4,100 occlusion rays. They do not establish GPU frame rate or visible graphics quality.
+
+Native review on the published site is recorded separately for [versions 16 and 17](../design/blueprint-world/validation/studio-browser-receipt.json). Version 16 established visitor read-only behavior, Donna edits/history/undo and denied company movement, local sub-Donna scope and immediate grant revocation. Local corrections replaced a no-op reorder permission probe with an actual adjacent-move probe and removed a redundant CEO actor toast; the attached popup was compacted. Final version 17 observations verified persisted delegate/revocation state, the correct actor label, owner undo after revocation, Name-to-Save keyboard focus and popup dragging at 1363 × 936 without HTML-page scroll. The pure/DOM suites establish policy preservation across undo; the revoked actor was not reselected after the final native undo. The older 20 native observations remain tied to their original checkpoint.
+
+Owner-private **Site version 17** was published from source `e0a17a669dd359a4346d9ca7c61e11394fa3760b`; deployment `appgdep_6b0233ef6a648191b6527e6cb6ff0811` succeeded at `2026-11-22T00:14:45.290141+00:00`. The [verified live page](https://atlas-command-office.whatswrong-inc.chatgpt.site/concepts/blueprint-world), [publication receipt](../design/blueprint-world/publication.json) and [Studio run record](../design/blueprint-world/STUDIO-RUN.json) preserve delivery identity. The audience remains one owner with zero editors, groups or external visitors, and no MCP connection was enabled. This Site source commit is separate from the GitHub design-branch history. Publication and the final local repairs added no provider usage.
+
+Studio actors and grants are local synthetic policy, not authenticated account roles or secure multi-user authority. A local sub-Donna employee definition and grant do not start a worker. Donna chat remains scripted, and the prototype has no live provider/runtime adapter. The local-preview reload was rejected by browser URL policy and was not retried or bypassed; the browser subsequently accepted the authorized published HTTPS destination for live review. The graphics gap remains explicit: managed Chrome cannot create WebGL2 here, so native observations use the graphics-unavailable path and this record claims no GPU appearance, shader, rendered-scene picking or frame-rate acceptance.
 
 ## Completed Donna rounds
 

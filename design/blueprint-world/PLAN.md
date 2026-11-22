@@ -1,14 +1,14 @@
 # Daftar: infinite blueprint world — graphics, interaction and implementation plan
 
-**Planning date:** 21 November 2026. **Status:** implemented local frontend demo; publication pending. **Surface mode:** Operate.
+**Planning date:** 21 November 2026; Studio expansion updated 22 November 2026. **Status:** scoped Studio published as owner-private Site version 17, with a graphics verification gap. **Surface mode:** Operate.
 
-The scoped core, Three.js renderer source and native work-element UI now exist. Independent core and DOM checks have passed, alongside separate non-GPU renderer mathematics checks. Actual WebGL was unavailable in managed Chrome: GPU visuals, shaders and rendered-scene picking remain unverified. The architecture and acceptance targets below retain their design intent; section 13 distinguishes the implemented scope from remaining gates.
+The scoped core, Three.js renderer source, architectural relief and native work-element UI now exist. Studio adds explicit local owner/Donna/sub-Donna editing, grants, history and revision checks. The command layer passed 17 independent groups, the final integrated UI passed 14 DOM groups, and the renderer passed 21 non-GPU groups. Native workflows and popup behavior were reviewed on the published HTTPS site, with version 16 and final version 17 observations recorded separately. Actual WebGL remains unavailable in managed Chrome, so GPU acceptance is still open. The architecture and acceptance targets below retain their design intent; section 13 distinguishes the implemented scope from remaining gates.
 
 ## 1. The decision
 
-Build one continuous, GPU-rendered conference-table workspace. Company blueprints, room boundaries, people markers, workboards and popup anchors occupy that world. Represent people and roles as **flat, color-coded circles**. Keep office contents as architectural linework. Use the third dimension for the camera, subtle sheet separation and clear popup layering.
+Build one continuous, GPU-rendered conference-table workspace. Company blueprints, room boundaries, people markers, workboards and popup anchors occupy that world. Represent people and roles as **flat, color-coded circles**. Keep office contents as architectural linework with contained floorplan relief. Use the third dimension for the camera, layered company sheets, slim partitions, lighting and clear popup layering.
 
-The latest user correction is authoritative: no human figures, miniature office furniture, plants, glass buildings, thick cutaway walls or decorative props. The two physical-office studies are superseded. The current visual reference is [the flat-circle blueprint concept](assets/03-flat-circle-blueprint.png). Its names and counts are illustrative generated content; implementation must derive every count from actual permitted records.
+The user corrections remain authoritative: no human figures, miniature office furniture, plants, glass buildings or decorative props. The later request for a stronger 3D overview adds depth to the floorplans while preserving flat people markers and one continuous canvas. Slim contained partitions use camera-facing cutaway to preserve the plan view. The two physical-office studies remain superseded. The current visual reference is [the flat-circle blueprint concept](assets/03-flat-circle-blueprint.png). Its names and counts are illustrative generated content; implementation must derive every count from actual permitted records.
 
 The experience should feel spatial through continuous movement, precise selection, smooth zoom and a stable mental map. Beauty comes from proportion, typography, restrained color, clean drafting lines and well-behaved motion.
 
@@ -50,22 +50,24 @@ The initial layout should be mostly rectangular because its boundaries are legib
 
 ## 3. Graphics architecture
 
-### One scene with flat content
+### One scene with flat markers and architectural relief
 
-Use Three.js with a locally bundled renderer. Three's WebGLRenderer uses WebGL 2 [1]. The implemented renderer source defines a table surface, company groups, flat blueprint geometry, flat marker instances, connection paths and world anchors for work elements.
+Use Three.js with a locally bundled renderer. Three's WebGLRenderer uses WebGL 2 [1]. The implemented renderer source defines a table surface, company groups, company-contained relief, flat blueprint strokes and marker instances, connection paths and world anchors for work elements. A Plan/Relief control changes the architectural presentation; it does not create a second workspace or model.
 
 Store plan geometry in company-local two-dimensional coordinates. Convert those coordinates onto the world's X/Z plane; Y is reserved for a small, controlled depth separation. Illustrative layer order:
 
 | Layer | Representation |
 | --- | --- |
 | Table | Repeated/procedural grid surface around the camera. |
-| Company sheet | A flat pale plane with a restrained edge and optional subtle contact shadow. |
-| Blueprint | Vector-like strokes, room fills, door arcs and labels on that sheet. |
+| Company sheet | A pale drafting plane with layered slab edges below it and bounded lighting/shadow configuration. |
+| Blueprint | Vector-like strokes, room fills, door arcs and labels, plus slim partitions contained in each room's footprint. |
 | People and work markers | Flat circles, rings, task chips and connection ports. |
 | Selected object | Outline and a small visual lift where useful; no ballooning or figure conversion. |
 | Active work element | A world anchor with a readable panel facing the viewer. |
 
 Depth values are implementation details and must scale consistently with the chosen world units. Avoid coplanar surfaces that cause flickering. Establish explicit drawing, depth and hit-test policies for selected and active elements.
+
+The relief source uses `MeshStandardMaterial` and directional lighting [10, 11]. Near-side partitions lower with the camera to reduce marker occlusion; flat markers, labels and popup anchors keep their distinct planes. Geometry, containment and occlusion rays can be checked without a graphics context, but the resulting visible appearance and shadows require WebGL acceptance. Relief shares the renderer lifecycle rather than owning another animation loop.
 
 ### Crisp blueprints at different zoom levels
 
@@ -101,6 +103,8 @@ Three's OrbitControls supports pan, orbit, damping, angle limits and zoom toward
 | Click department | Focus its existing footprint without rebuilding the office. |
 | Click person circle | Select the stable employee/assignment and open its profile. |
 | Top | Return to the overhead orientation around the current focus. |
+| 3D overview | Frame the selected company's structural envelope from the architectural view; retain the same company and work records. |
+| Plan / Relief | Switch the contained architectural depth treatment without changing ownership, permissions or active drafts. |
 | Fit / Home | Frame the selected company or return to the conference neighborhood. |
 | Orbit mode / modified drag | Rotate and tilt around the current focus. |
 | Escape | Close the active transient element or cancel an in-progress drag. |
@@ -208,7 +212,7 @@ Active popups do not multiply into permanent sidebars. Distant elements may coll
 | Connection | Typed endpoints, relationship scope and state. |
 | Presentation | Camera, selected IDs, panel anchors, local layout preferences and drafts kept separate from credentials/grants. |
 
-Boards, profiles, circles and Donna must read these same records. Fix the existing prototype's global task/note collections and repeated people fixtures during the rewrite. A task created in Company A must not appear in B just because both have a board with the same title.
+Boards, profiles, circles and Donna read these same records. The implemented core replaces the earlier prototype's global task/note collections and repeated people fixtures with company-scoped records and canonical employee identities. A task created in Company A must not appear in B just because both have a board with the same title.
 
 ### First complete working flow
 
@@ -236,6 +240,16 @@ The visual greyed-out area follows a restricted data projection. Unavailable nam
 The standalone concept may offer a clearly labelled simulated visitor mode using synthetic fixtures. Real access depends on the existing native/server authority. Dragging or adding a connection cannot grant membership.
 
 Keep appearance changes separate from domain changes. View/pan/zoom are personal presentation state. Shared task edits and assignments are versioned domain commands. Concurrent edits need explicit conflict behavior; a late response must not overwrite a newer scope or draft.
+
+### Implemented local Studio policy
+
+Studio exposes a local actor selector and explicit grants for seven capabilities: department rename, color and reorder; company movement; employee placement; policy management; and eligible cross-author undo. Roles and visual positions do not confer rights. The initial CEO actor has an explicit workspace grant. Each canonical director has five floorplan capabilities on its own company, and each canonical Donna has four department/placement capabilities on its own company. A visiting actor starts without a grant. Parent-company and shared-employee relationships never substitute for authorization.
+
+Owner-only Access controls register an existing employee as an actor, add or revoke a scope grant, or atomically create a local sub-Donna. Sub-Donna creation stages the employee record, reporting relationship, actor and explicit department-subtree grant before committing them together. Ordinary company creation, hiring, tasks and notes remain labelled CEO owner tools; choosing another Studio actor does not reassign those workflows.
+
+The command layer checks current authorization and base revisions, retains bounded idempotency receipts and records compensating undo events. Owner CRUD creates a history barrier. Dirty forms retain their drafts on a stale-revision rejection and offer an explicit draft-base refresh; they do not silently retry. A cross-tab storage event fences edits and saves until reload. Canonical core arrays and Studio metadata share one JSON snapshot capped at 2 MiB, with invalid stored metadata preserved rather than silently overwritten.
+
+These are local synthetic editing rules, not server authentication or tamper-resistant account permissions. The fingerprint is a change detector, not a security guarantee. The app does not implement collaborative synchronization or start any employee process by registering a local actor or creating a sub-Donna.
 
 ## 10. Infinite-canvas and laptop performance strategy
 
@@ -268,7 +282,7 @@ The implementation used bounded model, renderer and UI responsibilities with the
 | A — Scoped model | Company/office/department/employee/assignment/task/board records, validators, local fixtures and persistence migration. | Isolation, hierarchy, unique IDs, bad storage and capacity checks. |
 | B — World renderer | Table, company planes, blueprint lines, circle instances, labels, boundary ports and culling. | Correct top view, company containment, stable scene identities and local asset loading. |
 | C — Camera and motion | Pan/zoom/orbit, focus transitions, picking, spring placement, collision and undo. | Projection/ray agreement, whole-object bounds, cancellation and frame-step stability. |
-| D — World work elements | Profiles, creation, local hiring, roadmap, ownership, notes, hierarchy and scripted Donna. | End-to-end scoped workflow, persistent drafts and native keyboard controls. |
+| D — World work elements | Profiles, creation, local hiring, roadmap, ownership, notes, hierarchy, scripted Donna and Studio editing/access/history. | End-to-end scoped workflow, current grants, revision barriers, persistent drafts and native keyboard controls. |
 | E — Review and publication | Independent numeric checks, actual laptop browser review, one grouped correction pass and exact artifact receipts. | Publish only the tested source and retained evidence. |
 | F — Runtime adapter | Connect the validated presentation to existing native/cloud projections and commands. | Real authority, provider results and permission behavior verified separately from the demo. |
 
@@ -292,19 +306,22 @@ Numerical tests can establish matrices, rays, containment and motion properties.
 
 ## 13. Current checkpoint and next implementation boundary
 
-The initial planning checkpoint has progressed to an implemented standalone local frontend. The entry point is [blueprint-world.html](../../cloud-workspace/public/concepts/blueprint-world.html), with separate core, renderer and application modules plus a locally bundled graphics dependency. The corrected image remains a concept, not a captured application result.
+The initial planning checkpoint has progressed to an implemented standalone local frontend and a further Studio expansion. The entry point is [blueprint-world.html](../../cloud-workspace/public/concepts/blueprint-world.html), with separate core, renderer, relief, Studio command/UI and application modules plus a locally bundled graphics dependency. The corrected image remains a concept, not a captured application result.
 
 | Area | Implemented or recorded now | Remaining boundary |
 | --- | --- | --- |
-| Scoped records | Company/sub-company creation, one default office per company, root and nested departments, local employees and explicit assignments, tasks, notes and validated persistence. | Additional-office creation, real membership/grants, runtime model policy and collaborative conflict resolution are not connected by this demo. |
-| Native work elements | Scoped create, hire, task ownership/lane/status, notes, profiles, boards, search and scripted Donna. | Local definitions do not start employees or execute model calls. |
-| Graphics and motion source | Three.js 0.187.0 with OrbitControls, flat blueprint/circle scene source, world anchors and bounded UI motion/containment. | Actual GPU appearance, shaders, rendered-scene picking, laptop frame timing and GPU resource behavior remain unverified. No PhysX, Rapier or Troika dependency was added. |
-| Independent validation | 12 core groups and 6 DOM groups passed for their recorded source hashes; the DOM harness explicitly makes graphics unavailable. | These results establish neither browser layout nor WebGL rendering. See the [validation record](validation/README.md) and [index](validation/validation-index.json). |
-| Renderer review | The renderer owner reports 11 passing non-GPU groups using Three.js mathematics. | This separate numerical evidence is not an actual graphics-context or visual review. |
-| Browser review | The coordinator observed company creation, local hiring and task ownership, lane and status changes through native managed-Chrome controls. | WebGL was unavailable in that environment. Further browser review is in progress; no actual scene-picking success is claimed. |
-| Publication | Source exists locally with coordinated build evidence in [BUILD-RUN.json](BUILD-RUN.json). | Publication and its exact URL/version/source receipt are pending. |
+| Scoped records | Company/sub-company creation, one default office per company, root and nested departments, local employees and explicit assignments, tasks, notes and validated persistence. | Additional-office creation, authenticated membership, runtime model policy and collaborative synchronization remain unconnected. |
+| World work elements | Scoped create, hire, task ownership/lane/status, notes, profiles, boards, search and scripted Donna, with an attached Studio popup. Published-site observations verify scoped local editing, revocation, persistence, focus and popup movement. | Local definitions do not start employees or execute model calls. Browser coverage is limited to the recorded workflows and viewport, through the graphics-unavailable path. |
+| Local editing policy | Explicit actors and scoped grants, local sub-Donna creation, department/company/placement commands, grant revocation, stale checks, idempotency, undo and owner barriers. | This synthetic policy is not server authentication, production account authority or tamper-resistant ownership. |
+| Graphics and motion source | Three.js 0.187.0 with OrbitControls, contained slabs/partitions and cutaway, flat circles, optional 3D overview, world anchors and bounded motion. | Actual GPU appearance, shaders, rendered-scene picking, laptop frame timing and GPU resource behavior remain unverified. No PhysX, Rapier or Troika dependency was added. |
+| Independent validation | Unchanged core: 12 passing groups. Studio command layer: 17 passing groups. Current integrated Studio DOM: 14 passing groups; renderer explicitly unavailable. | Source hashes and limits are in the [validation record](validation/README.md), [final Studio DOM receipt](validation/studio-ui-final.json) and [index](validation/validation-index.json). They establish neither native browser layout nor WebGL rendering. |
+| Renderer review | [21 non-GPU groups passed](validation/studio-renderer-evidence.json), including 100-company/1,000-employee capacity fixtures, dense-department framing and 4,100 occlusion rays. The original checkpoint retains its 11 historical groups. | CPU geometry/resource checks are not GPU frame-rate, shader, rendered-scene picking or visual acceptance. |
+| Browser review | The [Studio browser receipt](validation/studio-browser-receipt.json) separates version 16 workflow observations from final version 17 persistence, undo/revocation, actor-label, keyboard and popup-drag observations. Final viewport: 1363 × 936; no HTML-page scroll. | The local-preview reload was denied by browser URL policy and not retried or bypassed. The published HTTPS destination was accepted for live review. All recorded native observations use the graphics-unavailable path. |
+| Publication | Owner-private Site version **17**, source `e0a17a669dd359a4346d9ca7c61e11394fa3760b`, succeeded at `2026-11-22T00:14:45.290141+00:00`. [Open the published canvas](https://atlas-command-office.whatswrong-inc.chatgpt.site/concepts/blueprint-world); [publication receipt](publication.json). | Audience remains one owner, with no editors, groups, external visitors or MCP connection. Site publication is separate from the GitHub design-branch commit and does not establish runtime integration. |
 
-External Claude Sonnet 5.5 partially authored the core and supplied the initial UI plus its bounded completion; local review completed the core and repaired the UI. The renderer was authored locally after automatic approval review blocked polling its request. That process's outcome is unknown, no response was observed, and its reservation remains in [the usage ledger](../../project/CLAUDE_USAGE.md). There was no automatic retry or change to platform automatic-approval settings; later user authorization supported continuation of the development work.
+External Claude Sonnet 5.5 partially authored the core and supplied the initial UI plus its bounded completion; local review completed the core and repaired the UI. The original renderer was authored locally after automatic approval review blocked polling its request. That process's outcome is unknown, no response was observed, and its reservation remains in [the usage ledger](../../project/CLAUDE_USAGE.md). The later Studio expansion used four distinct Claude requests for relief, the edit-layer prefix and bounded suffix, and the attached UI. Two responses reached their output limits. Local completion, independent repairs and application integration produced the tested source. The additional work used $0.446882 against its separately recorded $20 ceiling. There was no automatic retry of uncertainty or change to platform automatic-approval settings.
+
+Native review found and resolved two presentation defects before version 17: reorder permission probing now tests a real adjacent move instead of a no-op, and sub-Donna creation no longer displays a redundant CEO actor toast. The attached popup was compacted to a 420 px width and 680 px height limit. The final DOM receipt was rerun against the post-review source, and final browser observations confirmed persisted delegate/revocation state followed by an owner undo. Grant preservation across undo is established by pure/DOM tests; the revoked actor was not reselected after the final native undo. The initial [BUILD-RUN.json](BUILD-RUN.json) remains the historical publication-pending record at `287dfdf70bcece1960c7bda364e911c82dea37e2`; [STUDIO-RUN.json](STUDIO-RUN.json) and the publication receipt record the later completed expansion.
 
 The next acceptance boundary is a real WebGL2-capable browser running this exact frontend, with visible geometry, text, shaders, object picking, camera modes and popup hit targets checked together. Numerical geometry and native-form checks remain useful evidence within their stated scope. The earlier CSS 3D prototype, its historical owner-private Site publication and the 0.8.0 release retain their own source and receipts; this new frontend is outside that released binary source.
 
@@ -321,3 +338,5 @@ Reviewed 21 November 2026. These sources support the library capabilities; the l
 7. [NVIDIA PhysX introduction](https://nvidia-omniverse.github.io/PhysX/physx/latest/index.html) — simulation responsibilities and separation from rendering.
 8. [physx-js-webidl maintainer README](https://github.com/fabmax/physx-js-webidl/blob/main/README.md) — third-party PhysX browser bindings and excluded CUDA coverage.
 9. [Cannon ES documentation](https://pmndrs.github.io/cannon-es/docs/) — an alternative JavaScript physics implementation considered during research.
+10. [Three.js MeshStandardMaterial](https://threejs.org/docs/pages/MeshStandardMaterial.html) — metallic/roughness material properties and lighting behavior used by the relief source.
+11. [Three.js lighting manual](https://threejs.org/manual/pages/lights.html) — directional-light targeting and light types.

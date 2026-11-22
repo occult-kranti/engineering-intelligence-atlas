@@ -1,89 +1,82 @@
-# Blueprint World validation evidence
+# Blueprint World Studio — validation evidence
 
-This directory contains independent core and DOM checks for the new flat-circle Blueprint World, plus the renderer owner's separate numerical review. The coordinator reran the current DOM and renderer harnesses. Those origins are kept distinct below. The earlier CSS 3D prototype's validation is not evidence for this WebGL implementation.
+The current Studio expansion is published as owner-private Site version 17. This record separates independent command checks, application DOM workflows, numerical renderer checks and native browser observations. Actual WebGL rendering remains unverified in the managed browser.
 
-## Recorded result
+## Current results
 
-| Check | Result | Exact source | Receipt |
-| --- | --- | --- | --- |
-| Independent core records, persistence and geometry | 12 of 12 groups passed | Core SHA256 `a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea`, 35,637 bytes | `core-receipt-a16a38263dda.json` |
-| Independent application DOM harness, rerun by the coordinator with graphics explicitly unavailable | 6 of 6 groups passed | App SHA256 `3dd32e492c47215835842394a8f78ef42a3c84066b2d7755b121cdc5f20d9546`, 63,778 bytes | `ui-receipt-3dd32e492c47.json` |
-| Renderer-owner numerical review, rerun by the coordinator | 11 of 11 groups passed; non-GPU only | Renderer SHA256 `c595ab9e7fbe3dc7cbbb969fba7f7eac7094f8ca27cb6f6a6b553f258f839f53`, 33,195 bytes | `renderer-nongpu-evidence.json` |
-| Actual WebGL rendering, graphics picking and GPU performance | Not verified by these checks | No real GPU context is created by these harnesses | The coordinator reported that managed Chrome could not provide WebGL2; actual-browser observations belong to the coordinator's separate receipt. |
+| Layer | Recorded result | Exact-source receipt |
+| --- | --- | --- |
+| Core model, persistence and geometry | 12 of 12 groups; core unchanged from the previous build | [Core receipt](core-receipt-a16a38263dda.json) |
+| Studio authorization and commands | 17 of 17 independent groups | [Studio command receipt](studio-receipt-3a586a4d0905.json) |
+| Application and Studio DOM workflows | 14 of 14 groups, final sources | [Final DOM receipt](studio-ui-final.json) |
+| Three scene mathematics and relief lifecycle | 21 of 21 groups, non-GPU | [Renderer evidence](studio-renderer-evidence.json) |
+| Managed Chrome controls | 14 grouped observations across published versions 16 and 17, with their source boundaries retained | [Native browser receipt](studio-browser-receipt.json) |
+| WebGL appearance, shaders, scene picking and GPU performance | Not verified: WebGL2 unavailable | Native browser receipt and [run record](../STUDIO-RUN.json) |
 
-The receipts identify the exact inputs, harnesses and environments. A later source change is not covered merely because its filename remains the same. `validation-index.json` links these results and their hashes.
+These totals describe separate layers. The current DOM suite includes the six earlier workflow regressions, and the current renderer suite extends the earlier numerical suite; historical totals should not be added again. Native observations are not an automated test count. [validation-index.json](validation-index.json) contains the current source and evidence hashes. [publication.json](../publication.json) verifies byte parity between all nine canonical frontend files, the pushed Site source and the deployment archive.
 
-The earlier independent DOM pass, `ui-receipt-724868f8697d.json`, remains historical evidence for app SHA256 `724868f8697dce20047ff516cc9874e730bb0f20b40c35ce722abb6a8cfe67f0` (63,579 bytes). The current pass uses the same independent DOM harness, SHA256 `a26abeba77fcc676bdb9e3998fd88b58053effab15e34622a84507ae56efd4ba`, on the coordinator's updated app. The renderer-owner harness has SHA256 `29c833c54174d536002833bd9aae95baeac122fc2910e82b5e73bda103db782a`.
+## Running current checks
 
-## Running the checks
-
-From the repository root:
+Run from the repository root:
 
 ```sh
 node design/blueprint-world/validation/check-core.mjs
-node design/blueprint-world/validation/check-ui.mjs
-node --experimental-vm-modules design/blueprint-world/validation/check-renderer-nongpu.mjs
+node design/blueprint-world/validation/check-studio.mjs
+node design/blueprint-world/validation/check-studio-ui.mjs
+node --experimental-vm-modules design/blueprint-world/validation/check-studio-renderer.mjs
 ```
 
-The core and UI scripts accept an optional source path followed by an optional output JSON path. Relative arguments resolve from the invoking working directory. The UI script expects the HTML and core module alongside the app module. The renderer harness resolves the shipped core, renderer and vendor relative to its own file and writes `renderer-nongpu-evidence.json` alongside the harness.
+The core, command and DOM scripts accept an optional source path and output JSON path. The renderer harness writes its named receipt beside the harness. Preserve committed receipts when recording a new run. The old `check-ui.mjs` and `check-renderer-nongpu.mjs` belong to the pre-Studio checkpoint and should be run against that checkpoint's sources.
 
-```sh
-node design/blueprint-world/validation/check-core.mjs cloud-workspace/public/concepts/blueprint-world-core.js /tmp/blueprint-core-receipt.json
-node design/blueprint-world/validation/check-ui.mjs cloud-workspace/public/concepts/blueprint-world-app.js /tmp/blueprint-ui-receipt.json
-```
+The command suite uses Node built-ins. DOM and renderer harnesses resolve the existing `desktop-shell` jsdom dependency. Recorded runs used Node v24.22.3 and jsdom 31.0.1. No harness starts a provider, server, browser or external service. The renderer uses actual bundled Three 0.187.0 mathematics, geometries and OrbitControls, with explicitly mocked WebGLRenderer and text measurement. A mocked render call does not compile shaders or rasterize pixels.
 
-The core harness uses Node built-ins only. The UI and renderer harnesses resolve the repository's existing `desktop-shell` dependency on jsdom; the recorded core and DOM runs used Node v24.22.3, and the DOM receipt records jsdom 31.0.1. None of these harnesses starts a browser, server, provider call or external service. A failed assertion produces a nonzero exit code and a receipt identifying the failed group.
+## Model and authorization
 
-## Core coverage
+The unchanged core suite covers canonical identities, same-name records in different companies, graph cycles, invalid references, rejected-mutation atomicity, query purity, corrupt storage, capacities, nested floorplans, placement clamping and circle spacing. Recorded capacities are 100 companies, 1,000 employees, 2,000 assignments, 4,096 departments, 500 tasks and 500 notes. These are local frontend limits, not measured production service capacity.
 
-Fixtures are constructed independently of the implementation and do not import its layout or validation helpers. The suite checks:
+The independent Studio suite was authored from a frozen contract before acceptance of the command module. Its 17 groups cover:
 
-- The frozen 23-export contract, deterministic independent seed states and declared constants.
-- Twenty-five malformed graph/schema cases, including company, department and reporting cycles, invalid references, duplicate identifiers and out-of-company ownership.
-- Two companies with the same employee names, task titles and note text: changing one company's records leaves the other company's records intact, including after save/reload.
-- Local company creation, explicit shared assignments, same-clock task IDs, nested department scopes and task-owner eligibility.
-- Twenty rejected mutations that must leave the original state deeply unchanged.
-- Inclusive capacities: 100 companies, 1,000 employee definitions, 2,000 assignments, 4,096 departments, 500 tasks and 500 notes; 32 root departments per company, four children per parent and nesting depth two.
-- Copied query results and pure queries, bounded search, ten load-failure cases and four save-failure cases using only the supplied storage adapter.
-- Rectangle/circle predicates, boundary tolerance, large-coordinate translation, clamps and full layout containment.
-- A nested layout with nine rooms, four boards and 22 circles, including 172 automatic spacing pairs; circles have radius 18 and automatic centers are separated by at least 64 world units.
-- Assignment/note movement clamps that preserve canonical identity and scope, including the usable parent-room strip above nested children.
+- Explicit actor and capability grants. Role names, director labels, visiting/shared status and company ancestry confer no authority.
+- Company isolation, department scope, opt-in descendants and shared employee assignments checked against their host company.
+- Complete sibling reorder permutations, canonical identity preservation, company gutters and circle occupancy/containment.
+- Atomic rejection, immediate revocation, stale revisions, exact retry receipts, cursor persistence after receipt eviction and current-state returns on retries.
+- Latest eligible compensating undo, current grant checks, owner-change barriers and policy preservation.
+- Combined core/Studio snapshots, legacy core-only loading, malformed metadata, journal validation, 256 actors, 1,024 grants and a 2 MiB serialized limit.
 
-These are abstract interface world units, not metres. The core uses local x/y coordinates; the renderer maps them onto world X/Z with world Y as depth. The CPU geometry checks use binary64 arithmetic and the frozen API's absolute epsilon of `1e-7`. They do not establish GPU precision or visual hit-test tolerances.
+The model fingerprint is a change detector, not a cryptographic integrity guarantee. These are local command-policy checks; they do not provide server authentication, real account isolation, distributed transactions or autonomous worker execution.
 
-## DOM workflow coverage
+## DOM integration
 
-The UI harness evaluates captured app and core source in the same jsdom realm. Only their module wiring is adapted: core exports are exposed to that realm, and the renderer import is replaced by a function that explicitly throws an unavailable-renderer error. There is no mock rendering success or fake WebGL context. Interactions use visible application controls, labels, input/change events and pointer/keyboard events; tests do not call private application state or functions.
+The final 14-group run evaluates the actual app, core, Studio commands and Studio UI in the same jsdom realm. The renderer import is replaced with an explicit unavailable-renderer boundary. No rendering success is simulated. The real application handlers receive input, change, pointer and keyboard events; private state is not used to trigger form mutations.
 
-The six groups cover:
+The suite retains the six earlier regressions: corrupt-storage recovery, department-specific hire drafts, person-specific task ownership, scoped scripted Donna drafts/literal text/history limits, panel cancellation and failed-persistence behavior. Eight Studio groups add opening without a write, literal owner edits, distinct actor drafts, denial through both profile and scene-placement callbacks, canonical Donna selection, atomic scoped sub-Donna creation/revocation, stale drafts after owner work, undo, invalid metadata preservation, cross-tab fencing and registration without implicit grants.
 
-1. Truthful graphics failure recovery, usable native forms, read-only opening without storage writes, and preservation of corrupt raw storage until a mutation is requested.
-2. Independent hire drafts for two departments, stable drafts across close/reopen, unique field IDs when forms coexist, and creation only in the selected department.
-3. Independent task drafts for two people in the same department, correct owner retention and exclusion of employees from a different company.
-4. Donna draft clearing after send, unsent drafts across scope changes, literal rendering of hostile HTML-looking text, 24 rapid sends, a 40-message cap, and no hidden task creation.
-5. Restoration of a dragged panel's starting presentation after pointer cancellation, window blur and Escape. This uses a fixed synthetic 380 by 240 panel rectangle; it does not verify real pointer capture, CSS positioning, scrolling or browser hit-testing.
-6. A failed storage write that keeps the new session record usable, leaves persisted data unchanged and displays a session-only warning.
+Cross-tab fencing is a local conflict warning and mutation stop, not compare-and-swap or multi-user synchronization. The test of a scene-placement callback does not establish real graphics picking. jsdom does not lay out or paint a browser page; CSS sizing, visual clipping, native focus scrolling and GPU performance require separate observations.
 
-The initial UI attempt passed Node-realm core functions into jsdom. Because the core deliberately accepts only plain objects from its own realm, this was an invalid test setup for browser form arguments. That attempt is retained as `ui-receipt-724868f8697d-initial-harness.json` with status `invalid-harness` and is not counted as an application failure or as verification. The corrected harness evaluates both modules in one realm, as native browser modules do.
+## Numerical graphics and bounded motion
 
-## Renderer-owner numerical coverage
+The 21-group renderer harness checks independent orthographic equations, projection round trips, geometry containment, camera interruption, fast-release placement, cancellation, collisions, a 250 ms frame gap, malformed camera inputs, camera preservation, resource churn and disposal. It also checks Plan/Relief transitions, exact bottom door gaps, atomic invalid-relief rejection, shadow-target disposal and camera-facing cutaways.
 
-This is a separate review authored by the renderer owner, not an independent GPU pass. The coordinator made its paths portable and reran it against the exact shipped vendor: `cloud-workspace/public/concepts/blueprint-world-vendor.js`, SHA256 `fc7cbff1e3c2d33d2ac1fe1ad49d8a31db926cd5c966482ce2d2762bc82147c4` (769,573 bytes). It imports the bundled Three 0.187.0 math, geometries and OrbitControls, while replacing `WebGLRenderer` and text measurement with explicit test doubles and using synthetic DOM events.
+The final evidence includes 3,800 center/rim rays across four tilts and five yaws, plus 300 nested-department rays. These CPU rays did not intersect a partition before the tested circle points. They do not prove rendered pixel visibility, glyph legibility or real scene hit targets.
 
-The 11 passing groups cover initial scene settling, independent orthographic equations and projection/inverse-projection round trips, finite contained room geometry, manual interruption of camera travel, fast-release position commits, five cancellation paths, collision/containment with extreme targets and a 250 ms frame gap, malformed camera input, camera preservation across state refresh, bounded observed resource churn, simulated context-restoration readiness, and disposal of observed resources/listeners/frames. The receipt reports 36 projection cases with a maximum screen error of about `7.35e-12` and maximum world round-trip error of about `1.37e-12` under its synthetic dimensions.
+A dense fixture contains 1,000 employees, 966 assignments in one department and a company 16,152 interface units tall. Overview fits its raised envelope at zoom 0.07186452855140499. A company moved to x=-60000, z=50000 excludes the distant conference spine. Company/department focus restores the 0.12 editing zoom floor and 2,400-unit camera distance.
 
-The harness records 481 mocked render calls. Those calls exercise scene construction and lifecycle logic; they do not compile shaders or rasterize pixels. The synthetic context-restoration assertion establishes a host readiness callback after a simulated event, not recovery of a real graphics device. These numerical results cannot establish glyph legibility, visual occlusion, real browser hit targets or GPU performance.
+A separate distributed fixture has 100 companies and 1,000 employees. It mounted three detailed companies, 30 circle instances, 90 partition instances and 501 text textures, with 8,804,566 source bitmap pixels observed. The recorded approximately 49 ms dense-fixture and 763 ms distributed-fixture durations are Node CPU construction plus synthetic frame observations, not browser timings or GPU FPS. The renderer harness recorded 649 mocked render calls.
 
-## Scope and remaining limits
+## Native browser evidence and its limits
 
-These checks verify local demo behavior. They do not verify production account authorization, delegated grants, live Donna workers, model execution, repository access, or remote deployment.
+The local-preview reload was rejected by browser URL policy, and no local retry, alternate browser, flag change or graphics bypass followed. The independently published HTTPS page opened normally. Managed Chrome still reported WebGL2 unavailable; the application showed a recovery element and disabled graphics controls while keeping native forms usable.
 
-jsdom does not perform browser layout or graphics rendering. The DOM workflow pass does not establish CSS clipping, element hit-testing, focus scrolling, accessible announcement delivery, graphics context restoration, camera projection, raycasts, spring animation, frame rate, or GPU resource cleanup. The separately identified renderer-owner review checks CPU scene mathematics and lifecycle behavior using test doubles. Actual-browser observations must retain their own source hashes and distinguish native form behavior from graphics behavior. The coordinator's WebGL2 limitation remains a real verification gap.
+Version 16 review exercised visitor read-only controls, Donna's literal rename and undo, attributed history, company-position denial, atomic local sub-Donna creation, department scope, delegated rename and immediate grant revocation. It exposed a redundant actor success message after automatic actor selection. The final UI removed that redundant text while retaining the live selector and canvas actor label. Earlier version 15 review also found a reorder label based on a no-op probe; the corrected label tests actual adjacent moves.
 
-## Provenance and bounds
+Version 17 review confirmed saved local actor/revocation state after reload, corrected current-actor presentation, owner undo after the policy change, Tab from Name to Save name, and a native header drag. At a 1,363 by 936 viewport, the Studio popup measured 420 by 680; it moved from x=40,y=90 to x=520,y=110. The popup body scrolled internally while document dimensions matched the viewport and page scroll remained zero.
 
-Run: `blueprint-world-20261121`; node: `verification`; attempt: `1`; termination owner: `root`. The review was bounded by the Director protocol, with one grouped repair review for concrete application/renderer issues. This validator modified only this validation directory and did not commit or publish changes.
+The final native owner undo restored Design at revision 8. Policy preservation is established by the command and DOM suites; a separate native selection of the revoked actor after that final undo was not performed. The complete version 16 native scenario set was not replayed after the one-line actor-status correction. The final DOM suite does cover the final source. No live employee, account grant, provider operation or remote worker was created by these browser checks.
 
-The final bookkeeping pass inspected the coordinator's current receipts and source/harness hashes without rerunning tests or changing implementation code. It updated only this README and `validation-index.json`. The coordinator owns the separate browser receipt and its subsequent addition to the index.
+## Retained history and failures
 
-The frozen input contract is `core-contract.json`, SHA256 `63fdb32f46975a5b4ba0599f99c4f69cb8601d8ac23c56e594e67aa984bc1cce`. The computational-geometry engineering skill and its validation/method references were read and matched against the project's skill registry; their exact hashes are included in the core receipt. The old `design/blueprint-canvas/validation/` results apply only to that earlier prototype.
+[validation-index.checkpoint-287dfdf.json](validation-index.checkpoint-287dfdf.json) retains the original build index. Its source and README hashes refer to commit `287dfdf70bcece1960c7bda364e911c82dea37e2`. The original 20 native observations remain in `browser-receipt.json` and apply only to that older source. Earlier CSS prototype results remain in their separate design directory.
+
+Initial Studio receipts are preserved: a bootstrap grant-schema integration failure, a 13/17 command attempt with two implementation defects and two demonstrated fixture-coordinate assumptions, and two transient UI-copy regressions. The explicit local-owner label and concrete owner-tools explanation were restored without weakening assertions. Historical passing UI receipts identify their own hashes. The current final command, DOM and renderer receipts all pass within their documented scope.
+
+The remaining acceptance boundary is this exact frontend on a real WebGL2-capable laptop browser: rendered floorplans, materials, shadows, text, camera transitions, scene picking, popup attachment and frame rate must be observed together before claiming full graphics acceptance.

@@ -1,0 +1,170 @@
+{
+  "schemaVersion": 1,
+  "runId": "blueprint-studio-20261121",
+  "baseCommit": "287dfdf70bcece1960c7bda364e911c82dea37e2",
+  "status": "completed-with-gpu-verification-gap",
+  "goal": "Architectural 3D floorplan overview and scoped local owner/Donna/sub-Donna editing within the one continuous canvas.",
+  "userAuthorization": "Additional USD 20 ceiling approved during the active build; existing code, bounded provider, GitHub push and owner-private publication authorization persists.",
+  "budget": {
+    "incrementalProviderCeilingUsd": 20,
+    "automaticRetries": false,
+    "maxOutputTokensPerRequest": 12000,
+    "recordObservedAndUncertainSeparately": true
+  },
+  "constraints": [
+    "Flat circles for people; no 3D figures or decorative office props.",
+    "Top is default; overview/orbit is optional.",
+    "Company plan boundaries own their department geometry.",
+    "Local editing permissions are not server authentication or production ACLs.",
+    "No native/provider runtime connected in this standalone frontend.",
+    "Managed browser WebGL2 remains unavailable; no diagnostic bypass."
+  ],
+  "nodes": [
+    {
+      "id": "permissions-design",
+      "owner": "content_review",
+      "status": "completed",
+      "toolBudget": 12,
+      "wallMinutes": 8,
+      "externalDollarBudget": 0
+    },
+    {
+      "id": "renderer-design",
+      "owner": "canvas_architecture",
+      "status": "completed",
+      "toolBudget": 12,
+      "wallMinutes": 8,
+      "externalDollarBudget": 0
+    },
+    {
+      "id": "implementation",
+      "owner": "root",
+      "status": "completed"
+    },
+    {
+      "id": "verification",
+      "owner": "branch_review",
+      "status": "completed"
+    },
+    {
+      "id": "final-renderer-review",
+      "owner": "renderer_finish",
+      "status": "completed",
+      "externalDollarBudget": 0
+    },
+    {
+      "id": "native-review-and-publication",
+      "owner": "root",
+      "status": "completed-with-gpu-gap"
+    },
+    {
+      "id": "accounting-and-docs",
+      "owner": "studio_docs",
+      "status": "completed",
+      "externalDollarBudget": 0
+    }
+  ],
+  "skillsFrom": "BUILD-RUN.json selectedSkills content hashes",
+  "terminationOwner": "root",
+  "startedAt": "2026-11-21T23:41:58.093809+00:00",
+  "completedAt": "2026-11-22T00:17:55.271490+00:00",
+  "sourceBranch": "design/infinite-blueprint-canvas",
+  "publishedSource": "e0a17a669dd359a4346d9ca7c61e11394fa3760b",
+  "publication": "publication.json",
+  "artifacts": [
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-LICENSES.txt",
+      "bytes": 1095,
+      "sha256": "2a1f8894cb0866fcc689c6428d58397eb3d03c20c97fb5e244a87d22507ef9db",
+      "archivePath": "dist/client/concepts/blueprint-world-LICENSES.txt"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-app.js",
+      "bytes": 77342,
+      "sha256": "7d676a4a91bfa801d0d9e2f7ac837a2b8c84f38cbd5f56db422098bd0ce0d7f0",
+      "archivePath": "dist/client/concepts/blueprint-world-app.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-core.js",
+      "bytes": 35637,
+      "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea",
+      "archivePath": "dist/client/concepts/blueprint-world-core.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-relief.js",
+      "bytes": 14413,
+      "sha256": "49ee0ce33e92f7da725476008c4edc0f0c81c97ca5c2c3e81fc394cd6e09f352",
+      "archivePath": "dist/client/concepts/blueprint-world-relief.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-renderer.js",
+      "bytes": 38174,
+      "sha256": "fb7f9f89875d663494e7e3b2f9cae15167de321bf1def82b7aaa56a8d2d8ddbd",
+      "archivePath": "dist/client/concepts/blueprint-world-renderer.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-studio-edits.js",
+      "bytes": 41543,
+      "sha256": "3a586a4d09059e1fa908d2a44cf00c8a0e90fd9abfa62e1fe90f3a5fb1d7581a",
+      "archivePath": "dist/client/concepts/blueprint-world-studio-edits.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-studio-ui.js",
+      "bytes": 33064,
+      "sha256": "04f9b9b933241acd966685dc3d890fbcf9df07070b299f815cab55fcae9cb1a4",
+      "archivePath": "dist/client/concepts/blueprint-world-studio-ui.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-vendor.js",
+      "bytes": 769573,
+      "sha256": "fc7cbff1e3c2d33d2ac1fe1ad49d8a31db926cd5c966482ce2d2762bc82147c4",
+      "archivePath": "dist/client/concepts/blueprint-world-vendor.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world.html",
+      "bytes": 14434,
+      "sha256": "ecf54ec2a0dadf3e92fff9e22c05beedae4db4bc83082ef729c6714904eb69e9",
+      "archivePath": "dist/client/concepts/blueprint-world.html"
+    }
+  ],
+  "platformApprovals": "Unchanged; standing user permission applied within existing platform controls.",
+  "providerOutcome": {
+    "requests": 4,
+    "observedUsd": 0.446882,
+    "retainedNewUncertaintyUsd": 0,
+    "incrementalCeilingUsd": 20,
+    "remainingIncrementalCeilingUsd": 19.553118,
+    "automaticRetries": 0,
+    "requestIds": [
+      "c4b6f586-bbbd-4354-915e-a32c1d212158",
+      "2e4f95d6-8579-424a-95c1-c69c480076f7",
+      "f6190f8a-dbe8-422e-886c-61efdba26a8e",
+      "1c332aa7-d34d-4d9c-b9ee-346f9b04bbc9"
+    ],
+    "authorship": "Claude relief and edit-layer completion ended normally; edit-layer prefix and Studio UI reached output limits. Local completion, integration, review and repairs produced the final sources."
+  },
+  "evidence": {
+    "unchangedCore": {
+      "passed": 12,
+      "groups": 12,
+      "receipt": "validation/core-receipt-a16a38263dda.json"
+    },
+    "permissions": {
+      "passed": 17,
+      "groups": 17,
+      "receipt": "validation/studio-receipt-3a586a4d0905.json"
+    },
+    "dom": {
+      "passed": 14,
+      "groups": 14,
+      "receipt": "validation/studio-ui-final.json"
+    },
+    "rendererNonGPU": {
+      "passed": 21,
+      "groups": 21,
+      "receipt": "validation/studio-renderer-evidence.json"
+    },
+    "native": "validation/studio-browser-receipt.json",
+    "gpu": "Not verified; managed Chrome WebGL2 unavailable"
+  }
+}

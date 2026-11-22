@@ -1,5 +1,7 @@
 import * as core from './blueprint-world-core.js';
 import { mountWorld } from './blueprint-world-renderer.js';
+import * as edits from './blueprint-world-studio-edits.js';
+import { createStudioUI } from './blueprint-world-studio-ui.js';
 
 const $ = (id) => document.getElementById(id);
 const canvas = $('world'), root = $('world-panels'), live = $('status-live'), tethers = $('tethers');
@@ -17,6 +19,11 @@ let panelDrag = null;
 let lastFocused = [];
 let busy = false;
 let sessionErr = '';
+const STORAGE_KEY = 'daftar-blueprint-world-v1';
+const STUDIO_CAPABILITIES = ['department.rename', 'department.color', 'department.reorder', 'company.move', 'assignment.place', 'policy.manage', 'history.undoAny'];
+const DEPARTMENT_CAPABILITIES = ['department.rename', 'department.color', 'department.reorder', 'assignment.place'];
+let studio = null, studioUI = null, studioActorId = '', studioIssue = '', writesFenced = false;
+const studioNotices = new Map();
 
 // ---------- storage ----------
 function storage() {
@@ -28,12 +35,19 @@ const adapter = {
 };
 function setSaveLabel(t, warn) { const e = $('save-status'); e.textContent = t; e.classList.toggle('warn', !!warn); }
 function persist() {
-  const r = core.saveState(adapter, state);
-  if (r && r.ok) { storageOk = true; setSaveLabel('Saved'); return true; }
-  storageOk = false;
-  setSaveLabel('Not saved: session only', true);
-  announce('Save failed: ' + ((r && r.error) || 'storage unavailable') + '. Changes live in this session only.');
-  return false;
+  try {
+    if (writesFenced) throw new Error('Another tab changed this workspace. Reload before making changes.');
+    if (studioIssue || !studio) throw new Error(studioIssue || 'Studio metadata is unavailable.');
+    // One value retains both core records and Studio policy/history. core.saveState
+    // intentionally ignores extension fields and must not run on this save path.
+    adapter.setItem(STORAGE_KEY, edits.encodeSnapshot(state, studio));
+    storageOk = true; setSaveLabel('Saved'); return true;
+  } catch (e) {
+    storageOk = false;
+    setSaveLabel(writesFenced ? 'Another tab changed · reload' : 'Not saved: session only', true);
+    announce('Save failed: ' + ((e && e.message) || String(e)) + '. Saved data was preserved.');
+    return false;
+  }
 }
 function announce(t) { live.textContent = ''; setTimeout(() => { live.textContent = t; }, 20); }
 
@@ -96,6 +110,165 @@ function clearDraft(key) {
   // Retain the object held by mounted input listeners; discard its values only.
   const draft = drafts.get(key);
   if (draft) for (const name of Object.keys(draft)) delete draft[name];
+}
+
+// ---------- local Blueprint Studio integration ----------
+function uniqueStudioId(prefix, source, used) {
+  const base = (prefix + '_' + String(source).toLowerCase().replace(/[^a-z0-9_-]/g, '_')).slice(0, 74);
+  let id = base, n = 1;
+  while (used.has(id)) { if (++n > 2048) throw new Error('Local Studio identity limit reached.'); id = base + '_' + n; }
+  used.add(id); return id;
+}
+function initialStudioPolicy(model) {
+  const ownerActorId = 'act_ceo';
+  const actors = [{ id: ownerActorId, label: 'CEO', role: 'owner', employeeId: null, active: true }];
+  const grants = [{ id: 'gr_ceo_workspace', actorId: ownerActorId, capabilities: [...STUDIO_CAPABILITIES], scope: { kind: 'workspace', companyId: null, departmentId: null, includeDescendants: false }, issuedBy: ownerActorId, issuedAtRevision: 0, revokedAtRevision: null }];
+  const actorIds = new Set([ownerActorId]), grantIds = new Set(['gr_ceo_workspace']);
+  for (const company of model.companies) {
+    for (const [role, employeeId, capabilities] of [
+      ['director', company.directorId, STUDIO_CAPABILITIES.slice(0, 5)],
+      ['donna', company.assistantId, DEPARTMENT_CAPABILITIES]
+    ]) {
+      const employee = model.employees.find(e => e.id === employeeId);
+      if (!employee) throw new Error('A company leadership record is unavailable.');
+      const id = uniqueStudioId('act_' + role, employeeId, actorIds);
+      actors.push({ id, label: employee.name, role, employeeId, active: true });
+      grants.push({ id: uniqueStudioId('gr', id, grantIds), actorId: id, capabilities: [...capabilities], scope: { kind: 'company', companyId: company.id, departmentId: null, includeDescendants: false }, issuedBy: ownerActorId, issuedAtRevision: 0, revokedAtRevision: null });
+    }
+  }
+  actors.push({ id: 'act_visitor', label: 'Visiting employee', role: 'visitor', employeeId: null, active: true });
+  return { ownerActorId, actors, grants };
+}
+function studioBlocked() {
+  return writesFenced ? 'Another tab changed this workspace. Reload before making changes.' : studioIssue || (!studio ? 'Studio metadata is unavailable.' : '');
+}
+function requireOwnerWrite() {
+  if (writesFenced) throw new Error(studioBlocked());
+}
+function requireStudioWrite() {
+  const reason = studioBlocked(); if (reason) throw new Error(reason);
+}
+function ownerMutation(source, callback) {
+  requireOwnerWrite();
+  const previous = state, draft = core.validateState(previous);
+  const result = callback(draft);
+  const next = core.validateState(draft);
+  // Corrupt Studio metadata remains untouched in storage. Ordinary owner work
+  // can continue in session, but no replacement policy is invented.
+  const nextStudio = studioIssue ? studio : edits.observeOwnerChange(previous, next, studio, { source });
+  state = next; studio = nextStudio;
+  return result;
+}
+function studioEnvelope(command, actorId = studioActorId, metadata = studio) {
+  if (!metadata) throw new Error('Studio metadata is unavailable.');
+  return { actorId, sequence: (metadata.cursors[actorId] || 0) + 1, expectedRevision: metadata.revision, command };
+}
+function updateStudioButton() {
+  for (const companyId of studioNotices.keys()) {
+    const assistantId = co(companyId)?.assistantId;
+    if (studio?.policy.actors.some(a => a.employeeId === assistantId && a.role === 'donna' && a.active)) studioNotices.delete(companyId);
+  }
+  const button = $('btn-studio'); if (!button) return;
+  const actor = studio?.policy.actors.find(a => a.id === studioActorId && a.active);
+  const label = actor?.label || 'unavailable';
+  button.textContent = 'Studio · ' + (label.length > 22 ? label.slice(0, 21) + '…' : label);
+  button.setAttribute('aria-label', 'Open Blueprint Studio. Local editing actor: ' + label);
+  button.title = studioBlocked() || 'Blueprint edits as ' + label + '. Create, hire, tasks and notes remain CEO owner actions.';
+}
+function setStudioActorId(actorId) {
+  requireStudioWrite();
+  if (!studio.policy.actors.some(a => a.id === actorId && a.active)) throw new Error('Choose an active registered Studio actor.');
+  studioActorId = actorId;
+  updateStudioButton();
+  // Every open Studio panel must show the new actor before another action.
+  // The UI owns actor-scoped draft keys and preserves the other actors' drafts.
+  studioUI?.refresh();
+}
+function commitStudioEnvelope(envelope) {
+  requireStudioWrite();
+  if (!envelope || envelope.actorId !== studioActorId) throw new Error('The Studio actor changed. Prepare this edit again.');
+  const result = edits.applyEdit(state, studio, envelope);
+  state = result.model; studio = result.studio;
+  if (!studio.policy.actors.some(a => a.id === studioActorId && a.active)) studioActorId = studio.policy.ownerActorId;
+  afterMutation();
+  return result;
+}
+function placeAssignment(assignmentId, point) {
+  return commitStudioEnvelope(studioEnvelope({ type: 'assignment.place', assignmentId, x: point.x, y: point.y }));
+}
+function createSubDonna({ companyId, departmentId, name }) {
+  requireStudioWrite();
+  const ownerId = studio.policy.ownerActorId;
+  if (studioActorId !== ownerId) throw new Error('Choose CEO in Studio to create a local sub-Donna.');
+  const company = co(companyId), department = dept(departmentId);
+  if (!company || !department || department.companyId !== companyId) throw new Error('Choose a department inside this company.');
+  let model = core.validateState(state);
+  const employee = core.hireEmployee(model, { companyId, departmentId, name, role: 'Sub-Donna', kind: 'resident' });
+  employee.reportsToId = company.assistantId;
+  model = core.validateState(model);
+  let metadata = edits.observeOwnerChange(state, model, studio, { source: 'owner.create-sub-donna' });
+  const actorId = uniqueStudioId('act_sub_donna', employee.id, new Set(metadata.policy.actors.map(a => a.id)));
+  const actor = { id: actorId, label: employee.name, role: 'sub_donna', employeeId: employee.id, active: true };
+  let staged = edits.applyEdit(model, metadata, studioEnvelope({ type: 'policy.actor.put', actor }, ownerId, metadata));
+  model = staged.model; metadata = staged.studio;
+  const grantId = uniqueStudioId('gr', actorId, new Set(metadata.policy.grants.map(g => g.id)));
+  staged = edits.applyEdit(model, metadata, studioEnvelope({ type: 'policy.grant', grantId, actorId, capabilities: [...DEPARTMENT_CAPABILITIES], scope: { kind: 'department', companyId, departmentId, includeDescendants: true } }, ownerId, metadata));
+  // Validate serialization before the one visible commit; rejection at any stage
+  // leaves the original model, metadata and saved value unchanged.
+  edits.encodeSnapshot(staged.model, staged.studio);
+  state = staged.model; studio = staged.studio;
+  afterMutation();
+  announce('Local sub-Donna definition created with an explicit department grant. No worker was started.');
+  return { employeeId: employee.id, actorId };
+}
+function studioOpenPanel(id, title, scopeLabel, selected, builder) {
+  return openPanel(id, title, scopeLabel, selected, (body, panel) => {
+    const notice = studioNotices.get(selected?.companyId);
+    builder(body, panel);
+    if (notice) body.prepend(el('p', { class: 'meta', text: notice }));
+  });
+}
+function mountStudioUI() {
+  if (!studio || studioIssue) return;
+  studioUI = createStudioUI({
+    getModel: () => state, getStudio: () => studio, getActorId: () => studioActorId,
+    setActorId: setStudioActorId, blocked: studioBlocked, commit: commitStudioEnvelope,
+    createSubDonna, openPanel: studioOpenPanel, refreshPanel: renderPanelById,
+    openProfile, getWorld: () => world, announce, el, btn, field, select
+  });
+}
+function openStudio(companyId = selCompany, departmentId) {
+  if (!co(companyId)) return;
+  const reason = studioBlocked();
+  if (reason || !studioUI) {
+    openPanel('studio-' + companyId, 'Blueprint Studio', coName(companyId), { kind: 'company', id: companyId, companyId }, body => {
+      body.append(el('div', { class: 'err', text: reason || 'Studio interface is unavailable.' }), el('p', { class: 'meta', text: 'Local blueprint editing only. Saved data is preserved; reload to review the current stored workspace.' }));
+    });
+    return;
+  }
+  studioUI.open(companyId, departmentId);
+}
+function openDonnaBlueprint(companyId, departmentId) {
+  const assistantId = co(companyId)?.assistantId;
+  const actor = studio?.policy.actors.find(a => a.employeeId === assistantId && a.role === 'donna' && a.active);
+  try {
+    if (actor) { setStudioActorId(actor.id); studioNotices.delete(companyId); }
+    else if (studio && !studioBlocked()) {
+      setStudioActorId(studio.policy.ownerActorId);
+      studioNotices.set(companyId, 'This company’s Donna has no registered Studio actor. CEO is selected; register Donna and issue an explicit grant before editing as her.');
+    }
+  } catch (e) { announce(errMsg(e)); }
+  openStudio(companyId, departmentId);
+}
+function fenceExternalStorage(event) {
+  if (event.key !== STORAGE_KEY && event.key !== null) return;
+  if (event.storageArea && event.storageArea !== storage()) return;
+  writesFenced = true; storageOk = false;
+  setSaveLabel('Another tab changed · reload', true);
+  updateStudioButton();
+  if (mode === 'arrange') setMode('pan');
+  try { studioUI?.refresh(); } catch (e) { /* fence remains authoritative */ }
+  announce(studioBlocked());
 }
 
 // ---------- panels ----------
@@ -239,6 +412,14 @@ function pagedRows(parent, records, key, makeRow, refresh) {
 function refreshPanels(force) {
   const act = document.activeElement;
   for (const p of panels.values()) {
+    if (p.id.startsWith('studio-')) continue;
+    if (p.sel?.kind === 'department') {
+      const current = dept(p.sel.id);
+      if (current) { p.title = current.name; p.scopeLabel = 'Company: ' + coName(current.companyId) + ' / Department: ' + current.name; }
+    } else if (p.sel?.kind === 'employee') {
+      const assignment = state.assignments.find(a => a.id === (p.sel.assignmentId || p.sel.id));
+      if (assignment) p.scopeLabel = 'Company: ' + coName(assignment.companyId) + ' / Department: ' + (dept(assignment.departmentId)?.name || 'Unavailable');
+    }
     const editing = act && p.node.contains(act) && /^(INPUT|TEXTAREA|SELECT)$/.test(act.tagName);
     if (editing && !force) continue;
     renderPanel(p);
@@ -297,7 +478,7 @@ function openCompany(cid) {
     b.append(el('div', { class: 'row' },
       btn('Whiteboard', () => go({ kind: 'board', id: cid + ':whiteboard', companyId: cid, boardType: 'whiteboard' })),
       btn('Hierarchy', () => go({ kind: 'board', id: cid + ':hierarchy', companyId: cid, boardType: 'hierarchy' })),
-      btn('Connections', () => openConnections(cid))));
+      btn('Connections', () => openConnections(cid)), btn('Edit blueprint', () => openStudio(cid))));
     b.append(el('div', { class: 'lbl', text: 'Departments' }));
     const ul = el('ul', { class: 'list' });
     for (const d of depts) {
@@ -326,7 +507,7 @@ function openDepartment(cid, did) {
     const people = core.companyEmployees(state, cid).filter((e) => set.has(e.departmentId));
     if (!people.length) b.append(el('div', { class: 'empty', text: 'No people in this department yet. Use Hire here to add the first employee.' }));
     else { const ul = el('ul', { class: 'list' }); for (const e of people.slice(0, 40)) ul.append(personItem(e, cid)); b.append(ul); }
-    b.append(el('div', { class: 'row' }, btn('Add sub-department', () => openCreate('department', cid, did)), btn('Hire here', () => openCreate('hire', cid, did)), btn('Add task', () => openCreate('task', cid, did)), btn('Ask Donna', () => openDonna(cid, did))));
+    b.append(el('div', { class: 'row' }, btn('Add sub-department', () => openCreate('department', cid, did)), btn('Hire here', () => openCreate('hire', cid, did)), btn('Add task', () => openCreate('task', cid, did)), btn('Ask Donna', () => openDonna(cid, did)), btn('Edit blueprint', () => openStudio(cid, did))));
   });
 }
 function personItem(e, cid) {
@@ -383,11 +564,11 @@ function openProfile(aid) {
       const tasks = core.companyTasks(state, as.companyId).filter((t) => t.ownerId === ee.id);
       if (!tasks.length) b.append(el('div', { class: 'empty', text: 'No tasks owned here. Use Assign task to prepare one.' }));
       else { const ul = el('ul', { class: 'list' }); for (const t of tasks.slice(0, 20)) ul.append(el('li', { class: 'item' }, el('span', { class: 'main', text: t.title }), el('span', { class: 'tag', text: t.status }), btn('Edit', () => openTask(t.id)))); b.append(ul); }
-      b.append(el('div', { class: 'row' }, btn('Assign task', () => openCreate('task', as.companyId, as.departmentId, ee.id)), btn('Ask Donna', () => openDonna(as.companyId, as.departmentId)), btn('Focus', () => go({ kind: 'employee', id: as.id, companyId: as.companyId, departmentId: as.departmentId, assignmentId: as.id }, false))));
+      b.append(el('div', { class: 'row' }, btn('Assign task', () => openCreate('task', as.companyId, as.departmentId, ee.id)), btn('Ask Donna', () => openDonna(as.companyId, as.departmentId)), btn('Edit blueprint', () => openStudio(as.companyId, as.departmentId)), btn('Focus', () => go({ kind: 'employee', id: as.id, companyId: as.companyId, departmentId: as.departmentId, assignmentId: as.id }, false))));
       b.append(el('div', { class: 'lbl', text: 'Nudge position within the room' }));
       const nudge = el('div', { class: 'row' });
       for (const [lab, dx, dy] of [['Left', -20, 0], ['Right', 20, 0], ['Up', 0, -20], ['Down', 0, 20]]) nudge.append(btn(lab, () => nudgeSeat(as.id, dx, dy), '', { 'aria-label': 'Move ' + ee.name + ' ' + lab.toLowerCase() }));
-      b.append(nudge, el('div', { class: 'meta', text: 'Moves the circle inside its room only. Does not change department or access.' }));
+      b.append(nudge, el('div', { class: 'meta', text: 'Blueprint placement uses the current Studio actor and explicit grants. It changes no department or access.' }));
       const msg = el('div', { id: 'nudge-msg-' + aid, 'aria-live': 'polite' }); b.append(msg);
     });
 }
@@ -396,13 +577,8 @@ function nudgeSeat(aid, dx, dy) {
     const a = state.assignments.find((x) => x.id === aid);
     const lay = core.companyLayout(state, a.companyId);
     const seat = lay.seats.find((s) => s.assignmentId === aid); if (!seat) throw new Error('No seat position available');
-    const proposed = JSON.parse(JSON.stringify(state));
-    core.moveAssignment(proposed, aid, { x: seat.x + dx, y: seat.y + dy });
-    const candidateSeats = core.companyLayout(proposed, a.companyId).seats;
-    const moved = candidateSeats.find(s => s.assignmentId === aid);
-    if (candidateSeats.some(s => s.assignmentId !== aid && Math.hypot(s.x - moved.x, s.y - moved.y) < s.r + moved.r + 2 - 1e-6)) throw new Error('That position is occupied. Try another direction.');
-    core.moveAssignment(state, aid, { x: moved.x, y: moved.y });
-    afterMutation(); announce('Position updated');
+    placeAssignment(aid, { x: seat.x + dx, y: seat.y + dy });
+    announce('Position updated by the current local Studio actor.');
   } catch (e) { const m = document.getElementById('nudge-msg-' + aid); if (m) { m.className = 'err'; m.textContent = errMsg(e); } announce('Move failed: ' + errMsg(e)); }
 }
 
@@ -452,6 +628,7 @@ function ownershipBody(b, cid) {
 }
 function whiteboardBody(b, cid) {
   const notes = core.companyNotes(state, cid);
+  b.append(el('p', { class: 'meta', text: 'Note changes are local CEO owner actions.' }));
   b.append(el('div', { class: 'lbl', text: 'Notes (' + notes.length + ')' }));
   if (!notes.length) b.append(el('div', { class: 'empty', text: 'No notes yet. Write the first note below.' }));
   const pageKey='notes-'+cid,page=Math.max(0,Math.min(pageNumbers.get(pageKey)||0,Math.max(0,Math.ceil(notes.length/12)-1)));
@@ -461,14 +638,14 @@ function whiteboardBody(b, cid) {
     if (getDraft(k).text === undefined) ta.value = n.text;
     const msg = el('div', { 'aria-live': 'polite' });
     b.append(el('div', { class: 'field' }, ta, msg, btn('Save note', () => {
-      try { core.updateNote(state, n.id, { text: ta.value }); clearDraft(k); afterMutation(); announce('Note updated.'); } catch (e) { msg.className = 'err'; msg.textContent = errMsg(e); }
+      try { ownerMutation('owner.note.update', draft => core.updateNote(draft, n.id, { text: ta.value })); clearDraft(k); afterMutation(); announce('Note updated.'); } catch (e) { msg.className = 'err'; msg.textContent = errMsg(e); }
     }, '', {'data-focus-key':'save-note-'+n.id})));
   }
   if(notes.length>12){const prev=btn('Previous notes',()=>{pageNumbers.set(pageKey,page-1);renderPanelById('board-'+cid+'-whiteboard');}),next=btn('Next notes',()=>{pageNumbers.set(pageKey,page+1);renderPanelById('board-'+cid+'-whiteboard');});prev.disabled=page===0;next.disabled=(page+1)*12>=notes.length;b.append(el('div',{class:'row'},prev,el('span',{class:'meta',text:'Page '+(page+1)+' of '+Math.ceil(notes.length/12)}),next));}
   const nk = draftKey('note-new', cid);
   const nta = bindDraft(nk, el('textarea', { id: 'nt-new-' + cid, maxlength: String(core.LIMITS.textLength) }), 'text');
   const msg = el('div', { 'aria-live': 'polite' });
-  const add = btn('Add note', () => { if (busy) return; busy = true; add.disabled = true; try { const n = core.addNote(state, { companyId: cid, text: nta.value }); clearDraft(nk); afterMutation(); announce('Note added'); } catch (e) { msg.className = 'err'; msg.textContent = errMsg(e); } finally { busy = false; add.disabled = false; } }, 'primary');
+  const add = btn('Add note', () => { if (busy) return; busy = true; add.disabled = true; try { const n = ownerMutation('owner.note.create', draft => core.addNote(draft, { companyId: cid, text: nta.value })); clearDraft(nk); afterMutation(); announce('Note added'); } catch (e) { msg.className = 'err'; msg.textContent = errMsg(e); } finally { busy = false; add.disabled = false; } }, 'primary');
   b.append(field('New note', nta, 'nt-new-f-' + cid), msg, add);
 }
 function hierarchyBody(b, cid) {
@@ -496,6 +673,7 @@ function openTask(tid) {
   openPanel('task-' + tid, 'Edit task', 'Company: ' + coName(t.companyId), { kind: 'company', id: t.companyId, companyId: t.companyId }, (b) => {
     const tt = state.tasks.find((x) => x.id === tid);
     if (!tt) { b.append(el('div', { class: 'err', text: 'Record unavailable: task no longer exists.' })); return; }
+    b.append(el('p', { class: 'meta', text: 'Task changes are local CEO owner actions.' }));
     const k = draftKey('task-edit', tid), d = getDraft(k);
     const title = bindDraft(k, el('input', { type: 'text', maxlength: String(core.LIMITS.textLength) }), 'title'); if (d.title === undefined) title.value = tt.title;
     const dsel = bindDraft(k, select('te-dept-' + tid, deptOpts(tt.companyId, 'No department'), d.dept !== undefined ? d.dept : (tt.departmentId || '')), 'dept'); if (d.dept === undefined) dsel.value = tt.departmentId || '';
@@ -508,7 +686,7 @@ function openTask(tid) {
     b.append(el('div', { class: 'row' }, field('Lane (roadmap placement)', lane, 'te-lsel-' + tid), field('Status (progress)', status, 'te-ssel-' + tid)));
     const save = btn('Save changes', () => {
       if (busy) return; busy = true; save.disabled = true;
-      try { core.updateTask(state, tid, { title: title.value, departmentId: dsel.value || null, ownerId: owner.value || null, lane: lane.value, status: status.value }); clearDraft(k); closePanel('task-' + tid, true); afterMutation(); announce('Task saved.'); }
+      try { ownerMutation('owner.task.update', draft => core.updateTask(draft, tid, { title: title.value, departmentId: dsel.value || null, ownerId: owner.value || null, lane: lane.value, status: status.value })); clearDraft(k); closePanel('task-' + tid, true); afterMutation(); announce('Task updated.'); }
       catch (e) { msg.className = 'err'; msg.textContent = errMsg(e); }
       finally { busy = false; save.disabled = false; }
     }, 'primary');
@@ -522,8 +700,8 @@ function openCreate(kind, cid, did, ownerId) {
   const base = cid || selCompany || state.companies[0].id;
   const id = createPanelId(kind, base, did, ownerId);
   const titles = { company: 'Create company', subcompany: 'Create sub-company', department: 'Add department', hire: 'Hire employee', task: 'Create task', note: 'Create note' };
-  const scopeLabel = kind === 'company' ? 'New company · on this table' : coName(base)+(did&&dept(did)?' › '+dept(did).name:'')+(ownerId&&emp(ownerId)?' › '+emp(ownerId).name:'');
-  openPanel(id, titles[kind], scopeLabel, { kind: 'company', id: base, companyId: base }, (b, p) => buildCreate(b, kind, base, did, ownerId, id));
+  const scopeLabel = kind === 'company' ? 'CEO owner · New company · on this table' : coName(base)+(did&&dept(did)?' › '+dept(did).name:'')+(ownerId&&emp(ownerId)?' › '+emp(ownerId).name:'');
+  openPanel(id, titles[kind], kind === 'company' ? scopeLabel : 'CEO owner · ' + scopeLabel, { kind: 'company', id: base, companyId: base }, (b, p) => buildCreate(b, kind, base, did, ownerId, id));
   const p = panels.get(id); const f = p.node.querySelector('input,select,textarea'); if (f) try { f.focus({ preventScroll: true }); } catch (e) { /* ignore */ }
 }
 function buildCreate(b, kind, base, did, ownerId, pid) {
@@ -540,12 +718,12 @@ function buildCreate(b, kind, base, did, ownerId, pid) {
   let submit;
   if (kind === 'company' || kind === 'subcompany') {
     const name = text('cc-name', kind === 'company' ? 'Company name' : 'Sub-company name', 'name');
-    submit = () => { const c = core.createCompany(state, { name: name.value, parentId: kind === 'subcompany' ? base : null }); selCompany = c.id; finish({ sel: { kind: 'company', id: c.id, companyId: c.id } }, 'Company'); };
+    submit = () => { const c = ownerMutation('owner.company.create', draft => core.createCompany(draft, { name: name.value, parentId: kind === 'subcompany' ? base : null })); selCompany = c.id; finish({ sel: { kind: 'company', id: c.id, companyId: c.id } }, 'Company'); };
     if (kind === 'subcompany') b.append(el('div', { class: 'meta', text: 'Parent: ' + coName(base) + '. The link is organisational only.' }));
   } else if (kind === 'department') {
     const name = text('cd-name', 'Department name', 'name');
     const par = sel('cd-par', 'Parent department', 'parent', deptOpts(base, 'Top level'), did || '');
-    submit = () => { const d = core.createDepartment(state, { companyId: base, parentId: par.value || null, name: name.value }); finish({ sel: { kind: 'department', id: d.id, companyId: base, departmentId: d.id } }, 'Department'); };
+    submit = () => { const d = ownerMutation('owner.department.create', draft => core.createDepartment(draft, { companyId: base, parentId: par.value || null, name: name.value })); finish({ sel: { kind: 'department', id: d.id, companyId: base, departmentId: d.id } }, 'Department'); };
   } else if (kind === 'hire') {
     const name = text('ch-name', 'Name', 'name');
     const role = text('ch-role', 'Role', 'role');
@@ -554,7 +732,7 @@ function buildCreate(b, kind, base, did, ownerId, pid) {
     b.append(el('div', { class: 'meta', text: 'Creates a new employee definition and one assignment. Grants no real access.' }));
     submit = () => {
       const before = new Set(state.assignments.map((a) => a.id));
-      const e = core.hireEmployee(state, { companyId: base, departmentId: dp.value, name: name.value, role: role.value, kind: kd.value });
+      const e = ownerMutation('owner.employee.hire', draft => core.hireEmployee(draft, { companyId: base, departmentId: dp.value, name: name.value, role: role.value, kind: kd.value }));
       const a = state.assignments.find((x) => !before.has(x.id) && x.employeeId === e.id);
       finish(a ? { sel: { kind: 'employee', id: a.id, companyId: base, departmentId: a.departmentId, assignmentId: a.id } } : null, 'Employee');
     };
@@ -569,11 +747,11 @@ function buildCreate(b, kind, base, did, ownerId, pid) {
     ow.addEventListener('change', () => { d0.owner = ow.value; });
     dp.addEventListener('change', () => { fill(); d0.owner = ''; });
     b.append(field('Owner (eligible people only)', ow, 'ct-ownf-' + base));
-    submit = () => { const t = core.addTask(state, { companyId: base, departmentId: dp.value || null, title: title.value, ownerId: ow.value || null }); finish({ sel: { kind: 'board', id: base + ':roadmap', companyId: base, boardType: 'roadmap' } }, 'Task'); };
+    submit = () => { const t = ownerMutation('owner.task.create', draft => core.addTask(draft, { companyId: base, departmentId: dp.value || null, title: title.value, ownerId: ow.value || null })); finish({ sel: { kind: 'board', id: base + ':roadmap', companyId: base, boardType: 'roadmap' } }, 'Task'); };
   } else {
     const ta = bindDraft(k, el('textarea', { maxlength: String(core.LIMITS.textLength) }), 'text');
     b.append(field('Note text', ta, 'cn-text-' + base));
-    submit = () => { core.addNote(state, { companyId: base, text: ta.value }); finish({ sel: { kind: 'board', id: base + ':whiteboard', companyId: base, boardType: 'whiteboard' } }, 'Note'); };
+    submit = () => { ownerMutation('owner.note.create', draft => core.addNote(draft, { companyId: base, text: ta.value })); finish({ sel: { kind: 'board', id: base + ':whiteboard', companyId: base, boardType: 'whiteboard' } }, 'Note'); };
   }
   const go1 = btn('Create', () => {
     if (busy) return; busy = true; go1.disabled = true; msg.textContent = '';
@@ -588,6 +766,8 @@ function afterMutation() {
   refreshPanels(false);
   drawMinimap();
   updateCrumb();
+  updateStudioButton();
+  try { studioUI?.refresh(); } catch (e) { announce('Studio refresh failed: ' + errMsg(e)); }
 }
 
 // ---------- Donna ----------
@@ -648,7 +828,7 @@ function openDonna(cid, did) {
       if(ta.value.trim() && !taskDraft.title)taskDraft.title=ta.value.trim();
       openCreate('task',cid,did);
     };
-    b.append(el('div',{class:'row'},btn('Summarize work',()=>send('Summarize work')),btn('Unassigned tasks',()=>send('Unassigned tasks'))),msgs,field('Message',ta,'donna-message'),btn('Send',()=>send(),'primary'),el('div',{class:'row'},btn('Prepare task',prepareTask),btn('Prepare hire',()=>openCreate('hire',cid,did))));
+    b.append(el('div',{class:'row'},btn('Summarize work',()=>send('Summarize work')),btn('Unassigned tasks',()=>send('Unassigned tasks'))),msgs,field('Message',ta,'donna-message'),btn('Send',()=>send(),'primary'),el('div',{class:'row'},btn('Prepare task',prepareTask),btn('Prepare hire',()=>openCreate('hire',cid,did)),btn('Edit blueprint',()=>openDonnaBlueprint(cid,did))));
     msgs.scrollTop=msgs.scrollHeight;
   });
   panels.get(id)?.node.querySelector('textarea')?.focus({preventScroll:true});
@@ -793,24 +973,53 @@ const cam = (fn) => () => { if (!world || !worldOk) { announce('World not ready'
 let rotAcc = 0;
 
 function bootstrap() {
-  let loaded = null, corrupt = '';
+  let loaded = null, corrupt = '', raw = null, hasStudioMetadata = false;
   try {
-    const raw = storage() ? storage().getItem('daftar-blueprint-world-v1') : null;
-    loaded = core.loadState(adapter);
-    if (raw && loaded && raw.length && !storage()) corrupt = '';
-    storageOk = !!storage();
-    if (!storage()) setSaveLabel('Session only', true);
-    else if (raw === null) setSaveLabel('Not saved yet');
-    else {
-      let valid = true; try { core.validateState(JSON.parse(raw)); } catch (e) { valid = false; }
-      if (valid) setSaveLabel('Saved'); else { corrupt = 'Stored data was unreadable; showing sample data. It is not overwritten until you make a change.'; setSaveLabel('Stored data unreadable', true); }
+    const local = storage();
+    storageOk = !!local;
+    raw = local ? local.getItem(STORAGE_KEY) : null;
+    if (raw !== null) {
+      // Bound parsing before inspecting optional metadata. Existing core-only
+      // corruption keeps the prior sample-data recovery behavior.
+      const rawBytes = typeof TextEncoder === 'function' ? new TextEncoder().encode(raw).length : raw.length;
+      if (rawBytes > core.LIMITS.storageBytes) {
+        hasStudioMetadata = true; // Unknown oversized content must not be replaced by a fresh policy.
+        throw new Error('Stored workspace exceeds the storage limit.');
+      }
+      const parsed = JSON.parse(raw);
+      hasStudioMetadata = !!parsed && typeof parsed === 'object' && Object.hasOwn(parsed, 'studio');
+      loaded = core.validateState(parsed);
+      const decoded = edits.decodeSnapshot(raw);
+      loaded = decoded.model; studio = decoded.studio;
+      if (decoded.needsBootstrap) studio = edits.createStudio(loaded, initialStudioPolicy(loaded));
+      setSaveLabel('Saved');
+    } else {
+      loaded = core.seedState(); studio = edits.createStudio(loaded, initialStudioPolicy(loaded));
+      setSaveLabel(local ? 'Not saved yet' : 'Session only', !local);
     }
-  } catch (e) { loaded = core.seedState(); setSaveLabel('Session only', true); }
+  } catch (e) {
+    storageOk = false;
+    if (hasStudioMetadata) {
+      studio = null;
+      studioIssue = 'Stored Studio metadata is invalid. Blueprint edits are blocked and saved data is preserved. CEO record changes can continue in this session only.';
+      corrupt = studioIssue; setSaveLabel('Studio blocked · session only', true);
+    } else {
+      loaded = core.seedState();
+      try { studio = edits.createStudio(loaded, initialStudioPolicy(loaded)); }
+      catch (policyError) { studio = null; studioIssue = 'Studio policy is unavailable: ' + errMsg(policyError); }
+      corrupt = raw !== null ? 'Stored data was unreadable; showing sample data. It is not overwritten until you make a change.' : 'Storage is unavailable; changes stay in this session.';
+      setSaveLabel(raw !== null ? 'Stored data unreadable' : 'Session only', true);
+    }
+  }
   state = loaded || core.seedState();
+  studioActorId = studio?.policy.ownerActorId || '';
   selCompany = state.companies[0] && state.companies[0].id;
   selection = selCompany ? { kind: 'company', id: selCompany, companyId: selCompany } : null;
+  mountStudioUI(); updateStudioButton();
   updateCrumb(); drawMinimap();
   if (corrupt) announce(corrupt);
+  window.addEventListener('storage', fenceExternalStorage);
+  $('btn-studio')?.addEventListener('click', () => openStudio(selCompany, selection?.companyId === selCompany ? selection.departmentId : undefined));
 
   for (const b of document.querySelectorAll('#create-menu button[data-create]')) b.addEventListener('click', () => { $('create-menu').hidden = true; $('btn-create').setAttribute('aria-expanded', 'false'); const kind=b.dataset.create;const did=selection?.companyId===selCompany?selection.departmentId:undefined;const owner=kind==='task'&&selection?.kind==='employee'?state.assignments.find(a=>a.id===(selection.assignmentId||selection.id))?.employeeId:undefined;openCreate(kind,selCompany,['department','hire','task'].includes(kind)?did:undefined,owner); });
   $('btn-create').addEventListener('click', () => { const m = $('create-menu'); m.hidden = !m.hidden; $('btn-create').setAttribute('aria-expanded', m.hidden ? 'false' : 'true'); });
@@ -826,6 +1035,8 @@ function bootstrap() {
   $('cam-zout').addEventListener('click', cam(() => world.zoom(1 / 1.2)));
   $('cam-zin').addEventListener('click', cam(() => world.zoom(1.2)));
   $('cam-fit').addEventListener('click', cam(() => world.fit()));
+  $('cam-overview')?.addEventListener('click', cam(() => world.overview(selCompany)));
+  $('cam-style')?.addEventListener('change', cam(() => world.setStyle($('cam-style').value)));
   for (const b of document.querySelectorAll('button[data-mode]')) b.addEventListener('click', () => setMode(b.dataset.mode));
   setMode('pan');
 
@@ -842,13 +1053,13 @@ function bootstrap() {
     world = mountWorld({
       canvas, state,
       onSelect: (s) => { if (!s) return; try { world.select(s); } catch (e) { /* stale */ } openSelection(s); drawMinimap(); },
-      onPlace: (aid, pos) => { try { core.moveAssignment(state, aid, pos); afterMutation(); announce('Position updated'); } catch (e) { announce('Move failed: ' + errMsg(e)); try { world.setState(state); } catch (x) { /* ignore */ } } },
+      onPlace: (aid, pos) => { try { placeAssignment(aid, pos); announce('Position updated by the current local Studio actor.'); } catch (e) { announce('Move failed: ' + errMsg(e)); try { world.setState(state); } catch (x) { /* ignore */ } } },
       onCameraChange: pose => { const view=$('cam-tilt');if(document.activeElement!==view){let value=[0,25,45,55].find(n=>Math.abs(n-pose.tilt)<.25);let custom=$('cam-live-angle');if(value===undefined){if(!custom){custom=el('option',{id:'cam-live-angle',value:'current'});view.append(custom);}custom.textContent='Tilt '+Math.round(pose.tilt)+'°';value='current';}else custom?.remove();view.value=String(value);} },
-      onReady: () => { worldOk = true; closePanel('recovery',false);for(const c of $('hud-cam').querySelectorAll('button,select'))c.disabled=false; $('loading').style.display = 'none'; document.body.dataset.ready = 'true'; if (selection) { try { world.select(selection); } catch (e) { /* ignore */ } } setMode(mode); positionAll(); },
+      onReady: () => { worldOk = true; closePanel('recovery',false);for(const c of $('hud-cam').querySelectorAll('button,select'))c.disabled=false;if($('cam-overview'))$('cam-overview').disabled=typeof world?.overview!=='function';if($('cam-style'))$('cam-style').disabled=typeof world?.setStyle!=='function'; $('loading').style.display = 'none'; document.body.dataset.ready = 'true'; if (selection) { try { world.select(selection); } catch (e) { /* ignore */ } } setMode(mode); positionAll(); },
       onError: (err) => { worldOk = false;for(const c of $('hud-cam').querySelectorAll('button,select'))c.disabled=true;openRecovery(err); }
     });
     world.subscribeFrame(positionAll);
-  } catch (e) { openRecovery(e); }
+  } catch (e) { worldOk=false;for(const c of $('hud-cam').querySelectorAll('button,select'))c.disabled=true;openRecovery(e); }
 
   window.addEventListener('pagehide', () => { try { if (world) world.dispose(); } catch (e) { /* ignore */ } world = null; worldOk = false; });
 }

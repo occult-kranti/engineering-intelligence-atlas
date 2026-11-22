@@ -1,0 +1,174 @@
+{
+  "artifactType": "blueprint-world-independent-validation-index",
+  "run": "blueprint-world-20261121",
+  "node": "verification",
+  "attempt": 1,
+  "idempotencyKey": "blueprint-world-20261121:verification:1",
+  "terminationOwner": "root",
+  "createdAt": "2026-11-21T23:29:09.717Z",
+  "status": "passed-with-graphics-verification-gap",
+  "results": {
+    "core": {
+      "status": "passed",
+      "passed": 12,
+      "groups": 12,
+      "receipt": "core-receipt-a16a38263dda.json",
+      "reviewOrigin": "independent verification",
+      "executedBy": "verification",
+      "source": {
+        "path": "cloud-workspace/public/concepts/blueprint-world-core.js",
+        "bytes": 35637,
+        "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea"
+      },
+      "harness": {
+        "path": "check-core.mjs",
+        "bytes": 26186,
+        "sha256": "4fa8e3e426a31cdd915c4c4d8c4a5005593c9b1553ca04f3611e3dc8973bd21e"
+      }
+    },
+    "domUnavailableRenderer": {
+      "status": "passed",
+      "passed": 6,
+      "groups": 6,
+      "receipt": "ui-receipt-3dd32e492c47.json",
+      "reviewOrigin": "independent verification harness",
+      "executedBy": "root",
+      "executionTime": "2026-11-21T23:33:22.264Z",
+      "source": {
+        "path": "cloud-workspace/public/concepts/blueprint-world-app.js",
+        "bytes": 63778,
+        "sha256": "3dd32e492c47215835842394a8f78ef42a3c84066b2d7755b121cdc5f20d9546"
+      },
+      "harness": {
+        "path": "check-ui.mjs",
+        "bytes": 16685,
+        "sha256": "a26abeba77fcc676bdb9e3998fd88b58053effab15e34622a84507ae56efd4ba"
+      },
+      "method": "Actual app and core evaluated in the same jsdom realm; renderer module explicitly unavailable; no rendering success simulated"
+    },
+    "actualWebGL": {
+      "status": "not-verified",
+      "evidence": "Coordinator reports managed Chrome cannot provide WebGL2. No real GPU context, shader compilation or rasterization was tested by these harnesses. Root owns the separate actual-browser receipt."
+    },
+    "rendererNumerical": {
+      "status": "passed-non-gpu",
+      "passed": 11,
+      "groups": 11,
+      "failed": 0,
+      "receipt": "renderer-nongpu-evidence.json",
+      "reviewOrigin": "renderer-owner numerical review; distinct from independent core and DOM review",
+      "executedBy": "root",
+      "source": {
+        "path": "cloud-workspace/public/concepts/blueprint-world-renderer.js",
+        "bytes": 33195,
+        "sha256": "c595ab9e7fbe3dc7cbbb969fba7f7eac7094f8ca27cb6f6a6b553f258f839f53"
+      },
+      "vendor": {
+        "path": "cloud-workspace/public/concepts/blueprint-world-vendor.js",
+        "bytes": 769573,
+        "sha256": "fc7cbff1e3c2d33d2ac1fe1ad49d8a31db926cd5c966482ce2d2762bc82147c4"
+      },
+      "harness": {
+        "path": "check-renderer-nongpu.mjs",
+        "bytes": 14714,
+        "sha256": "29c833c54174d536002833bd9aae95baeac122fc2910e82b5e73bda103db782a"
+      },
+      "method": "NON-GPU: actual Three 0.187.0 math, geometries and OrbitControls; mocked WebGLRenderer and 2D text measurement; synthetic DOM/events",
+      "renderCallsMocked": 481,
+      "limitations": [
+        "No WebGL context, shader compilation or GPU rasterization was tested.",
+        "Synthetic text measurements do not validate glyph sizing or legibility.",
+        "Synthetic pointer events do not establish real-browser hit targets."
+      ]
+    },
+    "nativeBrowser": {
+      "status": "observed-controls-pass-with-graphics-unavailable",
+      "checks": 20,
+      "receipt": "browser-receipt.json"
+    }
+  },
+  "files": [
+    {
+      "path": "core-contract.json",
+      "bytes": 12625,
+      "sha256": "63fdb32f46975a5b4ba0599f99c4f69cb8601d8ac23c56e594e67aa984bc1cce"
+    },
+    {
+      "path": "fixtures.mjs",
+      "bytes": 5530,
+      "sha256": "235a32d31eeb6d9d65880946ada6bdbeb16eac97f477bf30d9e0170b8838e7fa"
+    },
+    {
+      "path": "check-core.mjs",
+      "bytes": 26186,
+      "sha256": "4fa8e3e426a31cdd915c4c4d8c4a5005593c9b1553ca04f3611e3dc8973bd21e"
+    },
+    {
+      "path": "core-receipt-a16a38263dda.json",
+      "bytes": 5897,
+      "sha256": "1ca1fd4178e43e19309bf44e0c7e4ba42a75ee29b38e0c7a951fa2b987f76e19"
+    },
+    {
+      "path": "check-ui.mjs",
+      "bytes": 16685,
+      "sha256": "a26abeba77fcc676bdb9e3998fd88b58053effab15e34622a84507ae56efd4ba"
+    },
+    {
+      "path": "ui-receipt-3dd32e492c47.json",
+      "bytes": 3271,
+      "sha256": "d637a6e50e830b447db8f42485dffe13fca2212d956bebba33fcbc80b21e1b0c"
+    },
+    {
+      "path": "ui-receipt-724868f8697d.json",
+      "bytes": 3271,
+      "sha256": "cd24342473a5d1601f29bebd9a4da83fc6bb25aaad8d77ebf6036dadccea9f1f"
+    },
+    {
+      "path": "ui-receipt-724868f8697d-initial-harness.json",
+      "bytes": 3490,
+      "sha256": "6215a3be1a00cbf8ba7a520db5ad8f178e811579584aca089ed719ec86109b23"
+    },
+    {
+      "path": "check-renderer-nongpu.mjs",
+      "bytes": 14714,
+      "sha256": "29c833c54174d536002833bd9aae95baeac122fc2910e82b5e73bda103db782a"
+    },
+    {
+      "path": "renderer-nongpu-evidence.json",
+      "bytes": 2577,
+      "sha256": "4427745a201c6823bb7c395fa5e2a6545014326d45e46bc2fc3e74dd13c3002f"
+    },
+    {
+      "path": "README.md",
+      "bytes": 11045,
+      "sha256": "1e12ed66d44214c5b8e2955fc27ae7c1afee2207d88781ee5ca50c45afa22ea8"
+    },
+    {
+      "path": "browser-receipt.json",
+      "bytes": 5819,
+      "sha256": "be01dcb7a27e78f5006388ff67aff75616ad37c4d578899e3e3fff7b8a13c0b5"
+    }
+  ],
+  "updatedAt": "2026-11-21T23:39:08.417Z",
+  "bookkeeping": {
+    "owner": "verification",
+    "scope": "README and validation index only; existing receipts and file hashes inspected; no tests rerun in this bookkeeping pass",
+    "browserReceipt": "Owned by root; to be added separately"
+  },
+  "history": [
+    {
+      "receipt": "ui-receipt-724868f8697d.json",
+      "status": "passed-historical",
+      "passed": 6,
+      "groups": 6,
+      "reviewOrigin": "independent verification",
+      "sourceSHA256": "724868f8697dce20047ff516cc9874e730bb0f20b40c35ce722abb6a8cfe67f0",
+      "note": "Superseded as the current app receipt by the root rerun; retained unchanged."
+    },
+    {
+      "receipt": "ui-receipt-724868f8697d-initial-harness.json",
+      "status": "invalid-harness",
+      "note": "Node/jsdom object-realm mismatch in the initial harness; not counted as an application failure or as verification; retained unchanged."
+    }
+  ]
+}

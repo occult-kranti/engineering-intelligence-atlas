@@ -1,0 +1,115 @@
+{
+  "projectId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8",
+  "sourceCommit": "e0a17a669dd359a4346d9ca7c61e11394fa3760b",
+  "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_a49b21865ab48191b48f710788c41cb5",
+  "versionNumber": 17,
+  "deploymentId": "appgdep_6b0233ef6a648191b6527e6cb6ff0811",
+  "status": "succeeded",
+  "publishedAt": "2026-11-22T00:14:45.290141+00:00",
+  "liveUrl": "https://atlas-command-office.whatswrong-inc.chatgpt.site/concepts/blueprint-world",
+  "origin": "https://atlas-command-office.whatswrong-inc.chatgpt.site",
+  "hasMCP": false,
+  "audience": {
+    "accessMode": "custom",
+    "owners": 1,
+    "editors": 0,
+    "groups": 0,
+    "externalVisitors": 0,
+    "changed": false
+  },
+  "archive": {
+    "format": "tar",
+    "contentHash": "sha256:595ab7f6dce9d95576aeaa5fb9d94375c507adeaada8c1225ec92b1754e15731",
+    "bytes": 3993600,
+    "fileCount": 134
+  },
+  "previousPublications": [
+    {
+      "versionNumber": 15,
+      "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_56ff594fe7d88191b5086c34cbfebff2",
+      "sourceCommit": "86069c18cbfd11a207c120a3cb0f07aa33c36b31",
+      "deploymentId": "appgdep_6b0232ae23048191acbd02b2785bf9a0",
+      "archiveHash": "sha256:bf685bfa10e94611dfe81c7d696cdb046c4667638a065dea9e29aeb74c111496"
+    },
+    {
+      "versionNumber": 16,
+      "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_eb9e21d7eec88191bacd5b939417c245",
+      "sourceCommit": "5fac9b2d584af3e13cf67374356157a147b5e4bb",
+      "deploymentId": "appgdep_6b02335bd358819187c1616f7904b3f2",
+      "archiveHash": "sha256:6b5aca770a5a860345be41f6c358d99a243eaaa68094d3b89219754bc5136bf0"
+    }
+  ],
+  "localArchive": {
+    "file": "daftar-blueprint-world-site-reviewed.tar.gz",
+    "format": "tar.gz",
+    "sha256": "a1ae3abdd28fcfaa37f98d0bcdbdda86740964393afb92698c54f71b61101804",
+    "bytes": 974450,
+    "fileCount": 134
+  },
+  "archiveNote": "The local gzip container and server-normalized tar are distinct artifacts; their hashes are recorded separately. All nine frontend files match canonical source, Site source and packaged assets byte-for-byte.",
+  "artifacts": [
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-LICENSES.txt",
+      "bytes": 1095,
+      "sha256": "2a1f8894cb0866fcc689c6428d58397eb3d03c20c97fb5e244a87d22507ef9db",
+      "archivePath": "dist/client/concepts/blueprint-world-LICENSES.txt"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-app.js",
+      "bytes": 77342,
+      "sha256": "7d676a4a91bfa801d0d9e2f7ac837a2b8c84f38cbd5f56db422098bd0ce0d7f0",
+      "archivePath": "dist/client/concepts/blueprint-world-app.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-core.js",
+      "bytes": 35637,
+      "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea",
+      "archivePath": "dist/client/concepts/blueprint-world-core.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-relief.js",
+      "bytes": 14413,
+      "sha256": "49ee0ce33e92f7da725476008c4edc0f0c81c97ca5c2c3e81fc394cd6e09f352",
+      "archivePath": "dist/client/concepts/blueprint-world-relief.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-renderer.js",
+      "bytes": 38174,
+      "sha256": "fb7f9f89875d663494e7e3b2f9cae15167de321bf1def82b7aaa56a8d2d8ddbd",
+      "archivePath": "dist/client/concepts/blueprint-world-renderer.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-studio-edits.js",
+      "bytes": 41543,
+      "sha256": "3a586a4d09059e1fa908d2a44cf00c8a0e90fd9abfa62e1fe90f3a5fb1d7581a",
+      "archivePath": "dist/client/concepts/blueprint-world-studio-edits.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-studio-ui.js",
+      "bytes": 33064,
+      "sha256": "04f9b9b933241acd966685dc3d890fbcf9df07070b299f815cab55fcae9cb1a4",
+      "archivePath": "dist/client/concepts/blueprint-world-studio-ui.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-vendor.js",
+      "bytes": 769573,
+      "sha256": "fc7cbff1e3c2d33d2ac1fe1ad49d8a31db926cd5c966482ce2d2762bc82147c4",
+      "archivePath": "dist/client/concepts/blueprint-world-vendor.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world.html",
+      "bytes": 14434,
+      "sha256": "ecf54ec2a0dadf3e92fff9e22c05beedae4db4bc83082ef729c6714904eb69e9",
+      "archivePath": "dist/client/concepts/blueprint-world.html"
+    }
+  ],
+  "verification": {
+    "url": "Observed after publication and redirect in the managed browser",
+    "nativeControls": "validation/studio-browser-receipt.json",
+    "exactSourceDOM": "validation/studio-ui-final.json",
+    "permissions": "validation/studio-receipt-3a586a4d0905.json",
+    "geometry": "validation/studio-renderer-evidence.json",
+    "gpu": "Unavailable in managed Chrome; no visual, shader, picking or FPS acceptance",
+    "build": "Site workflow framework production build, source push and packaging succeeded"
+  }
+}
