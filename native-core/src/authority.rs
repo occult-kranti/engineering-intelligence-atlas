@@ -566,6 +566,8 @@ pub struct OfficeIndexEntry {
     pub company_id: Option<String>,
     pub parent_id: Option<String>,
     pub owner_employee_id: Option<String>,
+    #[serde(default)]
+    pub reviewer_employee_id: Option<String>,
     pub status: String,
     pub updated_at: String,
     pub related_ids: Vec<String>,
@@ -899,6 +901,8 @@ impl OfficeSnapshot {
             "claim_job",
             "reserve_job",
             "finish_job",
+            "record_step_review",
+            "record_review_failure",
             "complete_job",
             "heartbeat_job",
             "get_cache",
@@ -1064,7 +1068,7 @@ impl OfficeSnapshot {
                     .ok_or_else(|| fail("NOT_FOUND", "Schedule not found"))?;
                 Ok(("work.manage", self.scoped_payload(&s.job_template)?))
             }
-            "create_goal" | "post_chat" | "upsert_roadmap_item" => {
+            "create_goal" | "create_paired_workflow" | "post_chat" | "upsert_roadmap_item" => {
                 let s: Scope = decode(p.get("scope").unwrap_or(&Value::Null), "scope")?;
                 self.authority_location(&s)?;
                 Ok((
@@ -1537,6 +1541,7 @@ impl OfficeSnapshot {
                 company_id: company.map(str::to_owned),
                 parent_id: parent.map(str::to_owned),
                 owner_employee_id: owner.map(str::to_owned),
+                reviewer_employee_id: None,
                 status: status.into(),
                 updated_at: stamp.into(),
                 related_ids: related,
@@ -1614,6 +1619,18 @@ impl OfficeSnapshot {
                 g.job_ids.clone(),
             );
         }
+        for blueprint in &self.blueprints {
+            for board in &blueprint.whiteboards {
+                let related = board.goal_ids.iter().chain(&board.job_ids).chain(&board.roadmap_item_ids).cloned().collect();
+                add("whiteboard", &board.id, &board.title, Some(&blueprint.company_id), Some(&blueprint.office_id), Some(&board.owner_employee_id), "saved", &self.office(&blueprint.office_id)?.created_at, related);
+            }
+        }
+        for goal in &self.goals {
+            for step in &goal.steps {
+                let related = goal.job_ids.iter().filter(|id| self.jobs.iter().any(|j| &j.id == *id && j.pair.as_ref().is_some_and(|p| p.step_id == step.id))).cloned().collect();
+                add("goal-step", &format!("{}:{}", goal.id, step.id), &step.title, Some(&goal.company_id), Some(&goal.id), Some(&step.employee_id), &goal.status, &goal.updated_at, related);
+            }
+        }
         for j in &self.jobs {
             add(
                 "job",
@@ -1629,6 +1646,9 @@ impl OfficeSnapshot {
                 &j.updated_at,
                 j.dependencies.clone(),
             );
+            if let Some(pair) = j.pair.as_ref().filter(|p| p.phase == "review") {
+                add("review", &j.id, "Independent artifact review", Some(&j.company_id), Some(&pair.primary_job_id), Some(&pair.peer_employee_id), j.review.as_ref().map(|r| r.verdict.as_str()).unwrap_or(if j.review_failure.is_some() { "blocked" } else { "pending" }), &j.updated_at, vec![pair.primary_job_id.clone(), pair.review_job_id.clone()]);
+            }
             if j.artifact_uri.is_some() {
                 add(
                     "artifact",
@@ -1725,6 +1745,15 @@ impl OfficeSnapshot {
                 &event.at,
                 event.grant_id.iter().cloned().collect(),
             );
+        }
+        for entry in &mut entries {
+            entry.reviewer_employee_id = match entry.kind.as_str() {
+                "goal-step" => self.goals.iter().find(|g| entry.parent_id.as_ref() == Some(&g.id)).and_then(|g| g.steps.iter().find(|s| entry.entity_id == format!("{}:{}", g.id, s.id))).and_then(|s| s.reviewer_employee_id.clone()),
+                "review" => self.jobs.iter().find(|j| j.id == entry.entity_id).map(|j| j.employee_id.clone()),
+                "job" => self.jobs.iter().find(|j| j.id == entry.entity_id).and_then(|j| j.pair.as_ref().map(|p| if p.phase == "review" { j.employee_id.clone() } else { p.peer_employee_id.clone() })),
+                "roadmap" => self.portfolio.roadmap.iter().find(|r| r.id == entry.entity_id).and_then(|r| r.reviewer_employee_id.clone()),
+                _ => None,
+            };
         }
         if entries.len() > MAX_INDEX {
             return Err(fail(

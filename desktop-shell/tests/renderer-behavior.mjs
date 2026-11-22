@@ -36,10 +36,10 @@ const persistentWorld=d.querySelector('.ff-world');check(Boolean(persistentWorld
 for(const view of ['overview','office','projects','team','roadmap','usage','library','models','settings']){d.querySelector(`.nav-item[data-view="${view}"]`).click();await flush();check(d.querySelector('.ff-world')===persistentWorld&&!el('office-view').classList.contains('hidden')&&!el('freeflow-surface').classList.contains('hidden'),`navigation retains the same visible world: ${view}`);if(view!=='office'){const panel=d.querySelector(`.canvas-panel[data-panel-id="${view}"]`);check(Boolean(panel)&&!panel.hidden&&persistentWorld.contains(panel),`${view} opens as a live world element`);}check(d.querySelector(`.nav-item[data-view="${view}"]`).getAttribute('aria-current')==='page',`selected nav: ${view}`);}
 await click('header-new-project');check(el('new-project-details').open,'new project composer opens');check(d.activeElement===el('proj-name'),'new project focuses name');
 set('proj-name','UI fixture project');set('proj-goal','A test-only deliverable');set('proj-model','fixture-model');await submit('project-form');check(fixture.calls.some(c=>c.name==='createProject'&&c.args.nodes.length===4),'project submits its four specialist nodes');
-await click('run-start');check(!fixture.calls.some(c=>c.name==='startRun'),'zero cloud price blocks run');check(el('run-status').textContent.includes('positive'),'pricing error visible');set('rate-input','2');set('rate-output','10');await click('run-start');check(fixture.calls.some(c=>c.name==='startRun'&&c.args.priceRates.outputUsdPerMillion===10),'valid priced run reaches bridge');
+await click('run-start');check(!fixture.calls.some(c=>c.name==='startRun')&&el('run-start').disabled,'schema-v2 standalone provider runs require native pairing');check(el('run-pairing-note').textContent.includes('paired office goal'),'paired execution route is explained');const beforeRunDraft=commands().length;await click('run-plan-with-donna');check(el('chat-message').value.includes('UI fixture project')&&commands().length===beforeRunDraft,'project handoff prepares a Donna draft without dispatch');
 d.querySelector('[data-view="settings"]').click();await flush();set('company-repo-url','https://github.com/fixture/engineering');await submit('company-form');check(fixture.calls.some(c=>c.name==='registerCompany'),'company registration calls bridge');check(el('settings-repo-status').textContent==='GitHub verified','verified result appears');
 d.querySelector('.nav-item[data-view="roadmap"]').click();await flush();let select=d.querySelector('.task-card select');select.value='done';select.dispatchEvent(new w.Event('change'));await flush();check(!fixture.calls.some(c=>c.name==='updateCompanyTask'),'completion needs evidence');d.querySelector('.task-proof textarea').value='Fixture test evidence';select.value='done';select.dispatchEvent(new w.Event('change'));await flush();check(fixture.calls.some(c=>c.name==='updateCompanyTask'&&c.args.evidence==='Fixture test evidence'),'task update carries evidence');
-d.querySelector('.nav-item[data-view="office"]').click();await flush();check(el('office-native-status').textContent==='Local state loaded','office snapshot loads');check(el('office-company-select').value==='fixture-company','active company selected');check(!d.querySelector('#office-employees .danger'),'Donna has no firing control');
+d.querySelector('.nav-item[data-view="office"]').click();await flush();check(el('office-native-status').textContent==='Local state loaded','office snapshot loads');check(el('office-company-select').value==='fixture-company','active company selected');check(!Array.from(d.querySelectorAll('#office-employees .employee-card')).find(card=>card.textContent.includes('Donna stays available'))?.querySelector('.danger'),'Donna has no firing control');
 check(el('locator-company').textContent==='Fixture Engineering'&&el('locator-office').textContent==='Product studio','visible hierarchy reflects the loaded company and office');check(/^\d+ assigned (person|people) · \d+ running requests?$/.test(el('locator-people').textContent),'loaded hierarchy replaces its empty-state employee text');
 const visibleDepartment=fixture.office.departments[0];await change('office-department-select',visibleDepartment.id);check(el('locator-department').textContent===visibleDepartment.name,'visible hierarchy follows department selection');await change('office-department-select','');
 await click('office-tab-people');set('hire-name','Reviewer <img src=x onerror=alert(1)>');set('hire-role','Review evidence');set('hire-skills','skills/agent-research-director/SKILL.md');await submit('office-hire-form');check(lastCommand()?.action==='hire_employee','hire submits command');check(!d.querySelector('#office-employees img'),'untrusted employee name stays text');check(lastCommand()?.skillPaths.length===1,'skill paths preserved');const pause=Array.from(d.querySelectorAll('#office-employees button')).find(b=>b.textContent==='Pause');pause.click();await flush();check(lastCommand()?.action==='pause_employee','employee pause wired');
@@ -55,8 +55,8 @@ await click('header-new-goal');check(d.activeElement===el('chat-message'),'new g
 check(el('chat-scope').value==='office','New goal inherits office focus');
 await change('chat-scope','company');const preChat=commands().length;
 set('chat-message','Review release evidence <img src=x onerror=alert(1)>');await submit('workspace-chat-form');
-check(commands().slice(preChat).some(c=>c.args.action==='post_chat'&&c.args.scope.kind==='company'&&c.args.scope.id==='fixture-company'),'chat retains explicit company scope');
-check(lastCommand()?.action==='plan_goal','plan-only creates a persisted local plan');
+check(commands().slice(preChat).some(c=>c.args.action==='create_paired_workflow'&&c.args.scope.kind==='company'&&c.args.scope.id==='fixture-company'),'chat retains explicit company scope');
+check(lastCommand()?.action==='create_paired_workflow'&&lastCommand()?.execute===false,'plan-only creates one atomic persisted paired workflow');
 check(el('conversation-messages').textContent.includes('Local planning'),'local planner provenance visible');
 check(!el('conversation-messages').querySelector('img'),'untrusted chat content stays text');
 check(el('workspace-goals').textContent.includes('Review the evidence'),'assigned plan steps render');
@@ -65,12 +65,12 @@ await change('chat-goal-mode','provider');set('chat-message','Run a bounded test
 const beforeGoal=commands().length;await submit('workspace-chat-form');check(commands().length===beforeGoal,'review mode requires goal provider authorization');
 el('chat-authorized').checked=true;await submit('workspace-chat-form');check(commands().length===beforeGoal,'goal cloud rates must be positive');
 set('chat-rate-input','2');set('chat-rate-output','10');await submit('workspace-chat-form');
-check(lastCommand()?.action==='plan_goal','review mode holds the goal after planning');
+check(lastCommand()?.action==='create_paired_workflow'&&lastCommand()?.execute===false,'review mode atomically saves the plan without dispatch');
 const approve=Array.from(el('workspace-goals').querySelectorAll('button')).find(b=>b.textContent==='Approve & queue');check(Boolean(approve),'review mode offers an explicit goal execution action');approve.click();await flush();check(lastCommand()?.action==='execute_goal','approved goal requests bounded execution');
 set('workspace-approval-mode','autonomous');set('workspace-global-usd','25');set('workspace-global-tokens','100000');set('workspace-warning-percent','80');await submit('workspace-policy-form');
 check(lastCommand()?.action==='configure_policy'&&lastCommand()?.hardCapUsd===25,'global budget and autonomy persist together');check(el('workspace-budget-label').textContent.includes('$25.00'),'global remaining budget comes from saved state');
 el('chat-authorized').checked=false;set('chat-message','Autonomous goal inside the fixture cap');await submit('workspace-chat-form');
-check(lastCommand()?.action==='execute_goal','autonomous goal queues without a repeated authorization checkbox');
+check(lastCommand()?.action==='create_paired_workflow'&&lastCommand()?.execute===true,'autonomous paired workflow requests bounded dispatch atomically');
 check(fixture.office.goals.at(-1).runSettings.authorized===true,'autonomy carries authorization without changing caps');
 await change('chat-scope','office');check(el('conversation-scope').textContent.includes('Product studio'),'chat scope visibly follows the office');await change('chat-scope','company');
 await click('workspace-tab-blueprint');check(el('office-blueprint').querySelectorAll('.blueprint-room').length===1,'stored room renders in blueprint');
@@ -533,5 +533,170 @@ for(const interacted of [false,true]){
   check(world.style.transform===before,'later native refresh retains the settled Donna camera');
  }
  initial.window.close();
+}
+
+// Board-flow regression: edit bases are immutable, links are plural, and cancellation never saves.
+{
+ const attempts=[];
+ const boardDom=await makeDom(true,undefined,'',bw=>{
+  const f=bw.__atlasFixture;
+  f.office.blueprints[0].whiteboards=[{id:'linked-board',revision:7,roomId:'fixture-room',ownerEmployeeId:'donna',title:'All linked work',goalIds:['goal-a','goal-b'],jobIds:['job-a','job-b'],roadmapItemIds:['outcome-a','outcome-b'],x:.3,y:.4}];
+  const base=bw.desktopBridge.officeCommand;
+  bw.desktopBridge.officeCommand=async request=>{
+   if(request.action==='upsert_whiteboard'){
+    attempts.push(JSON.parse(JSON.stringify(request)));
+    const saved=f.office.blueprints[0].whiteboards.find(item=>item.id===request.id);
+    if(saved&&request.expectedRevision!==(saved.revision||0))return{ok:false,error:'STALE_REVISION: the saved whiteboard changed.'};
+    const revision=(saved?.revision||0)+1,result=await base(request);
+    f.office.blueprints[0].whiteboards.find(item=>item.id===request.id).revision=revision;
+    result.snapshot.blueprints[0].whiteboards.find(item=>item.id===request.id).revision=revision;
+    return result;
+   }
+   return base(request);
+  };
+ });
+ const bw=boardDom.window,bd=bw.document,bf=bw.__atlasFixture,bid=id=>bd.getElementById(id);
+ const press=async id=>{bid(id).click();await flush();};
+ const save=async()=>{bid('workspace-node-form').dispatchEvent(new bw.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:bid('node-save')}));await flush();};
+ const type=(id,text)=>{bid(id).value=text;bid(id).dispatchEvent(new bw.Event('input',{bubbles:true}));};
+ await press('workspace-tab-whiteboard');bd.querySelector('[data-board-id="linked-board"] .card-title').click();
+ check(bid('node-goal-links').children.length===2&&bid('node-job-links').children.length===2&&bid('node-roadmap-links').children.length===2,'multi-link editor shows every saved link, including unresolved references');
+ type('node-title','Title-only edit');await save();
+ check(attempts.length===1&&attempts[0].expectedRevision===7&&attempts[0].officeId==='fixture-office','whiteboard edit uses its frozen revision and office');
+ check(attempts[0].goalIds.join(',')==='goal-a,goal-b'&&attempts[0].jobIds.join(',')==='job-a,job-b'&&attempts[0].roadmapItemIds.join(',')==='outcome-a,outcome-b','title-only save preserves all link arrays');
+ type('node-title','Local unfinished draft');bf.office.blueprints[0].whiteboards[0].revision=10;bf.office.blueprints[0].whiteboards[0].title='External edit';await press('office-refresh');
+ check(bid('node-title').value==='Local unfinished draft'&&bid('node-save-status').textContent.includes('draft'),'native refresh preserves the visible local draft');
+ const staleBefore=attempts.length;await save();await flush();
+ check(attempts.length===staleBefore+1&&attempts.at(-1).expectedRevision===8,'stale edit sends the original base once without rebasing or retry');
+ check(bid('node-title').value==='Local unfinished draft'&&bid('node-save-status').textContent.includes('STALE_REVISION'),'stale rejection stays visible and retains the typed draft');
+ await press('workspace-tab-softboard');await press('workspace-tab-whiteboard');check(bid('node-title').value==='Local unfinished draft','board navigation preserves the same live draft');
+ await press('node-reload');check(bid('node-title').value==='External edit','explicit discard loads the new saved record');
+ bid('node-goal-links').querySelector('button').click();await save();
+ check(attempts.at(-1).expectedRevision===10&&attempts.at(-1).goalIds.join(',')==='goal-b'&&attempts.at(-1).jobIds.length===2,'explicit link removal affects exactly one selected relationship');
+ const card=bd.querySelector('[data-board-id="linked-board"]'),handle=card.querySelector('.card-title'),left=card.style.left,top=card.style.top,count=attempts.length;
+ const pointer=(type,x,y)=>{const event=new bw.MouseEvent(type,{button:0,clientX:x,clientY:y,bubbles:true,cancelable:true});Object.defineProperty(event,'pointerId',{value:17});return event;};
+ handle.dispatchEvent(pointer('pointerdown',100,100));bw.dispatchEvent(pointer('pointermove',145,135));bw.dispatchEvent(pointer('pointercancel',145,135));bw.dispatchEvent(pointer('pointerup',145,135));await flush();
+ check(attempts.length===count&&card.style.left===left&&card.style.top===top,'cancelled board drag restores paint and never submits a mutation');
+ handle.dispatchEvent(pointer('pointerdown',100,100));bw.dispatchEvent(pointer('pointermove',150,140));await press('office-refresh');bw.dispatchEvent(pointer('pointerup',150,140));await flush();
+ check(attempts.length===count,'snapshot replacement disposes an active board gesture before a late pointerup');
+ const movedHandle=bd.querySelector('[data-board-id="linked-board"] .card-title');movedHandle.click();movedHandle.dispatchEvent(new bw.KeyboardEvent('keydown',{key:'ArrowRight',bubbles:true,cancelable:true}));await flush();const movedRevision=bf.office.blueprints[0].whiteboards[0].revision;type('node-title','Edit after acknowledged movement');await save();check(attempts.at(-1).expectedRevision===movedRevision,'an acknowledged own movement updates a clean editor base without creating a false stale edit');
+ for(let index=0;index<100;index++)bf.office.blueprints[0].whiteboards.push({...bf.office.blueprints[0].whiteboards[0],id:`paged-${index}`,title:`Searchable card ${index}`,goalIds:[],jobIds:[],roadmapItemIds:[]});await press('office-refresh');
+ check(bid('workspace-whiteboard').querySelectorAll('.ownership-card').length===24&&bid('whiteboard-page').textContent.includes('of 101'),'whiteboard DOM stays bounded with an honest complete count');
+ type('whiteboard-search','Searchable card 99');check(bid('workspace-whiteboard').querySelector('[data-board-id="paged-99"]'),'search reaches a saved card beyond the old first-100 limit');
+ check(bd.querySelector('.ff-world')?.contains(bid('workspace-panel-whiteboard')),'whiteboard remains a live element of the same endless world');
+ boardDom.window.close();
+}
+// Greenboard is a view of canonical people/departments and pairs, without inferred access or dispatch.
+{
+ const peopleDom=await makeDom(true,undefined,'',pw=>{
+  const f=pw.__atlasFixture,base=f.office.employees[0];
+  f.office.departments.push({...f.office.departments[0],id:'nested-quality',name:'Release quality',parentDepartmentId:'fixture-department'});
+  f.office.employees.push({...base,id:'paired-primary',name:'Primary engineer',role:'Engineer',companyId:'fixture-company',officeId:'fixture-office',departmentId:'nested-quality'},{...base,id:'paired-reviewer',name:'Independent reviewer',role:'Reviewer',companyId:'fixture-company',officeId:'fixture-office',departmentId:'nested-quality'});
+  const goal={id:'paired-goal',companyId:'fixture-company',scope:{kind:'department',id:'nested-quality'},title:'Native paired outcome',description:'Fixture',mode:'plan',status:'planned',maxIterations:1,iteration:0,jobIds:[],steps:[{id:'paired-step',title:'Implement and verify',employeeId:'paired-primary',reviewerEmployeeId:'paired-reviewer',goal:'Fixture',dependsOn:[],estimate:{optimisticMinutes:5,likelyMinutes:10,pessimisticMinutes:20},reviewEstimate:{optimisticMinutes:2,likelyMinutes:3,pessimisticMinutes:5}}],runSettings:{mode:'manual'},createdAt:'2026-11-22T00:00:00Z',updatedAt:'2026-11-22T00:00:00Z'};
+  f.office.goals.push(goal,{...goal,id:'foreign-goal',companyId:'not-this-company',title:'Foreign company secret'});
+ });
+ const pw=peopleDom.window,pd=pw.document,pf=pw.__atlasFixture,pid=id=>pd.getElementById(id);
+ pid('office-department-select').value='fixture-department';pid('office-department-select').dispatchEvent(new pw.Event('change',{bubbles:true}));await flush();pid('workspace-tab-softboard').click();await flush();
+ check(pd.querySelector('[data-employee-id="paired-primary"]')&&pid('workspace-softboard').textContent.includes('Engineering'),'parent department view includes a named nested department path');
+ pd.querySelector('#workspace-softboard [data-employee-id="paired-primary"]').click();
+ check(pid('softboard-person-detail').textContent.includes('Independent reviewer')&&pid('softboard-person-detail').textContent.includes('Native paired outcome'),'ownership inspector shows canonical primary/helper-reviewer assignments');
+ check(!pid('softboard-person-detail').textContent.includes('Foreign company secret'),'paired responsibility detail stays in the selected company');
+ const before=pf.calls.filter(call=>call.name==='officeCommand').length;pid('softboard-person-chat').click();await flush();
+ check(pid('chat-scope').value==='employee'&&pid('chat-employee').value==='paired-primary','nested employee discussion opens the existing employee-scoped conversation');
+ check(pf.calls.filter(call=>call.name==='officeCommand').length===before,'Greenboard navigation does not hire, grant, send or queue work');
+ pid('workspace-tab-softboard').click();await flush();pid('softboard-descendants').checked=false;pid('softboard-descendants').dispatchEvent(new pw.Event('change'));await flush();
+ check(pid('softboard-result-note').textContent.includes('Selected department only'),'exact department scope is explicitly identified');
+ peopleDom.window.close();
+}
+
+// One atomic Donna command, including the lost-acknowledgement case.
+{
+ const attempts=[];let loseAcknowledgement=true;
+ const atomic=await makeDom(true,undefined,'',aw=>{const base=aw.desktopBridge.officeCommand;aw.desktopBridge.officeCommand=async request=>{if(request.action==='create_paired_workflow'){attempts.push(JSON.parse(JSON.stringify(request)));const result=await base(request);if(loseAcknowledgement){loseAcknowledgement=false;return{ok:false,snapshot:null,code:'IO_ERROR',error:'Fixture response failed after the durable workflow was saved.'};}return result;}return base(request);};});
+ const aw=atomic.window,ad=aw.document,af=aw.__atlasFixture,ae=id=>ad.getElementById(id);
+ const send=async()=>{ae('workspace-chat-form').dispatchEvent(new aw.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:ae('chat-send')}));await flush();};
+ ae('chat-message').value='A single paired workflow';await send();
+ check(attempts.length===1&&af.office.goals.length===1&&!ae('chat-pending-workflow').hidden,'IO_ERROR after a durable save retains one uncertain request identity');
+ const nonce=attempts[0].requestId;ae('chat-message').value='An edited next workflow';await send();
+ check(attempts.length===1&&ae('chat-message').value==='An edited next workflow'&&ae('chat-status').textContent.includes('uncertain'),'editing an uncertain brief cannot create a fresh workflow identity');
+ ae('chat-retry-workflow').click();await flush();
+ check(attempts.length===2&&attempts[1].requestId===nonce&&attempts[1].content==='A single paired workflow','explicit retry resends the frozen original body and request identity');
+ check(af.office.goals.length===1&&af.office.events.filter(event=>event.action==='create_paired_workflow').length===1,'native fixture replay returns the original receipt without duplicate work');
+ check(ae('chat-pending-workflow').hidden&&ae('chat-message').value==='An edited next workflow','acknowledgement clears pending state while preserving a newer typed brief');
+ check(!af.calls.some(call=>call.name==='officeCommand'&&['post_chat','create_goal','plan_goal','execute_goal'].includes(call.args.action)),'Donna atomic submission does not fall back to the previous multi-write chain');
+ atomic.window.close();
+}
+// Roadmap edits use their own frozen base and preserve unrelated relationships.
+{
+ const roadmapDom=await makeDom(true,undefined,'',rw=>{rw.__atlasFixture.office.portfolio.roadmap.push({id:'revision-outcome',revision:3,scope:{kind:'company',id:'fixture-company'},title:'Original outcome',description:'Saved acceptance',ownerEmployeeId:'donna',reviewerEmployeeId:'fixture-reviewer',reviewerServiceContractId:null,departmentId:null,serviceContractId:null,status:'planned',dependencies:['saved-dependency'],goalIds:['saved-goal'],jobIds:[],estimate:null,reviewEstimate:null,evidence:null,createdAt:'2026-11-22T00:00:00Z',updatedAt:'2026-11-22T00:00:00Z'});});
+ const rw=roadmapDom.window,rd=rw.document,rf=rw.__atlasFixture,re=id=>rd.getElementById(id),rc=()=>rf.calls.filter(call=>call.name==='officeCommand');
+ const input=(id,value)=>{re(id).value=value;re(id).dispatchEvent(new rw.Event('input',{bubbles:true}));};
+ const submit=async()=>{re('ceo-roadmap-form').dispatchEvent(new rw.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:re('ceo-roadmap-form').querySelector('button[type="submit"]')}));await flush();};
+ re('workspace-tab-timeline').click();await flush();rd.querySelector('[data-roadmap-id="revision-outcome"] button').click();await flush();
+ input('ceo-roadmap-title','Unsaved outcome draft');rf.office.portfolio.roadmap[0].revision=4;rf.office.portfolio.roadmap[0].title='Another editor saved';re('office-refresh').click();await flush();
+ check(re('ceo-roadmap-title').value==='Unsaved outcome draft','roadmap background refresh preserves an unfinished title');const before=rc().length;await submit();
+ check(rc().length===before+1&&rc().at(-1).args.expectedRevision===3&&rf.office.portfolio.roadmap[0].title==='Another editor saved','stale roadmap sends its frozen revision once and cannot overwrite the newer record');
+ check(re('ceo-roadmap-title').value==='Unsaved outcome draft'&&re('ceo-roadmap-save-status').textContent.includes('draft'),'roadmap stale failure visibly keeps the original draft');
+ re('ceo-roadmap-reload').click();await flush();input('ceo-roadmap-title','Reconciled outcome');
+ for(const [suffix,value] of [['optimistic','10'],['likely','20'],['pessimistic','30']])input(`ceo-roadmap-estimate-${suffix}`,value);
+ for(const [suffix,value] of [['optimistic','2'],['likely','4'],['pessimistic','8']])input(`ceo-roadmap-review-estimate-${suffix}`,value);
+ await submit();const saved=rc().at(-1).args;
+ check(saved.expectedRevision===4&&saved.reviewerEmployeeId==='fixture-reviewer'&&saved.estimate.likelyMinutes===20&&saved.reviewEstimate.likelyMinutes===4,'roadmap controls submit exact native reviewer and minute-range fields');
+ check(saved.dependencies.join(',')==='saved-dependency'&&saved.goalIds.join(',')==='saved-goal','roadmap ownership edits preserve saved dependencies and links');
+ for(let i=0;i<125;i++)rf.office.portfolio.roadmap.push({...rf.office.portfolio.roadmap[0],id:`later-outcome-${i}`,title:`Later outcome ${i}`,dependencies:[],goalIds:[]});re('office-refresh').click();await flush();input('studio-roadmap-search','Later outcome 124');
+ check(rd.querySelector('[data-roadmap-id="later-outcome-124"]'),'roadmap search reaches saved outcomes beyond the old first-120 cap');
+
+ // Attach reviewed native work through the actual editor; a failed gate leaves the draft intact.
+ const primaryId='reviewed-primary',reviewId='reviewed-review',goalId='reviewed-linked-goal',stepId='reviewed-step';
+ const baseJob={companyId:'fixture-company',officeId:'fixture-office',departmentId:null,goalId,goalIteration:1,mode:'manual',provider:'ollama',model:'fixture',goal:'Fixture reviewed evidence',authorized:false,allowedTools:[],dependencies:[],status:'completed',limits:{maxTokens:100,maxUsd:1,maxMinutes:10},usage:{inputTokens:0,outputTokens:0,costUsd:0},costStatus:'none',reservation:null,createdAt:'2026-11-22T00:00:00Z',updatedAt:'2026-11-22T00:00:00Z',artifactUri:'fixture://artifact',summary:'Fixture only',error:null};
+ rf.office.jobs.push({...baseJob,id:primaryId,employeeId:'donna',artifactSha256:'a'.repeat(64),pair:{stepId,phase:'primary',peerEmployeeId:'fixture-reviewer',primaryJobId:primaryId,reviewJobId:reviewId}}, {...baseJob,id:reviewId,employeeId:'fixture-reviewer',artifactSha256:'b'.repeat(64),pair:{stepId,phase:'review',peerEmployeeId:'donna',primaryJobId:primaryId,reviewJobId:reviewId},review:{verdict:'revise',primaryArtifactSha256:'a'.repeat(64),reviewArtifactSha256:'b'.repeat(64),summary:'Fixture review',evidenceRefs:['fixture://artifact'],recordedAt:'2026-11-22T00:00:00Z'}});
+ rf.office.goals.push({id:goalId,companyId:'fixture-company',scope:{kind:'company',id:'fixture-company'},title:'Reviewed linked goal',description:'Fixture',mode:'plan',status:'completed',iteration:1,maxIterations:1,jobIds:[primaryId,reviewId],steps:[{id:stepId,title:'Produce evidence',employeeId:'donna',reviewerEmployeeId:'fixture-reviewer',dependsOn:[],goal:'Fixture'}],runSettings:{mode:'manual'},createdAt:'2026-11-22T00:00:00Z',updatedAt:'2026-11-22T00:00:00Z'});
+ re('office-refresh').click();await flush();re('ceo-add-roadmap').click();await flush();input('ceo-roadmap-title','Outcome from reviewed work');
+ re('ceo-roadmap-scope').value='company';re('ceo-roadmap-scope').dispatchEvent(new rw.Event('change',{bubbles:true}));re('ceo-roadmap-target').value='fixture-company';re('ceo-roadmap-target').dispatchEvent(new rw.Event('change',{bubbles:true}));
+ re('ceo-roadmap-owner').value='donna';re('ceo-roadmap-reviewer').value='fixture-reviewer';re('ceo-roadmap-goal').value=goalId;re('ceo-roadmap-add-goal').click();re('ceo-roadmap-edit-status').value='done';input('ceo-roadmap-evidence','fixture://reviewed-evidence');
+ const count=rf.office.portfolio.roadmap.length;await submit();
+ check(rf.office.portfolio.roadmap.length===count&&re('ceo-roadmap-title').value==='Outcome from reviewed work'&&re('ceo-roadmap-save-status').textContent.includes('independent review'),'unaccepted linked work cannot create Done and its failure preserves the full draft');
+ rf.office.jobs.find(job=>job.id===reviewId).review.verdict='accepted';re('office-refresh').click();await flush();await submit();
+ const accepted=rf.office.portfolio.roadmap.find(item=>item.title==='Outcome from reviewed work');
+ check(accepted?.status==='done'&&accepted.goalIds.join(',')===goalId&&accepted.reviewerEmployeeId==='fixture-reviewer','new outcome can link an accepted paired goal and save Done through the actual editor');
+ check(rf.office.jobs.length===2,'linking accepted evidence does not create or execute new jobs');
+ re('ceo-roadmap-edit-status').value='in-progress';re('ceo-roadmap-dependency').value='revision-outcome';re('ceo-roadmap-add-dependency').click();await submit();check(rc().at(-1).args.dependencies.includes('revision-outcome')&&rc().at(-1).args.scope.id==='fixture-company','dependency editor saves the chosen canonical outcome without changing scope');re('ceo-roadmap-dependency-links').querySelector('button').click();await submit();check(rc().at(-1).args.dependencies.length===0&&rc().at(-1).args.goalIds.join(',')===goalId,'explicit dependency removal preserves reviewed work links');
+ roadmapDom.window.close();
+}
+
+// Failed review output is a concrete repair state, even when execution itself completed.
+{
+ const repairDom=await makeDom(true,undefined,'',pw=>{
+  const f=pw.__atlasFixture,goalId='repair-goal',stepId='repair-step',primaryId='repair-primary',reviewId='repair-review';
+  const base={companyId:'fixture-company',officeId:'fixture-office',departmentId:null,goalId,goalIteration:1,mode:'manual',provider:'ollama',model:'fixture',goal:'Repair the recorded review',authorized:false,allowedTools:[],dependencies:[],status:'completed',limits:{maxTokens:100,maxUsd:1,maxMinutes:10},usage:{inputTokens:0,outputTokens:0,costUsd:0},usageRecorded:true,costStatus:'none',reservation:null,createdAt:'2026-11-22T00:00:00Z',updatedAt:'2026-11-22T00:00:00Z',artifactUri:'fixture://evidence',summary:'Recorded execution',error:null};
+  f.office.jobs.push({...base,id:primaryId,employeeId:'donna',artifactSha256:'a'.repeat(64),pair:{stepId,phase:'primary',peerEmployeeId:'fixture-reviewer',primaryJobId:primaryId,reviewJobId:reviewId}}, {...base,id:reviewId,employeeId:'fixture-reviewer',artifactSha256:'b'.repeat(64),pair:{stepId,phase:'review',peerEmployeeId:'donna',primaryJobId:primaryId,reviewJobId:reviewId},review:null,reviewFailure:{reason:'malformed-output',summary:'Malformed recorded review',recordedAt:'2026-11-22T00:00:00Z'}});
+  f.office.goals.push({id:goalId,companyId:'fixture-company',scope:{kind:'company',id:'fixture-company'},title:'Repairable paired goal',description:'Fixture repair',mode:'execute',status:'needs-review',stopReason:'review-required',iteration:1,maxIterations:3,jobIds:[primaryId,reviewId],steps:[{id:stepId,title:'Review the output',employeeId:'donna',reviewerEmployeeId:'fixture-reviewer',dependsOn:[],goal:'Fixture'}],runSettings:{mode:'manual'},createdAt:'2026-11-22T00:00:00Z',updatedAt:'2026-11-22T00:00:00Z'});
+  f.office.portfolio.roadmap.push({id:'repair-outcome',revision:0,scope:{kind:'company',id:'fixture-company'},title:'Repairable outcome',description:'Fixture',ownerEmployeeId:'donna',reviewerEmployeeId:'fixture-reviewer',reviewerServiceContractId:null,departmentId:null,serviceContractId:null,status:'blocked',dependencies:[],goalIds:[goalId],jobIds:[primaryId],estimate:null,reviewEstimate:null,evidence:null,createdAt:'2026-11-22T00:00:00Z',updatedAt:'2026-11-22T00:00:00Z'});
+  f.office.blueprints[0].whiteboards.push({id:'repair-card',revision:0,roomId:'fixture-room',ownerEmployeeId:'donna',title:'Repairable linked card',goalIds:[goalId],jobIds:[primaryId],roadmapItemIds:['repair-outcome'],x:.2,y:.2});
+ });
+ const pw=repairDom.window,pd=pw.document,pf=pw.__atlasFixture,pe=id=>pd.getElementById(id);
+ pe('chat-scope').value='company';pe('chat-scope').dispatchEvent(new pw.Event('change',{bubbles:true}));await flush();
+ for(const reason of ['malformed-output','input-budget','artifact-mismatch','recording-unconfirmed']){
+  pf.office.jobs.find(job=>job.id==='repair-review').reviewFailure={reason,summary:`Repair receipt ${reason} <img src=x onerror=alert(1)>`,recordedAt:'2026-11-22T00:00:00Z'};pe('office-refresh').click();await flush();
+  const goal=pd.querySelector('[data-goal-id="repair-goal"]'),card=pd.querySelector('[data-board-id="repair-card"]'),outcome=pd.querySelector('[data-roadmap-id="repair-outcome"]');
+  check([goal,card,outcome].every(element=>element?.textContent.includes('Review needs repair')&&element.textContent.includes(`Repair receipt ${reason}`)),`${reason} is exposed on the real goal, whiteboard and roadmap`);
+  check(!goal.textContent.includes('awaiting accepted review')&&!goal.textContent.includes('Independent review accepted'),`${reason} is not mislabeled as pending or accepted`);
+  check(!goal.querySelector('img')&&!card.querySelector('img')&&!outcome.querySelector('img'),'review failure summaries remain plain text');
+ }
+ pe('workspace-tab-softboard').click();await flush();pd.querySelector('#workspace-softboard [data-employee-id="fixture-reviewer"]').click();
+ check(pe('softboard-person-detail').textContent.includes('Review needs repair')&&pe('softboard-person-detail').textContent.includes('recording-unconfirmed'),'Greenboard exposes the canonical helper repair summary');
+ pe('chat-message').value='Keep my unfinished Donna draft';pe('workspace-tab-whiteboard').click();await flush();const before=pf.calls.filter(call=>call.name==='officeCommand').length;
+ pd.querySelector('[data-board-id="repair-card"] [data-review-failure] button').click();await flush();await flush();
+ const advance=pd.querySelector('[data-goal-id="repair-goal"] .goal-advance');
+ check(Boolean(advance)&&advance.closest('details').open,'Inspect repair plan opens the existing explicit bounded-iteration controls');
+ check(pe('chat-message').value==='Keep my unfinished Donna draft','repair navigation preserves an unfinished Donna brief');
+ check(!pf.calls.slice(before).some(call=>call.name==='officeCommand'&&['advance_goal','resume_job','execute_goal','create_paired_workflow','enqueue_job'].includes(call.args.action))&&pf.office.jobs.length===2,'opening repair options never starts or recreates work');
+ check(pf.office.jobs.every(job=>job.status==='completed'),'repair presentation preserves recorded execution statuses');
+
+ const reason=advance.querySelector('textarea'),submit=advance.querySelector('button[type="submit"]');
+ check(submit.textContent==='Approve & queue next iteration','review policy names the explicit owner approval before repair dispatch');reason.value='Inspect the malformed review and preserve the prior evidence';advance.dispatchEvent(new pw.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:submit}));await flush();
+ const queued=pf.calls.filter(call=>call.name==='officeCommand'&&call.args.action==='advance_goal');check(queued.length===1&&queued[0].args.reviewed===true&&queued[0].args.reason===reason.value,'only the explicit owner iteration submission sends reviewed:true');
+ pf.office.policy.approvalMode='autonomous';pe('office-refresh').click();await flush();const automatic=pd.querySelector('[data-goal-id="repair-goal"] .goal-advance');automatic.querySelector('textarea').value='A separately requested iteration within the same limits';const autoSubmit=automatic.querySelector('button[type="submit"]');automatic.dispatchEvent(new pw.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:autoSubmit}));await flush();const last=pf.calls.filter(call=>call.name==='officeCommand'&&call.args.action==='advance_goal').at(-1);check(autoSubmit.textContent==='Queue next iteration'&&!Object.prototype.hasOwnProperty.call(last.args,'reviewed'),'autonomous policy does not add an unsolicited review flag');
+ repairDom.window.close();
 }
 console.log(JSON.stringify({suite:'renderer pure-DOM interaction',checks,passed:true,fixtureOnly:true,networkCalls:0,providerCalls:0,visualVerification:false},null,2));

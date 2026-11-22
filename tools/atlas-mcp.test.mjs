@@ -199,6 +199,172 @@ test('byte-bounded pages shorten the page without losing the remaining records',
   assert.equal(ids.length,100);assert.equal(new Set(ids).size,100);
 });
 
+function boardFixture() {
+  const snapshot = officeFixture(2);
+  snapshot.employees.push({ id:'sk-12345678', companyId:'company-a', officeId:'office-a', departmentId:'department-a', name:'Owner sk-12345678', status:'active' });
+  snapshot.goals = [
+    { id:'goal-a', companyId:'company-a', scope:{kind:'company',id:'company-a'}, title:'A goal', steps:[
+      { id:'write', title:'Write', employeeId:'sk-12345678', goal:'PRIVATE STEP PROMPT', dependsOn:[], knowledgeTransferIds:['transfer-a'],
+        reviewerEmployeeId:'employee-0000',reviewerServiceContractId:null,estimate:{optimisticMinutes:2,likelyMinutes:4,pessimisticMinutes:8},reviewEstimate:{optimisticMinutes:1,likelyMinutes:2,pessimisticMinutes:3} },
+      { id:'verify', title:'Verify', employeeId:'employee-0000', goal:'PRIVATE REVIEW PROMPT', dependsOn:['write'], knowledgeTransferIds:[] },
+    ]},
+    { id:'goal-a2', companyId:'company-a', scope:{kind:'office',id:'office-a'}, title:'A second goal', steps:[{id:'write',title:'Write again',employeeId:'employee-0000',goal:'PRIVATE SECOND PROMPT',dependsOn:[]}] },
+    { id:'goal-b', companyId:'company-b', scope:{kind:'company',id:'company-b'}, title:'B goal', steps:[{id:'write',title:'Other company',employeeId:'employee-0001',goal:'PRIVATE B PROMPT',dependsOn:[]}] },
+  ];
+  snapshot.jobs.push({ id:'job-a2',companyId:'company-a',employeeId:'employee-0000',status:'completed' },{id:'job-b',companyId:'company-b',employeeId:'employee-0001',status:'queued'});
+  snapshot.portfolio={groups:[],contracts:[],transfers:[{id:'transfer-a',recipientCompanyId:'company-a',status:'granted'}],roadmap:[
+    {id:'roadmap-global',scope:{kind:'global',id:'portfolio'},title:'Global',ownerEmployeeId:'sk-12345678',status:'planned',dependencies:[],goalIds:[],jobIds:[]},
+    {id:'roadmap-a',scope:{kind:'company',id:'company-a'},title:'A outcome',ownerEmployeeId:'sk-12345678',status:'planned',dependencies:['roadmap-global'],goalIds:['goal-a','goal-a2'],jobIds:['job-a','job-a2'],evidence:'PRIVATE EVIDENCE'},
+    {id:'roadmap-b',scope:{kind:'company',id:'company-b'},title:'B outcome',ownerEmployeeId:'employee-0001',status:'planned',dependencies:[],goalIds:['goal-b'],jobIds:['job-b']},
+  ]};
+  snapshot.blueprints=['a','b'].map(suffix=>({id:`blueprint-${suffix}`,companyId:`company-${suffix}`,officeId:`office-${suffix}`,
+    rooms:[{id:`room-${suffix}`,name:`Room ${suffix}`,departmentId:suffix==='a'?'department-a':null,x:.1,y:.1,width:.6,height:.6}],
+    desks:[{id:`desk-${suffix}`,roomId:`room-${suffix}`,employeeId:suffix==='a'?'sk-12345678':'employee-0001',x:.2,y:.3}],
+    whiteboards:[{id:`board-${suffix}`,roomId:`room-${suffix}`,ownerEmployeeId:suffix==='a'?'sk-12345678':'employee-0001',title:`Board ${suffix}`,x:.3,y:.4,revision:3,
+      goalIds:suffix==='a'?['goal-a','goal-a2']:['goal-b'],jobIds:suffix==='a'?['job-a','job-a2']:['job-b'],roadmapItemIds:[`roadmap-${suffix}`,'roadmap-global']}] }));
+  return snapshot;
+}
+
+test('nested metadata requires explicit scope and preserves canonical parent identities and full links',async()=>{
+  const snapshot=boardFixture(),f=officeHarness(snapshot);
+  for(const collection of ['rooms','desks','whiteboards','goalSteps']){
+    await assert.rejects(f.handler('office_query',{collection}),InvalidParams);
+    assert.ok(TOOL_DEFINITIONS.find(tool=>tool.name==='office_query').inputSchema.properties.collection.enum.includes(collection));
+  }
+  await assert.rejects(f.handler('office_query',{collection:'whiteboards',scope:{kind:'employee',id:'sk-12345678'}}),InvalidParams);
+  assert.equal(f.calls.length,0);
+  Object.assign(snapshot.blueprints[0].whiteboards[0],{companyId:'company-b',officeId:'office-b',blueprintId:'blueprint-b',scope:{kind:'company',id:'company-b'},goalId:'goal-b',privateBody:'PRIVATE BOARD BODY'});
+  for(const collection of ['rooms','desks','whiteboards']){
+    const page=await f.handler('office_query',{collection,scope:{kind:'company',id:'company-a'}});
+    assert.equal(page.total,1);assert.equal(page.omittedRows,0);assert.equal(page.sourceTruncated,false);
+    assert.equal(page.items[0].companyId,'company-a');assert.equal(page.items[0].officeId,'office-a');assert.equal(page.items[0].blueprintId,'blueprint-a');
+    assert.equal(JSON.stringify(page).includes('PRIVATE BOARD BODY'),false);
+  }
+  const board=(await f.handler('office_query',{collection:'whiteboards',scope:{kind:'office',id:'office-a'}})).items[0];
+  assert.equal('scope' in board,false);assert.equal('goalId' in board,false,'child-supplied aliases do not survive projection');
+  assert.deepEqual(board.goalIds,['goal-a','goal-a2']);assert.deepEqual(board.jobIds,['job-a','job-a2']);assert.deepEqual(board.roadmapItemIds,['roadmap-a','roadmap-global']);
+  assert.equal(board.ownerEmployeeId,'sk-12345678');assert.equal(board.revision,3);assert.equal(board.referencesComplete,true);assert.deepEqual(board.omittedReferences,{});
+  const employees=(await f.handler('office_query',{collection:'employees'})).items;
+  assert.equal(employees.find(row=>row.id==='sk-12345678').name,'Owner [credential omitted]');
+  assert.ok(f.calls.every(call=>call.command==='office_snapshot'));
+});
+
+test('nested metadata omits malformed or orphan records and explicitly reports invalid links',async()=>{
+  const snapshot=boardFixture(),f=officeHarness(snapshot),blueprint=snapshot.blueprints[0],board=blueprint.whiteboards[0];
+  board.goalIds.push('goal-b','missing-goal','bad/id');board.jobIds.push('job-b');board.roadmapItemIds.push('roadmap-b');
+  blueprint.whiteboards.push({...board,id:'orphan-room',roomId:'missing-room'},{...board,id:'bad/id'},{...board,id:'unknown-owner',ownerEmployeeId:'missing-employee'});
+  snapshot.blueprints.push({...blueprint,id:'cross-company-parent',officeId:'office-b',whiteboards:[{...board,id:'wrong-parent'}]});
+  const result=await f.handler('office_query',{collection:'whiteboards',scope:{kind:'company',id:'company-a'}});
+  assert.deepEqual(result.items.map(row=>row.id),['board-a']);assert.equal(result.omittedRows,4);
+  assert.equal(result.items[0].referencesComplete,false);assert.deepEqual(result.items[0].omittedReferences,{goalIds:3,jobIds:1,roadmapItemIds:1});
+  assert.deepEqual(result.items[0].goalIds,['goal-a','goal-a2']);
+  snapshot.blueprints[0].whiteboards.push({...board});
+  assert.equal((await f.handler('office_query',{collection:'whiteboards',scope:{kind:'office',id:'office-a'}})).items.length,0,'duplicate child IDs cannot select an arbitrary record');
+  snapshot.goals.push({...snapshot.goals[0],id:'orphan-scope',scope:{kind:'office',id:'office-b'}});
+  const steps=await f.handler('office_query',{collection:'goalSteps',scope:{kind:'company',id:'company-a'}});
+  assert.equal(steps.items.some(row=>row.goalId==='orphan-scope'),false);assert.equal(steps.omittedRows,2);
+});
+
+test('goal-step pagination distinguishes repeated step IDs and rejects changed dependency cursors',async()=>{
+  const snapshot=boardFixture(),f=officeHarness(snapshot),scope={kind:'company',id:'company-a'};
+  let cursor;const rows=[];
+  do{const page=await f.handler('office_query',{collection:'goalSteps',scope,pageSize:1,...(cursor?{cursor}:{})});rows.push(...page.items);cursor=page.nextCursor;}while(cursor);
+  assert.equal(rows.length,3);assert.equal(new Set(rows.map(row=>`${row.goalId}/${row.id}`)).size,3);
+  const primary=rows.find(row=>row.goalId==='goal-a'&&row.id==='write');
+  assert.equal(primary.employeeId,'sk-12345678');assert.equal(primary.reviewerEmployeeId,'employee-0000');assert.equal(primary.reviewerServiceContractId,null);
+  assert.deepEqual(primary.estimate,{optimisticMinutes:2,likelyMinutes:4,pessimisticMinutes:8});assert.deepEqual(primary.knowledgeTransferIds,['transfer-a']);
+  assert.equal(JSON.stringify(rows).includes('PRIVATE'),false);assert.equal(rows.some(row=>row.companyId==='company-b'),false);
+  const first=await f.handler('office_query',{collection:'goalSteps',scope,pageSize:1});
+  snapshot.goals[0].steps[1].dependsOn=[];
+  await assert.rejects(f.handler('office_query',{collection:'goalSteps',scope,pageSize:1,cursor:first.nextCursor}),error=>error.code==='query_changed');
+  const exact=await f.handler('office_query',{collection:'goalSteps',scope:{kind:'goal',id:'goal-b'}});assert.equal(exact.total,1);assert.equal(exact.items[0].companyId,'company-b');
+  assert.ok(f.calls.every(call=>call.command==='office_snapshot'));
+});
+
+test('native nested caps and reference caps are explicit and cannot create a non-advancing page',async()=>{
+  const snapshot=boardFixture(),f=officeHarness(snapshot),scope={kind:'company',id:'company-a'};
+  snapshot.goals[0].steps=Array.from({length:13},(_,i)=>({id:`s${i}`,title:'Step',employeeId:'employee-0000',dependsOn:[]}));
+  const steps=await f.handler('office_query',{collection:'goalSteps',scope:{kind:'goal',id:'goal-a'},pageSize:100});
+  assert.equal(steps.returned,12);assert.equal(steps.omittedRows,1);assert.equal(steps.sourceTruncated,true);
+  const longId=(prefix,i)=>`${prefix}-${String(i).padStart(3,'0')}-${'x'.repeat(148)}`;
+  snapshot.goals=Array.from({length:100},(_,i)=>({id:longId('g',i),companyId:'company-a'}));
+  snapshot.jobs=Array.from({length:100},(_,i)=>({id:longId('j',i),companyId:'company-a'}));
+  snapshot.portfolio.roadmap=Array.from({length:100},(_,i)=>({id:longId('r',i),scope:{kind:'company',id:'company-a'}}));
+  const prototype=snapshot.blueprints[0].whiteboards[0];
+  snapshot.blueprints[0].whiteboards=Array.from({length:12},(_,i)=>({...prototype,id:`board-${i}`,goalIds:snapshot.goals.map(x=>x.id),jobIds:snapshot.jobs.map(x=>x.id),roadmapItemIds:snapshot.portfolio.roadmap.map(x=>x.id)}));
+  let cursor;const ids=[];let pages=0;
+  do{
+    const page=await f.handler('office_query',{collection:'whiteboards',scope,pageSize:100,...(cursor?{cursor}:{})});
+    assert.ok(page.returned>0);assert.ok(Buffer.byteLength(JSON.stringify(page.items))<=OFFICE_QUERY_PAGE_BYTES+100);
+    ids.push(...page.items.map(row=>row.id));assert.notEqual(page.nextCursor,cursor??undefined);cursor=page.nextCursor;pages++;
+  }while(cursor);
+  assert.equal(ids.length,12);assert.equal(new Set(ids).size,12);assert.ok(pages>1);
+  snapshot.blueprints[0].whiteboards[0].goalIds.push('extra');
+  const bounded=await f.handler('office_query',{collection:'whiteboards',scope,pageSize:1});
+  assert.equal(bounded.items[0].goalIds.length,100);assert.equal(bounded.items[0].referencesComplete,false);assert.equal(bounded.items[0].omittedReferences.goalIds,1);
+});
+
+test('roadmap and paired-job metadata preserve references and hashes without prompts or private evidence',async()=>{
+  const snapshot=boardFixture(),f=officeHarness(snapshot),primaryHash='a'.repeat(64),reviewHash='b'.repeat(64);
+  const road=(await f.handler('office_query',{collection:'roadmap',scope:{kind:'company',id:'company-a'}})).items.find(row=>row.id==='roadmap-a');
+  assert.deepEqual(road.dependencies,['roadmap-global']);assert.deepEqual(road.goalIds,['goal-a','goal-a2']);assert.equal(road.evidencePresent,true);assert.equal('evidence' in road,false);
+  Object.assign(snapshot.jobs[0],{requestSha256:primaryHash,artifactSha256:reviewHash,pair:{stepId:'write',phase:'review',peerEmployeeId:'sk-12345678',primaryJobId:'job-a2',reviewJobId:'job-a'},
+    review:{verdict:'accepted',primaryArtifactSha256:primaryHash,reviewArtifactSha256:reviewHash,primaryArtifactComplete:true,summary:'Verified sk-proj-1234567890 /workspace/private/report',evidenceRefs:['job-a2','bad/path'],recordedAt:'2026-11-22T00:00:00Z'}});
+  const job=(await f.handler('office_query',{collection:'jobs'})).items.find(row=>row.id==='job-a');
+  assert.equal(job.pair.peerEmployeeId,'sk-12345678');assert.equal(job.artifactSha256,reviewHash);assert.equal(job.review.primaryArtifactSha256,primaryHash);
+  assert.deepEqual(job.review.evidenceRefs,['job-a2']);assert.equal(job.review.omittedEvidenceRefs,1);assert.match(job.review.summary,/credential omitted/);
+  assert.equal(job.review.primaryArtifactComplete,true);
+  for(const forbidden of ['PRIVATE PROMPT','PRIVATE LEASE','PRIVATE EVIDENCE','/workspace/private','sk-proj-1234567890'])assert.equal(JSON.stringify(job).includes(forbidden),false);
+  snapshot.jobs[0].review.evidenceRefs=Array.from({length:23},(_,i)=>`ref-${i}`);
+  delete snapshot.jobs[0].review.primaryArtifactComplete;
+  const legacy=(await f.handler('office_query',{collection:'jobs'})).items.find(row=>row.id==='job-a');
+  assert.equal(legacy.review.evidenceRefs.length,20);assert.equal(legacy.review.omittedEvidenceRefs,3);
+  assert.equal(legacy.review.primaryArtifactComplete,null);assert.equal(legacy.metadataIncomplete,true);
+  snapshot.jobs[0].review.primaryArtifactComplete=false;
+  assert.equal((await f.handler('office_query',{collection:'jobs'})).items.find(row=>row.id==='job-a').review.primaryArtifactComplete,false);
+});
+
+test('metadata estimates use the native duration bounds and label malformed triples incomplete',async()=>{
+  const snapshot=boardFixture(),f=officeHarness(snapshot),step=snapshot.goals[0].steps[0],road=snapshot.portfolio.roadmap[1];
+  for(const value of [0,0.009,1440.001,Number.MAX_SAFE_INTEGER]){
+    step.estimate={optimisticMinutes:value,likelyMinutes:value,pessimisticMinutes:value};road.estimate=step.estimate;
+    const a=(await f.handler('office_query',{collection:'goalSteps',scope:{kind:'goal',id:'goal-a'}})).items.find(row=>row.id==='write');
+    const b=(await f.handler('office_query',{collection:'roadmap'})).items.find(row=>row.id==='roadmap-a');
+    for(const item of [a,b]){assert.equal('estimate' in item,false);assert.equal(item.metadataIncomplete,true);}
+  }
+  step.estimate={optimisticMinutes:0.01,likelyMinutes:10,pessimisticMinutes:1440};
+  assert.deepEqual((await f.handler('office_query',{collection:'goalSteps',scope:{kind:'goal',id:'goal-a'}})).items.find(row=>row.id==='write').estimate,step.estimate);
+});
+
+test('trusted review failure metadata preserves settlement without inventing an accepted verdict',async()=>{
+  const snapshot=boardFixture(),f=officeHarness(snapshot),job=snapshot.jobs[0];
+  Object.assign(job,{status:'completed',review:null,reviewFailure:{reason:'malformed-output',summary:'Saved sk-proj-1234567890 /workspace/private/review.json for inspection.',recordedAt:'2026-11-22T00:00:00Z'}});
+  const item=(await f.handler('office_query',{collection:'jobs'})).items.find(row=>row.id===job.id);
+  assert.equal(item.status,'completed');assert.equal(item.review,null);assert.equal(item.reviewFailure.reason,'malformed-output');
+  assert.match(item.reviewFailure.summary,/credential omitted/);assert.equal(JSON.stringify(item).includes('/workspace/private'),false);
+  assert.equal('verdict' in item.reviewFailure,false);assert.equal('leaseToken' in item,false);
+  for(const reason of ['input-budget','artifact-mismatch','recording-unconfirmed']){
+    job.reviewFailure.reason=reason;
+    assert.equal((await f.handler('office_query',{collection:'jobs'})).items.find(row=>row.id===job.id).reviewFailure.reason,reason);
+  }
+  job.reviewFailure.reason='accepted';
+  const invalid=(await f.handler('office_query',{collection:'jobs'})).items.find(row=>row.id===job.id);
+  assert.equal('reviewFailure' in invalid,false);assert.equal(invalid.metadataIncomplete,true);
+  assert.equal(TOOL_DEFINITIONS.find(tool=>tool.name==='office_command').inputSchema.properties.action.enum.includes('record_review_failure'),false);
+  await assert.rejects(f.handler('office_command',{action:'record_review_failure',payload:{jobId:job.id}}),InvalidParams);
+});
+
+test('atomic workflow recovery exposes only exact source identities and validated request hashes',async()=>{
+  const snapshot=boardFixture(),f=officeHarness(snapshot),goal=snapshot.goals[0];
+  Object.assign(goal,{sourceRequestId:'sk-12345678',sourceMessageId:'message:atomic-1',requestSha256:'a'.repeat(64),content:'PRIVATE WORKFLOW BRIEF'});
+  const item=(await f.handler('office_query',{collection:'goals',scope:{kind:'company',id:'company-a'}})).items.find(row=>row.id===goal.id);
+  assert.equal(item.sourceRequestId,'sk-12345678');assert.equal(item.sourceMessageId,'message:atomic-1');assert.equal(item.requestSha256,'a'.repeat(64));
+  assert.equal(JSON.stringify(item).includes('PRIVATE WORKFLOW BRIEF'),false);
+  Object.assign(goal,{sourceRequestId:'bad/id',sourceMessageId:null,requestSha256:'not-a-hash'});
+  const invalid=(await f.handler('office_query',{collection:'goals'})).items.find(row=>row.id===goal.id);
+  assert.equal('sourceRequestId' in invalid,false);assert.equal('requestSha256' in invalid,false);assert.equal(invalid.sourceMessageId,null);assert.equal(invalid.metadataIncomplete,true);
+});
+
 function nativeProcessFixture(buffer) {
   const child=new EventEmitter();child.stdin=new PassThrough();child.stdout=new PassThrough();child.stderr=new PassThrough();let killed=false;
   child.kill=()=>{killed=true;};child.stdin.on('finish',()=>queueMicrotask(()=>{child.stdout.emit('data',buffer);child.emit('close',0);}));

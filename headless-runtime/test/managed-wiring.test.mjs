@@ -13,7 +13,9 @@ async function fixture(t) {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-managed-wiring-')); let generated = 0, fetched = 0;
   const runtime = createRuntime({ repoRoot, dataDir, ollamaLocalOnly: true,
     modelFetch: async url => { fetched++; if(String(url).endsWith('/api/show')) return new Response(JSON.stringify({model_info:{architecture:'qwen3'}}),{headers:{'content-type':'application/json'}}); if(String(url).endsWith('/api/ps')) return new Response(JSON.stringify({models:[]}),{headers:{'content-type':'application/json'}}); assert.ok(String(url).endsWith('/api/tags')); return new Response(JSON.stringify({models:[{name:'qwen3:4b',model:'qwen3:4b',size:2500000000,digest,details:{parameter_size:'4B',quantization_level:'Q4_K_M'}}]}),{headers:{'content-type':'application/json'}}); },
-    generate: async request => { generated++; return { text: 'Synthetic expert result', model: request.model, inputTokens: 10, outputTokens: 10, totalTokens: 20, estimated: false, finishReason: 'stop', latencyMs: 1 }; },
+    generate: async request => { generated++; return { text: request.system.includes('distinct helper and reviewer')
+      ? JSON.stringify({ verdict: 'accepted', summary: 'The complete synthetic result satisfies the integration task.', evidenceRefs: ['synthetic-artifact-check'] })
+      : 'Synthetic expert result', model: request.model, inputTokens: 10, outputTokens: 10, totalTokens: 20, estimated: false, finishReason: 'stop', latencyMs: 1 }; },
     workbenchPlatform: { fetch: async () => { throw new Error('External transport forbidden'); } },
   });
   const service = await startServer({runtime,token,port:0}); const origin=`http://127.0.0.1:${service.server.address().port}`;
@@ -53,10 +55,20 @@ test('a real native expert DAG runs once with provenance and retains grants acro
   const plan=(await f.mcp('resource_plan',{id:'plan-once',companyId:f.company.id,employeeId:f.company.assistantId,routeId:route.id,task:'Produce a synthetic integration report.'})).plan;
   const input={id:'run-once',planId:plan.id,expectedPlanHash:plan.planHash};
   const run=await f.mcp('resource_start',input);assert.equal(run.run.status,'queued');assert.equal(run.run.steps.length,2);
-  await f.runtime.worker.runOnce();await f.runtime.worker.runOnce();
-  const inspected=await f.mcp('resource_inspect',{id:input.id});assert.equal(inspected.run.status,'completed');assert.equal(f.generated(),2);
-  assert.equal((await f.mcp('resource_start',input)).replayed,true);assert.equal(f.generated(),2);
-  assert.ok(inspected.run.steps.every(step=>step.artifactUri));
+  assert.ok(plan.steps.every(step => step.reviewerEmployeeId && step.reviewerEmployeeId !== step.employeeId));
+  const queued=(await f.runtime.snapshot()).snapshot.jobs;
+  assert.equal(queued.length,4);assert.equal(new Set(queued.map(job=>job.id)).size,4);
+  assert.deepEqual(queued.find(job=>job.id===run.run.steps[1].jobId).dependencies,[run.run.steps[0].reviewJobId]);
+  assert.ok(queued.reduce((sum,job)=>sum+job.limits.maxTokens,0)<=route.limits.maxTokens);
+  assert.ok(queued.reduce((sum,job)=>sum+job.limits.maxMinutes,0)<=route.limits.maxMinutes);
+  await f.runtime.worker.runOnce();
+  const pending=await f.mcp('resource_inspect',{id:input.id});assert.notEqual(pending.run.status,'completed');assert.equal(pending.run.steps[0].status,'awaiting-review');
+  for(let index=0;index<3;index++)await f.runtime.worker.runOnce();
+  const inspected=await f.mcp('resource_inspect',{id:input.id});assert.equal(inspected.run.status,'completed');assert.equal(f.generated(),4);
+  assert.equal((await f.mcp('resource_start',input)).replayed,true);assert.equal(f.generated(),4);
+  assert.equal((await f.runtime.snapshot()).snapshot.jobs.length,4);
+  assert.ok(inspected.run.steps.every(step=>step.artifactUri&&step.reviewArtifactUri&&step.reviewVerdict==='accepted'));
+  assert.equal(f.runtime.worker.status().enabled,false);
   await f.runtime.resourceOperation('configure',{expectedRevision:1,resources:[resource],grants:[],routes:[route]});
   await assert.rejects(f.runtime.modelOperation('select',{companyId:f.company.id,employeeId:f.employeeId,model:'qwen3:4b'}),error=>error.code==='RESOURCE_GRANT_REQUIRED');
 });

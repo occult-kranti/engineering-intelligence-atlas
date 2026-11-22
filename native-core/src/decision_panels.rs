@@ -147,6 +147,7 @@ impl OfficeSnapshot {
             created_at: now(),
             updated_at: now(),
             stop_reason: None,
+            source_request_id: None, request_sha256: None, source_message_id: None,
         })
     }
     fn panel_hire_or_reuse(&mut self, panel: &DecisionPanel, key: &str) -> Result<PanelMember> {
@@ -562,15 +563,16 @@ impl OfficeSnapshot {
                     goal.steps.push(GoalStep {
                         id: format!("expert-{}", n + 1), title: role_title(&member.role_key).unwrap().into(), employee_id: member.employee_id.clone(),
                         goal: format!("{brief}\nYour lens: {}. Work independently of the other current-round expert reports. Identify one concrete recommendation and the strongest reason it could fail.", role_title(&member.role_key).unwrap()),
-                        depends_on: vec![], service_contract_id: member.service_contract_id.clone(), knowledge_transfer_ids: transfers.clone(),
+                        depends_on: vec![], service_contract_id: member.service_contract_id.clone(), knowledge_transfer_ids: transfers.clone(), reviewer_employee_id: None, reviewer_service_contract_id: None, estimate: None, review_estimate: None,
                     });
                 }
                 let dependencies = goal.steps.iter().map(|s| s.id.clone()).collect();
                 goal.steps.push(GoalStep {
                     id: "donna-synthesis".into(), title: "Donna — compare evidence and record a recommendation".into(), employee_id: "donna".into(),
                     goal: format!("{brief}\nYou are Donna, the decision panel moderator. Read the supplied expert artifacts, merge duplicate proposals, preserve disagreements and distinguish accepted recommendations from evidence gaps. Return a small roadmap with owners, dependencies, verification checks and proposed budgets, plus accepted/rejected/deferred options. Do not claim the owner accepted the result; the decision ledger is a separate explicit step."),
-                    depends_on: dependencies, service_contract_id: None, knowledge_transfer_ids: transfers,
+                    depends_on: dependencies, service_contract_id: None, knowledge_transfer_ids: transfers, reviewer_employee_id: None, reviewer_service_contract_id: None, estimate: None, review_estimate: None,
                 });
+                self.assign_goal_reviewers(&mut goal)?;
                 self.validate_goal_steps(&goal)?;
                 let goal_id = goal.id.clone();
                 self.goals.push(goal);
@@ -733,7 +735,11 @@ mod tests {
                 .as_str()
                 .unwrap()
                 .to_string();
-            s.apply(&json!({"action":"finish_job","jobId":job,"leaseToken":lease,"status":"completed","inputTokens":10,"outputTokens":10,"costUsd":0.01,"artifactUri":"/tmp/fixture-evidence.md","summary":"Fixture expert report; no live provider was called."})).unwrap();
+            s.apply(&json!({"action":"finish_job","jobId":job,"leaseToken":lease,"status":"completed","inputTokens":10,"outputTokens":10,"costUsd":0.01,"artifactUri":"/tmp/fixture-evidence.md","artifactSha256":"a".repeat(64),"summary":"Fixture expert report; no live provider was called."})).unwrap();
+            let pair = s.jobs.iter().find(|j| j.id == job).unwrap().pair.clone().unwrap();
+            if pair.phase == "review" {
+                s.apply(&json!({"action":"record_step_review","jobId":job,"leaseToken":lease,"primaryJobId":pair.primary_job_id,"primaryArtifactSha256":"a".repeat(64),"reviewArtifactSha256":"a".repeat(64),"primaryArtifactComplete":true,"verdict":"accepted","summary":"Independent fixture review","evidenceRefs":["fixture:complete-artifact"]})).unwrap();
+            }
         }
     }
     #[test]
@@ -864,7 +870,7 @@ mod tests {
         s.apply(&json!({"action":"start_panel_round","panelId":id,"runSettings":settings,"reviewed":true})).unwrap();
         let goal = &s.goals[0];
         assert_eq!(goal.max_iterations, 1);
-        assert_eq!(s.jobs.len(), 5);
+        assert_eq!(s.jobs.len(), 10);
         assert_eq!(
             s.jobs.iter().filter(|j| j.dependencies.is_empty()).count(),
             4
@@ -873,7 +879,7 @@ mod tests {
         assert_eq!(moderator.dependencies.len(), 4);
         assert!(s.jobs.iter().all(|j| j.authorized
             && j.allowed_tools.is_empty()
-            && j.limits.max_tokens == 2000
+            && j.limits.max_tokens == if j.pair.as_ref().unwrap().phase == "primary" { 1200 } else { 800 }
             && j.limits.max_minutes == 7.0));
         assert!((s.jobs.iter().map(|j| j.limits.max_usd).sum::<f64>() - 1.0).abs() < 1e-9);
         assert!(s
@@ -933,7 +939,7 @@ mod tests {
             .iter()
             .filter(|j| j.id != running)
             .all(|j| j.status == "paused"));
-        s.apply(&json!({"action":"finish_job","jobId":running,"leaseToken":lease,"status":"completed","inputTokens":10,"outputTokens":10,"costUsd":0.01,"artifactUri":"/tmp/fixture-evidence.md"})).unwrap();
+        s.apply(&json!({"action":"finish_job","jobId":running,"leaseToken":lease,"status":"completed","inputTokens":10,"outputTokens":10,"costUsd":0.01,"artifactUri":"/tmp/fixture-evidence.md","artifactSha256":"a".repeat(64)})).unwrap();
         assert_eq!(s.decision_panels[0].status, "paused");
         s.apply(&json!({"action":"resume_panel","panelId":id}))
             .unwrap();
@@ -943,7 +949,7 @@ mod tests {
         );
         finish_round(&mut s);
         assert_eq!(s.decision_panels[0].status, "review");
-        assert_eq!(s.jobs.len(), 4);
+        assert_eq!(s.jobs.len(), 8);
     }
     #[test]
     fn department_scope_and_read_only_tools_are_enforced() {

@@ -21,7 +21,7 @@ import { CredentialVault, isApiProvider, isCredentialProvider } from './vault';
 import { importCredentialFromFile } from './credentialImport';
 import { listProviderModels } from './providers';
 import { detectOllama } from './ollama';
-import { ProjectRunner, ProjectStore } from './projects';
+import { ProjectRunner, ProjectStore, legacyProjectExecutionDenied } from './projects';
 import { isTrustedLocalSender, UntrustedSenderError } from './senderGuard';
 import { CompanyService } from './company';
 import { OfficeService } from './office';
@@ -355,7 +355,7 @@ export function registerIpc(ctx: IpcContext): Map<string, (...args: unknown[]) =
     if (typeof req !== 'object' || req === null) return { ok: false, error: 'request must be an object' };
     const r = req as { projectId?: unknown; runBudget?: unknown; priceRates?: unknown };
     if (typeof r.projectId !== 'string') return { ok: false, error: 'projectId must be a string' };
-    return projectRunner.start(r.projectId, r.runBudget, r.priceRates);
+    return legacyProjectExecutionDenied();
   }));
 
   register(CHANNELS.pauseRun, guard((_event, runId: unknown) => {
@@ -365,7 +365,7 @@ export function registerIpc(ctx: IpcContext): Map<string, (...args: unknown[]) =
 
   register(CHANNELS.resumeRun, guard((_event, runId: unknown) => {
     if (typeof runId !== 'string') return { ok: false, error: 'runId must be a string' };
-    return projectRunner.resume(runId);
+    return legacyProjectExecutionDenied();
   }));
 
   register(CHANNELS.cancelRun, guard((_event, runId: unknown) => {

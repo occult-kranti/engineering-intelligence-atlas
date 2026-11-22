@@ -60,7 +60,7 @@ export function cloudSnapshot(snapshot: OfficeSnapshot): OfficeSnapshot {
     if (['leaseToken', 'workerId', 'artifactUri', 'pendingReservation'].includes(key)) return null;
     if (['lastAction', 'remoteReceipts'].includes(key)) return key === 'remoteReceipts' ? [] : null;
     // Only structured evidence references: chat/summary text and HTTPS sources stay exact.
-    if (key === 'evidence') return cloudEvidence(value);
+    if (key === 'evidence' || key === 'evidenceRefs') return cloudEvidence(value);
     return value;
   });
   if (Buffer.byteLength(serialized) > MAX_BYTES) throw new Error('Workspace and full conversations exceed the 8 MiB cloud snapshot limit. Export/archive completed work before syncing; no messages were truncated or uploaded.');

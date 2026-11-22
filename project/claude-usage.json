@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 3.440794,
+  "accountedUsd": 3.54997,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -397,9 +397,25 @@
       "retainedReservationUsd": 0,
       "executionContext": "External bounded source authorship, not a native Donna employee run. Generic interfaces and public presentation requirements only.",
       "contribution": "Complete modules returned. Independent integration removed the superseded table, normalized camera bounds, repaired a recursive error helper, shader failure behavior, cleanup and floating origin. Acceptance recorded separately."
+    },
+    {
+      "number": 30,
+      "model": "claude-sonnet-5-5",
+      "workstream": "boards-flow-20261122",
+      "requestId": "1de8d1e3-093c-4436-ad4d-d58330d5419b",
+      "task": "Pure paired DAG duration planner and edge-case tests",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 2168,
+      "outputTokens": 10484,
+      "thinkingTokens": 0,
+      "costUsd": 0.109176,
+      "retainedReservationUsd": 0,
+      "executionContext": "External bounded development authorship using public interface requirements; not a native Donna employee run.",
+      "contribution": "Sonnet supplied the initial planner and tests. Root and an independent integration helper repaired staffing assumptions, bounded diagnostics, input semantics and display edge cases. Final source is tested separately."
     }
   ],
-  "observedUsd": 2.671078,
+  "observedUsd": 2.780254,
   "retainedReservationUsd": 0.769716,
   "cloud": {
     "allocationUsd": 5,
@@ -425,7 +441,7 @@
     },
     "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
   },
-  "observedNativeUsd": 2.648938,
+  "observedNativeUsd": 2.758114,
   "newWorkstreamCapUsd": 20,
   "observedNativeUsdScope": "Historical field for all non-hosted development requests, including external provider authorship. It does not imply execution by native Donna.",
   "laterFrontendDesign": {
@@ -580,5 +596,25 @@
     "validationEvidence": "design/endless-blueprint/VALIDATION.md",
     "testedSource": "887938cf588f4eaab28408fa32285d049eb68b78",
     "acceptanceRun": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44981843233"
+  },
+  "boardsFlowDevelopment": {
+    "runId": "boards-flow-20261122",
+    "requestNumbers": [
+      30
+    ],
+    "observedUsd": 0.109176,
+    "retainedReservationUsd": 0,
+    "sharedIncrementalCapUsd": 20,
+    "sharedIncrementalRequestNumbers": [
+      29,
+      30
+    ],
+    "sharedIncrementalAccountedUsd": 0.234182,
+    "sharedIncrementalRemainingUsd": 19.765818,
+    "budgetInterpretation": "Continues the latest USD20 laptop-blueprint allowance. This run does not create or reset another USD20 cap. Older reservations and historical ceilings are unchanged.",
+    "status": "implementation-complete-acceptance-in-progress",
+    "authorship": "Actual Sonnet planner contribution, independently repaired and reviewed; native, worker, UX, MCP and VS Code changes by the coordinated development team.",
+    "validationEvidence": "design/board-workflows/VALIDATION.md",
+    "cloudActions": 0
   }
 }

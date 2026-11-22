@@ -1,13 +1,24 @@
 /** Owner-authenticated resource policy and bounded native-job orchestration.
  * A request ensemble is not a newly trained mixture-of-experts weight artifact. */
 import { ModelResourcesError, RESOURCE_LIMITS, assertActor, createPrivateRegistry, fields, hash, nativeSnapshot,
-  normalizeConfiguration, object, resourceFail as fail, safeId, scopeEntity, validateResourceOperation } from './model-resources-contract.mjs';
+  normalizeConfiguration, object, resourceFail as fail, safeId, scopeEntity, validId, validateResourceOperation } from './model-resources-contract.mjs';
 export { ModelResourcesError } from './model-resources-contract.mjs';
 
 const now = () => new Date().toISOString();
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const scopeKey = value => `${value.kind}:${value.id}`;
 const nativeTerminal = new Set(['completed', 'failed', 'cancelled', 'budget-exhausted', 'needs-review']);
+const pairedStep = step => validId(step?.reviewerEmployeeId) && step.reviewerEmployeeId !== step.employeeId;
+const reviewGoal = goal => `Review the primary deliverable for this work. Return only structured JSON with verdict (accepted, revise or blocked), summary and evidenceRefs. Cite concrete evidence; do not claim execution or grant permissions.\n${goal}`;
+const primaryTokens = total => Math.max(1, Math.min(total - 1, Math.floor(total * 3 / 5)));
+const digest = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
+function acceptedPair(primary, review) {
+  const record = review?.review;
+  return primary?.status === 'completed' && review?.status === 'completed' && record?.verdict === 'accepted'
+    && record.primaryArtifactComplete === true && digest(primary.artifactSha256) && digest(review.artifactSha256)
+    && record.primaryArtifactSha256 === primary.artifactSha256 && record.reviewArtifactSha256 === review.artifactSha256
+    && typeof primary.artifactUri === 'string' && typeof review.artifactUri === 'string';
+}
 function validateState(state) {
   if (!object(state) || state.version !== 1 || !Number.isSafeInteger(state.revision) || state.revision < 0) fail('RESOURCE_STATE_INVALID', 'The resource registry is malformed.', 503);
   for (const key of ['resources', 'grants', 'routes', 'officeParents', 'definitions', 'plans', 'runs']) {
@@ -65,10 +76,13 @@ function inScope(target, companyId, employee, location) {
 }
 const publicGrant = ({ coveredScopes, ...grant }) => ({ ...grant, coveredScopeCount: coveredScopes.length, membershipHash: hash(JSON.stringify(coveredScopes)) });
 const publicPlan = plan => ({ id: plan.id, companyId: plan.companyId, employeeId: plan.employeeId, routeId: plan.routeId, planHash: plan.planHash,
-  strategy: plan.strategy, kind: 'request-routing', trainedMoe: false, task: plan.task, steps: plan.steps, limits: plan.limits, createdAt: plan.createdAt });
+  strategy: plan.strategy, kind: 'request-routing', trainedMoe: false, pairedReviewRequired: true, requiresReplan: !plan.steps.every(pairedStep), task: plan.task, steps: plan.steps, limits: plan.limits, createdAt: plan.createdAt });
 const publicRun = run => ({ id: run.id, planId: run.planId, planHash: run.planHash, status: run.status, createdAt: run.createdAt,
   steps: run.steps.map(step => ({ index: step.index, employeeId: step.employeeId, resourceId: step.resourceId, model: step.model, digest: step.digest,
-    role: step.role, status: step.status, jobId: step.jobId ?? null, artifactUri: step.artifactUri ?? null, reason: step.reason ?? null })) });
+    role: step.role, status: step.status, jobId: step.jobId ?? null, artifactUri: step.artifactUri ?? null, reason: step.reason ?? null,
+    reviewerEmployeeId: step.reviewerEmployeeId ?? null, reviewJobId: step.reviewJobId ?? null, primaryStatus: step.primaryStatus ?? null,
+    reviewStatus: step.reviewStatus ?? null, reviewArtifactUri: step.reviewArtifactUri ?? null, reviewVerdict: step.reviewVerdict ?? null,
+    reviewFailureReason: step.reviewFailureReason ?? null })) });
 
 export function createModelResources({ stateDir, snapshot, modelPool, nativeCommand, environmentService } = {}) {
   if (typeof stateDir !== 'string' || typeof snapshot !== 'function' || typeof modelPool?.snapshot !== 'function') fail('RESOURCE_INPUT_INVALID', 'State, native snapshot and model pool adapters are required.');
@@ -111,23 +125,100 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
     if (input.scope) resources = resources.filter(item => same(item.ownerScope, input.scope) || store.value.grants.some(grant => grant.resourceId === item.id && grant.coveredScopes.some(target => same(target, input.scope))));
     const ids = new Set(resources.map(item => item.id));
     return { ok: true, resources: { revision: store.value.revision, resources: structuredClone(resources), grants: store.value.grants.filter(item => ids.has(item.resourceId)).map(publicGrant), routes: structuredClone(store.value.routes), officeParents: structuredClone(store.value.officeParents), planCount: store.value.plans.length, runCount: store.value.runs.length,
-      limits: RESOURCE_LIMITS, capabilities: { requestRouting: true, nativeExpertDag: typeof nativeCommand === 'function', trainedMoeCreation: false, nativeSuboffices: false, officeGrouping: 'sidecar-resource-view-only', remoteWeightTransfer: false, managedEnvironments: !!environmentService, infrastructureCost: 'separate', enforcementRequiresAllAdapters: true, enforcementEnabled: store.value.revision > 0, downloadOwnership: 'owner-staging-before-register' } } };
+      limits: RESOURCE_LIMITS, capabilities: { requestRouting: true, nativeExpertDag: typeof nativeCommand === 'function', pairedReviewRequired: true, reviewUsesSameResource: true, trainedMoeCreation: false, nativeSuboffices: false, officeGrouping: 'sidecar-resource-view-only', remoteWeightTransfer: false, managedEnvironments: !!environmentService, infrastructureCost: 'separate', enforcementRequiresAllAdapters: true, enforcementEnabled: store.value.revision > 0, downloadOwnership: 'owner-staging-before-register' } } };
   };
   const findPlan = id => { const plan = store.value.plans.find(item => item.id === id); if (!plan) fail('RESOURCE_PLAN_NOT_FOUND', 'The resource plan was not found.', 404); return plan; };
-  const verifyStep = async (step, plan, state) => resolveIn({ companyId: plan.companyId, employeeId: step.employeeId, resourceId: step.resourceId, purpose: 'use' }, state, step, true);
-  const nativeMatches = (job, expected) => job && ['companyId', 'officeId', 'departmentId', 'employeeId', 'goal', 'mode', 'provider', 'model', 'idempotencyKey'].every(key => job[key] === expected[key])
-    && (job.serviceContractId ?? null) === expected.serviceContractId && job.authorized === true && same(job.dependencies, expected.dependencies)
-    && same(job.allowedTools, expected.allowedTools) && job.limits?.maxTokens === expected.maxTokens && job.limits?.maxUsd === 0 && job.limits?.maxMinutes === expected.maxMinutes;
+  const verifyStep = async (step, plan, state) => {
+    if (!pairedStep(step)) fail('RESOURCE_PAIR_REQUIRED', 'This historical plan has no frozen distinct reviewer. Create a new paired plan; the original receipt will not be replayed.', 409);
+    const primary = await resolveIn({ companyId: plan.companyId, employeeId: step.employeeId, resourceId: step.resourceId, purpose: 'use' }, state, step, true);
+    await resolveIn({ companyId: plan.companyId, employeeId: step.reviewerEmployeeId, resourceId: step.resourceId, purpose: 'use' }, state,
+      { ...step, serviceContractId: step.reviewerServiceContractId }, true);
+    return primary;
+  };
+  const selectReviewer = async (expert, companyId, state) => {
+    const verify = async employeeId => {
+      if (employeeId === expert.employeeId) fail('RESOURCE_PAIR_REQUIRED', 'Primary and reviewer must be different employees.', 409);
+      await resolveIn({ companyId, employeeId, resourceId: expert.resourceId, purpose: 'use' }, state,
+        { ...expert, serviceContractId: expert.reviewerServiceContractId ?? null }, true);
+      return employeeId;
+    };
+    if (expert.reviewerEmployeeId) return verify(expert.reviewerEmployeeId);
+    const company = state.companies.find(item => item.id === companyId);
+    const candidates = state.employees.filter(employee => employee.status === 'active' && employee.id !== expert.employeeId
+      && (employee.companyId === companyId || (employee.companyId === null && employee.id === company?.assistantId))).sort((a, b) => a.id.localeCompare(b.id));
+    for (const candidate of candidates) {
+      try { return await verify(candidate.id); } catch (error) {
+        if (!['RESOURCE_SCOPE_DENIED', 'RESOURCE_GRANT_REQUIRED', 'RESOURCE_MODEL_NOT_ASSIGNED'].includes(error.code)) throw error;
+      }
+    }
+    fail('RESOURCE_PAIR_REQUIRED', 'No distinct active reviewer has the required scope, model assignment and resource grant. Assign one and create a new plan; no authority was added.', 409);
+  };
+  const nativeMatches = (job, expected, phase, primary, review) => {
+    if (!job || !primary || !review || !pairedStep(expected) || !digest(primary.requestSha256)) return false;
+    const isReview = phase === 'review';
+    const projected = { ...expected, employeeId: isReview ? expected.reviewerEmployeeId : expected.employeeId,
+      serviceContractId: isReview ? expected.reviewerServiceContractId : expected.serviceContractId,
+      goal: isReview ? reviewGoal(expected.goal) : expected.goal,
+      idempotencyKey: isReview ? `pair-review:${primary.requestSha256}` : expected.idempotencyKey,
+      dependencies: isReview ? [primary.id] : expected.dependencies, allowedTools: isReview ? [] : expected.allowedTools,
+      maxTokens: isReview ? expected.maxTokens - primaryTokens(expected.maxTokens) : primaryTokens(expected.maxTokens) };
+    return ['companyId', 'officeId', 'departmentId', 'employeeId', 'goal', 'mode', 'provider', 'model', 'idempotencyKey'].every(key => job[key] === projected[key])
+      && (job.serviceContractId ?? null) === projected.serviceContractId && job.authorized === true && same(job.dependencies, projected.dependencies)
+      && same(job.allowedTools, projected.allowedTools) && job.limits?.maxTokens === projected.maxTokens && job.limits?.maxUsd === 0 && job.limits?.maxMinutes === projected.maxMinutes
+      && job.id === (isReview ? review.id : primary.id) && (isReview ? job.requestSha256 === hash(`review:${primary.requestSha256}`) : true)
+      && Object.entries({ stepId: primary.id, phase, peerEmployeeId: isReview ? expected.employeeId : expected.reviewerEmployeeId,
+        primaryJobId: primary.id, reviewJobId: review.id }).every(([key, value]) => job.pair?.[key] === value);
+  };
+  const pairForStep = (step, state) => {
+    const expected = step.expected;
+    const matches = (state.jobs ?? []).filter(job => job.companyId === expected.companyId && job.idempotencyKey === expected.idempotencyKey);
+    if (!matches.length) return null;
+    const primary = matches[0], reviews = (state.jobs ?? []).filter(job => job.id === primary.pair?.reviewJobId), review = reviews[0];
+    if (matches.length !== 1 || reviews.length !== 1 || !nativeMatches(primary, expected, 'primary', primary, review)
+      || !nativeMatches(review, expected, 'review', primary, review) || (step.jobId && step.jobId !== primary.id) || (step.reviewJobId && step.reviewJobId !== review.id)) {
+      fail('RESOURCE_NATIVE_CONFLICT', 'A native pair does not match its immutable routing receipt.', 409);
+    }
+    return { primary, review };
+  };
+  // Old receipts can predate the paired DTO even when the native enqueue
+  // committed a pair. Recover identities only for inspection/cancellation;
+  // never reinterpret the old authorization as permission to dispatch again.
+  const historicalJobs = (step, state) => {
+    const expected = step.expected;
+    if (!expected) return [];
+    const matches = (state.jobs ?? []).filter(job => job.companyId === expected.companyId && job.idempotencyKey === expected.idempotencyKey
+      && job.employeeId === expected.employeeId && job.officeId === expected.officeId && job.goal === expected.goal && (!step.jobId || step.jobId === job.id));
+    if (matches.length !== 1) return [];
+    const primary = matches[0], review = (state.jobs ?? []).find(job => job.id === primary.pair?.reviewJobId && job.companyId === primary.companyId
+      && job.pair?.phase === 'review' && job.pair?.primaryJobId === primary.id);
+    return [primary, ...(review ? [review] : [])];
+  };
+  const updateStep = (step, { primary, review }) => {
+    step.jobId = primary.id; step.reviewJobId = review.id; step.primaryStatus = primary.status; step.reviewStatus = review.status;
+    step.artifactUri = primary.artifactUri ?? null; step.reviewArtifactUri = review.artifactUri ?? null;
+    step.reviewVerdict = review.review?.verdict ?? null; step.reviewFailureReason = review.reviewFailure?.reason ?? null;
+    step.status = acceptedPair(primary, review) ? 'completed'
+      : review.reviewFailure || ['revise', 'blocked'].includes(review.review?.verdict) || [primary.status, review.status].some(status => ['failed', 'needs-review', 'budget-exhausted'].includes(status)) ? 'needs-review'
+      : [primary.status, review.status].includes('cancelled') ? 'cancelled'
+      : [primary.status, review.status].includes('running') ? 'running'
+      : primary.status === 'completed' ? 'awaiting-review' : primary.status;
+    step.reason = step.reviewFailureReason ?? (step.reviewVerdict && step.reviewVerdict !== 'accepted' ? `review_${step.reviewVerdict}` : null);
+  };
   const refreshRuns = async () => {
     const state = await current(); let changed = false; const next = structuredClone(store.value.runs);
     for (const run of next) {
       for (const step of run.steps) {
         if (!step.expected) continue;
-        const matches = (state.jobs ?? []).filter(job => job.companyId === step.expected.companyId && job.idempotencyKey === step.expected.idempotencyKey);
-        if (matches.length > 1 || (matches.length === 1 && !nativeMatches(matches[0], step.expected))) fail('RESOURCE_NATIVE_CONFLICT', 'A native job does not match its immutable routing receipt.', 409);
-        if (matches.length) {
-          const job = matches[0];
-          if (step.jobId !== job.id || step.status !== job.status || step.artifactUri !== job.artifactUri) { step.jobId = job.id; step.status = job.status; step.artifactUri = job.artifactUri ?? null; changed = true; }
+        if (!pairedStep(step.expected)) {
+          const before = JSON.stringify(step), jobs = historicalJobs(step, state);
+          if (jobs.length) { step.jobId = jobs[0].id; step.reviewJobId = jobs[1]?.id ?? null; step.primaryStatus = jobs[0].status; step.reviewStatus = jobs[1]?.status ?? null; }
+          step.status = jobs.length && jobs.every(job => job.status === 'cancelled') ? 'cancelled' : 'needs-review'; step.reason = 'legacy_unpaired_receipt';
+          if (before !== JSON.stringify(step)) changed = true;
+          continue;
+        }
+        const pair = pairForStep(step, state);
+        if (pair) {
+          const before = JSON.stringify(step); updateStep(step, pair); if (before !== JSON.stringify(step)) changed = true;
         } else if (step.status === 'dispatching') { step.status = 'uncertain'; step.reason = 'native_enqueue_unknown'; changed = true; }
       }
       const statuses = run.steps.map(item => item.status);
@@ -136,7 +227,8 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
         : statuses.every(item => nativeTerminal.has(item) || item === 'not-dispatched') && statuses.some(item => item === 'cancelled') ? 'cancelled'
         : statuses.some(item => ['failed', 'needs-review', 'budget-exhausted'].includes(item)) ? 'needs-review'
         : statuses.some(item => item === 'running') ? 'running'
-        : run.steps.every(item => item.jobId) && !['cancelling', 'needs-review'].includes(run.status) ? 'queued' : run.status;
+        : statuses.some(item => item === 'awaiting-review') ? 'awaiting-review'
+        : run.steps.every(item => item.jobId && item.reviewJobId) && !['cancelling', 'needs-review'].includes(run.status) ? 'queued' : run.status;
       if (run.status !== status) { run.status = status; changed = true; }
     }
     if (changed) store.update(value => { value.runs = next; });
@@ -179,6 +271,7 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
         for (const expert of [...route.experts, ...(route.aggregator ? [route.aggregator] : [])]) {
           if (!resourceIds.has(expert.resourceId)) fail('RESOURCE_NOT_FOUND', 'An expert refers to an unknown resource.', 404);
           assertActor(state, route.companyId, expert.employeeId, expert);
+          if (expert.reviewerEmployeeId) assertActor(state, route.companyId, expert.reviewerEmployeeId, { ...expert, serviceContractId: expert.reviewerServiceContractId });
         }
       }
       store.update(value => {
@@ -194,11 +287,13 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
       const route = store.value.routes.find(item => item.id === input.routeId && item.companyId === input.companyId); if (!route) fail('RESOURCE_ROUTE_NOT_FOUND', 'The route was not found in this company.', 404);
       const state = await current(); assertActor(state, input.companyId, input.employeeId);
       const definitions = [...route.experts.map(item => ({ ...item, role: 'expert' })), ...(route.aggregator ? [{ ...route.aggregator, role: 'aggregator' }] : [])];
+      if (route.limits.maxTokens < definitions.length * 2 || route.limits.maxMinutes < definitions.length * 0.02) fail('RESOURCE_PAIR_BUDGET', 'The original limits cannot cover both native phases. Increase the explicit route limits before planning.', 409);
       const steps = [];
       for (const [index, expert] of definitions.entries()) {
         const resolved = await resolveIn({ companyId: input.companyId, employeeId: expert.employeeId, resourceId: expert.resourceId, purpose: 'use' }, state, expert, true);
+        const reviewerEmployeeId = await selectReviewer(expert, input.companyId, state);
         const dependsOn = expert.role === 'aggregator' ? route.experts.map((_, position) => position) : index >= route.limits.maxParallel ? [index - route.limits.maxParallel] : [];
-        steps.push({ ...expert, index, model: resolved.resource.model, digest: resolved.resource.digest, dependsOn });
+        steps.push({ ...expert, reviewerEmployeeId, reviewerServiceContractId: expert.reviewerServiceContractId ?? null, index, model: resolved.resource.model, digest: resolved.resource.digest, dependsOn });
       }
       const body = { id: input.id, companyId: input.companyId, employeeId: input.employeeId, routeId: route.id, routeHash: hash(JSON.stringify(route)), strategy: route.strategy, task: input.task, steps, limits: route.limits };
       const plan = { ...body, inputHash, planHash: hash(JSON.stringify(body)), createdAt: now() }; store.update(value => { value.plans.push(plan); });
@@ -212,7 +307,7 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
       if (typeof nativeCommand !== 'function') fail('RESOURCE_EXECUTION_UNAVAILABLE', 'Native job enqueue is not connected; this service can only produce plans.', 503);
       if (store.value.runs.length >= RESOURCE_LIMITS.receipts) fail('RESOURCE_CAPACITY', 'The durable run receipt limit is full.', 409);
       await verifyPlan(plan);
-      store.update(value => { value.runs.push({ id: input.id, inputHash, planId: plan.id, planHash: plan.planHash, status: 'dispatching', createdAt: now(), steps: plan.steps.map(step => ({ ...step, status: 'not-dispatched', jobId: null })) }); });
+      store.update(value => { value.runs.push({ id: input.id, inputHash, planId: plan.id, planHash: plan.planHash, status: 'dispatching', createdAt: now(), steps: plan.steps.map(step => ({ ...step, status: 'not-dispatched', jobId: null, reviewJobId: null })) }); });
       for (const planned of plan.steps) {
         try { await verifyPlan(plan); } catch (error) {
           store.update(value => { const run = value.runs.find(item => item.id === input.id); run.status = 'needs-review'; run.steps[planned.index].reason = 'authorization_changed_before_enqueue'; });
@@ -221,18 +316,19 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
         const run = store.value.runs.find(item => item.id === input.id); const step = run.steps[planned.index];
         const expected = { action: 'enqueue_job', companyId: plan.companyId, officeId: step.officeId, departmentId: step.departmentId, employeeId: step.employeeId,
           serviceContractId: step.serviceContractId, goal: `${step.role === 'aggregator' ? 'Synthesize the completed expert dependency artifacts with provenance.\n' : ''}${plan.task}`,
+          reviewerEmployeeId: step.reviewerEmployeeId, reviewerServiceContractId: step.reviewerServiceContractId,
           mode: 'provider', provider: 'ollama', model: step.model, authorized: true, allowedTools: ['provider.run'],
-          dependencies: step.dependsOn.map(index => run.steps[index].jobId), maxTokens: Math.floor(plan.limits.maxTokens / plan.steps.length), maxUsd: 0,
-          maxMinutes: plan.limits.maxMinutes / plan.steps.length, idempotencyKey: `resource:${hash(`${input.id}:${plan.planHash}`).slice(0, 48)}:${step.index}` };
+          dependencies: step.dependsOn.map(index => run.steps[index].reviewJobId), maxTokens: Math.floor(plan.limits.maxTokens / plan.steps.length), maxUsd: 0,
+          maxMinutes: plan.limits.maxMinutes / (plan.steps.length * 2), idempotencyKey: `resource:${hash(`${input.id}:${plan.planHash}`).slice(0, 48)}:${step.index}` };
         store.update(value => { const target = value.runs.find(item => item.id === input.id).steps[step.index]; target.expected = expected; target.status = 'dispatching'; });
         let response; try { response = await nativeCommand(expected); } catch { response = null; }
-        const state = await current(); const matches = (state.jobs ?? []).filter(job => job.companyId === expected.companyId && job.idempotencyKey === expected.idempotencyKey);
-        if (matches.length !== 1 || !nativeMatches(matches[0], expected)) {
+        const state = await current(); let pair; try { pair = pairForStep({ expected }, state); } catch { pair = null; }
+        if (!pair) {
           store.update(value => { const target = value.runs.find(item => item.id === input.id); target.status = 'uncertain'; target.steps[step.index].status = 'uncertain'; target.steps[step.index].reason = response?.ok === false ? 'native_enqueue_rejected' : 'native_enqueue_unknown'; }); break;
         }
-        store.update(value => { const target = value.runs.find(item => item.id === input.id).steps[step.index]; target.jobId = matches[0].id; target.status = matches[0].status; });
+        store.update(value => { updateStep(value.runs.find(item => item.id === input.id).steps[step.index], pair); });
       }
-      store.update(value => { const run = value.runs.find(item => item.id === input.id); if (run.steps.every(step => step.jobId)) run.status = 'queued'; });
+      store.update(value => { const run = value.runs.find(item => item.id === input.id); if (run.steps.every(step => step.jobId && step.reviewJobId)) run.status = 'queued'; });
       return { ok: true, id: input.id, replayed: false, run: publicRun(store.value.runs.find(item => item.id === input.id)) };
     }),
     inspect: input => store.serial(async () => {
@@ -245,7 +341,11 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
       if (!run) fail('RESOURCE_RECEIPT_NOT_FOUND', 'The requested native run was not found.', 404);
       if (typeof nativeCommand !== 'function') fail('RESOURCE_EXECUTION_UNAVAILABLE', 'Native cancellation is unavailable.', 503);
       store.update(value => { value.runs.find(item => item.id === input.id).status = 'cancelling'; });
-      for (const step of run.steps) if (step.jobId && !nativeTerminal.has(step.status)) { try { await nativeCommand({ action: 'cancel_job', jobId: step.jobId }); } catch { /* inspect reconciles the canonical result; no claim of cancellation yet */ } }
+      const state = await current();
+      for (const step of run.steps) for (const jobId of [step.jobId, step.reviewJobId]) {
+        const job = (state.jobs ?? []).find(item => item.id === jobId);
+        if (job && !nativeTerminal.has(job.status)) { try { await nativeCommand({ action: 'cancel_job', jobId }); } catch { /* inspect reconciles the canonical result; no claim of cancellation yet */ } }
+      }
       await refreshRuns(); return { ok: true, id: input.id, run: publicRun(store.value.runs.find(item => item.id === input.id)) };
     }),
     authorizeModelOperation: (operation, input) => store.serial(async () => {
@@ -262,14 +362,18 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
     }),
     validateJob: job => store.serial(async () => {
       if (job?.provider !== 'ollama') return;
-      const state = await current(); const belongs = step => step.jobId === job.id || (step.expected?.idempotencyKey === job.idempotencyKey && step.expected?.companyId === job.companyId);
+      const state = await current();
+      const original = (state.jobs ?? []).find(item => item.id === job.pair?.primaryJobId);
+      const belongs = step => step.jobId === job.id || step.reviewJobId === job.id
+        || (step.expected?.companyId === job.companyId && [job.idempotencyKey, original?.idempotencyKey].includes(step.expected?.idempotencyKey));
       const run = store.value.runs.find(item => item.steps.some(belongs));
       if (run) {
         const plan = findPlan(run.planId); await verifyPlan(plan); const step = run.steps.find(belongs);
-        if (!nativeMatches(job, step.expected)) fail('RESOURCE_NATIVE_CONFLICT', 'The worker job differs from its resource routing receipt.', 409);
+        const pair = pairForStep(step, state);
+        if (!pair || !nativeMatches(job, step.expected, job.pair?.phase, pair.primary, pair.review)) fail('RESOURCE_NATIVE_CONFLICT', 'The worker job differs from its resource routing receipt.', 409);
         await verifyStep(step, plan, state);
       } else {
-        if (job.idempotencyKey?.startsWith('resource:')) fail('RESOURCE_NATIVE_CONFLICT', 'This resource-prefixed native job has no matching managed receipt.', 409);
+        if (job.idempotencyKey?.startsWith('resource:') || original?.idempotencyKey?.startsWith('resource:')) fail('RESOURCE_NATIVE_CONFLICT', 'This resource-prefixed native pair has no matching managed receipt.', 409);
         const candidates = store.value.resources.filter(resource => resource.model === job.model); let permitted = false;
         for (const resource of candidates) { try { await resolveIn({ companyId: job.companyId, employeeId: job.employeeId, resourceId: resource.id, purpose: 'use' }, state, job, true); permitted = true; break; } catch {} }
         if (!permitted) fail('RESOURCE_GRANT_REQUIRED', 'The worker has no current grant for this exact model.', 403);

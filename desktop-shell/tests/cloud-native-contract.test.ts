@@ -58,13 +58,20 @@ describe('real Rust and TypeScript cloud command contract',()=>{
     expect(panel.error).toBeUndefined();expect(panel.ok).toBe(true);const panelId=String(panel.snapshot!.lastAction!.panelId);
     const started=await service.officeCommand({action:'start_panel_round',panelId});expect(started.error).toBeUndefined();expect(started.ok).toBe(true);
     let finished=0;
-    for(let i=0;i<5;i++){
+    for(let i=0;i<10;i++){
       const claimed=await service.workerCommand({action:'claim_job',workerId:'synthetic-restore-worker'});expect(claimed.error).toBeUndefined();
       const jobId=claimed.snapshot?.lastAction?.jobId;if(!jobId)break;
-      const done=await service.workerCommand({action:'finish_job',jobId,leaseToken:claimed.snapshot!.lastAction!.leaseToken,status:'completed',inputTokens:0,outputTokens:0,costUsd:0,artifactUri:artifactPath,summary:'Synthetic local test report'});
+      const attempt=claimed.snapshot!.jobs.find(job=>job.id===jobId)!;
+      const done=await service.workerCommand({action:'finish_job',jobId,leaseToken:claimed.snapshot!.lastAction!.leaseToken,status:'completed',inputTokens:0,outputTokens:0,costUsd:0,artifactUri:artifactPath,artifactSha256:contentHash,summary:'Synthetic local test report'});
       expect(done.error).toBeUndefined();expect(done.ok).toBe(true);finished++;
+      if(attempt.pair?.phase==='review'){
+        const reviewed=await service.workerCommand({action:'record_step_review',jobId,leaseToken:attempt.leaseToken,
+          primaryJobId:attempt.pair.primaryJobId,primaryArtifactSha256:contentHash,reviewArtifactSha256:contentHash,
+          primaryArtifactComplete:true,verdict:'accepted',summary:'Synthetic paired fixture accepted only for export/restore testing.',evidenceRefs:[artifactPath]});
+        expect(reviewed.error).toBeUndefined();expect(reviewed.ok).toBe(true);
+      }
     }
-    expect(finished).toBe(2);
+    expect(finished).toBe(4);
     const httpsEvidence='https://example.org/reports/verified?path=/tmp/reference.md';
     const evidence=[artifactPath,pathToFileURL(artifactPath).href,'C:\\Private\\original.md','\\\\private-server\\share\\report.md',httpsEvidence,'project/reference.md'];
     const decided=await service.officeCommand({action:'record_panel_decision',panelId,verdict:'accepted',summary:'Synthetic report accepted for the portability test',evidence});expect(decided.error).toBeUndefined();expect(decided.ok).toBe(true);

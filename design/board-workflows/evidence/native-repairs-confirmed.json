@@ -1,0 +1,105 @@
+{
+  "run": "boards-flow-20261122",
+  "node": "integration",
+  "attempt": 5,
+  "passedGroups": 3,
+  "passedCases": 4,
+  "externalCalls": 0,
+  "sourceArtifacts": {
+    "native-core/target/release/atlas-core": "dab5424937207db9baa090df26048fa61f3d7f5fd6712def90bdeacd14285793",
+    "desktop-shell/dist/main/officeWorker.js": "963d757f7e3b387493397a4e3180c186eee2ab54a125050ce8d71d19811ae770",
+    "desktop-shell/dist/main/pairedReview.js": "82237bd78fd3b3436c0ca73a243475cfb4029773e16307e4b8f02c7800af5f2a",
+    "desktop-shell/dist/main/company.js": "7839c839161d3ae38b70b485d8157fa41532362dce7982e4a2d9e8260fb96f4b"
+  },
+  "evidence": [
+    {
+      "scenario": "durable-brief-without-description",
+      "passed": true,
+      "externalCalls": 0,
+      "stepsPreserveBrief": 4,
+      "originalMessageOutsideRecentWindow": true,
+      "calls": [
+        {
+          "jobId": "job-9f6b9bcf-6a7a-48b5-9a22-5e2686d5d613",
+          "phase": "primary",
+          "iteration": 1,
+          "hasContent": true,
+          "hasDescription": false
+        }
+      ]
+    },
+    {
+      "scenario": "durable-brief-with-description",
+      "passed": true,
+      "externalCalls": 0,
+      "stepsPreserveBrief": 4,
+      "originalMessageOutsideRecentWindow": true,
+      "calls": [
+        {
+          "jobId": "job-430cbc7c-8060-4d86-b084-9fba93425197",
+          "phase": "primary",
+          "iteration": 1,
+          "hasContent": true,
+          "hasDescription": true
+        }
+      ]
+    },
+    {
+      "scenario": "cancelled-review",
+      "passed": true,
+      "externalCalls": 0,
+      "calls": [],
+      "jobs": [
+        {
+          "phase": "primary",
+          "status": "needs-review"
+        },
+        {
+          "phase": "review",
+          "status": "cancelled"
+        }
+      ],
+      "budgetUnchanged": true
+    },
+    {
+      "scenario": "malformed-review",
+      "passed": true,
+      "externalCalls": 0,
+      "beforeRepair": {
+        "status": "needs-review",
+        "stopReason": "review-required",
+        "settledReviewPreserved": true,
+        "downstreamBlocked": true
+      },
+      "explicitRepairIteration": 2,
+      "previousUsageAndArtifactsUnchanged": true,
+      "calls": [
+        {
+          "jobId": "job-6d806ae4-beae-4a3c-8da3-b9c2388f2fc4",
+          "phase": "primary",
+          "iteration": 1,
+          "hasContent": false,
+          "hasDescription": false
+        },
+        {
+          "jobId": "job-f9751825-e9af-4a5e-a090-c1c0075df9c3",
+          "phase": "review",
+          "iteration": 1,
+          "hasContent": false,
+          "hasDescription": false
+        },
+        {
+          "jobId": "job-c7aa2065-db47-4074-be77-89591c64e4c8",
+          "phase": "primary",
+          "iteration": 2,
+          "hasContent": false,
+          "hasDescription": false
+        }
+      ]
+    }
+  ],
+  "limits": [
+    "Synthetic provider adapter only; no paid/model/network acceptance.",
+    "Explicit repair verified through native owner adapter; remote allowlist gate follows a separate rebuild."
+  ]
+}

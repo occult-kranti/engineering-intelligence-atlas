@@ -36,7 +36,13 @@ function nativeFixture(t, options = {}) {
 test('workbench manifest covers desktop backend families and explicitly delegates platform effects', async t => {
   const { runtime } = nativeFixture(t); const wb = runtime.workbench;
   const manifest = wb.capabilities();
-  for (const name of ['officeSnapshot', 'officeCommand', 'setOfficeWorker', 'modelPoolRequest', 'companySnapshot', 'listProjects', 'startRun', 'getModelCatalog', 'createVenv', 'downloadModel', 'getVaultStatus', 'configureCloud', 'hostSubmit']) assert.equal(manifest.methods[name].available, true, name);
+  for (const name of ['officeSnapshot', 'officeCommand', 'setOfficeWorker', 'modelPoolRequest', 'companySnapshot', 'listProjects', 'getModelCatalog', 'createVenv', 'downloadModel', 'getVaultStatus', 'configureCloud', 'hostSubmit']) assert.equal(manifest.methods[name].available, true, name);
+  for (const name of ['startRun', 'resumeRun']) {
+    assert.equal(manifest.methods[name].available, false, name);
+    assert.equal(manifest.methods[name].code, 'PAIR_REQUIRED');
+    assert.match(manifest.methods[name].reason, /Donna.*paired office goal/);
+  }
+  assert.equal(manifest.legacyProjectExecution.enabled, false);
   for (const name of ['openExternal', 'openPersonalDashboard', 'importCredentialFile', 'onJobEvent']) assert.equal(manifest.methods[name].platformDelegated, true, name);
   assert.equal(manifest.credentialStorage, 'aes-256-gcm-protected-file-key'); assert.equal(manifest.osKeychain, false);
   const delegated = await wb.call('openExternal', ['https://example.invalid']);
@@ -59,6 +65,8 @@ test('HTTP workbench keeps owner/Origin controls, rejects unknown methods and re
   assert.equal((await request({ method: 'officeSnapshot', args: [] }, { Origin: 'https://foreign.invalid' })).status, 403);
   for (const method of ['getSecret', '__proto__', 'workerCommand', 'shell']) assert.equal((await request({ method, args: [] })).status, 404);
   assert.equal((await request({ id: 'bad', method: 'officeCommand', args: [{ action: 'reserve_external' }] })).status, 400);
+  const blocked = await request({ id: 'legacy-http-denial', method: 'startRun', args: [runInput('historical-project')] });
+  assert.equal(blocked.status, 200); assert.equal((await blocked.json()).result.code, 'PAIR_REQUIRED');
   const snapshot = (await (await request({ method: 'officeSnapshot', args: [] })).json()).result;
   const body = { id: 'create-company', method: 'officeCommand', args: [{ expectedStateHash: snapshot.stateHash,
     command: { action: 'create_company', id: 'workbench-company', name: 'Workbench company' } }] };
@@ -89,30 +97,54 @@ test('private vault roundtrip, deployment precedence and live model discovery ne
   await deployed.close();
 });
 
-test('native project lifecycle executes once, writes artifact and settles the shared budget', async t => {
+test('legacy projects remain readable while production start and resume do not dispatch or reserve budget', async t => {
   let generations = 0;
   const f = nativeFixture(t, { generate: async () => { generations++; return { text: 'Synthetic portable deliverable.', inputTokens: 12, outputTokens: 8, usageObserved: true }; } });
   const wb = f.runtime.workbench;
+  const before = (await f.runtime.snapshot()).snapshot.budget;
   const created = await wb.call('createProject', [project()], id('project-create'));
   assert.equal((await wb.call('createProject', [project()], id('project-create'))).project.id, created.project.id);
   assert.equal((await wb.call('listProjects')).length, 1);
   const input = runInput(created.project.id);
   const started = await wb.call('startRun', [input], id('project-start'));
-  assert.equal((await wb.call('startRun', [input], id('project-start'))).runId, started.runId);
-  const runs = await until(() => wb.call('listRuns', [created.project.id]), rows => rows[0]?.status === 'completed');
-  assert.equal(generations, 1); assert.equal(runs[0].usage.inputTokens, 12); assert.equal(runs[0].usage.outputTokens, 8);
-  const artifact = await wb.call('readArtifact', [created.project.id, started.runId, 'node-1']);
-  assert.match(artifact.text, /Synthetic portable deliverable/);
-  const office = await f.runtime.snapshot(); assert.equal(office.snapshot.budget.observedUsd, 0.00002); assert.equal(office.snapshot.budget.reservedUsd, 0);
+  assert.equal(started.ok, false); assert.equal(started.code, 'PAIR_REQUIRED');
+  assert.deepEqual(await wb.call('startRun', [input], id('project-start')), started);
+  assert.equal((await wb.call('resumeRun', ['historical-run'], id('project-resume'))).code, 'PAIR_REQUIRED');
+  assert.deepEqual(await wb.call('listRuns', [created.project.id]), []);
+  assert.equal(generations, 0); assert.deepEqual((await f.runtime.snapshot()).snapshot.budget, before);
+  assert.equal((await wb.call('getProject', [created.project.id])).goal, project().goal);
   await f.runtime.close(); const restored = f.open();
   assert.equal((await restored.workbench.call('createProject', [project()], id('project-create'))).project.id, created.project.id);
   await assert.rejects(restored.workbench.call('createProject', [{ ...project(), name: 'Changed intent' }], id('project-create')), error => error.code === 'WORKBENCH_ID_CONFLICT');
 });
 
+test('historical runs and artifacts from the isolated legacy engine remain readable after the production block', async t => {
+  const f = nativeFixture(t); const wb = f.runtime.workbench;
+  const { ProjectStore, ProjectRunner } = createRequire(import.meta.url)(path.join(repoRoot, 'desktop-shell/dist/main/projects.js'));
+  const store = new ProjectStore(f.dataDir); const created = store.createProject(project());
+  // Create historical evidence through an isolated synthetic engine, never the production runner.
+  const runner = new ProjectRunner(store, async () => ({ text: 'Historical synthetic artifact.', inputTokens: 1, outputTokens: 1, usageObserved: true }));
+  const input = runInput(created.id); const started = runner.start(created.id, input.runBudget, input.priceRates); assert.equal(started.ok, true);
+  await until(async () => store.listRuns(created.id), rows => rows[0]?.status === 'completed');
+  const before = store.getRun(created.id, started.runId);
+  assert.match((await wb.call('readArtifact', [created.id, started.runId, 'node-1'])).text, /Historical synthetic artifact/);
+  assert.equal((await wb.call('resumeRun', [started.runId], id('historical-resume'))).code, 'PAIR_REQUIRED');
+  assert.deepEqual(store.getRun(created.id, started.runId), before);
+  await f.runtime.close(); const reopened = f.open();
+  assert.deepEqual((await reopened.workbench.call('listRuns', [created.id]))[0], before);
+  assert.match((await reopened.workbench.call('readArtifact', [created.id, started.runId, 'node-1'])).text, /Historical synthetic artifact/);
+});
+
 test('a newly saved vault key reaches the existing office worker and GitHub resolver without restarting', async t => {
   const providers = createRequire(import.meta.url)(path.join(repoRoot, 'desktop-shell/dist/main/providers.js'));
   const original = providers.generateWithProvider; const observed = [];
-  providers.generateWithProvider = async (provider, key) => { observed.push({ provider, key }); return { text: 'Synthetic worker output', inputTokens: 3, outputTokens: 2, usageObserved: true }; };
+  providers.generateWithProvider = async (provider, key, request) => {
+    observed.push({ provider, key });
+    const text = request.system.includes('distinct helper and reviewer')
+      ? JSON.stringify({ verdict: 'accepted', summary: 'The complete synthetic artifact matches the credential propagation task.', evidenceRefs: ['synthetic-artifact-check'] })
+      : 'Synthetic worker output';
+    return { text, inputTokens: 3, outputTokens: 2, usageObserved: true };
+  };
   t.after(() => { providers.generateWithProvider = original; });
   const f = nativeFixture(t); const wb = f.runtime.workbench;
   const key = 'synthetic-live-vault-key';
@@ -122,14 +154,25 @@ test('a newly saved vault key reaches the existing office worker and GitHub reso
   assert.equal((await f.runtime.status()).capabilities.githubPublish, true);
   const snapshot = await wb.call('officeSnapshot'); const company = snapshot.snapshot.companies.find(value => value.status === 'active');
   const office = snapshot.snapshot.offices.find(value => value.companyId === company.id && value.status === 'active');
-  await wb.call('officeCommand', [{ expectedStateHash: snapshot.stateHash, command: { action: 'enqueue_job', companyId: company.id,
-    officeId: office.id, employeeId: company.assistantId, goal: 'Synthetic credential propagation verification', mode: 'provider', provider: 'anthropic',
+  const hired = await wb.call('officeCommand', [{ expectedStateHash: snapshot.stateHash, command: { action: 'hire_employee', companyId: company.id,
+    officeId: office.id, name: 'Credential fixture reviewer', role: 'Quality reviewer', skillPaths: [] } }], id('hire-vault-reviewer'));
+  const reviewer = hired.snapshot.employees.find(employee => employee.companyId === company.id && employee.name === 'Credential fixture reviewer');
+  assert.ok(reviewer); assert.notEqual(reviewer.id, company.assistantId);
+  await wb.call('officeCommand', [{ expectedStateHash: hired.stateHash, command: { action: 'enqueue_job', companyId: company.id,
+    officeId: office.id, employeeId: company.assistantId, reviewerEmployeeId: reviewer.id, goal: 'Synthetic credential propagation verification', mode: 'provider', provider: 'anthropic',
     model: 'synthetic-model', authorized: true, maxTokens: 64000, maxUsd: 1, maxMinutes: 1,
     priceRates: { inputUsdPerMillion: 1, outputUsdPerMillion: 1 }, idempotencyKey: 'live-vault-job' } }], id('enqueue-live-vault'));
-  await wb.call('setOfficeWorker', [{ enabled: true }], id('enable-live-vault'));
-  await until(() => wb.call('officeSnapshot'), value => value.snapshot.jobs.find(job => job.idempotencyKey === 'live-vault-job')?.status === 'completed');
-  assert.deepEqual(observed, [{ provider: 'anthropic', key }]);
-  await wb.call('setOfficeWorker', [{ enabled: false }], id('disable-live-vault'));
+  await wb.call('runOfficeQueue', [], id('run-live-vault-primary'));
+  await until(() => wb.call('officeWorkerStatus'), value => !value.running);
+  await wb.call('runOfficeQueue', [], id('run-live-vault-review'));
+  await until(() => wb.call('officeWorkerStatus'), value => !value.running);
+  const finished = await wb.call('officeSnapshot');
+  const primary = finished.snapshot.jobs.find(job => job.idempotencyKey === 'live-vault-job');
+  assert.equal(primary?.status, 'completed'); assert.equal(primary?.pair?.peerEmployeeId, reviewer.id);
+  const reviewed = finished.snapshot.jobs.find(job => job.id === primary.pair.reviewJobId);
+  assert.equal(reviewed?.status, 'completed'); assert.equal(reviewed?.review?.verdict, 'accepted');
+  assert.deepEqual(observed, [{ provider: 'anthropic', key }, { provider: 'anthropic', key }]);
+  assert.equal((await wb.call('officeWorkerStatus')).enabled, false);
 });
 
 test('uncertain receipt persistence fences writes and restart cannot duplicate a saved project', async t => {
@@ -161,20 +204,20 @@ test('reviewed model download returns a job promptly and disposal aborts its onl
   await f.runtime.close(); assert.equal(aborted, true); assert.equal(wb.diagnostics().activeJobs, 0); assert.equal(wb.diagnostics().pending, 0);
 });
 
-test('close aborts project work and environment processes, removes listeners, and preserves cancelled evidence', async t => {
-  let generationStarted, processStarted; const generation = new Promise(resolve => { generationStarted = resolve; }); const processStart = new Promise(resolve => { processStarted = resolve; });
+test('close aborts environment processes and removes listeners while legacy generation remains disabled', async t => {
+  let generations = 0, processStarted; const processStart = new Promise(resolve => { processStarted = resolve; });
   const f = nativeFixture(t, {
-    generate: request => new Promise((_, reject) => { generationStarted(); request.abortSignal.addEventListener('abort', () => reject(new Error('synthetic abort')), { once: true }); }),
+    generate: async () => { generations++; assert.fail('Production legacy generation must remain disabled.'); },
     workbenchPlatform: { execFile: async (_file, args, options) => { if (args[0] === '--version') return { stdout: 'Python 3.11.0', stderr: '' }; processStarted(); return new Promise((_, reject) => options.signal.addEventListener('abort', () => reject(new Error('synthetic process abort')), { once: true })); } },
   });
   const wb = f.runtime.workbench; const created = await wb.call('createProject', [project()], id('close-project'));
-  const started = await wb.call('startRun', [runInput(created.project.id)], id('close-run')); await generation;
+  assert.equal((await wb.call('startRun', [runInput(created.project.id)], id('close-run'))).code, 'PAIR_REQUIRED');
   const environment = await wb.call('createVenv', [{ name: 'test-env', confirmed: true }], id('close-env')); assert.equal(environment.pending, true); await processStart;
-  await wb.call('pauseRun', [started.runId], id('pause-run')); await wb.call('resumeRun', [started.runId], id('resume-run'));
+  assert.equal(generations, 0);
   await f.runtime.close();
   assert.deepEqual(wb.diagnostics(), { closed: true, activeJobs: 0, activeRuns: 0, pending: 0, listeners: 0 });
   await assert.rejects(wb.call('listProjects'), error => error.code === 'WORKBENCH_CLOSED');
-  const reopened = f.open(); assert.equal((await reopened.workbench.call('listRuns', [created.project.id]))[0].status, 'cancelled');
+  const reopened = f.open(); assert.deepEqual(await reopened.workbench.call('listRuns', [created.project.id]), []);
 });
 
 test('200 reopen/request/dispose cycles retain no workbench listeners, jobs or ownership lock', async t => {

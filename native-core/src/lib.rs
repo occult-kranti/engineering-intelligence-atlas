@@ -516,6 +516,9 @@ pub fn execute(request: Request) -> Result<Snapshot> {
     };
     validate_snapshot(&snapshot)?;
     let mut office_changed = false;
+    if let Some(office) = snapshot.office.as_mut() {
+        if office.schema_version == 1 { office.schema_version = 2; office_changed = true; }
+    }
     if request.command.starts_with("office_") || request.command.starts_with("control_") {
         if snapshot.office.is_none() {
             snapshot.office = Some(office::OfficeSnapshot::seeded(

@@ -13,7 +13,7 @@ import {
   createToolHandler as createOfficeMetadataHandler,
   InvalidParams,
   ToolError,
-  OFFICE_COLLECTIONS,
+  officeCollectionCounts,
   TOOL_DEFINITIONS as LOCAL_TOOL_DEFINITIONS,
 } from './atlas-mcp.mjs';
 import { OWNER_ACTIONS, TOKEN_PATTERN, validateCommandEnvelope } from '../headless-runtime/contract.mjs';
@@ -71,7 +71,7 @@ export const TOOL_DEFINITIONS = Object.freeze([
   },
   {
     name: 'office_query', title: 'Query Daftar office metadata',
-    description: 'Read one bounded metadata page from the connected runtime, optionally filtered by scope or search. Returns stateHash from the same read. Scope is a read filter, not an authorization grant. Reuse nextCursor with unchanged filters; query_changed means restart the read.',
+    description: 'Read bounded canonical metadata and reference IDs. Nested rooms, desks and whiteboards require company or office scope; goalSteps requires an explicit supported scope. Returns stateHash from the same read. Omissions and truncated references are explicit: do not replace records from incomplete metadata. Scope is a read filter, not an authorization grant. Reuse nextCursor with unchanged filters; query_changed means restart the read.',
     inputSchema: OFFICE_QUERY_SCHEMA, annotations: READ_ANNOTATIONS,
   },
   {
@@ -212,7 +212,7 @@ function safeText(value, limit = 160) {
     .replace(/[\u0000-\u001f\u007f]/g, ' ').slice(0, limit);
 }
 
-function safeId(value) { return typeof value === 'string' && ID_PATTERN.test(value) ? safeText(value) : undefined; }
+function safeId(value) { return typeof value === 'string' && ID_PATTERN.test(value) ? value : undefined; }
 
 // Host identifiers are durable command and scope identities, not display text.
 // Validate their alphabet and bounds without redacting credential-like prefixes.
@@ -368,17 +368,9 @@ function capabilitiesSummary(capabilities) {
   return out;
 }
 
-function collectionRows(snapshot, name) {
-  const value = ['groups', 'services', 'contracts', 'transfers', 'roadmap'].includes(name) ? snapshot.portfolio?.[name]
-    : name === 'authorityGrants' ? snapshot.authority?.grants
-      : name === 'authorityLedger' ? snapshot.authority?.ledger
-        : name === 'index' ? snapshot.authority?.index : snapshot[name];
-  return Array.isArray(value) ? value : [];
-}
-
 function officeSummary(snapshot) {
   if (!isObject(snapshot)) throw new ToolError('Runtime returned an invalid office snapshot.', 'runtime_bad_response');
-  const out = { counts: Object.fromEntries(OFFICE_COLLECTIONS.map(name => [name, collectionRows(snapshot, name).length])) };
+  const out = { counts: officeCollectionCounts(snapshot) };
   const activeCompanyId = safeId(snapshot.activeCompanyId);
   if (activeCompanyId) out.activeCompanyId = activeCompanyId;
   if (Number.isSafeInteger(snapshot.schemaVersion)) out.schemaVersion = snapshot.schemaVersion;
@@ -445,6 +437,24 @@ function rejection(status, body) {
   return new ToolError('The runtime rejected the operation. Inspect private server logs and office state for details.', 'runtime_rejected');
 }
 
+function removeControlCredential(value, token, key = '', depth = 0) {
+  const collision = () => { throw new ToolError('A canonical identity contains the configured control credential. Inspect the private receipt; no identity was changed.', 'runtime_identity_credential_collision'); };
+  if (depth > 64) throw new ToolError('Runtime response nesting exceeds its limit.', 'runtime_bad_response');
+  if (typeof value === 'string') {
+    if (!value.includes(token)) return value;
+    if (/^(?:id|.*Id|.*Ids|dependencies|dependsOn|evidenceRefs)$/.test(key)) collision();
+    return value.split(token).join('[control credential omitted]');
+  }
+  if (Array.isArray(value)) return value.map(item => removeControlCredential(item, token, key, depth + 1));
+  if (!value || typeof value !== 'object') return value;
+  const result = {};
+  for (const [name, child] of Object.entries(value)) {
+    if (name.includes(token)) collision();
+    Object.defineProperty(result, name, { value: removeControlCredential(child, token, name, depth + 1), enumerable: true, configurable: true, writable: true });
+  }
+  return result;
+}
+
 /** Only fixed routes; credentials never appear in returned objects or errors. */
 export function createRuntimeClient(config, { fetchImpl = globalThis.fetch, timeoutMs = REQUEST_TIMEOUT_MS, responseLimit = RESPONSE_LIMIT } = {}) {
   const origin = normalizeRuntimeOrigin(config?.origin);
@@ -485,8 +495,9 @@ export function createRuntimeClient(config, { fetchImpl = globalThis.fetch, time
       const result = await readBoundedJson(response, responseLimit, controller.signal);
       if (!isObject(result) || typeof result.ok !== 'boolean') throw new ToolError('Runtime returned an invalid response.', 'runtime_bad_response');
       if (!result.ok) throw rejection(response.status, result);
-      // Redact the exact runtime token if an unexpected upstream text field repeats it.
-      return JSON.parse(JSON.stringify(result).split(token).join('[control credential omitted]'));
+      // Human text can be redacted; canonical identities must stay byte-exact or
+      // fail explicitly when they collide with the actual configured credential.
+      return removeControlCredential(result, token);
     };
     try { return await Promise.race([operation(), timeout]); }
     catch (error) {

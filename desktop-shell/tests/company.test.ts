@@ -97,7 +97,10 @@ describe('compiled Rust / desktop bridge integration', () => {
     expect(queued.ok).toBe(true);
     expect((await first.officeCommand({ action: 'claim_job', workerId: 'renderer' })).code).toBe('WORKER_ONLY');
     const second = new OfficeService({ userDataPath: dir, seedDir, binaryPath: binary });
-    expect((await second.officeSnapshot()).snapshot?.jobs).toHaveLength(1);
+    expect((await second.officeSnapshot()).snapshot?.jobs).toHaveLength(2);
+    expect((await second.officeSnapshot()).snapshot?.schemaVersion).toBe(2);
+    expect((await first.officeCommand({action:'record_step_review',jobId:'forged',leaseToken:'forged'})).code).toBe('WORKER_ONLY');
+    expect((await first.officeCommand({action:'record_review_failure',jobId:'forged',leaseToken:'forged',reason:'malformed-output'})).code).toBe('WORKER_ONLY');
     const claims = await Promise.all([first.workerCommand({ action: 'claim_job', workerId: 'one' }), second.workerCommand({ action: 'claim_job', workerId: 'two' })]);
     const claimed = claims.filter(c => c.ok && c.snapshot?.lastAction?.jobId);
     expect(claimed).toHaveLength(1);

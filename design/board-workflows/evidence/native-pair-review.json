@@ -1,0 +1,71 @@
+[
+  {
+    "scenario": "cancelled-review",
+    "calls": [
+      {
+        "id": "job-12e8d970-71c8-4a21-8235-f6ceb1a51704",
+        "phase": "primary"
+      }
+    ],
+    "jobs": [
+      {
+        "phase": "primary",
+        "status": "completed"
+      },
+      {
+        "phase": "review",
+        "status": "cancelled"
+      }
+    ],
+    "externalCalls": 0
+  },
+  {
+    "scenario": "malformed-review",
+    "calls": [
+      {
+        "id": "job-be8cfdf2-1bcb-43a8-b17b-0d8541bd5748",
+        "phase": "primary"
+      },
+      {
+        "id": "job-7cbce60a-5a8e-4f8f-b5df-0156b8fa1522",
+        "phase": "review"
+      }
+    ],
+    "goal": {
+      "status": "running",
+      "stopReason": null,
+      "iteration": 1
+    },
+    "jobs": [
+      {
+        "stepId": "first",
+        "phase": "primary",
+        "status": "completed",
+        "hasVerdict": false
+      },
+      {
+        "stepId": "first",
+        "phase": "review",
+        "status": "completed",
+        "hasVerdict": false
+      },
+      {
+        "stepId": "second",
+        "phase": "primary",
+        "status": "queued",
+        "hasVerdict": false
+      },
+      {
+        "stepId": "second",
+        "phase": "review",
+        "status": "queued",
+        "hasVerdict": false
+      }
+    ],
+    "explicitAdvance": {
+      "ok": false,
+      "code": "GOAL_BUSY"
+    },
+    "externalCalls": 0
+  }
+]

@@ -112,6 +112,32 @@ pub struct GoalStep {
     pub service_contract_id: Option<String>,
     #[serde(default)]
     pub knowledge_transfer_ids: Vec<String>,
+    #[serde(default)]
+    pub reviewer_employee_id: Option<String>,
+    #[serde(default)]
+    pub reviewer_service_contract_id: Option<String>,
+    #[serde(default)]
+    pub estimate: Option<WorkEstimate>,
+    #[serde(default)]
+    pub review_estimate: Option<WorkEstimate>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct WorkEstimate {
+    pub optimistic_minutes: f64,
+    pub likely_minutes: f64,
+    pub pessimistic_minutes: f64,
+}
+impl WorkEstimate {
+    pub(super) fn validate(&self) -> Result<()> {
+        if [self.optimistic_minutes, self.likely_minutes, self.pessimistic_minutes]
+            .iter().any(|v| !v.is_finite() || !(0.01..=1440.0).contains(v))
+            || self.optimistic_minutes > self.likely_minutes
+            || self.likely_minutes > self.pessimistic_minutes {
+            return Err(fail("INVALID_ESTIMATE", "Estimates must satisfy 0.01 <= optimistic <= likely <= pessimistic <= 1440 minutes"));
+        }
+        Ok(())
+    }
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -164,6 +190,12 @@ pub struct Goal {
     pub updated_at: String,
     #[serde(default)]
     pub stop_reason: Option<String>,
+    #[serde(default)]
+    pub source_request_id: Option<String>,
+    #[serde(default)]
+    pub request_sha256: Option<String>,
+    #[serde(default)]
+    pub source_message_id: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -209,6 +241,8 @@ pub struct Whiteboard {
     pub roadmap_item_ids: Vec<String>,
     pub x: f64,
     pub y: f64,
+    #[serde(default)]
+    pub revision: u64,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -219,12 +253,14 @@ pub struct Blueprint {
     pub rooms: Vec<Room>,
     pub desks: Vec<Desk>,
     pub whiteboards: Vec<Whiteboard>,
+    #[serde(default)]
+    pub revision: u64,
 }
 
 fn decode<T: serde::de::DeserializeOwned>(v: &Value, label: &str) -> Result<T> {
     serde_json::from_value(v.clone()).map_err(|_| fail("INVALID_INPUT", format!("Invalid {label}")))
 }
-fn terminal(status: &str) -> bool {
+pub(super) fn terminal(status: &str) -> bool {
     [
         "completed",
         "failed",
@@ -654,6 +690,7 @@ impl OfficeSnapshot {
             roadmap_item_ids: vec![],
             x: 0.1,
             y: 0.05,
+            revision: 0,
         }];
         let blueprint_id = id("blueprint");
         self.blueprints.push(Blueprint {
@@ -663,6 +700,7 @@ impl OfficeSnapshot {
             rooms,
             desks,
             whiteboards,
+            revision: 0,
         });
         Ok(blueprint_id)
     }
@@ -673,6 +711,7 @@ impl OfficeSnapshot {
             || b.rooms.len() > 100
             || b.desks.len() > 1000
             || b.whiteboards.len() > 200
+            || b.revision > 9_007_199_254_740_991
         {
             return Err(fail("INVALID_INPUT", "Invalid blueprint scope or capacity"));
         }
@@ -752,6 +791,7 @@ impl OfficeSnapshot {
                 || board.goal_ids.len() > 100
                 || board.job_ids.len() > 100
                 || board.roadmap_item_ids.len() > 100
+                || board.revision > 9_007_199_254_740_991
             {
                 return Err(fail(
                     "SCOPE_MISMATCH",
@@ -795,6 +835,10 @@ impl OfficeSnapshot {
             bounded_text(&step.goal, 18000, "step goal")?;
             self.goal_employee_scope(goal, &step.employee_id, step.service_contract_id.as_deref())?;
             self.validate_knowledge_access(&goal.company_id, &step.knowledge_transfer_ids)?;
+            for estimate in [&step.estimate, &step.review_estimate].into_iter().flatten() { estimate.validate()?; }
+            if step.reviewer_employee_id.as_ref().is_some_and(|id| id == &step.employee_id) {
+                return Err(fail("PAIR_REQUIRED", "A logical step needs a distinct helper/reviewer"));
+            }
         }
         // Kahn traversal accepts a DAG in any submitted order.
         let mut completed = HashSet::new();
@@ -815,6 +859,37 @@ impl OfficeSnapshot {
             if previous == completed.len() {
                 return Err(fail("INVALID_DEPENDENCY", "Goal plan contains a cycle"));
             }
+        }
+        Ok(())
+    }
+    pub(super) fn paired_primary(&self, goal: &Goal, step: &GoalStep) -> Result<Job> {
+        let (office, department) = self.goal_employee_scope(goal, &step.employee_id, step.service_contract_id.as_deref())?;
+        let r = &goal.run_settings;
+        let mut job = self.job_from(&json!({"companyId":goal.company_id,"officeId":office,"departmentId":department,"employeeId":step.employee_id,"serviceContractId":step.service_contract_id,
+            "goal":step.goal,"mode":r.mode,"provider":r.provider,"model":r.model,"authorized":r.authorized,"maxTokens":r.max_tokens,"maxUsd":r.max_usd,"maxMinutes":5,
+            "priceRates":r.price_rates,"allowedTools":r.allowed_tools,"knowledgeTransferIds":step.knowledge_transfer_ids,"idempotencyKey":"pair-validation"}))?;
+        job.goal_id = Some(goal.id.clone());
+        Ok(job)
+    }
+    pub(super) fn assign_goal_reviewers(&self, goal: &mut Goal) -> Result<()> {
+        if goal.scope.kind == "employee" {
+            return Err(fail("PAIR_REQUIRED", "Employee-only goals cannot borrow a reviewer implicitly. Select an explicitly authorized office or department workflow with two employees"));
+        }
+        for index in 0..goal.steps.len() {
+            let primary = self.paired_primary(goal, &goal.steps[index])?;
+            let (employee, contract) = self.choose_reviewer(&primary, goal.steps[index].reviewer_employee_id.as_deref(), goal.steps[index].reviewer_service_contract_id.as_deref())?;
+            goal.steps[index].reviewer_employee_id = Some(employee);
+            goal.steps[index].reviewer_service_contract_id = contract;
+        }
+        Ok(())
+    }
+    pub(super) fn require_paired_steps(&self, goal: &Goal) -> Result<()> {
+        if goal.scope.kind == "employee" { return Err(fail("PAIR_REQUIRED", "Employee-only goals cannot execute without an explicitly authorized paired scope; select an office or department workflow")); }
+        if goal.run_settings.max_tokens < 2 { return Err(fail("PAIR_BUDGET", "A logical step must fund both primary and review token allowances")); }
+        for step in &goal.steps {
+            let employee = step.reviewer_employee_id.as_deref().ok_or_else(|| fail("PAIR_REQUIRED", "Every logical step must name a distinct helper/reviewer"))?;
+            let primary = self.paired_primary(goal, step)?;
+            self.choose_reviewer(&primary, Some(employee), step.reviewer_service_contract_id.as_deref())?;
         }
         Ok(())
     }
@@ -883,7 +958,12 @@ impl OfficeSnapshot {
                 "Finish or cancel the current iteration before creating another",
             ));
         }
+        if goal.job_ids.iter().filter_map(|id| self.jobs.iter().find(|j| &j.id == id))
+            .any(|j| j.started_at.is_some() && !j.usage_recorded) {
+            return Err(fail("UNSETTLED_ATTEMPT", "Reconcile the prior attempt before starting another iteration; uncertain execution must not be rerun"));
+        }
         self.validate_goal_steps(&goal)?;
+        self.require_paired_steps(&goal)?;
         self.validate_run_settings(&goal)?;
         if goal.run_settings.mode == "provider"
             && !goal.run_settings.authorized
@@ -894,28 +974,18 @@ impl OfficeSnapshot {
                 "Review mode requires explicit authorization for this goal's provider requests",
             ));
         }
-        if self.jobs.len() + goal.steps.len() > 5000 {
+        if self.jobs.len() + goal.steps.len() * 2 > 5000 {
             return Err(fail(
                 "CAPACITY",
                 "Queue history cannot fit this goal iteration",
             ));
         }
-        let previous: Vec<_> = self
-            .jobs
-            .iter()
-            .filter(|j| {
-                j.goal_id.as_deref() == Some(&goal.id) && j.goal_iteration == Some(goal.iteration)
-            })
-            .collect();
-        let previous_handoffs: Vec<String> = previous
-            .iter()
-            .filter(|j| {
-                !previous
-                    .iter()
-                    .any(|other| other.dependencies.contains(&j.id))
-            })
-            .map(|j| j.id.clone())
-            .collect();
+        // Earlier attempts are evidence lineage, never success prerequisites for a
+        // deliberately requested repair. Failed leaves must not poison the new DAG.
+        let previous_handoffs: Vec<String> = self.jobs.iter()
+            .filter(|j| j.goal_id.as_deref() == Some(&goal.id) && j.goal_iteration == Some(goal.iteration))
+            .filter(|j| j.pair.as_ref().is_some_and(|p| p.phase == "review") && self.job_accepted(j))
+            .map(|j| j.id.clone()).collect();
         goal.iteration += 1;
         let mut jobs: HashMap<String, String> = HashMap::new();
         while jobs.len() < goal.steps.len() {
@@ -936,17 +1006,17 @@ impl OfficeSnapshot {
                     step.depends_on.iter().map(|d| jobs[d].clone()).collect()
                 };
                 let r = &goal.run_settings;
-                let job_id = self.enqueue(&json!({"companyId":goal.company_id,"officeId":office,"departmentId":department,"employeeId":step.employee_id,
+                let job_id = self.enqueue_pair(&json!({"companyId":goal.company_id,"officeId":office,"departmentId":department,"employeeId":step.employee_id,
                     "goal":format!("{}\nGoal iteration {} of {}. Use supplied earlier handoffs as evidence; improve unresolved findings without pretending to run unavailable tools.",step.goal,goal.iteration,goal.max_iterations),"mode":r.mode,"provider":r.provider,"model":r.model,"authorized":r.authorized,
                     "maxTokens":r.max_tokens,"maxUsd":r.max_usd,"maxMinutes":5,"priceRates":r.price_rates,
+                    "reviewerEmployeeId":step.reviewer_employee_id,"reviewerServiceContractId":step.reviewer_service_contract_id,
                     "allowedTools":r.allowed_tools,
                     "serviceContractId":step.service_contract_id,"knowledgeTransferIds":step.knowledge_transfer_ids,
-                    "dependencies":dependencies,"idempotencyKey":format!("goal:{}:{}:{}",goal.id,goal.iteration,step.id)}))?;
-                let job = self.jobs.iter_mut().find(|j| j.id == job_id).unwrap();
-                job.goal_id = Some(goal.id.clone());
-                job.goal_iteration = Some(goal.iteration);
-                jobs.insert(step.id.clone(), job_id.clone());
+                    "dependencies":dependencies,"idempotencyKey":format!("goal:{}:{}:{}",goal.id,goal.iteration,step.id)}), Some((&goal.id, goal.iteration, &step.id)))?;
+                let review_id = self.jobs.iter().find(|j| j.id == job_id).unwrap().pair.as_ref().unwrap().review_job_id.clone();
+                jobs.insert(step.id.clone(), review_id.clone());
                 goal.job_ids.push(job_id);
+                goal.job_ids.push(review_id);
             }
         }
         goal.status = "running".into();
@@ -1018,8 +1088,9 @@ impl OfficeSnapshot {
                 messages.push((goal.scope.clone(), content, provider));
             }
         }
+        let accepted_jobs: HashSet<String> = self.jobs.iter().filter(|j| self.job_accepted(j)).map(|j| j.id.clone()).collect();
         for goal in &mut self.goals {
-            if goal.status != "running" {
+            if goal.status != "running" && !(goal.status == "needs-review" && goal.stop_reason.as_deref() == Some("review-pending")) {
                 continue;
             }
             let current: Vec<_> = self
@@ -1031,7 +1102,8 @@ impl OfficeSnapshot {
                 })
                 .collect();
             if !current.is_empty() && current.iter().all(|j| terminal(&j.status)) {
-                goal.status = if current.iter().all(|j| j.status == "completed") {
+                let accepted = current.iter().all(|j| j.status == "completed" && accepted_jobs.contains(&j.id));
+                goal.status = if accepted {
                     "completed"
                 } else {
                     "needs-review"
@@ -1040,7 +1112,7 @@ impl OfficeSnapshot {
                 goal.updated_at = now();
                 changed = true;
                 if goal.status == "needs-review" {
-                    goal.stop_reason = Some("review-required".into());
+                    goal.stop_reason = Some(if current.iter().all(|j| j.status == "completed") && current.iter().all(|j| j.review_failure.is_none() && j.review.as_ref().is_none_or(|r| r.verdict == "accepted")) { "review-pending" } else { "review-required" }.into());
                 } else if goal.iteration >= goal.max_iterations {
                     goal.stop_reason = Some("iteration-limit".into());
                 }
@@ -1343,6 +1415,41 @@ impl OfficeSnapshot {
                     self.last_action = Some(json!({"messageId":message_id,"imported":true}));
                 }
             }
+            "create_paired_workflow" => {
+                let request_id = string(p, "requestId", 100)?;
+                if !safe_id(&request_id) { return Err(fail("INVALID_INPUT", "Invalid workflow request ID")); }
+                let mut semantic = p.clone();
+                semantic.as_object_mut().ok_or_else(|| fail("INVALID_INPUT", "Expected workflow object"))?.remove("action");
+                let digest = format!("{:x}", Sha256::digest(serde_json::to_vec(&semantic).map_err(|_| fail("INVALID_INPUT", "Invalid workflow payload"))?));
+                if let Some(existing) = self.goals.iter().find(|g| g.source_request_id.as_deref() == Some(&request_id)) {
+                    if existing.request_sha256.as_deref() != Some(&digest) { return Err(fail("WORKFLOW_IDEMPOTENCY_CONFLICT", "This request ID already identifies a different workflow; use its original body to recover the receipt")); }
+                    self.last_action = Some(json!({"goalId":existing.id,"messageId":existing.source_message_id,"planned":true,"started":existing.iteration > 0,"jobIds":existing.job_ids,"replayed":true}));
+                    return Ok(true);
+                }
+                let scope: Scope = decode(p.get("scope").unwrap_or(&Value::Null), "scope")?;
+                let content = string(p, "content", 12000)?;
+                let execute = boolean(p, "execute", false)?;
+                // The user brief, plan and optional bounded dispatch commit together.
+                // This candidate is discarded on any planning, scope or budget error.
+                let extra = opt_string(p, "description", 16000)?.unwrap_or_default();
+                let durable_brief = if extra.is_empty() || extra == content { content.clone() }
+                    else { format!("Source brief:\n{content}\n\nAdditional context:\n{extra}") };
+                bounded_text(&durable_brief, 16000, "combined source brief and description")?;
+                let mut goal_payload = p.clone();
+                goal_payload["description"] = json!(durable_brief);
+                let mut candidate = self.clone();
+                let message_id = candidate.append_chat(scope, content, "user", "user")?;
+                candidate.apply_governance("create_goal", &goal_payload)?;
+                let goal_id = candidate.last_action.as_ref().and_then(|a| a["goalId"].as_str()).unwrap().to_owned();
+                candidate.apply_governance("plan_goal", &json!({"goalId":goal_id}))?;
+                if execute { candidate.apply_governance("execute_goal", &json!({"goalId":goal_id}))?; }
+                let goal = candidate.goals.iter_mut().find(|g| g.id == goal_id).unwrap();
+                goal.source_request_id = Some(request_id);
+                goal.request_sha256 = Some(digest);
+                goal.source_message_id = Some(message_id.clone());
+                candidate.last_action = Some(json!({"goalId":goal_id,"messageId":message_id,"planned":true,"started":goal.iteration > 0,"jobIds":goal.job_ids,"replayed":false}));
+                *self = candidate;
+            }
             "create_goal" => {
                 if self.goals.len() >= 2000 {
                     return Err(fail(
@@ -1381,6 +1488,7 @@ impl OfficeSnapshot {
                     created_at: stamp.clone(),
                     updated_at: stamp,
                     stop_reason: None,
+                    source_request_id: None, request_sha256: None, source_message_id: None,
                 };
                 self.validate_run_settings(&goal)?;
                 self.last_action = Some(json!({"goalId":goal.id}));
@@ -1498,9 +1606,11 @@ impl OfficeSnapshot {
                     } else {
                         candidates
                     };
-                    goal.steps = candidates.iter().enumerate().map(|(i, (employee, contract))| GoalStep { id: format!("step-{}", i + 1), title: shortened(format!("{} — {}", self.staff(employee).unwrap().name, goal.title), 200), employee_id: employee.clone(), goal: format!("{}\n{}\nResponsibility: {}. Produce conclusions, evidence and a concise handoff. Do not invent completed work or expose hidden reasoning.", goal.title, goal.description, self.staff(employee).unwrap().role), depends_on: if i == 0 { vec![] } else { vec![format!("step-{i}")] }, service_contract_id: contract.clone(), knowledge_transfer_ids: vec![] }).collect();
+                    goal.steps = candidates.iter().enumerate().map(|(i, (employee, contract))| GoalStep { id: format!("step-{}", i + 1), title: shortened(format!("{} — {}", self.staff(employee).unwrap().name, goal.title), 200), employee_id: employee.clone(), goal: format!("{}\n{}\nResponsibility: {}. Produce conclusions, evidence and a concise handoff. Do not invent completed work or expose hidden reasoning.", goal.title, goal.description, self.staff(employee).unwrap().role), depends_on: if i == 0 { vec![] } else { vec![format!("step-{i}")] }, service_contract_id: contract.clone(), knowledge_transfer_ids: vec![], reviewer_employee_id: None, reviewer_service_contract_id: None, estimate: None, review_estimate: None }).collect();
                 }
+                if action == "plan_goal" { self.assign_goal_reviewers(&mut goal)?; }
                 self.validate_goal_steps(&goal)?;
+                self.require_paired_steps(&goal)?;
                 if goal.steps.is_empty() {
                     return Err(fail("INVALID_INPUT", "A plan needs at least one step"));
                 }
@@ -1685,7 +1795,7 @@ impl OfficeSnapshot {
                 self.last_action = Some(json!({"blueprintId":blueprint}));
             }
             "save_blueprint" => {
-                let blueprint: Blueprint =
+                let mut blueprint: Blueprint =
                     decode(p.get("blueprint").unwrap_or(&Value::Null), "blueprint")?;
                 self.validate_blueprint(&blueprint)?;
                 let index = self
@@ -1695,6 +1805,13 @@ impl OfficeSnapshot {
                     .ok_or_else(|| fail("NOT_FOUND", "Create the office blueprint first"))?;
                 if self.blueprints[index].id != blueprint.id {
                     return Err(fail("IMMUTABLE_ID", "Blueprint identity is immutable"));
+                }
+                blueprint.revision = next_revision(p, Some(self.blueprints[index].revision))?;
+                for board in &mut blueprint.whiteboards {
+                    if let Some(previous) = self.blueprints[index].whiteboards.iter().find(|b| b.id == board.id) {
+                        if board.revision != previous.revision { return Err(fail("STALE_REVISION", "A whiteboard changed since this blueprint was loaded")); }
+                        board.revision = next_revision(&json!({"expectedRevision":board.revision}), Some(previous.revision))?;
+                    } else if board.revision != 0 { return Err(fail("STALE_REVISION", "A new whiteboard starts at revision zero")); }
                 }
                 for desk in &blueprint.desks {
                     if !self.blueprints[index].desks.iter().any(|old| {
@@ -1782,6 +1899,7 @@ impl OfficeSnapshot {
                     }
                 } else {
                     entity = opt_string(p, "id", 100)?.unwrap_or_else(|| id("whiteboard"));
+                    let revision = next_revision(p, b.whiteboards.iter().find(|w| w.id == entity).map(|w| w.revision))?;
                     let board = Whiteboard {
                         id: entity.clone(),
                         room_id: string(p, "roomId", 100)?,
@@ -1792,6 +1910,7 @@ impl OfficeSnapshot {
                         roadmap_item_ids: strings(p, "roadmapItemIds", 100)?,
                         x: number(p, "x", 0.0, 1.0)?,
                         y: number(p, "y", 0.0, 1.0)?,
+                        revision,
                     };
                     self.validate_layout_assignment(&b, &board.room_id, &board.owner_employee_id)?;
                     if let Some(w) = b.whiteboards.iter_mut().find(|w| w.id == entity) {
@@ -1800,6 +1919,7 @@ impl OfficeSnapshot {
                         b.whiteboards.push(board);
                     }
                 }
+                b.revision = next_revision(&json!({"expectedRevision":b.revision}), Some(b.revision))?;
                 self.validate_blueprint(&b)?;
                 self.blueprints[index] = b;
                 self.last_action = Some(json!({"id":entity}));
@@ -1903,6 +2023,7 @@ impl OfficeSnapshot {
         if goal_ids.len() != self.goals.len() {
             return Err(fail("OFFICE_STATE_INVALID", "Duplicate goal identity"));
         }
+        let mut workflow_requests = HashSet::new();
         for goal in &self.goals {
             self.company(&goal.company_id)?;
             if !(goal.scope.kind == "employee" && goal.scope.id == "donna")
@@ -1926,15 +2047,25 @@ impl OfficeSnapshot {
                 .contains(&goal.status.as_str())
                 || !(1..=10).contains(&goal.max_iterations)
                 || goal.iteration > goal.max_iterations
-                || goal.job_ids.len() > 120
+                || goal.job_ids.len() > 240
             {
                 return Err(fail("OFFICE_STATE_INVALID", "Invalid bounded goal"));
             }
             self.validate_run_settings(goal)?;
+            match (&goal.source_request_id, &goal.request_sha256, &goal.source_message_id) {
+                (None, None, None) => {},
+                (Some(request), Some(digest), Some(message)) if safe_id(request) && workflow_requests.insert(request)
+                    && digest.len() == 64 && digest.bytes().all(|c| c.is_ascii_hexdigit())
+                    && self.chat_threads.iter().any(|t| t.scope == goal.scope && t.messages.iter().any(|m| &m.id == message && m.role == "user" && m.source == "user")) => {},
+                _ => return Err(fail("OFFICE_STATE_INVALID", "Invalid immutable paired workflow receipt")),
+            }
             // Historical plans retain fired employee references; only dispatch
             // validates present availability. Structural links remain immutable.
             for step in &goal.steps {
                 self.staff(&step.employee_id)?;
+                if let Some(reviewer) = &step.reviewer_employee_id { self.staff(reviewer)?; if reviewer == &step.employee_id { return Err(fail("OFFICE_STATE_INVALID", "A step cannot review itself")); } }
+                if let Some(estimate) = &step.estimate { estimate.validate()?; }
+                if let Some(estimate) = &step.review_estimate { estimate.validate()?; }
             }
             if goal.job_ids.iter().any(|j| {
                 !self.jobs.iter().any(|x| {
@@ -1993,15 +2124,26 @@ mod tests {
         )
     }
     fn finish(s: &mut OfficeSnapshot, job: &str, lease: &str) {
-        s.apply(&json!({"action":"finish_job","jobId":job,"leaseToken":lease,"status":"completed","inputTokens":10,"outputTokens":10,"costUsd":0.1,"costStatus":"observed","summary":"Verified result and evidence.","artifactUri":"/tmp/test-result.md"})).unwrap();
+        s.apply(&json!({"action":"finish_job","jobId":job,"leaseToken":lease,"status":"completed","inputTokens":10,"outputTokens":10,"costUsd":0.1,"costStatus":"observed","summary":"Verified result and evidence.","artifactUri":"/tmp/test-result.md","artifactSha256":"a".repeat(64)})).unwrap();
+    }
+    fn finish_review(s: &mut OfficeSnapshot, primary: &str) {
+        let (review, lease) = claim(s);
+        assert_eq!(s.jobs.iter().find(|j| j.id == review).unwrap().pair.as_ref().unwrap().primary_job_id, primary);
+        s.apply(&json!({"action":"reserve_job","jobId":review,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.1})).unwrap();
+        finish(s, &review, &lease);
+        s.apply(&json!({"action":"record_step_review","jobId":review,"leaseToken":lease,"primaryJobId":primary,"primaryArtifactSha256":"a".repeat(64),"reviewArtifactSha256":"a".repeat(64),"primaryArtifactComplete":true,"verdict":"accepted","summary":"Independently verified the complete fixture artifact","evidenceRefs":["fixture:verified"]})).unwrap();
+    }
+    fn finish_pair(s: &mut OfficeSnapshot, primary: &str, lease: &str) {
+        finish(s, primary, lease);
+        finish_review(s, primary);
     }
     fn goal(s: &mut OfficeSnapshot, mode: &str, provider: bool, iterations: u64) -> String {
-        s.apply(&json!({"action":"create_goal","scope":{"kind":"employee","id":"donna"},"title":"Inspect the repository","mode":mode,"maxIterations":iterations,"runSettings":{"mode":if provider {"provider"} else {"manual"},"provider":"anthropic","model":if provider {"test-model"} else {""},"authorized":false,"maxTokens":100,"maxUsd":1,"maxMinutes":15,"priceRates":{"inputUsdPerMillion":1,"outputUsdPerMillion":1}}})).unwrap();
+        s.apply(&json!({"action":"create_goal","scope":{"kind":"office","id":s.offices[0].id},"title":"Inspect the repository","mode":mode,"maxIterations":iterations,"runSettings":{"mode":if provider {"provider"} else {"manual"},"provider":"anthropic","model":if provider {"test-model"} else {""},"authorized":false,"maxTokens":100,"maxUsd":1,"maxMinutes":15,"priceRates":{"inputUsdPerMillion":1,"outputUsdPerMillion":1}}})).unwrap();
         let goal = s.last_action.as_ref().unwrap()["goalId"]
             .as_str()
             .unwrap()
             .to_string();
-        s.apply(&json!({"action":"plan_goal","goalId":goal}))
+        s.apply(&json!({"action":"set_goal_plan","goalId":goal,"steps":[{"id":"inspect","title":"Inspect","employeeId":"donna","reviewerEmployeeId":s.offices[0].assistant_id,"goal":"Inspect repository evidence","dependsOn":[]}]}))
             .unwrap();
         goal
     }
@@ -2048,8 +2190,8 @@ mod tests {
         let (second, second_lease) = claim(&mut s);
         s.apply(&json!({"action":"reserve_job","jobId":second,"leaseToken":second_lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.6})).unwrap();
         assert_eq!(s.last_action.as_ref().unwrap()["reserved"], false);
-        assert_eq!(s.jobs[1].status, "waiting-budget");
-        assert!(s.jobs[1].started_at.is_none());
+        assert_eq!(s.jobs.iter().find(|j| j.id == second).unwrap().status, "waiting-budget");
+        assert!(s.jobs.iter().find(|j| j.id == second).unwrap().started_at.is_none());
         assert!(s.budget.warning);
         assert_eq!(s.budget.reserved_usd, 0.6);
         s.apply(&json!({"action":"configure_policy","hardCapUsd":0.2,"dispatchPaused":true}))
@@ -2061,6 +2203,7 @@ mod tests {
         assert!(s.jobs[0].artifact_uri.is_some());
         s.apply(&json!({"action":"configure_policy","hardCapUsd":1,"dispatchPaused":false}))
             .unwrap();
+        finish_review(&mut s, &first);
         assert_eq!(claim(&mut s).0, second);
         s.validate().unwrap();
     }
@@ -2108,16 +2251,16 @@ mod tests {
             .unwrap();
         let (j, lease) = claim(&mut s);
         s.apply(&json!({"action":"reserve_job","jobId":j,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.2})).unwrap();
-        finish(&mut s, &j, &lease);
+        finish_pair(&mut s, &j, &lease);
         assert_eq!(s.goals[0].status, "completed");
-        assert_eq!(s.checkpoints.len(), 1);
+        assert_eq!(s.checkpoints.len(), 2);
         assert_eq!(
             s.chat_threads[0].messages.last().unwrap().source,
             "provider"
         );
         s.migrate_governance().unwrap();
-        assert_eq!(s.checkpoints.len(), 1);
-        assert_eq!(s.chat_threads[0].messages.len(), 2);
+        assert_eq!(s.checkpoints.len(), 2);
+        assert_eq!(s.chat_threads[0].messages.len(), 3);
         s.validate().unwrap();
     }
     #[test]
@@ -2133,16 +2276,16 @@ mod tests {
         assert!(s.jobs.is_empty());
         s.apply(&json!({"action":"execute_goal","goalId":g,"reviewed":true}))
             .unwrap();
-        assert_eq!(s.jobs.len(), 1);
+        assert_eq!(s.jobs.len(), 2);
         assert!(s.jobs[0].authorized);
         assert!(!s.goals[0].run_settings.authorized);
         let (j, lease) = claim(&mut s);
-        finish(&mut s, &j, &lease);
+        finish_pair(&mut s, &j, &lease);
         assert_eq!(s.apply(&json!({"action":"advance_goal","goalId":g,"reason":"Review the handoff","reviewed":false})).unwrap_err().code, "REVIEW_REQUIRED");
-        assert_eq!(s.jobs.len(), 1);
-        s.apply(&json!({"action":"advance_goal","goalId":g,"reason":"Review the handoff","reviewed":true})).unwrap();
         assert_eq!(s.jobs.len(), 2);
-        assert!(s.jobs[1].authorized);
+        s.apply(&json!({"action":"advance_goal","goalId":g,"reason":"Review the handoff","reviewed":true})).unwrap();
+        assert_eq!(s.jobs.len(), 4);
+        assert!(s.jobs[2].authorized && s.jobs[3].authorized);
         assert_eq!(s.goals[0].iteration, 2);
         assert!(!s.goals[0].run_settings.authorized);
         s.validate().unwrap();
@@ -2172,15 +2315,15 @@ mod tests {
         s.apply(&json!({"action":"execute_goal","goalId":g}))
             .unwrap();
         let (j, lease) = claim(&mut s);
-        finish(&mut s, &j, &lease);
+        finish_pair(&mut s, &j, &lease);
         s.apply(&json!({"action":"tick_goals"})).unwrap();
         assert_eq!(s.goals[0].iteration, 2);
-        assert_eq!(s.jobs[1].dependencies, vec![j]);
-        assert_eq!(s.jobs[1].limits.max_minutes, 5.0);
+        assert_eq!(s.jobs[2].dependencies, vec![s.jobs[1].id.clone()]);
+        assert_eq!(s.jobs[2].limits.max_minutes, 5.0);
         let (j2, lease2) = claim(&mut s);
-        finish(&mut s, &j2, &lease2);
+        finish_pair(&mut s, &j2, &lease2);
         s.apply(&json!({"action":"tick_goals"})).unwrap();
-        assert_eq!(s.jobs.len(), 2);
+        assert_eq!(s.jobs.len(), 4);
         assert_eq!(s.goals[0].stop_reason.as_deref(), Some("iteration-limit"));
         assert_eq!(
             s.apply(&json!({"action":"advance_goal","goalId":g,"reason":"Another pass"}))
@@ -2199,13 +2342,13 @@ mod tests {
         s.apply(&json!({"action":"execute_goal","goalId":g}))
             .unwrap();
         let (j, lease) = claim(&mut s);
-        finish(&mut s, &j, &lease);
+        finish_pair(&mut s, &j, &lease);
         s.jobs[0].created_at = "2020-01-01T00:00:00Z".into();
         s.apply(&json!({"action":"tick_goals"})).unwrap();
-        assert_eq!(s.jobs.len(), 1);
+        assert_eq!(s.jobs.len(), 2);
         assert_eq!(s.goals[0].stop_reason.as_deref(), Some("time-target"));
         assert!(s.jobs[0].artifact_uri.is_some());
-        assert_eq!(s.checkpoints.len(), 1);
+        assert_eq!(s.checkpoints.len(), 2);
     }
     #[test]
     fn goal_graph_rejects_cycles_and_plan_mode_has_no_dispatch() {
@@ -2247,13 +2390,14 @@ mod tests {
         job(&mut s, "first");
         job(&mut s, "second");
         let (first, lease) = claim(&mut s);
-        s.apply(&json!({"action":"reserve_job","jobId":first,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.7})).unwrap();
+        s.apply(&json!({"action":"reserve_job","jobId":first,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.6})).unwrap();
         let (second, second_lease) = claim(&mut s);
         s.apply(&json!({"action":"reserve_job","jobId":second,"leaseToken":second_lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.6})).unwrap();
         s.migrate_governance().unwrap();
-        assert_eq!(s.jobs[1].status, "waiting-budget");
+        assert_eq!(s.jobs.iter().find(|j| j.id == second).unwrap().status, "waiting-budget");
         finish(&mut s, &first, &lease);
-        assert_eq!(s.jobs[1].status, "queued");
+        assert_eq!(s.jobs.iter().find(|j| j.id == second).unwrap().status, "queued");
+        finish_review(&mut s, &first);
         assert_eq!(claim(&mut s).0, second);
     }
     #[test]
@@ -2272,6 +2416,8 @@ mod tests {
         assert_eq!(s.budget.observed_usd, 0.1);
         s.apply(&json!({"action":"resume_goal","goalId":g}))
             .unwrap();
+        assert_ne!(s.goals[0].status, "completed");
+        finish_review(&mut s, &j);
         assert_eq!(s.goals[0].status, "completed");
     }
     #[test]

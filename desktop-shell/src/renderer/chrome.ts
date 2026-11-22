@@ -1,3 +1,5 @@
+import { estimateMinutes, formatMinuteRange, buildBoardForecast } from './boards/planning.js';
+import { BOARD_HEIGHT, boardPoint, cardMap, moveOnBoard, projectedDelta, type BoardMap } from './boards/geometry.js';
 import { mountStudio, type Studio, type StudioHeat, type StudioActionKind, type StudioActionContext, type StudioActionState, type InspectorActionSpec } from './freeflow/studio.js';
 import { mountCanvasWorkspace, type CanvasWorkspace, type CanvasWorkspacePanel } from './freeflow/canvas-workspace.js';
 import { buildDonnaTeam, proposeDonnaAction, type DonnaSnapshot, type DonnaIntent } from './freeflow/donna-team.js';
@@ -330,6 +332,10 @@ interface OfficeJob {
   createdAt: string; updatedAt: string; dueAt: string; startedAt: string | null; finishedAt: string | null;
   workerId: string | null; leaseToken: string | null; leaseExpiresAt: string | null;
   artifactUri: string | null; summary: string | null; error: string | null; idempotencyKey: string;
+  pair?: {stepId:string;phase:'primary'|'review';peerEmployeeId:string;primaryJobId:string;reviewJobId:string} | null;
+  requestSha256?: string | null; artifactSha256?: string | null;
+  review?: {verdict:'accepted'|'revise'|'blocked';primaryArtifactSha256:string;reviewArtifactSha256:string;summary:string;evidenceRefs:string[];recordedAt:string} | null;
+  reviewFailure?: {reason:'malformed-output'|'input-budget'|'artifact-mismatch'|'recording-unconfirmed';summary:string;recordedAt:string} | null;
   goalId?: string | null; goalIteration?: number | null;
   serviceContractId?: string | null; knowledgeTransferIds?: string[];
 }
@@ -360,7 +366,8 @@ interface OfficeChatMessage {
   id: string; role: 'user' | 'assistant' | 'system'; content: string; createdAt: string; source: 'user' | 'local' | 'provider';
 }
 interface OfficeChatThread { id: string; scope: OfficeScope; messages: OfficeChatMessage[] }
-interface OfficeGoalStep { id: string; title: string; employeeId: string; goal: string; dependsOn: string[]; serviceContractId?: string | null; knowledgeTransferIds?: string[] }
+interface BoardEstimate { optimisticMinutes: number; likelyMinutes: number; pessimisticMinutes: number }
+interface OfficeGoalStep { id: string; title: string; employeeId: string; goal: string; dependsOn: string[]; serviceContractId?: string | null; knowledgeTransferIds?: string[]; reviewerEmployeeId?: string | null; reviewerServiceContractId?: string | null; estimate?: BoardEstimate | null; reviewEstimate?: BoardEstimate | null }
 interface OfficeGoalRunSettings {
   mode: 'manual' | 'provider'; provider: 'anthropic' | 'openai' | 'ollama'; model: string; authorized: boolean;
   maxTokens: number; maxUsd: number; maxMinutes: number;
@@ -372,12 +379,12 @@ interface OfficeGoal {
   mode: 'plan' | 'execute'; status: 'draft' | 'planned' | 'running' | 'paused' | 'completed' | 'needs-review';
   maxIterations: number; iteration: number; jobIds: string[]; steps: OfficeGoalStep[]; runSettings: OfficeGoalRunSettings;
   createdAt: string; updatedAt: string;
-  stopReason?: string | null;
+  stopReason?: string | null;sourceRequestId?:string|null;requestSha256?:string|null;sourceMessageId?:string|null;
 }
 interface OfficeCheckpoint { id: string; goalId: string; jobId: string | null; iteration: number; summary: string; artifactUri: string | null; createdAt: string }
 interface OfficeRoom { id: string; name: string; departmentId: string | null; x: number; y: number; width: number; height: number }
 interface OfficeDesk { id: string; roomId: string; employeeId: string; x: number; y: number }
-interface OfficeWhiteboard { id: string; roomId: string; ownerEmployeeId: string; title: string; goalIds: string[]; jobIds: string[]; roadmapItemIds?: string[]; x: number; y: number }
+interface OfficeWhiteboard { revision?: number; id: string; roomId: string; ownerEmployeeId: string; title: string; goalIds: string[]; jobIds: string[]; roadmapItemIds?: string[]; x: number; y: number }
 interface OfficeBlueprint { id: string; companyId: string; officeId: string; rooms: OfficeRoom[]; desks: OfficeDesk[]; whiteboards: OfficeWhiteboard[] }
 type PortfolioServiceKey = 'engineering' | 'design-architecture' | 'research-knowledge' | 'security' | 'hackathon' | 'music-arts';
 interface PortfolioGroup { id: string; name: string; description: string; companyIds: string[]; status: OfficeEntityStatus; createdAt: string; updatedAt: string }
@@ -391,6 +398,7 @@ interface PortfolioKnowledgeTransfer {
   status: 'requested' | 'granted' | 'revoked'; purpose: string; createdAt: string; updatedAt: string;
 }
 interface PortfolioRoadmapItem {
+  revision?: number; reviewerEmployeeId?: string | null; reviewerServiceContractId?: string | null; estimate?: BoardEstimate | null; reviewEstimate?: BoardEstimate | null;
   id: string; scope: { kind: 'company' | 'group' | 'global'; id: string }; title: string; description: string;
   ownerEmployeeId: string; departmentId: string | null; serviceContractId: string | null;
   status: 'planned' | 'in-progress' | 'blocked' | 'done'; dependencies: string[]; goalIds: string[]; jobIds: string[];
@@ -432,7 +440,7 @@ interface AuthorityLedgerEntry { id:string; at:string; actor:string; action:stri
 interface OfficeIndexEntry { id:string; entityId:string; kind:string; title:string; companyId:string|null; parentId:string|null; ownerEmployeeId:string|null; status:string; updatedAt:string; relatedIds:string[] }
 interface OfficeAuthority { schemaVersion:1; managedEmployeeIds:string[]; grants:AuthorityGrant[]; ledger:AuthorityLedgerEntry[]; index:OfficeIndexEntry[] }
 interface OfficeSnapshot {
-  schemaVersion: 1; activeCompanyId: string;
+  schemaVersion: 1 | 2; activeCompanyId: string;
   companies: OfficeCompany[]; offices: OfficeLocation[]; departments: OfficeDepartment[]; employees: OfficeEmployee[];
   jobs: OfficeJob[]; schedules: OfficeSchedule[]; cache: OfficeCache; knowledge: OfficeKnowledge[]; events: OfficeEvent[];
   /** Result metadata from the most recent command; never a provider credential. */
@@ -451,7 +459,7 @@ type OfficeAction = 'create_company' | 'select_company' | 'import_repositories' 
   | 'create_schedule' | 'pause_schedule' | 'resume_schedule' | 'tick_schedules'
   | 'configure_cache' | 'clear_cache' | 'get_cache' | 'put_cache' | 'add_knowledge'
   | 'configure_policy' | 'reserve_external' | 'settle_external' | 'approve_job' | 'bootstrap_directors'
-  | 'post_chat' | 'post_assistant_message' | 'create_goal' | 'plan_goal' | 'set_goal_plan' | 'execute_goal' | 'advance_goal'
+  | 'create_paired_workflow' | 'post_chat' | 'post_assistant_message' | 'create_goal' | 'plan_goal' | 'set_goal_plan' | 'execute_goal' | 'advance_goal'
   | 'pause_goal' | 'resume_goal' | 'checkpoint_goal' | 'tick_goals' | 'ensure_blueprint' | 'save_blueprint' | 'upsert_room'
   | 'place_employee' | 'upsert_whiteboard' | 'record_github_activity' | 'github_operation'
   | 'configure_ceo' | 'upsert_portfolio_group' | 'ensure_shared_services' | 'optimize_portfolio'
@@ -606,10 +614,12 @@ let endlessWorkspace: CanvasWorkspace | null = null;
 // Live surfaces share refreshes, but an unfinished policy edit belongs to its
 // form until confirmed saved or explicitly reset, even after focus moves away.
 const canvasFormDrafts = new Set<string>();
+const canvasDraftVersions = new Map<string,number>();
+function markCanvasDraft(id:string):void { canvasFormDrafts.add(id);canvasDraftVersions.set(id,(canvasDraftVersions.get(id)||0)+1); }
 function initCanvasFormDrafts():void {
-  for(const id of ['workspace-policy-form','office-cache-form','ceo-policy-form']){
+  for(const id of ['workspace-policy-form','office-cache-form','ceo-policy-form','workspace-node-form','ceo-roadmap-form']){
     const form=$(id);
-    for(const event of ['input','change'])form.addEventListener(event,()=>canvasFormDrafts.add(id));
+    for(const event of ['input','change'])form.addEventListener(event,()=>markCanvasDraft(id));
     form.addEventListener('reset',()=>canvasFormDrafts.delete(id));
   }
 }
@@ -1342,6 +1352,7 @@ async function startRun(): Promise<void> {
     setStatus(status, 'Select a project first.', 'error');
     return;
   }
+  if((officeState?.schemaVersion||0)>=2){setStatus(status,'Run this work as a paired office goal with Donna. A standalone project run has no native primary/reviewer assignment.','error');return;}
   const req: StartRunRequest = {
     projectId: currentProject.id,
     runBudget: {
@@ -1378,9 +1389,11 @@ async function refreshCurrentRun(): Promise<void> {
 
 function runControlsSetEnabled(run: ProjectRun | null): void {
   const active = run !== null && (run.status === 'running' || run.status === 'paused');
-  ($('run-start') as HTMLButtonElement).disabled = currentProject === null || active;
+  const requiresPair=(officeState?.schemaVersion||0)>=2;
+  ($('run-start') as HTMLButtonElement).disabled = currentProject === null || active || requiresPair;
+  ($('run-plan-with-donna') as HTMLButtonElement).disabled = currentProject===null;
   ($('run-pause') as HTMLButtonElement).disabled = !(run !== null && run.status === 'running');
-  ($('run-resume') as HTMLButtonElement).disabled = !(run !== null && run.status === 'paused');
+  ($('run-resume') as HTMLButtonElement).disabled = requiresPair || !(run !== null && run.status === 'paused');
   ($('run-cancel') as HTMLButtonElement).disabled = !active;
 }
 
@@ -2195,6 +2208,17 @@ let conversationSignature = '';
 let blueprintLoading = false;
 let spatialSaving = false;
 let spatialOfficeId = '';
+let whiteboardEditBase: OfficeWhiteboard | null = null;
+let whiteboardEditOffice = '';
+let roadmapEditBase: PortfolioRoadmapItem | null = null;
+type RoadmapLinkKind='goal'|'job'|'dependency';
+let roadmapDraftLinks:Record<RoadmapLinkKind,string[]>={goal:[],job:[],dependency:[]};
+let whiteboardPage = 0, roadmapPage = 0;
+const BOARD_PAGE_SIZE = 24;
+type BoardLinkKind = 'goal' | 'job' | 'roadmap';
+let boardDraftLinks: Record<BoardLinkKind,string[]> = {goal:[],job:[],roadmap:[]};
+const spatialGestureCancels = new Set<()=>void>();
+function cancelSpatialGestures():void { for(const cancel of [...spatialGestureCancels])cancel(); }
 
 function workspaceReadOnly(): boolean { return bridge?.transport === 'public-preview'; }
 function workspaceAvailable(): boolean {
@@ -2243,8 +2267,9 @@ function workspaceTask(task: () => Promise<void>, statusId = 'workspace-action-s
 function workspaceForm(id: string, task: () => Promise<void>, statusId: string): void {
   $(id).addEventListener('submit', (event) => {
     event.preventDefault(); const button = (event as SubmitEvent).submitter as HTMLButtonElement | null;
+    const version=canvasDraftVersions.get(id)||0;
     if (button) button.disabled = true;
-    workspaceTask(async () => { try { await task();canvasFormDrafts.delete(id); } finally { if (button) button.disabled = !workspaceAvailable() || workspaceReadOnly(); } },statusId);
+    workspaceTask(async () => { try { await task();if((canvasDraftVersions.get(id)||0)===version)canvasFormDrafts.delete(id); } finally { if (button) button.disabled = !workspaceAvailable() || workspaceReadOnly(); } },statusId);
   });
 }
 function workspaceButton(label: string, task: () => Promise<void>, kind = 'secondary small'): HTMLButtonElement {
@@ -2299,33 +2324,64 @@ function renderConversation(): void {
   }
   if (nearBottom) container.scrollTop = container.scrollHeight;
 }
+function parseBoardEstimate(values:string[]):BoardEstimate|null {
+  if(values.every(item=>!item.trim()))return null;if(values.some(item=>!item.trim()))throw new Error('Fill all three estimate values, or leave all three unknown.');
+  const [optimisticMinutes,likelyMinutes,pessimisticMinutes]=values.map(Number);if(![optimisticMinutes,likelyMinutes,pessimisticMinutes].every(item=>typeof item==='number'&&Number.isFinite(item)&&item>=.01&&item<=1440)||optimisticMinutes!>likelyMinutes!||likelyMinutes!>pessimisticMinutes!)throw new Error('Estimates must be 0.01–1440 minutes, with optimistic ≤ likely ≤ pessimistic.');
+  return {optimisticMinutes:optimisticMinutes!,likelyMinutes:likelyMinutes!,pessimisticMinutes:pessimisticMinutes!};
+}
+function readBoardEstimate(prefix:string):BoardEstimate|null {return parseBoardEstimate(['optimistic','likely','pessimistic'].map(key=>value(`${prefix}-${key}`)));}
+function fillBoardEstimate(prefix:string,estimate?:BoardEstimate|null):void {for(const key of ['optimistic','likely','pessimistic'] as const)($(`${prefix}-${key}`) as HTMLInputElement).value=estimate?String(estimate[`${key}Minutes`]):'';}
+function eligiblePlanEmployees(goal:OfficeGoal):OfficeEmployee[] {
+  const department=goal.scope.kind==='department'?officeState?.departments.find(item=>item.id===goal.scope.id):null;
+  const officeId=goal.scope.kind==='office'?goal.scope.id:department?.officeId;
+  const contracts=(portfolioState()?.contracts||[]).filter(contract=>contract.status==='active'&&contract.recipientCompanyId===goal.companyId&&(!contract.recipientOfficeId||contract.recipientOfficeId===officeId)&&(!contract.recipientDepartmentId||contract.recipientDepartmentId===department?.id));
+  const shared=new Set(contracts.flatMap(contract=>contract.employeeIds));
+  return (officeState?.employees||[]).filter(employee=>employee.status==='active'&&(!employee.companyId||shared.has(employee.id)||employee.companyId===goal.companyId&&(!officeId||!employee.officeId||employee.officeId===officeId)&&(!department||!employee.departmentId||employee.departmentId===department.id)));
+}
+const goalPlanEditors=new Map<string,{element:HTMLDetailsElement;signature:string}>();
+function goalPlanEditor(goal:OfficeGoal):HTMLDetailsElement {
+  const existing=goalPlanEditors.get(goal.id);if(existing){if(existing.signature===JSON.stringify(goal.steps))return existing.element;if(existing.element.dataset.dirty==='true'){const status=existing.element.querySelector<HTMLElement>('[role="status"]');if(status)setStatus(status,'The saved plan changed. Your draft is kept; reload explicitly to reconcile.','error');return existing.element;}goalPlanEditors.delete(goal.id);}
+  if(goalPlanEditors.size>=40){const clean=[...goalPlanEditors].find(([,entry])=>entry.element.dataset.dirty!=='true');if(clean)goalPlanEditors.delete(clean[0]);else{const note=textElement('details','','goal-steps');note.append(textElement('summary','Plan editor limit'),textElement('p','Save or discard an existing plan draft before opening another editor. Up to 40 unfinished plans are retained.','form-help'));return note;}}
+  const details=textElement('details','','goal-steps');details.append(textElement('summary','Edit owners, independent review & estimates'));
+  const form=textElement('form','','goal-step-editor'),status=textElement('p','','status');status.setAttribute('role','status');const signature=JSON.stringify(goal.steps),getters:Array<()=>OfficeGoalStep>=[];
+  const candidates=eligiblePlanEmployees(goal);const contracts=(portfolioState()?.contracts||[]).filter(item=>item.status==='active'&&item.recipientCompanyId===goal.companyId);
+  function selectField(fieldset:HTMLElement,labelText:string,rows:Array<{id:string;name:string}>,selected:string,empty:string):HTMLSelectElement{const label=textElement('label',labelText,'field'),select=document.createElement('select');populateSelect(select,rows,selected,empty);if(selected&&!rows.some(item=>item.id===selected)){const option=document.createElement('option');option.value=selected;option.textContent=`Unavailable saved assignment · ${selected}`;select.append(option);select.value=selected;}label.append(select);fieldset.append(label);return select;}
+  function estimateFields(fieldset:HTMLElement,title:string,estimate?:BoardEstimate|null):()=>BoardEstimate|null{const group=textElement('fieldset','','board-estimate');group.append(textElement('legend',`${title} · minutes`));const row=textElement('div','','estimate-fields'),inputs:HTMLInputElement[]=[];for(const key of ['optimistic','likely','pessimistic'] as const){const label=textElement('label',key,'field'),input=document.createElement('input');input.type='number';input.min='.01';input.max='1440';input.step='.01';input.placeholder='Unknown';input.value=estimate?String(estimate[`${key}Minutes`]):'';label.append(input);row.append(label);inputs.push(input);}group.append(row);fieldset.append(group);return()=>parseBoardEstimate(inputs.map(input=>input.value));}
+  for(const [index,step] of goal.steps.entries()){const fieldset=textElement('fieldset','','goal-step-fields');fieldset.dataset.stepId=step.id;fieldset.append(textElement('legend',`${index+1}. ${step.title}`));const employeeRows=candidates.map(employee=>({id:employee.id,name:`${employee.name} · ${employee.role}`}));const primary=selectField(fieldset,'Primary owner',employeeRows,step.employeeId,'Choose primary owner');const reviewer=selectField(fieldset,'Independent helper/reviewer',employeeRows,step.reviewerEmployeeId||'','Choose a different employee');const contractRows=contracts.map(contract=>({id:contract.id,name:contract.id}));const primaryContract=selectField(fieldset,'Primary service contract',contractRows,step.serviceContractId||'','Direct assignment'),reviewContract=selectField(fieldset,'Reviewer service contract',contractRows,step.reviewerServiceContractId||'','Direct assignment');const estimate=estimateFields(fieldset,'Primary work',step.estimate),reviewEstimate=estimateFields(fieldset,'Independent review',step.reviewEstimate);fieldset.append(textElement('p',`Dependencies: ${step.dependsOn.join(', ')||'none'}. Saving this plan does not queue work.`,'form-help'));form.append(fieldset);getters.push(()=>{if(!primary.value||!reviewer.value||primary.value===reviewer.value)throw new Error(`Step ${index+1} needs a primary owner and a different independent helper/reviewer.`);return{...step,employeeId:primary.value,reviewerEmployeeId:reviewer.value,serviceContractId:primaryContract.value||null,reviewerServiceContractId:reviewContract.value||null,estimate:estimate(),reviewEstimate:reviewEstimate()};});}
+  const save=textElement('button','Save paired plan','secondary small');save.type='submit';save.disabled=workspaceReadOnly();const reload=textElement('button','Discard draft & reload plan','text-button');reload.type='button';reload.onclick=()=>{goalPlanEditors.delete(goal.id);renderWorkspaceGoals();};form.append(textElement('p','Duration estimates remain unknown until supplied. Reviewer assignment does not create a permission grant or start a worker.','form-help'),save,reload,status);
+  form.addEventListener('input',()=>{details.dataset.dirty='true';});form.addEventListener('change',()=>{details.dataset.dirty='true';});
+  form.onsubmit=(event)=>{event.preventDefault();workspaceTask(async()=>{try{const current=officeState?.goals?.find(item=>item.id===goal.id);if(!current||JSON.stringify(current.steps)!==signature)throw new Error('The saved plan changed. Your draft is kept; reload explicitly before saving.');if(current.jobIds.length)throw new Error('Work already exists for this plan. Inspect the recorded jobs before changing their assignments.');const steps=getters.map(get=>get());for(const field of Array.from(form.querySelectorAll<HTMLInputElement|HTMLSelectElement|HTMLButtonElement>('input,select,button')))field.disabled=true;await workspaceCommand({action:'set_goal_plan',goalId:goal.id,steps},'Paired plan saved; no work queued.');goalPlanEditors.delete(goal.id);renderWorkspaceGoals();}catch(error){setStatus(status,`${error instanceof Error?error.message:String(error)} Your plan draft is kept.`,'error');}finally{for(const field of Array.from(form.querySelectorAll<HTMLInputElement|HTMLSelectElement|HTMLButtonElement>('input,select,button')))field.disabled=workspaceReadOnly();}});};details.append(form);goalPlanEditors.set(goal.id,{element:details,signature});return details;
+}
 function renderWorkspaceGoals(): void {
-  const container = $('workspace-goals'); if(container.contains(document.activeElement)&&document.activeElement?.matches('input,textarea'))return;container.replaceChildren(); const goals = scopedGoals().slice(-40).reverse();
+  const container = $('workspace-goals'); if(container.contains(document.activeElement)&&document.activeElement?.matches('input,textarea')){for(const button of Array.from(container.querySelectorAll<HTMLButtonElement>('.goal-advance button[type="submit"]')))button.textContent=officeState?.policy?.approvalMode==='review'?'Approve & queue next iteration':'Queue next iteration';return;}container.replaceChildren(); const scoped=scopedGoals();const goals=scoped.slice(-40).reverse();const requested=scoped.find(goal=>goal.id===selectedGoalId);if(requested&&!goals.some(goal=>goal.id===requested.id)){goals.unshift(requested);goals.splice(40);}
   $('workspace-goal-count').textContent = number(goals.length);
   if (!goals.some((goal) => goal.id === selectedGoalId)) selectedGoalId = goals[0]?.id || '';
   for (const goal of goals) {
     const card = textElement('article','',`goal-card${goal.id === selectedGoalId ? ' selected' : ''}`); card.dataset.goalId = goal.id;
-    const goalJobs=(officeState?.jobs||[]).filter(job=>goal.jobIds.includes(job.id));
-    const goalStatus=goal.status==='running'?(goalJobs.some(job=>job.status==='running')?'Executing':goalJobs.some(job=>job.status==='waiting-budget')?'Waiting for budget':'Work queued'):goal.status.replaceAll('-',' ');
-    const head = textElement('div','','row wrap'); head.append(textElement('span',goalStatus,`badge ${goal.status === 'completed' ? 'ok' : goal.status === 'needs-review' ? 'unknown' : ''}`),textElement('span',goal.mode === 'plan' ? 'Local plan' : 'Bounded goal','form-help'));
+    const goalJobs=(officeState?.jobs||[]).filter(job=>goal.jobIds.includes(job.id)&&(job.goalIteration===undefined||job.goalIteration===null||job.goalIteration===goal.iteration));
+    const failures=goalJobs.filter(job=>job.reviewFailure);
+    const goalStatus=failures.length?'Review needs repair':goal.status==='completed'?(goal.steps.length&&goal.steps.every(step=>stepReview(goal,step).accepted)?'Independent review accepted':'Execution recorded · review unverified'):goal.status==='running'?(goalJobs.some(job=>job.status==='running')?'Executing':goalJobs.some(job=>job.status==='waiting-budget')?'Waiting for budget':'Work queued'):goal.status.replaceAll('-',' ');
+    const head = textElement('div','','row wrap'); head.append(textElement('span',goalStatus,`badge ${!failures.length&&goal.status === 'completed' ? 'ok' : failures.length||goal.status === 'needs-review' ? 'unknown' : ''}`),textElement('span',goal.mode === 'plan' ? 'Local plan' : 'Bounded goal','form-help'));
     card.append(head,textElement('h3',goal.title),textElement('p',`${goal.steps.length} planned steps · ${goal.jobIds.length} jobs · iteration ${goal.iteration} of ${goal.maxIterations}`));
     if(goal.stopReason)card.append(textElement('p',`Stopped: ${goal.stopReason.replaceAll('-',' ')}`,'goal-stop-reason'));
+    appendReviewFailures(card,failures);
     if (goal.steps.length) {
       const details = textElement('details','','goal-steps'); const summary = textElement('summary','Plan & ownership'); details.append(summary);
-      for (const [index,step] of goal.steps.entries()) { const name = officeState?.employees.find((e) => e.id === step.employeeId)?.name || step.employeeId; const row = textElement('div','','goal-step'); row.append(textElement('strong',`${index+1}. ${step.title}`),textElement('span',name)); details.append(row); }
-      card.append(details);
+      for (const [index,step] of goal.steps.entries()) { const name=officeState?.employees.find(employee=>employee.id===step.employeeId)?.name||step.employeeId;const reviewer=officeState?.employees.find(employee=>employee.id===step.reviewerEmployeeId);const row=textElement('div','','goal-step board-pair');row.append(textElement('strong',`${index+1}. ${step.title}`),textElement('span',`Primary: ${name}`),textElement('span',`Independent helper/reviewer: ${reviewer?.name||'Unassigned'}`),textElement('span',stepReview(goal,step).label));const repair=stepReview(goal,step).summary;if(repair)row.append(textElement('span',repair));details.append(row); }
+      details.append(textElement('p',forecastText(goal.steps.map(step=>({...step,accepted:stepReview(goal,step).accepted,blocked:goal.status==='paused'}))),'board-forecast'));
+      card.append(details);if(!goal.jobIds.length)card.append(goalPlanEditor(goal));
     }
     const actions = textElement('div','','row wrap');
     if (goal.status === 'draft') actions.append(workspaceButton('Build local plan',async () => { await workspaceCommand({action:'plan_goal',goalId:goal.id},'Local goal plan saved.'); }));
     if (goal.mode === 'execute' && ['planned','needs-review'].includes(goal.status) && !goal.jobIds.length) actions.append(workspaceButton(officeState?.policy?.approvalMode === 'review' ? 'Approve & queue' : 'Queue goal',async () => { await workspaceCommand({action:'execute_goal',goalId:goal.id,reviewed:true},'Goal execution requested within its budget.'); }));
     if (['running','planned','needs-review'].includes(goal.status)) actions.append(workspaceButton('Pause',async () => { await workspaceCommand({action:'pause_goal',goalId:goal.id},'Goal paused.'); },'text-button'));
     if (goal.status === 'paused') actions.append(workspaceButton('Resume',async () => { await workspaceCommand({action:'resume_goal',goalId:goal.id},'Goal resumed.'); },'text-button'));
-    actions.append(workspaceButton('Map ownership',async () => { selectedGoalId = goal.id; await ensureWorkspaceBlueprint(); switchWorkspaceTab('whiteboard'); resetBoardForm(); ($('node-title') as HTMLInputElement).value = goal.title; ($('node-goal') as HTMLSelectElement).value = goal.id; $('node-title').focus(); },'text-button'));
+    actions.append(workspaceButton('Map ownership',async () => { selectedGoalId = goal.id; await ensureWorkspaceBlueprint(); switchWorkspaceTab('whiteboard'); if(!resetBoardForm())return;markCanvasDraft('workspace-node-form'); ($('node-title') as HTMLInputElement).value = goal.title; ($('node-goal') as HTMLSelectElement).value = goal.id; $('node-title').focus(); },'text-button'));
     card.append(actions);
     if(goal.mode==='execute'&&goal.iteration>0&&goal.iteration<goal.maxIterations&&['completed','needs-review'].includes(goal.status)){
       const details=textElement('details','','goal-steps');details.append(textElement('summary','Request another bounded iteration'));
-      const form=textElement('form','','stack goal-advance');const label=textElement('label','Reason for this iteration','field');const reason=document.createElement('textarea');reason.rows=2;reason.required=true;reason.maxLength=2000;reason.setAttribute('aria-label',`Reason to advance ${goal.title}`);label.append(reason);const submit=textElement('button','Queue next iteration','secondary small');submit.type='submit';submit.disabled=workspaceReadOnly();form.append(label,textElement('p','Uses the same owners, per-job caps, and global budget.','form-help'),submit);
-      form.onsubmit=(event)=>{event.preventDefault();const text=reason.value.trim();if(!text)return;submit.disabled=true;workspaceTask(async()=>{try{await workspaceCommand({action:'advance_goal',goalId:goal.id,reason:text},'Next bounded iteration requested.');}finally{submit.disabled=workspaceReadOnly();}});};details.append(form);card.append(details);
+      const form=textElement('form','','stack goal-advance');const label=textElement('label','Reason for this iteration','field');const reason=document.createElement('textarea');reason.rows=2;reason.required=true;reason.maxLength=2000;reason.setAttribute('aria-label',`Reason to advance ${goal.title}`);label.append(reason);const submit=textElement('button',officeState?.policy?.approvalMode==='review'?'Approve & queue next iteration':'Queue next iteration','secondary small');submit.type='submit';submit.disabled=workspaceReadOnly();form.append(label,textElement('p','Uses the same owners, per-job caps, and global budget.','form-help'),submit);
+      form.onsubmit=(event)=>{event.preventDefault();const text=reason.value.trim();if(!text)return;submit.disabled=true;workspaceTask(async()=>{try{await workspaceCommand({action:'advance_goal',goalId:goal.id,reason:text,...(officeState?.policy?.approvalMode==='review'?{reviewed:true}:{})},'Next bounded iteration requested.');}finally{submit.disabled=workspaceReadOnly();}});};details.append(form);card.append(details);
     }
     container.append(card);
   }
@@ -2370,7 +2426,8 @@ function renderSpatialSelectors(): void {
     ['room-department',departments,'Shared office space'],['room-employee',contractedRoomEmployees(value('room-id'),employees),'Choose an employee'],
     ['node-owner',contractedRoomEmployees(value('node-room'),employees,true),'Choose an owner'],['node-room',blueprint?.rooms || [],'Choose a room'],
     ['node-goal',goals.map((goal) => ({id:goal.id,name:goal.title})),'No goal linked'],['node-roadmap',(portfolioState()?.roadmap||[]).filter(item=>company&&roadmapInCompany(item,company.id)).map(item=>({id:item.id,name:item.title})),'No portfolio outcome linked'],['node-job',jobRows,'No job linked'],
-  ] as const) { const selected = value(id); populateSelect($(id) as HTMLSelectElement,rows,selected,empty); }
+  ] as const) { const selected = value(id); const select=$(id) as HTMLSelectElement;populateSelect(select,rows,selected,empty);if(id.startsWith('node-')&&selected&&!Array.from(select.options).some(option=>option.value===selected)){const option=document.createElement('option');option.value=selected;option.textContent=`Unavailable saved reference · ${selected}`;select.append(option);select.value=selected;} }
+  renderBoardLinks();
 }
 function resetRoomForm(): void {
   selectedRoomId = ''; roomDraftDirty = false; ($('workspace-room-form') as HTMLFormElement).reset();
@@ -2389,31 +2446,44 @@ function selectRoom(room: OfficeRoom,focus = false): void {
   renderSpatialSelectors();
   if (focus) $('room-name').focus();
 }
-function spatialPosition(element: HTMLElement,x:number,y:number,width?:number): void { element.style.left = `${Math.max(0,x)*100}%`; element.style.top = `${Math.max(0,y)*620}px`; if (width !== undefined) element.style.width = `${width*100}%`; }
-function wireSpatialMove(handle: HTMLButtonElement,element:HTMLElement,x:number,y:number,maxX:number,maxY:number,save:(x:number,y:number)=>Promise<void>,map = {originX:0,originY:0,scaleX:1,scaleY:1}): void {
+function spatialPosition(element: HTMLElement,x:number,y:number,width?:number): void { element.style.left = `${Math.max(0,x)*100}%`; element.style.top = `${Math.max(0,y)*BOARD_HEIGHT}px`; if (width !== undefined) element.style.width = `${width*100}%`; }
+function wireSpatialMove(handle: HTMLButtonElement,element:HTMLElement,x:number,y:number,maxX:number,maxY:number,save:(x:number,y:number)=>Promise<void>,map:BoardMap = {originX:0,originY:0,scaleX:1,scaleY:1}): void {
   if(workspaceReadOnly())return;
-  handle.setAttribute('aria-keyshortcuts','ArrowUp ArrowDown ArrowLeft ArrowRight');
+  handle.setAttribute('aria-keyshortcuts','ArrowUp ArrowDown ArrowLeft ArrowRight Escape');
+  const paint=(point:{x:number;y:number})=>{const p=boardPoint(point,map);spatialPosition(element,p.x,p.y);};
+  const commit=async(point:{x:number;y:number})=>{if(spatialSaving)return;spatialSaving=true;try{await save(point.x,point.y);}catch(error){paint({x,y});throw error;}finally{spatialSaving=false;}};
   handle.addEventListener('keydown',(event) => {
-    const delta = event.shiftKey ? .10 : .02; let dx=0; let dy=0;
-    if (event.key === 'ArrowLeft') dx=-delta; else if (event.key === 'ArrowRight') dx=delta; else if (event.key === 'ArrowUp') dy=-delta; else if (event.key === 'ArrowDown') dy=delta; else return;
-    event.preventDefault(); if (spatialSaving) return; spatialSaving=true;
-    workspaceTask(async () => { try { await save(Math.max(0,Math.min(maxX,x+dx)),Math.max(0,Math.min(maxY,y+dy))); } finally { spatialSaving=false; } });
+    const delta=event.shiftKey?.10:.02;let dx=0,dy=0;
+    if(event.key==='ArrowLeft')dx=-delta;else if(event.key==='ArrowRight')dx=delta;else if(event.key==='ArrowUp')dy=-delta;else if(event.key==='ArrowDown')dy=delta;else return;
+    event.preventDefault();event.stopPropagation();if(spatialSaving)return;
+    workspaceTask(()=>commit({x:Math.max(0,Math.min(maxX,x+dx)),y:Math.max(0,Math.min(maxY,y+dy))}),element.classList.contains('ownership-card')?'node-save-status':'room-status');
   });
   handle.addEventListener('pointerdown',(event) => {
-    if (event.button !== 0 || element.parentElement?.classList.contains('list-mode')) return;
-    const startX=event.clientX; const startY=event.clientY; const parent=element.parentElement; if(!parent) return;
-    const width=parent.clientWidth || 1000; let nextX=x; let nextY=y; let moved=false;
-    handle.setPointerCapture?.(event.pointerId);
-    const move=(e:PointerEvent) => { if(Math.abs(e.clientX-startX)+Math.abs(e.clientY-startY)<5&&!moved)return; moved=true; nextX=Math.max(0,Math.min(maxX,x+(e.clientX-startX)/width/map.scaleX)); nextY=Math.max(0,Math.min(maxY,y+(e.clientY-startY)/620/map.scaleY)); spatialPosition(element,map.originX+nextX*map.scaleX,map.originY+nextY*map.scaleY); };
-    const end=() => { handle.removeEventListener('pointermove',move); handle.removeEventListener('pointerup',end); handle.removeEventListener('pointercancel',cancel); if(moved)workspaceTask(()=>save(nextX,nextY)); };
-    const cancel=() => { handle.removeEventListener('pointermove',move); handle.removeEventListener('pointerup',end); handle.removeEventListener('pointercancel',cancel); spatialPosition(element,map.originX+x*map.scaleX,map.originY+y*map.scaleY); };
-    handle.addEventListener('pointermove',move); handle.addEventListener('pointerup',end,{once:true}); handle.addEventListener('pointercancel',cancel,{once:true});
+    const parent=element.parentElement;if(event.button!==0||spatialSaving||!parent||parent.classList.contains('list-mode'))return;
+    cancelSpatialGestures();ffStudio?.stopMotion();
+    const pointerId=event.pointerId,start={x:event.clientX,y:event.clientY},camera=ffStudio?.getCamera(),viewport=ffStudio?.getViewport(),bounds=ffStudio?.elements.canvasHost.getBoundingClientRect();
+    const size={width:parent.clientWidth||1000,height:BOARD_HEIGHT};let next={x,y},moved=false,finished=false;
+    const scrollParents:HTMLElement[]=[];for(let ancestor:HTMLElement|null=parent;ancestor&&ancestor!==ffStudio?.elements.world;ancestor=ancestor.parentElement)scrollParents.push(ancestor);
+    const scroll=()=>scrollParents.reduce((sum,item)=>({x:sum.x+item.scrollLeft,y:sum.y+item.scrollTop}),{x:0,y:0});const scrollStart=scroll();
+    const panel=element.closest<HTMLElement>('.canvas-panel');
+    const cleanup=()=>{if(finished)return;finished=true;spatialGestureCancels.delete(cancel);window.removeEventListener('pointermove',move);window.removeEventListener('pointerup',end);window.removeEventListener('pointercancel',cancel);window.removeEventListener('blur',cancel);window.removeEventListener('keydown',escape);handle.removeEventListener('lostpointercapture',cancel);observer?.disconnect();element.classList.remove('is-moving');try{handle.releasePointerCapture?.(pointerId);}catch{/* capture already released */}};
+    const cancel=()=>{cleanup();paint({x,y});};
+    const move=(e:PointerEvent)=>{if(e.pointerId!==pointerId)return;if(!element.isConnected||panel?.hidden){cancel();return;}if(Math.abs(e.clientX-start.x)+Math.abs(e.clientY-start.y)<5&&!moved)return;moved=true;element.classList.add('is-moving');const delta=camera&&viewport&&bounds?projectedDelta(camera,viewport,{x:start.x-bounds.left,y:start.y-bounds.top},{x:e.clientX-bounds.left,y:e.clientY-bounds.top}):{x:e.clientX-start.x,y:e.clientY-start.y};const currentScroll=scroll();next=moveOnBoard({x,y},{x:delta.x+currentScroll.x-scrollStart.x,y:delta.y+currentScroll.y-scrollStart.y},size,map,{x:maxX,y:maxY});paint(next);};
+    const end=(e:PointerEvent)=>{if(e.pointerId!==pointerId)return;cleanup();if(moved){handle.addEventListener('click',suppressClick,{capture:true,once:true});workspaceTask(()=>commit(next),element.classList.contains('ownership-card')?'node-save-status':'room-status');}};
+    const suppressClick=(e:Event)=>{e.preventDefault();e.stopImmediatePropagation();};
+    const escape=(e:KeyboardEvent)=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();cancel();handle.focus({preventScroll:true});}};
+    const observer=typeof MutationObserver!=='undefined'&&panel?new MutationObserver(()=>{if(panel.hidden||!element.isConnected||element.closest('[hidden]'))cancel();}):null;
+    observer?.observe(panel!,{attributes:true,subtree:true,attributeFilter:['hidden']});
+    spatialGestureCancels.add(cancel);window.addEventListener('pointermove',move);window.addEventListener('pointerup',end);window.addEventListener('pointercancel',cancel);window.addEventListener('blur',cancel);window.addEventListener('keydown',escape);handle.addEventListener('lostpointercapture',cancel);
+    try{handle.setPointerCapture?.(pointerId);}catch{/* keyboard movement remains available */}
   });
 }
 function renderBlueprint(): void {
+  cancelSpatialGestures();
   const container=$('office-blueprint'); container.replaceChildren(); const blueprint=currentBlueprint();
   container.classList.toggle('list-mode',($('blueprint-list-mode') as HTMLInputElement).checked); appendCanvasGrid(container);
   if (!blueprint?.rooms.length) { canvasEmpty(container,'Room to begin.',workspaceAvailable() ? 'Add a room for a department, then place the people responsible for its work.' : 'Open the desktop workspace to load saved office rooms and employees.'); return; }
+  const gestureOfficeId=blueprint.officeId;
   for (const room of blueprint.rooms.slice(0,80)) {
     const card=textElement('article','',`blueprint-room${selectedRoomId===room.id?' selected':''}`); card.dataset.roomId=room.id; spatialPosition(card,room.x,room.y,room.width);card.style.minHeight=`${room.height*620}px`;
     const title=textElement('button',room.name,'blueprint-room-title'); title.type='button'; title.onclick=()=>selectRoom(room);
@@ -2431,36 +2501,57 @@ function renderBlueprint(): void {
     const art=svgElement('svg',{viewBox:'0 0 115 54',class:'room-floorplan','aria-hidden':'true'}); art.append(svgElement('rect',{x:10,y:10,width:46,height:26,rx:3}),svgElement('path',{d:'M20 8V4h25v4M20 40v9h25v-9M74 10h30v34H74Z M74 20h30M74 34h30'}));
     const boards=blueprint.whiteboards.filter((board)=>board.roomId===room.id).length;
     card.append(occupants,textElement('span',`${boards} ownership ${boards===1?'card':'cards'}`,'room-work-count'),art);
-    wireSpatialMove(title,card,room.x,room.y,1-room.width,1-room.height,async(x,y)=>{await workspaceCommand({action:'upsert_room',officeId:selectedOfficeId,id:room.id,name:room.name,departmentId:room.departmentId,x,y,width:room.width,height:room.height},'Room position saved.'); Array.from(document.querySelectorAll<HTMLElement>('[data-room-id]')).find(item=>item.dataset.roomId===room.id)?.querySelector<HTMLButtonElement>('.blueprint-room-title')?.focus();});
+    wireSpatialMove(title,card,room.x,room.y,1-room.width,1-room.height,async(x,y)=>{await workspaceCommand({action:'upsert_room',officeId:gestureOfficeId,id:room.id,name:room.name,departmentId:room.departmentId,x,y,width:room.width,height:room.height},'Room position saved.'); Array.from(document.querySelectorAll<HTMLElement>('[data-room-id]')).find(item=>item.dataset.roomId===room.id)?.querySelector<HTMLButtonElement>('.blueprint-room-title')?.focus();});
     container.append(card);
   }
   if(selectedRoomId){const room=blueprint.rooms.find((item)=>item.id===selectedRoomId);if(room&&!roomDraftDirty&&!$('workspace-room-form').contains(document.activeElement))selectRoom(room);}
 }
-function resetBoardForm(): void {
-  selectedBoardId='';($('workspace-node-form') as HTMLFormElement).reset();($('node-id') as HTMLInputElement).value='';$('node-inspector-title').textContent='Work with a clear owner.';$('node-save').textContent='Add card';renderSpatialSelectors();
-  const blueprint=currentBlueprint();if(blueprint?.rooms[0])($('node-room') as HTMLSelectElement).value=selectedRoomId||blueprint.rooms[0].id;
-  if(value('chat-employee'))($('node-owner') as HTMLSelectElement).value=value('chat-employee');
+function boardLinkLabel(kind:BoardLinkKind,id:string):string {
+  return (kind==='goal'?officeState?.goals?.find(item=>item.id===id)?.title:kind==='job'?officeState?.jobs.find(item=>item.id===id)?.goal:portfolioState()?.roadmap.find(item=>item.id===id)?.title)||`Saved reference · ${id}`;
 }
-function selectBoard(board:OfficeWhiteboard):void {
-  selectedBoardId=board.id;($('node-id') as HTMLInputElement).value=board.id;($('node-title') as HTMLInputElement).value=board.title;($('node-owner') as HTMLSelectElement).value=board.ownerEmployeeId;($('node-room') as HTMLSelectElement).value=board.roomId;($('node-goal') as HTMLSelectElement).value=board.goalIds[0]||'';($('node-job') as HTMLSelectElement).value=board.jobIds[0]||'';($('node-roadmap') as HTMLSelectElement).value=board.roadmapItemIds?.[0]||'';($('node-x') as HTMLInputElement).value=String(Math.round(board.x*100));($('node-y') as HTMLInputElement).value=String(Math.round(board.y*100));$('node-inspector-title').textContent=board.title;$('node-save').textContent='Save ownership';
-  document.querySelectorAll<HTMLElement>('.ownership-card').forEach((card)=>card.classList.toggle('selected',card.dataset.boardId===board.id));
+function renderBoardLinks():void {
+  for(const kind of ['goal','job','roadmap'] as const){const list=$(`node-${kind}-links`);list.replaceChildren();for(const id of boardDraftLinks[kind]){const row=textElement('span','','board-link');row.append(textElement('span',boardLinkLabel(kind,id)));const remove=textElement('button','×','text-button');remove.type='button';remove.setAttribute('aria-label',`Remove linked ${kind}: ${boardLinkLabel(kind,id)}`);remove.onclick=()=>{boardDraftLinks[kind]=boardDraftLinks[kind].filter(value=>value!==id);if(value(`node-${kind}`)===id)($(`node-${kind}`) as HTMLSelectElement).value='';markCanvasDraft('workspace-node-form');renderBoardLinks();};row.append(remove);list.append(row);}}
+}
+function addBoardLink(kind:BoardLinkKind):void {
+  const id=value(`node-${kind}`);if(!id)return;if(!boardDraftLinks[kind].includes(id)){if(boardDraftLinks[kind].length>=100){setStatus($('node-save-status'),'Keep at most 100 links of each kind.','error');return;}boardDraftLinks[kind].push(id);markCanvasDraft('workspace-node-form');}($(`node-${kind}`) as HTMLSelectElement).value='';renderBoardLinks();
+}
+function resetBoardForm(force=false): boolean {
+  if(!force&&canvasFormDrafts.has('workspace-node-form')){setStatus($('node-save-status'),'Your card draft is still open. Save it or explicitly discard it before opening another card.','error');return false;}
+  selectedBoardId='';whiteboardEditBase=null;whiteboardEditOffice=selectedOfficeId;boardDraftLinks={goal:[],job:[],roadmap:[]};($('workspace-node-form') as HTMLFormElement).reset();($('node-id') as HTMLInputElement).value='';$('node-inspector-title').textContent='Work with a clear steward.';$('node-save').textContent='Add card';renderSpatialSelectors();
+  const blueprint=currentBlueprint();if(blueprint?.rooms[0])($('node-room') as HTMLSelectElement).value=selectedRoomId||blueprint.rooms[0].id;
+  if(value('chat-employee'))($('node-owner') as HTMLSelectElement).value=value('chat-employee');setStatus($('node-save-status'),'');return true;
+}
+function selectBoard(board:OfficeWhiteboard,force=false):void {
+  if(!force&&canvasFormDrafts.has('workspace-node-form')){setStatus($('node-save-status'),'Your card draft is kept. Save or discard it before loading a saved card.','error');return;}
+  canvasFormDrafts.delete('workspace-node-form');whiteboardEditBase=JSON.parse(JSON.stringify(board));whiteboardEditOffice=selectedOfficeId;boardDraftLinks={goal:[...board.goalIds],job:[...board.jobIds],roadmap:[...(board.roadmapItemIds||[])]};
+  selectedBoardId=board.id;($('node-id') as HTMLInputElement).value=board.id;($('node-title') as HTMLInputElement).value=board.title;($('node-owner') as HTMLSelectElement).value=board.ownerEmployeeId;($('node-room') as HTMLSelectElement).value=board.roomId;for(const kind of ['goal','job','roadmap'])($(`node-${kind}`) as HTMLSelectElement).value='';($('node-x') as HTMLInputElement).value=String(Math.round(board.x*100));($('node-y') as HTMLInputElement).value=String(Math.round(board.y*100));$('node-inspector-title').textContent=board.title;$('node-save').textContent='Save card';renderSpatialSelectors();setStatus($('node-save-status'),`Editing saved revision ${board.revision||0}. Steward changes do not reassign linked jobs.`);
+  document.querySelectorAll<HTMLElement>('.ownership-card').forEach(card=>card.classList.toggle('selected',card.dataset.boardId===board.id));
+}
+function boardPageControls(prefix:string,page:number,total:number):void {
+  const count=Math.max(1,Math.ceil(total/BOARD_PAGE_SIZE));($(`${prefix}-prev`) as HTMLButtonElement).disabled=page===0;($(`${prefix}-next`) as HTMLButtonElement).disabled=page>=count-1;$(`${prefix}-page`).textContent=`${total? page*BOARD_PAGE_SIZE+1:0}–${Math.min(total,(page+1)*BOARD_PAGE_SIZE)} of ${total}`;
+}
+function discussBoard(title:string,context:string,companyId=officeCompany()?.id):void {
+  if(!companyId)return;const input=$('chat-message') as HTMLTextAreaElement;if(input.value.trim()){setStatus($('workspace-action-status'),'Your Donna draft is kept. Send or clear it before preparing another discussion.','error');switchWorkspaceTab('chat');return;}
+  ($('chat-scope') as HTMLSelectElement).value='company';input.value=`Help me plan ${title}. ${context} Keep primary ownership and an independent helper/reviewer explicit. Propose changes before dispatching work.`;switchWorkspaceTab('chat');input.focus({preventScroll:true});setStatus($('chat-status'),'Discussion draft prepared. Nothing has been sent or queued.');
 }
 function renderWhiteboard():void {
-  const container=$('workspace-whiteboard');container.replaceChildren();const blueprint=currentBlueprint();container.classList.toggle('list-mode',($('whiteboard-list-mode') as HTMLInputElement).checked);appendCanvasGrid(container);
-  if(!blueprint?.whiteboards.length){canvasEmpty(container,'An owner for every outcome.',workspaceAvailable()?'Add an ownership card and link it to a goal, a room, and the employee responsible.':'Saved ownership appears when the desktop workspace is connected.');return;}
-  const width=container.clientWidth||1000;const lines=svgElement('svg',{viewBox:`0 0 ${width} 620`,preserveAspectRatio:'none',class:'ownership-lines','aria-hidden':'true'});container.append(lines);
-  for(const board of blueprint.whiteboards.slice(0,100)){
-    const room=blueprint.rooms.find((item)=>item.id===board.roomId);if(!room)continue;
-    const employee=officeState?.employees.find((item)=>item.id===board.ownerEmployeeId);const goal=officeState?.goals?.find((item)=>board.goalIds.includes(item.id));const linkedJob=officeState?.jobs.find((item)=>board.jobIds.includes(item.id));const roadmap=portfolioState()?.roadmap.find(item=>board.roadmapItemIds?.includes(item.id));
-    const x=Math.max(0,Math.min(.70,room.x+board.x*room.width*.55));const y=Math.max(0,Math.min(.72,room.y+board.y*room.height*.55));
-    const card=textElement('article','',`ownership-card${selectedBoardId===board.id?' selected':''}`);card.dataset.boardId=board.id;spatialPosition(card,x,y);card.append(textElement('span',linkedJob?'JOB OWNERSHIP':goal?'GOAL OWNERSHIP':roadmap?'ROADMAP OWNERSHIP':'WORK OWNERSHIP','card-type'));
-    const title=textElement('button',board.title,'card-title');title.type='button';title.onclick=()=>selectBoard(board);title.setAttribute('aria-label',`${board.title}. Owned by ${employee?.name||'unknown employee'} in ${room.name}. Arrow keys move the card.`);card.append(title);
-    const status=linkedJob?.status||goal?.status||roadmap?.status||'Assigned';card.append(textElement('span',status.replaceAll('-',' '),`badge ${status==='completed'?'ok':status==='needs-review'||status==='waiting-budget'?'unknown':''}`));
+  cancelSpatialGestures();const container=$('workspace-whiteboard');container.replaceChildren();const blueprint=currentBlueprint();container.classList.toggle('list-mode',($('whiteboard-list-mode') as HTMLInputElement).checked);appendCanvasGrid(container);
+  const query=value('whiteboard-search').toLowerCase();const rows=(blueprint?.whiteboards||[]).filter(board=>`${board.id} ${board.title} ${officeState?.employees.find(employee=>employee.id===board.ownerEmployeeId)?.name||''}`.toLowerCase().includes(query));whiteboardPage=Math.min(whiteboardPage,Math.max(0,Math.ceil(rows.length/BOARD_PAGE_SIZE)-1));boardPageControls('whiteboard',whiteboardPage,rows.length);
+  const latest=whiteboardEditBase&&blueprint?.whiteboards.find(board=>board.id===whiteboardEditBase?.id);const stale=Boolean(latest&&(latest.revision||0)!==(whiteboardEditBase?.revision||0));$('workspace-node-form').classList.toggle('board-stale',stale);if(stale)setStatus($('node-save-status'),'The saved card changed after this editor opened. Your draft and original revision are kept; discard and load the saved card to reconcile.','error');
+  if(!rows.length){canvasEmpty(container,query?'No matching cards.':'An owner for every outcome.',query?'Change the search to reach other saved cards.':workspaceAvailable()?'Add a card, choose its steward and connect the saved work.':'Saved ownership appears when the workspace is connected.');return;}
+  const width=container.clientWidth||1000;const lines=svgElement('svg',{viewBox:`0 0 ${width} ${BOARD_HEIGHT}`,preserveAspectRatio:'none',class:'ownership-lines','aria-hidden':'true'});container.append(lines);
+  const officeId=blueprint!.officeId;
+  for(const board of rows.slice(whiteboardPage*BOARD_PAGE_SIZE,(whiteboardPage+1)*BOARD_PAGE_SIZE)){
+    const room=blueprint!.rooms.find(item=>item.id===board.roomId);if(!room)continue;
+    const employee=officeState?.employees.find(item=>item.id===board.ownerEmployeeId);const goal=officeState?.goals?.find(item=>board.goalIds.includes(item.id));const linkedJob=officeState?.jobs.find(item=>board.jobIds.includes(item.id));const roadmap=portfolioState()?.roadmap.find(item=>board.roadmapItemIds?.includes(item.id));
+    const card=textElement('article','',`ownership-card${selectedBoardId===board.id?' selected':''}`);card.dataset.boardId=board.id;card.append(textElement('span','LINKED WORK','card-type'));
+    const title=textElement('button',board.title,'card-title');title.type='button';title.onclick=()=>selectBoard(board);title.setAttribute('aria-label',`${board.title}. Board steward ${employee?.name||'unknown employee'} in ${room.name}. Arrow keys move the card.`);card.append(title);
+    const status=linkedJob?.status||goal?.status||roadmap?.status||'Assigned';const statusLabel=linkedJob?`Linked job: ${linkedJob.status==='completed'&&linkedJob.pair?.phase==='primary'?'output recorded · review required':status.replaceAll('-',' ')}`:goal?`Linked goal: ${goal.status==='completed'?'execution recorded; inspect review evidence':status.replaceAll('-',' ')}`:roadmap?`Linked outcome: ${status==='done'?'recorded Done; inspect review evidence':status.replaceAll('-',' ')}`:'No execution record linked';card.append(textElement('span',statusLabel,'badge'));
     addStudioHeat(card,employee?currentStudioSignals()?.perEmployee[employee.id]:undefined);
-    const ownership=textElement('div','','card-ownership');ownership.append(textElement('strong',employee?.name||'Employee unavailable'),textElement('span',room.name));if(goal)ownership.append(textElement('span',`Goal: ${goal.title}`));if(roadmap)ownership.append(textElement('span',`Roadmap: ${roadmap.title}`));if(linkedJob?.artifactUri)ownership.append(textElement('span',`Artifact: ${linkedJob.artifactUri}`));card.append(ownership);
-    const desk=blueprint.desks.find((item)=>item.roomId===room.id&&item.employeeId===board.ownerEmployeeId);
-    if(desk){const ax=(room.x+desk.x*room.width)*width;const ay=(room.y+desk.y*room.height)*620;lines.append(svgElement('path',{d:`M${x*width+12} ${y*620+70} C${x*width-20} ${y*620+70} ${ax-20} ${ay} ${ax} ${ay}`}),svgElement('circle',{cx:ax,cy:ay,r:4}));}
-    wireSpatialMove(title,card,board.x,board.y,1,1,async(nextX,nextY)=>{await workspaceCommand({action:'upsert_whiteboard',officeId:selectedOfficeId,...board,x:nextX,y:nextY},'Ownership card position saved.');Array.from(document.querySelectorAll<HTMLElement>('[data-board-id]')).find(item=>item.dataset.boardId===board.id)?.querySelector<HTMLButtonElement>('.card-title')?.focus();},{originX:room.x,originY:room.y,scaleX:room.width*.55,scaleY:room.height*.55});container.append(card);
+    const ownership=textElement('div','','card-ownership');ownership.append(textElement('strong',`Steward: ${employee?.name||'Employee unavailable'}`),textElement('span',room.name),textElement('span',`${board.goalIds.length} goals · ${board.jobIds.length} jobs · ${board.roadmapItemIds?.length||0} outcomes`));if(linkedJob){const executor=officeState?.employees.find(item=>item.id===linkedJob.employeeId);ownership.append(textElement('span',`Executor: ${executor?.name||linkedJob.employeeId}`));}if(goal)ownership.append(textElement('span',`Goal: ${goal.title}`));if(roadmap)ownership.append(textElement('span',`Roadmap: ${roadmap.title}`));card.append(ownership);appendReviewFailures(card,linkedReviewFailures(board));container.append(card);
+    const map=cardMap(room,{width,height:BOARD_HEIGHT},{width:card.offsetWidth||223,height:card.offsetHeight||300});const point=boardPoint(board,map);spatialPosition(card,point.x,point.y);
+    const desk=blueprint!.desks.find(item=>item.roomId===room.id&&item.employeeId===board.ownerEmployeeId);if(desk){const ax=(room.x+desk.x*room.width)*width,ay=(room.y+desk.y*room.height)*BOARD_HEIGHT;lines.append(svgElement('path',{d:`M${point.x*width+12} ${point.y*BOARD_HEIGHT+70} L${ax} ${ay}`}),svgElement('circle',{cx:ax,cy:ay,r:4}));}
+    wireSpatialMove(title,card,board.x,board.y,1,1,async(nextX,nextY)=>{if(canvasFormDrafts.has('workspace-node-form')&&selectedBoardId===board.id)throw new Error('Save or discard this card draft before moving its saved position.');const {revision,...savedFields}=board;const state=await workspaceCommand({action:'upsert_whiteboard',...savedFields,officeId,expectedRevision:revision||0,x:nextX,y:nextY},'Card position saved.');if(whiteboardEditBase?.id===board.id&&whiteboardEditOffice===officeId&&!canvasFormDrafts.has('workspace-node-form')){const saved=state.blueprints?.find(item=>item.officeId===officeId)?.whiteboards.find(item=>item.id===board.id);if(saved)selectBoard(saved,true);}Array.from(document.querySelectorAll<HTMLElement>('[data-board-id]')).find(item=>item.dataset.boardId===board.id)?.querySelector<HTMLButtonElement>('.card-title')?.focus({preventScroll:true});},map);
   }
 }
 async function ensureWorkspaceBlueprint():Promise<void>{
@@ -2478,7 +2569,7 @@ function renderUnifiedWorkspace():void{
   if(ffStudio)ffRefresh();
   $('workspace-studio-signals').classList.toggle('hidden',!endlessWorkspace&&(workspaceTab==='chat'||workspaceTab==='decisions'));
   renderWorkspaceControls();renderPortfolio();renderWorkspaceLocator();renderDecisionPanels();renderCloudConnection();
-  if(spatialOfficeId!==selectedOfficeId){spatialOfficeId=selectedOfficeId;resetRoomForm();resetBoardForm();}
+  if(spatialOfficeId!==selectedOfficeId){cancelSpatialGestures();spatialOfficeId=selectedOfficeId;whiteboardPage=0;roadmapPage=0;resetRoomForm();if(!canvasFormDrafts.has('workspace-node-form'))resetBoardForm();else setStatus($('node-save-status'),'This draft belongs to a different office. It is kept until you discard it or return to that office.','error');}
   renderWorkspacePolicy();renderConversation();renderWorkspaceGoals();renderSpatialSelectors();renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();renderStudioRoadmap();syncDonnaDock();
   $('github-repository-label').textContent=officeCompany()?.repoUrl||'Choose a repository company.';
   endlessWorkspace?.refresh();
@@ -2499,6 +2590,25 @@ function chatRunSettings():OfficeGoalRunSettings{
   if(!Number.isInteger(settings.maxTokens)||settings.maxTokens<1||settings.maxTokens>200000||!Number.isFinite(settings.maxUsd)||settings.maxUsd<=0||settings.maxUsd>100||!Number.isFinite(settings.maxMinutes)||settings.maxMinutes<=0||settings.maxMinutes>120)throw new Error('Use positive token, time, and spending limits, with at most $100 per job.');
   return settings;
 }
+interface PairedWorkflowRequest extends OfficeCommand {action:'create_paired_workflow';requestId:string;scope:OfficeScope;title:string;description:string;content:string;mode:'plan'|'execute';maxIterations:number;runSettings:OfficeGoalRunSettings;execute:boolean}
+interface PendingWorkflowRequest {request:PairedWorkflowRequest;body:string;state:'sending'|'uncertain'}
+let pendingWorkflow:PendingWorkflowRequest|null=null;
+// Only native validation/authority rejections guarantee the atomic transaction made no change.
+const WORKFLOW_REJECTED_CODES=new Set(['INVALID_INPUT','INVALID_ESTIMATE','INVALID_DEPENDENCY','PAIR_REQUIRED','PAIR_BUDGET','SCOPE_MISMATCH','SERVICE_CONTRACT_REQUIRED','REVIEW_REQUIRED','CAPACITY','NOT_FOUND','DISPATCH_PERMISSION_REVOKED','PLAN_ONLY','PLAN_REQUIRED','INVALID_TRANSITION','ITERATION_LIMIT','IMMUTABLE_PLAN','GOAL_BUSY']);
+function workflowBody(request:Omit<PairedWorkflowRequest,'requestId'>|PairedWorkflowRequest):string {const {requestId:ignored,...body}=request;return JSON.stringify(body);}
+function renderPendingWorkflow():void {const box=$('chat-pending-workflow');box.hidden=!pendingWorkflow;if(!pendingWorkflow)return;$('chat-pending-id').textContent=`Request ${pendingWorkflow.request.requestId} · ${pendingWorkflow.state==='sending'?'awaiting acknowledgement':'outcome not yet confirmed'}`;($('chat-retry-workflow') as HTMLButtonElement).disabled=pendingWorkflow.state==='sending';($('chat-inspect-workflow') as HTMLButtonElement).disabled=pendingWorkflow.state==='sending';}
+function acknowledgeWorkflow(state:OfficeSnapshot,request:PairedWorkflowRequest):boolean {
+  const receipt=state.lastAction,goalId=typeof receipt?.goalId==='string'?receipt.goalId:state.goals?.find(goal=>goal.sourceRequestId===request.requestId)?.id;
+  if(!goalId)return false;selectedGoalId=goalId;pendingWorkflow=null;renderPendingWorkflow();if(value('chat-message')===request.content)($('chat-message') as HTMLTextAreaElement).value='';setStatus($('chat-status'),receipt?.started===true?'Paired goal and review jobs saved within the existing limits.':'Brief and paired plan saved. Review the assignments before requesting execution.','ok');return true;
+}
+async function submitPairedWorkflow(request:PairedWorkflowRequest):Promise<void> {
+  if(!bridge?.officeCommand||workspaceReadOnly())throw new Error('Open a writable native workspace to save a paired workflow.');
+  pendingWorkflow={request:JSON.parse(JSON.stringify(request)),body:workflowBody(request),state:'sending'};renderPendingWorkflow();setStatus($('chat-status'),'Saving one atomic brief, paired plan and optional bounded dispatch…');
+  try{const result=await bridge.officeCommand(request);
+    if(!result.ok||!result.snapshot){const code=result.code||'OUTCOME_UNKNOWN';if(WORKFLOW_REJECTED_CODES.has(code)){pendingWorkflow=null;renderPendingWorkflow();throw new Error(`${code}: ${result.error||'The workflow was rejected.'} Your brief is kept.`);}throw new Error(`${code}: ${result.error||'No acknowledgement was received.'}`);}
+    officeState=appliedOfficeSnapshot(result);renderOffice();if(!acknowledgeWorkflow(result.snapshot,request))throw new Error('The snapshot did not contain an acknowledged goal receipt.');
+  }catch(error){if(pendingWorkflow){pendingWorkflow.state='uncertain';renderPendingWorkflow();throw new Error(`${error instanceof Error?error.message:String(error)} Keep this window open. Retry the saved request or inspect native work; editing the brief will not create a new request while this outcome is uncertain.`);}throw error;}
+}
 function initUnifiedWorkspace():void{
   document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]').forEach((button)=>{button.onclick=()=>switchWorkspaceTab(button.dataset.workspaceTab||'chat');button.addEventListener('keydown',(event)=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const buttons=Array.from(document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]'));const i=buttons.indexOf(button);const next=event.key==='Home'?buttons[0]:event.key==='End'?buttons.at(-1):buttons[(i+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length];next?.click();next?.focus();});});
   document.querySelectorAll<HTMLButtonElement>('[data-open-workspace-tab]').forEach((button)=>button.onclick=()=>switchWorkspaceTab(button.dataset.openWorkspaceTab||'chat'));
@@ -2506,14 +2616,13 @@ function initUnifiedWorkspace():void{
   const newBrief=()=>{setPortfolioOpen(false);navigate('office');switchWorkspaceTab('chat');$('chat-message').focus();};$('header-new-goal').onclick=()=>{if(document.body.classList.contains('ff-canvas-mode')){const f=ffFocus;const ctx:StudioActionContext=f.kind==='portfolio'?{}:{companyId:f.companyId,...('officeId' in f&&f.officeId?{officeId:f.officeId}:{}),...(f.kind==='department'?{departmentId:f.departmentId}:{})};ffAction('new-goal' as unknown as StudioActionKind,ctx);}else newBrief();};$('brief-donna').onclick=newBrief;
   $('chat-scope').addEventListener('change',renderUnifiedWorkspace);$('chat-employee').addEventListener('change',renderUnifiedWorkspace);$('chat-goal-mode').addEventListener('change',()=>{updateChatMode();if(value('chat-goal-mode')==='provider')($('chat-provider-options') as HTMLDetailsElement).open=true;});
   $('chat-message').addEventListener('keydown',(event)=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();($('workspace-chat-form') as HTMLFormElement).requestSubmit();}});
+  $('chat-retry-workflow').onclick=()=>workspaceTask(async()=>{if(pendingWorkflow?.state==='uncertain')await submitPairedWorkflow(pendingWorkflow.request);},'chat-status');
+  $('chat-inspect-workflow').onclick=()=>workspaceTask(async()=>{if(!pendingWorkflow)return;const request=pendingWorkflow.request;await refreshOffice();const saved=officeState?.goals?.find(goal=>goal.sourceRequestId===request.requestId);if(saved&&officeState){selectedGoalId=saved.id;pendingWorkflow=null;renderPendingWorkflow();setStatus($('chat-status'),`Saved goal found: ${saved.title}. No request was sent again.`,'ok');}else setStatus($('chat-status'),'No matching goal is visible yet. The original request is retained; retry it to obtain the native idempotent receipt.');},'chat-status');
   workspaceForm('workspace-chat-form',async()=>{
-    const content=value('chat-message');if(!content)throw new Error('Write a goal first.');if(new TextEncoder().encode(content).byteLength>12000)throw new Error('Keep the conversation brief under 12 KB of text.');const scope=workspaceScope();if(bridge?.transport==='cloud-browser'){await sendDonnaCloud(content,scope);return;}const runSettings=chatRunSettings();const maxIterations=Number(value('chat-max-iterations'));if(!Number.isInteger(maxIterations)||maxIterations<1||maxIterations>10)throw new Error('Choose between one and ten goal iterations.');
-    setStatus($('chat-status'),'Saving your brief and local plan…');await workspaceCommand({action:'post_chat',scope,content},'Brief saved.');
-    const before=new Set((officeState?.goals||[]).map((goal)=>goal.id));const state=await workspaceCommand({action:'create_goal',scope,title:boundedUtf8(content.replace(/\s+/g,' '),120),description:content,mode:runSettings.mode==='provider'?'execute':'plan',maxIterations,runSettings},'Goal saved.');
-    const goal=state.goals?.find((item)=>!before.has(item.id));if(!goal)throw new Error('The brief was saved, but no new goal record was returned. Refresh the workspace to inspect it.');selectedGoalId=goal.id;
-    await workspaceCommand({action:'plan_goal',goalId:goal.id},'Local goal plan saved.');
-    if(runSettings.mode==='provider'&&officeState?.policy?.approvalMode==='autonomous')await workspaceCommand({action:'execute_goal',goalId:goal.id},'Goal queued within the global budget.');
-    ($('chat-message') as HTMLTextAreaElement).value='';setStatus($('chat-status'),runSettings.mode==='provider'&&officeState?.policy?.approvalMode==='review'?'Plan saved. Review ownership, then approve the goal to queue its provider jobs.':'Brief and plan saved.','ok');renderUnifiedWorkspace();
+    const content=value('chat-message');if(!content)throw new Error('Write a goal first.');if(new TextEncoder().encode(content).byteLength>12000)throw new Error('Keep the conversation brief under 12 KB of text.');const scope=workspaceScope();if(bridge?.transport==='cloud-browser'){await sendDonnaCloud(content,scope);return;}const runSettings=chatRunSettings(),maxIterations=Number(value('chat-max-iterations'));if(!Number.isInteger(maxIterations)||maxIterations<1||maxIterations>10)throw new Error('Choose between one and ten goal iterations.');
+    const body={action:'create_paired_workflow' as const,scope,title:boundedUtf8(content.replace(/\s+/g,' '),120),description:content,content,mode:runSettings.mode==='provider'?'execute' as const:'plan' as const,maxIterations,runSettings,execute:runSettings.mode==='provider'&&officeState?.policy?.approvalMode==='autonomous'};
+    if(pendingWorkflow){if(pendingWorkflow.state==='sending')throw new Error('The saved request is still awaiting acknowledgement.');if(workflowBody(body)!==pendingWorkflow.body)throw new Error('A previous workflow has an uncertain outcome. Your edited brief is kept; retry the original request or inspect it before creating another workflow.');await submitPairedWorkflow(pendingWorkflow.request);return;}
+    const bytes=new Uint8Array(16);window.crypto.getRandomValues(bytes);const requestId=`ui-${Array.from(bytes,byte=>byte.toString(16).padStart(2,'0')).join('')}`;await submitPairedWorkflow({...body,requestId});
   },'chat-status');
   $('workspace-budget-open').onclick=()=>{const details=$('workspace-policy') as HTMLDetailsElement;details.open=!details.open;if(details.open){details.scrollIntoView({block:'nearest'});$('workspace-approval-mode').focus();}};
   workspaceForm('workspace-policy-form',async()=>{
@@ -2522,6 +2631,13 @@ function initUnifiedWorkspace():void{
     await workspaceCommand({action:'configure_policy',approvalMode:value('workspace-approval-mode'),dispatchPaused:($('workspace-dispatch-paused') as HTMLInputElement).checked,hardCapUsd,hardCapTokens,warningPercent},'Global policy saved.');setStatus($('workspace-policy-status'),'Global budget and approval mode saved.','ok');
   },'workspace-policy-status');
   $('blueprint-add-room').onclick=()=>{resetRoomForm();$('room-name').focus();};$('whiteboard-add-node').onclick=()=>{resetBoardForm();$('node-title').focus();};
+  for(const kind of ['goal','job','roadmap'] as const)$(`node-add-${kind}`).onclick=()=>addBoardLink(kind);
+  $('node-reload').onclick=()=>{canvasFormDrafts.delete('workspace-node-form');const board=currentBlueprint()?.whiteboards.find(item=>item.id===value('node-id'));if(board)selectBoard(board,true);else resetBoardForm(true);};
+  $('node-donna').onclick=()=>{if(whiteboardEditOffice!==selectedOfficeId){setStatus($('node-save-status'),'Return to this draft’s office before discussing its scope.','error');return;}discussBoard(value('node-title')||'this whiteboard',`Company ${officeCompany()?.id}; office ${selectedOfficeId}; card ${value('node-id')||'unsaved'}. Linked goals: ${boardDraftLinks.goal.join(', ')||'none'}; outcomes: ${boardDraftLinks.roadmap.join(', ')||'none'}.`);};
+  $('whiteboard-search').addEventListener('input',()=>{whiteboardPage=0;renderWhiteboard();});
+  $('whiteboard-prev').onclick=()=>{whiteboardPage=Math.max(0,whiteboardPage-1);renderWhiteboard();};$('whiteboard-next').onclick=()=>{whiteboardPage++;renderWhiteboard();};
+  $('whiteboard-inspector-toggle').onclick=()=>{const inspector=$('whiteboard-inspector'),button=$('whiteboard-inspector-toggle');inspector.hidden=!inspector.hidden;button.setAttribute('aria-expanded',String(!inspector.hidden));button.textContent=inspector.hidden?'Show card details':'Hide card details';renderWhiteboard();};
+
   for(const event of ['input','change'])$('workspace-room-form').addEventListener(event,()=>{roomDraftDirty=true;$('room-inspector-note').textContent='Unsaved room details. Save to apply; changing views keeps this draft.';});
   for(const id of ['blueprint-list-mode','whiteboard-list-mode']){$(id).addEventListener('change',renderUnifiedWorkspace);if(window.innerWidth<650)($(id) as HTMLInputElement).checked=true;}
   workspaceForm('workspace-room-form',async()=>{
@@ -2531,9 +2647,18 @@ function initUnifiedWorkspace():void{
   },'room-status');
   workspaceForm('workspace-room-assign',async()=>{const roomId=value('room-id');const employeeId=value('room-employee');if(!roomId||!employeeId)throw new Error('Select a room and an employee.');await workspaceCommand({action:'place_employee',officeId:selectedOfficeId,roomId,employeeId,x:.2,y:.65},'Employee placed in the selected room.');const room=currentBlueprint()?.rooms.find((item)=>item.id===roomId);if(room)selectRoom(room);},'room-status');
   workspaceForm('workspace-node-form',async()=>{
-    const roomId=value('node-room');const ownerEmployeeId=value('node-owner');const title=value('node-title');if(!roomId||!ownerEmployeeId||!title)throw new Error('Give this card a title, owner, and room.');const x=Number(value('node-x'))/100;const y=Number(value('node-y'))/100;if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||x>1||y<0||y>1)throw new Error('Card positions must be between 0 and 100%.');const previous=currentBlueprint()?.whiteboards.find((item)=>item.id===value('node-id'));
-    await workspaceCommand({action:'upsert_whiteboard',officeId:selectedOfficeId,id:previous?.id,roomId,ownerEmployeeId,title,goalIds:value('node-goal')?[value('node-goal')]:[],jobIds:value('node-job')?[value('node-job')]:[],roadmapItemIds:value('node-roadmap')?[value('node-roadmap')]:[],x,y},'Ownership card saved.');setStatus($('node-save-status'),'Ownership saved. Linked execution records keep their own scope and evidence.','ok');
+    const officeId=whiteboardEditOffice||selectedOfficeId;if(officeId!==selectedOfficeId)throw new Error('Your draft belongs to a different office. Return there, or explicitly discard it.');
+    const roomId=value('node-room'),ownerEmployeeId=value('node-owner'),title=value('node-title');if(!roomId||!ownerEmployeeId||!title)throw new Error('Give this card a title, board steward and room.');const x=Number(value('node-x'))/100,y=Number(value('node-y'))/100;if(!Number.isFinite(x)||!Number.isFinite(y)||x<0||x>1||y<0||y>1)throw new Error('Card positions must be between 0 and 100%.');
+    const links=(kind:BoardLinkKind)=>[...new Set([...boardDraftLinks[kind],...(value(`node-${kind}`)?[value(`node-${kind}`)]:[])])];const goalIds=links('goal'),jobIds=links('job'),roadmapItemIds=links('roadmap');if(Math.max(goalIds.length,jobIds.length,roadmapItemIds.length)>100)throw new Error('Keep at most 100 links of each kind.');
+    const base=whiteboardEditBase,before=new Set(currentBlueprint()?.whiteboards.map(item=>item.id)||[]),version=canvasDraftVersions.get('workspace-node-form')||0;
+    try{
+      const state=await workspaceCommand({action:'upsert_whiteboard',officeId,id:base?.id,...(base?{expectedRevision:base.revision||0}:{}),roomId,ownerEmployeeId,title,goalIds,jobIds,roadmapItemIds,x,y},'Whiteboard card saved.');
+      const saved=state.blueprints?.find(item=>item.officeId===officeId)?.whiteboards.find(item=>base?item.id===base.id:!before.has(item.id));
+      if(saved&&whiteboardEditOffice===officeId){whiteboardEditBase=JSON.parse(JSON.stringify(saved));selectedBoardId=saved.id;($('node-id') as HTMLInputElement).value=saved.id;$('node-save').textContent='Save card';if((canvasDraftVersions.get('workspace-node-form')||0)===version){boardDraftLinks={goal:goalIds,job:jobIds,roadmap:roadmapItemIds};for(const kind of ['goal','job','roadmap'])($(`node-${kind}`) as HTMLSelectElement).value='';renderBoardLinks();}}
+      $('workspace-node-form').classList.remove('board-stale');setStatus($('node-save-status'),'Card saved. Linked executors, reviewers and evidence retain their own records.','ok');
+    }catch(error){throw new Error(`${error instanceof Error?error.message:String(error)} Your draft and original edit revision are kept. Load the saved card only when ready to discard this draft.`);}
   },'node-save-status');
+  if(typeof ResizeObserver!=='undefined'){let previousWidth=0;const observer=new ResizeObserver(entries=>{const width=entries[0]?.contentRect.width||0;if(width>0&&Math.abs(width-previousWidth)>1){previousWidth=width;renderWhiteboard();}});observer.observe($('workspace-whiteboard'));window.addEventListener('beforeunload',()=>observer.disconnect(),{once:true});}
   renderUnifiedWorkspace();
 }
 
@@ -2608,7 +2733,7 @@ function filteredPortfolioCompanies():OfficeCompany[]{
   const group=portfolioState()?.groups.find(item=>item.id===value('ceo-roadmap-group'));const companyId=value('ceo-roadmap-company');
   return portfolioCompanies().filter(company=>(!group||group.companyIds.includes(company.id))&&(!companyId||company.id===companyId));
 }
-function portfolioSelect(id:string,rows:Array<{id:string;name:string}>,empty?:string):void{const select=$(id) as HTMLSelectElement;populateSelect(select,rows,select.value,empty);}
+function portfolioSelect(id:string,rows:Array<{id:string;name:string}>,empty?:string):void{const select=$(id) as HTMLSelectElement,selected=select.value;populateSelect(select,rows,selected,empty);if(id.startsWith('ceo-roadmap-')&&selected&&!rows.some(row=>row.id===selected)){const option=document.createElement('option');option.value=selected;option.textContent=`Unavailable saved reference · ${selected}`;select.append(option);select.value=selected;}}
 function renderPortfolioSelectors():void{
   const portfolio=portfolioState();if(!portfolio)return;const companies=portfolioCompanies();
   for(const id of ['ceo-roadmap-group','ceo-edit-group','ceo-move-group','ceo-focus-group'])portfolioSelect(id,portfolio.groups,id==='ceo-edit-group'?'Create a group':id==='ceo-focus-group'?'Entire portfolio':id==='ceo-move-group'?'Choose destination':'All groups');
@@ -2675,18 +2800,26 @@ function renderContractRecipients():void{
   const service=portfolioState()?.services.find(item=>item.id===value('ceo-contract-service'));if(contractPickerService!==service?.id){contractPickerService=service?.id||'';contractMembers=new Set(service?.employeeIds||[]);}
   const container=$('ceo-contract-employees');container.replaceChildren();for(const id of service?.employeeIds||[]){const employee=officeState?.employees.find(item=>item.id===id);if(!employee)continue;const label=textElement('label','','check-label');const input=document.createElement('input');input.type='checkbox';input.value=id;input.checked=contractMembers.has(id);input.onchange=()=>{if(input.checked)contractMembers.add(id);else contractMembers.delete(id);};label.append(input,textElement('span',`${employee.name} · ${employee.role}`));container.append(label);}if(!service)noData(container,'Choose a shared service.');
 }
+function roadmapLinkLabel(kind:RoadmapLinkKind,id:string):string {return kind==='dependency'?portfolioState()?.roadmap.find(item=>item.id===id)?.title||`Saved outcome · ${id}`:boardLinkLabel(kind,id);}
+function renderRoadmapLinks():void {
+  for(const kind of ['goal','job','dependency'] as const){const container=$(`ceo-roadmap-${kind}-links`);container.replaceChildren();for(const id of roadmapDraftLinks[kind]){const row=textElement('span','','board-link');row.append(textElement('span',roadmapLinkLabel(kind,id)));const remove=textElement('button','×','text-button');remove.type='button';remove.setAttribute('aria-label',`Remove roadmap ${kind}: ${roadmapLinkLabel(kind,id)}`);remove.onclick=()=>{roadmapDraftLinks[kind]=roadmapDraftLinks[kind].filter(item=>item!==id);if(value(`ceo-roadmap-${kind}`)===id)($(`ceo-roadmap-${kind}`) as HTMLSelectElement).value='';markCanvasDraft('ceo-roadmap-form');renderRoadmapLinks();};row.append(remove);container.append(row);}}
+}
+function addRoadmapLink(kind:RoadmapLinkKind):void {const id=value(`ceo-roadmap-${kind}`);if(!id)return;if(!roadmapDraftLinks[kind].includes(id)){if(roadmapDraftLinks[kind].length>=100){setStatus($('ceo-roadmap-save-status'),'Keep at most 100 links of each kind.','error');return;}roadmapDraftLinks[kind].push(id);markCanvasDraft('ceo-roadmap-form');}($(`ceo-roadmap-${kind}`) as HTMLSelectElement).value='';renderRoadmapLinks();}
 function renderRoadmapEditorSelectors():void{
   const kind=value('ceo-roadmap-scope');const portfolio=portfolioState();const targets=kind==='company'?portfolioCompanies():kind==='group'?portfolio?.groups||[]:[];portfolioSelect('ceo-roadmap-target',targets,kind==='global'?undefined:'Choose a target');$('ceo-roadmap-target-label').classList.toggle('hidden',kind==='global');
   const companyIds=kind==='company'?[value('ceo-roadmap-target')]:kind==='group'?portfolio?.groups.find(group=>group.id===value('ceo-roadmap-target'))?.companyIds||[]:portfolioCompanies().map(company=>company.id);const allowed=new Set(companyIds);const contracts=(portfolio?.contracts||[]).filter(contract=>contract.status==='active'&&allowed.has(contract.recipientCompanyId));const contracted=new Set(contracts.flatMap(contract=>contract.employeeIds));
   portfolioSelect('ceo-roadmap-owner',(officeState?.employees||[]).filter(employee=>employee.status!=='fired'&&(!employee.companyId||allowed.has(employee.companyId)||contracted.has(employee.id))).map(employee=>({id:employee.id,name:`${employee.name} · ${employee.role}`})),'Choose an owner');
+  portfolioSelect('ceo-roadmap-reviewer',(officeState?.employees||[]).filter(employee=>employee.status==='active'&&(!employee.companyId||allowed.has(employee.companyId)||contracted.has(employee.id))).map(employee=>({id:employee.id,name:`${employee.name} · ${employee.role}`})),'Not assigned');portfolioSelect('ceo-roadmap-reviewer-contract',contracts.map(contract=>({id:contract.id,name:contract.id})),'Direct review assignment');
+  portfolioSelect('ceo-roadmap-goal',(officeState?.goals||[]).filter(goal=>allowed.has(goal.companyId)).map(goal=>({id:goal.id,name:`${goal.steps.length&&goal.steps.every(step=>stepReview(goal,step).accepted)?'Native review accepted':goal.status} · ${goal.title}`})),'Choose a saved goal');portfolioSelect('ceo-roadmap-job',(officeState?.jobs||[]).filter(job=>allowed.has(job.companyId)).map(job=>({id:job.id,name:`${job.pair?.phase||'legacy'} · ${job.status} · ${job.goal.slice(0,70)}`})),'Choose a saved job');portfolioSelect('ceo-roadmap-dependency',(portfolio?.roadmap||[]).filter(item=>item.id!==value('ceo-roadmap-id')&&scopeCompanies(item).some(companyId=>allowed.has(companyId))).map(item=>({id:item.id,name:item.title})),'Choose a dependency');renderRoadmapLinks();
   portfolioSelect('ceo-roadmap-owner-department',(officeState?.departments||[]).filter(department=>allowed.has(department.companyId)),'No department');portfolioSelect('ceo-roadmap-contract',contracts.map(contract=>({id:contract.id,name:`${portfolio?.services.find(service=>service.id===contract.serviceId)?.name||'Shared service'} → ${officeState?.companies.find(company=>company.id===contract.recipientCompanyId)?.name||''}`})),'Direct ownership');
 }
-function editPortfolioRoadmap(item?:PortfolioRoadmapItem):void{
-  ($('ceo-roadmap-form') as HTMLFormElement).reset();($('ceo-roadmap-id') as HTMLInputElement).value=item?.id||'';($('ceo-roadmap-title') as HTMLInputElement).value=item?.title||'';($('ceo-roadmap-description') as HTMLTextAreaElement).value=item?.description||'';($('ceo-roadmap-scope') as HTMLSelectElement).value=item?.scope.kind||'global';renderRoadmapEditorSelectors();if(item?.scope.kind!=='global')($('ceo-roadmap-target') as HTMLSelectElement).value=item?.scope.id||'';renderRoadmapEditorSelectors();($('ceo-roadmap-owner') as HTMLSelectElement).value=item?.ownerEmployeeId||'donna';($('ceo-roadmap-owner-department') as HTMLSelectElement).value=item?.departmentId||'';($('ceo-roadmap-contract') as HTMLSelectElement).value=item?.serviceContractId||'';($('ceo-roadmap-edit-status') as HTMLSelectElement).value=item?.status||'planned';($('ceo-roadmap-evidence') as HTMLInputElement).value=item?.evidence||'';($('ceo-roadmap-editor') as HTMLDetailsElement).open=true;$('ceo-roadmap-editor').scrollIntoView({block:'nearest'});$('ceo-roadmap-title').focus();
+function editPortfolioRoadmap(item?:PortfolioRoadmapItem,force=false):void{
+  if(!force&&canvasFormDrafts.has('ceo-roadmap-form')){setStatus($('ceo-roadmap-save-status'),'Your outcome draft is kept. Save it or explicitly discard it before loading another outcome.','error');return;}roadmapEditBase=item?JSON.parse(JSON.stringify(item)):null;roadmapDraftLinks={goal:[...(item?.goalIds||[])],job:[...(item?.jobIds||[])],dependency:[...(item?.dependencies||[])]};
+  ($('ceo-roadmap-form') as HTMLFormElement).reset();($('ceo-roadmap-id') as HTMLInputElement).value=item?.id||'';($('ceo-roadmap-title') as HTMLInputElement).value=item?.title||'';($('ceo-roadmap-description') as HTMLTextAreaElement).value=item?.description||'';($('ceo-roadmap-scope') as HTMLSelectElement).value=item?.scope.kind||'global';renderRoadmapEditorSelectors();if(item?.scope.kind!=='global')($('ceo-roadmap-target') as HTMLSelectElement).value=item?.scope.id||'';renderRoadmapEditorSelectors();($('ceo-roadmap-owner') as HTMLSelectElement).value=item?.ownerEmployeeId||'donna';($('ceo-roadmap-owner-department') as HTMLSelectElement).value=item?.departmentId||'';($('ceo-roadmap-contract') as HTMLSelectElement).value=item?.serviceContractId||'';($('ceo-roadmap-edit-status') as HTMLSelectElement).value=item?.status||'planned';($('ceo-roadmap-evidence') as HTMLInputElement).value=item?.evidence||'';($('ceo-roadmap-reviewer') as HTMLSelectElement).value=item?.reviewerEmployeeId||'';($('ceo-roadmap-reviewer-contract') as HTMLSelectElement).value=item?.reviewerServiceContractId||'';fillBoardEstimate('ceo-roadmap-estimate',item?.estimate);fillBoardEstimate('ceo-roadmap-review-estimate',item?.reviewEstimate);setStatus($('ceo-roadmap-save-status'),item?`Editing saved revision ${item.revision||0}.`:'New outcome · estimates may remain unknown.');($('ceo-roadmap-editor') as HTMLDetailsElement).open=true;$('ceo-roadmap-editor').scrollIntoView({block:'nearest'});$('ceo-roadmap-title').focus();
 }
 async function mapRoadmapOwnership(item:PortfolioRoadmapItem):Promise<void>{
   const companies=scopeCompanies(item);const companyId=companies.includes(officeCompany()?.id||'')?officeCompany()!.id:companies[0];if(!companyId)throw new Error('Add a company to this roadmap scope before mapping ownership.');
-  await openPortfolioCompany(companyId,'whiteboard');await ensureWorkspaceBlueprint();resetBoardForm();($('node-title') as HTMLInputElement).value=item.title;($('node-owner') as HTMLSelectElement).value=item.ownerEmployeeId;($('node-roadmap') as HTMLSelectElement).value=item.id;$('node-title').focus();setStatus($('node-save-status'),'Choose the room, then save this roadmap ownership card.');
+  await openPortfolioCompany(companyId,'whiteboard');await ensureWorkspaceBlueprint();if(!resetBoardForm())return;markCanvasDraft('workspace-node-form');($('node-title') as HTMLInputElement).value=item.title;($('node-owner') as HTMLSelectElement).value=item.ownerEmployeeId;($('node-roadmap') as HTMLSelectElement).value=item.id;$('node-title').focus();setStatus($('node-save-status'),'Choose the room, then save this roadmap ownership card.');
 }
 function optimizeGroups():Array<{id:string;name:string;description:string;companyIds:string[];status:OfficeEntityStatus}>{
   const portfolio=portfolioState();const companies=portfolioCompanies();const groups=(portfolio?.groups||[]).map(group=>({id:group.id,name:group.name,description:group.description,companyIds:[...group.companyIds],status:group.status}));const assigned=new Set(groups.flatMap(group=>group.companyIds));const missing=companies.filter(company=>!assigned.has(company.id)).map(company=>company.id);
@@ -2839,7 +2972,16 @@ function initPortfolio():void{
   workspaceForm('ceo-group-form',async()=>{if(!portfolioReady())throw new Error('Portfolio support is unavailable.');const previous=portfolioState()?.groups.find(group=>group.id===value('ceo-edit-group'));const name=value('ceo-group-name');if(!name)throw new Error('Give the group a name.');const state=await workspaceCommand({action:'upsert_portfolio_group',id:previous?.id,name,description:value('ceo-group-description'),companyIds:Array.from(groupMembers),status:previous?.status||'active'},'Group membership saved.');const saved=state.portfolio?.groups.find(group=>previous?group.id===previous.id:group.name===name);if(saved)editPortfolioGroup(saved.id);setStatus($('ceo-group-status'),'Group membership saved.','ok');},'ceo-group-status');
   workspaceForm('ceo-move-company-form',async()=>{const companyId=value('ceo-move-company');const groupId=value('ceo-move-group');if(!companyId||!groupId)throw new Error('Choose a company and destination group.');const groups=(portfolioState()?.groups||[]).map(group=>({id:group.id,name:group.name,description:group.description,status:group.status,companyIds:group.id===groupId?[...new Set([...group.companyIds,companyId])]:group.companyIds.filter(id=>id!==companyId)}));await workspaceCommand({action:'optimize_portfolio',groups,preset:'standard',pauseRedundant:false},'Company group membership and shared contracts updated.');setStatus($('ceo-move-status'),'Company moved and shared teams updated.','ok');},'ceo-move-status');
   workspaceForm('ceo-contract-form',async()=>{const serviceId=value('ceo-contract-service');const recipientCompanyId=value('ceo-contract-company');if(!serviceId||!recipientCompanyId||!contractMembers.size)throw new Error('Choose a service, recipient, and at least one shared specialist.');const recipientOfficeId=value('ceo-contract-office')||null;const recipientDepartmentId=value('ceo-contract-department')||null;const previous=portfolioState()?.contracts.find(contract=>contract.serviceId===serviceId&&contract.recipientCompanyId===recipientCompanyId&&contract.recipientOfficeId===recipientOfficeId&&contract.recipientDepartmentId===recipientDepartmentId);await workspaceCommand({action:'contract_service',id:previous?.id,serviceId,recipientCompanyId,recipientOfficeId,recipientDepartmentId,employeeIds:Array.from(contractMembers),allowedTools:previous?.allowedTools||[],status:'active'},'Shared-service contract saved.');setStatus($('ceo-contract-status'),'Staffing contract saved with the selected recipient scope.','ok');},'ceo-contract-status');
-  workspaceForm('ceo-roadmap-form',async()=>{const previous=portfolioState()?.roadmap.find(item=>item.id===value('ceo-roadmap-id'));const kind=value('ceo-roadmap-scope') as PortfolioRoadmapItem['scope']['kind'];const id=kind==='global'?'portfolio':value('ceo-roadmap-target');const title=value('ceo-roadmap-title');const ownerEmployeeId=value('ceo-roadmap-owner');const status=value('ceo-roadmap-edit-status');const evidence=value('ceo-roadmap-evidence');if(!id||!title||!ownerEmployeeId)throw new Error('Give the outcome a scope, title, and accountable owner.');if(status==='done'&&!evidence)throw new Error('Add completion evidence before marking a portfolio outcome Done.');await workspaceCommand({action:'upsert_roadmap_item',id:previous?.id,scope:{kind,id},title,description:value('ceo-roadmap-description'),ownerEmployeeId,departmentId:value('ceo-roadmap-owner-department')||null,serviceContractId:value('ceo-roadmap-contract')||null,status,evidence:evidence||null,dependencies:previous?.dependencies||[],goalIds:previous?.goalIds||[],jobIds:previous?.jobIds||[]},'Portfolio roadmap outcome saved.');setStatus($('ceo-roadmap-save-status'),'Outcome, ownership, and evidence saved.','ok');},'ceo-roadmap-save-status');
+  for(const kind of ['goal','job','dependency'] as const)$(`ceo-roadmap-add-${kind}`).onclick=()=>addRoadmapLink(kind);
+  $('ceo-roadmap-reload').onclick=()=>{const item=portfolioState()?.roadmap.find(row=>row.id===value('ceo-roadmap-id'));canvasFormDrafts.delete('ceo-roadmap-form');editPortfolioRoadmap(item,true);};
+  workspaceForm('ceo-roadmap-form',async()=>{
+    const previous=roadmapEditBase,kind=value('ceo-roadmap-scope') as PortfolioRoadmapItem['scope']['kind'],id=kind==='global'?'portfolio':value('ceo-roadmap-target'),title=value('ceo-roadmap-title'),ownerEmployeeId=value('ceo-roadmap-owner'),status=value('ceo-roadmap-edit-status'),evidence=value('ceo-roadmap-evidence'),reviewerEmployeeId=value('ceo-roadmap-reviewer')||null;
+    if(!id||!title||!ownerEmployeeId)throw new Error('Give the outcome a scope, title and accountable owner.');if(previous&&(previous.scope.kind!==kind||previous.scope.id!==id))throw new Error('An existing outcome keeps its saved scope. Create a new outcome to use another scope.');if(status==='done'&&!evidence)throw new Error('Add completion evidence before marking a portfolio outcome Done.');if(reviewerEmployeeId===ownerEmployeeId)throw new Error('Independent review must be assigned to a different employee.');
+    const links=(kind:RoadmapLinkKind)=>[...new Set([...roadmapDraftLinks[kind],...(value(`ceo-roadmap-${kind}`)?[value(`ceo-roadmap-${kind}`)]:[])])];const goalIds=links('goal'),jobIds=links('job'),dependencies=links('dependency');if(Math.max(goalIds.length,jobIds.length,dependencies.length)>100)throw new Error('Keep at most 100 links of each kind.');
+    const version=canvasDraftVersions.get('ceo-roadmap-form')||0;const estimate=readBoardEstimate('ceo-roadmap-estimate'),reviewEstimate=readBoardEstimate('ceo-roadmap-review-estimate'),before=new Set(portfolioState()?.roadmap.map(item=>item.id)||[]);
+    try{const state=await workspaceCommand({action:'upsert_roadmap_item',id:previous?.id,...(previous?{expectedRevision:previous.revision||0}:{}),scope:{kind,id},title,description:value('ceo-roadmap-description'),ownerEmployeeId,reviewerEmployeeId,reviewerServiceContractId:value('ceo-roadmap-reviewer-contract')||null,estimate,reviewEstimate,departmentId:value('ceo-roadmap-owner-department')||null,serviceContractId:value('ceo-roadmap-contract')||null,status,evidence:evidence||null,dependencies,goalIds,jobIds},'Portfolio roadmap outcome saved.');const saved=state.portfolio?.roadmap.find(item=>previous?item.id===previous.id:!before.has(item.id));if(saved){roadmapEditBase=JSON.parse(JSON.stringify(saved));($('ceo-roadmap-id') as HTMLInputElement).value=saved.id;if((canvasDraftVersions.get('ceo-roadmap-form')||0)===version){roadmapDraftLinks={goal:goalIds,job:jobIds,dependency:dependencies};for(const kind of ['goal','job','dependency'])($(`ceo-roadmap-${kind}`) as HTMLSelectElement).value='';renderRoadmapLinks();}}setStatus($('ceo-roadmap-save-status'),'Outcome, paired ownership and estimates saved. Execution and review evidence remain in native records.','ok');}
+    catch(error){throw new Error(`${error instanceof Error?error.message:String(error)} Your outcome draft and original edit revision are kept.`);}
+  },'ceo-roadmap-save-status');
   workspaceForm('ceo-policy-form',async()=>{await workspaceCommand({action:'configure_ceo',enabled:($('ceo-enabled') as HTMLInputElement).checked,title:value('ceo-policy-title'),focusGroupId:value('ceo-focus-group')||null},'CEO coordination policy saved.');setStatus($('ceo-status'),'Saved CEO policy. Worker activity remains controlled by the dispatcher and global budgets.','ok');},'ceo-status');
   workspaceForm('ceo-review-form',async()=>{const companyIds=filteredPortfolioCompanies().map(company=>company.id);if(!companyIds.length)throw new Error('Select at least one company in the portfolio filter.');const provider=value('ceo-review-provider');const model=value('ceo-review-model');const maxUsd=Number(value('ceo-review-usd'));const maxTokens=Number(value('ceo-review-tokens'));const priceRates={inputUsdPerMillion:Number(value('ceo-review-rate-input')),outputUsdPerMillion:Number(value('ceo-review-rate-output'))};if(!model||!Number.isFinite(maxUsd)||maxUsd<=0||maxUsd>100||!Number.isInteger(maxTokens)||maxTokens<1||maxTokens>200000)throw new Error('Use a model, positive token limit, and spend ceiling up to $100.');if(provider!=='ollama'&&(!Number.isFinite(priceRates.inputUsdPerMillion)||!Number.isFinite(priceRates.outputUsdPerMillion)||priceRates.inputUsdPerMillion<=0||priceRates.outputUsdPerMillion<=0))throw new Error('Enter current positive cloud-provider prices.');await workspaceCommand({action:'schedule_repository_reviews',companyIds,everyMinutes:1440,enabled:false,provider,model,maxUsd,maxTokens,priceRates},'Paused recurring repository reviews prepared.');setStatus($('ceo-review-status'),'Daily reviews are prepared and paused. Open a company’s schedules to activate them. Reviews produce proposals; publishing is a separate action.','ok');},'ceo-review-status');
   $('queue-service-contract').addEventListener('change',renderOfficeScope);$('node-room').addEventListener('change',renderSpatialSelectors);renderPortfolio();
@@ -2989,7 +3131,7 @@ function initDecisionPanels():void{
   $('decision-focus').onchange=()=>{decisionRoles=new Set(DECISION_PRESETS[value('decision-focus') as DecisionPanel['focus']]);renderDecisionRoleOptions();};$('decision-scope').onchange=renderDecisionSelectors;
   $('decision-start').onclick=()=>{($('decision-run-options') as HTMLDetailsElement).open=true;$('decision-model').focus();};
   $('decision-to-chat').onclick=()=>{switchWorkspaceTab('chat');$('chat-message').focus();};
-  $('decision-map-goal').onclick=()=>workspaceTask(async()=>{const panel=selectedDecisionPanel();const goalId=panel?.goalIds.at(-1);if(!panel||!goalId)throw new Error('Start a panel round before mapping its work.');await ensureWorkspaceBlueprint();switchWorkspaceTab('whiteboard');resetBoardForm();($('node-title') as HTMLInputElement).value=panel.title;($('node-goal') as HTMLSelectElement).value=goalId;($('node-owner') as HTMLSelectElement).value='donna';$('node-title').focus();},'decision-status');
+  $('decision-map-goal').onclick=()=>workspaceTask(async()=>{const panel=selectedDecisionPanel();const goalId=panel?.goalIds.at(-1);if(!panel||!goalId)throw new Error('Start a panel round before mapping its work.');await ensureWorkspaceBlueprint();switchWorkspaceTab('whiteboard');if(!resetBoardForm())return;markCanvasDraft('workspace-node-form');($('node-title') as HTMLInputElement).value=panel.title;($('node-goal') as HTMLSelectElement).value=goalId;($('node-owner') as HTMLSelectElement).value='donna';$('node-title').focus();},'decision-status');
   $('decision-pause').onclick=()=>workspaceTask(async()=>{const panel=selectedDecisionPanel();if(!panel)throw new Error('Choose a panel first.');await workspaceCommand({action:panel.status==='paused'?'resume_panel':'pause_panel',panelId:panel.id},panel.status==='paused'?'Panel resumed.':'Panel paused.');},'decision-status');
   workspaceForm('decision-create-form',async()=>{const company=officeCompany();const title=value('decision-title');const task=value('decision-task');const id=value('decision-scope-target');if(!company||!title||!task||!id)throw new Error('Give the decision a title, brief, and valid scope.');if(decisionRoles.size<1||decisionRoles.size>5)throw new Error('Choose between one and five expert perspectives.');const maxRounds=Number(value('decision-max-rounds'));const maxUsd=Number(value('decision-max-usd'));const maxTokens=Number(value('decision-max-tokens'));const maxMinutes=Number(value('decision-max-minutes'));if(!Number.isInteger(maxRounds)||maxRounds<1||maxRounds>5||!Number.isFinite(maxUsd)||maxUsd<=0||maxUsd>100||!Number.isInteger(maxTokens)||maxTokens<1||maxTokens>200000||!Number.isFinite(maxMinutes)||maxMinutes<=0||maxMinutes>120)throw new Error('Use 1–5 rounds and positive panel limits, with a ceiling no greater than $100.');const before=new Set((officeState?.decisionPanels||[]).map(panel=>panel.id));const state=await workspaceCommand({action:'convene_panel',companyId:company.id,scope:{kind:value('decision-scope'),id},title,task,focus:value('decision-focus'),roleKeys:[...decisionRoles],maxRounds,maxUsd,maxTokens,maxMinutes,roadmapItemIds:value('decision-roadmap')?[value('decision-roadmap')]:[]},'Decision panel saved. No provider request was made.');const created=state.decisionPanels?.find(panel=>!before.has(panel.id));if(created){selectedDecisionPanelId=created.id;decisionCreating=false;renderDecisionPanels();}setStatus($('decision-status'),'Panel created with accountable expert roles. Choose a provider to start its first review round.','ok');},'decision-status');
   workspaceForm('decision-run-form',async()=>{const panel=selectedDecisionPanel();if(!panel)throw new Error('Choose a saved panel first.');const provider=value('decision-provider') as ProjectProvider;const model=value('decision-model');const authorized=($('decision-authorized') as HTMLInputElement).checked||officeState?.policy?.approvalMode==='autonomous';const priceRates={inputUsdPerMillion:Number(value('decision-rate-input')),outputUsdPerMillion:Number(value('decision-rate-output'))};if(!model)throw new Error('Choose a model ID.');if(!authorized)throw new Error('Approve this review round within the saved limits.');if(provider!=='ollama'&&Object.values(priceRates).some(rate=>!Number.isFinite(rate)||rate<=0))throw new Error('Enter current positive input and output prices for this cloud provider.');const runSettings:OfficeGoalRunSettings={mode:'provider',provider,model,authorized,...panel.limits,priceRates};await workspaceCommand({action:'start_panel_round',panelId:panel.id,runSettings,reviewed:true},'Expert review and Donna synthesis queued within the panel allocation.');($('decision-run-options') as HTMLDetailsElement).open=false;setStatus($('decision-status'),'Review round queued. Reports appear as actual jobs return; the dispatcher and global budget govern execution.','ok');},'decision-status');
@@ -3032,39 +3174,95 @@ function renderStudioSignals(): void {
   if(!legend.children.length)legend.append(textElement('p','No signal data is loaded. Unknown values are not treated as zero.'));
 }
 function studioAvatar(employee: OfficeEmployee): HTMLElement {const initials=employee.name.trim().split(/\s+/).slice(0,2).map(part=>part[0]||'').join('').toUpperCase();const avatar=textElement('span',initials||'AI','studio-avatar');avatar.setAttribute('aria-hidden','true');return avatar;}
+function departmentPath(departmentId:string):OfficeDepartment[] {
+  const path:OfficeDepartment[]=[],seen=new Set<string>();let id:string|null|undefined=departmentId;
+  while(id&&!seen.has(id)&&path.length<64){seen.add(id);const department=officeState?.departments.find(item=>item.id===id);if(!department||department.companyId!==officeCompany()?.id||department.officeId!==selectedOfficeId)break;path.unshift(department);id=department.parentDepartmentId;}return path;
+}
+function softboardMembers():OfficeEmployee[] {
+  const include=($('softboard-descendants') as HTMLInputElement).checked;
+  return (officeState?.employees||[]).filter(employee=>employee.status!=='fired'&&(!employee.companyId||(employee.companyId===officeCompany()?.id&&(!employee.officeId||employee.officeId===selectedOfficeId)&&(!selectedDepartmentId||!employee.departmentId||employee.departmentId===selectedDepartmentId||include&&departmentPath(employee.departmentId).some(item=>item.id===selectedDepartmentId)))));
+}
+function reviewFailureSummary(job:OfficeJob):string {
+  const failure=job.reviewFailure;if(!failure)return '';const labels:Record<NonNullable<OfficeJob['reviewFailure']>['reason'],string>={'malformed-output':'Review response could not be parsed','input-budget':'Review input exceeded its budget','artifact-mismatch':'Review artifact did not match the recorded work','recording-unconfirmed':'Review recording could not be confirmed'};
+  return `${labels[failure.reason]}: ${failure.summary}`;
+}
+function linkedReviewFailures(links:{goalIds:string[];jobIds:string[]}):OfficeJob[] {
+  const ids=new Set(links.jobIds),goalIds=new Set(links.goalIds);const iterations=new Map((officeState?.goals||[]).filter(goal=>goalIds.has(goal.id)).map(goal=>[goal.id,goal.iteration]));for(const job of officeState?.jobs||[])if(job.goalId&&iterations.has(job.goalId)&&job.goalIteration===iterations.get(job.goalId))ids.add(job.id);
+  for(const job of officeState?.jobs||[])if(ids.has(job.id)&&job.pair?.phase==='primary')ids.add(job.pair.reviewJobId);
+  return (officeState?.jobs||[]).filter(job=>ids.has(job.id)&&Boolean(job.reviewFailure));
+}
+async function openReviewRepair(job:OfficeJob):Promise<void> {
+  const goal=officeState?.goals?.find(item=>item.id===job.goalId),department=goal?.scope.kind==='department'?officeState?.departments.find(item=>item.id===goal.scope.id):null;const officeId=goal?.scope.kind==='company'?undefined:goal?.scope.kind==='office'?goal.scope.id:department?.officeId||job.officeId;await openPortfolioCompany(job.companyId,'chat',officeId,department?.id||(!goal?job.departmentId||undefined:undefined));
+  if(goal){if(goal.scope.kind==='employee'){($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=goal.scope.id;}selectedGoalId=goal.id;renderWorkspaceGoals();const card=Array.from($('workspace-goals').querySelectorAll<HTMLElement>('[data-goal-id]')).find(item=>item.dataset.goalId===goal.id);if(card){for(const details of Array.from(card.querySelectorAll<HTMLDetailsElement>('details.goal-steps')))details.open=true;const form=card.querySelector<HTMLFormElement>('.goal-advance');if(form){const reason=form.querySelector<HTMLTextAreaElement>('textarea');reason?.focus({preventScroll:true});form.scrollIntoView({block:'nearest'});setStatus($('chat-status'),'Inspect the saved failure and limits. Requesting another bounded iteration remains a separate explicit action.');return;}}}
+  const input=$('chat-message') as HTMLTextAreaElement;if(!input.value.trim())input.value=`Inspect review ${job.id} for ${job.goalId?`goal ${job.goalId}`:`primary job ${job.pair?.primaryJobId||'unavailable'}`}. ${reviewFailureSummary(job)} Propose an explicitly authorized repair in the same office and department, preserving the previous evidence and budget limits. Do not rerun it automatically.`;
+  input.focus({preventScroll:true});setStatus($('chat-status'),'Review repair discussion is ready. No job was advanced, resumed or executed; any existing Donna draft was kept.');
+}
+function appendReviewFailures(container:HTMLElement,failures:OfficeJob[]):void {
+  for(const job of failures.slice(0,3)){const row=textElement('div','','board-pair');row.dataset.reviewFailure=job.reviewFailure!.reason;row.append(textElement('strong','Review needs repair'),textElement('span',reviewFailureSummary(job)));const inspect=textElement('button','Inspect repair plan','text-button');inspect.type='button';inspect.onclick=()=>workspaceTask(()=>openReviewRepair(job));row.append(inspect);container.append(row);}if(failures.length>3)container.append(textElement('p',`${failures.length} linked reviews need repair. Open the goal or queue for all recorded attempts.`,'form-help'));
+}
+function stepReview(goal:OfficeGoal,step:OfficeGoalStep):{accepted:boolean;label:string;summary?:string} {
+  const primary=officeState?.jobs.find(job=>job.goalId===goal.id&&job.goalIteration===goal.iteration&&job.pair?.stepId===step.id&&job.pair.phase==='primary');
+  const review=primary&&officeState?.jobs.find(job=>job.id===primary.pair?.reviewJobId);
+  const accepted=Boolean(!review?.reviewFailure&&primary?.artifactSha256&&review?.artifactSha256&&review.status==='completed'&&review.review?.verdict==='accepted'&&review.review.primaryArtifactSha256===primary.artifactSha256&&review.review.reviewArtifactSha256===review.artifactSha256);
+  if(review?.reviewFailure)return{accepted:false,label:'Review needs repair',summary:reviewFailureSummary(review)};
+  return {accepted,label:accepted?'Independent review accepted':review?.review?.verdict==='revise'?'Reviewer requested changes':review?.review?.verdict==='blocked'?'Review blocked':!step.reviewerEmployeeId?'Helper/reviewer not assigned':primary?.status==='completed'?'Output recorded · awaiting accepted review':review?.status==='running'?'Independent review running':primary?`Primary work: ${primary.status.replaceAll('-',' ')}`:'Pair assigned · not dispatched'};
+}
+function forecastText(items:Array<{id:string;employeeId:string;reviewerEmployeeId?:string|null;dependsOn:string[];estimate?:BoardEstimate|null;reviewEstimate?:BoardEstimate|null;accepted?:boolean;blocked?:boolean}>):string {
+  if(!items.length)return 'No saved steps to estimate.';const result=buildBoardForecast(items);
+  return `Estimate coverage ${result.estimateCoverage.known}/${result.estimateCoverage.total}. Dependency lower bound: ${formatMinuteRange(result.dependencyMinutes)}. Declared staffing scenario: ${formatMinuteRange(result.staffedMinutes)}. ${result.issues.length?result.issues.map(issue=>issue.message).slice(0,3).join(' '):'Duration ranges are planning estimates, not promised finish dates. Staffing assumes one slot per employee and all staff available; calendars and compute capacity are excluded.'}`;
+}
 function renderSoftboard(): void {
   const board=$('workspace-softboard');board.replaceChildren();const company=officeCompany(),office=officeLocation();if(!company||!office){noData(board,'Select an office to inspect its organization.');return;}
-  const query=value('softboard-search').toLowerCase(),signals=currentStudioSignals();const members=scopedEmployees().filter(e=>e.status!=='fired'&&(!query||`${e.name} ${e.role}`.toLowerCase().includes(query)));
+  const query=value('softboard-search').toLowerCase(),signals=currentStudioSignals(),include=($('softboard-descendants') as HTMLInputElement).checked;
+  const members=softboardMembers().filter(employee=>!query||`${employee.name} ${employee.role} ${employee.departmentId?departmentPath(employee.departmentId).map(item=>item.name).join(' '):''}`.toLowerCase().includes(query));
   const root=textElement('div','','org-root');const ceo=textElement('button','CEO / Director','org-executive');ceo.type='button';ceo.onclick=()=>{setPortfolioOpen(true);syncDonnaDock();$('ceo-toggle').focus();};root.append(ceo,textElement('span',company.name,'org-company'),textElement('h3',office.name,'org-office'));board.append(root);
-  const branches=textElement('div','','org-branches');let rendered=0;const departments=(officeState?.departments||[]).filter(d=>d.officeId===office.id&&(!selectedDepartmentId||d.id===selectedDepartmentId));
-  const groups:Array<{id:string;name:string;employees:OfficeEmployee[]}>=[{id:'office-leadership',name:'Office & shared leadership',employees:members.filter(e=>!e.departmentId)},...departments.map(d=>({id:d.id,name:d.name,employees:members.filter(e=>e.departmentId===d.id)}))];
-  for(const group of groups){if(query&&!group.employees.length)continue;const branch=textElement('section','','org-branch');branch.setAttribute('aria-label',group.name);const heading=textElement('div','','org-department');heading.append(textElement('h4',group.name),textElement('span',`${group.employees.length} assigned`,'org-count'));if(group.id!=='office-leadership')addStudioHeat(heading,signals?.perDepartment[group.id]);branch.append(heading);const people=textElement('div','','org-people');
-    for(const employee of group.employees){if(rendered>=150)break;rendered++;const card=textElement('button','',`org-person${employee.id===softboardEmployeeId?' selected':''}`);card.type='button';card.dataset.employeeId=employee.id;card.setAttribute('aria-pressed',String(employee.id===softboardEmployeeId));const name=textElement('span','','org-person-copy');name.append(textElement('strong',employee.name),textElement('span',employee.role),textElement('small',employee.status==='active'?'Active assignment':employee.status));card.append(studioAvatar(employee),name);addStudioHeat(card,signals?.perEmployee[employee.id]);card.onclick=()=>{softboardEmployeeId=employee.id;renderSoftboard();$('softboard-person-title').focus();};people.append(card);}
-    if(!group.employees.length)people.append(textElement('p','No people assigned in this view.','empty-inline'));branch.append(people);branches.append(branch);
+  const branches=textElement('div','','org-branches');let rendered=0;const departments=(officeState?.departments||[]).filter(department=>department.companyId===company.id&&department.officeId===office.id&&(!selectedDepartmentId||department.id===selectedDepartmentId||include&&departmentPath(department.id).some(item=>item.id===selectedDepartmentId))).sort((a,b)=>departmentPath(a.id).map(item=>item.name).join('/').localeCompare(departmentPath(b.id).map(item=>item.name).join('/')));
+  const groups=[{id:'office-leadership',name:'Office & shared leadership',path:[] as OfficeDepartment[],employees:members.filter(employee=>!employee.departmentId)},...departments.map(department=>({id:department.id,name:department.name,path:departmentPath(department.id),employees:members.filter(employee=>employee.departmentId===department.id)}))];
+  for(const group of groups){if(query&&!group.employees.length)continue;const branch=textElement('section','','org-branch');branch.dataset.depth=String(Math.max(0,group.path.length-1));branch.setAttribute('aria-label',group.path.map(item=>item.name).join(' / ')||group.name);const heading=textElement('div','','org-department');if(group.path.length>1)heading.append(textElement('span',group.path.slice(0,-1).map(item=>item.name).join(' › '),'org-department-path'));heading.append(textElement('h4',group.name),textElement('span',`${group.employees.length} assigned`,'org-count'));if(group.id!=='office-leadership')addStudioHeat(heading,signals?.perDepartment[group.id]);branch.append(heading);const disclosure=textElement('details','','org-people-disclosure');disclosure.open=true;disclosure.append(textElement('summary','People in this department'));const people=textElement('div','','org-people');
+    for(const employee of group.employees){if(rendered>=150)break;rendered++;const card=textElement('button','',`org-person${employee.id===softboardEmployeeId?' selected':''}`);card.type='button';card.dataset.employeeId=employee.id;card.setAttribute('aria-pressed',String(employee.id===softboardEmployeeId));const name=textElement('span','','org-person-copy');name.append(textElement('strong',employee.name),textElement('span',employee.role),textElement('small',employee.status==='active'?'Active assignment':employee.status));card.append(studioAvatar(employee),name);addStudioHeat(card,signals?.perEmployee[employee.id]);card.onclick=()=>{softboardEmployeeId=employee.id;renderSoftboard();$('softboard-person-title').focus({preventScroll:true});};people.append(card);}
+    if(!group.employees.length)people.append(textElement('p','No people assigned in this view.','empty-inline'));disclosure.append(people);branch.append(disclosure);branches.append(branch);
   }
-  board.append(branches);$('softboard-result-note').textContent=`${rendered} of ${members.length} matching assignments shown. Direct office assignments and shared leadership; contracted staffing stays in service contracts. Select a person to inspect ownership.${members.length>150?' Refine the search to see another person.':''}`;
-  if(!members.some(e=>e.id===softboardEmployeeId))softboardEmployeeId='';renderSoftboardInspector();
+  board.append(branches);$('softboard-result-note').textContent=`${rendered} of ${members.length} matching assignments shown. ${include?'Subdepartments included':'Selected department only'}. Hierarchy shows organization, not inherited access. Contracted staffing stays in service contracts.${members.length>150?' Refine the search to find another person.':''}`;
+  if(!softboardMembers().some(employee=>employee.id===softboardEmployeeId))softboardEmployeeId='';renderSoftboardInspector();
 }
 function renderSoftboardInspector():void{
-  const employee=scopedEmployees().find(e=>e.id===softboardEmployeeId),detail=$('softboard-person-detail');detail.replaceChildren();$('softboard-person-title').tabIndex=-1;$('softboard-person-title').textContent=employee?.name||'Choose a person.';
-  ($('softboard-person-chat') as HTMLButtonElement).disabled=!employee||employee.status!=='active';
-  ($('softboard-person-authority') as HTMLButtonElement).disabled=!employee;
+  const employee=softboardMembers().find(item=>item.id===softboardEmployeeId),detail=$('softboard-person-detail');detail.replaceChildren();$('softboard-person-title').tabIndex=-1;$('softboard-person-title').textContent=employee?.name||'Choose a person.';
+  ($('softboard-person-chat') as HTMLButtonElement).disabled=!employee||employee.status!=='active';($('softboard-person-authority') as HTMLButtonElement).disabled=!employee;
   $('softboard-person-chat').title=employee&&employee.status!=='active'?'Resume this employee in the employee register before starting a conversation.':'';
-  if(!employee){detail.append(textElement('p','Inspect their role, current records and timed permissions.','muted'));return;}
+  if(!employee){detail.append(textElement('p','Inspect their role, paired responsibilities and timed permissions.','muted'));return;}
   detail.append(textElement('p',employee.role,'softboard-role'),textElement('span',employee.status,'badge'));
-  if(employee.status!=='active')detail.append(textElement('p','This employee is paused. Ownership remains visible; resume their assignment in the employee register before starting a conversation.','form-help'));
+  if(employee.departmentId)detail.append(textElement('p',departmentPath(employee.departmentId).map(item=>item.name).join(' › '),'org-department-path'));
+  if(employee.status!=='active')detail.append(textElement('p','This employee is paused. Recorded ownership remains visible; resume their assignment in the employee register before starting a conversation.','form-help'));
+  const assignments=(officeState?.goals||[]).filter(goal=>goal.companyId===officeCompany()?.id).flatMap(goal=>goal.steps.filter(step=>step.employeeId===employee.id||step.reviewerEmployeeId===employee.id).map(step=>({goal,step})));
+  for(const {goal,step} of assignments.slice(0,30)){const row=textElement('div','','board-pair');const primary=officeState?.employees.find(item=>item.id===step.employeeId),reviewer=officeState?.employees.find(item=>item.id===step.reviewerEmployeeId);row.append(textElement('strong',`${goal.title} · ${step.title}`),textElement('span',`Primary: ${primary?.name||step.employeeId}`),textElement('span',`Independent helper/reviewer: ${reviewer?.name||'Unassigned'}`),textElement('span',stepReview(goal,step).label));const repair=stepReview(goal,step).summary;if(repair)row.append(textElement('span',repair));detail.append(row);}
+  if(assignments.length>30)detail.append(textElement('p',`${assignments.length} paired responsibilities; open the scoped goal plan for the complete work record.`,'form-help'));
   const signals=currentStudioSignals()?.perEmployee[employee.id];for(const key of ['workload','budget','attention'] as const){const metric=signals?.[key];const item=textElement('div','','inspector-signal');item.dataset.heatLevel=String(metric?.level??'unknown');item.append(textElement('strong',metric?.label||'Unknown · no records'),textElement('small',metric?.detail||'No usable job records in this execution scope.'));detail.append(item);}
-  const grants=(officeState?.authority?.grants||[]).filter(g=>g.employeeId===employee.id);detail.append(textElement('p',`${grants.length} recorded permission or promotion ${grants.length===1?'grant':'grants'}. Inspect the authority register for scope, expiry and parent restrictions.`,'form-help'));
-  const owned=(portfolioState()?.roadmap||[]).filter(r=>r.ownerEmployeeId===employee.id&&roadmapInCompany(r,officeCompany()?.id||''));detail.append(textElement('p',`${owned.length} roadmap outcomes owned in this company.`,'form-help'));
+  const grants=(officeState?.authority?.grants||[]).filter(grant=>grant.employeeId===employee.id);detail.append(textElement('p',`${grants.length} recorded permission or promotion grants. Inspect scope and expiry before dispatch.`,'form-help'));const owned=(portfolioState()?.roadmap||[]).filter(item=>item.ownerEmployeeId===employee.id&&roadmapInCompany(item,officeCompany()?.id||''));detail.append(textElement('p',`${owned.length} roadmap outcomes owned in this company.`,'form-help'));
+}
+function roadmapReviewAccepted(item:PortfolioRoadmapItem):boolean {
+  const companies=new Set(scopeCompanies(item));const goals=(officeState?.goals||[]).filter(goal=>item.goalIds.includes(goal.id)&&companies.has(goal.companyId));
+  if(goals.length!==item.goalIds.length)return false;
+  const jobs=(officeState?.jobs||[]).filter(job=>item.jobIds.includes(job.id)&&companies.has(job.companyId));if(jobs.length!==item.jobIds.length)return false;
+  const primaries=jobs.filter(job=>job.pair?.phase==='primary');
+  const acceptedPrimary=(primary:OfficeJob)=>{const review=officeState?.jobs.find(job=>job.id===primary.pair?.reviewJobId&&job.companyId===primary.companyId);return Boolean(!review?.reviewFailure&&primary.artifactSha256&&review?.artifactSha256&&review.status==='completed'&&review.review?.verdict==='accepted'&&review.review.primaryArtifactSha256===primary.artifactSha256&&review.review.reviewArtifactSha256===review.artifactSha256);};
+  return Boolean(goals.length+primaries.length)&&goals.every(goal=>goal.steps.length>0&&goal.steps.every(step=>stepReview(goal,step).accepted))&&primaries.every(acceptedPrimary)&&jobs.every(job=>Boolean(job.pair));
+}
+function roadmapForecast(items:PortfolioRoadmapItem[]):string {
+  const available=new Map((portfolioState()?.roadmap||[]).filter(item=>roadmapInCompany(item,officeCompany()?.id||'')).map(item=>[item.id,item]));
+  const included=new Map<string,PortfolioRoadmapItem>(),pending=[...items];let cursor=0;while(cursor<pending.length&&included.size<=1000){const item=pending[cursor++]!;if(included.has(item.id))continue;included.set(item.id,item);for(const id of item.dependencies){const dependency=available.get(id);if(dependency&&!included.has(id))pending.push(dependency);}}
+  if(included.size>1000)return 'Planning graph exceeds 1,000 accessible outcomes. Narrow the dependency graph before calculating a duration range.';
+  return `${included.size>items.length?'Includes accessible dependencies outside the current department filter. ':''}${forecastText([...included.values()].map(item=>({id:item.id,employeeId:item.ownerEmployeeId,reviewerEmployeeId:item.reviewerEmployeeId,dependsOn:item.dependencies,estimate:item.estimate,reviewEstimate:item.reviewEstimate,accepted:roadmapReviewAccepted(item),blocked:item.status==='blocked'})))}`;
 }
 function renderStudioRoadmap():void{
-  const container=$('workspace-timeline');container.replaceChildren();const company=officeCompany();const all=(portfolioState()?.roadmap||[]).filter(item=>company&&roadmapInCompany(item,company.id)&&(!selectedDepartmentId||item.departmentId===selectedDepartmentId));const state=value('studio-roadmap-status');const items=all.filter(item=>state==='all'||item.status===state);$('studio-roadmap-summary').textContent=`${items.length} outcomes in view · ${all.filter(item=>item.status==='done').length} completed with recorded evidence · ${all.filter(item=>item.status==='blocked').length} blocked`;
-  const stages=[['planned','Planned'],['in-progress','In progress'],['blocked','Blocked'],['done','Done']] as const;let rendered=0;
-  for(const [status,label] of stages){if(state!=='all'&&state!==status)continue;const lane=textElement('section','','roadmap-lane');lane.dataset.stage=status;const rows=items.filter(item=>item.status===status);const head=textElement('header','','roadmap-lane-heading');head.append(textElement('h3',label),textElement('span',String(rows.length),'badge'));lane.append(head);
-    for(const item of rows){if(rendered>=120)break;rendered++;const card=textElement('article','','studio-outcome');card.dataset.roadmapId=item.id;const owner=officeState?.employees.find(e=>e.id===item.ownerEmployeeId);card.append(textElement('span',roadmapScopeLabel(item),'card-type'),textElement('h4',item.title));if(item.description)card.append(textElement('p',item.description.slice(0,260)));const person=textElement('div','','outcome-person');if(owner)person.append(studioAvatar(owner));person.append(textElement('strong',owner?.name||'Owner unavailable'));card.append(person);const date=new Date(item.updatedAt);card.append(textElement('small',`Updated ${Number.isFinite(date.getTime())?date.toLocaleDateString():'date unavailable'} · ${item.dependencies.length} dependencies`,'outcome-meta'));if(item.evidence)card.append(textElement('p',`Evidence: ${item.evidence}`,'form-help'));const action=textElement('button','Inspect ownership','text-button');action.type='button';action.onclick=()=>{setPortfolioOpen(true);editPortfolioRoadmap(item);syncDonnaDock();};card.append(action);lane.append(card);}
-    if(!rows.length)lane.append(textElement('p','No saved outcomes in this stage.','lane-empty'));container.append(lane);
+  const container=$('workspace-timeline');container.replaceChildren();const company=officeCompany(),query=value('studio-roadmap-search').toLowerCase();const all=(portfolioState()?.roadmap||[]).filter(item=>company&&roadmapInCompany(item,company.id)&&(!selectedDepartmentId||item.departmentId===selectedDepartmentId));const state=value('studio-roadmap-status');const items=all.filter(item=>(state==='all'||item.status===state)&&`${item.id} ${item.title} ${officeState?.employees.find(employee=>employee.id===item.ownerEmployeeId)?.name||''}`.toLowerCase().includes(query));roadmapPage=Math.min(roadmapPage,Math.max(0,Math.ceil(items.length/BOARD_PAGE_SIZE)-1));boardPageControls('studio-roadmap',roadmapPage,items.length);const page=items.slice(roadmapPage*BOARD_PAGE_SIZE,(roadmapPage+1)*BOARD_PAGE_SIZE);
+  $('studio-roadmap-summary').textContent=`${items.length} matching outcomes · ${all.filter(item=>item.status==='done').length} recorded Done · ${all.filter(item=>item.status==='blocked').length} blocked. Accepted review is shown only from linked evidence.`;
+  $('studio-roadmap-forecast').textContent=roadmapForecast(all);
+  for(const [status,label] of [['planned','Planned'],['in-progress','In progress'],['blocked','Blocked'],['done','Recorded Done']] as const){if(state!=='all'&&state!==status)continue;const lane=textElement('section','','roadmap-lane');lane.dataset.stage=status;const rows=page.filter(item=>item.status===status);const head=textElement('header','','roadmap-lane-heading');head.append(textElement('h3',label),textElement('span',String(items.filter(item=>item.status===status).length),'badge'));lane.append(head);
+    for(const item of rows){const card=textElement('article','','studio-outcome');card.dataset.roadmapId=item.id;const owner=officeState?.employees.find(employee=>employee.id===item.ownerEmployeeId),reviewer=officeState?.employees.find(employee=>employee.id===item.reviewerEmployeeId);card.append(textElement('span',roadmapScopeLabel(item),'card-type'),textElement('h4',item.title));if(item.description)card.append(textElement('p',item.description.slice(0,260)));const person=textElement('div','','outcome-person');if(owner)person.append(studioAvatar(owner));person.append(textElement('strong',`Owner: ${owner?.name||'Unavailable'}`));card.append(person,textElement('p',`Independent helper/reviewer: ${reviewer?.name||'Unassigned'}`,'board-pair'),textElement('p',`Primary ${formatMinuteRange(estimateMinutes(item.estimate))} · Review ${formatMinuteRange(estimateMinutes(item.reviewEstimate))}`,'outcome-meta'));const date=new Date(item.updatedAt);card.append(textElement('small',`Recorded update ${Number.isFinite(date.getTime())?date.toLocaleDateString():'unavailable'} · ${item.dependencies.length} dependencies`,'outcome-meta'));if(item.evidence)card.append(textElement('p',`Evidence: ${item.evidence}`,'form-help'));if(item.status==='done')card.append(textElement('p',roadmapReviewAccepted(item)?'Native linked review accepted':'Recorded Done · independent review not verified','board-pair'));
+      appendReviewFailures(card,linkedReviewFailures(item));
+      const action=textElement('button','Inspect ownership','text-button');action.type='button';action.onclick=()=>{setPortfolioOpen(true);editPortfolioRoadmap(item);syncDonnaDock();};const discuss=textElement('button','Discuss with Donna','text-button');discuss.type='button';discuss.onclick=()=>discussBoard(item.title,`Outcome ${item.id}; scope ${item.scope.kind}:${item.scope.id}; owner ${item.ownerEmployeeId}; independent reviewer ${item.reviewerEmployeeId||'unassigned'}.`);card.append(action,discuss);lane.append(card);}
+    if(!rows.length)lane.append(textElement('p','No saved outcomes in this stage on this page.','lane-empty'));container.append(lane);
   }
-  if(items.length>120)container.append(textElement('p','Showing the first 120 outcomes. Filter by delivery state or department.','form-help'));
 }
 function syncDonnaDock():void{
   if (endlessWorkspace) {
@@ -3086,8 +3284,8 @@ function initStudio():void{
   $('workspace-theme').onchange=()=>{const next=value('workspace-theme')==='drafting'?'drafting':'blueprint';document.documentElement.dataset.theme=next;saveStudioPreference('theme',next);document.querySelector('meta[name="theme-color"]')?.setAttribute('content',next==='drafting'?'#E8E5DA':'#111719');};
   const heat=studioPreference('heat','workload');($('workspace-heat-mode') as HTMLSelectElement).value=['workload','budget','attention','off'].includes(heat)?heat:'workload';
   $('workspace-heat-mode').onchange=()=>{saveStudioPreference('heat',studioHeatMode());renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();};
-  $('softboard-search').oninput=renderSoftboard;$('studio-roadmap-status').onchange=renderStudioRoadmap;
-  $('softboard-person-chat').onclick=()=>{const e=scopedEmployees().find(item=>item.id===softboardEmployeeId);if(!e||e.status!=='active')return;renderWorkspaceControls();($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=e.id;switchWorkspaceTab('chat');$('chat-message').focus();};
+  $('softboard-search').oninput=renderSoftboard;$('softboard-descendants').onchange=renderSoftboard;$('studio-roadmap-status').onchange=()=>{roadmapPage=0;renderStudioRoadmap();};$('studio-roadmap-search').oninput=()=>{roadmapPage=0;renderStudioRoadmap();};$('studio-roadmap-prev').onclick=()=>{roadmapPage=Math.max(0,roadmapPage-1);renderStudioRoadmap();};$('studio-roadmap-next').onclick=()=>{roadmapPage++;renderStudioRoadmap();};$('studio-roadmap-new').onclick=()=>{setPortfolioOpen(true);editPortfolioRoadmap();};
+  $('softboard-person-chat').onclick=()=>{const e=softboardMembers().find(item=>item.id===softboardEmployeeId);if(!e||e.status!=='active')return;if(e.departmentId)selectedDepartmentId=e.departmentId;renderWorkspaceControls();($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=e.id;switchWorkspaceTab('chat');$('chat-message').focus();};
   $('softboard-person-authority').onclick=()=>{if(!softboardEmployeeId)return;setPortfolioOpen(true);renderAuthority();($('authority-employee') as HTMLSelectElement).value=softboardEmployeeId;renderAuthorityForm();renderAuthorityGrants();($('ceo-authority-editor') as HTMLDetailsElement).open=true;$('authority-employee').focus();$('ceo-authority-editor').scrollIntoView({block:'nearest'});syncDonnaDock();};
   $('donna-dock-toggle').onclick=()=>{if(donnaSuppressClick){donnaSuppressClick=false;return;}donnaDockOpen=true;endlessWorkspace?.open('donna');syncDonnaDock();donnaClamp();$('chat-message').focus();};$('donna-dock-close').onclick=()=>{donnaDockOpen=false;endlessWorkspace?.close('donna');donnaCloseOptions(false);syncDonnaDock();donnaClamp();$('donna-dock-toggle').focus();};
   initDonnaPresentation();
@@ -3577,8 +3775,8 @@ function initFreeflowHost(): void {
   ffMountHeatControls();
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (ffStudio) ffRefresh(); renderStudioSignals(); } ffScheduleHeatTimer(); });
   $('workspace-heat-mode').addEventListener('change', ffScheduleHeatTimer);
-  window.addEventListener('beforeunload', () => { ffStopHeatTimer(); endlessWorkspace?.destroy(); endlessWorkspace = null; ffStudio?.destroy(); ffStudio = null; });
-  window.addEventListener('pagehide', ffStopHeatTimer);
+  window.addEventListener('beforeunload', () => { cancelSpatialGestures();ffStopHeatTimer(); endlessWorkspace?.destroy(); endlessWorkspace = null; ffStudio?.destroy(); ffStudio = null; });
+  window.addEventListener('pagehide', ()=>{cancelSpatialGestures();ffStopHeatTimer();});
   window.addEventListener('hashchange', () => { ffApplyMode(); });
 }
 // ---------------------------------------------------------------- One endless workspace; live forms are spatial elements.
@@ -3660,9 +3858,9 @@ function initEndlessWorkspace(): void {
   add('scope','Company & department',scope,'Office',760,510);
   add('company-directory','Find a company',studio.elements.listHost,'Office',620,690);
   add('workspace-blueprint','Office blueprint',$('workspace-panel-blueprint'),'Office',1080,740);
-  add('workspace-softboard','People & ownership',$('workspace-panel-softboard'),'Office',1040,720);
-  add('workspace-timeline','Company roadmap',$('workspace-panel-timeline'),'Work',1080,720);
-  add('workspace-whiteboard','Whiteboard',$('workspace-panel-whiteboard'),'Work',1080,740);
+  add('workspace-softboard','People & ownership',$('workspace-panel-softboard'),'Office',960,500);
+  add('workspace-timeline','Company roadmap',$('workspace-panel-timeline'),'Work',960,500);
+  add('workspace-whiteboard','Whiteboard',$('workspace-panel-whiteboard'),'Work',960,500);
   add('workspace-decisions','Decision room',$('workspace-panel-decisions'),'Work',1000,740);
   add('goals','Goals & conversation history',$('workspace-panel-chat'),'Donna',900,680);
   add('portfolio','CEO · portfolio & authority',$('ceo-panel'),'Office',1080,760);
@@ -3742,9 +3940,10 @@ function boot(): void {
   $('refresh-sysinfo').addEventListener('click', () => bridge ? void safeTask(async () => renderSystemInfo(await bridge.getSystemInfo())) : nativeUnavailable());
   $('refresh-catalog').addEventListener('click', () => bridge ? void safeTask(refreshCatalog) : nativeUnavailable()); $('refresh-jobs').addEventListener('click', () => bridge ? void safeTask(refreshJobs) : nativeUnavailable());
   $('back-to-launcher').addEventListener('click', () => void bridge?.backToLauncher()); $('ollama-detect').addEventListener('click', () => bridge ? void safeTask(detectOllamaUi) : nativeUnavailable()); $('projects-refresh').addEventListener('click', () => bridge ? void safeTask(refreshProjectsPanel) : nativeUnavailable());
+  $('run-plan-with-donna').onclick=()=>{if(currentProject)discussBoard(currentProject.name,`Project ${currentProject.id}. ${currentProject.goal} Prepare this as an office goal with distinct primary and independent review assignments. Preserve the existing project history.`);};
   $('run-start').addEventListener('click', () => void safeTask(startRun));
   $('run-pause').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { const r = await bridge.pauseRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
-  $('run-resume').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { const r = await bridge.resumeRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
+  $('run-resume').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { if((officeState?.schemaVersion||0)>=2){setStatus($('run-status'),'Run this work as a paired office goal with Donna; historical artifacts remain available.','error');return;}const r = await bridge.resumeRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
   $('run-cancel').addEventListener('click', () => void safeTask(async () => { if (currentRun && bridge) { const r = await bridge.cancelRun(currentRun.id); if (!r.ok) throw new Error(r.error); await refreshCurrentRun(); } }));
   bridge?.onModeChanged((mode, url) => setMode(mode, url)); bridge?.onJobEvent(() => { if (workspaceSurfaceVisible('models')) void safeTask(refreshJobs); });
   bridge?.onProjectEvent((run) => {

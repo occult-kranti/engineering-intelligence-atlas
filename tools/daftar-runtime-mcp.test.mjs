@@ -76,7 +76,7 @@ test('the adapter advertises only owner-facing tools and accurate worker side ef
   assert.equal(f.calls.length, 0);
   const owner = TOOL_DEFINITIONS.find(t => t.name === 'office_command');
   assert.equal(owner.annotations.openWorldHint, true);
-  for (const action of ['claim_job', 'reserve_job', 'finish_job', 'heartbeat_job', 'reserve_external', 'settle_external', 'put_cache', 'get_cache', 'tick_schedules', 'import_cloud_message']) assert.equal(owner.inputSchema.properties.command.properties.action.enum.includes(action), false, action);
+  for (const action of ['claim_job', 'reserve_job', 'finish_job', 'heartbeat_job', 'reserve_external', 'settle_external', 'put_cache', 'get_cache', 'tick_schedules', 'import_cloud_message', 'record_step_review', 'record_review_failure']) assert.equal(owner.inputSchema.properties.command.properties.action.enum.includes(action), false, action);
   const worker = TOOL_DEFINITIONS.find(t => t.name === 'worker_set_enabled');
   assert.equal(worker.annotations.readOnlyHint, false); assert.equal(worker.annotations.idempotentHint, false); assert.equal(worker.annotations.openWorldHint, true); assert.match(worker.description, /charges/);
 });
@@ -294,6 +294,60 @@ test('a saved command remains successful when its snapshot projection is unavail
   const result = await f.handler('office_command', command());
   assert.equal(result.ok, true); assert.equal(result.replayed, true); assert.equal(result.snapshotOmitted, true);
   assert.equal('stateHash' in result, false); assert.equal(f.calls.length, 1); assert.equal(JSON.stringify(result).includes('PRIVATE'), false);
+});
+
+test('remote nested board metadata keeps exact IDs, parent scope, links and the same-read CAS hash', async () => {
+  const office = snapshot(), id = 'sk-ant-1234567890';
+  office.companies.push({id:'company-b',name:'B'});
+  office.offices=[{id:'office-a',companyId:'company-a'},{id:'office-b',companyId:'company-b'}];
+  office.employees.push({id,companyId:'company-a',officeId:'office-a',name:'Owner'});
+  office.goals=[{id:'goal-a',companyId:'company-a',scope:{kind:'company',id:'company-a'},steps:[{id:'step-a',title:'Step',employeeId:id,goal:'PRIVATE STEP',dependsOn:[]}]}];
+  office.blueprints=['a','b'].map(suffix=>({id:`blueprint-${suffix}`,companyId:`company-${suffix}`,officeId:`office-${suffix}`,
+    rooms:[{id:`room-${suffix}`,name:'Room',x:0,y:0,width:1,height:1}],desks:[],
+    whiteboards:[{id:suffix==='a'?id:'board-b',title:'Board',ownerEmployeeId:id,roomId:`room-${suffix}`,x:.2,y:.3,goalIds:suffix==='a'?['goal-a']:[],jobIds:[],roadmapItemIds:[]}]}));
+  const calls=[];
+  const handler=createToolHandler({request:async(method,route,body)=>{calls.push({method,route,body});return {ok:true,stateHash:HASH,snapshot:office};}});
+  const result=await handler('office_query',{collection:'whiteboards',scope:{kind:'company',id:'company-a'}});
+  assert.equal(result.stateHash,HASH);assert.equal(result.items.length,1);assert.equal(result.items[0].id,id);assert.equal(result.items[0].ownerEmployeeId,id);
+  assert.equal(result.items[0].companyId,'company-a');assert.deepEqual(result.items[0].goalIds,['goal-a']);assert.equal(result.items[0].referencesComplete,true);
+  const summary=await handler('office_summary',{});assert.equal(summary.summary.counts.whiteboards,2);assert.equal(summary.summary.counts.rooms,2);assert.equal(summary.summary.counts.goalSteps,1);
+  const steps=await handler('office_query',{collection:'goalSteps',scope:{kind:'goal',id:'goal-a'}});assert.equal(steps.items[0].employeeId,id);assert.equal(JSON.stringify(steps).includes('PRIVATE STEP'),false);
+  const count=calls.length;
+  await assert.rejects(handler('office_query',{collection:'whiteboards'}));
+  await assert.rejects(handler('office_command',{id:'internal-review',expectedStateHash:HASH,command:{action:'record_step_review',jobId:'job-a'}}));
+  await assert.rejects(handler('office_command',{id:'internal-review-failure',expectedStateHash:HASH,command:{action:'record_review_failure',jobId:'job-a'}}));
+  assert.equal(calls.length,count);assert.ok(calls.every(call=>call.method==='GET'&&call.route==='/v1/office'));
+});
+
+test('atomic workflow recovery preserves source identity and uses the same owner CAS boundary', async () => {
+  const f=fixture(),requestId='sk-12345678';
+  f.office.goals=[{id:'goal-atomic',companyId:'company-a',scope:{kind:'company',id:'company-a'},sourceRequestId:requestId,sourceMessageId:'message-atomic',requestSha256:'b'.repeat(64),content:'PRIVATE WORKFLOW BRIEF'}];
+  const page=await f.handler('office_query',{collection:'goals',scope:{kind:'company',id:'company-a'}});
+  assert.equal(page.stateHash,HASH);assert.equal(page.items[0].sourceRequestId,requestId);assert.equal(page.items[0].sourceMessageId,'message-atomic');assert.equal(page.items[0].requestSha256,'b'.repeat(64));
+  assert.equal(JSON.stringify(page).includes('PRIVATE WORKFLOW BRIEF'),false);
+  const envelope={id:'outer-stable-workflow',expectedStateHash:page.stateHash,command:{action:'create_paired_workflow',requestId,scope:{kind:'company',id:'company-a'},title:'Paired goal',content:'Synthetic requested brief',mode:'plan'}};
+  await f.handler('office_command',envelope);
+  assert.deepEqual(f.calls,[{method:'GET',route:'/v1/office',body:undefined},{method:'POST',route:'/v1/commands',body:envelope}]);
+  await assert.rejects(f.handler('office_command',{...envelope,command:{action:'record_step_review',jobId:'review-worker-job'}}));
+  assert.equal(f.calls.length,2,'the owner recovery path cannot settle worker reviews');
+});
+
+test('canonical credential-like IDs survive remote projection while real control-token collisions fail explicitly', async () => {
+  const office=snapshot(), canonical='github_pat_1234567890';office.activeCompanyId=canonical;office.companies[0].id=canonical;
+  office.employees[0].id='sk-12345678';office.employees[0].name=`Fixture ${TOKEN}`;
+  let response={ok:true,stateHash:HASH,snapshot:office},calls=0;
+  const request=createRuntimeClient(config,{fetchImpl:async()=>{calls++;return json(response);}});
+  const handler=createToolHandler({request});
+  assert.equal((await handler('office_summary',{})).summary.activeCompanyId,canonical);
+  const employees=await handler('office_query',{collection:'employees'});
+  assert.ok(employees.items.some(row=>row.id==='sk-12345678'));assert.equal(JSON.stringify(employees).includes(TOKEN),false);
+  for(const record of [{id:TOKEN},{ownerEmployeeId:`prefix-${TOKEN}`},{dependencies:[TOKEN]},{review:{evidenceRefs:[TOKEN]}}]){
+    response={ok:true,snapshot:{record}};
+    await assert.rejects(request('GET','/v1/office'),error=>error.code==='runtime_identity_credential_collision'&&!error.message.includes(TOKEN));
+  }
+  response={ok:true,id:TOKEN};const before=calls;
+  await assert.rejects(request('POST','/v1/commands',command()),error=>error.code==='runtime_identity_credential_collision'&&/No retry was sent/.test(error.message));
+  assert.equal(calls,before+1);
 });
 
 test('worker control sends only the explicit Boolean and never silently runs a one-shot', async () => {

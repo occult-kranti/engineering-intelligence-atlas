@@ -1,0 +1,79 @@
+{
+  "run": "boards-flow-20261122",
+  "node": "integration",
+  "attempt": 4,
+  "status": "mcp-ready-native-repairs-pending",
+  "files": [
+    {
+      "path": "tools/atlas-mcp.mjs",
+      "sha256": "c4d6ff894f1438f32197c13e377edc5327e8b5798366a11498535a047ea15847"
+    },
+    {
+      "path": "tools/atlas-mcp.test.mjs",
+      "sha256": "0ad61762e176aa97c21c70029132c38f2890d165dfc3578599e00cdcf6650ffa"
+    },
+    {
+      "path": "tools/daftar-runtime-mcp.mjs",
+      "sha256": "80f7f834fe416fc7e77e4f9968ed4315f761d9e5f853d418f1f7736bac87adf2"
+    },
+    {
+      "path": "tools/daftar-runtime-mcp.test.mjs",
+      "sha256": "580c6771d785036fc585dc5e00ff924b2307b2e535d6df6f295aa9f96a5296a6"
+    }
+  ],
+  "tests": [
+    {
+      "suite": "atlas + runtime MCP",
+      "passed": 67,
+      "failed": 0,
+      "skipped": 0
+    }
+  ],
+  "findings": [
+    {
+      "id": "brief-coverage",
+      "status": "assigned-to-core",
+      "evidence": "native-brief-review.json",
+      "result": "Saved content beyond the 800-character conversation prefix was absent from an actual synthetic primary prompt when description was omitted."
+    },
+    {
+      "id": "cancelled-review",
+      "status": "assigned-to-core",
+      "evidence": "native-pair-review.json",
+      "result": "A terminal-cancelled review still permitted its primary to dispatch."
+    },
+    {
+      "id": "malformed-review-transition",
+      "status": "assigned-to-core-and-worker",
+      "evidence": "native-pair-review.json",
+      "result": "Settled invalid JSON review left downstream queued, goal running and explicit advance GOAL_BUSY."
+    },
+    {
+      "id": "accepted-producer-byte-hash",
+      "status": "root-fixed-source-read-confirmed",
+      "result": "New acceptedEvidence checks actual producer/review bytes against canonical accepted hashes before reservation."
+    }
+  ],
+  "proposedChanges": [
+    "Native exact source brief preservation in planned work.",
+    "No primary dispatch after its mandatory review becomes terminal.",
+    "Worker-only lease-bound review failure receipt preserving settled usage and enabling explicit repair."
+  ],
+  "readOnlyAcceptance": [
+    "Planning max-plus/paired-phase calculations:17 independently executed tests passed.",
+    "RuntimeClient draft CAS and bounded panel read cache:18 independently executed tests passed after four read classifications corrected.",
+    "Compaction retains full job.goal, original token/USD caps, exact serialized UTF-8 bound and truthful partial/redacted primary coverage."
+  ],
+  "metadataContract": [
+    "Duration triples0.01..1440 minutes.",
+    "Review primaryArtifactComplete true/false/null; evidence cap20 with omissions.",
+    "Atomic goal sourceRequestId/sourceMessageId/requestSha256 without brief text.",
+    "Trusted reviewFailure reasons and redacted bounded summary; no owner settlement authority."
+  ],
+  "limits": [
+    "No provider/SSH/Vast calls, credentials, commits or pushes.",
+    "Synthetic native reproduction is not a production model-quality benchmark.",
+    "No full native suite rerun: parent reported111 native tests before the three independent findings.",
+    "Final native failure-transition/brief fixes require rebuilt-artifact verification by assigned owners."
+  ]
+}

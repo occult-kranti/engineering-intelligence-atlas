@@ -1,0 +1,97 @@
+{
+  "run": "boards-flow-20261122",
+  "node": "integration",
+  "attempt": 3,
+  "status": "focused-checks-passed",
+  "files": [
+    {
+      "path": "desktop-shell/src/main/projects.ts",
+      "sha256": "3dde3973638d964071effdf6c662bdad743ac3a715025847e236a02dd606ded9"
+    },
+    {
+      "path": "desktop-shell/src/main/ipc.ts",
+      "sha256": "32d691c8f608c5e8b73e8a1d45bb0a156aae6693c55ae755ed72b4eb065e10cc"
+    },
+    {
+      "path": "desktop-shell/src/main/index.ts",
+      "sha256": "ad529f1b8d3354cdeee2d8b7f6b2d1dbb20d4b676f4d2c6a15f29ff1e93010e4"
+    },
+    {
+      "path": "headless-runtime/workbench.mjs",
+      "sha256": "7d171c58ef346eb754b052982aa51fb6345dc7dd3d3be51883db6f0912be1740"
+    },
+    {
+      "path": "desktop-shell/tests/legacy-project-policy.test.ts",
+      "sha256": "c2a6931da898e0946afd66283ce8db7f95c7e512c58ce4091ba010cdc5267734"
+    },
+    {
+      "path": "headless-runtime/test/workbench.test.mjs",
+      "sha256": "99fe26a012009056410f8653a3c5ca6d31ec84a9fa67afd00dc3338ffa005a02"
+    },
+    {
+      "path": "headless-runtime/test/workbench-resource-gate.test.mjs",
+      "sha256": "96c6a128c1665e2c951e6d7a395da0f6d763572002a48dd0bc03968c1ecb333d"
+    },
+    {
+      "path": "tools/atlas-mcp.mjs",
+      "sha256": "c5ba0b33ba8018de3272907128858b8086108e23d3e3e5c47e9936deeb4a2f16"
+    },
+    {
+      "path": "tools/atlas-mcp.test.mjs",
+      "sha256": "33bbfdb32400548f318bfcb07cb3ce53e751f1676e7e1d8d16efb2b7f3b58508"
+    },
+    {
+      "path": "tools/daftar-runtime-mcp.mjs",
+      "sha256": "80f7f834fe416fc7e77e4f9968ed4315f761d9e5f853d418f1f7736bac87adf2"
+    },
+    {
+      "path": "tools/daftar-runtime-mcp.test.mjs",
+      "sha256": "0f7d8b858604234a1c4654e2e1d1391a754db3f714521a34e844a5a041d72366"
+    }
+  ],
+  "changes": [
+    "Production legacy start/resume return fixed PAIR_REQUIRED; generation adapter never reaches provider or budget wrappers. History/create/read/pause/cancel retained.",
+    "Workbenches advertise legacy execution disabled and preserve only the exact trusted migration error.",
+    "MCP duration bounds, coverage metadata, evidence cap20, and atomic workflow recovery IDs/hashes align with native contract."
+  ],
+  "tests": [
+    {
+      "suite": "desktop-shell legacy-project-policy + projects",
+      "passed": 18,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "suite": "headless workbench + workbench-resource-gate with rebuilt native schema2",
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "actualNativePairedVaultFlow": true,
+      "providerTransport": "synthetic only",
+      "backgroundWorkersPaused": true
+    },
+    {
+      "suite": "atlas + runtime MCP",
+      "passed": 66,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "check": "desktop main noEmit + portable TypeScript build",
+      "result": "passed"
+    }
+  ],
+  "dependencyEvidence": {
+    "desktop-shell/src/main/company.ts": "45696158c1c890ee7eef3f01553d97437a1d98e748320727ef3dffecdb866edf",
+    "native-core/target/release/atlas-core": "87d4eecd04214dd6cb275056d3ffc35b4820bbed42a92744a6f5406952e2451a"
+  },
+  "resolvedFindings": [
+    "Fixed trusted PAIR_REQUIRED error scrubber presentation.",
+    "Parent fixed command-specific native schema response acceptance after real schema2 binary exposed CORE_INVALID."
+  ],
+  "limits": [
+    "No external provider/SSH/Vast calls, credentials, commits or pushes.",
+    "Legacy engine remains directly injectable for isolated tests; production entrypoints reject execution.",
+    "Native source security/iteration/idempotency independent review remains next task."
+  ]
+}

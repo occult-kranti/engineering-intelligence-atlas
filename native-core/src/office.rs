@@ -3,6 +3,7 @@
 use super::{bounded_text, fail, now, safe_id, safe_relative, Company, Employee, Result};
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
+use sha2::{Digest, Sha256};
 use std::collections::{HashMap, HashSet, VecDeque};
 use time::{format_description::well_known::Rfc3339, Duration, OffsetDateTime};
 use uuid::Uuid;
@@ -95,6 +96,21 @@ fn boolean(p: &Value, key: &str, default: bool) -> Result<bool> {
         None => Ok(default),
         Some(Value::Bool(v)) => Ok(*v),
         _ => Err(fail("INVALID_INPUT", format!("Invalid {key}"))),
+    }
+}
+fn next_revision(p: &Value, previous: Option<u64>) -> Result<u64> {
+    match previous {
+        Some(revision) => {
+            let expected = p.get("expectedRevision").and_then(Value::as_u64)
+                .ok_or_else(|| fail("REVISION_REQUIRED", "Updating this saved entity requires its draft-base expectedRevision"))?;
+            if expected != revision { return Err(fail("STALE_REVISION", "This entity changed after the draft was opened; reload and reconcile the saved revision")); }
+            revision.checked_add(1).filter(|r| *r <= 9_007_199_254_740_991)
+                .ok_or_else(|| fail("CAPACITY", "Entity revision capacity reached"))
+        }
+        None => {
+            if p.get("expectedRevision").is_some_and(|v| v.as_u64() != Some(0)) { return Err(fail("STALE_REVISION", "A new entity starts at revision zero")); }
+            Ok(0)
+        }
     }
 }
 fn canonical_repo(raw: &str) -> Result<String> {
@@ -247,6 +263,46 @@ pub struct Job {
     pub service_contract_id: Option<String>,
     #[serde(default)]
     pub knowledge_transfer_ids: Vec<String>,
+    #[serde(default)]
+    pub pair: Option<JobPair>,
+    #[serde(default)]
+    pub request_sha256: Option<String>,
+    #[serde(default)]
+    pub artifact_sha256: Option<String>,
+    #[serde(default)]
+    pub review: Option<StepReview>,
+    #[serde(default)]
+    pub review_failure: Option<ReviewFailure>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct JobPair {
+    pub step_id: String,
+    pub phase: String,
+    pub peer_employee_id: String,
+    pub primary_job_id: String,
+    pub review_job_id: String,
+}
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ReviewFailure {
+    pub reason: String,
+    pub summary: String,
+    pub recorded_at: String,
+}
+fn review_failure_reason(reason: &str) -> bool {
+    ["malformed-output", "input-budget", "artifact-mismatch", "recording-unconfirmed"].contains(&reason)
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct StepReview {
+    pub verdict: String,
+    pub primary_artifact_sha256: String,
+    pub review_artifact_sha256: String,
+    pub primary_artifact_complete: bool,
+    pub summary: String,
+    pub evidence_refs: Vec<String>,
+    pub recorded_at: String,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -345,7 +401,7 @@ pub struct OfficeSnapshot {
 
 impl OfficeSnapshot {
     pub fn validate(&self) -> Result<()> {
-        if self.schema_version != 1
+        if ![1, 2].contains(&self.schema_version)
             || self.companies.is_empty()
             || self.companies.len() > 2000
             || self.offices.len() > 5000
@@ -569,11 +625,12 @@ impl OfficeSnapshot {
         self.validate_decision_panels()?;
         self.validate_remote_receipts()?;
         self.validate_authority()?;
+        self.validate_pairs()?;
         Ok(())
     }
     pub fn seeded(company: &Company, specialists: &[Employee]) -> Result<Self> {
         let mut state = Self {
-            schema_version: 1,
+            schema_version: 2,
             active_company_id: company.id.clone(),
             companies: vec![],
             offices: vec![],
@@ -1046,25 +1103,73 @@ impl OfficeSnapshot {
             goal_iteration: None,
             service_contract_id,
             knowledge_transfer_ids,
+            pair: None,
+            request_sha256: None,
+            artifact_sha256: None,
+            review: None,
+            review_failure: None,
         })
     }
     fn enqueue(&mut self, p: &Value) -> Result<String> {
+        self.enqueue_pair(p, None)
+    }
+    fn enqueue_pair(&mut self, p: &Value, work: Option<(&str, u64, &str)>) -> Result<String> {
         let company_id = string(p, "companyId", 100)?;
         let key = string(p, "idempotencyKey", 200)?;
+        let mut semantic = p.clone();
+        if let Some(object) = semantic.as_object_mut() { object.remove("action"); }
+        let digest = format!("{:x}", Sha256::digest(serde_json::to_vec(&semantic).map_err(|_| fail("INVALID_INPUT", "Invalid job request"))?));
         if let Some(job) = self
             .jobs
             .iter()
             .find(|j| j.company_id == company_id && j.idempotency_key == key)
         {
+            if job.request_sha256.as_deref() != Some(&digest) {
+                return Err(fail("JOB_IDEMPOTENCY_CONFLICT", "This job key belongs to different or legacy work; inspect the original receipt before a deliberate new request"));
+            }
             return Ok(job.id.clone());
         }
-        if self.jobs.len() >= 5000 {
+        if self.jobs.len() + 2 > 5000 {
             return Err(fail(
                 "CAPACITY",
                 "Queue history reached 5000 jobs; export/archive before adding more",
             ));
         }
-        let job = self.job_from(p)?;
+        let mut job = self.job_from(p)?;
+        if job.limits.max_tokens < 2 {
+            return Err(fail("PAIR_BUDGET", "A paired job requires at least two tokens across its primary and review budgets"));
+        }
+        let reviewer = opt_string(p, "reviewerEmployeeId", 100)?;
+        let reviewer_contract = opt_string(p, "reviewerServiceContractId", 100)?;
+        let (reviewer, reviewer_contract) = self.choose_reviewer(&job, reviewer.as_deref(), reviewer_contract.as_deref())?;
+        let mut review_payload = p.clone();
+        review_payload["employeeId"] = json!(reviewer);
+        review_payload["serviceContractId"] = json!(reviewer_contract);
+        review_payload["allowedTools"] = json!([]);
+        review_payload["dependencies"] = json!([]);
+        review_payload["goal"] = json!(format!("Review the primary deliverable for this work. Return only structured JSON with verdict (accepted, revise or blocked), summary and evidenceRefs. Cite concrete evidence; do not claim execution or grant permissions.\n{}", job.goal.chars().scan(0usize, |bytes, c| { *bytes += c.len_utf8(); (*bytes <= 18000).then_some(c) }).collect::<String>()));
+        review_payload["idempotencyKey"] = json!(format!("pair-review:{digest}"));
+        let mut review = self.job_from(&review_payload)?;
+        if self.jobs.iter().any(|j| j.company_id == company_id && j.idempotency_key == review.idempotency_key) {
+            return Err(fail("JOB_IDEMPOTENCY_CONFLICT", "The paired review identity is already reserved"));
+        }
+        let total_tokens = job.limits.max_tokens;
+        let primary_tokens = ((total_tokens * 3) / 5).max(1).min(total_tokens - 1);
+        job.limits.max_tokens = primary_tokens;
+        review.limits.max_tokens = total_tokens - primary_tokens;
+        let total_usd = job.limits.max_usd;
+        job.limits.max_usd = total_usd * 0.6;
+        review.limits.max_usd = total_usd - job.limits.max_usd;
+        let step_id = work.map(|(_, _, step)| step.to_owned()).unwrap_or_else(|| job.id.clone());
+        job.pair = Some(JobPair { step_id: step_id.clone(), phase: "primary".into(), peer_employee_id: review.employee_id.clone(), primary_job_id: job.id.clone(), review_job_id: review.id.clone() });
+        review.pair = Some(JobPair { step_id, phase: "review".into(), peer_employee_id: job.employee_id.clone(), primary_job_id: job.id.clone(), review_job_id: review.id.clone() });
+        review.dependencies = vec![job.id.clone()];
+        job.request_sha256 = Some(digest.clone());
+        review.request_sha256 = Some(format!("{:x}", Sha256::digest(format!("review:{digest}"))));
+        if let Some((goal, iteration, _)) = work {
+            job.goal_id = Some(goal.into()); job.goal_iteration = Some(iteration);
+            review.goal_id = Some(goal.into()); review.goal_iteration = Some(iteration);
+        }
         let job_id = job.id.clone();
         self.log(
             "donna",
@@ -1073,9 +1178,166 @@ impl OfficeSnapshot {
             format!("Queued {} job for {}", job.mode, job.employee_id),
         );
         self.jobs.push(job);
+        self.jobs.push(review);
         Ok(job_id)
     }
+    fn choose_reviewer(&self, primary: &Job, requested: Option<&str>, contract: Option<&str>) -> Result<(String, Option<String>)> {
+        if requested.is_none() && contract.is_some() {
+            return Err(fail("PAIR_REQUIRED", "Select the reviewer covered by the explicit review service contract"));
+        }
+        let validate = |employee: &str, contract: Option<&str>| -> Result<()> {
+            if employee == primary.employee_id { return Err(fail("PAIR_REQUIRED", "Primary and reviewer must be different employees")); }
+            self.validate_worker_assignment(&primary.company_id, &primary.office_id, primary.department_id.as_deref(), employee, contract, &[])?;
+            let mut reviewer = primary.clone(); reviewer.employee_id = employee.into(); reviewer.service_contract_id = contract.map(str::to_owned); reviewer.allowed_tools.clear();
+            self.active_worker(&reviewer).map_err(|reason| fail("PAIR_REQUIRED", reason))?;
+            self.portfolio_allows_dispatch(&reviewer).map_err(|reason| fail("PAIR_REQUIRED", reason))?;
+            self.authority_allows_dispatch(&reviewer, OffsetDateTime::now_utc()).map_err(|reason| fail("PAIR_REQUIRED", reason))?;
+            Ok(())
+        };
+        if let Some(employee) = requested { validate(employee, contract)?; return Ok((employee.into(), contract.map(str::to_owned))); }
+        let mut candidates: Vec<_> = self.employees.iter().filter(|e| e.company_id.as_deref() == Some(&primary.company_id) && e.status == "active" && e.id != primary.employee_id).collect();
+        candidates.sort_by(|a,b| a.id.cmp(&b.id));
+        for employee in candidates { if validate(&employee.id, None).is_ok() { return Ok((employee.id.clone(), None)); } }
+        Err(fail("PAIR_REQUIRED", "No distinct authorized reviewer exists in this office/department. Hire or explicitly contract one before dispatch; scope was not widened"))
+    }
+    fn active_worker(&self, job: &Job) -> std::result::Result<(), String> {
+        let employee = self.employees.iter().find(|e| e.id == job.employee_id).ok_or("Employee is unavailable")?;
+        if employee.status != "active"
+            || self.companies.iter().find(|c| c.id == job.company_id).is_none_or(|c| c.status != "active")
+            || self.offices.iter().find(|o| o.id == job.office_id).is_none_or(|o| o.status != "active")
+            || job.department_id.as_ref().is_some_and(|id| self.departments.iter().find(|d| &d.id == id).is_none_or(|d| d.status != "active"))
+            || employee.company_id.as_ref().is_some_and(|id| self.companies.iter().find(|c| &c.id == id).is_none_or(|c| c.status != "active"))
+            || employee.office_id.as_ref().is_some_and(|id| self.offices.iter().find(|o| &o.id == id).is_none_or(|o| o.status != "active"))
+            || employee.department_id.as_ref().is_some_and(|id| self.departments.iter().find(|d| &d.id == id).is_none_or(|d| d.status != "active")) {
+            return Err("An assigned employee or its hierarchy is paused or unavailable".into());
+        }
+        Ok(())
+    }
+    fn pair_allows_dispatch(&self, job: &Job) -> std::result::Result<(), String> {
+        let pair = job.pair.as_ref().ok_or("PAIR_REQUIRED: legacy unpaired work cannot start; create an explicitly paired workflow")?;
+        let peer_id = if pair.phase == "primary" { &pair.review_job_id } else { &pair.primary_job_id };
+        let peer = self.jobs.iter().find(|j| &j.id == peer_id).ok_or("Paired assignment is missing")?;
+        if pair.phase == "primary" && (!["queued", "waiting-budget"].contains(&peer.status.as_str()) || peer.review_failure.is_some()) {
+            return Err("The assigned reviewer is paused, cancelled, completed, or unavailable for this attempt".into());
+        }
+        self.active_worker(job)?; self.active_worker(peer)?;
+        self.portfolio_allows_dispatch(peer)?;
+        self.authority_allows_dispatch(peer, OffsetDateTime::now_utc())?;
+        Ok(())
+    }
+    fn dependency_accepted(&self, job: &Job, parent: &Job) -> bool {
+        if parent.status != "completed" { return false; }
+        if job.pair.as_ref().is_some_and(|p| p.phase == "review" && p.primary_job_id == parent.id) { return true; }
+        let Some(pair) = &parent.pair else { return false; };
+        let review = if pair.phase == "review" { Some(parent) } else { self.jobs.iter().find(|j| j.id == pair.review_job_id) };
+        review.is_some_and(|j| j.status == "completed" && j.review.as_ref().is_some_and(|r| r.verdict == "accepted"))
+    }
+    pub(super) fn job_accepted(&self, job: &Job) -> bool {
+        let Some(pair) = &job.pair else { return false; };
+        self.jobs.iter().find(|j| j.id == pair.review_job_id).is_some_and(|j| j.status == "completed" && j.review.as_ref().is_some_and(|r| r.verdict == "accepted"))
+    }
+    fn validate_pairs(&self) -> Result<()> {
+        let digest = |s: &str| s.len() == 64 && s.bytes().all(|c| c.is_ascii_hexdigit());
+        for job in &self.jobs {
+            if job.request_sha256.as_ref().is_some_and(|s| !digest(s)) || job.artifact_sha256.as_ref().is_some_and(|s| !digest(s)) { return Err(fail("OFFICE_STATE_INVALID", "Invalid paired artifact or request digest")); }
+            let Some(pair) = &job.pair else {
+                if job.review.is_some() || job.review_failure.is_some() { return Err(fail("OFFICE_STATE_INVALID", "Unpaired job cannot carry a review receipt")); }
+                continue;
+            };
+            let primary = self.jobs.iter().find(|j| j.id == pair.primary_job_id).ok_or_else(|| fail("OFFICE_STATE_INVALID", "Primary job is missing"))?;
+            let review = self.jobs.iter().find(|j| j.id == pair.review_job_id).ok_or_else(|| fail("OFFICE_STATE_INVALID", "Review job is missing"))?;
+            if !safe_id(&pair.step_id) || !["primary", "review"].contains(&pair.phase.as_str()) || primary.id == review.id || primary.employee_id == review.employee_id
+                || primary.company_id != review.company_id || primary.office_id != review.office_id || primary.department_id != review.department_id
+                || primary.goal_id != review.goal_id || primary.goal_iteration != review.goal_iteration
+                || !review.allowed_tools.is_empty() || review.dependencies != vec![primary.id.clone()]
+                || (pair.phase == "primary" && (job.id != primary.id || pair.peer_employee_id != review.employee_id))
+                || (pair.phase == "review" && (job.id != review.id || pair.peer_employee_id != primary.employee_id))
+                || primary.pair.as_ref().is_none_or(|p| p.phase != "primary" || p.primary_job_id != primary.id || p.review_job_id != review.id || p.step_id != pair.step_id)
+                || review.pair.as_ref().is_none_or(|p| p.phase != "review" || p.primary_job_id != primary.id || p.review_job_id != review.id || p.step_id != pair.step_id) {
+                return Err(fail("OFFICE_STATE_INVALID", "Invalid paired work identities or scope"));
+            }
+            if let Some(failure) = &job.review_failure {
+                if pair.phase != "review" || job.review.is_some() || !job.usage_recorded || !governance::terminal(&job.status) || !review_failure_reason(&failure.reason) {
+                    return Err(fail("OFFICE_STATE_INVALID", "Invalid nonaccepting review failure receipt"));
+                }
+                bounded_text(&failure.summary, 2000, "review failure summary")?;
+                timestamp(&failure.recorded_at)?;
+            }
+            if let Some(record) = &job.review {
+                if pair.phase != "review" || primary.status != "completed" || review.status != "completed"
+                    || !["accepted", "revise", "blocked"].contains(&record.verdict.as_str())
+                    || !digest(&record.primary_artifact_sha256) || !digest(&record.review_artifact_sha256)
+                    || primary.artifact_sha256.as_deref() != Some(&record.primary_artifact_sha256) || review.artifact_sha256.as_deref() != Some(&record.review_artifact_sha256)
+                    || primary.artifact_uri.is_none() || review.artifact_uri.is_none()
+                    || record.evidence_refs.len() > 20 || (record.verdict == "accepted" && (!record.primary_artifact_complete || record.evidence_refs.is_empty())) {
+                    return Err(fail("OFFICE_STATE_INVALID", "Invalid review evidence"));
+                }
+                bounded_text(&record.summary, 4000, "review summary")?;
+                for reference in &record.evidence_refs { bounded_text(reference, 300, "review evidence")?; }
+                timestamp(&record.recorded_at)?;
+            }
+        }
+        Ok(())
+    }
+    fn record_step_review(&mut self, p: &Value) -> Result<()> {
+        let job_id = string(p, "jobId", 100)?;
+        let lease = string(p, "leaseToken", 100)?;
+        let primary_id = string(p, "primaryJobId", 100)?;
+        let job = self.jobs.iter().find(|j| j.id == job_id).ok_or_else(|| fail("NOT_FOUND", "Review job not found"))?;
+        let pair = job.pair.as_ref().ok_or_else(|| fail("PAIR_REQUIRED", "Review job has no paired assignment"))?;
+        if pair.phase != "review" || pair.primary_job_id != primary_id || job.lease_token.as_deref() != Some(&lease) {
+            return Err(fail("STALE_LEASE", "Review receipt requires the exact completed reviewer lease and primary job"));
+        }
+        if job.review_failure.is_some() { return Err(fail("REVIEW_RECEIPT_CONFLICT", "This review attempt already has an immutable failure receipt; create an explicitly authorized repair iteration")); }
+        let record = StepReview { verdict: string(p, "verdict", 20)?, primary_artifact_sha256: string(p, "primaryArtifactSha256", 64)?, review_artifact_sha256: string(p, "reviewArtifactSha256", 64)?, primary_artifact_complete: boolean(p, "primaryArtifactComplete", false)?, summary: string(p, "summary", 4000)?, evidence_refs: strings(p, "evidenceRefs", 20)?, recorded_at: job.review.as_ref().map(|r| r.recorded_at.clone()).unwrap_or_else(now) };
+        if let Some(previous) = &job.review {
+            if previous != &record { return Err(fail("REVIEW_RECEIPT_CONFLICT", "This review attempt already has a different immutable verdict")); }
+            self.last_action = Some(json!({"jobId":job_id,"verdict":record.verdict,"replayed":true})); return Ok(());
+        }
+        let primary = self.jobs.iter().find(|j| j.id == primary_id).ok_or_else(|| fail("NOT_FOUND", "Primary job not found"))?;
+        if job.status != "completed" || primary.status != "completed" || !job.usage_recorded || !primary.usage_recorded
+            || job.artifact_uri.is_none() || primary.artifact_uri.is_none()
+            || primary.artifact_sha256.as_deref() != Some(&record.primary_artifact_sha256) || job.artifact_sha256.as_deref() != Some(&record.review_artifact_sha256)
+            || !["accepted", "revise", "blocked"].contains(&record.verdict.as_str())
+            || (record.verdict == "accepted" && (!record.primary_artifact_complete || record.evidence_refs.is_empty())) {
+            return Err(fail("REVIEW_EVIDENCE_REQUIRED", "Review acceptance requires settled distinct jobs, exact artifact hashes, evidence and complete primary coverage"));
+        }
+        self.pair_allows_dispatch(job).map_err(|s| fail("REVIEW_AUTHORITY_REVOKED", s))?;
+        self.portfolio_allows_dispatch(job).map_err(|s| fail("REVIEW_AUTHORITY_REVOKED", s))?;
+        self.authority_allows_dispatch(job, OffsetDateTime::now_utc()).map_err(|s| fail("REVIEW_AUTHORITY_REVOKED", s))?;
+        let verdict = record.verdict.clone();
+        self.jobs.iter_mut().find(|j| j.id == job_id).unwrap().review = Some(record);
+        self.log("worker", "step-review-recorded", &job_id, format!("Recorded independent paired review: {verdict}; execution usage remains unchanged"));
+        self.last_action = Some(json!({"jobId":job_id,"verdict":verdict,"replayed":false}));
+        Ok(())
+    }
+    fn record_review_failure(&mut self, p: &Value) -> Result<()> {
+        let job_id = string(p, "jobId", 100)?;
+        let lease = string(p, "leaseToken", 100)?;
+        let reason = string(p, "reason", 40)?;
+        if !review_failure_reason(&reason) { return Err(fail("INVALID_INPUT", "Unknown review failure reason")); }
+        let job = self.jobs.iter().find(|j| j.id == job_id).ok_or_else(|| fail("NOT_FOUND", "Review job not found"))?;
+        if job.pair.as_ref().is_none_or(|pair| pair.phase != "review") || job.lease_token.as_deref() != Some(&lease) {
+            return Err(fail("STALE_LEASE", "Review failure requires the exact reviewer job and settled lease"));
+        }
+        if job.review.is_some() { return Err(fail("REVIEW_RECEIPT_CONFLICT", "A review verdict is already recorded and cannot be overwritten by a failure")); }
+        let record = ReviewFailure { reason, summary: opt_string(p, "summary", 2000)?.unwrap_or_else(|| "The managed reviewer could not record a valid independent verdict. Explicit repair is required.".into()), recorded_at: job.review_failure.as_ref().map(|r| r.recorded_at.clone()).unwrap_or_else(now) };
+        if let Some(previous) = &job.review_failure {
+            if previous != &record { return Err(fail("REVIEW_RECEIPT_CONFLICT", "This review attempt already has a different immutable failure receipt")); }
+            self.last_action = Some(json!({"jobId":job_id,"failedReview":true,"reason":record.reason,"replayed":true}));
+            return Ok(());
+        }
+        if !job.usage_recorded || !governance::terminal(&job.status) { return Err(fail("REVIEW_SETTLEMENT_REQUIRED", "Settle the review execution before recording its nonaccepting failure")); }
+        // Like usage settlement, a nonaccepting failure may be recorded after
+        // revocation. It grants no tools, acceptance, retry, or spending authority.
+        let reason = record.reason.clone();
+        self.jobs.iter_mut().find(|j| j.id == job_id).unwrap().review_failure = Some(record);
+        self.log("worker", "step-review-failed", &job_id, format!("Recorded nonaccepting review failure: {reason}; settled usage and artifacts retained"));
+        self.last_action = Some(json!({"jobId":job_id,"failedReview":true,"reason":reason,"replayed":false}));
+        Ok(())
+    }
     fn eligible(&self, job: &Job, clock: OffsetDateTime) -> std::result::Result<(), String> {
+        self.pair_allows_dispatch(job)?;
         self.governance_allows_dispatch(job)?;
         self.portfolio_allows_dispatch(job)?;
         self.authority_allows_dispatch(job, clock)?;
@@ -1115,9 +1377,9 @@ impl OfficeSnapshot {
             self.jobs
                 .iter()
                 .find(|x| &x.id == d)
-                .is_none_or(|x| x.status != "completed")
+                .is_none_or(|x| !self.dependency_accepted(job, x))
         }) {
-            return Err("Waiting for completed dependencies".into());
+            return Err("Waiting for accepted dependency reviews".into());
         }
         if timestamp(&job.due_at).map(|t| t > clock).unwrap_or(true) {
             return Err("Scheduled for a later time".into());
@@ -1178,8 +1440,24 @@ impl OfficeSnapshot {
             .iter()
             .map(|j| (j.id.clone(), j.status.clone()))
             .collect();
+        for job in &self.jobs {
+            if let Some(pair) = &job.pair {
+                if self.jobs.iter().find(|j| j.id == pair.review_job_id).is_some_and(|review|
+                    review.review_failure.is_some() || review.review.as_ref().is_some_and(|r| r.verdict != "accepted")
+                    || ["failed", "cancelled", "budget-exhausted", "needs-review"].contains(&review.status.as_str())) {
+                    statuses.insert(job.id.clone(), "needs-review".into());
+                }
+            }
+        }
         for job in &mut self.jobs {
             if job.status == "queued" || job.status == "waiting-budget" {
+                if job.pair.as_ref().is_some_and(|pair| pair.phase == "primary") && statuses.get(&job.id).is_some_and(|status| status == "needs-review") {
+                    job.status = "needs-review".into();
+                    job.error = Some("The assigned review attempt cannot complete; create an explicitly authorized paired repair".into());
+                    job.updated_at = now();
+                    blocked.push(job.id.clone());
+                    continue;
+                }
                 if let Some(dependency) = job.dependencies.iter().find(|d| {
                     statuses.get(*d).is_some_and(|s| {
                         ["failed", "cancelled", "budget-exhausted", "needs-review"]
@@ -1218,6 +1496,7 @@ impl OfficeSnapshot {
             self.authority_prepare_owner_action()?;
         }
         self.apply_inner(p)?;
+        self.schema_version = 2;
         if audit {
             self.authority_record_owner_action(&action, p)?;
         }
@@ -1244,6 +1523,8 @@ impl OfficeSnapshot {
             return Ok(());
         }
         match action.as_str() {
+            "record_step_review" => { self.record_step_review(p)?; }
+            "record_review_failure" => { self.record_review_failure(p)?; }
             "set_company_parent" => {
                 self.set_company_parent(p)?;
             }
@@ -1483,7 +1764,8 @@ impl OfficeSnapshot {
             }
             "enqueue_job" => {
                 let job_id = self.enqueue(p)?;
-                self.last_action = Some(json!({"jobId":job_id}));
+                let review_id = self.jobs.iter().find(|j| j.id == job_id).and_then(|j| j.pair.as_ref()).map(|p| p.review_job_id.clone());
+                self.last_action = Some(json!({"jobId":job_id,"reviewJobId":review_id}));
             }
             "claim_job" => {
                 let worker_id = string(p, "workerId", 150)?;
@@ -1548,6 +1830,7 @@ impl OfficeSnapshot {
                     .find(|job| job.id == job_id)
                     .ok_or_else(|| fail("NOT_FOUND", "Job not found"))?;
                 if existing.reservation.is_none() {
+                    self.pair_allows_dispatch(existing).map_err(|reason| fail(if existing.pair.is_none() { "PAIR_REQUIRED" } else { "DISPATCH_PERMISSION_REVOKED" }, reason))?;
                     self.authority_allows_dispatch(existing, OffsetDateTime::now_utc())
                         .map_err(|reason| fail("AUTHORITY_DENIED", reason))?;
                 }
@@ -1661,6 +1944,8 @@ impl OfficeSnapshot {
                 }
                 let artifact =
                     opt_string(p, "artifactUri", 3000)?.or(opt_string(p, "artifactPath", 3000)?);
+                let artifact_sha256 = opt_string(p, "artifactSha256", 64)?;
+                if artifact_sha256.as_ref().is_some_and(|h| h.len() != 64 || !h.bytes().all(|c| c.is_ascii_hexdigit())) { return Err(fail("INVALID_INPUT", "artifactSha256 must be an exact SHA-256 digest")); }
                 let summary = opt_string(p, "summary", 4000)?;
                 let error = opt_string(p, "error", 1000)?;
                 let job = self
@@ -1693,6 +1978,7 @@ impl OfficeSnapshot {
                 job.cost_status = cost_status;
                 job.usage_recorded = true;
                 job.artifact_uri = artifact;
+                job.artifact_sha256 = artifact_sha256;
                 job.summary = summary;
                 if !preserve {
                     job.status = if over {
@@ -2072,7 +2358,7 @@ mod tests {
         let mut s = office();
         enqueue(&mut s, "key");
         let (j, l) = claim(&mut s);
-        s.apply(&json!({"action":"reserve_job","jobId":j,"leaseToken":l,"inputTokens":20,"maxOutputTokens":50,"costUsd":0.5})).unwrap();
+        s.apply(&json!({"action":"reserve_job","jobId":j,"leaseToken":l,"inputTokens":20,"maxOutputTokens":30,"costUsd":0.5})).unwrap();
         s.apply(&json!({"action":"cancel_job","jobId":j})).unwrap();
         assert_eq!(s.jobs[0].cost_status, "reserved");
         s.apply(&json!({"action":"finish_job","jobId":j,"leaseToken":l,"status":"completed","inputTokens":20,"outputTokens":10,"costUsd":0.2,"artifactUri":"file:///tmp/result.md"})).unwrap();
@@ -2139,7 +2425,7 @@ mod tests {
         let mut s = office();
         enqueue(&mut s, "reservation");
         let (j, l) = claim(&mut s);
-        s.apply(&json!({"action":"reserve_job","jobId":j,"leaseToken":l,"inputTokens":20,"maxOutputTokens":50,"costUsd":0.5})).unwrap();
+        s.apply(&json!({"action":"reserve_job","jobId":j,"leaseToken":l,"inputTokens":20,"maxOutputTokens":30,"costUsd":0.5})).unwrap();
         s.apply(&json!({"action":"cancel_job","jobId":j})).unwrap();
         s.jobs[0].lease_expires_at = Some("2020-01-01T00:00:00Z".into());
         assert!(s.expire_leases());
@@ -2185,10 +2471,301 @@ mod tests {
         s.apply(&json!({"action":"fire_employee","employeeId":employee}))
             .unwrap();
         s.apply(&json!({"action":"tick_schedules"})).unwrap();
-        assert_eq!(s.jobs.len(), 1);
+        assert_eq!(s.jobs.len(), 2);
         assert_eq!(s.jobs[0].employee_id, "donna");
         assert!(s.schedules[0].last_error.is_some());
         assert!(!s.schedules[0].enabled);
         assert!(s.schedules[1].last_enqueued_at.is_some());
     }
+}
+
+
+#[cfg(test)]
+mod paired_work_tests {
+    use super::*;
+    fn state() -> OfficeSnapshot {
+        let company: Company = serde_json::from_value(json!({"id":"paired","name":"Paired","repoUrl":"https://github.com/example/paired","owner":"example","repo":"paired","githubStatus":"unchecked"})).unwrap();
+        OfficeSnapshot::seeded(&company, &[]).unwrap()
+    }
+    fn request(s: &OfficeSnapshot, key: &str) -> Value {
+        json!({"action":"enqueue_job","companyId":"paired","officeId":s.offices[0].id,"employeeId":"donna","reviewerEmployeeId":s.offices[0].assistant_id,"goal":"Inspect a bounded artifact","mode":"manual","maxTokens":100,"maxUsd":1,"maxMinutes":5,"idempotencyKey":key})
+    }
+    fn enqueue(s: &mut OfficeSnapshot, p: Value) -> (String,String) {
+        s.apply(&p).unwrap(); let a=s.last_action.as_ref().unwrap();
+        (a["jobId"].as_str().unwrap().into(),a["reviewJobId"].as_str().unwrap().into())
+    }
+    fn claim(s: &mut OfficeSnapshot) -> Option<(String,String)> {
+        s.apply(&json!({"action":"claim_job","workerId":"pair-test"})).unwrap();
+        let a=s.last_action.as_ref().unwrap(); a["jobId"].as_str().map(|id|(id.into(),a["leaseToken"].as_str().unwrap().into()))
+    }
+    fn settle(s: &mut OfficeSnapshot, id: &str, lease: &str, status: &str) {
+        let digest=if s.jobs.iter().find(|j|j.id==id).unwrap().pair.as_ref().is_some_and(|p|p.phase=="review") { "b".repeat(64) } else { "a".repeat(64) };
+        s.apply(&json!({"action":"finish_job","jobId":id,"leaseToken":lease,"status":status,"inputTokens":5,"outputTokens":5,"costUsd":0.1,"artifactUri":format!("/fixture/{id}.md"),"artifactSha256":digest,"summary":"Fixture evidence"})).unwrap();
+    }
+    fn review_request(s: &OfficeSnapshot, review: &str, lease: &str) -> Value {
+        let j=s.jobs.iter().find(|j|j.id==review).unwrap();
+        json!({"action":"record_step_review","jobId":review,"leaseToken":lease,"primaryJobId":j.pair.as_ref().unwrap().primary_job_id,"primaryArtifactSha256":"a".repeat(64),"reviewArtifactSha256":"b".repeat(64),"primaryArtifactComplete":true,"verdict":"accepted","summary":"Checked the complete primary artifact","evidenceRefs":["fixture:result"]})
+    }
+    fn goal(s: &mut OfficeSnapshot, steps: usize) -> String {
+        s.apply(&json!({"action":"create_goal","scope":{"kind":"office","id":s.offices[0].id},"title":"Paired goal","mode":"execute","maxIterations":2,"runSettings":{"mode":"manual","provider":"anthropic","model":"","authorized":false,"maxTokens":100,"maxUsd":1,"maxMinutes":15,"priceRates":{"inputUsdPerMillion":null,"outputUsdPerMillion":null}}})).unwrap();
+        let id=s.last_action.as_ref().unwrap()["goalId"].as_str().unwrap().to_owned();
+        let steps:Vec<_>=(0..steps).map(|i|json!({"id":format!("step-{i}"),"title":"Work","employeeId":"donna","reviewerEmployeeId":s.offices[0].assistant_id,"goal":"Produce evidence","dependsOn":if i==0 {vec![]}else{vec![format!("step-{}",i-1)]}})).collect();
+        s.apply(&json!({"action":"set_goal_plan","goalId":id,"steps":steps})).unwrap();
+        id
+    }
+    #[test]
+    fn pairing_creates_real_distinct_read_only_review_and_preserves_total_budget() {
+        let mut s=state();let p=request(&s,"pair-1");let (a,b)=enqueue(&mut s,p.clone());
+        assert_eq!(s.jobs.len(),2);assert_ne!(s.jobs[0].employee_id,s.jobs[1].employee_id);
+        assert_eq!(s.jobs[0].limits.max_tokens+s.jobs[1].limits.max_tokens,100);
+        assert!((s.jobs[0].limits.max_usd+s.jobs[1].limits.max_usd-1.0).abs()<1e-9);
+        assert!(s.jobs[1].allowed_tools.is_empty());assert_eq!(s.jobs[1].dependencies,vec![a.clone()]);
+        assert_eq!(s.jobs[0].pair.as_ref().unwrap().review_job_id,b);s.validate().unwrap();
+        enqueue(&mut s,p);assert_eq!(s.jobs.len(),2);
+    }
+    #[test]
+    fn pairing_rejects_same_employee_cross_company_and_changed_key_body() {
+        let mut s=state();let p=request(&s,"identity");enqueue(&mut s,p.clone());
+        let mut changed=p.clone();changed["goal"]=json!("Different work");assert_eq!(s.apply(&changed).unwrap_err().code,"JOB_IDEMPOTENCY_CONFLICT");
+        let mut same=request(&s,"same");same["reviewerEmployeeId"]=json!("donna");assert_eq!(s.apply(&same).unwrap_err().code,"PAIR_REQUIRED");
+        s.apply(&json!({"action":"create_company","name":"Foreign"})).unwrap();
+        let foreign=s.employees.iter().find(|e|e.company_id.as_deref()!=Some("paired")&&e.id!="donna").unwrap().id.clone();
+        let mut cross=request(&s,"cross");cross["reviewerEmployeeId"]=json!(foreign);assert!(s.apply(&cross).is_err());assert_eq!(s.jobs.len(),2);
+    }
+    #[test]
+    fn paired_acceptance_requires_exact_hashes_full_coverage_and_is_idempotent_after_revocation() {
+        let mut s=state();let p=request(&s,"review");let (a,b)=enqueue(&mut s,p);
+        let (id,lease)=claim(&mut s).unwrap();assert_eq!(id,a);settle(&mut s,&id,&lease,"completed");
+        let (id,lease)=claim(&mut s).unwrap();assert_eq!(id,b);settle(&mut s,&id,&lease,"completed");
+        assert!(!s.job_accepted(&s.jobs[0]));let good=review_request(&s,&id,&lease);
+        let mut wrong=good.clone();wrong["primaryArtifactSha256"]=json!("c".repeat(64));assert_eq!(s.apply(&wrong).unwrap_err().code,"REVIEW_EVIDENCE_REQUIRED");
+        let mut partial=good.clone();partial["primaryArtifactComplete"]=json!(false);assert_eq!(s.apply(&partial).unwrap_err().code,"REVIEW_EVIDENCE_REQUIRED");
+        s.apply(&good).unwrap();assert!(s.job_accepted(&s.jobs[0]));
+        let reviewer=s.jobs[1].employee_id.clone();s.apply(&json!({"action":"pause_employee","employeeId":reviewer})).unwrap();
+        s.apply(&good).unwrap();assert_eq!(s.last_action.as_ref().unwrap()["replayed"],true);
+        let mut changed=good;changed["verdict"]=json!("revise");assert_eq!(s.apply(&changed).unwrap_err().code,"REVIEW_RECEIPT_CONFLICT");s.validate().unwrap();
+    }
+    #[test]
+    fn dependency_waits_for_review_acceptance_not_just_review_execution() {
+        let mut s=state();let p=request(&s,"parent");let (a,b)=enqueue(&mut s,p);
+        let mut child=request(&s,"child");child["dependencies"]=json!([a]);let (child,_)=enqueue(&mut s,child);
+        let (id,lease)=claim(&mut s).unwrap();settle(&mut s,&id,&lease,"completed");
+        let (id,lease)=claim(&mut s).unwrap();assert_eq!(id,b);settle(&mut s,&id,&lease,"completed");
+        assert!(claim(&mut s).is_none());let review=review_request(&s,&id,&lease);s.apply(&review).unwrap();
+        assert_eq!(claim(&mut s).unwrap().0,child);
+    }
+    #[test]
+    fn reviewer_pause_blocks_claim_and_recheck_without_losing_settlement() {
+        let mut s=state();let p=request(&s,"pause");let (a,b)=enqueue(&mut s,p);
+        let reviewer=s.jobs.iter().find(|j|j.id==b).unwrap().employee_id.clone();
+        s.apply(&json!({"action":"pause_employee","employeeId":reviewer})).unwrap();assert!(claim(&mut s).is_none());
+        s.apply(&json!({"action":"resume_employee","employeeId":reviewer})).unwrap();assert!(claim(&mut s).is_none());s.apply(&json!({"action":"resume_job","jobId":b})).unwrap();let (id,lease)=claim(&mut s).unwrap();assert_eq!(id,a);
+        s.apply(&json!({"action":"pause_employee","employeeId":reviewer})).unwrap();assert!(s.eligible(s.jobs.iter().find(|j|j.id==id).unwrap(),OffsetDateTime::now_utc()).is_err());
+        settle(&mut s,&id,&lease,"completed");assert_eq!(s.jobs[0].status,"completed");assert!(!s.job_accepted(&s.jobs[0]));
+    }
+    #[test]
+    fn legacy_unpaired_work_cannot_start_but_an_existing_attempt_can_settle() {
+        let mut s=state();let p=request(&s,"legacy");let (a,_)=enqueue(&mut s,p);
+        let (id,lease)=claim(&mut s).unwrap();assert_eq!(id,a);
+        s.jobs.truncate(1);s.jobs[0].pair=None;s.jobs[0].request_sha256=None;s.schema_version=1;
+        settle(&mut s,&id,&lease,"completed");assert_eq!(s.schema_version,2);assert_eq!(s.jobs[0].status,"completed");
+        let mut queued=s.jobs[0].clone();queued.id="legacy-queued".into();queued.idempotency_key="legacy-queued".into();queued.status="queued".into();queued.started_at=None;queued.usage_recorded=false;queued.lease_token=None;s.jobs.push(queued);
+        assert!(claim(&mut s).is_none());assert!(s.jobs[1].error.as_deref().unwrap().contains("PAIR_REQUIRED"));s.validate().unwrap();
+    }
+    #[test]
+    fn goal_compiles_two_jobs_per_step_and_accepts_only_all_reviews() {
+        let mut s=state();let g=goal(&mut s,2);s.apply(&json!({"action":"execute_goal","goalId":g})).unwrap();
+        assert_eq!(s.goals[0].job_ids.len(),4);assert_eq!(s.jobs[2].dependencies,vec![s.jobs[1].id.clone()]);
+        for _ in 0..4 { let (id,lease)=claim(&mut s).unwrap();let is_review=s.jobs.iter().find(|j|j.id==id).unwrap().pair.as_ref().unwrap().phase=="review";settle(&mut s,&id,&lease,"completed");if is_review {let review=review_request(&s,&id,&lease);s.apply(&review).unwrap();} }
+        assert_eq!(s.goals[0].status,"completed");s.validate().unwrap();
+    }
+    #[test]
+    fn explicit_repair_iteration_does_not_depend_on_failed_prior_leaf() {
+        let mut s=state();let g=goal(&mut s,1);s.apply(&json!({"action":"execute_goal","goalId":g})).unwrap();
+        let (id,lease)=claim(&mut s).unwrap();settle(&mut s,&id,&lease,"failed");assert_eq!(s.goals[0].status,"needs-review");
+        s.apply(&json!({"action":"advance_goal","goalId":g,"reason":"Repair the preserved failed attempt"})).unwrap();
+        let (id,_)=claim(&mut s).unwrap();let new=s.jobs.iter().find(|j|j.id==id).unwrap();assert_eq!(new.goal_iteration,Some(2));assert!(new.dependencies.is_empty());
+    }
+    #[test]
+    fn employee_scope_is_not_widened_and_estimates_are_validated() {
+        let mut s=state();s.apply(&json!({"action":"create_goal","scope":{"kind":"employee","id":"donna"},"title":"Scoped","mode":"plan"})).unwrap();let id=s.goals[0].id.clone();
+        assert_eq!(s.apply(&json!({"action":"plan_goal","goalId":id})).unwrap_err().code,"PAIR_REQUIRED");
+        let g=goal(&mut s,1);let before=s.goals.iter().find(|x|x.id==g).unwrap().steps.clone();let mut steps=serde_json::to_value(&before).unwrap();steps[0]["estimate"]=json!({"optimisticMinutes":20,"likelyMinutes":10,"pessimisticMinutes":30});
+        assert_eq!(s.apply(&json!({"action":"set_goal_plan","goalId":g,"steps":steps})).unwrap_err().code,"INVALID_ESTIMATE");
+    }
+    #[test]
+    fn whiteboard_revisions_protect_single_and_full_blueprint_edits() {
+        let mut s=state();let original=s.blueprints[0].clone();let board=&original.whiteboards[0];
+        let mut edit=serde_json::to_value(board).unwrap();edit["action"]=json!("upsert_whiteboard");edit["officeId"]=json!(original.office_id);edit["title"]=json!("New title");
+        assert_eq!(s.apply(&edit).unwrap_err().code,"REVISION_REQUIRED");edit["expectedRevision"]=json!(0);s.apply(&edit).unwrap();assert_eq!(s.blueprints[0].whiteboards[0].revision,1);assert_eq!(s.blueprints[0].revision,1);
+        assert_eq!(s.apply(&edit).unwrap_err().code,"STALE_REVISION");assert_eq!(s.apply(&json!({"action":"save_blueprint","expectedRevision":0,"blueprint":original})).unwrap_err().code,"STALE_REVISION");
+        let current=s.blueprints[0].clone();s.apply(&json!({"action":"save_blueprint","expectedRevision":1,"blueprint":current})).unwrap();assert_eq!(s.blueprints[0].revision,2);assert_eq!(s.blueprints[0].whiteboards[0].revision,2);
+    }
+    #[test]
+    fn roadmap_done_requires_real_accepted_pair_and_revision() {
+        let mut s=state();let mut item=json!({"action":"upsert_roadmap_item","id":"outcome","scope":{"kind":"company","id":"paired"},"title":"Outcome","ownerEmployeeId":"donna","reviewerEmployeeId":s.offices[0].assistant_id,"status":"planned"});
+        s.apply(&item).unwrap();assert_eq!(s.portfolio.roadmap[0].revision,0);assert_eq!(s.apply(&item).unwrap_err().code,"REVISION_REQUIRED");
+        item["expectedRevision"]=json!(0);item["status"]=json!("done");item["evidence"]=json!("A label alone is not acceptance");assert_eq!(s.apply(&item).unwrap_err().code,"REVIEW_EVIDENCE_REQUIRED");
+        let p=request(&s,"outcome-work");let (a,_)=enqueue(&mut s,p);for _ in 0..2 {let (id,lease)=claim(&mut s).unwrap();let is_review=s.jobs.iter().find(|j|j.id==id).unwrap().pair.as_ref().unwrap().phase=="review";settle(&mut s,&id,&lease,"completed");if is_review{let r=review_request(&s,&id,&lease);s.apply(&r).unwrap();}}
+        item["jobIds"]=json!([a]);s.apply(&item).unwrap();assert_eq!(s.portfolio.roadmap[0].revision,1);assert_eq!(s.portfolio.roadmap[0].status,"done");s.validate().unwrap();
+    }
+    #[test]
+    fn paired_workflow_is_atomic_and_replays_after_restart_without_duplicate_briefs() {
+        let mut s = state();
+        let mut request = json!({"action":"create_paired_workflow","requestId":"workflow-once","scope":{"kind":"employee","id":"donna"},"title":"One durable brief","content":"Deliver a reviewed artifact","mode":"plan"});
+        let before = (s.goals.len(), s.chat_threads.len(), s.jobs.len());
+        assert_eq!(s.apply(&request).unwrap_err().code, "PAIR_REQUIRED");
+        assert_eq!((s.goals.len(), s.chat_threads.len(), s.jobs.len()), before);
+        request["scope"] = json!({"kind":"office","id":s.offices[0].id});
+        s.apply(&request).unwrap();
+        let receipt = s.last_action.clone().unwrap();
+        assert_eq!(receipt["started"], false);
+        assert!(s.jobs.is_empty()); assert_eq!(s.goals.len(), 1);
+        assert_eq!(s.chat_threads.iter().flat_map(|t| &t.messages).filter(|m| m.role == "user").count(), 1);
+        assert!(s.goals[0].steps.iter().all(|step| step.reviewer_employee_id.as_ref().is_some_and(|id| id != &step.employee_id)));
+        s = serde_json::from_str(&serde_json::to_string(&s).unwrap()).unwrap();
+        let reviewer = s.goals[0].steps[0].reviewer_employee_id.clone().unwrap();
+        s.apply(&json!({"action":"pause_employee","employeeId":reviewer})).unwrap();
+        s.apply(&request).unwrap();
+        assert_eq!(s.last_action.as_ref().unwrap()["goalId"], receipt["goalId"]);
+        assert_eq!(s.last_action.as_ref().unwrap()["messageId"], receipt["messageId"]);
+        assert_eq!(s.last_action.as_ref().unwrap()["replayed"], true);
+        assert_eq!(s.goals.len(), 1);
+        request["content"] = json!("Changed brief under the same ID");
+        assert_eq!(s.apply(&request).unwrap_err().code, "WORKFLOW_IDEMPOTENCY_CONFLICT");
+        assert_eq!(s.chat_threads.iter().flat_map(|t| &t.messages).filter(|m| m.role == "user").count(), 1);
+        s.validate().unwrap();
+    }
+    #[test]
+    fn paired_workflow_cannot_escalate_provider_policy_and_creates_real_dag_once() {
+        let mut s = state();
+        let request = json!({"action":"create_paired_workflow","requestId":"workflow-provider","scope":{"kind":"office","id":s.offices[0].id},"title":"Bounded provider flow","content":"Prepare evidence and review it","mode":"execute","execute":true,"runSettings":{"mode":"provider","provider":"anthropic","model":"fixture","authorized":false,"maxTokens":1000,"maxUsd":1,"maxMinutes":15,"priceRates":{"inputUsdPerMillion":1,"outputUsdPerMillion":1}}});
+        assert_eq!(s.apply(&request).unwrap_err().code, "REVIEW_REQUIRED");
+        assert!(s.goals.is_empty() && s.chat_threads.is_empty() && s.jobs.is_empty());
+        s.apply(&json!({"action":"configure_policy","approvalMode":"autonomous"})).unwrap();
+        s.apply(&request).unwrap();
+        assert!(s.last_action.as_ref().unwrap()["started"].as_bool().unwrap());
+        let count = s.goals[0].steps.len();
+        assert_eq!(s.jobs.len(), count * 2);
+        assert_eq!(s.jobs.iter().map(|j| j.limits.max_tokens).sum::<u64>(), count as u64 * 1000);
+        s.apply(&request).unwrap(); assert_eq!(s.jobs.len(), count * 2); s.validate().unwrap();
+    }
+    #[test]
+    fn reviewer_revocation_between_claim_and_reserve_cannot_start_provider() {
+        let mut s = state(); let p = request(&s, "reserve-check"); let (primary, review) = enqueue(&mut s, p);
+        let (_, lease) = claim(&mut s).unwrap();
+        let reviewer = s.jobs.iter().find(|j| j.id == review).unwrap().employee_id.clone();
+        s.apply(&json!({"action":"pause_employee","employeeId":reviewer})).unwrap();
+        assert_eq!(s.apply(&json!({"action":"reserve_job","jobId":primary,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.1})).unwrap_err().code, "DISPATCH_PERMISSION_REVOKED");
+        assert!(s.jobs.iter().find(|j| j.id == primary).unwrap().reservation.is_none());
+    }
+    #[test]
+    fn uncertain_prior_execution_blocks_repair_and_rejected_review_blocks_dependents() {
+        let mut s = state(); let g = goal(&mut s, 1);
+        s.apply(&json!({"action":"execute_goal","goalId":g})).unwrap();
+        let (primary, lease) = claim(&mut s).unwrap();
+        s.apply(&json!({"action":"reserve_job","jobId":primary,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.1})).unwrap();
+        s.jobs.iter_mut().find(|j| j.id == primary).unwrap().lease_expires_at = Some("2020-01-01T00:00:00Z".into());
+        s.apply(&json!({"action":"tick_goals"})).unwrap();
+        assert_eq!(s.apply(&json!({"action":"advance_goal","goalId":g,"reason":"Unknown outcome must be reconciled"})).unwrap_err().code, "UNSETTLED_ATTEMPT");
+        assert_eq!(s.jobs.len(), 2);
+        let mut s = state(); let g = goal(&mut s, 2);
+        s.apply(&json!({"action":"execute_goal","goalId":g})).unwrap();
+        for _ in 0..2 {
+            let (id, lease) = claim(&mut s).unwrap(); let is_review = s.jobs.iter().find(|j| j.id == id).unwrap().pair.as_ref().unwrap().phase == "review";
+            settle(&mut s, &id, &lease, "completed");
+            if is_review { let mut record = review_request(&s, &id, &lease); record["verdict"] = json!("revise"); s.apply(&record).unwrap(); }
+        }
+        assert!(claim(&mut s).is_none()); assert_ne!(s.goals[0].status, "completed");
+        assert!(s.jobs.iter().filter(|j| j.pair.as_ref().unwrap().step_id == "step-1").all(|j| j.status == "needs-review"));
+    }
+    #[test]
+    fn paired_index_links_boards_steps_reviews_without_artifact_bodies() {
+        let mut s = state(); let g = goal(&mut s, 1);
+        s.apply(&json!({"action":"execute_goal","goalId":g})).unwrap();
+        for _ in 0..2 { let (id, lease) = claim(&mut s).unwrap(); let is_review = s.jobs.iter().find(|j| j.id == id).unwrap().pair.as_ref().unwrap().phase == "review"; settle(&mut s, &id, &lease, "completed"); if is_review {let p = review_request(&s, &id, &lease); s.apply(&p).unwrap();} }
+        assert!(s.authority.index.iter().any(|i| i.kind == "whiteboard"));
+        let step = s.authority.index.iter().find(|i| i.kind == "goal-step").unwrap();
+        assert_eq!(step.parent_id.as_deref(), Some(g.as_str())); assert_eq!(step.owner_employee_id.as_deref(), Some("donna")); assert_eq!(step.reviewer_employee_id.as_deref(), Some(s.offices[0].assistant_id.as_str()));
+        let review = s.authority.index.iter().find(|i| i.kind == "review").unwrap(); assert_eq!(review.status, "accepted"); assert_eq!(review.related_ids.len(), 2);
+        assert!(!serde_json::to_string(&s.authority.index).unwrap().contains("/fixture/"));
+    }
+
+    #[test]
+    fn atomic_workflow_keeps_full_source_brief_after_chat_rolloff_with_optional_context() {
+        for description in [None, Some("Additional acceptance context")] {
+            let mut s = state();
+            let brief = format!("{} END_OF_FULL_BRIEF_SENTINEL", "Original source content. ".repeat(60));
+            assert!(brief.find("END_OF_FULL_BRIEF_SENTINEL").unwrap() > 900);
+            let scope = json!({"kind":"office","id":s.offices[0].id});
+            let mut p = json!({"action":"create_paired_workflow","requestId":"full-brief","scope":scope,"title":"Short title","content":brief,"mode":"execute"});
+            if let Some(description) = description { p["description"] = json!(description); }
+            s.apply(&p).unwrap();
+            let goal_id = s.goals[0].id.clone(); let message_id = s.goals[0].source_message_id.clone();
+            assert!(s.goals[0].description.contains(&brief));
+            if let Some(description) = description { assert!(s.goals[0].description.contains(description)); }
+            assert!(s.goals[0].steps.iter().all(|step| step.goal.contains(&brief)));
+            for i in 0..9 { s.apply(&json!({"action":"post_chat","scope":scope,"content":format!("Later conversation {i}")})).unwrap(); }
+            assert!(s.chat_threads[0].messages.iter().rev().take(6).all(|m| !m.content.contains("END_OF_FULL_BRIEF_SENTINEL")));
+            s.apply(&json!({"action":"execute_goal","goalId":goal_id})).unwrap();
+            assert!(s.jobs.iter().all(|job| job.goal.contains(&brief)));
+            let count = s.jobs.len(); s = serde_json::from_str(&serde_json::to_string(&s).unwrap()).unwrap(); s.apply(&p).unwrap();
+            assert_eq!(s.jobs.len(), count); assert_eq!(s.goals[0].source_message_id, message_id); assert_eq!(s.last_action.as_ref().unwrap()["replayed"], true);
+            s.validate().unwrap();
+        }
+    }
+    #[test]
+    fn atomic_workflow_rejects_oversized_combined_brief_without_partial_records() {
+        let mut s = state(); let p = json!({"action":"create_paired_workflow","requestId":"oversized-brief","scope":{"kind":"office","id":s.offices[0].id},"title":"Bounded brief","content":"b".repeat(11000),"description":"d".repeat(8000),"mode":"plan"});
+        assert!(s.apply(&p).is_err()); assert!(s.goals.is_empty() && s.jobs.is_empty() && s.chat_threads.is_empty());
+    }
+    #[test]
+    fn cancelled_reviewer_blocks_primary_claim_reservation_and_dispatch_but_not_settlement() {
+        let mut s = state(); let p = request(&s, "cancel-before-claim"); let (primary, review) = enqueue(&mut s, p);
+        s.apply(&json!({"action":"cancel_job","jobId":review})).unwrap();
+        assert!(claim(&mut s).is_none()); assert_eq!(s.jobs.iter().find(|j| j.id == primary).unwrap().status, "needs-review");
+        let mut s = state(); let p = request(&s, "cancel-after-claim"); let (primary, review) = enqueue(&mut s, p);
+        let (_, lease) = claim(&mut s).unwrap(); s.apply(&json!({"action":"cancel_job","jobId":review})).unwrap();
+        assert_eq!(s.apply(&json!({"action":"reserve_job","jobId":primary,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.1})).unwrap_err().code, "DISPATCH_PERMISSION_REVOKED");
+        assert_eq!(s.apply(&json!({"action":"check_worker_authority","jobId":primary,"leaseToken":lease,"capability":"provider.run"})).unwrap_err().code, "AUTHORITY_DENIED");
+        settle(&mut s, &primary, &lease, "completed");
+        assert_eq!(s.jobs[0].status, "completed"); assert!(s.jobs[0].usage_recorded); assert!(!s.job_accepted(&s.jobs[0])); s.validate().unwrap();
+    }
+    #[test]
+    fn explicit_review_failure_unblocks_repair_without_racing_normal_settlement() {
+        let mut s = state(); let goal_id = goal(&mut s, 2); s.apply(&json!({"action":"execute_goal","goalId":goal_id})).unwrap();
+        let (primary, lease) = claim(&mut s).unwrap(); settle(&mut s, &primary, &lease, "completed");
+        let (review, lease) = claim(&mut s).unwrap();
+        let failure = json!({"action":"record_review_failure","jobId":review,"leaseToken":lease,"reason":"malformed-output","summary":"The settled model output did not match the review JSON contract."});
+        assert_eq!(s.apply(&failure).unwrap_err().code, "REVIEW_SETTLEMENT_REQUIRED");
+        settle(&mut s, &review, &lease, "completed");
+        assert_eq!(s.goals[0].status, "running"); assert_eq!(s.jobs[2].status, "queued");
+        assert_eq!(s.apply(&json!({"action":"advance_goal","goalId":goal_id,"reason":"Must await explicit review outcome"})).unwrap_err().code, "GOAL_BUSY");
+        let artifact = s.jobs[1].artifact_uri.clone(); let cost = s.budget.observed_usd;
+        s.apply(&failure).unwrap();
+        assert_eq!(s.goals[0].status, "needs-review"); assert_eq!(s.goals[0].stop_reason.as_deref(), Some("review-required"));
+        assert_eq!(s.jobs[1].status, "completed"); assert_eq!(s.jobs[1].artifact_uri, artifact); assert_eq!(s.budget.observed_usd, cost); assert!(s.jobs[1].review.is_none());
+        assert!(s.jobs[2..].iter().all(|j| j.status == "needs-review"));
+        s.apply(&json!({"action":"advance_goal","goalId":goal_id,"reason":"Explicit repair after malformed review"})).unwrap();
+        let (next, _) = claim(&mut s).unwrap(); assert_eq!(s.jobs.iter().find(|j| j.id == next).unwrap().goal_iteration, Some(2)); s.validate().unwrap();
+    }
+    #[test]
+    fn review_failure_receipts_are_lease_bound_immutable_and_cannot_replace_acceptance() {
+        let mut s = state(); let p = request(&s, "failure-receipt"); let (_, review) = enqueue(&mut s, p);
+        let (primary, lease) = claim(&mut s).unwrap(); settle(&mut s, &primary, &lease, "completed");
+        let (_, lease) = claim(&mut s).unwrap(); settle(&mut s, &review, &lease, "completed");
+        let good = review_request(&s, &review, &lease);
+        let failure = json!({"action":"record_review_failure","jobId":review,"leaseToken":lease,"reason":"malformed-output"});
+        let mut wrong = failure.clone(); wrong["leaseToken"] = json!("wrong-lease"); assert_eq!(s.apply(&wrong).unwrap_err().code, "STALE_LEASE");
+        let mut accepted = s.clone(); accepted.apply(&good).unwrap(); assert_eq!(accepted.apply(&failure).unwrap_err().code, "REVIEW_RECEIPT_CONFLICT"); assert!(accepted.job_accepted(&accepted.jobs[0]));
+        let reviewer = s.jobs[1].employee_id.clone(); s.apply(&json!({"action":"pause_employee","employeeId":reviewer})).unwrap();
+        s.apply(&failure).unwrap(); let cost = s.budget.observed_usd;
+        s = serde_json::from_str(&serde_json::to_string(&s).unwrap()).unwrap(); s.apply(&failure).unwrap();
+        assert_eq!(s.last_action.as_ref().unwrap()["replayed"], true); assert_eq!(s.budget.observed_usd, cost);
+        assert_eq!(s.apply(&good).unwrap_err().code, "REVIEW_RECEIPT_CONFLICT");
+        let mut changed = failure.clone(); changed["reason"] = json!("recording-unconfirmed"); assert_eq!(s.apply(&changed).unwrap_err().code, "REVIEW_RECEIPT_CONFLICT");
+        assert_eq!(s.apply(&json!({"action":"apply_remote_command","id":"remote-cannot-fail-review","command":failure})).unwrap_err().code, "REMOTE_ACTION_DENIED");
+        s.validate().unwrap(); let mut invalid = s.clone(); invalid.jobs[0].review_failure = invalid.jobs[1].review_failure.clone(); assert!(invalid.validate().is_err());
+    }
+
 }

@@ -84,6 +84,16 @@ pub struct PortfolioRoadmapItem {
     pub title: String,
     pub description: String,
     pub owner_employee_id: String,
+    #[serde(default)]
+    pub reviewer_employee_id: Option<String>,
+    #[serde(default)]
+    pub reviewer_service_contract_id: Option<String>,
+    #[serde(default)]
+    pub estimate: Option<WorkEstimate>,
+    #[serde(default)]
+    pub review_estimate: Option<WorkEstimate>,
+    #[serde(default)]
+    pub revision: u64,
     pub department_id: Option<String>,
     pub service_contract_id: Option<String>,
     pub status: String,
@@ -952,6 +962,12 @@ impl OfficeSnapshot {
                 "Roadmap scope cannot be moved across tenants",
             ));
         }
+        let revision = next_revision(p, previous.as_ref().map(|r| r.revision))?;
+        let reviewer_employee_id = opt_string(p, "reviewerEmployeeId", 100)?;
+        let reviewer_service_contract_id = opt_string(p, "reviewerServiceContractId", 100)?;
+        let estimate: Option<WorkEstimate> = p.get("estimate").filter(|v| !v.is_null()).map(|v| serde_json::from_value(v.clone()).map_err(|_| fail("INVALID_ESTIMATE", "Invalid production estimate"))).transpose()?;
+        let review_estimate: Option<WorkEstimate> = p.get("reviewEstimate").filter(|v| !v.is_null()).map(|v| serde_json::from_value(v.clone()).map_err(|_| fail("INVALID_ESTIMATE", "Invalid review estimate"))).transpose()?;
+        for value in [&estimate, &review_estimate].into_iter().flatten() { value.validate()?; }
         let owner = string(p, "ownerEmployeeId", 100)?;
         let employee = self.staff(&owner)?;
         if employee.status == "fired" {
@@ -1010,6 +1026,20 @@ impl OfficeSnapshot {
                 ));
             }
         }
+        let reviewer = reviewer_employee_id.as_deref().ok_or_else(|| fail("PAIR_REQUIRED", "Roadmap work requires a distinct helper/reviewer"))?;
+        let review_employee = self.staff(reviewer)?;
+        if reviewer == owner || review_employee.status != "active" { return Err(fail("PAIR_REQUIRED", "Roadmap owner and active reviewer must be different employees")); }
+        let pair_company = if scope.kind == "company" { scope.id.clone() } else {
+            employee.company_id.clone().or_else(|| review_employee.company_id.clone())
+                .filter(|company| companies.contains(company))
+                .ok_or_else(|| fail("PAIR_REQUIRED", "Select paired employees inside a concrete company covered by this roadmap scope"))?
+        };
+        let pair_office = contract.as_ref().and_then(|id| self.portfolio.contracts.iter().find(|c| &c.id == id)).and_then(|c| c.recipient_office_id.clone())
+            .or_else(|| employee.office_id.clone().filter(|id| self.offices.iter().any(|o| &o.id == id && o.company_id == pair_company)))
+            .or_else(|| self.offices.iter().find(|o| o.company_id == pair_company).map(|o| o.id.clone()))
+            .ok_or_else(|| fail("PAIR_REQUIRED", "Roadmap pair needs an existing office"))?;
+        self.validate_worker_assignment(&pair_company, &pair_office, department.as_deref(), &owner, contract.as_deref(), &[])?;
+        self.validate_worker_assignment(&pair_company, &pair_office, department.as_deref(), reviewer, reviewer_service_contract_id.as_deref(), &[])?;
         let status = opt_string(p, "status", 30)?.unwrap_or_else(|| {
             previous
                 .as_ref()
@@ -1068,6 +1098,15 @@ impl OfficeSnapshot {
                 "Completed roadmap items require evidence",
             ));
         }
+        if status == "done" {
+            if goals.is_empty() && jobs.is_empty() { return Err(fail("REVIEW_EVIDENCE_REQUIRED", "Completed roadmap work must link actual accepted paired execution")); }
+            for goal_id in &goals {
+                let goal = self.goals.iter().find(|g| &g.id == goal_id).unwrap();
+                let current: Vec<_> = self.jobs.iter().filter(|j| j.goal_id.as_deref() == Some(goal_id) && j.goal_iteration == Some(goal.iteration)).collect();
+                if goal.status != "completed" || current.is_empty() || current.iter().any(|j| !self.job_accepted(j)) { return Err(fail("REVIEW_EVIDENCE_REQUIRED", "Linked goal has not passed its paired reviews")); }
+            }
+            if jobs.iter().any(|id| self.jobs.iter().find(|j| &j.id == id).is_none_or(|j| !self.job_accepted(j))) { return Err(fail("REVIEW_EVIDENCE_REQUIRED", "Linked job has not passed its paired review")); }
+        }
         let stamp = now();
         let roadmap = PortfolioRoadmapItem {
             id: item_id.clone(),
@@ -1075,6 +1114,11 @@ impl OfficeSnapshot {
             title,
             description: optional_description(p)?,
             owner_employee_id: owner,
+            reviewer_employee_id,
+            reviewer_service_contract_id,
+            estimate,
+            review_estimate,
+            revision,
             department_id: department,
             service_contract_id: contract,
             status,
@@ -1154,12 +1198,12 @@ impl OfficeSnapshot {
                 || self
                     .goals
                     .iter()
-                    .any(|g| g.steps.iter().any(|s| s.employee_id == employee.id))
+                    .any(|g| g.steps.iter().any(|s| s.employee_id == employee.id || s.reviewer_employee_id.as_ref() == Some(&employee.id)))
                 || self
                     .portfolio
                     .roadmap
                     .iter()
-                    .any(|r| r.owner_employee_id == employee.id)
+                    .any(|r| r.owner_employee_id == employee.id || r.reviewer_employee_id.as_ref() == Some(&employee.id))
                 || self.blueprints.iter().any(|b| {
                     b.whiteboards
                         .iter()
@@ -1510,6 +1554,9 @@ impl OfficeSnapshot {
             }
         }
         for roadmap in &p.roadmap {
+            for value in [&roadmap.estimate, &roadmap.review_estimate].into_iter().flatten() { value.validate()?; }
+            if roadmap.revision > 9_007_199_254_740_991 || roadmap.reviewer_employee_id.as_ref().is_some_and(|id| id == &roadmap.owner_employee_id || !self.employees.iter().any(|e| &e.id == id))
+                || roadmap.reviewer_service_contract_id.as_ref().is_some_and(|id| !p.contracts.iter().any(|c| &c.id == id)) { return Err(fail("OFFICE_STATE_INVALID", "Invalid roadmap pair or revision")); }
             let companies = self.roadmap_scope_companies(&roadmap.scope)?;
             if !safe_id(&roadmap.id)
                 || !ids.insert(&roadmap.id)
@@ -1869,7 +1916,7 @@ mod tests {
             .as_str()
             .unwrap()
             .to_string();
-        s.apply(&json!({"action":"set_goal_plan","goalId":goal,"steps":[{"id":"review","title":"Review","employeeId":employee,"serviceContractId":contract,"knowledgeTransferIds":[transfer],"goal":"Use only selected references","dependsOn":[]}]})).unwrap();
+        s.apply(&json!({"action":"set_goal_plan","goalId":goal,"steps":[{"id":"review","title":"Review","employeeId":employee,"reviewerEmployeeId":s.offices.iter().find(|o| o.company_id == "beta").unwrap().assistant_id,"serviceContractId":contract,"knowledgeTransferIds":[transfer],"goal":"Use only selected references","dependsOn":[]}]})).unwrap();
         s.apply(&json!({"action":"execute_goal","goalId":goal}))
             .unwrap();
         let job = s
@@ -1911,7 +1958,7 @@ mod tests {
             .unwrap()
             .id
             .clone();
-        s.apply(&json!({"action":"enqueue_job","companyId":"beta","officeId":office,"employeeId":beta_code,"goal":"Existing owned work","mode":"manual","maxTokens":100,"maxUsd":0,"maxMinutes":1,"idempotencyKey":"existing"})).unwrap();
+        s.apply(&json!({"action":"enqueue_job","companyId":"beta","officeId":office,"employeeId":beta_code,"reviewerEmployeeId":s.offices.iter().find(|o| o.id == office).unwrap().assistant_id,"goal":"Existing owned work","mode":"manual","maxTokens":100,"maxUsd":0,"maxMinutes":1,"idempotencyKey":"existing"})).unwrap();
         let job = s.jobs[0].id.clone();
         optimize(&mut s, true);
         assert_eq!(s.staff(&beta_code).unwrap().status, "active");
@@ -1940,14 +1987,51 @@ mod tests {
         s.validate().unwrap();
     }
     #[test]
+    fn optimizer_retains_queued_and_planned_reviewers_but_pauses_unassigned_duplicates() {
+        for assignment in ["queued-review", "planned-step", "roadmap"] {
+            let mut s = state();
+            let reviewer = s.employees.iter().find(|e| e.company_id.as_deref() == Some("beta") && e.assignment_key.as_deref() == Some("qa-lead")).unwrap().id.clone();
+            let idle = s.employees.iter().find(|e| e.company_id.as_deref() == Some("beta") && e.assignment_key.as_deref() == Some("knowledge-curator")).unwrap().id.clone();
+            let office = s.offices.iter().find(|o| o.company_id == "beta").unwrap().id.clone();
+            match assignment {
+                "queued-review" => { s.apply(&json!({"action":"enqueue_job","companyId":"beta","officeId":office,"employeeId":"donna","reviewerEmployeeId":reviewer,"goal":"Owned paired work","mode":"manual","maxTokens":100,"maxUsd":0,"maxMinutes":1,"idempotencyKey":"review-owned"})).unwrap(); },
+                "planned-step" => {
+                    s.apply(&json!({"action":"create_goal","scope":{"kind":"office","id":office},"title":"Review assignment before dispatch","mode":"plan"})).unwrap();
+                    let goal = s.last_action.as_ref().unwrap()["goalId"].as_str().unwrap().to_owned();
+                    s.apply(&json!({"action":"set_goal_plan","goalId":goal,"steps":[{"id":"work","title":"Planned owned work","employeeId":"donna","reviewerEmployeeId":reviewer,"goal":"Produce reviewed evidence","dependsOn":[]}]})).unwrap();
+                },
+                "roadmap" => { s.apply(&json!({"action":"upsert_roadmap_item","id":"review-owned-outcome","scope":{"kind":"company","id":"beta"},"title":"Owned review outcome","ownerEmployeeId":"donna","reviewerEmployeeId":reviewer,"status":"planned"})).unwrap(); },
+                _ => unreachable!(),
+            }
+            optimize(&mut s, true);
+            assert_eq!(s.staff(&reviewer).unwrap().status, "active", "Reviewer assignment {assignment} must remain available");
+            assert_eq!(s.staff(&idle).unwrap().status, "paused", "Unassigned duplicate must still be paused for {assignment}");
+            assert!(s.portfolio.recommendations.iter().any(|r| r.employee_id == reviewer && r.reason.starts_with("Retained")));
+            s.validate().unwrap();
+        }
+    }
+    #[test]
     fn owned_roadmaps_validate_dependencies_evidence_and_contracted_whiteboards() {
         let mut s = state();
         optimize(&mut s, false);
         let (_, contract, employee) = borrowed(&s);
-        s.apply(&json!({"action":"upsert_roadmap_item","id":"global","scope":{"kind":"global","id":"portfolio"},"title":"Portfolio gate","ownerEmployeeId":"donna","status":"done","evidence":"Fixture gate passed"})).unwrap();
-        let item = json!({"action":"upsert_roadmap_item","id":"company-work","scope":{"kind":"company","id":"beta"},"title":"Company delivery","ownerEmployeeId":employee,"serviceContractId":contract,"status":"done","dependencies":["global"],"evidence":"Fixture artifact retained"});
+        let reviewer = s.offices.iter().find(|o| o.company_id == "beta").unwrap().assistant_id.clone();
+        let req = request(&s, "completed-roadmap-work");
+        s.apply(&req).unwrap();
+        let primary = s.last_action.as_ref().unwrap()["jobId"].as_str().unwrap().to_owned();
+        for _ in 0..2 {
+            s.apply(&json!({"action":"claim_job","workerId":"fixture"})).unwrap();
+            let job = s.last_action.as_ref().unwrap()["jobId"].as_str().unwrap().to_owned();
+            let lease = s.last_action.as_ref().unwrap()["leaseToken"].as_str().unwrap().to_owned();
+            s.apply(&json!({"action":"finish_job","jobId":job,"leaseToken":lease,"status":"completed","inputTokens":0,"outputTokens":0,"costUsd":0,"artifactUri":"/fixture/roadmap.md","artifactSha256":"a".repeat(64)})).unwrap();
+            if s.jobs.iter().find(|j| j.id == job).unwrap().pair.as_ref().unwrap().phase == "review" {
+                s.apply(&json!({"action":"record_step_review","jobId":job,"leaseToken":lease,"primaryJobId":primary,"primaryArtifactSha256":"a".repeat(64),"reviewArtifactSha256":"a".repeat(64),"primaryArtifactComplete":true,"verdict":"accepted","summary":"Complete fixture review","evidenceRefs":["fixture:roadmap"]})).unwrap();
+            }
+        }
+        s.apply(&json!({"action":"upsert_roadmap_item","id":"global","scope":{"kind":"global","id":"portfolio"},"title":"Portfolio gate","ownerEmployeeId":"donna","reviewerEmployeeId":reviewer,"jobIds":[primary],"status":"done","evidence":"Fixture gate passed"})).unwrap();
+        let item = json!({"action":"upsert_roadmap_item","id":"company-work","scope":{"kind":"company","id":"beta"},"title":"Company delivery","ownerEmployeeId":employee,"reviewerEmployeeId":reviewer,"jobIds":[primary],"serviceContractId":contract,"status":"done","dependencies":["global"],"evidence":"Fixture artifact retained"});
         s.apply(&item).unwrap();
-        let mut cycle = json!({"action":"upsert_roadmap_item","id":"global","scope":{"kind":"global","id":"portfolio"},"title":"Portfolio gate","ownerEmployeeId":"donna","status":"done","evidence":"Fixture gate passed","dependencies":["company-work"]});
+        let mut cycle = json!({"action":"upsert_roadmap_item","expectedRevision":0,"id":"global","scope":{"kind":"global","id":"portfolio"},"title":"Portfolio gate","ownerEmployeeId":"donna","reviewerEmployeeId":reviewer,"jobIds":[primary],"status":"done","evidence":"Fixture gate passed","dependencies":["company-work"]});
         assert_eq!(s.apply(&cycle).unwrap_err().code, "INVALID_DEPENDENCY");
         cycle["dependencies"] = json!([]);
         cycle.as_object_mut().unwrap().remove("evidence");

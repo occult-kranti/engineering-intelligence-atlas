@@ -1,0 +1,20 @@
+{
+  "kind": "native-atomic-brief-coverage",
+  "nativeSha256": "87d4eecd04214dd6cb275056d3ffc35b4820bbed42a92744a6f5406952e2451a",
+  "schemaVersion": 2,
+  "sourceBriefPersisted": true,
+  "descriptionContainsFullBrief": false,
+  "stepGoalsContainFullBrief": [
+    false,
+    false,
+    false,
+    false
+  ],
+  "syntheticDispatches": [
+    {
+      "jobId": "job-c9dc87ee-7f23-4a87-b596-4feb7031c3e7",
+      "hasFullBrief": false
+    }
+  ],
+  "externalCalls": 0
+}

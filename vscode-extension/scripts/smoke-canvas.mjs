@@ -12,6 +12,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { startServer } from '../../headless-runtime/server.mjs';
 import { assertEndlessShell, openCanvasSurface, settleCanvas, canvasPanelState, checkEndlessPanelInteractions } from '../../scripts/endless-canvas-browser-checks.mjs';
+import { checkBoardWorkflows } from '../../scripts/board-workflow-browser-checks.mjs';
 
 const extension=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const repository=path.resolve(extension,'..');
@@ -30,7 +31,7 @@ const receipt={schemaVersion:2,status:'running',startedAt:new Date().toISOString
   targetMeasurements:[],panelFrames:[],targetMeasurementScope:'Rendered CSS-pixel bounding boxes; no WCAG conformance assessment',
   controlCredentialInBrowser:false,controlCredentialLocation:'Node harness memory only',
 };
-let browser,page,service,uiServer,controller,client,stage='preflight',token='',html='',uiOrigin='';
+let browser,page,service,uiServer,controller,client,stage='preflight',token='',html='',uiOrigin='',boardConflictExpected=false;
 const subscription={};const methods=new Set();let persistedView=null;
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done;});return{promise,resolve};};
 const uiCompanyCommitted=deferred(),computeObserved=deferred();
@@ -474,9 +475,12 @@ try{
     // Scope this acceptance to reads and the tested native company transaction.
     const denied=new Set(['setOfficeWorker','runOfficeQueue','startRun','createVenv','downloadModel','modelPoolRequest','hostSubmit','hostApprove','environmentPrepare','environmentRun','resourceStart','designInstall','setApiKey','configureCloud']);
     if(denied.has(method))throw new Error('This browser acceptance does not dispatch runtime jobs or credential operations.');
-    if(method==='officeCommand')assert.ok(['create_company','select_company','ensure_blueprint'].includes(args[0]?.action),'Only company/blueprint state mutations are permitted');
+    if(method==='officeCommand')assert.ok(['create_company','select_company','ensure_blueprint','upsert_whiteboard'].includes(args[0]?.action),'Only the tested company/blueprint/whiteboard state mutations are permitted');
     if(method==='openComputeCenter'){computeObserved.resolve();return{ok:true,harness:'native-command-entry-observed'};}
-    try{const result=await client.call(method,args,context);if(method==='officeCommand'&&args[0]?.action==='create_company'&&args[0]?.name==='Canvas Created Through UI')uiCompanyCommitted.resolve(result);return result;}catch(error){receipt.rpcFailures.push({method,error:cleanError(error)});throw error;}
+    try{const result=await client.call(method,args,context);if(method==='officeCommand'&&args[0]?.action==='create_company'&&args[0]?.name==='Canvas Created Through UI')uiCompanyCommitted.resolve(result);return result;}catch(error){
+      const expected=boardConflictExpected&&['STALE_REVISION','CONFLICT'].includes(error.code);
+      if(expected){receipt.expectedRpcFailures??=[];receipt.expectedRpcFailures.push({method,code:error.code,error:cleanError(error)});}
+      else receipt.rpcFailures.push({method,error:cleanError(error)});throw error;}
   }});
   const context=await browser.newContext({viewport:receipt.viewport,colorScheme:'dark',reducedMotion:'reduce'});
   await context.route('**/*',async route=>{
@@ -588,6 +592,7 @@ try{
   await page.getByRole('button',{name:'Top view',exact:true}).click();await settleCanvas(page);await assertTopView('1366×768 return to plan');
   receipt.checks.push('Tilted and rotated laptop view keeps popup keyboard input isolated from the shared camera');
   stage='graphics-lifecycle';await checkGraphicsRecovery();
+  stage='board-workflows';await checkBoardWorkflows({page,client,companyId:seeded.id,receipt,screenshot,expectConflict:value=>{boardConflictExpected=value;}});
   persistedView=await page.evaluate(()=>window.__DAFTAR_VIEW_STATE||null);
   assert.ok(!JSON.stringify(persistedView).includes('Unsent'),'Only view preferences persist');
   const rendered=await page.content();receipt.controlCredentialInBrowser=rendered.includes(token)||JSON.stringify(persistedView).includes(token);

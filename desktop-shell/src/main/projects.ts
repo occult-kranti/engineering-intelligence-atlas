@@ -35,6 +35,18 @@ import { resolveContainedPath } from './paths';
 
 export const SAFE_ID = /^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$/;
 
+/** Production policy only. Historical records and the isolated runner engine remain usable. */
+export const LEGACY_PROJECT_EXECUTION = Object.freeze({
+  enabled: false,
+  code: 'PAIR_REQUIRED',
+  reason: 'Legacy project runs do not assign a distinct reviewer to each step. Ask Donna to create a paired office goal with a primary employee and a different reviewer, then run the office queue. Existing projects, run history and artifacts remain available.',
+  migration: 'native-paired-office-goal',
+});
+
+export function legacyProjectExecutionDenied() {
+  return { ok: false as const, code: LEGACY_PROJECT_EXECUTION.code, error: LEGACY_PROJECT_EXECUTION.reason };
+}
+
 const MAX_NAME = 120;
 const MAX_GOAL = 8000;
 const MAX_INSTRUCTIONS = 4000;
@@ -384,6 +396,11 @@ export interface RunnerGenerateResult {
 }
 
 export type GenerateFn = (req: RunnerGenerateRequest) => Promise<RunnerGenerateResult>;
+
+/** Install directly on production legacy runners, before any budget reservation or provider adapter. */
+export const rejectLegacyProjectGeneration: GenerateFn = async () => {
+  throw Object.assign(new Error(LEGACY_PROJECT_EXECUTION.reason), { code: LEGACY_PROJECT_EXECUTION.code });
+};
 
 interface RunControl {
   controller: AbortController;

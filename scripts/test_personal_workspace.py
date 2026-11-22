@@ -58,6 +58,101 @@ class PersonalWorkspaceTests(unittest.TestCase):
             self.assertIn('Synthetic company', archive.read('PORTFOLIO.md').decode())
             self.assertFalse(any('vault' in name for name in archive.namelist()))
 
+    def test_schema_two_roundtrip_preserves_paired_receipts_revisions_and_request_identity(self):
+        data = json.loads(json.dumps(self.data))
+        office = data['office']
+        office['schemaVersion'] = 2
+        artifact_hash = hashlib.sha256(self.artifact.read_bytes()).hexdigest()
+        stamp = '2026-11-22T00:00:00Z'
+        old = str(self.artifact)
+        uri = self.artifact.as_uri()
+        pair = {'stepId': 'step-a', 'phase': 'primary', 'peerEmployeeId': 'reviewer', 'primaryJobId': 'producer', 'reviewJobId': 'reviewer-job'}
+        primary = {'id': 'producer', 'employeeId': 'producer-employee', 'status': 'completed', 'pair': pair,
+                   'artifactUri': old, 'artifactSha256': artifact_hash, 'requestSha256': 'b' * 64,
+                   'review': None, 'reviewFailure': None, 'usageRecorded': True, 'usage': {'costUsd': 0.125},
+                   'goal': old, 'summary': uri}
+        review = {'id': 'reviewer-job', 'employeeId': 'reviewer', 'status': 'completed',
+                  'pair': {**pair, 'phase': 'review', 'peerEmployeeId': 'producer-employee'},
+                  'artifactUri': old, 'artifactSha256': artifact_hash, 'requestSha256': 'c' * 64,
+                  'usageRecorded': True, 'usage': {'costUsd': 0.05}, 'reviewFailure': None,
+                  'review': {'verdict': 'accepted', 'primaryArtifactSha256': artifact_hash,
+                             'reviewArtifactSha256': artifact_hash, 'primaryArtifactComplete': True,
+                             'summary': old, 'evidenceRefs': [old, uri, 'https://example.org/evidence', 'project/check.md'],
+                             'recordedAt': stamp}}
+        failure = {'id': 'failed-review', 'status': 'completed', 'artifactUri': old,
+                   'artifactSha256': artifact_hash, 'review': None,
+                   'reviewFailure': {'reason': 'malformed-output', 'summary': old, 'recordedAt': stamp},
+                   'usageRecorded': True, 'usage': {'costUsd': 0.025}}
+        office['jobs'] = [primary, review, failure]
+        estimate = {'optimisticMinutes': 1, 'likelyMinutes': 2, 'pessimisticMinutes': 4}
+        office['goals'] = [{'id': 'goal-a', 'description': old, 'sourceRequestId': 'request-a',
+                            'requestSha256': 'd' * 64, 'sourceMessageId': 'brief-a',
+                            'steps': [{'id': 'step-a', 'employeeId': 'producer-employee', 'reviewerEmployeeId': 'reviewer',
+                                       'reviewerServiceContractId': 'contract-a', 'estimate': estimate, 'reviewEstimate': estimate}]}]
+        office['chatThreads'] = [{'id': 'thread-a', 'messages': [{'id': 'brief-a', 'content': old}]}]
+        office['blueprints'] = [{'id': 'blueprint-a', 'revision': 8, 'whiteboards': [{'id': 'board-a', 'revision': 3, 'goalIds': ['goal-a'], 'jobIds': ['producer', 'reviewer-job']}]}]
+        office['portfolio']['roadmap'][0].update({'revision': 5, 'reviewerEmployeeId': 'reviewer',
+                                                'reviewerServiceContractId': 'contract-a', 'estimate': estimate,
+                                                'reviewEstimate': estimate, 'goalIds': ['goal-a'], 'jobIds': ['producer']})
+        self.state.write_text(json.dumps(data))
+        exported = self.command('export-personal-workspace.py', '--state', self.state, '--out', self.archive, '--artifact-root', self.artifacts)
+        self.assertEqual(exported.returncode, 0, exported.stderr)
+        destination = self.root / 'v2-restored'
+        result = self.command('restore-personal-workspace.py', '--archive', self.archive, '--user-data-path', destination)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        restored = json.loads((destination / 'company' / 'company-state.json').read_text())
+        relocated = str(destination / 'office-artifacts' / (artifact_hash + '.md'))
+        expected = json.loads(json.dumps(data))
+        for job in expected['office']['jobs']:
+            job['artifactUri'] = relocated
+        expected['office']['jobs'][1]['review']['evidenceRefs'][:2] = [relocated, relocated]
+        expected['office']['knowledge'][0]['artifactUri'] = relocated
+        expected['office']['cache']['entries'][0]['artifactUri'] = relocated
+        self.assertEqual(restored, expected)
+        self.assertEqual(restored['schemaVersion'], 1)
+        self.assertEqual(restored['office']['schemaVersion'], 2)
+        self.assertEqual(hashlib.sha256(Path(relocated).read_bytes()).hexdigest(), artifact_hash)
+        self.assertEqual(json.loads(self.state.read_text()), data)
+        with zipfile.ZipFile(self.archive) as archive:
+            self.assertEqual(json.loads(archive.read('company-state.json')), data)
+
+    def test_future_and_noninteger_state_versions_are_rejected_before_writes(self):
+        for index, (outer_version, office_version) in enumerate([(1, 3), (1, 99), (2, 2), (True, 2), (1, True), (1, 2.0)]):
+            with self.subTest(outer=outer_version, office=office_version):
+                data = json.loads(json.dumps(self.data))
+                data['schemaVersion'] = outer_version
+                data['office']['schemaVersion'] = office_version
+                self.state.write_text(json.dumps(data))
+                output = self.root / f'unsupported-export-{index}.zip'
+                exported = self.command('export-personal-workspace.py', '--state', self.state, '--out', output)
+                self.assertNotEqual(exported.returncode, 0)
+                self.assertIn('version', exported.stderr.lower())
+                self.assertFalse(output.exists())
+                with zipfile.ZipFile(self.archive) as original:
+                    payloads = {name: original.read(name) for name in original.namelist() if name != 'SHA256SUMS'}
+                payloads['company-state.json'] = json.dumps(data).encode()
+                payloads['SHA256SUMS'] = ''.join(hashlib.sha256(body).hexdigest() + '  ' + name + '\n' for name, body in sorted(payloads.items())).encode()
+                invalid_archive = self.root / f'unsupported-restore-{index}.zip'
+                with zipfile.ZipFile(invalid_archive, 'w') as archive:
+                    for name, body in payloads.items():
+                        archive.writestr(name, body)
+                destination = self.root / f'unsupported-destination-{index}'
+                restored = self.command('restore-personal-workspace.py', '--archive', invalid_archive, '--user-data-path', destination)
+                self.assertNotEqual(restored.returncode, 0)
+                self.assertIn('version', restored.stderr.lower())
+                self.assertFalse(destination.exists())
+
+    def test_export_reports_missing_structured_review_artifacts_only(self):
+        missing = str(self.artifacts / ('f' * 64 + '.md'))
+        self.data['office']['schemaVersion'] = 2
+        self.data['office']['jobs'][0]['review'] = {'evidenceRefs': [missing, 'https://example.org/report', 'project/check.md'], 'summary': str(self.root / 'private-note.md')}
+        self.state.write_text(json.dumps(self.data))
+        result = self.command('export-personal-workspace.py', '--state', self.state, '--out', self.archive, '--artifact-root', self.artifacts)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(json.loads(result.stdout)['missingArtifactReferences'], 1)
+        with zipfile.ZipFile(self.archive) as archive:
+            self.assertEqual(json.loads(archive.read('artifact-map.json'))['missingArtifactReferences'], [missing])
+
     def test_checksum_tampering_is_rejected_before_destination_creation(self):
         tampered = self.root / 'tampered.zip'
         with zipfile.ZipFile(self.archive) as source, zipfile.ZipFile(tampered, 'w') as target:
@@ -120,10 +215,11 @@ class FileUriCanonicalizationTests(unittest.TestCase):
         node = 'file:///C:/Users/RUNNER%7E1/AppData/office-artifacts/' + 'a' * 64 + '.md'
         self.assertEqual(self.restore.canonical_file_uri(py), self.restore.canonical_file_uri(node))
         new = 'C:/new/office-artifacts/' + 'a' * 64 + '.md'
-        state = {'a': node, 'b': [py], 'note': 'see ' + node + ' for details'}
+        state = {'artifactUri': node, 'review': {'evidenceRefs': [py]}, 'summary': node, 'note': 'see ' + node + ' for details'}
         result = self.restore.remap_references(state, {py: new})
-        self.assertEqual(result['a'], new)
-        self.assertEqual(result['b'], [new])
+        self.assertEqual(result['artifactUri'], new)
+        self.assertEqual(result['review']['evidenceRefs'], [new])
+        self.assertEqual(result['summary'], node)
         self.assertEqual(result['note'], 'see ' + node + ' for details')
 
     def test_unrelated_local_and_remote_references_are_untouched(self):

@@ -80,10 +80,10 @@ def parse_state(raw):
     if len(raw) > MAX_STATE_BYTES:
         raise ValueError('State exceeds its 64 MiB limit.')
     data = parse_json(raw)
-    if not isinstance(data, dict) or data.get('schemaVersion') != 1 or not isinstance(data.get('office'), dict):
+    if not isinstance(data, dict) or type(data.get('schemaVersion')) is not int or data.get('schemaVersion') != 1 or not isinstance(data.get('office'), dict):
         raise ValueError('Expected a complete schema-version-1 Atlas company state.')
     office = data['office']
-    if office.get('schemaVersion') != 1:
+    if type(office.get('schemaVersion')) is not int or office.get('schemaVersion') not in (1, 2):
         raise ValueError('Unsupported office state version.')
     limits = {'companies': 2000, 'offices': 5000, 'departments': 16000, 'employees': 30000, 'jobs': 5000, 'schedules': 1000, 'knowledge': 5000, 'events': 1000, 'goals': 2000, 'checkpoints': 20000, 'blueprints': 5000, 'chatThreads': 5000, 'externalAttempts': 10000}
     for key, maximum in limits.items():
@@ -199,13 +199,17 @@ def canonical_file_uri(value):
     return 'file:' + path
 
 def remap_references(value, replacements):
+    """Relocate structured references only; authored text and request identities stay exact."""
+    reference_fields = {'artifactUri', 'artifactPath', 'evidence', 'evidenceRefs'}
     canonical = {}
     for old, new in replacements.items():
         key = canonical_file_uri(old)
         if key is not None:
             canonical.setdefault(key, new)
-    def walk(item):
+    def walk(item, reference=False):
         if isinstance(item, str):
+            if not reference:
+                return item
             if item in replacements:
                 return replacements[item]
             key = canonical_file_uri(item)
@@ -213,9 +217,9 @@ def remap_references(value, replacements):
                 return canonical[key]
             return item
         if isinstance(item, list):
-            return [walk(x) for x in item]
+            return [walk(x, reference) for x in item]
         if isinstance(item, dict):
-            return {k: walk(v) for k, v in item.items()}
+            return {k: walk(v, k in reference_fields) for k, v in item.items()}
         return item
     return walk(value)
 

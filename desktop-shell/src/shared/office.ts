@@ -21,6 +21,19 @@ export interface OfficeEmployee {
   assignmentKey?: string | null;
 }
 export type OfficeJobStatus = 'queued' | 'waiting-budget' | 'running' | 'paused' | 'cancelled' | 'completed' | 'failed' | 'budget-exhausted' | 'needs-review';
+export interface OfficeDurationEstimate { optimisticMinutes: number; likelyMinutes: number; pessimisticMinutes: number }
+export interface OfficeJobPair {
+  stepId: string; phase: 'primary' | 'review'; peerEmployeeId: string; primaryJobId: string; reviewJobId: string;
+}
+/** Execution settlement is separate from this independently recorded acceptance. */
+export interface OfficeStepReview {
+  verdict: 'accepted' | 'revise' | 'blocked'; primaryArtifactSha256: string; reviewArtifactSha256: string;
+  primaryArtifactComplete: boolean; summary: string; evidenceRefs: string[]; recordedAt: string;
+}
+export interface OfficeReviewFailure {
+  reason: 'malformed-output' | 'input-budget' | 'artifact-mismatch' | 'recording-unconfirmed';
+  summary: string; recordedAt: string;
+}
 export interface OfficeJob {
   id: string; companyId: string; officeId: string; departmentId: string | null; employeeId: string;
   goal: string; mode: 'manual' | 'provider'; provider: 'anthropic' | 'openai' | 'ollama'; model: string;
@@ -39,6 +52,8 @@ export interface OfficeJob {
   artifactUri: string | null; summary: string | null; error: string | null; idempotencyKey: string;
   goalId?: string | null; goalIteration?: number | null;
   serviceContractId?: string | null; knowledgeTransferIds?: string[];
+  pair?: OfficeJobPair | null; requestSha256?: string | null; artifactSha256?: string | null; review?: OfficeStepReview | null;
+  reviewFailure?: OfficeReviewFailure | null;
 }
 export interface OfficeSchedule {
   id: string; companyId: string; name: string; enabled: boolean; everyMinutes: number;
@@ -67,7 +82,11 @@ export interface OfficeChatMessage {
   id: string; role: 'user' | 'assistant' | 'system'; content: string; createdAt: string; source: 'user' | 'local' | 'provider' | 'cloud';
 }
 export interface OfficeChatThread { id: string; scope: OfficeScope; messages: OfficeChatMessage[] }
-export interface OfficeGoalStep { id: string; title: string; employeeId: string; goal: string; dependsOn: string[]; serviceContractId?: string | null; knowledgeTransferIds?: string[] }
+export interface OfficeGoalStep {
+  id: string; title: string; employeeId: string; goal: string; dependsOn: string[]; serviceContractId?: string | null; knowledgeTransferIds?: string[];
+  reviewerEmployeeId?: string | null; reviewerServiceContractId?: string | null;
+  estimate?: OfficeDurationEstimate | null; reviewEstimate?: OfficeDurationEstimate | null;
+}
 export interface OfficeGoalRunSettings {
   mode: 'manual' | 'provider'; provider: 'anthropic' | 'openai' | 'ollama'; model: string; authorized: boolean;
   maxTokens: number; maxUsd: number; maxMinutes: number;
@@ -80,12 +99,13 @@ export interface OfficeGoal {
   maxIterations: number; iteration: number; jobIds: string[]; steps: OfficeGoalStep[]; runSettings: OfficeGoalRunSettings;
   createdAt: string; updatedAt: string;
   stopReason?: string | null;
+  sourceRequestId?: string | null; requestSha256?: string | null; sourceMessageId?: string | null;
 }
 export interface OfficeCheckpoint { id: string; goalId: string; jobId: string | null; iteration: number; summary: string; artifactUri: string | null; createdAt: string }
 export interface OfficeRoom { id: string; name: string; departmentId: string | null; x: number; y: number; width: number; height: number }
 export interface OfficeDesk { id: string; roomId: string; employeeId: string; x: number; y: number }
-export interface OfficeWhiteboard { id: string; roomId: string; ownerEmployeeId: string; title: string; goalIds: string[]; jobIds: string[]; roadmapItemIds?: string[]; x: number; y: number }
-export interface OfficeBlueprint { id: string; companyId: string; officeId: string; rooms: OfficeRoom[]; desks: OfficeDesk[]; whiteboards: OfficeWhiteboard[] }
+export interface OfficeWhiteboard { id: string; roomId: string; ownerEmployeeId: string; title: string; goalIds: string[]; jobIds: string[]; roadmapItemIds?: string[]; x: number; y: number; revision?: number }
+export interface OfficeBlueprint { id: string; companyId: string; officeId: string; rooms: OfficeRoom[]; desks: OfficeDesk[]; whiteboards: OfficeWhiteboard[]; revision?: number }
 export type PortfolioServiceKey = 'engineering' | 'design-architecture' | 'research-knowledge' | 'security' | 'hackathon' | 'music-arts';
 export interface PortfolioGroup { id: string; name: string; description: string; companyIds: string[]; status: OfficeEntityStatus; createdAt: string; updatedAt: string }
 export interface PortfolioService { id: string; key: PortfolioServiceKey; name: string; companyId: string; officeId: string; departmentId: string; employeeIds: string[]; retiredEmployeeIds?: string[]; status: OfficeEntityStatus; createdAt: string; updatedAt: string }
@@ -102,6 +122,8 @@ export interface PortfolioRoadmapItem {
   ownerEmployeeId: string; departmentId: string | null; serviceContractId: string | null;
   status: 'planned' | 'in-progress' | 'blocked' | 'done'; dependencies: string[]; goalIds: string[]; jobIds: string[];
   evidence: string | null; createdAt: string; updatedAt: string;
+  revision?: number; reviewerEmployeeId?: string | null; reviewerServiceContractId?: string | null;
+  estimate?: OfficeDurationEstimate | null; reviewEstimate?: OfficeDurationEstimate | null;
 }
 export interface OfficePortfolio {
   ceo: { enabled: boolean; title: string; focusGroupId: string | null; sharedServicesCompanyId: string | null; updatedAt: string };
@@ -142,15 +164,17 @@ export interface AuthorityLedgerEntry {
   summary: string; grantId: string | null; outcome: 'applied' | 'denied';
 }
 export interface OfficeIndexEntry {
-  id: string; entityId: string; kind: 'company' | 'office' | 'department' | 'employee' | 'goal' | 'job' | 'knowledge' | 'artifact' | 'roadmap' | 'operation' | 'authority';
+  id: string; entityId: string; kind: 'company' | 'office' | 'department' | 'employee' | 'goal' | 'goal-step' | 'job' | 'review' | 'whiteboard' | 'knowledge' | 'artifact' | 'roadmap' | 'operation' | 'authority';
   title: string; companyId: string | null; parentId: string | null; ownerEmployeeId: string | null;
   status: string; updatedAt: string; relatedIds: string[];
+  reviewerEmployeeId?: string | null;
 }
 export interface OfficeAuthority {
   schemaVersion: 1; managedEmployeeIds: string[]; grants: AuthorityGrant[]; ledger: AuthorityLedgerEntry[]; index: OfficeIndexEntry[];
 }
 export interface OfficeSnapshot {
-  schemaVersion: 1; activeCompanyId: string;
+  /** v1 is accepted for historical display; the v2 native core fences new paired execution. */
+  schemaVersion: 1 | 2; activeCompanyId: string;
   companies: OfficeCompany[]; offices: OfficeLocation[]; departments: OfficeDepartment[]; employees: OfficeEmployee[];
   jobs: OfficeJob[]; schedules: OfficeSchedule[]; cache: OfficeCache; knowledge: OfficeKnowledge[]; events: OfficeEvent[];
   /** Result metadata from the most recent command; never a provider credential. */
@@ -165,11 +189,11 @@ export interface OfficeSnapshot {
 export type OfficeAction = 'create_company' | 'select_company' | 'import_repositories' | 'import_github_account'
   | 'create_office' | 'create_department' | 'set_department_parent' | 'hire_employee' | 'pause_employee' | 'resume_employee' | 'fire_employee'
   | 'pause_company' | 'resume_company' | 'pause_office' | 'resume_office' | 'pause_department' | 'resume_department'
-  | 'enqueue_job' | 'claim_job' | 'reserve_job' | 'finish_job' | 'complete_job' | 'heartbeat_job' | 'cancel_job' | 'pause_job' | 'resume_job'
+  | 'enqueue_job' | 'claim_job' | 'reserve_job' | 'finish_job' | 'record_step_review' | 'record_review_failure' | 'complete_job' | 'heartbeat_job' | 'cancel_job' | 'pause_job' | 'resume_job'
   | 'create_schedule' | 'pause_schedule' | 'resume_schedule' | 'tick_schedules'
   | 'configure_cache' | 'clear_cache' | 'get_cache' | 'put_cache' | 'add_knowledge'
   | 'configure_policy' | 'reserve_external' | 'settle_external' | 'approve_job' | 'bootstrap_directors'
-  | 'post_chat' | 'post_assistant_message' | 'create_goal' | 'plan_goal' | 'set_goal_plan' | 'execute_goal' | 'advance_goal'
+  | 'post_chat' | 'post_assistant_message' | 'create_goal' | 'create_paired_workflow' | 'plan_goal' | 'set_goal_plan' | 'execute_goal' | 'advance_goal'
   | 'pause_goal' | 'resume_goal' | 'checkpoint_goal' | 'tick_goals' | 'ensure_blueprint' | 'save_blueprint' | 'upsert_room'
   | 'place_employee' | 'upsert_whiteboard' | 'record_github_activity' | 'github_operation'
   | 'configure_ceo' | 'upsert_portfolio_group' | 'ensure_shared_services' | 'optimize_portfolio'

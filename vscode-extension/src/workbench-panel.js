@@ -30,6 +30,10 @@ const SETUP_FLOW_MARKUP=`<section id="workbench-setup-panel" role="dialog" aria-
   </ol><p class="workbench-setup-footnote">Native controls handle credentials. This popup stores no keys and runs no background setup.</p>
 </section>`;
 const MAX_REQUEST_BYTES=272*1024, MAX_RESPONSE_BYTES=9*1024*1024, MAX_PENDING=32, DEADLINE_MS=45000;
+// Read polling must not consume the lifetime mutation-deduplication allowance.
+// Evicting a completed read is safe; mutation identities remain until reconnect.
+const READ_METHODS=new Set(['cloudStatus','getSystemInfo','getModelCatalog','checkModelRequirements','getJobStatus','getSettings','getVaultStatus','listProviderModels','detectOllama','companySnapshot','officeSnapshot','officeWorkerStatus','modelPoolSnapshot','listProjects','getProject','listRuns','readArtifact','hostStatus','hostInspect','environmentStatus','environmentInspect','resourceStatus','resourceResolve','resourceInspect','designCatalog','designInspect','activityStatus','activityQuery','activitySummarize']);
+const MAX_READ_IDENTITIES=512, MAX_MUTATION_IDENTITIES=8192;
 const EVENTS=new Set(['job','project','mode','connection']);
 const ID=/^[A-Za-z0-9_-]{1,96}$/;
 function plain(value){return value!==null&&typeof value==='object'&&!Array.isArray(value)&&[Object.prototype,null].includes(Object.getPrototypeOf(value));}
@@ -84,25 +88,27 @@ function htmlFor(vscode,context,webview,info,epoch){
 function createOfficePanel(vscode,context,{call,connectionInfo}){
   if(typeof call!=='function'||typeof connectionInfo!=='function')throw new TypeError('Workbench call and connectionInfo are required.');
   let disposed=false,epoch=1,info=publicInfo(connectionInfo()),signature=identity(info);
-  const pending=new Map(),seen=new Set(),subscriptions=[];
+  const pending=new Map(),seen=new Set(),readSeen=new Set(),subscriptions=[];
   const panel=vscode.window.createWebviewPanel('atlas.workbench','Daftar — Office',vscode.ViewColumn.Active,{enableScripts:true,retainContextWhenHidden:false,localResourceRoots:[vscode.Uri.joinPath(context.extensionUri,'media')]});
   const post=message=>{if(!disposed)void Promise.resolve(panel.webview.postMessage(message)).catch(()=>{});};
-  const cancelAll=()=>{for(const item of pending.values()){clearTimeout(item.timer);item.controller.abort();}pending.clear();seen.clear();};
-  const settle=(id,item,message)=>{if(disposed||pending.get(id)!==item||item.epoch!==epoch)return;clearTimeout(item.timer);pending.delete(id);post({type:'daftar:response',id,epoch,...message});};
+  const cancelAll=()=>{for(const item of pending.values()){clearTimeout(item.timer);item.controller.abort();}pending.clear();seen.clear();readSeen.clear();};
+  const rememberRead=(id,item)=>{if(!item.read)return;readSeen.add(id);while(readSeen.size>MAX_READ_IDENTITIES)readSeen.delete(readSeen.values().next().value);};
+  const settle=(id,item,message)=>{if(disposed||pending.get(id)!==item||item.epoch!==epoch)return;clearTimeout(item.timer);pending.delete(id);rememberRead(id,item);post({type:'daftar:response',id,epoch,...message});};
   const onMessage=message=>{
     if(disposed||!plain(message)||!serializable(message,MAX_REQUEST_BYTES))return;
     if(message.type==='daftar:ready'){post({type:'daftar:connection',epoch,connection:info});return;}
     if(message.type==='daftar:cancel'&&message.epoch===epoch&&ID.test(message.id||'')){
-      const item=pending.get(message.id);if(item){clearTimeout(item.timer);item.controller.abort();pending.delete(message.id);}return;
+      const item=pending.get(message.id);if(item){clearTimeout(item.timer);item.controller.abort();pending.delete(message.id);rememberRead(message.id,item);}return;
     }
     if(message.type!=='daftar:request'||message.epoch!==epoch||!ID.test(message.id||''))return;
     const method=message.method,args=message.args;
     if(!Object.hasOwn(METHODS,method)||!Array.isArray(args)||args.length<METHODS[method][0]||args.length>METHODS[method][1]){post({type:'daftar:response',id:message.id,epoch,ok:false,error:{code:'invalid_method',message:'Unsupported bridge operation or arguments.'}});return;}
-    if(seen.has(message.id))return;
-    if(pending.size>=MAX_PENDING||seen.size>=8192){post({type:'daftar:response',id:message.id,epoch,ok:false,error:{code:'capacity',message:'The editor has reached its request limit. Wait for work to finish or reopen the office.'}});return;}
+    if(pending.has(message.id)||seen.has(message.id)||readSeen.has(message.id))return;
+    const read=READ_METHODS.has(method);
+    if(pending.size>=MAX_PENDING||(!read&&seen.size>=MAX_MUTATION_IDENTITIES)){post({type:'daftar:response',id:message.id,epoch,ok:false,error:{code:'capacity',message:'The editor has reached its request limit. Wait for work to finish or reopen the office.'}});return;}
     if(method==='configureCloud'&&args.length){post({type:'daftar:response',id:message.id,epoch,ok:false,error:{code:'native_credentials_required',message:'Use the VS Code connection prompts for credentials.'}});return;}
-    seen.add(message.id);
-    const controller=new AbortController();const item={controller,epoch,timer:null};pending.set(message.id,item);
+    if(!read)seen.add(message.id);
+    const controller=new AbortController();const item={controller,epoch,timer:null,read};pending.set(message.id,item);
     item.timer=setTimeout(()=>{controller.abort();settle(message.id,item,{ok:false,error:{code:'deadline',message:'The operation exceeded the editor deadline. No retry was sent; inspect its original job ID.'}});},DEADLINE_MS);
     Promise.resolve().then(()=>{if(disposed||controller.signal.aborted||pending.get(message.id)!==item)throw Object.assign(new Error('The office request was cancelled before dispatch.'),{code:'cancelled'});return call(method,args,{id:message.id,signal:controller.signal});}).then(value=>{
       if(!serializable(value,MAX_RESPONSE_BYTES))throw Object.assign(new Error('The operation returned an invalid or oversized response.'),{code:'response_limit'});
@@ -113,6 +119,7 @@ function createOfficePanel(vscode,context,{call,connectionInfo}){
   subscriptions.push(panel.webview.onDidReceiveMessage(onMessage),panel.onDidDispose(()=>{if(!disposed){disposed=true;cancelAll();for(const subscription of subscriptions.splice(0))subscription.dispose();}}));
   try{panel.webview.html=htmlFor(vscode,context,panel.webview,info,epoch);}catch(error){dispose();throw error;}
   return {reveal(){if(!disposed)panel.reveal(vscode.ViewColumn.Active);},dispose,isVisible(){return !disposed&&panel.visible===true;},isDisposed(){return disposed;},
+    diagnostics(){return{pending:pending.size,readIdentities:readSeen.size,mutationIdentities:seen.size};},
     postEvent(type,value){const name=({onJobEvent:'job',jobEvent:'job',onProjectEvent:'project',projectEvent:'project',onModeChanged:'mode',modeChanged:'mode'})[type]||type;if(!EVENTS.has(name)||name==='connection'||!serializable(value,MAX_RESPONSE_BYTES))return;post({type:'daftar:event',epoch,event:name,value});},
     notifyConnection(next){if(disposed)return;const updated=publicInfo(next),nextSignature=identity(updated);info=updated;if(nextSignature!==signature){signature=nextSignature;epoch++;cancelAll();panel.webview.html=htmlFor(vscode,context,panel.webview,info,epoch);}else post({type:'daftar:connection',epoch,connection:info});}
   };

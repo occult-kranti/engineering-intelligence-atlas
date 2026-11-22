@@ -55,6 +55,34 @@ test('closing before the dispatch microtask prevents the operation from starting
   f.events.message(request('cancel-before-call','officeCommand',[{action:'create_company',name:'Must not run'}]));controller.dispose();await tick();assert.equal(calls,0);
 });
 
+test('10000 completed reads stay bounded without exhausting the panel or forgetting mutation identities',async t=>{
+  const f=await fixture(t),calls=[];
+  const controller=createOfficePanel(f.vscode,f.context,{call:async(method,_args,context)=>{calls.push([method,context.id]);return{ok:true};},connectionInfo:()=>({connected:true,kind:'runtime'})});
+  t.after(()=>controller.dispose());
+  f.events.message(request('one-write','officeCommand',[{action:'create_company',name:'Only once'}]));await tick();
+  const polling=[['officeSnapshot',[]],['cloudStatus',[]],['modelPoolSnapshot',[{}]],['hostInspect',[{id:'fixture'}]],['resourceResolve',[{}]]];
+  for(let offset=0;offset<10000;offset+=20){
+    for(let i=offset;i<offset+20;i++){const[method,args]=polling[i%polling.length];f.events.message(request(`read-${i}`,method,args));}
+    await tick();
+  }
+  assert.equal(calls.length,10001);assert.equal(f.sent.filter(x=>x.ok===true).length,10001);
+  assert.deepEqual(controller.diagnostics(),{pending:0,readIdentities:512,mutationIdentities:1});
+  f.events.message(request('one-write','officeCommand',[{action:'create_company',name:'Must not repeat'}]));
+  f.events.message(request('read-9999'));await tick();assert.equal(calls.length,10001);
+  // An evicted, completed read may run again; the long-lived mutation cannot.
+  f.events.message(request('read-0'));await tick();assert.equal(calls.length,10002);
+  controller.dispose();assert.deepEqual(controller.diagnostics(),{pending:0,readIdentities:0,mutationIdentities:0});
+});
+
+test('a cancelled read cannot return a late response or keep a pending slot',async t=>{
+  const f=await fixture(t);let resolve,signal;
+  const controller=createOfficePanel(f.vscode,f.context,{call:(_m,_a,context)=>{signal=context.signal;return new Promise(done=>{resolve=done;});},connectionInfo:()=>({connected:true,kind:'runtime'})});
+  t.after(()=>controller.dispose());f.events.message(request('cancel-read'));await tick();
+  f.events.message({type:'daftar:cancel',epoch:1,id:'cancel-read'});assert.equal(signal.aborted,true);
+  resolve({late:true});await tick();assert.ok(!f.sent.some(x=>x.id==='cancel-read'));
+  assert.deepEqual(controller.diagnostics(),{pending:0,readIdentities:1,mutationIdentities:0});
+});
+
 test('the actual shared renderer creates website portals only outside the VS Code host',()=>{
   const ts=require('../../desktop-shell/node_modules/typescript');const vm=require('node:vm');
   const source=fs.readFileSync(path.resolve(__dirname,'../../desktop-shell/src/renderer/chrome.ts'),'utf8');

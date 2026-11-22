@@ -60,21 +60,9 @@ export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, 
   const getSecret = provider => secretFiles[provider] ? readSecretFile(secretFiles[provider]) : vault.getKey(provider);
   const fetcher = async (url, options = {}) => (platform.fetch ?? globalThis.fetch)(url, { ...options,
     signal: options.signal ? AbortSignal.any([options.signal, lifetime.signal]) : lifetime.signal });
-  const assertLegacyModelScope = provider => {
-    if (provider === 'ollama' && runtime.resources?.isEnforced()) throw new WorkbenchError('WORKBENCH_RESOURCE_SCOPE_REQUIRED',
-      'Shared model ownership is enabled. Use resourcePlan and resourceStart with a company, employee and granted model resource; legacy projects do not carry this scope.', 403);
-  };
-  const generateAdapter = platform.generate ?? (async request => {
-    if (request.provider === 'ollama') return modules.generateWithOllama(request, fetcher);
-    const key = getSecret(request.provider);
-    if (!key) throw new WorkbenchError('WORKBENCH_CREDENTIAL', 'Configure a usable provider credential first.', 403);
-    return modules.generateWithProvider(request.provider, key, request, platform.providerSdk);
-  });
-  // Check immediately before every dispatch, including an already active project
-  // and trusted test adapters. Enabling ownership cannot leave a legacy lane open.
-  const generate = async request => { assertLegacyModelScope(request.provider); return generateAdapter(request); };
-  const runner = new modules.ProjectRunner(projects, modules.withGlobalBudget(async request => generate({ ...request,
-    abortSignal: AbortSignal.any([request.abortSignal, lifetime.signal]) }), request => runtime.office.workerCommand(request)));
+  // Production legacy nodes cannot attest a canonical primary/reviewer pair.
+  // The rejecting adapter is outside provider and global-budget wrappers.
+  const runner = new modules.ProjectRunner(projects, modules.rejectLegacyProjectGeneration);
   const onRun = run => { if (['running', 'paused'].includes(run.status)) activeRuns.add(run.id); else activeRuns.delete(run.id); };
   runner.on('run', onRun);
   const company = new modules.CompanyService({ userDataPath: dataDir, seedDir: path.join(repoRoot, 'company'),
@@ -96,9 +84,12 @@ export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, 
     if (Array.isArray(value)) return value.map(sanitize);
     if (!value || typeof value !== 'object') return value;
     const out = {};
+    const trustedPairDenial = value.ok === false && value.code === modules.LEGACY_PROJECT_EXECUTION.code
+      && value.error === modules.LEGACY_PROJECT_EXECUTION.reason;
     for (const [key, item] of Object.entries(value)) {
       if (['leaseToken', 'workerId', 'deviceToken', 'siteAccessToken', 'apiKey', 'remoteReceipts'].includes(key)) continue;
-      out[key] = (key === 'error' || key === 'lastError' || key === 'githubError') && item ? genericError : sanitize(item);
+      out[key] = (key === 'error' || key === 'lastError' || key === 'githubError') && item
+        && !(key === 'error' && trustedPairDenial) ? genericError : sanitize(item);
     }
     return out;
   };
@@ -208,16 +199,9 @@ export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, 
       case 'listProjects': return projects.listProjects();
       case 'createProject': return { ok: true, project: projects.createProject(args[0]) };
       case 'getProject': return projects.getProject(args[0]);
-      case 'startRun': {
-        const project = projects.getProject(args[0]?.projectId); if (project) assertLegacyModelScope(project.provider);
-        return runner.start(args[0]?.projectId, args[0]?.runBudget, args[0]?.priceRates);
-      }
+      case 'startRun': return modules.legacyProjectExecutionDenied();
       case 'pauseRun': return runner.pause(args[0]);
-      case 'resumeRun': {
-        const run = projects.listRuns().find(item => item.id === args[0]);
-        if (run) { const project = projects.getProject(run.projectId); if (project) assertLegacyModelScope(project.provider); }
-        return runner.resume(args[0]);
-      }
+      case 'resumeRun': return modules.legacyProjectExecutionDenied();
       case 'cancelRun': return runner.cancel(args[0]);
       case 'listRuns': return projects.listRuns(args[0]);
       case 'readArtifact': { const result = projects.readArtifact(...args); return result ? { ok: true, ...result } : { ok: false, error: 'Artifact not found.' }; }
@@ -237,11 +221,13 @@ export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, 
     catch { throw new WorkbenchError('RESOURCE_STATE_UNCERTAIN', 'Resource ownership needs review before its capabilities can be confirmed.', 503); }
   };
   const capabilities = () => ({ version: 1, transport: 'headless-workbench', credentialStorage: 'aes-256-gcm-protected-file-key', osKeychain: false,
+    legacyProjectExecution: { ...modules.LEGACY_PROJECT_EXECUTION },
     legacyOllamaScopeRequiresResources: resourceEnforcement(),
-    legacyOllamaScopeGuidance: 'When shared model ownership is enabled, use resourcePlan/resourceStart with canonical company, employee and resource scope. Existing legacy projects can still use budgeted OpenAI/Anthropic providers.',
+    legacyOllamaScopeGuidance: modules.LEGACY_PROJECT_EXECUTION.reason,
     officeCommandInput: '{expectedStateHash,command}', lifecycle: 'owned jobs are cancelled on close; uncertain mutations are never replayed automatically',
     methods: Object.fromEntries(Object.entries(methods).map(([name, value]) => [name, { available: !value.platformDelegated,
       mutates: value.mutates, platformDelegated: value.platformDelegated, minArgs: value.minArgs, maxArgs: value.maxArgs,
+      ...(['startRun', 'resumeRun'].includes(name) ? { available: false, code: modules.LEGACY_PROJECT_EXECUTION.code, reason: modules.LEGACY_PROJECT_EXECUTION.reason } : {}),
       ...(managedCloud && ['configureCloud', 'disconnectCloud'].includes(name) ? { available: false, reason: 'deployment-managed' } : {}) }])) });
   function call(method, args = [], options = {}) {
     const input = validateWorkbenchCall(method, args, options.id, methods);

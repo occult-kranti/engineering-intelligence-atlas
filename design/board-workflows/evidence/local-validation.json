@@ -1,0 +1,62 @@
+{
+  "run": "boards-flow-20261122",
+  "status": "local gates passed; final independent review and CI pending",
+  "observedGates": {
+    "desktop": {
+      "passed": 739,
+      "files": 50
+    },
+    "renderer": {
+      "passed": 419,
+      "kind": "DOM fixture, not visual acceptance"
+    },
+    "planner": {
+      "passed": 17,
+      "includedInDesktop": true
+    },
+    "geometry": {
+      "passed": 7,
+      "includedInDesktop": true
+    },
+    "mcp": {
+      "passed": 67
+    },
+    "vscodeLocal": {
+      "passed": 132
+    },
+    "pythonPortability": {
+      "passed": 9
+    },
+    "native": {
+      "passed": 118
+    },
+    "headlessAndMcp": {
+      "total": 189,
+      "passed": 187,
+      "failed": 0,
+      "skipped": 2,
+      "skipReason": "tmux unavailable locally"
+    }
+  },
+  "pending": [
+    "final independent resource adapter review",
+    "sandboxed real-browser and installed-platform CI"
+  ],
+  "sourceHashes": {
+    "native-core/src/office.rs": "cb7ede2e0a42f890a5dae8e33bf7872d4b80e5e79641d940948d4e86ab238fcf",
+    "native-core/src/governance.rs": "bce9b1185a6abfd599b29d6564feef90e48e5ffbd77abca53ddfc32b1818a488",
+    "native-core/src/remote_commands.rs": "c15bb8a552214359c8491f574d4e07667cec354c9f184388347a8a38f80b1991",
+    "desktop-shell/src/main/officeWorker.ts": "8a7ab04d26dd68dc1057977edc59f41a41f760eede6ffd22bb2e1641b88c4df8",
+    "desktop-shell/src/main/pairedReview.ts": "c6bcbf4c9b7b11770ed103235468e16186dc4813ca0da08788024790c7a07427",
+    "desktop-shell/src/renderer/chrome.ts": "f4e281f46dcf341f050cc1298191f9b797334b2057f3204cc3fe5bbe45dbe904",
+    "desktop-shell/src/renderer/boards/planning.ts": "1a37d954e11b7b91775ee622737326b088521a82978b6a0936c88cd842e45e12",
+    "desktop-shell/src/renderer/boards/geometry.ts": "da16726d1a3c6b498674dc1bed9f3c4d61b24d38adf6ff1cf56cc612f449cad5",
+    "vscode-extension/src/runtime-client.js": "ee2d8ddf9483dbed5cbacd6e59a2497a87b41ade8bd33c8f19e95b94c3c0e3c4",
+    "vscode-extension/src/workbench-panel.js": "ef4f414c37f1a6fa41fc11c8bac31da21eac6fff37c29570e1bd38043b57bf0e"
+  },
+  "claims": {
+    "externalTestProviderCalls": 0,
+    "physicalGpu": false,
+    "indefiniteLeakGuarantee": false
+  }
+}

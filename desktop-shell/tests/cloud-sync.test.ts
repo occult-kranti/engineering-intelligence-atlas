@@ -247,13 +247,16 @@ describe('sync projection and canonical state hash',()=>{
     const local=['/old/private/office-artifacts/job-hash.md','file:///old/private/report.md','C:\\Users\\Private\\report.md','\\\\server\\private\\report.md',' \tFILE:///old/report.md'];
     const sources=['https://example.org/evidence?file=/tmp/report.md','company/references.md','Observed fixture result'];
     snapshot.decisionPanels=[{decisions:[{summary:'/old/private/summary.md',evidence:[...local,...sources]}]}];
+    snapshot.jobs=[{review:{evidenceRefs:[...local,...sources],primaryArtifactComplete:true,summary:'Reference provenance'}}];
     snapshot.chatThreads=[{messages:[{content:'/old/private/office-artifacts/job-hash.md'}]}];
     const before=structuredClone(snapshot);const projected=cloudSnapshot(snapshot);
     expect((projected.decisionPanels[0] as any).decisions[0].evidence).toEqual([...local.map(()=>'[local artifact omitted from cloud]'),...sources]);
+    expect((projected.jobs[0] as any).review.evidenceRefs).toEqual([...local.map(()=>'[local artifact omitted from cloud]'),...sources]);
     expect((projected.decisionPanels[0] as any).decisions[0].summary).toBe('/old/private/summary.md');
     expect(projected.chatThreads).toEqual(snapshot.chatThreads);expect(snapshot).toEqual(before);
     const relocated=structuredClone(snapshot);
     relocated.decisionPanels[0].decisions[0].evidence=[...local.map((_,i)=>`/restored/office-artifacts/content-hash-${i}.md`),...sources];
+    relocated.jobs[0].review.evidenceRefs=[...local.map((_,i)=>`/relocated/reviews/receipt-${i}.md`),...sources];
     expect(syncStateHash(relocated)).toBe(syncStateHash(snapshot));
     relocated.decisionPanels[0].decisions[0].evidence[local.length]='https://example.org/different-evidence';
     expect(syncStateHash(relocated)).not.toBe(syncStateHash(snapshot));

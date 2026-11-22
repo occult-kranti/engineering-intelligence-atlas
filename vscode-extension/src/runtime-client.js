@@ -150,6 +150,12 @@ class RuntimeClient {
     return data.workbench;
   }
 
+  /** Capture once when opening an edit; later polling must not rebase its intent. */
+  captureEditContext() {
+    if (!HASH.test(this.stateHash || '')) throw new Error('Read the office before opening an edit.');
+    return Object.freeze({ expectedStateHash: this.stateHash });
+  }
+
   async call(method, args = [], context = {}) {
     if (!/^[A-Za-z][A-Za-z0-9]{1,70}$/.test(method) || !Array.isArray(args) || args.length > 8) {
       throw new Error('Invalid workbench operation.');
@@ -163,8 +169,17 @@ class RuntimeClient {
     }
     if (method === 'officeCommand') {
       if (args.length !== 1 || !args[0] || typeof args[0].action !== 'string') throw new Error('An office command is required.');
-      if (!this.stateHash) await this.snapshot(context);
-      wireArgs = [{ expectedStateHash: this.stateHash, command: args[0] }];
+      const suppliedInCommand = Object.hasOwn(args[0], 'expectedStateHash');
+      const suppliedInContext = Object.hasOwn(context, 'expectedStateHash');
+      const baseline = suppliedInCommand ? args[0].expectedStateHash : context.expectedStateHash;
+      if ((suppliedInCommand || suppliedInContext) && (!HASH.test(baseline || '')
+          || (suppliedInCommand && suppliedInContext && baseline !== context.expectedStateHash))) {
+        throw new Error('Invalid or conflicting edit baseline. Reopen the saved record before editing.');
+      }
+      if (!baseline && !this.stateHash) await this.snapshot(context);
+      const command = { ...args[0] };
+      delete command.expectedStateHash;
+      wireArgs = [{ expectedStateHash: baseline || this.stateHash, command }];
     }
     const value = await this.request('/v1/workbench/call', 'POST', { id, method, args: wireArgs },
       { ...context, id, timeoutMs: method === 'createVenv' ? 150000 : 45000 });

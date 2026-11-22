@@ -44,8 +44,10 @@ def artifact_references(value):
         item = stack.pop()
         if isinstance(item, dict):
             for key, child in item.items():
-                if key in ('artifactUri', 'artifactPath') and isinstance(child, str) and (child.startswith('/') or child.startswith('file:///') or re.match(r'^[A-Za-z]:[\\/]', child)):
-                    found.add(child)
+                if key in ('artifactUri', 'artifactPath', 'evidence', 'evidenceRefs'):
+                    for reference in child if isinstance(child, list) else [child]:
+                        if isinstance(reference, str) and (reference.startswith(('/', '\\\\')) or reference.lower().startswith('file:') or re.match(r'^[A-Za-z]:[\\/]', reference)):
+                            found.add(reference)
                 stack.append(child)
         elif isinstance(item, list):
             stack.extend(item)

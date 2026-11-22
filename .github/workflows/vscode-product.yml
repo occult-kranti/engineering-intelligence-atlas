@@ -6,6 +6,9 @@ on:
       - 'vscode-extension/**'
       - 'headless-runtime/**'
       - 'desktop-shell/**'
+      - 'native-core/**'
+      - 'scripts/*browser-checks.mjs'
+      - 'scripts/*personal*workspace*.py'
       - 'company/**'
       - 'tools/**'
       - 'deploy/**'
@@ -58,6 +61,15 @@ jobs:
           npm run check
           npm test
           npm run package
+      - name: Verify paired work, board mathematics and runtime boundaries
+        if: runner.os == 'Linux'
+        run: |
+          cargo test --locked --manifest-path native-core/Cargo.toml
+          python3 -m unittest discover -s scripts -p 'test_personal_workspace.py'
+          npm --prefix desktop-shell test
+          npm --prefix desktop-shell run test:renderer
+          node --test tools/atlas-mcp.test.mjs tools/daftar-runtime-mcp.test.mjs
+          node --test headless-runtime/test/*.test.mjs
       - name: Activate installed Linux VSIX in a fresh editor
         if: runner.os == 'Linux'
         working-directory: vscode-extension

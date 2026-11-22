@@ -87,7 +87,7 @@ fn cloud_projection(state: &OfficeSnapshot) -> Result<Value> {
                     } else if key == "remoteReceipts" {
                         *child = json!([]);
                     } else {
-                        if key == "evidence" {
+                        if key == "evidence" || key == "evidenceRefs" {
                             redact_evidence(child);
                         }
                         redact(child);
@@ -196,9 +196,11 @@ fn permitted(action: &str) -> bool {
             | "post_chat"
             | "import_cloud_message"
             | "create_goal"
+            | "create_paired_workflow"
             | "plan_goal"
             | "set_goal_plan"
             | "execute_goal"
+            | "advance_goal"
             | "pause_goal"
             | "resume_goal"
             | "checkpoint_goal"
@@ -339,6 +341,42 @@ mod tests {
         serde_json::from_value(value["office"].clone()).unwrap()
     }
     #[test]
+    fn owner_remote_advance_repairs_once_within_iteration_cap_and_cannot_record_worker_failure() {
+        let company: Company = serde_json::from_value(json!({"id":"repair","name":"Repair fixture","repoUrl":"https://github.com/example/repair","owner":"example","repo":"repair","githubStatus":"unchecked"})).unwrap();
+        let mut s = OfficeSnapshot::seeded(&company, &[]).unwrap();
+        s.apply(&json!({"action":"create_goal","scope":{"kind":"office","id":s.offices[0].id},"title":"Bounded repair","mode":"execute","maxIterations":2,"runSettings":{"mode":"manual","provider":"anthropic","model":"","authorized":false,"maxTokens":100,"maxUsd":1,"maxMinutes":15,"priceRates":{"inputUsdPerMillion":null,"outputUsdPerMillion":null}}})).unwrap();
+        let goal = s.goals[0].id.clone();
+        s.apply(&json!({"action":"set_goal_plan","goalId":goal,"steps":[{"id":"work","title":"Paired task","employeeId":"donna","reviewerEmployeeId":s.offices[0].assistant_id,"goal":"Produce a bounded artifact","dependsOn":[]}]})).unwrap();
+        s.apply(&json!({"action":"execute_goal","goalId":goal})).unwrap();
+        s.apply(&json!({"action":"claim_job","workerId":"fixture-worker"})).unwrap();
+        let claim = s.last_action.clone().unwrap();
+        s.apply(&json!({"action":"finish_job","jobId":claim["jobId"],"leaseToken":claim["leaseToken"],"status":"failed","inputTokens":0,"outputTokens":0,"costUsd":0,"error":"Synthetic failed first attempt"})).unwrap();
+        assert_eq!(s.goals[0].status, "needs-review");
+        let advance = json!({"action":"apply_remote_command","id":"owner-repair-once","command":{"action":"advance_goal","goalId":goal,"reason":"Repair the failed attempt without erasing its history"}});
+        s.apply(&advance).unwrap();
+        assert_eq!(s.goals[0].iteration, 2); assert_eq!(s.jobs.len(), 4);
+        assert_eq!(s.jobs[2..].iter().map(|j| j.limits.max_tokens).sum::<u64>(), 100);
+        assert!((s.jobs[2..].iter().map(|j| j.limits.max_usd).sum::<f64>() - 1.0).abs() < 1e-9);
+        assert!(s.jobs[2].dependencies.is_empty());
+        s = serde_json::from_str(&serde_json::to_string(&s).unwrap()).unwrap();
+        s.apply(&advance).unwrap(); assert_eq!(s.jobs.len(), 4); assert_eq!(s.remote_receipts.len(), 1);
+        let mut changed = advance.clone(); changed["command"]["reason"] = json!("Different repair request");
+        assert_eq!(s.apply(&changed).unwrap_err().code, "REMOTE_RECEIPT_MISMATCH");
+        let mut final_claim = Value::Null;
+        for _ in 0..2 {
+            s.apply(&json!({"action":"claim_job","workerId":"fixture-worker"})).unwrap();
+            final_claim = s.last_action.clone().unwrap();
+            s.apply(&json!({"action":"finish_job","jobId":final_claim["jobId"],"leaseToken":final_claim["leaseToken"],"status":"completed","inputTokens":0,"outputTokens":0,"costUsd":0,"artifactUri":"/fixture/repair.md","artifactSha256":"a".repeat(64)})).unwrap();
+        }
+        let failure = json!({"action":"record_review_failure","jobId":final_claim["jobId"],"leaseToken":final_claim["leaseToken"],"reason":"malformed-output"});
+        assert_eq!(s.apply(&json!({"action":"apply_remote_command","id":"owner-cannot-record-worker-failure","command":failure})).unwrap_err().code, "REMOTE_ACTION_DENIED");
+        assert!(s.jobs[3].review_failure.is_none()); s.apply(&failure).unwrap();
+        let before = (s.jobs.len(), s.checkpoints.len(), s.remote_receipts.len());
+        assert_eq!(s.apply(&json!({"action":"apply_remote_command","id":"owner-repair-past-limit","command":{"action":"advance_goal","goalId":goal,"reason":"Must respect the original iteration limit"}})).unwrap_err().code, "ITERATION_LIMIT");
+        assert_eq!((s.jobs.len(), s.checkpoints.len(), s.remote_receipts.len()), before);
+        s.validate().unwrap();
+    }
+    #[test]
     fn repeat_after_roundtrip_preserves_single_effect() {
         let mut state = fixture();
         let before = state.companies.len();
@@ -476,7 +514,7 @@ mod tests {
         state
             .apply(&json!({"action":"start_panel_round","panelId":panel_id}))
             .unwrap();
-        for _ in 0..3 {
+        for _ in 0..4 {
             state
                 .apply(&json!({"action":"claim_job","workerId":"synthetic-worker"}))
                 .unwrap();
@@ -492,7 +530,11 @@ mod tests {
                 .as_str()
                 .unwrap()
                 .to_owned();
-            state.apply(&json!({"action":"finish_job","jobId":job_id,"leaseToken":lease,"status":"completed","inputTokens":0,"outputTokens":0,"costUsd":0,"artifactUri":"/old/office-artifacts/job-hash.md"})).unwrap();
+            state.apply(&json!({"action":"finish_job","jobId":job_id,"leaseToken":lease,"status":"completed","inputTokens":0,"outputTokens":0,"costUsd":0,"artifactUri":"/old/office-artifacts/job-hash.md","artifactSha256":"a".repeat(64)})).unwrap();
+            let pair = state.jobs.iter().find(|j| j.id == job_id).unwrap().pair.clone().unwrap();
+            if pair.phase == "review" {
+                state.apply(&json!({"action":"record_step_review","jobId":job_id,"leaseToken":lease,"primaryJobId":pair.primary_job_id,"primaryArtifactSha256":"a".repeat(64),"reviewArtifactSha256":"a".repeat(64),"primaryArtifactComplete":true,"verdict":"accepted","summary":"Fixture review","evidenceRefs":["/old/office-artifacts/job-hash.md"]})).unwrap();
+            }
         }
         let evidence = json!([
             "/old/office-artifacts/job-hash.md",

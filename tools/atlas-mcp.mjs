@@ -281,14 +281,22 @@ export function validateCommit(commit) {
 // ---------------------------------------------------------------------------
 
 const EMPTY_SCHEMA = Object.freeze({ type: 'object', properties: {}, additionalProperties: false });
-export const OFFICE_COLLECTIONS = Object.freeze(['companies','offices','departments','employees','jobs','schedules','knowledge','events','chatThreads','goals','checkpoints','blueprints','groups','services','contracts','transfers','roadmap','decisionPanels','authorityGrants','authorityLedger','index']);
+export const OFFICE_COLLECTIONS = Object.freeze(['companies','offices','departments','employees','jobs','schedules','knowledge','events','chatThreads','goals','checkpoints','blueprints','rooms','desks','whiteboards','goalSteps','groups','services','contracts','transfers','roadmap','decisionPanels','authorityGrants','authorityLedger','index']);
 const QUERY_SCOPE_KINDS = Object.freeze(['company','office','department','employee','goal','group']);
+const NESTED_COLLECTIONS = Object.freeze({ rooms: 100, desks: 1000, whiteboards: 200, goalSteps: 12 });
+const NESTED_SCOPE_KINDS = Object.freeze({ rooms: ['company','office'], desks: ['company','office'], whiteboards: ['company','office'], goalSteps: ['company','office','department','employee','goal'] });
+const NESTED_FIELDS = Object.freeze({
+  rooms: ['id','name','departmentId','x','y','width','height'],
+  desks: ['id','roomId','employeeId','x','y'],
+  whiteboards: ['id','roomId','ownerEmployeeId','title','goalIds','jobIds','roadmapItemIds','x','y','revision'],
+  goalSteps: ['id','title','employeeId','dependsOn','serviceContractId','knowledgeTransferIds','reviewerEmployeeId','reviewerServiceContractId','estimate','reviewEstimate','officeId','departmentId'],
+});
 
-export const OFFICE_ACTIONS = Object.freeze(['create_company','select_company','create_office','create_department','hire_employee','pause_employee','resume_employee','fire_employee','pause_company','resume_company','pause_office','resume_office','pause_department','resume_department','enqueue_job','claim_job','reserve_job','finish_job','heartbeat_job','cancel_job','pause_job','resume_job','create_schedule','pause_schedule','resume_schedule','tick_schedules','configure_cache','clear_cache','get_cache','put_cache','add_knowledge','configure_policy','reserve_external','settle_external','approve_job','bootstrap_directors','post_chat','post_assistant_message','create_goal','plan_goal','set_goal_plan','execute_goal','advance_goal','tick_goals','pause_goal','resume_goal','checkpoint_goal','ensure_blueprint','save_blueprint','upsert_room','place_employee','upsert_whiteboard','configure_ceo','upsert_portfolio_group','ensure_shared_services','optimize_portfolio','contract_service','share_knowledge','upsert_roadmap_item','convene_panel','start_panel_round','record_panel_decision','pause_panel','resume_panel','grant_authority','promote_employee','revoke_authority','set_authority_enforcement','rebuild_office_index','apply_employee_command','check_worker_authority','rename_company','set_company_parent','set_department_parent']);
+export const OFFICE_ACTIONS = Object.freeze(['create_company','select_company','create_office','create_department','hire_employee','pause_employee','resume_employee','fire_employee','pause_company','resume_company','pause_office','resume_office','pause_department','resume_department','enqueue_job','claim_job','reserve_job','finish_job','heartbeat_job','cancel_job','pause_job','resume_job','create_schedule','pause_schedule','resume_schedule','tick_schedules','configure_cache','clear_cache','get_cache','put_cache','add_knowledge','configure_policy','reserve_external','settle_external','approve_job','bootstrap_directors','post_chat','post_assistant_message','create_goal','create_paired_workflow','plan_goal','set_goal_plan','execute_goal','advance_goal','tick_goals','pause_goal','resume_goal','checkpoint_goal','ensure_blueprint','save_blueprint','upsert_room','place_employee','upsert_whiteboard','configure_ceo','upsert_portfolio_group','ensure_shared_services','optimize_portfolio','contract_service','share_knowledge','upsert_roadmap_item','convene_panel','start_panel_round','record_panel_decision','pause_panel','resume_panel','grant_authority','promote_employee','revoke_authority','set_authority_enforcement','rebuild_office_index','apply_employee_command','check_worker_authority','rename_company','set_company_parent','set_department_parent']);
 
 export const TOOL_DEFINITIONS = Object.freeze([
   { name:'office_snapshot', title:'Office control snapshot', description:'Read the local office. Large wire results are successful metadata summaries with snapshotOmitted:true; use office_query for paginated metadata. No provider calls.', inputSchema:EMPTY_SCHEMA, annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false} },
-  { name:'office_query', title:'Query office metadata', description:'Read bounded metadata pages from a collection, optionally by scope or metadata search. Omits chat/prompt bodies, local paths and worker credentials. Reuse nextCursor with the same filters; query_changed means restart this read. Local state only.', inputSchema:{type:'object',properties:{collection:{type:'string',enum:[...OFFICE_COLLECTIONS]},scope:{type:'object',properties:{kind:{type:'string',enum:[...QUERY_SCOPE_KINDS]},id:{type:'string',minLength:1,maxLength:150}},required:['kind','id'],additionalProperties:false},search:{type:'string',maxLength:200},pageSize:{type:'integer',minimum:1,maximum:100,default:25},cursor:{type:'string',maxLength:1024}},required:['collection'],additionalProperties:false},annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false} },
+  { name:'office_query', title:'Query office metadata', description:'Read bounded metadata pages. Nested rooms, desks and whiteboards require an explicit company or office scope; goalSteps requires company, office, department, employee or goal scope. Canonical IDs, geometry and bounded dependency/link arrays are preserved; omissions are explicit. Prompts, chat bodies, evidence text, local paths and credentials are excluded. Scope filters do not grant authority. Reuse nextCursor with unchanged filters; query_changed means restart the read. Local state only.', inputSchema:{type:'object',properties:{collection:{type:'string',enum:[...OFFICE_COLLECTIONS]},scope:{type:'object',properties:{kind:{type:'string',enum:[...QUERY_SCOPE_KINDS]},id:{type:'string',minLength:1,maxLength:150}},required:['kind','id'],additionalProperties:false},search:{type:'string',maxLength:200},pageSize:{type:'integer',minimum:1,maximum:100,default:25},cursor:{type:'string',maxLength:1024}},required:['collection'],additionalProperties:false,allOf:[{if:{properties:{collection:{enum:['rooms','desks','whiteboards']}}},then:{required:['scope'],properties:{scope:{properties:{kind:{enum:['company','office']}}}}}},{if:{properties:{collection:{const:'goalSteps'}}},then:{required:['scope'],properties:{scope:{properties:{kind:{enum:['company','office','department','employee','goal']}}}}}}]},annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false} },
   { name:'office_command', title:'Office control operation', description:'Apply an explicit local state command. A large result returns a successful receipt with snapshotOmitted:true: do not replay that mutation; use office_query. No code or provider execution; jobs require a separately enabled worker and budget authorization.', inputSchema:{type:'object',properties:{action:{type:'string',enum:[...OFFICE_ACTIONS]},payload:{type:'object'}},required:['action'],additionalProperties:false},annotations:{readOnlyHint:false,destructiveHint:true,idempotentHint:false,openWorldHint:false} },
   { name:'github_import_account',title:'Import public repositories as companies',description:'Read public repositories for one GitHub account and create corresponding local company/office/assistant definitions. No private repositories, provider calls, or external writes.',inputSchema:{type:'object',properties:{owner:{type:'string',maxLength:39}},required:['owner'],additionalProperties:false},annotations:{readOnlyHint:false,destructiveHint:false,idempotentHint:true,openWorldHint:true} },
 
@@ -375,10 +383,10 @@ function unwrapNative(result) {
 }
 
 const SECRET_TEXT = /(?:sk-ant-|sk-proj-|sk-|gh[pousr]_|github_pat_)[A-Za-z0-9_-]{8,}|\bBearer\s+[A-Za-z0-9._~-]+/gi;
-const ID_FIELDS = ['id','entityId','parentId','parentCompanyId','parentDepartmentId','companyId','officeId','departmentId','employeeId','ownerEmployeeId','assistantId','goalId','jobId','scheduleId','panelId','grantId','blueprintId','roomId','whiteboardId','roadmapItemId','serviceId','serviceContractId','contractId','transferId','knowledgeId','groupId','recipientCompanyId','recipientOfficeId','recipientDepartmentId','sourceCompanyId','targetId'];
+const ID_FIELDS = ['id','entityId','parentId','parentCompanyId','parentDepartmentId','companyId','officeId','departmentId','employeeId','ownerEmployeeId','reviewerEmployeeId','reviewerServiceContractId','assistantId','goalId','jobId','scheduleId','panelId','grantId','blueprintId','roomId','whiteboardId','roadmapItemId','serviceId','serviceContractId','contractId','transferId','knowledgeId','groupId','recipientCompanyId','recipientOfficeId','recipientDepartmentId','sourceCompanyId','targetId'];
 const TEXT_FIELDS = ['name','title','role','kind','status','action','actor','outcome','type','preset','issuer','mode','provider','model','costStatus','source','visibility','githubStatus'];
 const DATE_FIELDS = ['at','createdAt','updatedAt','importedAt','grantedAt','expiresAt','revokedAt','dueAt','startedAt','finishedAt','nextRunAt','lastEnqueuedAt'];
-const NUMBER_FIELDS = ['iteration','maxIterations','round','maxRounds','everyMinutes','indexEntries','imported','created'];
+const NUMBER_FIELDS = ['iteration','maxIterations','round','maxRounds','everyMinutes','indexEntries','imported','created','revision'];
 const BOOL_FIELDS = ['enabled','authorized','allowed','revoked','requiresGrants','rebuilt','queued'];
 const ARRAY_COUNTS = ['messages','steps','jobs','jobIds','goalIds','dependencies','members','decisions','rooms','desks','whiteboards','companyIds','employeeIds','relatedIds','parentGrantIds','skillPaths'];
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -393,7 +401,9 @@ function summaryText(value, limit = 240) {
 
 function summaryId(value) {
   if (typeof value !== 'string' || !/^[A-Za-z0-9_.:-]{1,160}$/.test(value)) return undefined;
-  return summaryText(value, 160);
+  // Identifiers are canonical references, not human text. Redacting a valid
+  // credential-like prefix changes the entity being addressed.
+  return value;
 }
 
 function collectionRows(snapshot, name) {
@@ -404,12 +414,163 @@ function collectionRows(snapshot, name) {
   return list(snapshot[name]);
 }
 
+export function officeCollectionCounts(snapshot) {
+  return Object.fromEntries(OFFICE_COLLECTIONS.map(name => [name, Object.hasOwn(NESTED_COLLECTIONS, name)
+    ? list(snapshot[name === 'goalSteps' ? 'goals' : 'blueprints']).reduce((n, parent) => n + list(parent?.[name === 'goalSteps' ? 'steps' : name]).length, 0)
+    : collectionRows(snapshot, name).length]));
+}
+
+// Duplicate identities are ambiguous, so they cannot establish ancestry for a
+// nested read. These maps are request-local and retain no snapshot between calls.
+function canonicalMap(rows) {
+  const result = new Map(), ambiguous = new Set();
+  for (const row of rows) {
+    const id = summaryId(row?.id); if (!id || ambiguous.has(id)) continue;
+    if (result.has(id)) { result.delete(id); ambiguous.add(id); } else result.set(id, row);
+  }
+  return result;
+}
+function officeMetadataContext(snapshot) {
+  const maps = Object.fromEntries(['companies','offices','departments','employees','goals','jobs','contracts','transfers','roadmap','groups'].map(name => [name, canonicalMap(collectionRows(snapshot, name))]));
+  const companiesForScope = scope => {
+    if (scope?.kind === 'company') return new Set(maps.companies.has(scope.id) ? [scope.id] : []);
+    if (scope?.kind === 'global' && scope.id === 'portfolio') return new Set(maps.companies.keys());
+    if (scope?.kind === 'group') return new Set(list(maps.groups.get(scope.id)?.companyIds).filter(id => maps.companies.has(id)));
+    return new Set();
+  };
+  return { maps, companiesForScope };
+}
+function nestedOfficeRows(snapshot, name, matches, context) {
+  const { maps } = context, rows = []; let omittedRows = 0, sourceTruncated = false;
+  const goalSteps = name === 'goalSteps';
+  const parents = list(snapshot[goalSteps ? 'goals' : 'blueprints']);
+  const parentMap = canonicalMap(parents);
+  for (const parent of parents) {
+    if (!parent || typeof parent !== 'object') continue;
+    const children = list(parent[goalSteps ? 'steps' : name]);
+    const scope = parent.scope;
+    const goalScopeValid = scope?.kind === 'company' ? scope.id === parent.companyId
+      : scope?.kind === 'office' ? maps.offices.get(scope.id)?.companyId === parent.companyId
+        : scope?.kind === 'department' ? maps.departments.get(scope.id)?.companyId === parent.companyId
+          : scope?.kind === 'employee' && maps.employees.has(scope.id) && (maps.employees.get(scope.id).companyId === null || maps.employees.get(scope.id).companyId === parent.companyId);
+    const parentValid = parentMap.get(parent.id) === parent && maps.companies.has(parent.companyId)
+      && (goalSteps ? goalScopeValid : maps.offices.get(parent.officeId)?.companyId === parent.companyId);
+    const roomMap = canonicalMap(list(parent.rooms));
+    const childMap = canonicalMap(children);
+    const base = { companyId: parent.companyId, ...(goalSteps ? { goalId: parent.id, scope: parent.scope } : { blueprintId: parent.id, officeId: parent.officeId }) };
+    if (!goalSteps && !matches(base, name)) continue;
+    for (let i = 0; i < Math.min(children.length, NESTED_COLLECTIONS[name]); i++) {
+      const child = children[i];
+      const row = child && typeof child === 'object' && !Array.isArray(child) ? { ...child, ...base } : { ...base };
+      if (goalSteps) {
+        // The enclosing goal owns the scope. A shared worker's home office must
+        // never move recipient work into another company's metadata view.
+        delete row.officeId; delete row.departmentId;
+        const department = parent.scope?.kind === 'department' ? maps.departments.get(parent.scope.id) : null;
+        const employee = maps.employees.get(row.employeeId);
+        const contract = maps.contracts.get(row.serviceContractId);
+        const officeId = parent.scope?.kind === 'office' ? parent.scope.id : department?.officeId
+          ?? (employee?.companyId === parent.companyId ? employee.officeId : undefined)
+          ?? (contract?.recipientCompanyId === parent.companyId ? contract.recipientOfficeId : undefined);
+        if (maps.offices.get(officeId)?.companyId === parent.companyId) row.officeId = officeId;
+        if (department?.companyId === parent.companyId) row.departmentId = department.id;
+      }
+      if (!matches(row, name)) continue;
+      const room = roomMap.get(row.roomId);
+      const validRoom = room && (!room.departmentId || maps.departments.get(room.departmentId)?.companyId === parent.companyId && maps.departments.get(room.departmentId)?.officeId === parent.officeId);
+      const coordinate = key => Number.isFinite(row[key]) && row[key] >= 0 && row[key] <= 1;
+      const valid = parentValid && childMap.get(row.id) === child && summaryId(row.id)
+        && (goalSteps ? maps.employees.has(row.employeeId)
+          : name === 'rooms' ? typeof row.name === 'string' && ['x','y','width','height'].every(coordinate) && row.width > 0 && row.height > 0 && row.x + row.width <= 1.000000001 && row.y + row.height <= 1.000000001
+            && (!row.departmentId || maps.departments.get(row.departmentId)?.companyId === parent.companyId && maps.departments.get(row.departmentId)?.officeId === parent.officeId)
+          : validRoom && coordinate('x') && coordinate('y') && maps.employees.has(name === 'desks' ? row.employeeId : row.ownerEmployeeId));
+      if (!valid) { omittedRows++; continue; }
+      // A nested record cannot invent another scope, parent, or actor alias.
+      rows.push(Object.fromEntries([...Object.keys(base), ...NESTED_FIELDS[name]].filter(key => row[key] !== undefined).map(key => [key, row[key]])));
+    }
+    // Do not pretend a malformed over-cap source was completely inspected.
+    if (children.length > NESTED_COLLECTIONS[name]) {
+      sourceTruncated = true;
+      if (matches(base, name)) omittedRows += children.length - NESTED_COLLECTIONS[name];
+    }
+  }
+  return { rows, omittedRows, sourceTruncated };
+}
+
+function linkedMetadata(out, row, collection, context) {
+  const { maps, companiesForScope } = context;
+  const companies = collection === 'roadmap' ? companiesForScope(row.scope) : new Set([row.companyId]);
+  const missing = {};
+  const ids = (key, limit, valid = () => true) => {
+    const source = row[key] === undefined ? [] : row[key];
+    const result = []; let omitted = Array.isArray(source) ? Math.max(0, source.length - limit) : 1;
+    for (const id of list(source).slice(0, limit)) {
+      if (summaryId(id) && valid(id)) result.push(id); else omitted++;
+    }
+    out[key] = result; if (omitted) missing[key] = omitted;
+  };
+  if (collection === 'whiteboards' || collection === 'roadmap') {
+    ids('goalIds', 100, id => companies.has(maps.goals.get(id)?.companyId));
+    ids('jobIds', 100, id => companies.has(maps.jobs.get(id)?.companyId));
+    if (collection === 'whiteboards') ids('roadmapItemIds', 100, id => companiesForScope(maps.roadmap.get(id)?.scope).has(row.companyId));
+    else ids('dependencies', 100, id => id !== row.id && maps.roadmap.has(id) && (row.scope?.kind === 'global' || [...companiesForScope(maps.roadmap.get(id).scope)].some(company => companies.has(company))));
+  }
+  if (collection === 'goalSteps') {
+    const siblings = canonicalMap(list(maps.goals.get(row.goalId)?.steps));
+    ids('dependsOn', 12, id => id !== row.id && siblings.has(id));
+    ids('knowledgeTransferIds', 100, id => maps.transfers.get(id)?.recipientCompanyId === row.companyId);
+  }
+  if (['whiteboards','roadmap','goalSteps'].includes(collection)) {
+    out.referencesComplete = Object.keys(missing).length === 0;
+    out.omittedReferences = missing;
+  }
+  if (collection === 'roadmap') out.evidencePresent = typeof row.evidence === 'string' && row.evidence.trim().length > 0;
+  for (const key of ['estimate','reviewEstimate']) {
+    if (!['roadmap','goalSteps'].includes(collection) || row[key] === undefined) continue;
+    if (row[key] === null) { out[key] = null; continue; }
+    const values = ['optimisticMinutes','likelyMinutes','pessimisticMinutes'].map(name => row[key]?.[name]);
+    if (values.every(n => Number.isFinite(n) && n >= 0.01 && n <= 1440) && values[0] <= values[1] && values[1] <= values[2]) out[key] = Object.fromEntries(['optimisticMinutes','likelyMinutes','pessimisticMinutes'].map((name, i) => [name, values[i]]));
+    else { out.metadataIncomplete = true; }
+  }
+  if (collection === 'goals') {
+    for (const key of ['sourceRequestId', 'sourceMessageId', 'requestSha256']) {
+      if (row[key] === null) out[key] = null;
+      else if (row[key] !== undefined) {
+        if (key === 'requestSha256' ? typeof row[key] === 'string' && /^[a-f0-9]{64}$/.test(row[key]) : summaryId(row[key])) out[key] = row[key];
+        else out.metadataIncomplete = true;
+      }
+    }
+  }
+  if (collection === 'jobs') {
+    for (const key of ['requestSha256','artifactSha256']) if (typeof row[key] === 'string' && /^[a-f0-9]{64}$/.test(row[key])) out[key] = row[key];
+    if (row.pair === null) out.pair = null;
+    else if (row.pair && ['primary','review'].includes(row.pair.phase) && ['stepId','peerEmployeeId','primaryJobId','reviewJobId'].every(key => summaryId(row.pair[key]))) out.pair = Object.fromEntries(['stepId','phase','peerEmployeeId','primaryJobId','reviewJobId'].map(key => [key, row.pair[key]]));
+    else if (row.pair !== undefined) out.metadataIncomplete = true;
+    if (row.review === null) out.review = null;
+    else if (row.review && ['accepted','revise','blocked'].includes(row.review.verdict) && ['primaryArtifactSha256','reviewArtifactSha256'].every(key => /^[a-f0-9]{64}$/.test(row.review[key] ?? '')) && isIsoDate(row.review.recordedAt)) {
+      const refs = list(row.review.evidenceRefs), evidenceRefs = refs.slice(0, 20).filter(id => summaryId(id));
+      const coverageKnown = typeof row.review.primaryArtifactComplete === 'boolean';
+      out.review = { verdict: row.review.verdict, primaryArtifactSha256: row.review.primaryArtifactSha256, reviewArtifactSha256: row.review.reviewArtifactSha256,
+        primaryArtifactComplete: coverageKnown ? row.review.primaryArtifactComplete : null,
+        summary: summaryText(row.review.summary ?? '', 1000), evidenceRefs, omittedEvidenceRefs: refs.length - evidenceRefs.length, recordedAt: row.review.recordedAt };
+      if (!coverageKnown) out.metadataIncomplete = true;
+    } else if (row.review !== undefined) out.metadataIncomplete = true;
+    if (row.reviewFailure === null) out.reviewFailure = null;
+    else if (row.reviewFailure && ['malformed-output','input-budget','artifact-mismatch','recording-unconfirmed'].includes(row.reviewFailure.reason)
+      && typeof row.reviewFailure.summary === 'string' && row.reviewFailure.summary.trim()
+      && Buffer.byteLength(row.reviewFailure.summary, 'utf8') <= 2000 && isIsoDate(row.reviewFailure.recordedAt)) {
+      // A trusted adapter failure is not a model verdict or evidence of acceptance.
+      out.reviewFailure = { reason: row.reviewFailure.reason, summary: summaryText(row.reviewFailure.summary, 1000), recordedAt: row.reviewFailure.recordedAt };
+    } else if (row.reviewFailure !== undefined) out.metadataIncomplete = true;
+  }
+}
+
 /** Deliberately a metadata allowlist, not a recursively redacted full record. */
-function metadataSummary(row) {
+function metadataSummary(row, collection, context) {
   const out = {};
   if (!row || typeof row !== 'object') return out;
   for (const key of ID_FIELDS) { const value = summaryId(row[key]); if (value !== undefined) out[key] = value; }
-  for (const key of ['parentCompanyId','parentDepartmentId']) if (row[key] === null) out[key] = null;
+  for (const key of ['parentCompanyId','parentDepartmentId','departmentId','serviceContractId','reviewerEmployeeId','reviewerServiceContractId']) if (row[key] === null) out[key] = null;
   for (const key of TEXT_FIELDS) if (typeof row[key] === 'string') out[key] = summaryText(row[key]);
   for (const key of DATE_FIELDS) if (isIsoDate(row[key])) out[key] = row[key];
   for (const key of NUMBER_FIELDS) if (Number.isFinite(row[key])) out[key] = row[key];
@@ -421,6 +582,8 @@ function metadataSummary(row) {
     out.usage = {};
     for (const key of ['inputTokens','outputTokens','costUsd']) if (Number.isFinite(row.usage[key])) out.usage[key] = row.usage[key];
   }
+  if (['rooms','desks','whiteboards'].includes(collection)) for (const key of ['x','y','width','height']) if (Number.isFinite(row[key])) out[key] = row[key];
+  if (context) linkedMetadata(out, row, collection, context);
   return out;
 }
 
@@ -472,6 +635,7 @@ function validateOfficeQuery(args) {
     assertNoKeys(a.scope, ['kind','id'], 'office_query scope');
     if (!QUERY_SCOPE_KINDS.includes(a.scope.kind) || !summaryId(a.scope.id) || a.scope.id.length > 150) throw new InvalidParams('office_query: scope needs a supported kind and identifier');
   }
+  if (Object.hasOwn(NESTED_SCOPE_KINDS, a.collection) && !NESTED_SCOPE_KINDS[a.collection].includes(a.scope?.kind)) throw new InvalidParams('office_query: this nested collection requires an explicit supported scope');
   let cursor;
   if (a.cursor !== undefined) {
     if (typeof a.cursor !== 'string' || a.cursor.length > 1024 || !/^[A-Za-z0-9_-]+$/.test(a.cursor)) throw new InvalidParams('office_query: invalid cursor');
@@ -483,17 +647,22 @@ function validateOfficeQuery(args) {
 
 function queryOffice(snapshot, query) {
   const matches = scopeMatcher(snapshot, query.scope);
-  const rows = collectionRows(snapshot, query.collection).filter(row => row && typeof row === 'object' && matches(row, query.collection))
-    .map(metadataSummary).filter(row => !query.search || JSON.stringify(row).toLowerCase().includes(query.search));
-  rows.sort((a, b) => String(a.id || '') < String(b.id || '') ? -1 : String(a.id || '') > String(b.id || '') ? 1 : 0);
+  const context = officeMetadataContext(snapshot);
+  const source = Object.hasOwn(NESTED_COLLECTIONS, query.collection) ? nestedOfficeRows(snapshot, query.collection, matches, context)
+    : { rows: collectionRows(snapshot, query.collection), omittedRows: 0, sourceTruncated: false };
+  const rows = source.rows.filter(row => row && typeof row === 'object' && matches(row, query.collection))
+    .map(row => metadataSummary(row, query.collection, context)).filter(row => !query.search || JSON.stringify(row).toLowerCase().includes(query.search));
+  const order = row => [row.id || '', row.goalId || '', row.blueprintId || ''].join('\0');
+  rows.sort((a, b) => order(a) < order(b) ? -1 : order(a) > order(b) ? 1 : 0);
   const identity = hash(JSON.stringify([query.collection, query.scope?.kind || null, query.scope?.id || null, query.search]));
-  const revision = hash(JSON.stringify(rows));
+  const revision = hash(JSON.stringify([rows, source.omittedRows, source.sourceTruncated]));
   if (query.cursor && (query.cursor.query !== identity || query.cursor.revision !== revision)) throw new ToolError('Office query changed. Restart this read without a cursor; no mutation was requested.', 'query_changed');
   const offset = query.cursor?.offset || 0;
   if (offset > rows.length) throw new InvalidParams('office_query: cursor is outside this result');
   const items = []; let size = 0;
   for (let i = offset; i < rows.length && items.length < query.pageSize; i++) {
     const bytes = Buffer.byteLength(JSON.stringify(rows[i]));
+    if (bytes > OFFICE_QUERY_PAGE_BYTES) throw new ToolError('A metadata record exceeds the bounded page size. Inspect it locally; no mutation was requested.', 'metadata_record_too_large');
     if (size + bytes > OFFICE_QUERY_PAGE_BYTES) break;
     items.push(rows[i]); size += bytes;
   }
@@ -501,13 +670,14 @@ function queryOffice(snapshot, query) {
   const nextCursor = next < rows.length ? Buffer.from(JSON.stringify({ v:1, query:identity, revision, offset:next })).toString('base64url') : null;
   return { ok:true, metadataOnly:true, collection:query.collection, scope:query.scope, search:query.search, total:rows.length,
     pageSize:query.pageSize, returned:items.length, items, nextCursor, revision,
-    omitted:'Prompts, chat messages, free-form summaries, reasons, local paths, worker leases and credentials are not included.' };
+    omittedRows: source.omittedRows, sourceTruncated: source.sourceTruncated,
+    omitted:'Prompts, chat messages, evidence text, local paths, worker leases and credentials are not included. Reference omissions are explicit; do not replace a record from incomplete metadata.' };
 }
 
 function compactOfficeResult(structured, context, fullResultBytes) {
   if (!['office_snapshot','office_command','github_import_account'].includes(context?.name) || !structured?.snapshot || Array.isArray(structured.snapshot)) return null;
   const snapshot = structured.snapshot;
-  const summary = { counts:Object.fromEntries(OFFICE_COLLECTIONS.map(name => [name, collectionRows(snapshot, name).length])) };
+  const summary = { counts:officeCollectionCounts(snapshot) };
   const activeCompanyId = summaryId(snapshot.activeCompanyId); if (activeCompanyId) summary.activeCompanyId = activeCompanyId;
   if (Number.isSafeInteger(snapshot.schemaVersion)) summary.schemaVersion = snapshot.schemaVersion;
   summary.lastAction = metadataSummary(snapshot.lastAction);

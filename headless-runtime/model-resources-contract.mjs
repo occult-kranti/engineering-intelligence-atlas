@@ -98,7 +98,7 @@ export function createPrivateRegistry({ stateDir, name, initial, validate, fail 
 const id = { type: 'string', pattern: '^[A-Za-z0-9_.:-]{1,160}$', maxLength: 160 };
 const obj = (properties, required = Object.keys(properties)) => ({ type: 'object', properties, required, additionalProperties: false });
 const scopeSchema = obj({ kind: { type: 'string', enum: ['company', 'office', 'department', 'employee'] }, id });
-const expert = obj({ employeeId: id, resourceId: id, officeId: id, departmentId: { anyOf: [id, { type: 'null' }] }, serviceContractId: { anyOf: [id, { type: 'null' }] } }, ['employeeId', 'resourceId', 'officeId', 'departmentId']);
+const expert = obj({ employeeId: id, resourceId: id, officeId: id, departmentId: { anyOf: [id, { type: 'null' }] }, serviceContractId: { anyOf: [id, { type: 'null' }] }, reviewerEmployeeId: { anyOf: [id, { type: 'null' }] }, reviewerServiceContractId: { anyOf: [id, { type: 'null' }] } }, ['employeeId', 'resourceId', 'officeId', 'departmentId']);
 const resource = obj({ id, companyId: id, ownerScope: scopeSchema, model: { type: 'string', minLength: 1, maxLength: 200 }, digest: { type: 'string', pattern: '^[a-f0-9]{64}$' } });
 const grant = obj({ id, resourceId: id, targetScope: scopeSchema, permissions: { type: 'array', minItems: 1, maxItems: 3, uniqueItems: true, items: { type: 'string', enum: ['use', 'assign', 'inspect'] } }, includeDescendants: { type: 'boolean' }, membershipRevision: { type: 'integer', minimum: 0, maximum: Number.MAX_SAFE_INTEGER - 1 } }, ['id', 'resourceId', 'targetScope', 'permissions']);
 const route = obj({ id, companyId: id, strategy: { type: 'string', enum: ['single', 'ensemble'] }, experts: { type: 'array', minItems: 1, maxItems: 4, items: expert }, aggregator: { anyOf: [expert, { type: 'null' }] }, limits: obj({ maxTokens: { type: 'integer', minimum: 1, maximum: 1000000 }, maxMinutes: { type: 'number', minimum: 0.05, maximum: 1440 }, maxParallel: { type: 'integer', minimum: 1, maximum: 2 } }) }, ['id', 'companyId', 'strategy', 'experts', 'limits']);
@@ -111,11 +111,15 @@ export const RESOURCE_TOOL_SCHEMAS = Object.freeze({
   inspect: obj({ id }), cancel: obj({ id })
 });
 function expertValue(value) {
-  fields(value, ['employeeId', 'resourceId', 'officeId', 'departmentId', 'serviceContractId'], ['employeeId', 'resourceId', 'officeId', 'departmentId']);
+  fields(value, ['employeeId', 'resourceId', 'officeId', 'departmentId', 'serviceContractId', 'reviewerEmployeeId', 'reviewerServiceContractId'], ['employeeId', 'resourceId', 'officeId', 'departmentId']);
   for (const key of ['employeeId', 'resourceId', 'officeId']) safeId(value[key]);
   if (value.departmentId !== null) safeId(value.departmentId);
   if (value.serviceContractId != null) safeId(value.serviceContractId);
-  return { employeeId: value.employeeId, resourceId: value.resourceId, officeId: value.officeId, departmentId: value.departmentId, serviceContractId: value.serviceContractId ?? null };
+  if (value.reviewerEmployeeId != null) safeId(value.reviewerEmployeeId);
+  if (value.reviewerServiceContractId != null) safeId(value.reviewerServiceContractId);
+  if (value.reviewerEmployeeId === value.employeeId || (value.reviewerServiceContractId != null && value.reviewerEmployeeId == null)) resourceFail('RESOURCE_PAIR_REQUIRED', 'Select a distinct reviewer for an explicit review service contract.');
+  return { employeeId: value.employeeId, resourceId: value.resourceId, officeId: value.officeId, departmentId: value.departmentId, serviceContractId: value.serviceContractId ?? null,
+    reviewerEmployeeId: value.reviewerEmployeeId ?? null, reviewerServiceContractId: value.reviewerServiceContractId ?? null };
 }
 export function normalizeConfiguration(input) {
   fields(input, ['expectedRevision', 'resources', 'grants', 'routes', 'officeParents'], ['expectedRevision', 'resources', 'grants', 'routes']); revision(input.expectedRevision);

@@ -22,7 +22,7 @@ export const OWNER_ACTIONS = Object.freeze([
   'cancel_job', 'pause_job', 'resume_job', 'create_schedule', 'pause_schedule',
   'resume_schedule', 'configure_cache', 'clear_cache', 'add_knowledge',
   'configure_policy', 'approve_job', 'bootstrap_directors', 'post_chat',
-  'create_goal', 'plan_goal', 'set_goal_plan', 'execute_goal', 'pause_goal',
+  'create_goal', 'create_paired_workflow', 'plan_goal', 'set_goal_plan', 'execute_goal', 'advance_goal', 'pause_goal',
   'resume_goal', 'checkpoint_goal', 'ensure_blueprint', 'save_blueprint',
   'upsert_room', 'place_employee', 'upsert_whiteboard', 'configure_ceo',
   'upsert_portfolio_group', 'ensure_shared_services', 'optimize_portfolio',

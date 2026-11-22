@@ -3,10 +3,16 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { createHash } from 'node:crypto';
 import { createModelResources, ModelResourcesError } from '../model-resources.mjs';
 import { RESOURCE_TOOL_SCHEMAS, validateResourceOperation } from '../model-resources-contract.mjs';
 
 const digest = 'a'.repeat(64);
+const hash = value => createHash('sha256').update(value).digest('hex');
+function acceptPair(primary, review) {
+  for (const job of [primary, review]) { job.status = 'completed'; job.artifactUri = `artifact:${job.id}`; job.artifactSha256 = hash(job.id); }
+  review.review = { verdict: 'accepted', primaryArtifactComplete: true, primaryArtifactSha256: primary.artifactSha256, reviewArtifactSha256: review.artifactSha256 };
+}
 function setup(t, overrides = {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-resources-test-'));
   const state = { companies: [{ id: 'acme', status: 'active', assistantId: 'donna', parentCompanyId: null }, { id: 'child', status: 'active', assistantId: 'child-donna', parentCompanyId: 'acme' }, { id: 'other', status: 'active', assistantId: 'other-donna', parentCompanyId: null }],
@@ -20,7 +26,19 @@ function setup(t, overrides = {}) {
   const nativeCommand = async command => {
     calls.push(structuredClone(command));
     if (command.action === 'cancel_job') { state.jobs.find(job => job.id === command.jobId).status = 'cancelled'; return { ok: true, snapshot: state }; }
-    if (!state.jobs.some(job => job.companyId === command.companyId && job.idempotencyKey === command.idempotencyKey)) state.jobs.push({ ...command, id: `native-${state.jobs.length}`, status: 'queued', artifactUri: null, limits: { maxTokens: command.maxTokens, maxMinutes: command.maxMinutes, maxUsd: command.maxUsd } });
+    if (!state.jobs.some(job => job.companyId === command.companyId && job.idempotencyKey === command.idempotencyKey)) {
+      const primaryId = `native-${state.jobs.length}`, reviewId = `native-${state.jobs.length + 1}`, requestSha256 = hash(JSON.stringify(command));
+      const tokens = Math.max(1, Math.min(command.maxTokens - 1, Math.floor(command.maxTokens * 3 / 5)));
+      const primary = { ...command, id: primaryId, requestSha256, status: 'queued', artifactUri: null,
+        pair: { stepId: primaryId, phase: 'primary', peerEmployeeId: command.reviewerEmployeeId, primaryJobId: primaryId, reviewJobId: reviewId },
+        limits: { maxTokens: tokens, maxMinutes: command.maxMinutes, maxUsd: command.maxUsd } };
+      const review = { ...command, id: reviewId, requestSha256: hash(`review:${requestSha256}`), employeeId: command.reviewerEmployeeId,
+        serviceContractId: command.reviewerServiceContractId, idempotencyKey: `pair-review:${requestSha256}`, status: 'queued', artifactUri: null,
+        goal: `Review the primary deliverable for this work. Return only structured JSON with verdict (accepted, revise or blocked), summary and evidenceRefs. Cite concrete evidence; do not claim execution or grant permissions.\n${command.goal}`,
+        allowedTools: [], dependencies: [primaryId], pair: { stepId: primaryId, phase: 'review', peerEmployeeId: command.employeeId, primaryJobId: primaryId, reviewJobId: reviewId },
+        limits: { maxTokens: command.maxTokens - tokens, maxMinutes: command.maxMinutes, maxUsd: command.maxUsd } };
+      state.jobs.push(primary, review);
+    }
     return { ok: true, snapshot: state };
   };
   const options = { stateDir: directory, snapshot: async () => ({ ok: true, snapshot: state }), modelPool, nativeCommand, ...overrides };
@@ -65,13 +83,15 @@ test('department scopes and sidecar office parents validate canonical boundaries
   f.state.employees[1].departmentId = 'research'; assert.equal((await f.service.resolve({ companyId: 'acme', employeeId: 'bob', resourceId: 'model', purpose: 'use' })).ok, true);
   assert.equal((await f.service.status()).resources.capabilities.nativeSuboffices, false);
 });
-test('concurrent plan/start duplicates enqueue one native job, never call a provider directly', async t => {
+test('concurrent plan/start duplicates enqueue one native pair, never call a provider directly', async t => {
   const f = setup(t); await f.service.configure(f.config());
   const plans = await Promise.all(Array.from({ length: 20 }, () => f.service.plan(f.plan()))); assert.equal(plans.filter(item => !item.replayed).length, 1);
   const input = { id: 'run', planId: 'plan', expectedPlanHash: plans[0].plan.planHash };
   const runs = await Promise.all(Array.from({ length: 20 }, () => f.service.start(input)));
   assert.equal(runs.filter(item => !item.replayed).length, 1); assert.equal(f.calls.length, 1); assert.equal(f.calls[0].action, 'enqueue_job'); assert.equal(f.calls[0].provider, 'ollama');
   assert.deepEqual(f.calls[0].allowedTools, ['provider.run']);
+  assert.equal(f.state.jobs.length, 2); assert.equal(plans[0].plan.steps[0].reviewerEmployeeId, 'bob');
+  assert.equal(runs[0].run.steps[0].reviewJobId, 'native-1');
   await reject(f.service.plan({ ...f.plan(), task: 'Different' }), 'RESOURCE_IDEMPOTENCY_CONFLICT');
   await f.service.close(); const reopened = f.restart(); assert.equal((await reopened.start(input)).replayed, true); assert.equal(f.calls.length, 1);
 });
@@ -81,9 +101,13 @@ test('native ensemble DAG carries distinct expert provenance and bounded aggrega
   assert.equal(plan.trainedMoe, false); assert.deepEqual(plan.steps[1].dependsOn, [0]); assert.deepEqual(plan.steps[2].dependsOn, [0, 1]);
   await f.service.start({ id: 'run', planId: 'plan', expectedPlanHash: plan.planHash });
   assert.equal(f.calls.length, 3); assert.ok(f.calls.reduce((sum, item) => sum + item.maxTokens, 0) <= 1000);
-  assert.deepEqual(f.calls[2].dependencies, ['native-0', 'native-1']); assert.ok(f.calls[2].goal.startsWith('Synthesize'));
-  for (const job of f.state.jobs) { job.status = 'completed'; job.artifactUri = `artifact:${job.id}`; }
-  const done = await f.service.inspect({ id: 'run' }); assert.equal(done.run.status, 'completed'); assert.equal(done.run.steps[2].artifactUri, 'artifact:native-2');
+  assert.equal(f.state.jobs.length, 6); assert.ok(f.state.jobs.reduce((sum, job) => sum + job.limits.maxTokens, 0) <= 1000);
+  assert.ok(f.state.jobs.reduce((sum, job) => sum + job.limits.maxMinutes, 0) <= 1);
+  assert.deepEqual(f.calls[1].dependencies, ['native-1']); assert.deepEqual(f.calls[2].dependencies, ['native-1', 'native-3']); assert.ok(f.calls[2].goal.startsWith('Synthesize'));
+  f.state.jobs[0].status = 'completed'; assert.notEqual((await f.service.inspect({ id: 'run' })).run.status, 'completed');
+  for (let index = 0; index < f.state.jobs.length; index += 2) acceptPair(f.state.jobs[index], f.state.jobs[index + 1]);
+  const done = await f.service.inspect({ id: 'run' }); assert.equal(done.run.status, 'completed'); assert.equal(done.run.steps[2].artifactUri, 'artifact:native-4');
+  assert.ok(done.run.steps.every(step => step.reviewVerdict === 'accepted' && step.reviewArtifactUri));
 });
 test('revocation and digest drift block start and already-enqueued worker validation', async t => {
   const f = setup(t); await f.service.configure(f.config()); const plan = (await f.service.plan(f.plan())).plan;
@@ -96,6 +120,7 @@ test('revocation and digest drift block start and already-enqueued worker valida
   await f.service.validateJob(f.state.jobs[0]); await f.service.configure(f.config({ expectedRevision: 3, grants: [] }));
   await reject(f.service.validateJob(f.state.jobs[0]), 'RESOURCE_GRANT_REQUIRED');
   const cancelled = await f.service.cancel({ id: 'run' }); assert.equal(cancelled.run.status, 'cancelled');
+  assert.deepEqual(f.state.jobs.map(job => job.status), ['cancelled', 'cancelled']);
 });
 test('a lost native enqueue result creates uncertainty and is not retried', async t => {
   let calls = 0; const f = setup(t, { nativeCommand: async () => { calls++; throw new Error('disconnected'); } });
@@ -137,4 +162,49 @@ test('worker validation rejects changed native commands and orphan routing ident
   await f.service.start({ id: 'run', planId: 'plan', expectedPlanHash: plan.planHash });
   await reject(f.service.validateJob({ ...f.state.jobs[0], goal: 'different instruction' }), 'RESOURCE_NATIVE_CONFLICT');
   await reject(f.service.validateJob({ ...f.state.jobs[0], id: 'orphan', idempotencyKey: 'resource:no-receipt' }), 'RESOURCE_NATIVE_CONFLICT');
+  await f.service.validateJob(f.state.jobs[1]);
+  await reject(f.service.validateJob({ ...f.state.jobs[1], allowedTools: ['provider.run'] }), 'RESOURCE_NATIVE_CONFLICT');
+  await reject(f.service.validateJob({ ...f.state.jobs[1], employeeId: 'alice' }), 'RESOURCE_NATIVE_CONFLICT');
+});
+
+test('planning freezes only granted distinct reviewers and a revoked reviewer blocks both phases without reassignment', async t => {
+  const f = setup(t); const primaryGrant = { ...f.grant, targetScope: { kind: 'employee', id: 'alice' } };
+  await f.service.configure(f.config({ grants: [primaryGrant] }));
+  await reject(f.service.plan(f.plan()), 'RESOURCE_PAIR_REQUIRED'); assert.equal(f.calls.length, 0);
+  const reviewerGrant = { ...primaryGrant, id: 'review-grant', targetScope: { kind: 'employee', id: 'bob' } };
+  await f.service.configure(f.config({ expectedRevision: 1, grants: [primaryGrant, reviewerGrant] }));
+  const plan = (await f.service.plan(f.plan())).plan; assert.equal(plan.steps[0].reviewerEmployeeId, 'bob');
+  f.state.employees.find(employee => employee.id === 'bob').status = 'fired';
+  await reject(f.service.start({ id: 'run', planId: plan.id, expectedPlanHash: plan.planHash }), 'RESOURCE_SCOPE_DENIED'); assert.equal(f.calls.length, 0);
+  f.state.employees.find(employee => employee.id === 'bob').status = 'active';
+  await f.service.start({ id: 'run', planId: plan.id, expectedPlanHash: plan.planHash });
+  await f.service.configure(f.config({ expectedRevision: 2, grants: [primaryGrant] }));
+  for (const job of f.state.jobs) await reject(f.service.validateJob(job), 'RESOURCE_GRANT_REQUIRED');
+  assert.equal(f.calls.length, 1, 'revocation never silently changes the frozen reviewer or repeats native enqueue');
+});
+
+test('review failure, unconfirmed verdict and hash mismatch cannot complete a resource run', async t => {
+  const f = setup(t); await f.service.configure(f.config()); const plan = (await f.service.plan(f.plan())).plan;
+  await f.service.start({ id: 'run', planId: plan.id, expectedPlanHash: plan.planHash });
+  const [primary, review] = f.state.jobs; acceptPair(primary, review); delete review.review;
+  assert.equal((await f.service.inspect({ id: 'run' })).run.status, 'awaiting-review');
+  review.reviewFailure = { reason: 'malformed-output' };
+  const failed = await f.service.inspect({ id: 'run' }); assert.equal(failed.run.status, 'needs-review'); assert.equal(failed.run.steps[0].reviewFailureReason, 'malformed-output');
+  delete review.reviewFailure; acceptPair(primary, review); review.review.primaryArtifactSha256 = 'b'.repeat(64);
+  assert.notEqual((await f.service.inspect({ id: 'run' })).run.status, 'completed');
+});
+
+test('historical plans require explicit replan and persisted unpaired receipts never replay', async t => {
+  const f = setup(t); await f.service.configure(f.config()); const plan = (await f.service.plan(f.plan())).plan;
+  await f.service.start({ id: 'run', planId: plan.id, expectedPlanHash: plan.planHash }); await f.service.close();
+  const file = path.join(f.directory, 'model-resources', 'registry.json'), saved = JSON.parse(fs.readFileSync(file, 'utf8'));
+  delete saved.plans[0].steps[0].reviewerEmployeeId; delete saved.runs[0].steps[0].expected.reviewerEmployeeId;
+  saved.runs[0].steps[0].jobId = null; delete saved.runs[0].steps[0].reviewJobId;
+  saved.plans.push({ ...saved.plans[0], id: 'old-unstarted' }); fs.writeFileSync(file, JSON.stringify(saved));
+  const reopened = f.restart(); assert.equal((await reopened.inspect({ id: 'old-unstarted' })).plan.requiresReplan, true);
+  await reject(reopened.start({ id: 'new-run', planId: 'old-unstarted', expectedPlanHash: plan.planHash }), 'RESOURCE_PAIR_REQUIRED');
+  const replay = await reopened.start({ id: 'run', planId: plan.id, expectedPlanHash: plan.planHash });
+  assert.equal(replay.replayed, true); assert.equal(replay.run.status, 'needs-review'); assert.equal(replay.run.steps[0].reason, 'legacy_unpaired_receipt'); assert.equal(f.calls.length, 1);
+  assert.equal((await reopened.cancel({ id: 'run' })).run.status, 'cancelled');
+  assert.deepEqual(f.state.jobs.map(job => job.status), ['cancelled', 'cancelled']); assert.equal(f.calls.filter(call => call.action === 'enqueue_job').length, 1);
 });

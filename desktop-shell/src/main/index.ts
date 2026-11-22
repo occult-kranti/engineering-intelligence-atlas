@@ -8,13 +8,12 @@ import { registerIpc } from './ipc';
 import { CredentialVault } from './vault';
 import { generateWithProvider } from './providers';
 import { generateWithOllama } from './ollama';
-import { ProjectRunner, ProjectStore, type GenerateFn } from './projects';
+import { ProjectRunner, ProjectStore, rejectLegacyProjectGeneration, type GenerateFn } from './projects';
 import { CompanyService, findNativeCore } from './company';
 import { OfficeService } from './office';
 import { OfficeWorkerPool } from './officeWorker';
 import { ModelPoolService } from './modelPool';
 import { PersonalDashboardServer } from './personalDashboard';
-import { withGlobalBudget } from './globalBudget';
 import { CloudSyncService } from './cloudSync';
 import { existingUserDataPath } from './profileMigration';
 
@@ -169,7 +168,9 @@ async function main(): Promise<void> {
     seedDir: app.isPackaged ? path.join(process.resourcesPath, 'company') : path.join(checkoutRoot, 'company'),
     binaryPath: findNativeCore(app.getAppPath(), app.isPackaged ? process.resourcesPath : undefined),
   });
-  const projectRunner = new ProjectRunner(projectStore, withGlobalBudget(generate, request => officeService.workerCommand(request)));
+  // Legacy nodes have no canonical primary/reviewer pair. Keep records readable,
+  // but never connect this runner to a provider or the native billing ledger.
+  const projectRunner = new ProjectRunner(projectStore, rejectLegacyProjectGeneration);
   const modelPool = new ModelPoolService({
     stateDir: userDataPath,
     snapshot: () => officeService.officeSnapshot(),

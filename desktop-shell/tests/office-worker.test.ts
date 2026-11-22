@@ -10,18 +10,20 @@ import type {OfficeCommand,OfficeJob,OfficeResult,OfficeSnapshot} from '../src/s
 const roots:string[]=[];const workers:Array<Pick<OfficeWorker,'stop'>>=[];
 const clone=<T>(v:T):T=>JSON.parse(JSON.stringify(v));
 function job(overrides:Partial<OfficeJob>={}):OfficeJob{
- const at=new Date().toISOString();return {id:crypto.randomUUID(),companyId:'company-a',officeId:'office-a',departmentId:null,employeeId:'donna',goal:'Review the release evidence.',mode:'provider',provider:'anthropic',model:'fixture-model',authorized:true,allowedTools:[],dependencies:[],contextHash:null,cacheKey:null,promptVersion:'test-v1',status:'queued',limits:{maxTokens:32000,maxUsd:1,maxMinutes:5},priceRates:{inputUsdPerMillion:2,outputUsdPerMillion:10},usage:{inputTokens:0,outputTokens:0,costUsd:0},costStatus:'none',reservation:null,usageRecorded:false,createdAt:at,updatedAt:at,dueAt:at,startedAt:null,finishedAt:null,workerId:null,leaseToken:null,leaseExpiresAt:null,artifactUri:null,summary:null,error:null,idempotencyKey:crypto.randomUUID(),...overrides};
+ const at=new Date().toISOString();const id=overrides.id??crypto.randomUUID();return {id,pair:{stepId:'fixture-step',phase:'primary',peerEmployeeId:'fixture-helper',primaryJobId:id,reviewJobId:`review-${id}`},companyId:'company-a',officeId:'office-a',departmentId:null,employeeId:'donna',goal:'Review the release evidence.',mode:'provider',provider:'anthropic',model:'fixture-model',authorized:true,allowedTools:[],dependencies:[],contextHash:null,cacheKey:null,promptVersion:'test-v1',status:'queued',limits:{maxTokens:32000,maxUsd:1,maxMinutes:5},priceRates:{inputUsdPerMillion:2,outputUsdPerMillion:10},usage:{inputTokens:0,outputTokens:0,costUsd:0},costStatus:'none',reservation:null,usageRecorded:false,createdAt:at,updatedAt:at,dueAt:at,startedAt:null,finishedAt:null,workerId:null,leaseToken:null,leaseExpiresAt:null,artifactUri:null,summary:null,error:null,idempotencyKey:crypto.randomUUID(),...overrides};
 }
 function fixture(options:{jobs?:OfficeJob[];generate?:OfficeWorkerOptions['generate'];cache?:boolean;refuseFinish?:boolean;refuseAuthority?:boolean;prepareContext?:OfficeWorkerOptions['prepareContext'];validateJob?:OfficeWorkerOptions['validateJob'];afterCommand?:(request:OfficeCommand)=>Promise<void>;executeTool?:OfficeWorkerOptions['executeTool']}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'atlas-worker-test-'));roots.push(root);const seedDir=path.join(root,'seed');const artifactRoot=path.join(root,'artifacts');fs.mkdirSync(seedDir);
- const state:OfficeSnapshot={schemaVersion:1,activeCompanyId:'company-a',companies:[],offices:[],departments:[],employees:[{id:'donna',companyId:null,officeId:null,departmentId:null,name:'Donna',role:'CEO assistant',kind:'assistant',status:'active',skillPaths:[],createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}],jobs:options.jobs??[job()],schedules:[],cache:{enabled:options.cache??false,maxEntries:32,ttlMinutes:60,entries:[],hits:0,misses:0},knowledge:[],events:[],lastAction:null};
+ const state:OfficeSnapshot={schemaVersion:2,activeCompanyId:'company-a',companies:[],offices:[],departments:[],employees:[{id:'donna',companyId:null,officeId:null,departmentId:null,name:'Donna',role:'CEO assistant',kind:'assistant',status:'active',skillPaths:[],createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}],jobs:options.jobs??[job()],schedules:[],cache:{enabled:options.cache??false,maxEntries:32,ttlMinutes:60,entries:[],hits:0,misses:0},knowledge:[],events:[],lastAction:null};
  const calls:OfficeCommand[]=[];const chronology:string[]=[];const response=():OfficeResult=>({ok:true,snapshot:clone(state)});
  const command=vi.fn(async(req:OfficeCommand):Promise<OfficeResult>=>{
   calls.push(clone(req));chronology.push(req.action);
   if(req.action==='claim_job'){const current=state.jobs.find(j=>j.status==='queued'&&j.mode===req.mode);if(!current)state.lastAction={jobId:null};else{current.status='running';current.leaseToken=`lease-${current.id}`;current.startedAt=new Date().toISOString();current.workerId=String(req.workerId);state.lastAction={jobId:current.id,leaseToken:current.leaseToken};}}
   if(req.action==='reserve_job'){const current=state.jobs.find(j=>j.id===req.jobId)!;expect(current.leaseToken).toBe(req.leaseToken);expect(Number(req.inputTokens)+Number(req.maxOutputTokens)).toBeLessThanOrEqual(current.limits.maxTokens);expect(Number(req.costUsd)).toBeLessThanOrEqual(current.limits.maxUsd);current.reservation={inputTokens:Number(req.inputTokens),maxOutputTokens:Number(req.maxOutputTokens),costUsd:Number(req.costUsd)};current.costStatus='reserved';current.usage={inputTokens:Number(req.inputTokens),outputTokens:Number(req.maxOutputTokens),costUsd:Number(req.costUsd)};}
   if(req.action==='check_worker_authority'){if(options.refuseAuthority)return{ok:false,snapshot:null,error:'Timeboxed authority expired before dispatch',code:'AUTHORITY_DENIED'};state.lastAction={jobId:req.jobId,allowed:true};}
-  if(req.action==='finish_job'){if(options.refuseFinish)return {ok:false,snapshot:null,error:'Fixture storage unavailable'};const current=state.jobs.find(j=>j.id===req.jobId)!;current.usage={inputTokens:Number(req.inputTokens),outputTokens:Number(req.outputTokens),costUsd:Number(req.costUsd)};current.costStatus=req.costStatus as OfficeJob['costStatus'];current.usageRecorded=true;current.artifactUri=typeof req.artifactUri==='string'?req.artifactUri:null;current.summary=typeof req.summary==='string'?req.summary:null;current.error=typeof req.error==='string'?req.error:null;if(!['cancelled','paused','needs-review'].includes(current.status))current.status=current.usage.inputTokens+current.usage.outputTokens>current.limits.maxTokens||current.usage.costUsd>current.limits.maxUsd?'budget-exhausted':req.status as OfficeJob['status'];current.finishedAt=new Date().toISOString();}
+  if(req.action==='finish_job'){if(options.refuseFinish)return {ok:false,snapshot:null,error:'Fixture storage unavailable'};const current=state.jobs.find(j=>j.id===req.jobId)!;current.usage={inputTokens:Number(req.inputTokens),outputTokens:Number(req.outputTokens),costUsd:Number(req.costUsd)};current.costStatus=req.costStatus as OfficeJob['costStatus'];current.usageRecorded=true;current.artifactUri=typeof req.artifactUri==='string'?req.artifactUri:null;current.artifactSha256=typeof req.artifactSha256==='string'?req.artifactSha256:null;current.summary=typeof req.summary==='string'?req.summary:null;current.error=typeof req.error==='string'?req.error:null;if(!['cancelled','paused','needs-review'].includes(current.status))current.status=current.usage.inputTokens+current.usage.outputTokens>current.limits.maxTokens||current.usage.costUsd>current.limits.maxUsd?'budget-exhausted':req.status as OfficeJob['status'];current.finishedAt=new Date().toISOString();}
+  if(req.action==='record_step_review'){const current=state.jobs.find(j=>j.id===req.jobId)!;current.review={verdict:req.verdict as 'accepted',summary:String(req.summary),evidenceRefs:req.evidenceRefs as string[],primaryArtifactSha256:String(req.primaryArtifactSha256),reviewArtifactSha256:String(req.reviewArtifactSha256),primaryArtifactComplete:req.primaryArtifactComplete===true,recordedAt:new Date().toISOString()};}
+  if(req.action==='record_review_failure'){const current=state.jobs.find(j=>j.id===req.jobId)!;current.reviewFailure={reason:req.reason as 'malformed-output',summary:String(req.summary),recordedAt:new Date().toISOString()};}
   if(req.action==='get_cache'){if(state.cache.entries.some(e=>e.companyId===req.companyId&&e.key===req.key))state.cache.hits++;else state.cache.misses++;}
   if(req.action==='put_cache')state.cache.entries.push({key:String(req.key),companyId:String(req.companyId),artifactUri:String(req.artifactUri),bytes:Number(req.bytes),createdAt:new Date().toISOString(),expiresAt:new Date(Date.now()+3600000).toISOString(),...(typeof req.contentSha256==='string'?{contentSha256:req.contentSha256}:{})});
   const result=response();
@@ -33,6 +35,119 @@ function fixture(options:{jobs?:OfficeJob[];generate?:OfficeWorkerOptions['gener
  const worker=new OfficeWorker({snapshot:async()=>response(),command,generate,artifactRoot,seedDir,intervalMs:5000,prepareContext:options.prepareContext,validateJob:options.validateJob,executeTool:options.executeTool});workers.push(worker);return{worker,state,calls,chronology,command,generate,root,seedDir,artifactRoot,snapshot:async()=>response()};
 }
 afterEach(()=>{for(const w of workers.splice(0))w.stop();vi.useRealTimers();for(const root of roots.splice(0))fs.rmSync(root,{recursive:true,force:true});});
+
+describe('independent review settlement',()=>{
+ function reviewFixture(text:string,artifact='A complete producer deliverable with a stated check and evidence.'){
+  const producer=job({id:'producer-job',employeeId:'producer',status:'completed',pair:{stepId:'step',phase:'primary',peerEmployeeId:'donna',primaryJobId:'producer-job',reviewJobId:'review-job'}});
+  const reviewer=job({id:'review-job',dependencies:[producer.id],pair:{stepId:'step',phase:'review',peerEmployeeId:'producer',primaryJobId:producer.id,reviewJobId:'review-job'}});
+  const f=fixture({jobs:[producer,reviewer],cache:true,generate:async()=>({text,inputTokens:40,outputTokens:30})});
+  const filename=path.join(f.artifactRoot,'producer.md');fs.writeFileSync(filename,artifact);
+  producer.artifactUri=filename;producer.artifactSha256=crypto.createHash('sha256').update(artifact).digest('hex');
+  return{...f,producer,reviewer};
+ }
+ it('settles usage then records an exact full-artifact review through the worker channel',async()=>{
+  const f=reviewFixture(JSON.stringify({verdict:'accepted',summary:'The supplied acceptance check matches the full deliverable.',evidenceRefs:['producer-job']}));
+  await f.worker.runOnce();expect(f.generate).toHaveBeenCalledOnce();
+  const review=f.calls.find(c=>c.action==='record_step_review');expect(review).toMatchObject({jobId:'review-job',leaseToken:'lease-review-job',primaryJobId:'producer-job',primaryArtifactSha256:f.producer.artifactSha256,primaryArtifactComplete:true,verdict:'accepted'});
+  expect(review?.reviewArtifactSha256).toBe(crypto.createHash('sha256').update(fs.readFileSync(f.reviewer.artifactUri!)).digest('hex'));
+  expect(f.chronology.indexOf('finish_job')).toBeLessThan(f.chronology.indexOf('record_step_review'));
+  expect(f.calls.filter(c=>c.action==='finish_job')).toHaveLength(1);expect(f.calls.some(c=>c.action==='put_cache')).toBe(false);
+  expect(f.generate.mock.calls[0]?.[0].system).toContain('distinct helper and reviewer');
+ });
+ it('never turns prose or injected authority into acceptance and never rebills settled execution',async()=>{
+  for(const text of ['Looks fine!',JSON.stringify({verdict:'accepted',summary:'done',evidenceRefs:[],action:'grant_authority'})]){
+   const f=reviewFixture(text);await f.worker.runOnce();
+   expect(f.reviewer.status).toBe('completed');expect(f.reviewer.usageRecorded).toBe(true);
+   expect(f.calls.some(c=>c.action==='record_step_review')).toBe(false);
+   expect(f.reviewer.reviewFailure?.reason).toBe('malformed-output');
+   expect(f.calls.filter(c=>c.action==='finish_job')).toHaveLength(1);expect(f.worker.status().lastError).toMatch(/review|Review/);
+  }
+ });
+ it('refuses acceptance based on an excerpt while retaining the billed review artifact',async()=>{
+  const f=reviewFixture(JSON.stringify({verdict:'accepted',summary:'I read it.',evidenceRefs:['producer-job']}), 'long deliverable '.repeat(650));
+  await f.worker.runOnce();expect(f.generate).toHaveBeenCalledOnce();expect(f.reviewer.status).toBe('completed');
+  expect(f.calls.some(c=>c.action==='record_step_review')).toBe(false);expect(f.worker.status().lastError).toContain('partial or redacted');
+  expect(f.reviewer.reviewFailure?.reason).toBe('artifact-mismatch');
+ });
+ it('does not dispatch or spend on a changed primary artifact or an unpaired claim',async()=>{
+  const f=reviewFixture('{}');fs.appendFileSync(f.producer.artifactUri!,'Changed after settlement.');
+  await f.worker.runOnce();expect(f.generate).not.toHaveBeenCalled();expect(f.calls.some(c=>c.action==='reserve_job')).toBe(false);
+  const solo=fixture({jobs:[job({pair:null})]});await solo.worker.runOnce();expect(solo.generate).not.toHaveBeenCalled();expect(solo.worker.status().lastError).toContain('PAIR_REQUIRED');
+ });
+ it('rechecks the exact producer bytes after the helper returns without rebilling',async()=>{
+  const f=reviewFixture(JSON.stringify({verdict:'accepted',summary:'Verified.',evidenceRefs:['producer-job']}));
+  f.generate.mockImplementationOnce(async()=>{
+   fs.appendFileSync(f.producer.artifactUri!,'Modified while the reviewer was running.');
+   return{text:JSON.stringify({verdict:'accepted',summary:'Verified.',evidenceRefs:['producer-job']}),inputTokens:40,outputTokens:30};
+  });
+  await f.worker.runOnce();
+  expect(f.reviewer.status).toBe('completed');expect(f.calls.filter(c=>c.action==='finish_job')).toHaveLength(1);
+  expect(f.calls.some(c=>c.action==='record_step_review')).toBe(false);
+  expect(f.worker.status().lastError).toContain('changed during review');
+  expect(f.reviewer.reviewFailure?.reason).toBe('artifact-mismatch');
+ });
+ it('fits the shipped Donna and assistant roles inside the existing 8000-token pair allocation',async()=>{
+  const producer=job({id:'producer-default',limits:{maxTokens:4800,maxUsd:0.6,maxMinutes:5},pair:{stepId:'default-step',phase:'primary',peerEmployeeId:'assistant',primaryJobId:'producer-default',reviewJobId:'review-default'}});
+  const reviewer=job({id:'review-default',employeeId:'assistant',dependencies:[producer.id],limits:{maxTokens:3200,maxUsd:0.4,maxMinutes:5},pair:{stepId:'default-step',phase:'review',peerEmployeeId:'donna',primaryJobId:producer.id,reviewJobId:'review-default'}});
+  const f=fixture({jobs:[producer,reviewer],generate:async(_request,attempt)=>({text:attempt?.pair?.phase==='review'?JSON.stringify({verdict:'accepted',summary:'The full short deliverable meets the request.',evidenceRefs:['producer-default']}):'A short complete plan with source references and explicit remaining gaps.',inputTokens:60,outputTokens:40})});
+  f.state.employees.push({...f.state.employees[0]!,id:'assistant',companyId:'company-a',officeId:'office-a',name:'Office assistant',role:'Office assistant'});
+  const bundledSeed=fileURLToPath(new URL('../../company/',import.meta.url));
+  for(const relative of ['skill-briefs.json','role-library/index.json','prompts/donna.md','prompts/shared-assistant.md','prompts/specialists.json']){
+   const target=path.join(f.seedDir,relative);fs.mkdirSync(path.dirname(target),{recursive:true});fs.copyFileSync(path.join(bundledSeed,relative),target);
+  }
+  await f.worker.runOnce();await f.worker.runOnce();
+  expect(f.worker.status().lastError).toBeNull();expect(f.generate).toHaveBeenCalledTimes(2);
+  expect(f.calls.find(c=>c.action==='record_step_review')).toMatchObject({primaryArtifactComplete:true,verdict:'accepted'});
+  expect(f.generate.mock.calls.every(([request])=>request.prompt.includes('Context mode: bounded'))).toBe(true);
+  expect(f.generate.mock.calls[1]![0].prompt).toContain('A short complete plan with source references');
+  for(const reserve of f.calls.filter(c=>c.action==='reserve_job')){
+   const attempt=f.state.jobs.find(row=>row.id===reserve.jobId)!;
+   expect(Number(reserve.inputTokens)+Number(reserve.maxOutputTokens)).toBeLessThanOrEqual(attempt.limits.maxTokens);
+   expect(Number(reserve.costUsd)).toBeLessThanOrEqual(attempt.limits.maxUsd);
+  }
+  expect(f.state.jobs.reduce((sum,row)=>sum+row.limits.maxTokens,0)).toBe(8000);
+ });
+ it('keeps compacted review coverage partial when the default helper allowance cannot carry the full evidence',async()=>{
+  const f=reviewFixture(JSON.stringify({verdict:'accepted',summary:'Everything is fine.',evidenceRefs:['producer-job']}),'Unicode evidence 🙂 '.repeat(100));
+  f.reviewer.limits.maxTokens=3200;
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();
+  expect(f.generate.mock.calls[0]![0].prompt).toContain('"readingStatus":"excerpt"');
+  expect(f.calls.some(c=>c.action==='record_step_review')).toBe(false);
+  expect(f.worker.status().lastError).toContain('partial or redacted');
+ });
+ it('hands the canonical producer artifact to the next step after an accepted review',async()=>{
+  const f=reviewFixture(JSON.stringify({verdict:'accepted',summary:'Checked.',evidenceRefs:['producer-job']}),'ORIGINAL_WORK_HANDOFF with specific geometry instructions.');
+  f.reviewer.status='completed';f.reviewer.artifactUri=path.join(f.artifactRoot,'review.md');
+  fs.writeFileSync(f.reviewer.artifactUri,'{"verdict":"accepted","summary":"Checked"}');
+  f.reviewer.artifactSha256=crypto.createHash('sha256').update(fs.readFileSync(f.reviewer.artifactUri)).digest('hex');
+  f.reviewer.review={verdict:'accepted',primaryArtifactSha256:f.producer.artifactSha256!,reviewArtifactSha256:f.reviewer.artifactSha256,primaryArtifactComplete:true,summary:'Checked',evidenceRefs:['producer-job'],recordedAt:new Date().toISOString()};
+  f.state.jobs.push(job({id:'next-step',dependencies:[f.reviewer.id]}));
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();expect(f.generate.mock.calls[0]![0].prompt).toContain('ORIGINAL_WORK_HANDOFF');
+  f.state.jobs.push(job({id:'tampered-next-step',dependencies:[f.reviewer.id]}));
+  fs.appendFileSync(f.producer.artifactUri!,'tampered after review');
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();expect(f.worker.status().lastError).toContain('producer evidence');
+ });
+ it('reconciles a lost verdict acknowledgement without rebilling or overwriting the recorded review',async()=>{
+  const f=reviewFixture(JSON.stringify({verdict:'accepted',summary:'Checked.',evidenceRefs:['producer-job']}));
+  const command=f.command.getMockImplementation()!;
+  f.command.mockImplementation(async request=>{const result=await command(request);if(request.action==='record_step_review')throw new Error('IO_ERROR after persisted verdict');return result;});
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();expect(f.calls.filter(c=>c.action==='finish_job')).toHaveLength(1);
+  expect(f.reviewer.review?.verdict).toBe('accepted');expect(f.calls.some(c=>c.action==='record_review_failure')).toBe(false);
+  expect(f.worker.status().lastError).toBeNull();
+ });
+ it('settles an impossible helper prompt once without dispatch and records a repairable input failure',async()=>{
+  const f=reviewFixture('{}');f.reviewer.goal='The full required goal. '.repeat(300);f.reviewer.limits.maxTokens=3200;
+  await f.worker.runOnce();
+  expect(f.generate).not.toHaveBeenCalled();expect(f.calls.some(c=>c.action==='reserve_job')).toBe(false);
+  expect(f.calls.filter(c=>c.action==='finish_job')).toHaveLength(1);
+  expect(f.reviewer.usage).toEqual({inputTokens:0,outputTokens:0,costUsd:0});
+  expect(f.reviewer.reviewFailure?.reason).toBe('input-budget');
+ });
+});
 
 describe('adaptive OfficeWorker scheduling', () => {
  it('backs off consecutive idle polls to a bounded unref timer and clears it on stop', async () => {

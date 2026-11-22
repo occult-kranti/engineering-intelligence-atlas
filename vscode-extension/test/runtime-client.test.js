@@ -38,6 +38,27 @@ test('conflict is not silently rebased, and lost mutations are never retried', a
   client.close();
 });
 
+test('a retained edit uses its original hash after background refresh and does not retry a stale save', async () => {
+  const calls=[]; let reads=0;
+  const client=new RuntimeClient(connection,async(url,init)=>{
+    if(url.endsWith('/v1/office'))return reply({ok:true,stateHash:reads++?secondHash:firstHash,snapshot:{companies:[]}});
+    calls.push(JSON.parse(init.body));return reply({ok:false,code:'CONFLICT'},409);
+  });
+  assert.throws(()=>client.captureEditContext(),/Read the office/);
+  await client.snapshot();const draft=client.captureEditContext();assert.ok(Object.isFrozen(draft));
+  await client.snapshot();assert.equal(client.stateHash,secondHash);
+  const command={action:'upsert_whiteboard',id:'board-1',expectedRevision:2,title:'My retained draft'};
+  await assert.rejects(client.command(command,{...draft,id:'draft-save'}),e=>e.code==='CONFLICT');
+  assert.equal(calls.length,1);assert.equal(calls[0].args[0].expectedStateHash,firstHash);
+  assert.deepEqual(calls[0].args[0].command,command);assert.equal(command.title,'My retained draft');
+  await assert.rejects(client.command({...command,expectedStateHash:firstHash},{id:'bridge-draft'}),e=>e.code==='CONFLICT');
+  assert.equal(calls[1].args[0].expectedStateHash,firstHash);
+  assert.ok(!Object.hasOwn(calls[1].args[0].command,'expectedStateHash'));
+  await assert.rejects(client.command(command,{id:'invalid-baseline',expectedStateHash:'bad'}),/baseline/);
+  await assert.rejects(client.command({...command,expectedStateHash:firstHash},{expectedStateHash:secondHash}),/baseline/);
+  assert.equal(calls.length,2);assert.equal(client.controllers.size,0);client.close();
+});
+
 test('disconnect aborts all in-flight requests and clears credentials and timers', async () => {
   let started = 0;
   const client = new RuntimeClient(connection, async (_url, { signal }) => new Promise((_resolve, reject) => {
