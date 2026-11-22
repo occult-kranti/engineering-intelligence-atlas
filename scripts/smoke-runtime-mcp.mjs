@@ -15,6 +15,8 @@ const token = crypto.randomBytes(32).toString('base64url');
 const tokenFile = path.join(dataDir, 'control-token');
 fs.writeFileSync(tokenFile, token + '\n', { mode: 0o600 });
 const checks = [];
+const hostEnabled = process.env.DAFTAR_REQUIRE_TMUX === '1';
+let hostRequest;
 let service;
 const clients = new Set();
 
@@ -84,18 +86,20 @@ async function initialize(client) {
 }
 
 try {
-  service = await startServer({ repoRoot, dataDir, tokenFile, host: '127.0.0.1', port: 0 });
+  service = await startServer({ repoRoot, dataDir, tokenFile, host: '127.0.0.1', port: 0, hostControlEnabled: hostEnabled });
   let origin = `http://127.0.0.1:${service.server.address().port}`;
   const client = connect(origin);
   await initialize(client);
   const listed = await client.call('tools/list', {});
   assert.deepEqual(listed.result.tools.map(t => t.name).sort(),
-    ['model_pool_cancel', 'model_pool_request', 'model_pool_select', 'model_pool_status', 'office_command', 'office_query', 'office_summary', 'runtime_status', 'worker_set_enabled']);
-  record('MCP initializes and advertises the nine bounded runtime tools');
+    ['host_approve', 'host_cancel', 'host_configure', 'host_inspect', 'host_status', 'host_stop_all', 'host_submit',
+      'model_pool_cancel', 'model_pool_request', 'model_pool_select', 'model_pool_status', 'office_command', 'office_query', 'office_summary', 'runtime_status', 'worker_set_enabled']);
+  record('MCP initializes and advertises all sixteen runtime and host tools');
 
   const status = await tool(client, 'runtime_status');
   assert.equal(status.worker.enabled, false);
-  assert.equal(status.capabilities.arbitraryCode, false);
+  assert.equal(status.capabilities.arbitraryCode, hostEnabled);
+  assert.equal(status.host.mode, 'off');
   record('real headless runtime begins paused with honest capability metadata');
 
   const initial = await tool(client, 'office_summary');
@@ -131,6 +135,24 @@ try {
   assert.equal(denied.error.code, -32602);
   record('MCP refuses internal worker settlement before dispatch');
 
+  const hostPolicy = await tool(client, 'host_status');
+  assert.equal(hostPolicy.host.configured, hostEnabled);
+  assert.equal(hostPolicy.host.mode, 'off');
+  record('MCP host status accurately distinguishes process opt-in and policy off');
+  if (hostEnabled) {
+    const fixture = (await service.runtime.snapshot()).snapshot;
+    const company = fixture.companies.find(item => item.status === 'active' && item.assistantId);
+    assert.ok(company, 'native fixture must have an actual company assistant');
+    await tool(client, 'host_configure', { expectedRevision: hostPolicy.host.revision, mode: 'auto',
+      grants: [{ id: 'mcp-host-grant', companyId: company.id, employeeId: company.assistantId }] });
+    hostRequest = { id: 'mcp-host-once', companyId: company.id, employeeId: company.assistantId,
+      cwd: dataDir, command: 'sleep 1; printf "once\\n" >> mcp-host-marker; printf "host-ready\\n"', timeoutSeconds: 10 };
+    const submitted = await tool(client, 'host_submit', hostRequest);
+    assert.equal(submitted.replayed, false);
+    assert.ok(['running', 'completed'].includes(submitted.job.status), 'real tmux launch must succeed');
+    record('owner stdio MCP dispatches a granted real native-company shell job through HTTP and tmux');
+  }
+
   await client.close();
   const alive = await fetch(origin + '/v1/status', { headers: { Authorization: `Bearer ${token}` } });
   assert.equal(alive.status, 200);
@@ -138,7 +160,7 @@ try {
   record('daemon remains available after the stdio client disconnects');
 
   await service.close(); service = null;
-  service = await startServer({ repoRoot, dataDir, tokenFile, host: '127.0.0.1', port: 0 });
+  service = await startServer({ repoRoot, dataDir, tokenFile, host: '127.0.0.1', port: 0, hostControlEnabled: hostEnabled });
   origin = `http://127.0.0.1:${service.server.address().port}`;
   const resumed = connect(origin);
   await initialize(resumed);
@@ -146,14 +168,36 @@ try {
   assert.equal(saved.replayed, true);
   assert.equal(saved.summary.counts.companies, initial.summary.counts.companies + 1);
   assert.equal((await tool(resumed, 'runtime_status')).worker.enabled, false);
+  if (hostRequest) {
+    let output;
+    const deadline = Date.now() + 10000;
+    do {
+      output = await tool(resumed, 'host_inspect', { id: hostRequest.id });
+      if (output.eof) break;
+      await new Promise(resolve => setTimeout(resolve, 50));
+    } while (Date.now() < deadline);
+    assert.equal(output.job.status, 'completed');
+    assert.equal(output.output, 'host-ready\n');
+    assert.equal((await tool(resumed, 'host_submit', hostRequest)).replayed, true);
+    assert.equal(fs.readFileSync(path.join(dataDir, 'mcp-host-marker'), 'utf8'), 'once\n');
+    const stopped = await tool(resumed, 'host_stop_all');
+    assert.equal(stopped.host.mode, 'off');
+    record('real tmux work survives daemon/client replacement and MCP replay executes it exactly once');
+  }
   await resumed.close();
   record('new daemon and MCP processes retain native receipts and start paused');
 
   const receipt = { ok: true, suite: 'real-native-http-stdio', checkedAt: new Date().toISOString(),
-    checks, providerCalls: 0, infrastructureProvisioned: false, privateWorkspaceUsed: false };
+    checks, hostTmuxRequired: hostEnabled, hostTmuxVerified: Boolean(hostRequest),
+    providerCalls: 0, infrastructureProvisioned: false, privateWorkspaceUsed: false };
   process.stdout.write(JSON.stringify(receipt, null, 2) + '\n');
 } finally {
   for (const client of clients) client.kill('SIGTERM');
-  if (service) await service.close();
+  if (service) {
+    if (hostRequest) {
+      try { await service.runtime.hostOperation('stopAll', {}); } catch {}
+    }
+    await service.close();
+  }
   fs.rmSync(dataDir, { recursive: true, force: true });
 }

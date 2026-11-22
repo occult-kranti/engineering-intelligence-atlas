@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 3.138952,
+  "accountedUsd": 3.207402,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -350,9 +350,25 @@
       "costUsd": 0.08954,
       "retainedReservationUsd": 0,
       "contribution": "A separate bounded suffix ended normally. Independent review and local repairs produced the tested edit layer; no uncertain request was retried."
+    },
+    {
+      "number": 27,
+      "model": "claude-sonnet-5-5",
+      "workstream": "host-control-vscode-transition",
+      "releaseScope": "Outside released 0.8.0 binaries.",
+      "executionContext": "External source authorship for read-only Vast status CLI, independently repaired and tested; no native Donna execution claim.",
+      "requestId": "b9a3ed18-3dbe-4bff-8de0-f921d6cdcb70",
+      "task": "Read-only Vast account diagnostic and tests",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 1080,
+      "outputTokens": 6629,
+      "costUsd": 0.06845,
+      "retainedReservationUsd": 0,
+      "contribution": "Complete source returned; endpoint, credential-file, hostname, and response-handling repairs integrated locally."
     }
   ],
-  "observedUsd": 2.369236,
+  "observedUsd": 2.437686,
   "retainedReservationUsd": 0.769716,
   "cloud": {
     "allocationUsd": 5,
@@ -378,7 +394,7 @@
     },
     "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
   },
-  "observedNativeUsd": 2.347096,
+  "observedNativeUsd": 2.415546,
   "newWorkstreamCapUsd": 20,
   "observedNativeUsdScope": "Historical field for all non-hosted development requests, including external provider authorship. It does not imply execution by native Donna.",
   "laterFrontendDesign": {
@@ -490,5 +506,19 @@
       "hasMCP": false
     },
     "browserBoundary": "The local-preview reload was rejected by browser URL policy and was not retried or bypassed. The browser subsequently accepted the authorized published HTTPS destination for live review. All native controls were reviewed through the graphics-unavailable path."
+  },
+  "hostControlDevelopment": {
+    "requestNumbers": [
+      27
+    ],
+    "requestIds": [
+      "b9a3ed18-3dbe-4bff-8de0-f921d6cdcb70"
+    ],
+    "observedUsd": 0.06845,
+    "retainedReservationUsd": 0,
+    "sharedIncrementalCapUsd": 20,
+    "sharedIncrementalAccountedUsd": 0.515332,
+    "sharedIncrementalRemainingUsd": 19.484668,
+    "validationEvidence": "project/HOST_CONTROL_VALIDATION.md"
   }
 }

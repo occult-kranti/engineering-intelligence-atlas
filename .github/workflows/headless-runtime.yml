@@ -13,6 +13,7 @@ jobs:
     timeout-minutes: 15
     env:
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      DAFTAR_REQUIRE_TMUX: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -22,6 +23,10 @@ jobs:
           cache-dependency-path: desktop-shell/package-lock.json
       - name: Select Rust stable
         run: rustup default stable
+      - name: Install tmux for required detached-host acceptance
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes tmux
       - name: Install locked dependencies and build portable modules
         run: |
           npm ci --prefix desktop-shell --ignore-scripts --no-audit --no-fund
@@ -32,7 +37,8 @@ jobs:
         run: npx vitest run tests/cloud-native-contract.test.ts tests/office-worker.test.ts tests/providers.test.ts
       - name: Verify private HTTP and stdio control
         run: |
-          node --test headless-runtime/test/*.test.mjs tools/daftar-runtime-mcp.test.mjs
+          node --test headless-runtime/test/*.test.mjs tools/daftar-runtime-mcp.test.mjs deploy/test/*.test.mjs
+          python3 -m unittest discover -s deploy/test -p 'test_*.py' -v
           node scripts/smoke-runtime-mcp.mjs
 
   container:

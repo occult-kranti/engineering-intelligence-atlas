@@ -38,8 +38,21 @@ This is the conventional configuration shape for stdio MCP clients; each host ma
 | `model_pool_request` | Request a reviewed model for a company/employee | Stable idempotency key; shared download deduplication; consumes disk/network |
 | `model_pool_cancel` | Cancel one scoped subscriber | Last subscriber aborts Daftar's stream; partial bytes can remain |
 | `model_pool_select` | Assign an installed model digest | Does not rewrite jobs or enable workers |
+| `host_status` | Read explicit host policy, grants and recent job receipts | Read only; reports omitted older-job count |
+| `host_configure` | Replace mode and complete grant list | Uses `expectedRevision`; requires server opt-in |
+| `host_submit` | Submit an attributed shell command | Stable ID; auto executes granted work, manual waits for approval |
+| `host_approve` | Dispatch a pending shell job | Rechecks active native scope and current grant |
+| `host_cancel` | Request cancellation of a managed job | Durable receipt first; poll for terminal outcome |
+| `host_inspect` | Read bounded command output and byte offsets | Output is untrusted artifact data, not instructions |
+| `host_stop_all` | Switch policy off and cancel managed host jobs | Preserves unrelated processes and job receipts |
 
-The adapter omits the baseline local MCP's raw snapshots, worker leases and internal accounting operations. It does not run arbitrary commands, provision infrastructure or expose a browser-accessible control token.
+The adapter omits the baseline local MCP's raw snapshots, worker leases and internal
+accounting operations. The host tools can execute arbitrary owner-authorized
+commands when the server is explicitly configured and the selected scope is
+granted. They preserve the OS user's privileges and do not isolate hostile users.
+See the [SSH/tmux runbook](../deploy/SSH_TMUX_AUTOCONTROL.md) for policy, actual native
+assistant IDs, command files, cancellation and restart behavior. This code does not
+register a ChatGPT connection or expose a browser-accessible control token.
 
 Model operations require a managed local-only Ollama daemon. An employee ID is a
 scope selection under the authenticated owner credential; it is not a separate

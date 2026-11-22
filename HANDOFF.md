@@ -1,5 +1,15 @@
 # Daftar maintainer handoff
 
+## Active work: VS Code as the main product
+
+The owner has prioritized a full VS Code office with desktop capability coverage,
+the shared infinite canvas, a cloud-operations employee, maintained environments,
+scoped model sharing and MCP control. The [host-control checkpoint](project/HOST_CONTROL_VALIDATION.md)
+provides the underlying SSH/tmux jobs, owner HTTP/MCP tools and deployment launcher.
+It is development-branch source, outside the 0.8.0 binaries. Preserve the stopped
+Vast instance and verify its current connection/GPU after an owner-requested resume.
+VS Code parity and live cloud deployment require their own acceptance evidence.
+
 ## Product contract
 
 Daftar is an owner-operated personal agent office. Donna is the single user-facing

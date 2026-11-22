@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { RuntimeError, validateCommandEnvelope } from './contract.mjs';
 import { readSecretFile } from './secrets.mjs';
 import { HeadlessCloudSync } from './cloud-sync.mjs';
+import { createHostControl } from './host-control.mjs';
+import { validateHostOperation } from './host-control-contract.mjs';
 
 const require = createRequire(import.meta.url);
 const defaultRepoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -37,7 +39,7 @@ function unwrap(result) {
 
 /** Injectable controller; persistent command idempotency belongs to the Rust core. */
 export class RuntimeController {
-  constructor({ office, worker, projectSnapshot, stateHash, modelPool, cloudSync, capabilities = {} }) {
+  constructor({ office, worker, projectSnapshot, stateHash, modelPool, cloudSync, hostControl, capabilities = {} }) {
     this.office = office;
     this.worker = worker;
     this.projectSnapshot = projectSnapshot;
@@ -45,14 +47,21 @@ export class RuntimeController {
     this.capabilities = capabilities;
     this.modelPool = modelPool;
     this.cloudSync = cloudSync;
+    this.hostControl = hostControl;
     this.singleRun = null;
   }
 
-  status() {
+  async status() {
+    const host = this.hostControl ? (await this.hostOperation('status', {})).host
+      : { configured: false, mode: 'off', revision: 0, grants: [], jobs: [], capabilities: {} };
     return { ok: true, execution: 'headless', worker: publicWorkerStatus(this.worker),
       observer: this.office.observerStatus?.() ?? null,
       cloud: this.cloudSync?.status() ?? { configured: false, connected: false, revision: null, error: null },
-      capabilities: { providerJobs: true, arbitraryCode: false, cloudSync: false, ...this.capabilities } };
+      host: { configured: host.configured === true, available: host.available === true, mode: host.mode, revision: host.revision,
+        grantCount: host.grants.length, jobCount: host.jobCount ?? host.jobs.length },
+      capabilities: { providerJobs: true, cloudSync: false, ...this.capabilities,
+        hostControl: host.configured === true, arbitraryCode: host.configured === true,
+        hostControlActive: host.configured === true && host.mode !== 'off' } };
   }
 
   projection(snapshot) {
@@ -91,6 +100,24 @@ export class RuntimeController {
     }
   }
 
+  async hostOperation(operation, input = {}) {
+    if (!this.hostControl || !['status', 'configure', 'submit', 'approve', 'cancel', 'inspect', 'stopAll'].includes(operation)) {
+      throw new RuntimeError('HOST_UNAVAILABLE', 'This runtime has no host-control controller.', 503);
+    }
+    try { return await this.hostControl[operation](validateHostOperation(operation, input)); }
+    catch (error) {
+      if (error?.name === 'HostControlError' && /^[A-Z_]{1,80}$/.test(error.code)) {
+        const status = [400, 403, 404, 409, 413, 429, 503].includes(error.status) ? error.status : 503;
+        throw new RuntimeError(error.code,
+          status === 409 ? 'Host state or job identity changed. Inspect host status and retain the original job id before another operation.'
+            : status === 400 || status === 413 ? 'The host operation does not match its bounded input contract.'
+            : status === 403 ? 'Host control requires process opt-in, an active owner policy, and a valid scope grant.'
+            : 'The host operation could not be confirmed. Inspect host status and retain the original job id; no automatic retry was sent.', status);
+      }
+      throw new RuntimeError('HOST_UNAVAILABLE', 'The host operation could not be confirmed. Inspect host status before another request; no automatic retry was sent.', 503);
+    }
+  }
+
   setEnabled(enabled) {
     if (typeof enabled !== 'boolean') throw new RuntimeError('INVALID_REQUEST', 'enabled must be boolean.');
     const current = this.worker.status();
@@ -115,6 +142,7 @@ export class RuntimeController {
     this.worker.stop();
     await this.cloudSync?.close();
     await this.modelPool?.close();
+    await this.hostControl?.close();
     // The pool aborts provider calls. A short grace period allows their durable
     // settlement; an unconfirmed attempt is reconciled by native lease recovery.
     const deadline = Date.now() + 10000;
@@ -168,6 +196,8 @@ export function createRuntime(options = {}) {
   const modelPool = new modules.ModelPoolService({ stateDir: dataDir, snapshot: () => office.officeSnapshot(),
     baseUrl: options.ollamaBaseUrl, localOnlyConfirmed: options.ollamaLocalOnly === true,
     ...(options.modelFetch ? { fetchFn: options.modelFetch } : {}) });
+  const hostControl = createHostControl({ stateDir: dataDir, enabled: options.hostControlEnabled === true,
+    snapshot: () => office.officeSnapshot() });
   const generate = options.generate ?? (async (request, job) => {
     if (request.provider === 'ollama') {
       return modelPool.generateForJob(job, request);
@@ -200,7 +230,7 @@ export function createRuntime(options = {}) {
   }, concurrency);
   office.startObserving();
   cloudSync.start();
-  return new RuntimeController({ office, worker, modelPool, cloudSync,
+  return new RuntimeController({ office, worker, modelPool, cloudSync, hostControl,
     projectSnapshot: modules.cloudSnapshot, stateHash: modules.syncStateHash,
     capabilities: { providerAdapters: ['openai', 'anthropic', 'ollama-loopback'],
       configuredProviders: ['openai', 'anthropic'].filter(provider => !!secrets[provider]),

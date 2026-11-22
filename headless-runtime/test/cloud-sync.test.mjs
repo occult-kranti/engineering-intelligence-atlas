@@ -328,7 +328,7 @@ test('headless runtime opt-in starts cloud sync while its worker pool remains pa
   const runtime = createRuntime({ repoRoot, binaryPath, dataDir: f.stateDir, cloudSyncEnabled: true, cloudUrl: remote.url,
     cloudPairingFile: f.pairingFile, cloudEncryptionKeyFile: f.keyFile, cloudSyncIntervalSeconds: 60 });
   f.cleanup.push(() => runtime.close()); await runtime.cloudSync.syncOnce();
-  assert.equal(runtime.status().worker.enabled, false); assert.equal(runtime.status().cloud.configured, true);
-  assert.equal(runtime.status().cloud.connected, true); assert.equal(runtime.status().capabilities.cloudSync, true);
-  assert.doesNotMatch(JSON.stringify(runtime.status().cloud), /deviceToken|clientId|http:/);
+  assert.equal((await runtime.status()).worker.enabled, false); assert.equal((await runtime.status()).cloud.configured, true);
+  assert.equal((await runtime.status()).cloud.connected, true); assert.equal((await runtime.status()).capabilities.cloudSync, true);
+  assert.doesNotMatch(JSON.stringify((await runtime.status()).cloud), /deviceToken|clientId|http:/);
 });

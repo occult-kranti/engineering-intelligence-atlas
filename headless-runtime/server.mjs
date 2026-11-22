@@ -81,6 +81,12 @@ export function createServer({ runtime, token, allowedHosts = [], allowedOrigins
       try {
         if (req.url === '/v1/status' && req.method === 'GET') return writeJson(res, 200, await runtime.status());
         if (req.url === '/v1/office' && req.method === 'GET') return writeJson(res, 200, await runtime.snapshot());
+        if (req.url === '/v1/host' && req.method === 'GET') return writeJson(res, 200, await runtime.hostOperation('status', {}));
+        const hostRoutes = { '/v1/host/configure': 'configure', '/v1/host/submit': 'submit',
+          '/v1/host/approve': 'approve', '/v1/host/cancel': 'cancel', '/v1/host/inspect': 'inspect', '/v1/host/stop-all': 'stopAll' };
+        if (Object.hasOwn(hostRoutes, req.url) && req.method === 'POST') {
+          return writeJson(res, 200, await runtime.hostOperation(hostRoutes[req.url], await readJson(req)));
+        }
         if ((req.url === '/v1/models' || req.url.startsWith('/v1/models?')) && req.method === 'GET') {
           const query = new URL(req.url, 'http://127.0.0.1').searchParams;
           if ([...query.keys()].some(key => !['companyId', 'employeeId'].includes(key)) || query.getAll('companyId').length !== 1 || query.getAll('employeeId').length > 1) {
@@ -153,6 +159,7 @@ export function configurationFromEnv(env = process.env) {
     binaryPath: env.DAFTAR_CORE_BINARY || undefined, host: env.DAFTAR_HOST || '127.0.0.1',
     port: Number(env.DAFTAR_PORT || 8788), concurrency: Number(env.DAFTAR_CONCURRENCY || 2),
     allowContainerBind: env.DAFTAR_ALLOW_CONTAINER_BIND === '1',
+    hostControlEnabled: env.DAFTAR_HOST_CONTROL === '1',
     tokenFile: env.DAFTAR_CONTROL_TOKEN_FILE,
     allowedHosts: (env.DAFTAR_ALLOWED_HOSTS || '').split(',').map(s => s.trim()).filter(Boolean),
     secretFiles: providerSecretFiles(env), ollamaBaseUrl: env.DAFTAR_OLLAMA_BASE_URL || undefined,
