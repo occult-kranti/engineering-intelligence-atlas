@@ -82,7 +82,9 @@ ChatGPT connection.
 
 The resource registry provides company, office, department and employee ownership, exact installed model digests, explicit sharing permissions, and immutable plan/run receipts. Company hierarchy and department hierarchy are native. Office parent grouping is a resource-view sidecar; the application does not claim native suboffice execution semantics.
 
-The first explicit resource configuration enables enforcement. From that point:
+Legacy projects, histories and artifacts remain readable. Production execution for any provider must use a paired native office workflow (`PAIR_REQUIRED`); this requirement is independent of opting into model-resource enforcement.
+
+The first explicit resource configuration enables the additional model-resource enforcement. From that point:
 
 - Model assignment and worker dispatch validate current grants, current native membership/service contracts, and the installed digest.
 - The older HTTP model endpoints, workbench methods and stdio MCP paths use the same gate.

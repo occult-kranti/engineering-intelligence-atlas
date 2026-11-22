@@ -64,6 +64,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   await page.locator('#node-save').click();
   const renamed = await eventually(board,row=>row.title==='Linked delivery card · renamed','Whiteboard title did not persist');
   await page.waitForFunction(()=>document.getElementById('node-save-status')?.textContent.startsWith('Card saved.'));
+  assert.equal(await page.locator('#workspace-node-form').evaluate(element=>element.classList.contains('board-stale')),false,'An acknowledged save clears the stale-edit decoration');
   const afterSaveLayout=await panel.evaluate(element=>{
     const body=element.querySelector('.canvas-panel-body'),viewport=element.querySelector('.blueprint-viewport'),inspector=element.querySelector('#whiteboard-inspector');
     return {bodyScrollTop:body.scrollTop,boardScrollTop:viewport.scrollTop,inspectorScrollTop:inspector.scrollTop};
@@ -82,6 +83,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   await seed({action:'upsert_whiteboard',...renamed,officeId:office.id,expectedRevision:renamed.revision,title:'Saved by the other editor'}, 'other-editor');
   await page.locator('#workspace-refresh').click();
   await page.waitForFunction(()=>document.getElementById('node-save-status')?.textContent.includes('changed after'));
+  assert.equal(await page.locator('#workspace-node-form').evaluate(element=>element.classList.contains('board-stale')),true,'A real external conflict retains its warning');
   assert.equal(await page.locator('#node-title').inputValue(),'Unsent stale card draft','Refresh preserves the original draft');
   expectConflict(true);
   try {
@@ -93,6 +95,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   assert.equal(await page.locator('#node-title').inputValue(),'Unsent stale card draft','The rejected draft remains available to reconcile');
   await page.locator('#node-reload').click();
   assert.equal(await page.locator('#node-title').inputValue(),'Saved by the other editor','Explicit reload replaces the discarded draft');
+  assert.equal(await page.locator('#workspace-node-form').evaluate(element=>element.classList.contains('board-stale')),false,'Explicit reload removes the resolved stale warning');
   await page.locator('#whiteboard-search').fill('');
   receipt.checks.push('Concurrent native edit plus background refresh rejects stale save and preserves the draft until explicit reload');
 
@@ -104,6 +107,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   await card().locator('.card-title').focus();await page.keyboard.press('ArrowRight');
   const afterKey = await eventually(board,row=>row.revision>beforeKey.revision,'Keyboard card move did not persist');
   await page.waitForFunction(x=>document.getElementById('node-x')?.value===String(Math.round(x*100)),afterKey.x);
+  assert.equal(await page.locator('#workspace-node-form').evaluate(element=>element.classList.contains('board-stale')),false,'An acknowledged own movement leaves a clean edit baseline');
   assert.ok(Math.abs(afterKey.x-Math.min(1,beforeKey.x+0.02))<1e-8,'Keyboard move advances two normalized percentage points');
   assert.equal(afterKey.y,beforeKey.y);assert.deepEqual(afterKey.goalIds,goals);
   await page.getByRole('button',{name:'Perspective view',exact:true}).click();

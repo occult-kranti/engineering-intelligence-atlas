@@ -71,11 +71,17 @@ Run [44990066263](https://github.com/occult-kranti/engineering-intelligence-atla
 
 The cause was event ownership: the outer scene consumed a bubbling Escape before the temporary window bubble listener for the inner-card gesture. That active gesture now listens in window capture and removes its listener with the matching flag. It cancels before outer selection/navigation, restores its original paint and removes the pointer-release handler. The regression sends Escape from the real card element through the mounted scene and checks that a later pointerup cannot save. An independent helper reviewed the correction and both actual screenshots. The full browser gate remains pending the next source run.
 
+## Successful browser gate and visual status correction
+
+Run [44990637095](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44990637095) tested `0f6b8962abe6685b3cb70252d84a85735873c02c` and passed both platform jobs, all native/backend suites and all seventeen browser checks. Nineteen actual screenshots were captured. The browser proved a real tilted-card hit, nonzero drag, Escape restoration with no native write, separate inspector scrolling and all three board views at both laptop sizes. The passing receipt is retained as `evidence/ci-0f6b896-browser.json`.
+
+The independent visual review then found one status-decoration inconsistency: the stale-edit border remained after an explicit reload or acknowledged movement accepted a new base revision. The final correction clears that decoration only after the dirty-draft guard permits the new base or reset. Real stale refreshes and rejected writes retain the warning. The existing renderer tests and browser workflow now explicitly distinguish those states. Full exact-source acceptance of this final status-only correction is pending the follow-up run.
+
 ## Boundaries
 
 The stopped Vast instance remains stopped. No user GPU, SSH host, downloaded model, external service installation, trained MoE, live ChatGPT MCP session or physical-GPU soak was activated. The browser gate uses sandboxed Chrome in CI; software WebGL rendering is reported as such. Bounded lifecycle and idle tests cannot prove an indefinite absence of memory leaks.
 
-The previous release `v0.9.0-preview.1` is not replaced by this branch work. Office schema2 is intentionally rejected by old native binaries. Use the matching source-built package and keep a private workspace export before switching versions.
+The previous release `v0.9.0-preview.1` is not replaced by this branch work. The outer workspace schema remains version 1. The native office schema migrates from 1 to 2 while retaining historical records and without fabricating reviewers. Older native binaries reject office version 2. Export/restore supports office versions 1 and 2 and rejects unsupported future versions. Use the matching source-built package and keep a private workspace export before switching versions.
 
 ## Claude budget
 

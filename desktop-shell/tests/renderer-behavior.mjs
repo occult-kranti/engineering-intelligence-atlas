@@ -566,12 +566,12 @@ for(const interacted of [false,true]){
  check(attempts[0].goalIds.join(',')==='goal-a,goal-b'&&attempts[0].jobIds.join(',')==='job-a,job-b'&&attempts[0].roadmapItemIds.join(',')==='outcome-a,outcome-b','title-only save preserves all link arrays');
  type('node-title','Local unfinished draft');bf.office.blueprints[0].whiteboards[0].revision=10;bf.office.blueprints[0].whiteboards[0].title='External edit';await press('workspace-refresh');
  check(bid('node-title').value==='Local unfinished draft'&&bid('node-save-status').textContent.includes('draft'),'global refresh preserves the visible local draft');
- check(bd.querySelector('[data-board-id="linked-board"] .card-title').textContent==='External edit'&&bid('node-save-status').textContent.includes('changed after'),'global refresh reads the native board and exposes its external revision without replacing the draft');
+ check(bd.querySelector('[data-board-id="linked-board"] .card-title').textContent==='External edit'&&bid('node-save-status').textContent.includes('changed after')&&bid('workspace-node-form').classList.contains('board-stale'),'global refresh reads the native board and exposes its external revision without replacing the draft');
  const staleBefore=attempts.length;await save();await flush();
  check(attempts.length===staleBefore+1&&attempts.at(-1).expectedRevision===8,'stale edit sends the original base once without rebasing or retry');
- check(bid('node-title').value==='Local unfinished draft'&&bid('node-save-status').textContent.includes('STALE_REVISION'),'stale rejection stays visible and retains the typed draft');
+ check(bid('node-title').value==='Local unfinished draft'&&bid('node-save-status').textContent.includes('STALE_REVISION')&&bid('workspace-node-form').classList.contains('board-stale'),'stale rejection stays visible and retains the typed draft');
  await press('workspace-tab-softboard');await press('workspace-tab-whiteboard');check(bid('node-title').value==='Local unfinished draft','board navigation preserves the same live draft');
- await press('node-reload');check(bid('node-title').value==='External edit','explicit discard loads the new saved record');
+ await press('node-reload');check(bid('node-title').value==='External edit'&&!bid('workspace-node-form').classList.contains('board-stale'),'explicit discard loads the new saved record and clears the resolved warning');
  bid('node-goal-links').querySelector('button').click();await save();
  check(attempts.at(-1).expectedRevision===10&&attempts.at(-1).goalIds.join(',')==='goal-b'&&attempts.at(-1).jobIds.length===2,'explicit link removal affects exactly one selected relationship');
  const card=bd.querySelector('[data-board-id="linked-board"]'),handle=card.querySelector('.card-title'),left=card.style.left,top=card.style.top,count=attempts.length;

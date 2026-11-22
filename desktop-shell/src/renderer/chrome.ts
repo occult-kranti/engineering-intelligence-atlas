@@ -2520,12 +2520,14 @@ function addBoardLink(kind:BoardLinkKind):void {
 }
 function resetBoardForm(force=false): boolean {
   if(!force&&canvasFormDrafts.has('workspace-node-form')){setStatus($('node-save-status'),'Your card draft is still open. Save it or explicitly discard it before opening another card.','error');return false;}
+  $('workspace-node-form').classList.remove('board-stale');
   selectedBoardId='';whiteboardEditBase=null;whiteboardEditOffice=selectedOfficeId;boardDraftLinks={goal:[],job:[],roadmap:[]};($('workspace-node-form') as HTMLFormElement).reset();($('node-id') as HTMLInputElement).value='';$('node-inspector-title').textContent='Work with a clear steward.';$('node-save').textContent='Add card';renderSpatialSelectors();
   const blueprint=currentBlueprint();if(blueprint?.rooms[0])($('node-room') as HTMLSelectElement).value=selectedRoomId||blueprint.rooms[0].id;
   if(value('chat-employee'))($('node-owner') as HTMLSelectElement).value=value('chat-employee');setStatus($('node-save-status'),'');return true;
 }
 function selectBoard(board:OfficeWhiteboard,force=false):void {
   if(!force&&canvasFormDrafts.has('workspace-node-form')){setStatus($('node-save-status'),'Your card draft is kept. Save or discard it before loading a saved card.','error');return;}
+  $('workspace-node-form').classList.remove('board-stale');
   canvasFormDrafts.delete('workspace-node-form');whiteboardEditBase=JSON.parse(JSON.stringify(board));whiteboardEditOffice=selectedOfficeId;boardDraftLinks={goal:[...board.goalIds],job:[...board.jobIds],roadmap:[...(board.roadmapItemIds||[])]};
   selectedBoardId=board.id;($('node-id') as HTMLInputElement).value=board.id;($('node-title') as HTMLInputElement).value=board.title;($('node-owner') as HTMLSelectElement).value=board.ownerEmployeeId;($('node-room') as HTMLSelectElement).value=board.roomId;for(const kind of ['goal','job','roadmap'])($(`node-${kind}`) as HTMLSelectElement).value='';($('node-x') as HTMLInputElement).value=String(Math.round(board.x*100));($('node-y') as HTMLInputElement).value=String(Math.round(board.y*100));$('node-inspector-title').textContent=board.title;$('node-save').textContent='Save card';renderSpatialSelectors();setStatus($('node-save-status'),`Editing saved revision ${board.revision||0}. Steward changes do not reassign linked jobs.`);
   document.querySelectorAll<HTMLElement>('.ownership-card').forEach(card=>card.classList.toggle('selected',card.dataset.boardId===board.id));
