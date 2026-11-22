@@ -72,15 +72,23 @@ try{
   receipt.bridgeSha256=checksum(await fs.readFile(path.join(extension,'media/workbench-bridge.js')));
   receipt.nativeCoreSha256=checksum(await fs.readFile(path.join(repository,'native-core/target/release/atlas-core')));
   const {chromium}=requireSite('playwright');
+  const browserChannel=process.env.DAFTAR_CANVAS_BROWSER_CHANNEL;
+  assert.ok(browserChannel===undefined||browserChannel==='chrome','Only the explicit installed Chrome channel is supported');
+  assert.ok(!browserChannel||!process.env.CHROMIUM_PATH,'Choose a browser channel or a Chromium executable, not both');
   stage='browser-launch';
   let executablePath;
-  for(const candidate of [process.env.CHROMIUM_PATH,chromium.executablePath(),'/usr/bin/chromium'].filter(Boolean)){
-    if(!path.isAbsolute(candidate))continue;
-    try{await fs.access(candidate);executablePath=candidate;break;}catch{}
+  if(!browserChannel){
+    for(const candidate of [process.env.CHROMIUM_PATH,chromium.executablePath(),'/usr/bin/chromium'].filter(Boolean)){
+      if(!path.isAbsolute(candidate))continue;
+      try{await fs.access(candidate);executablePath=candidate;break;}catch{}
+    }
   }
-  receipt.browserExecutable=executablePath||'playwright-default';
-  // Keep Chromium's sandbox enabled. A denied launch is recorded, not bypassed.
-  browser=await chromium.launch({headless:true,chromiumSandbox:true,executablePath,env:cleanEnvironment(),timeout:30000});
+  receipt.browserChannel=browserChannel||'playwright-chromium';
+  receipt.browserExecutable=executablePath||(browserChannel?'channel:chrome':'playwright-default');
+  // CI explicitly uses the runner's installed Chrome and its existing OS profile.
+  // Keep sandboxing enabled; never change policy or retry with an unsandboxed browser.
+  browser=await chromium.launch({headless:true,chromiumSandbox:true,
+    ...(browserChannel?{channel:browserChannel}:{executablePath}),env:cleanEnvironment(),timeout:30000});
   receipt.browserVersion=browser.version();
   stage='native-runtime';
   token=crypto.randomBytes(48).toString('base64url');
@@ -100,7 +108,8 @@ try{
   receipt.initialCompanyCount=companies.length;receipt.initialCompanyIds=companies.map(company=>company.id);
   const capabilities=await client.capabilities();
   await serveAssets(assets.manifest);
-  const connectionInfo=()=>({connected:true,configured:true,kind:'runtime',url:runtimeOrigin,location:'Temporary native acceptance runtime',connectionEpoch:1,capabilities:capabilities.methods});
+  const connectionInfo=()=>({connected:true,configured:true,kind:'runtime',url:runtimeOrigin,location:'Temporary native acceptance runtime',connectionEpoch:1,
+    capabilities:Object.fromEntries(Object.entries(capabilities.methods).map(([name,value])=>[name,value.available===true||value.platformDelegated===true]))});
   controller=createOfficePanel(fakeVsCode(),{extensionUri:{fsPath:extension}},{connectionInfo,call:async(method,args,context)=>{
     methods.add(method);
     // Scope this acceptance to reads and the tested native company transaction.
@@ -156,6 +165,21 @@ try{
   await page.locator('#workbench-compute').click();await within(computeObserved.promise,5000,'Compute did not reach the parent command boundary.');assert.ok(methods.has('openComputeCenter'),'Compute overlay reaches the parent command boundary');
   await openCanvasSurface(page,'donna');await assertEndlessShell(page,'After native mutation');
   await screenshot('02-live-surfaces');
+  stage='setup-flow-popup';
+  await page.locator('#workbench-setup').click();
+  const setup=page.locator('#workbench-setup-panel');await setup.waitFor({state:'visible'});
+  assert.equal(await setup.getAttribute('aria-modal'),'false','Setup remains a movable overlay on the office');
+  assert.equal(await setup.locator('.workbench-setup-steps>li').count(),6,'The setup flow exposes all six stages');
+  assert.match(await page.locator('#workbench-setup-status').innerText(),/Connection reported/);
+  const setupBefore=await setup.boundingBox(),worldBeforeSetup=await world.evaluate(node=>node.style.transform);
+  assert.ok(setupBefore&&setupBefore.x>26,'The laptop viewport has room to move the setup overlay');
+  await page.locator('#workbench-setup-move').focus();await page.keyboard.press('ArrowLeft');
+  const setupAfter=await setup.boundingBox();assert.equal(setupAfter.x,setupBefore.x-16,'Keyboard input moves the setup overlay');
+  assert.equal(await world.evaluate(node=>node.style.transform),worldBeforeSetup,'Moving the setup overlay does not pan the office');
+  await screenshot('03-setup-flow');await page.keyboard.press('Escape');
+  assert.equal(await setup.isVisible(),false,'Escape closes setup');
+  assert.equal(await page.locator('#workbench-setup').evaluate(node=>node===document.activeElement),true,'Escape returns focus to the setup trigger');
+  receipt.checks.push('Six-step setup remains an accessible movable popup with keyboard movement, isolated input and focus restoration');
   persistedView=await page.evaluate(()=>window.__DAFTAR_VIEW_STATE||null);
   assert.ok(!JSON.stringify(persistedView).includes('Unsent smoke-test draft'),'Only view preferences persist');
   const rendered=await page.content();receipt.controlCredentialInBrowser=rendered.includes(token)||JSON.stringify(persistedView).includes(token);
@@ -166,7 +190,7 @@ try{
   receipt.status='passed';
 }catch(error){
   receipt.status=stage==='browser-launch'?'blocked':'failed';receipt.failedStage=stage;receipt.error=cleanError(error);
-  if(receipt.status==='blocked')receipt.blocker='Chromium could not launch with its sandbox enabled. No sandbox exception, alternate browser or access-control workaround was attempted.';
+  if(receipt.status==='blocked')receipt.blocker='The configured browser could not launch with its sandbox enabled. No sandbox exception, policy change or automatic fallback was attempted.';
   try{await screenshot('failure');}catch{}
   process.exitCode=1;
 }finally{

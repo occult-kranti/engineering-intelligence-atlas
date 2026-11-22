@@ -20,6 +20,33 @@ async function filesBelow(root) {
   return files;
 }
 
+/** A Windows loader cache key can retain a different drive/path case than
+ * realpath. Locate an already-loaded instance by canonical path AND file ID;
+ * never require it again merely to make an installed-package assertion pass. */
+async function findCachedModule(filename, { cache = require.cache, fileSystem = fs, platform = process.platform } = {}) {
+  const paths = platform === 'win32' ? path.win32 : path;
+  const comparePath = value => {
+    const resolved = paths.resolve(value);
+    return platform === 'win32' ? paths.toNamespacedPath(resolved).toLowerCase() : resolved;
+  };
+  const target = await fileSystem.realpath(filename);
+  const targetStat = await fileSystem.stat(target, { bigint: true });
+  assert.ok(targetStat.isFile(), 'The expected extension entry must be a regular file');
+  const matches = new Set();
+  for (const cached of Object.values(cache)) {
+    if (!cached?.loaded || typeof cached.filename !== 'string') continue;
+    let candidate, candidateStat;
+    try {
+      candidate = await fileSystem.realpath(cached.filename);
+      if (comparePath(candidate) !== comparePath(target)) continue;
+      candidateStat = await fileSystem.stat(candidate, { bigint: true });
+    } catch { continue; }
+    if (candidateStat.isFile() && candidateStat.dev === targetStat.dev && candidateStat.ino === targetStat.ino) matches.add(cached);
+  }
+  assert.ok(matches.size <= 1, 'The extension entry must not have multiple separately loaded module instances');
+  return [...matches][0] ?? null;
+}
+
 exports.run = async function run() {
   const receiptPath = process.env.ATLAS_INSTALLED_SMOKE_RECEIPT;
   assert.ok(receiptPath, 'The isolated runner must supply the receipt path');
@@ -142,9 +169,13 @@ exports.run = async function run() {
     const activation = await extension.activate();
     assert.equal(extension.isActive, true);
     const installedMain = await fs.realpath(path.join(installedRoot, extension.packageJSON.main));
-    assert.ok(require.cache[installedMain], 'The active extension entry point must be the installed package');
-    assert.equal(require.cache[path.join(sourceRoot, 'src', 'extension.js')], undefined);
-    installedEntry = require(installedMain);
+    const relativeMain = path.relative(installedRoot, installedMain);
+    assert.ok(relativeMain && !relativeMain.startsWith('..') && !path.isAbsolute(relativeMain), 'The active entry must remain inside the verified installed package');
+    const cachedInstalled = await findCachedModule(installedMain);
+    assert.ok(cachedInstalled, 'The active extension entry point must be the installed package');
+    assert.equal(await findCachedModule(path.join(sourceRoot, 'src', 'extension.js')), null, 'The source development entry must not be loaded under any path spelling');
+    installedEntry = cachedInstalled.exports;
+    assert.equal(typeof installedEntry.activate, 'function');
     assert.equal(typeof activation.connectionInfo, 'function');
     receipt.checks.push('Installed extension activated in real VS Code extension host');
 
@@ -376,7 +407,7 @@ exports.run = async function run() {
     assert.equal(receipt.externalRequests, 0); assert.equal(receipt.blockedRequests, 0);
 
     const syntheticCredential = 'sk-ant-' + 'test-only-not-a-real-credential-1234567890';
-    assert.equal(require(installedMain).safeMessage(new Error(syntheticCredential)), '[credential removed]');
+    assert.equal(installedEntry.safeMessage(new Error(syntheticCredential)), '[credential removed]');
     receipt.checks.push('Error display removes credential-shaped text');
     receipt.status = 'passed';
   } catch (error) {

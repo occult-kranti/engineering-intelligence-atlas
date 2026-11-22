@@ -66,13 +66,15 @@ jobs:
         if: runner.os == 'Windows'
         working-directory: vscode-extension
         run: npm run test:installed
-      - name: Install locked browser driver for shared-canvas acceptance
+      - name: Prepare locked driver and installed Chrome for shared-canvas acceptance
         if: runner.os == 'Linux'
         run: |
           npm ci --prefix site-source --ignore-scripts --no-audit --no-fund
-          node site-source/node_modules/playwright/cli.js install --with-deps chromium
+          google-chrome --version
       - name: Exercise actual shared canvas against the native backend
         if: runner.os == 'Linux'
+        env:
+          DAFTAR_CANVAS_BROWSER_CHANNEL: chrome
         run: node vscode-extension/scripts/smoke-canvas.mjs
       - name: Retain install evidence and platform package
         if: always()
