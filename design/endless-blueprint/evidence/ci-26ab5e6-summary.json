@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "run": 44979493493,
+  "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44979493493",
+  "head": "26ab5e6ef91e73b031890415d9d45a2b094b53c9",
+  "workflowConclusion": "failure",
+  "platforms": {
+    "linux": {
+      "installedReceipt": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact/.work/installed-smoke/receipt.json",
+      "installedStatus": "passed",
+      "installedCheckCount": 11,
+      "installedChecks": [
+        "VSIX installed separately from test host and source",
+        "Installed archive contains runtime files and no credential-shaped material",
+        "Installed extension activated in real VS Code extension host",
+        "All contributed Atlas commands registered",
+        "Open Office command completed; disconnected refresh and disconnect stayed offline",
+        "Installed native runtime and shared infinite-canvas asset manifests verified",
+        "Installed Electron Node child started native workbench; reads stayed on owned loopback with workers paused",
+        "Disconnect cleared editor state; awaited deactivation stopped its owned runtime",
+        "Installed Electron \u2192 tmux host runner completed one bounded printf job under its native company assistant; replay executed once and policy returned off",
+        "Installed Electron \u2192 dedicated tmux \u2192 native daemon survives detach and reconnect; exact supervisor cleanup verified",
+        "Error display removes credential-shaped text"
+      ],
+      "nodeSuiteCounters": [
+        [
+          "tests",
+          "129"
+        ],
+        [
+          "pass",
+          "129"
+        ],
+        [
+          "fail",
+          "0"
+        ],
+        [
+          "skipped",
+          "0"
+        ],
+        [
+          "tests",
+          "129"
+        ],
+        [
+          "pass",
+          "129"
+        ],
+        [
+          "fail",
+          "0"
+        ],
+        [
+          "skipped",
+          "0"
+        ]
+      ],
+      "artifactSha256": "b34445fed5c3b594ff43199b10d383a23760082ba34e7df06423545dcba56fcf",
+      "artifactDigestMatches": true,
+      "artifact": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact.zip",
+      "log": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/job.log",
+      "logSha256": "1ad8a2d3634d2f8d77de0ff88b67225a54414146655ea75e82767ad6c84bb4c3",
+      "receiptSha256": "874d043d3bd46617158cb13a2abac218490c4851938f8382280393551128aa04"
+    },
+    "windows": {
+      "installedReceipt": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/windows/artifact/.work/installed-smoke/receipt.json",
+      "installedStatus": "passed",
+      "installedCheckCount": 9,
+      "installedChecks": [
+        "VSIX installed separately from test host and source",
+        "Installed archive contains runtime files and no credential-shaped material",
+        "Installed extension activated in real VS Code extension host",
+        "All contributed Atlas commands registered",
+        "Open Office command completed; disconnected refresh and disconnect stayed offline",
+        "Installed native runtime and shared infinite-canvas asset manifests verified",
+        "Installed Electron Node child started native workbench; reads stayed on owned loopback with workers paused",
+        "Disconnect cleared editor state; awaited deactivation stopped its owned runtime",
+        "Error display removes credential-shaped text"
+      ],
+      "nodeSuiteCounters": [
+        [
+          "tests",
+          "129"
+        ],
+        [
+          "pass",
+          "122"
+        ],
+        [
+          "fail",
+          "0"
+        ],
+        [
+          "skipped",
+          "7"
+        ],
+        [
+          "tests",
+          "129"
+        ],
+        [
+          "pass",
+          "122"
+        ],
+        [
+          "fail",
+          "0"
+        ],
+        [
+          "skipped",
+          "7"
+        ]
+      ],
+      "artifactSha256": "d6f21fac9a9f4b1dbfdcc7d5affecd972fe273a562b0944bd64ebe861346b6e1",
+      "artifactDigestMatches": true,
+      "artifact": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/windows/artifact.zip",
+      "log": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/windows/job.log",
+      "logSha256": "d3dcd0c25efa3ec4153cdb7e496bcc0481a9c8f1f9b8fea837e2a2ed63deea40",
+      "receiptSha256": "e41776f7938a6aab7e69ee67e26f883bef980a9a534227ab5b79608f493c4f7f"
+    }
+  },
+  "canvas": {
+    "receipt": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact/.work/canvas-smoke/receipt.json",
+    "status": "failed",
+    "failedStage": "laptop-1366",
+    "error": "1366\u00d7768 top view: real geometry was submitted to a successful frame",
+    "webglVerified": true,
+    "renderer": "ANGLE/SwiftShader (software)",
+    "checksCompleted": 6,
+    "screenshots": [
+      "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact/.work/canvas-smoke/01-native-office.png",
+      "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact/.work/canvas-smoke/04-perspective-1440x900.png",
+      "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact/.work/canvas-smoke/09-company-ownership-1440x900.png",
+      "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact/.work/canvas-smoke/02-live-surfaces.png",
+      "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact/.work/canvas-smoke/03-setup-flow.png",
+      "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact/.work/canvas-smoke/failure.png"
+    ],
+    "providerCalls": 0,
+    "externalRequests": [],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "rpcFailures": []
+  }
+}

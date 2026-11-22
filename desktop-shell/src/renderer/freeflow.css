@@ -217,14 +217,14 @@ body.ff-canvas-mode #donna-dock-toggle { bottom: 16px; }
 
 /* Endless office — the room is the application. Every working surface has a
    world address; only navigation and camera instruments stay in the HUD. */
-body.endless-canvas { margin: 0; width: 100%; height: 100dvh; overflow: hidden; }
-.endless-canvas .workspace-shell { display: block; height: 100dvh; overflow: hidden; }
+body.endless-canvas { margin: 0; width: 100%; height: 100dvh; overflow: clip; }
+.endless-canvas .workspace-shell { display: block; height: 100dvh; overflow: clip; }
 .endless-canvas .sidebar { display: none; }
 .endless-canvas .workspace-body { margin: 0; width: 100%; height: 100%; }
-.endless-canvas #workspace-main { position: relative; width: 100%; height: 100%; padding: 0; overflow: hidden; }
+.endless-canvas #workspace-main { position: relative; width: 100%; height: 100%; padding: 0; overflow: clip; }
 .endless-canvas #office-view { position: static; display: block; padding: 0; margin: 0; max-width: none; height: 100%; }
 .endless-canvas #office-view > :not(#freeflow-surface) { display: none; }
-.endless-canvas #freeflow-surface { position: absolute; inset: 0; height: 100%; min-height: 0; margin: 0; border: 0; border-radius: 0; overflow: hidden; background: var(--canvas); }
+.endless-canvas #freeflow-surface { position: absolute; inset: 0; height: 100%; min-height: 0; margin: 0; border: 0; border-radius: 0; overflow: clip; background: var(--canvas); }
 .endless-canvas .workspace-footer, .endless-canvas .workspace-body > footer { display: none; }
 :root[data-theme] .endless-canvas .workspace-topbar { position: absolute; top: 18px; left: 24px; right: 24px; min-height: 50px; padding: 0; z-index: 30; gap: 24px; background: transparent; border: 0; pointer-events: none; }
 .endless-canvas .workspace-topbar > * { pointer-events: auto; }
@@ -253,8 +253,12 @@ body.endless-canvas { margin: 0; width: 100%; height: 100dvh; overflow: hidden; 
 .endless-canvas .ff-surface-host, .endless-canvas .ff-studio { position: absolute; inset: 0; height: 100%; }
 .endless-canvas .ff-studio { font-family: 'Segoe UI',Inter,system-ui,sans-serif; }
 .endless-canvas .ff-workbench { display: block; position: absolute; inset: 0; }
-.endless-canvas .ff-canvas-host { height: 100%; min-height: 0; width: 100%; }
-.endless-canvas .ff-scene { height: 100%; overflow: hidden; }
+.endless-canvas .ff-canvas-host { height: 100%; min-height: 0; width: 100%; overflow: clip; }
+.endless-canvas .ff-scene { height: 100%; overflow: clip; }
+/* A camera viewport must not acquire a second, hidden browser scroll offset
+ * during focus. The actual panel bodies and forms retain their own scrolling. */
+html:has(> body.endless-canvas),
+.endless-canvas :is(.workspace-body,#office-view,.ff-surface-host,.ff-studio,.ff-workbench) { overflow: clip; }
 .endless-canvas .ff-table { background: var(--canvas); }
 .endless-canvas .ff-grid { opacity: .6; background-size: 32px 32px,32px 32px,160px 160px,160px 160px; }
 .endless-canvas .ff-header { position: absolute; left: 28px; bottom: 114px; z-index: 9; border: 0; background: transparent; padding: 0; pointer-events: none; flex-wrap: nowrap; gap: 28px; }
@@ -503,20 +507,38 @@ body.endless-canvas { margin: 0; width: 100%; height: 100dvh; overflow: hidden; 
 .endless-canvas .ff-node--company-plan .ff-table-plan-open { color: var(--plan-ink); }
 .endless-canvas .ff-node--room > .ff-node-paper,
 .endless-canvas .ff-node--department > .ff-node-paper {
-  background: color-mix(in srgb,var(--person-color) 8%,var(--plan-paper));
+  background: color-mix(in srgb,var(--person-color) 5%,var(--plan-floor));
   color: var(--plan-ink); border: 1.5px solid var(--plan-line); border-radius: 1px;
-  box-shadow: inset 0 0 0 3px var(--plan-paper),0 3px 0 var(--plan-edge); padding: 32px 10px 8px;
+  box-shadow: inset 0 0 0 3px var(--plan-paper),0 3px 0 var(--plan-edge); padding: 10px 12px;
 }
 .endless-canvas .ff-node--department > .ff-node-paper { border-style: dashed; }
-.endless-canvas .ff-node--whiteboard > .ff-node-paper { background: var(--plan-paper); color: var(--plan-ink); border: 1px solid var(--plan-line); border-top-width: 3px; border-radius: 2px; box-shadow: none; }
-.endless-canvas .ff-node--whiteboard .ff-node-title { color: var(--plan-ink); font-size: 13px; }
+.endless-canvas .ff-node--whiteboard { pointer-events: none; }
+.endless-canvas .ff-node--whiteboard > .ff-node-paper { position: absolute; right: 3px; bottom: 3px; width: 36px; height: 36px; display: grid; place-items: center; padding: 0; background: var(--plan-paper); color: var(--plan-ink); border: 1px solid var(--plan-line); border-radius: 2px; box-shadow: none; overflow: visible; pointer-events: auto; }
+.endless-canvas .ff-node--whiteboard > .ff-node-paper::before { content: '▤'; display: block; color: var(--plan-ink); font: 18px/1 'Segoe UI',system-ui,sans-serif; }
+.endless-canvas .ff-node--whiteboard > .ff-node-paper::after { content: none; }
+.endless-canvas .ff-node--whiteboard .ff-node-svg { display: none; }
+.endless-canvas .ff-node--whiteboard .ff-node-title { position: absolute; right: 0; bottom: 100%; width: max-content; max-width: 180px; padding: 5px 7px; background: var(--plan-paper); border: 1px solid var(--plan-edge); visibility: hidden; pointer-events: none; }
+.endless-canvas .ff-node--whiteboard:is(:hover,:focus-visible,.is-selected) .ff-node-title { visibility: visible; }
+.endless-canvas .ff-node--whiteboard .ff-node-title { color: var(--plan-ink); font-size: 12px; line-height: 1.3; }
 .endless-canvas .ff-node--whiteboard :is(.ff-node-sub,.ff-node-counts) { color: var(--plan-muted); }
 .endless-canvas .ff-node--whiteboard .ff-node-status { color: var(--plan-muted); background: transparent; border-color: var(--plan-edge); }
-.endless-canvas :is(.ff-node--office,.ff-node--room,.ff-node--department) .ff-node-title { color: var(--plan-ink); font-size: 15px; }
+.endless-canvas :is(.ff-node--office,.ff-node--room,.ff-node--department) .ff-node-title { color: var(--plan-ink); font-size: 15px; line-height: 1.3; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .endless-canvas :is(.ff-node--office,.ff-node--room,.ff-node--department) :is(.ff-node-sub,.ff-node-counts) { color: var(--plan-muted); }
 .endless-canvas :is(.ff-node--office,.ff-node--room,.ff-node--department) .ff-node-status { color: var(--plan-ink); background: var(--plan-paper); border-color: var(--plan-edge); }
 .endless-canvas :is(.ff-node--office,.ff-node--room,.ff-node--department) .ff-node-open { background: var(--plan-paper); color: var(--plan-ink); border: 1px solid var(--plan-edge); }
-.endless-canvas .ff-segment-tag { left: 9px; top: 7px; max-width: calc(100% - 18px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 2px 0; border: 0; background: transparent; color: var(--plan-ink); font-size: 12px; letter-spacing: .04em; }
+.endless-canvas .ff-segment-tag { left: 12px; top: 32px; max-width: calc(100% - 24px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0; border: 0; background: transparent; color: var(--plan-muted); font: 11px/1.3 'Segoe UI',system-ui,sans-serif; letter-spacing: 0; text-transform: none; }
+.endless-canvas .ff-node[data-assignment-duplicate='true'] .ff-segment-tag { display: none; }
+/* One name per boundary. Status, counts and complete department paths remain
+ * in each unchanged accessible name, native inspector and explicit heat mode. */
+.endless-canvas :is(.ff-node--office,.ff-node--room,.ff-node--department,.ff-node--whiteboard) :is(.ff-node-sub,.ff-node-status,.ff-node-counts) { display: none; }
+.endless-canvas :is(.ff-node--office,.ff-node--room) .ff-node-open { opacity: 0; pointer-events: none; }
+.endless-canvas :is(.ff-node--office,.ff-node--room):is(:hover,:focus-visible,.is-selected) .ff-node-open { opacity: 1; }
+.endless-canvas .ff-node--office .ff-dimension { opacity: .25; }
+.endless-canvas .ff-node--office .ff-measure { opacity: .35; }
+.endless-canvas .ff-node[data-company-level='true'] > .ff-node-paper { background: var(--plan-floor); background-image: none; color: var(--plan-ink); border: 1px dashed var(--plan-line); box-shadow: none; border-radius: 1px; padding: 8px 12px; }
+.endless-canvas .ff-node[data-company-level='true'] .ff-node-title { color: var(--plan-ink); font-size: 13px; font-weight: 600; }
+.endless-canvas .ff-node[data-company-level='true'] :is(.ff-node-sub,.ff-node-status,.ff-node-counts,.ff-node-svg) { display: none; }
+.endless-canvas .ff-node[data-company-level='true'] .ff-node-paper::after { content: none; }
 .endless-canvas :is(.ff-wall,.ff-measure,.ff-dimension,.ff-door) { stroke: var(--plan-line); }
 
 /* Canonical company markers sit inside their own blueprint headers. */
@@ -543,7 +565,7 @@ body.endless-canvas { margin: 0; width: 100%; height: 100dvh; overflow: hidden; 
  * accessible name and native inspector; pointer/focus reveals the role label. */
 .endless-canvas :is(.ff-node--employee,.ff-node--reference:not(.ff-node--table-plan)) > .ff-node-paper {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-  padding: 1px 3px; border: 0; border-radius: 0; background: transparent; background-image: none;
+  padding: 1px; border: 0; border-radius: 0; background: transparent; background-image: none;
   color: var(--plan-ink); box-shadow: none; overflow: visible;
 }
 .endless-canvas :is(.ff-node--employee,.ff-node--reference:not(.ff-node--table-plan)) .ff-node-paper::before,
@@ -554,10 +576,13 @@ body.endless-canvas { margin: 0; width: 100%; height: 100dvh; overflow: hidden; 
   box-shadow: 0 0 0 2px var(--plan-paper); letter-spacing: 0;
 }
 .endless-canvas :is(.ff-node--employee,.ff-node--reference:not(.ff-node--table-plan)) .ff-node-title {
-  max-width: 100%; padding: 0 3px; font: 600 var(--person-label-size,11px)/1.2 'Segoe UI',system-ui,sans-serif;
+  max-width: 100%; padding: 0 2px; font: 600 var(--person-label-size,11px)/1.3 'Segoe UI',system-ui,sans-serif;
   color: var(--plan-ink); text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  background: color-mix(in srgb,var(--plan-paper) 92%,transparent); border-radius: 2px;
+  background: transparent; text-shadow: 0 1px var(--plan-paper),1px 0 var(--plan-paper),-1px 0 var(--plan-paper),0 -1px var(--plan-paper); border-radius: 2px;
 }
+.endless-canvas :is(.ff-node--employee,.ff-node--reference:not(.ff-node--table-plan))[data-person-label='detail'] .ff-node-title { visibility: hidden; }
+.endless-canvas :is(.ff-node--employee,.ff-node--reference:not(.ff-node--table-plan)):is(:hover,:focus-visible,.is-selected) { z-index: 8; }
+.endless-canvas :is(.ff-node--employee,.ff-node--reference:not(.ff-node--table-plan)):is(:hover,:focus-visible,.is-selected) .ff-node-title { visibility: visible; max-width: 220px; overflow: visible; background: var(--plan-paper); border: 1px solid var(--plan-edge); padding: 2px 5px; box-shadow: 0 2px 6px rgb(0 8 20 / 10%); }
 .endless-canvas :is(.ff-node--employee,.ff-node--reference:not(.ff-node--table-plan)) :is(.ff-node-sub,.ff-node-status,.ff-node-counts,.ff-node-heat,.ff-node-svg) { display: none; }
 .endless-canvas :is(.ff-node--employee,.ff-node--reference:not(.ff-node--table-plan)):is(:hover,:focus-visible,.is-selected) .ff-node-monogram { outline: 2px solid var(--plan-ink); outline-offset: 3px; }
 .endless-canvas :is(.ff-node--employee,.ff-node--reference:not(.ff-node--table-plan)):is(:hover,:focus-visible) .ff-node-sub {
@@ -647,4 +672,17 @@ body.endless-canvas { margin: 0; width: 100%; height: 100dvh; overflow: hidden; 
   .canvas-arrange-popup { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
   :root[data-theme] .canvas-arrange-popup button { background: ButtonFace; color: ButtonText; border-color: ButtonText; }
   .canvas-arrange-label,.canvas-arrange-status { color: CanvasText; }
+}
+
+/* Use the gap in the existing bottom HUD for the scope/finder. Keeping these
+ * controls out of the lower-left world avoids covering company board actions. */
+@media (min-width: 1101px) {
+  .endless-canvas .ff-header { left: auto; right: 550px; bottom: 24px; width: 210px; max-width: 210px; flex-direction: column; align-items: flex-start; gap: 3px; }
+  .endless-canvas .ff-header > :not(.ff-tools) { max-width: 100%; }
+  .endless-canvas .ff-title { margin: 0; font: 500 14px/18px 'Segoe UI',system-ui,sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; letter-spacing: 0; }
+  .endless-canvas .ff-breadcrumbs { flex-wrap: nowrap; max-width: 210px; gap: 3px; font-size: 9px; overflow-x: auto; scrollbar-width: none; }
+  .endless-canvas .ff-breadcrumbs button { min-height: 24px; white-space: nowrap; }
+  .endless-canvas .ff-tools { flex-wrap: nowrap; }
+  .endless-canvas .canvas-launcher { max-width: min(600px,calc(100vw - 820px)); flex-wrap: nowrap; overflow-x: auto; }
+  .endless-canvas .canvas-launcher button { flex-shrink: 0; }
 }

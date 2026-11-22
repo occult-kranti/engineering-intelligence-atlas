@@ -103,10 +103,13 @@
    * are shared with the optional GPU scene; employee color describes a team,
    * never permissions or a claim that a saved employee is running. */
   --plan-paper: #F8F3E7;
+  --plan-floor: #EEF3F4;
   --plan-ink: #17324E;
   --plan-muted: #51667C;
   --plan-line: #526B86;
   --plan-edge: #CBBFAA;
+  --plan-grid-minor: #E6E9E6;
+  --plan-grid-major: #CFD8D9;
   --person-color: #3169AB;
   --person-ink: #FFFFFF;
   --department-blue: #3169AB;
@@ -185,6 +188,14 @@
     --connection: CanvasText;
     --grid-minor: Canvas;
     --grid-major: Canvas;
+    --plan-paper: Canvas;
+    --plan-floor: Canvas;
+    --plan-ink: CanvasText;
+    --plan-muted: CanvasText;
+    --plan-line: CanvasText;
+    --plan-edge: CanvasText;
+    --plan-grid-minor: Canvas;
+    --plan-grid-major: Canvas;
     --heat-0: CanvasText;
     --heat-1: CanvasText;
     --heat-2: CanvasText;

@@ -33,7 +33,7 @@ function mount(settings: { storage?: Storage | null; specs?: CanvasWorkspacePane
   cleanup.push(() => workspace.destroy());
   const panel = (id: string) => workspace.elements.layer.querySelector(`[data-panel-id="${id}"]`) as HTMLElement;
   const control = (id: string, cls: string) => panel(id).querySelector(cls) as HTMLButtonElement;
-  return { workspace, host, viewport, world, origin, first, second, input, panel, control, cameras, changes, getCamera: () => camera, stops: () => stops, shows: () => shows, homes: () => homes };
+  return { workspace, host, viewport, world, origin, first, second, input, panel, control, cameras, changes, getCamera: () => camera, setCamera: (next: Camera) => { camera = next; }, stops: () => stops, shows: () => shows, homes: () => homes };
 }
 
 describe('one live DOM canvas workspace', () => {
@@ -79,10 +79,11 @@ describe('one live DOM canvas workspace', () => {
 
   it('positions a new panel near the camera only once and preserves later parking', () => {
     const saved = store(); const m = mount({ storage: saved.storage, camera: { ...DEFAULT_CAMERA, x: 2000, y: 1000 } });
-    m.workspace.open('models', { frame: false, nearCamera: true });
+    m.workspace.open('models', { frame: false });
     const firstPosition = m.panel('models').style.transform;
     expect(firstPosition.replaceAll(' ', '')).toContain('1550px,650px');
-    m.workspace.close('models'); m.workspace.open('models', { frame: false, nearCamera: true });
+    m.workspace.close('models'); m.setCamera({ ...DEFAULT_CAMERA, x: -9000, y: 8000 });
+    m.workspace.open('models', { frame: false, nearCamera: true });
     expect(m.panel('models').style.transform).toBe(firstPosition);
     const json = saved.values.get(CANVAS_LAYOUT_KEY)!;
     expect(json).not.toMatch(/Keep this draft|live-draft|Models & system/);
@@ -235,10 +236,113 @@ describe('single-pointer surface arrangement', () => {
   });
 });
 
+describe('popup placement and viewport changes', () => {
+  function rect(panel: HTMLElement) {
+    const position = /translate3d\((-?[\d.]+)px,\s*(-?[\d.]+)px,\s*0(?:px)?\)/.exec(panel.style.transform)!;
+    expect(position).not.toBeNull();
+    return { x: Number(position[1]), y: Number(position[2]), width: parseFloat(panel.style.width), height: parseFloat(panel.style.height) };
+  }
+  function smallPopup(camera = { ...DEFAULT_CAMERA, x: 560, y: 380, zoom: .8 }) {
+    const element = document.createElement('section'), draft = document.createElement('textarea');
+    draft.value = 'Unsent company plan'; element.append(draft); document.body.append(element);
+    const insets = { top: 150, bottom: 150, left: 16, right: 16 }, saved = store();
+    const m = mount({ camera, viewport: { width: 1440, height: 900 }, insets, storage: saved.storage,
+      specs: [{ id: 'donna', title: 'Donna', element, rect: { x: -1000, y: 1100, width: 440, height: 480 } }] });
+    return { ...m, draft, insets, saved };
+  }
+  function expectTitleVisible(m: ReturnType<typeof smallPopup>, viewport: { width: number; height: number }) {
+    const r = rect(m.panel('donna'));
+    for (const x of [r.x, r.x + r.width]) for (const y of [r.y, r.y + 48]) {
+      const p = worldToScreen(m.getCamera(), viewport, { x, y });
+      expect(p.x).toBeGreaterThanOrEqual(m.insets.left - 1e-5);
+      expect(p.x).toBeLessThanOrEqual(viewport.width - m.insets.right + 1e-5);
+      expect(p.y).toBeGreaterThanOrEqual(m.insets.top - 1e-5);
+      expect(p.y).toBeLessThanOrEqual(viewport.height - m.insets.bottom + 1e-5);
+    }
+  }
+
+  it('opens a first Donna popup through the launcher near the office without zooming away from context', () => {
+    const m = smallPopup(); let edits = 0;
+    m.draft.addEventListener('input', () => edits++);
+    (m.host.querySelector('[data-canvas-open="donna"]') as HTMLButtonElement).click(); dom.raf.drain();
+    expect(rect(m.panel('donna'))).toEqual({ x: 340, y: 140, width: 440, height: 480 });
+    expect(m.getCamera().x).toBeCloseTo(560, 5); expect(m.getCamera().y).toBeCloseTo(380, 5);
+    expect(m.getCamera().zoom).toBeCloseTo(.8, 7);
+    expectTitleVisible(m, { width: 1440, height: 900 });
+    expect(m.panel('donna').querySelector('textarea')).toBe(m.draft);
+    m.draft.value = 'Still the same company draft'; m.draft.dispatchEvent(new Event('input'));
+    expect(edits).toBe(1); expect(m.saved.values.get(CANVAS_LAYOUT_KEY)).not.toContain('company draft');
+  });
+
+  it('respects explicit original placement and never teleports a seen, restored or pinned popup', () => {
+    const m = smallPopup();
+    m.workspace.open('donna', { frame: false, nearCamera: false });
+    const original = rect(m.panel('donna'));
+    expect(original.x).toBe(-1000); expect(original.y).toBe(1100);
+    m.control('donna', '.canvas-panel-pin').click(); m.workspace.close('donna');
+    m.setCamera({ ...DEFAULT_CAMERA, x: 7000, y: -5000 }); m.workspace.open('donna', { frame: false });
+    expect(rect(m.panel('donna'))).toEqual(original);
+    m.workspace.close('donna'); m.workspace.destroy();
+    const element = document.createElement('section'); element.append(m.draft); document.body.append(element);
+    const restored = mount({ storage: m.saved.storage, camera: { ...DEFAULT_CAMERA, x: 12000, y: 3000 },
+      specs: [{ id: 'donna', element, rect: { x: 0, y: 0, width: 440, height: 480 } }] });
+    restored.workspace.open('donna', { frame: false });
+    expect(rect(restored.panel('donna'))).toEqual(original);
+    expect(restored.panel('donna').classList.contains('is-pinned')).toBe(true);
+    expect(m.draft.value).toBe('Unsent company plan');
+  });
+
+  it('reframes a pinned active title after viewport shrink and inset changes without altering geometry, focus or drafts', () => {
+    const m = smallPopup({ ...DEFAULT_CAMERA, x: 560, y: 380, zoom: 1.2 });
+    m.workspace.open('donna'); dom.raf.drain(); m.control('donna', '.canvas-panel-pin').click();
+    m.draft.focus(); m.draft.value = 'Keep typing across resize';
+    const geometry = rect(m.panel('donna')), writes = m.saved.writes();
+    const viewport = { width: 1366, height: 768 };
+    dom.setGeometry(m.viewport, viewport); dom.fireResize(); dom.raf.drain();
+    expectTitleVisible(m, viewport);
+    expect(rect(m.panel('donna'))).toEqual(geometry); expect(m.saved.writes()).toBe(writes);
+    expect(document.activeElement).toBe(m.draft); expect(m.draft.value).toBe('Keep typing across resize');
+    m.insets.top = 220; m.workspace.refresh(); dom.raf.drain();
+    expectTitleVisible(m, viewport); expect(rect(m.panel('donna'))).toEqual(geometry);
+    const cameraWrites = m.cameras.length;
+    dom.fireResize(); m.workspace.refresh(); dom.raf.drain(); expect(m.cameras).toHaveLength(cameraWrites);
+    m.workspace.destroy(); dom.setGeometry(m.viewport, { width: 800, height: 600 }); dom.fireResize(); m.workspace.refresh(); dom.raf.drain();
+    expect(m.cameras).toHaveLength(cameraWrites); expect(dom.raf.pending()).toBe(0);
+  });
+
+  it('does not move the camera when a resized viewport leaves the active title reachable', () => {
+    const m = smallPopup(); m.workspace.open('donna'); dom.raf.drain();
+    const camera = m.getCamera(), writes = m.cameras.length, geometry = rect(m.panel('donna'));
+    dom.setGeometry(m.viewport, { width: 1600, height: 1000 }); dom.fireResize(); m.workspace.refresh(); dom.raf.drain();
+    expect(m.getCamera()).toEqual(camera); expect(m.cameras).toHaveLength(writes);
+    expect(rect(m.panel('donna'))).toEqual(geometry);
+  });
+
+  it('keeps an Ownership-size popup inside host insets after subsequent surface refreshes', () => {
+    const element = document.createElement('section'); document.body.append(element);
+    const viewport = { width: 1440, height: 900 }, insets = { top: 150, bottom: 150, left: 16, right: 16 };
+    const m = mount({ viewport, insets, camera: { ...DEFAULT_CAMERA, x: 560, y: 380, zoom: 1 },
+      specs: [{ id: 'workspace-softboard', title: 'People & ownership', element,
+        rect: { x: 2120, y: 3500, width: 1040, height: 720 } }] });
+    m.workspace.open('workspace-softboard'); m.workspace.refresh(); dom.raf.drain();
+    const geometry = rect(m.panel('workspace-softboard')), camera = m.getCamera();
+    expect(geometry).toEqual({ x: 40, y: 20, width: 1040, height: 720 });
+    for (let i = 0; i < 5; i++) { m.workspace.refresh(); dom.fireResize(); dom.raf.drain(); }
+    expect(m.getCamera()).toEqual(camera); expect(rect(m.panel('workspace-softboard'))).toEqual(geometry);
+    for (const x of [geometry.x, geometry.x + geometry.width]) for (const y of [geometry.y, geometry.y + geometry.height]) {
+      const screen = worldToScreen(camera, viewport, { x, y });
+      expect(screen.x).toBeGreaterThanOrEqual(insets.left - 1e-5);
+      expect(screen.x).toBeLessThanOrEqual(viewport.width - insets.right + 1e-5);
+      expect(screen.y).toBeGreaterThanOrEqual(insets.top - 1e-5);
+      expect(screen.y).toBeLessThanOrEqual(viewport.height - insets.bottom + 1e-5);
+    }
+  });
+});
+
 describe('canvas gestures and camera ownership', () => {
   it('frames the title and resize controls between the host navigation instruments', () => {
     const vp={width:1280,height:900}, inset={top:150,bottom:170,left:16,right:16};
-    const m=mount({viewport:vp,insets:inset});m.workspace.open('models');dom.raf.drain();
+    const m=mount({viewport:vp,insets:inset});m.workspace.open('models',{nearCamera:false});dom.raf.drain();
     const camera=m.getCamera();
     const a=worldToScreen(camera,vp,{x:4000,y:5000}),b=worldToScreen(camera,vp,{x:4900,y:5700});
     expect(a.y).toBeGreaterThanOrEqual(inset.top);expect(b.y).toBeLessThanOrEqual(vp.height-inset.bottom);
@@ -347,14 +451,14 @@ describe('canvas gestures and camera ownership', () => {
 
   it('respects reduced motion and defers framing until viewport measurement exists', () => {
     dom.setReducedMotion(true); const m = mount({ measure: false });
-    m.workspace.open('models'); expect(m.cameras).toHaveLength(0); expect(dom.raf.pending()).toBe(0);
+    m.workspace.open('models', {nearCamera:false}); expect(m.cameras).toHaveLength(0); expect(dom.raf.pending()).toBe(0);
     dom.setGeometry(m.viewport, { width: 390, height: 680 }); m.workspace.refresh();
     expect(m.cameras).toHaveLength(1); expect(m.getCamera().x).toBe(4450); expect(dom.raf.pending()).toBe(0);
   });
 
   it('reveals an offscreen keyboard-focused surface while pointer focus does not fight the camera', () => {
     const m = mount(); const input = document.createElement('input'); m.second.append(input);
-    m.workspace.open('models', { frame: false }); dom.pointer(input, 'pointerdown', { x: 20, y: 20 }); input.focus();
+    m.workspace.open('models', { frame: false, nearCamera: false }); dom.pointer(input, 'pointerdown', { x: 20, y: 20 }); input.focus();
     expect(dom.raf.pending()).toBe(0);
     m.input.focus(); dom.advanceTime(400); dom.key(m.input, 'Tab'); input.focus();
     expect(dom.raf.pending()).toBe(1);

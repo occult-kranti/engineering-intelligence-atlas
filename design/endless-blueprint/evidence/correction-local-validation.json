@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "run": "laptop-blueprint-20261122",
+  "round": 3,
+  "checkpoint": "grouped visual correction",
+  "baselineSource": "26ab5e6ef91e73b031890415d9d45a2b094b53c9",
+  "status": "local checks passed; exact-source browser confirmation pending",
+  "tests": {
+    "freeflow": {
+      "files": 13,
+      "passed": 167,
+      "failed": 0,
+      "skipped": 0
+    },
+    "extension": {
+      "passed": 129,
+      "failed": 0,
+      "skipped": 0
+    },
+    "rendererBuild": "passed",
+    "extensionBuild": "passed",
+    "extensionCheck": "passed",
+    "cssParse": "passed by UX node",
+    "browserHarnessSyntax": "passed"
+  },
+  "corrections": [
+    "Exact-color drafting floors with shaded shallow walls",
+    "One room label with optional distinct department assignment",
+    "Flat employee circles with focused detail instead of crowded microtext",
+    "Painted whiteboard marker and pointer area agree",
+    "Existing bottom HUD tools moved clear of company footer actions",
+    "Static viewport clipping prevents hidden browser scrolling; form bodies remain scrollable",
+    "First-use popups appear near the current camera; saved positions retained",
+    "Viewport resize keeps active titlebar reachable without rewriting panel geometry",
+    "Actual graphics acceptance distinguishes valid empty canvas from missing company geometry"
+  ],
+  "files": {
+    "desktop-shell/src/renderer/freeflow/relief3d.ts": "83e4f4025b9702e2f2687ceee003ce4f5a1ef638732fe2bd71d8b0a1b647fdd2",
+    "desktop-shell/src/renderer/freeflow/canvas-workspace.ts": "a43c1adabf9d0ab0b1d07ef6b76d8aaa88c22b98f77f785a42c39a596362bd24",
+    "desktop-shell/src/renderer/freeflow/scene.ts": "dc15857f12b2723e9e0bd0eedf5f86e7809e163e84d48ae6b1b5a336337b3862",
+    "desktop-shell/src/renderer/freeflow.css": "abe73cfd101f6123f9778e6acd9958ee36906c301bd7ed767d409f73b5f8d817",
+    "desktop-shell/src/renderer/studio-tokens.css": "3e6cf0d3ec0d193bfa5e9a12d86e7186d94d4745e768aaedf3584bcfd4cdc871",
+    "desktop-shell/src/renderer/chrome.css": "11a17012ceb4bbd01f9562123e7a9674051302b53dba201bbeac0c791ffc018f",
+    "vscode-extension/scripts/smoke-canvas.mjs": "04431c764371f02fcb089a13431277f045501b73a5d35abbf64f7c5500ac0029"
+  },
+  "logs": {
+    "correction-freeflow-tests.log": "8b788f4ab02a05d6dfa748b8b153e369d061857968432674f52941af2802a5df",
+    "correction-extension-build-tests.log": "f6d43d4ba69f2caff0b678d28530c44957f66d955e947d0fc2e2430dd0bdec39"
+  }
+}

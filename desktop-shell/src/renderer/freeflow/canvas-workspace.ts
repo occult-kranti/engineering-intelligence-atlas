@@ -4,7 +4,7 @@ import { isVisible, normalizeCamera, worldToScreen, type Camera, type Point, typ
 import {
   closePanel, dragPanelRect, focusPanel, framePanelCamera, normalizeWorkspaceState,
   parseWorkspaceState, resizePanelRect, revealPanel, sampleCameraFlight,
-  serializeWorkspaceState, setPanelCollapsed, setPanelPinned, updatePanelRect, visiblePanelRect,
+  serializeWorkspaceState, setPanelCollapsed, setPanelPinned, updatePanelRect, visiblePanelRect, PANEL_TITLE_HEIGHT,
   type CanvasPanelSpec, type CanvasPanelState, type WorkspaceState,
 } from './workspace.js';
 
@@ -98,6 +98,7 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
   let lastPointerAt = -Infinity, suppressClick = false;
   let clickHandle: HTMLElement | null = null, clickUntil = 0, pendingFrame: string | null = null;
   let arrangedId: string | null = null;
+  let measuredFrame = '';
   const mq = typeof win.matchMedia === 'function' ? win.matchMedia('(prefers-reduced-motion: reduce)') : null;
   const current = (id: string): CanvasPanelState | undefined => state.panels.find((p) => p.id === id);
   const size = (): Size => ({ width: Math.max(1, options.viewport.clientWidth), height: Math.max(1, options.viewport.clientHeight) });
@@ -112,18 +113,46 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
     if (flightFrame) win.cancelAnimationFrame(flightFrame);
     flightFrame = 0; flightId = null; flightTarget = null; pendingFrame = null;
   }
+  function frameArea() {
+    const vp = size(), requested = options.getFrameInsets?.();
+    const bound = (value: number | undefined, limit: number) => Number.isFinite(value) ? Math.max(0, Math.min(limit, value!)) : 0;
+    const top = bound(requested?.top, vp.height * .35), bottom = bound(requested?.bottom, vp.height * .35);
+    const left = bound(requested?.left, vp.width * .25), right = bound(requested?.right, vp.width * .25);
+    return { vp, top, bottom, left, right, custom: requested !== undefined,
+      key: `${vp.width}|${vp.height}|${top}|${bottom}|${left}|${right}` };
+  }
+  function checkViewport(): void {
+    if (destroyed || gesture || !(options.viewport.clientWidth > 0 && options.viewport.clientHeight > 0)) return;
+    const area = frameArea();
+    if (pendingFrame) { frame(pendingFrame); return; }
+    if (area.key === measuredFrame) return;
+    measuredFrame = area.key;
+    const panel = state.activeId ? current(state.activeId) : undefined;
+    if (!panel?.open) return;
+    const camera = normalizeCamera(options.getCamera()), r = visiblePanelRect(panel);
+    const titleBottom = r.y + Math.min(PANEL_TITLE_HEIGHT, r.height);
+    const title = [{ x: r.x, y: r.y }, { x: r.x + r.width, y: r.y },
+      { x: r.x, y: titleBottom }, { x: r.x + r.width, y: titleBottom }];
+    const reachable = title.every(point => {
+      const screen = worldToScreen(camera, area.vp, point);
+      return isVisible(camera, area.vp, point) && screen.x >= area.left && screen.x <= area.vp.width - area.right
+        && screen.y >= area.top && screen.y <= area.vp.height - area.bottom;
+    });
+    // Resize changes the camera only. Saved, pinned and in-progress form state
+    // stays on the same world rectangle; an unobstructed title needs no flight.
+    if (!reachable) frame(panel.id);
+  }
   function frame(id: string): void {
     const panel = current(id); if (!panel?.open || destroyed) return;
     cancelFlight(); options.stopMotion();
     if (!(options.viewport.clientWidth > 0 && options.viewport.clientHeight > 0)) { pendingFrame = id; return; }
     const from = normalizeCamera(options.getCamera());
-    const vp = size();
-    const requested = options.getFrameInsets?.();
-    const bound = (value: number | undefined, limit: number) => Number.isFinite(value) ? Math.max(0, Math.min(limit, value!)) : 0;
-    const top = bound(requested?.top, vp.height * .35), bottom = bound(requested?.bottom, vp.height * .35);
-    const left = bound(requested?.left, vp.width * .25), right = bound(requested?.right, vp.width * .25);
-    const target = framePanelCamera({ ...from, pitch: 0, yaw: 0 }, {width: vp.width-left-right, height: vp.height-top-bottom}, visiblePanelRect(panel), requested ? 8 : 40);
-    target.zoom = Math.min(1.25, target.zoom);
+    const area = frameArea(), { vp, top, bottom, left, right } = area;
+    measuredFrame = area.key;
+    const target = framePanelCamera({ ...from, pitch: 0, yaw: 0 }, {width: vp.width-left-right, height: vp.height-top-bottom}, visiblePanelRect(panel), area.custom ? 8 : 40);
+    // Keep the surrounding office visible when the current zoom is readable.
+    // A tiny portfolio overview may still move up to a useful reading scale.
+    target.zoom = Math.min(1.25, target.zoom, Math.max(.8, from.zoom));
     target.x -= (left-right) / (2 * target.zoom);
     target.y -= (top-bottom) / (2 * target.zoom);
     if (mq?.matches || doc.hidden) { options.setCamera(target); return; }
@@ -179,7 +208,7 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
     else if (suppressClick) { clickHandle = previous.handle; clickUntil = performance.now() + 500; }
     try { previous.handle.releasePointerCapture(previous.pointerId); } catch { /* Already lost capture. */ }
     entry?.wrapper.classList.remove('is-moving', 'is-resizing');
-    render(); if (commit) persist();
+    render(); if (commit) { persist(); checkViewport(); }
   }
   function activate(id: string): void {
     const next = focusPanel(state, id);
@@ -225,7 +254,7 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
       const p = current(id)!, vp = size(), inset = options.getFrameInsets?.();
       state = updatePanelRect(state, id, { ...p.rect, width: Math.min(p.rect.width, vp.width - 32), height: Math.min(p.rect.height, Math.max(260, vp.height - (inset?.top ?? 80) - (inset?.bottom ?? 80))) }, live.get(id)!.spec);
     }
-    if (!seen.has(id) && settings.nearCamera && !current(id)!.pinned) {
+    if (!seen.has(id) && settings.nearCamera !== false && !current(id)!.pinned) {
       const p = current(id)!; const c = normalizeCamera(options.getCamera());
       state = updatePanelRect(state, id, { ...p.rect, x: c.x - p.rect.width / 2, y: c.y - p.rect.height / 2 }, live.get(id)!.spec);
     }
@@ -408,7 +437,11 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
   win.addEventListener('blur', suspend);
   doc.addEventListener('visibilitychange', hidden);
   mq?.addEventListener('change', motionChange);
+  const resizeObserver = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(checkViewport) : null;
+  resizeObserver?.observe(options.viewport);
+  if (!resizeObserver) win.addEventListener('resize', checkViewport);
   render(); renderSearch();
+  measuredFrame = frameArea().key;
 
   return {
     open, close,
@@ -418,7 +451,7 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
       const entry = [...live.values()].find((p) => p.wrapper.contains(element));
       if (!entry) return false; open(entry.spec.id); return true;
     },
-    refresh() { render(); if (pendingFrame && options.viewport.clientWidth > 0 && options.viewport.clientHeight > 0) frame(pendingFrame); },
+    refresh() { render(); checkViewport(); },
     elements: { layer, launcher },
     destroy() {
       if (destroyed) return;
@@ -434,6 +467,8 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
       win.removeEventListener('blur', suspend);
       doc.removeEventListener('visibilitychange', hidden);
       mq?.removeEventListener('change', motionChange);
+      resizeObserver?.disconnect();
+      win.removeEventListener('resize', checkViewport);
       for (const entry of [...live.values()].reverse()) {
         entry.arrange.onclick = null; entry.arrangementClose.onclick = null;
         for (const control of entry.arrangementSteps) control.onclick = null;

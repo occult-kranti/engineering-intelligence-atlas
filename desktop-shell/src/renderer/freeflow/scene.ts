@@ -210,6 +210,7 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   e.classList.toggle('ff-node--company-plan', n.metadata['companyFootprint'] === true);
   e.classList.toggle('ff-node--company-marker', n.metadata['companyMarker'] === true);
   e.dataset.companyFootprint = String(n.metadata['companyFootprint'] === true);
+  e.dataset.companyLevel = String(n.metadata['companyLevel'] === true);
   if (n.metadata['companyFootprint'] === true || n.kind === 'office' || n.kind === 'room') e.dataset.geometry = 'container';
   else delete e.dataset.geometry;
   // Department color conveys a saved assignment, never inferred authority.
@@ -219,15 +220,20 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   e.style.setProperty('--person-color', n.departmentId ? swatches[(hue >>> 0) % swatches.length]! : '#526579');
   e.style.setProperty('--person-ink', '#fff');
   e.style.setProperty('--person-diameter', `${Math.max(10, Math.min(32, n.rect.height - 18))}px`);
-  e.style.setProperty('--person-label-size', `${Math.max(9, Math.min(12, n.rect.height * .22))}px`);
+  e.style.setProperty('--person-label-size', `${Math.max(11, Math.min(12, n.rect.height * .22))}px`);
+  // Tiny saved desk rectangles keep a legible circle, revealing the exact name
+  // on focus/hover instead of laying overlapping microtext across nearby desks.
+  e.dataset.personLabel = n.rect.width < 100 || n.rect.height < 44 ? 'detail' : 'visible';
   e.classList.toggle('is-selected', selected);
   e.setAttribute('aria-label', describeNode(n));
+  e.title = describeNode(n);
   e.setAttribute('aria-pressed', String(selected));
   if (n.kind === 'restricted') e.setAttribute('aria-disabled', 'true'); else e.removeAttribute('aria-disabled');
   e.tabIndex = tabStop ? 0 : -1;
   const paper = e.firstElementChild as HTMLElement;
   const hk = heatOf(n);
   const assign = typeof n.metadata['assignment'] === 'string' ? (n.metadata['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department');
+  e.dataset.assignmentDuplicate = String(assign.trim().toLocaleLowerCase() === n.label.trim().toLocaleLowerCase());
   const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}|${n.metadata['blueprintDetail'] ?? ''}|${n.metadata['companyFootprint'] ?? ''}|${n.blueprintPreview ? JSON.stringify(n.blueprintPreview) : ''}`;
   if (e.dataset.sig === key) return;
   e.dataset.sig = key;
@@ -283,12 +289,12 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
     paper.appendChild(el('div', 'ff-node-sub', n.subtitle));
     return;
   }
+  if (n.kind === 'employee' || n.kind === 'reference') {
+    const mono = n.metadata['monogram'];
+    paper.insertBefore(el('div', 'ff-node-monogram', typeof mono === 'string' ? mono : '?'), title);
+  }
   if (lod === 'rich' || n.kind === 'folio') {
     if (n.subtitle) paper.appendChild(el('div', 'ff-node-sub', n.subtitle));
-    if (n.kind === 'employee' || n.kind === 'reference') {
-      const mono = n.metadata['monogram'];
-      paper.insertBefore(el('div', 'ff-node-monogram', typeof mono === 'string' ? mono : '?'), title);
-    }
     const state = n.kind === 'folio' && n.status === 'active' ? `Company ${Number(n.metadata['seatIndex'] ?? 0) + 1}` : n.status;
     paper.appendChild(el('div', 'ff-node-status', state));
     const c = countsText(n);

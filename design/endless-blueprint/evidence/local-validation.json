@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "run": "laptop-blueprint-20261122",
+  "evidenceKind": "local deterministic and CPU lifecycle validation",
+  "productSourceCommit": "3fe5dd99df7f65a40162905b66e466f0186b62a8",
+  "browserHarnessCommit": "26ab5e6ef91e73b031890415d9d45a2b094b53c9",
+  "checks": {
+    "freeflow": {
+      "files": 13,
+      "passed": 162,
+      "failed": 0,
+      "skipped": 0,
+      "command": "node node_modules/vitest/vitest.mjs run tests/freeflow-*.test.ts",
+      "cwd": "desktop-shell"
+    },
+    "rendererTypecheck": "passed",
+    "rendererBuild": "passed",
+    "rendererAssetCopy": "passed",
+    "extensionBuild": "passed",
+    "extensionCheck": "passed",
+    "extensionTests": {
+      "passed": 129,
+      "failed": 0,
+      "skipped": 0
+    },
+    "browserHarnessSyntax": "passed",
+    "diffWhitespace": "passed",
+    "changedFileCredentialPatternScan": {
+      "files": 33,
+      "matches": 0
+    }
+  },
+  "independentCorrections": [
+    "Capped grid centered near the camera with stable line phase",
+    "GPU and DOM allocations follow nearby company geometry under horizon fallback",
+    "DOM painted surfaces are hidden only after their matching GPU surfaces render",
+    "Terminal graphics failures release resources immediately; one throwing disposer does not stop other cleanup"
+  ],
+  "bounds": {
+    "richDomNodes": 240,
+    "threads": 160,
+    "gpuGeometryObjects": 1,
+    "gpuMaterials": 3,
+    "gpuInstancesMax": 2048,
+    "detailedCompanies": 24,
+    "panels": 48
+  },
+  "stressCases": [
+    "1000 companies with camera-local and offscreen-selected company reachability",
+    "2000 synthetic rooms with bounded instancing",
+    "50 mount/dispose cycles, demand rendering and late events",
+    "Malformed geometry, extreme zoom and camera-domain coordinates",
+    "Native ownership scope, saved form identity, click movement/resize, pinning and Escape behavior"
+  ],
+  "limitations": [
+    "WebGLRenderer is mocked in CPU lifecycle checks; real browser rendering is a separate receipt",
+    "No measured GPU VRAM, hardware frame rate or universal absence-of-leaks claim",
+    "No live Vast instance or production compute action",
+    "The published 0.9.0-preview.1 release predates this source"
+  ],
+  "files": {
+    "desktop-shell/src/renderer/freeflow/camera.ts": "2e98de07897067b2f28f4fb10922fb9ac60bd869f33ad20a8ab9dc0ccc805a9d",
+    "desktop-shell/src/renderer/freeflow/universe.ts": "f557e8f2c1a5e18e218d629b171491f514f958778c7c2d5c743b54aa92cb2db6",
+    "desktop-shell/src/renderer/freeflow/scene.ts": "efe2589225741fa39f85f5b41ceadbc34038bd97a3987950a116fb7e68a83d5e",
+    "desktop-shell/src/renderer/freeflow/studio.ts": "5ef673ee05d17cabab9737cb2f2d6630b22be6e05c1c3e1cdb260f750be304de",
+    "desktop-shell/src/renderer/freeflow/relief-math.ts": "1937125518d1c35d0f2d78f9749402026e8a2e1e5e073c4dc7b5e238b411c050",
+    "desktop-shell/src/renderer/freeflow/relief3d.ts": "e654e21b163a3b257aff09188a9326118385bde4f3af6163e425300dd7707fd8",
+    "desktop-shell/src/renderer/freeflow/canvas-workspace.ts": "5185bdd1d1f2443e4d56f99bffca04ce5ababe88e5da48788a2327ae41551b59",
+    "desktop-shell/src/renderer/freeflow/vendor/three.js": "c92b1ccf8e35bd65e85076bc0c7c88e806b640b761856d599f06d660d3feeed7",
+    "desktop-shell/src/renderer/freeflow.css": "b8bcbeea7a197875cba43d197a333fa9004603c192cf991df92ab7064218b848",
+    "desktop-shell/src/renderer/chrome.ts": "8f392cd8c8c9d4f78dfebd0099a5c96ecd96180c9f9c55584d605595bddb409b",
+    "vscode-extension/scripts/smoke-canvas.mjs": "a1e60ad1c3ac10a6b69f9a77807ba0cf608ad8e00fb365f3414c68ed691c9ac5"
+  },
+  "logs": {
+    "freeflow-tests.log": "760bca87be855ae61e7915d5603e25b20e4ec0e32ab01b3fe4d33622979b305a",
+    "extension-build-tests.log": "cb1b6f8853f60d6e620c0e860638d776e013ce2253aba9a0905130220437073d"
+  }
+}

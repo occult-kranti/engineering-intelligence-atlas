@@ -102,3 +102,106 @@ Source/license provenance is a reference list, not a redistribution license. The
 ## Handoff and next event
 
 Deliver `PLAN.md` and this review with content hashes using the typed report fields `{run,node,attempt,files,hashes,findings,checks,limits}`. The director decides acceptance. The UX node then waits for exact-source screenshots or an explicit correction assignment; it does not poll or promote a release. Updates to Round 2/3 status require new director-supplied evidence and must retain the earlier pending record and its provenance.
+
+---
+
+## 2026-11-22 checkpoint — Round 1 accepted; Round 2 source integrated
+
+**Checkpoint identity:** `laptop-blueprint-20261122:ux:round3-evidence-1`, following planning attempt 1 and correction attempt 2. This is an append-only update; the pending records above describe their earlier evidence state and remain intact.
+
+The root director accepted Round 1 and integrated the Round 2 source at **`3fe5dd99df7f65a40162905b66e466f0186b62a8`**. The current candidate at this checkpoint is **`26ab5e6ef91e73b031890415d9d45a2b094b53c9`**. A local revision comparison verified that the only change between them is in `vscode-extension/scripts/smoke-canvas.mjs`: the camera assertion now interprets omitted identity rotation transforms as zero. This is a harness correction, not a product camera or scene change.
+
+| Round / gate | Established status at this checkpoint | Remaining condition |
+| --- | --- | --- |
+| Round 1 — evidence and workflow design | **Accepted by the root director.** | Preserve the accepted no-table direction and explicit workflow/authority boundaries. |
+| Round 2 — source integration and local checks | **Integrated; recorded local checks passed.** Independent source-review defects were repaired and confirmed according to the director handoff. | Current-candidate browser/GPU, visual and installed-product gates are not established by local checks. |
+| Round 3 — independent visual and stress acceptance | **In progress; visual acceptance pending.** | Review exact-source screenshots and CI receipts, record one grouped findings/correction pass, and obtain independent final director acceptance. |
+
+### Local validation evidence inspected
+
+This node opened the director's retained logs and verified their result summaries. It did not rerun the suites or reinterpret synthetic renderer tests as GPU execution.
+
+| Evidence | Observed result | SHA-256 |
+| --- | --- | --- |
+| `/workspace/scratch/3cd2e045f9b8/round3-freeflow-tests.log` | **162/162 tests passed across 13 files**; recorded start 22:08:42. | `760bca87be855ae61e7915d5603e25b20e4ec0e32ab01b3fe4d33622979b305a` |
+| `/workspace/scratch/3cd2e045f9b8/round3-build-tests.log` | Renderer assets copied; extension build produced a 22-file shared-renderer graph and a Linux/x64 runtime with 133 verified files; extension check completed; **129/129 extension tests passed**, with zero failures/skips. | `cb1b6f8853f60d6e620c0e860638d776e013ce2253aba9a0905130220437073d` |
+
+The director reports the renderer build succeeded before asset copy. TypeScript's successful invocation is silent in this retained build log; the visible record begins with completed asset copying. These local logs are workspace evidence, not a claim that the new VSIX has passed installed-platform or GPU acceptance. The tests include pure computation and simulated renderer/lifecycle checks; their category remains distinct from actual-browser evidence.
+
+### Source review repairs and exact file identity
+
+The independent core review, as reported and accepted by the root director, identified and resolved three concrete defects:
+
+1. **Unbounded grid generation:** grid work needed a finite budget at extreme camera conditions.
+2. **Far-company rendering budget and fallback:** the current distant company needed consistent GPU/DOM selection, with per-surface ownership so undrawn geometry did not lose its CSS fallback.
+3. **Terminal GPU cleanup:** terminal failure needed to release owned geometry, materials, renderer state and callbacks instead of retaining failed resources.
+
+This node located the budget, per-surface fallback and terminal-cleanup tests in the source and read the aggregate passing local result. The grid-specific review and independent confirmation of all three repairs are supplied by the director's received review artifact; this documentation append is not a second independent code audit.
+
+The following current files were hashed and compared byte-for-byte with their contents at integrated source `3fe5dd99df7f65a40162905b66e466f0186b62a8`; all matched:
+
+| Source file | SHA-256 |
+| --- | --- |
+| `desktop-shell/src/renderer/freeflow/relief-math.ts` | `1937125518d1c35d0f2d78f9749402026e8a2e1e5e073c4dc7b5e238b411c050` |
+| `desktop-shell/src/renderer/freeflow/relief3d.ts` | `e654e21b163a3b257aff09188a9326118385bde4f3af6163e425300dd7707fd8` |
+| `desktop-shell/src/renderer/freeflow/scene.ts` | `efe2589225741fa39f85f5b41ceadbc34038bd97a3987950a116fb7e68a83d5e` |
+| `desktop-shell/src/renderer/freeflow/universe.ts` | `f557e8f2c1a5e18e218d629b171491f514f958778c7c2d5c743b54aa92cb2db6` |
+| `desktop-shell/src/renderer/freeflow/canvas-workspace.ts` | `5185bdd1d1f2443e4d56f99bffca04ce5ababe88e5da48788a2327ae41551b59` |
+
+### UX-08 correction evidence
+
+The attempt-2 component correction now supplies an **Arrange** popup on each live panel with four movement and four size controls. Actions use bounded 20-world-unit steps through `updatePanelRect`. Pinned, collapsed, closed and destroyed panels reject those actions. Escape closes the local arrangement controls and restores focus without closing the work panel. Exact forms and drafts are preserved.
+
+The focused correction suite passed **28/28** tests, including actual button clicks, size bounds, lifecycle guards, focus return, draft retention and no authority calls. Renderer typecheck, CSS parsing and whitespace checks also passed during that correction. This closes the **implementation gap for panel movement/resizing**. Rendered pointer-target measurement and any remaining camera gesture alternatives still require Round 3 review. It does not establish full WCAG conformance.
+
+### Claude authorship and recorded cost
+
+The [usage ledger](../../project/claude-usage.json) records request **29**, model **`claude-sonnet-5-5`**, request ID **`d477db0c-77e3-46ae-b9d0-3bb690926d43`**, completed with `end_turn`, **3,138 input tokens** and **11,873 output tokens**. Its recorded `costUsd` is **0.125006**, with no retained reservation for that request.
+
+The ledger describes complete relief/projection modules returned by Claude, followed by independent local repairs and integration, including removal of the superseded table, camera bounds, recursive error handling, shader failure behavior, cleanup and floating origin. The accepted source is therefore a combined contribution; a completed API response alone did not certify it. The workstream ledger records a USD 20 incremental authorized cap and USD 19.874994 remaining, while explicitly excluding native image generation from Claude API totals because no image billing receipt is available here. These are ledger records, not an independently reconciled provider invoice. This UX checkpoint made no paid call or external write.
+
+### CI and visual gate remain open
+
+The director supplied [product CI run 44979493493](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44979493493) for candidate `26ab5e6ef91e73b031890415d9d45a2b094b53c9`; it was **still running when this checkpoint was assigned**. This node did not poll the run. Later CI conclusions require another evidence entry.
+
+No current-candidate screenshot or actual GPU receipt has been accepted in this checkpoint. The next event is delivery of exact-source laptop screenshots and browser/installed receipts for one grouped visual review, followed by independent root acceptance. Current roadmap/activity functionality remains separate from future temporal scene reconstruction; this record makes no full “4D” implementation claim.
+
+---
+
+## 2026-11-22 checkpoint — grouped visual correction from source 26ab5e6
+
+**Checkpoint identity:** `laptop-blueprint-20261122:ux:round3-visual-correction-1`. This records the one grouped correction assigned by the root director. It does not replace the earlier pending evidence or certify the corrected build. The reviewed candidate is `26ab5e6ef91e73b031890415d9d45a2b094b53c9`, from product CI run 44979493493. The four images were inspected as one review set, with individual image reads to stay within the tool output limit.
+
+### Exact visual inputs
+
+The retained inputs are under `/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-26ab5e6/linux/artifact/.work/canvas-smoke/`.
+
+| Input | SHA-256 | Direct observation |
+| --- | --- | --- |
+| `01-native-office.png` | `d38100cc8b07018a3d07494137fab65ff415d3e4102034b9599dd1d7328570bc` | At 1440×900, the company contains its actual floorplan and flat employee circles on one continuous grid, with no physical table. Intended ivory floors render grey. Repeated department/room titles, saved/active labels, counts, whiteboard text and tiny employee name strips compete. |
+| `04-perspective-1440x900.png` | `178dc973b16eb1db41648995ac19caf9770c171970ccd992295264e450c55dec` | Donna is a tilted live popup, with its draft and ordinary controls visible, but the company world is outside the view. This does not establish usable company context. |
+| `09-company-ownership-1440x900.png` | `2f52df8b2eb7828ee61c41b77ea1023027d4a4e677c73cf7344c35f5d342215e` | Ownership content is largely above the viewport despite an 81% camera scale. Its internal grid is visually strong and unknown-state bands use dark fills inside an otherwise light panel. |
+| `failure.png` | `3f71d745c7f89c162fd6da89c1ca134a88dd0f95026fd2bb2420fd0aa22d12b7` | At 1366×768, Donna's header lies beneath the top navigation while the draft remains visible. This is an unresolved frame/recovery problem in the reviewed source. |
+
+The associated `receipt.json` reports **`status: failed`**, with error **“1366×768 top view: real geometry was submitted to a successful frame”**. Screenshots prove the observed intermediate states; they are not a passing browser or release receipt. The root director assigned popup placement, resize recovery and framing to the core node. This UX node did not compensate for those issues by changing world positions or camera geometry.
+
+### Corrections made in the assigned presentation files
+
+| Finding / relation to earlier review | Implemented correction | Boundary preserved |
+| --- | --- | --- |
+| Grey floors weaken the blueprint hierarchy (UX-01/UX-05). | Kept the intended warm ivory company floor and navy linework; introduced the light `--plan-floor` value `#EEF3F4` for CSS fallback and annotations. Requested matching unlit GPU floor colors from root. | This node did not edit GPU geometry or materials. Root separately reports exact base-color floors with shaded shallow walls. Actual corrected rendering awaits confirmation. |
+| Room information repeats at the same visual level (UX-05). | A room keeps its saved title. Matching department assignment text is visually suppressed; a distinct assignment remains one secondary line. Generic Room/Office sheet, saved/active and count badges are hidden in compact floorplans; the Open cue appears on focus, hover or selection. | Original accessible names, real labels, IDs, status/count data, inspection and actions remain. Assignment text is still present in the DOM and the accessible description. |
+| Dense desk names and board labels collide (UX-05/UX-09). | Name type is at least 11 world units. Small saved desk bounds show a flat circle/monogram; exact names reveal on focus, hover or selection instead of overlapping microtext. Circles now remain present at simple detail level. Whiteboards use a compact board marker within the unchanged native rectangle, revealing their saved title on focus/hover. | Native rectangles, identities, employee ownership, board handlers and full accessible names are unchanged. This is progressive disclosure, not a claim that all small markers meet rendered target-size criteria. |
+| Leadership looks like a dark status card. | Company-level leadership/unplaced staff use a pale, dashed blueprint annotation with one heading. | Actual employee assignments remain unchanged; no imaginary department was added. |
+| Ownership panel grid/status paint competes with content. | Light work panels receive their own subtle grid and light heat/unknown fill tokens, including navy-compatible text. | Heat semantics and actual values remain; theme preference keys and the drafting theme are retained. |
+| Hidden viewport scrolling can displace DOM from GPU projection (related to UX-02/UX-07). | Endless static viewport ancestors now use `overflow: clip`, including the document viewport, shell, main, scene and canvas host. | Actual `.canvas-panel-body` and form scrolling remain `overflow: auto`; no world position or camera change is introduced by this correction. This targets hidden browser scroll offsets; corrected browser evidence is still required. |
+
+The root's coordinated GPU correction reports company `#F8F3E7`, neutral floor `#EEF3F4`, navy wall `#526B86`, and six light room tints; drafting uses company `#FFFDFA` and wall `#56728A`. Floors use unlit base-color material, while shallow walls remain shaded. This palette coordination is director-provided implementation evidence, not an independent visual pass of the resulting GPU frame.
+
+Two additional observations from this same review set were included before handoff. The lower-left Find company/Inspector header covered the first company's Donna/Roadmap buttons in image 01. On laptop widths, the existing scope header now occupies the gap between the existing bottom launcher and camera controls, with a compact title and retained breadcrumbs; the launcher can scroll horizontally when space is limited. No additional dock was introduced. The compact whiteboard marker uses a 36×36-world-unit painted/pointer area, while the unchanged larger native parent is pointer-transparent so it cannot intercept unrelated room/employee clicks. Its parent keyboard role and original delegated action remain.
+
+### Focused checks and handoff status
+
+The current presentation source passed **32/32 existing tests** across `freeflow-studio`, `freeflow-tabletop`, `freeflow-blueprint-world` and `freeflow-member`, including native label updates, inert snapshot text, keyed identities and native actions. The renderer TypeScript check passed. All three stylesheets parsed in JSDOM; computed-style checks confirmed static viewport clipping while the live panel body retained scrolling and an exact textarea draft. `git diff --check` passed. These checks are source/DOM evidence, not a browser screenshot or GPU execution substitute.
+
+The correction is handed to root for the single confirmation CI and independent visual acceptance. **Round 3 remains open.** The root/core framing work and the final rendered label density, focus behavior, theme appearance, target sizes and 1366×768 recovery require the corrected exact-source receipt. No new browser session, model request, cloud rental, API connection or paid call was performed by this UX node. No WCAG conformance, live Vast execution or complete temporal scene replay is claimed.

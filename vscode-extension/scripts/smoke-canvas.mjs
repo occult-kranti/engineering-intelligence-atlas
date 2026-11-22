@@ -27,6 +27,7 @@ const receipt={schemaVersion:2,status:'running',startedAt:new Date().toISOString
   viewport:{width:1440,height:900},viewports:[{width:1440,height:900},{width:1366,height:768}],browserSandbox:true,providerCalls:0,externalRequests:[],backendNetworkAttempts:[],
   pageErrors:[],consoleErrors:[],cspErrors:[],rpcFailures:[],checks:[],screenshots:[],rpcMethods:[],
   graphics:[],webglVerified:false,hardwareAccelerationVerified:false,
+  targetMeasurements:[],panelFrames:[],targetMeasurementScope:'Rendered CSS-pixel bounding boxes; no WCAG conformance assessment',
   controlCredentialInBrowser:false,controlCredentialLocation:'Node harness memory only',
 };
 let browser,page,service,uiServer,controller,client,stage='preflight',token='',html='',uiOrigin='';
@@ -69,7 +70,7 @@ async function assertBlueprintPlane(label){
   assert.equal(plane.chairs,0,`${label}: company markers do not introduce chair illustrations`);
   assert.equal(plane.worlds,1,`${label}: all offices remain on one continuous canvas`);
 }
-async function captureGraphics(label){
+async function captureGraphics(label,{requireGeometry=false}={}){
   await page.waitForFunction(()=>{
     const data=document.querySelector('#freeflow-host .ff-scene')?.dataset;
     return data?.graphics==='webgl'||(data?.graphics==='fallback'&&data.graphicsReason&&data.graphicsReason!=='init'&&['false','0'].includes(data.graphicsPending));
@@ -106,6 +107,7 @@ async function captureGraphics(label){
     return result;
   });
   graphics.label=label;
+  graphics.geometryRequired=requireGeometry;
   receipt.graphics.push(graphics);
   assert.equal(graphics.canvasCount,1,`${label}: one relief drawing layer shares the world`);
   assert.ok(graphics.canvas&&graphics.canvas.width>0&&graphics.canvas.height>0,`${label}: drawing buffer has a finite size`);
@@ -120,7 +122,14 @@ async function captureGraphics(label){
     assert.match(graphics.context.version,/WebGL 2/i,`${label}: graphics are WebGL2`);
     assert.ok(graphics.canvas.cssWidth>0&&graphics.canvas.cssHeight>0&&graphics.canvas.display!=='none'&&graphics.canvas.visibility!=='hidden'&&graphics.canvas.opacity>0,`${label}: the successful drawing layer is visible`);
     assert.ok(Math.abs(graphics.canvas.cssWidth-graphics.scene.width)<=1&&Math.abs(graphics.canvas.cssHeight-graphics.scene.height)<=1,`${label}: the drawing layer covers the same viewport as its semantic world`);
-    assert.ok(graphics.frames>0&&graphics.drawCalls>0&&graphics.triangles>0,`${label}: real geometry was submitted to a successful frame`);
+    assert.ok(graphics.frames>0,`${label}: the live context has completed a successful frame`);
+    if(graphics.instances===0){
+      assert.equal(graphics.drawCalls,0,`${label}: an empty visible region has no geometry draw calls`);
+      assert.equal(graphics.triangles,0,`${label}: an empty visible region has no rendered triangles`);
+      assert.equal(requireGeometry,false,`${label}: the explicitly framed company must contain visible geometry`);
+    }else{
+      assert.ok(graphics.drawCalls>0&&graphics.triangles>0,`${label}: admitted visible instances produce real draw calls and triangles`);
+    }
     assert.equal(graphics.geometries,1,`${label}: relief reuses one box geometry`);
     assert.equal(graphics.materials,3,`${label}: relief retains three fixed material batches`);
     assert.ok(graphics.instances<=2048&&graphics.drawCalls<=3&&graphics.triangles<=2048*12,`${label}: visible geometry stays within the renderer's admitted resource bounds`);
@@ -136,6 +145,76 @@ async function captureGraphics(label){
     assert.equal(graphics.context,null,`${label}: fallback did not start a second graphics attempt`);
   }
   return graphics;
+}
+async function measureTargets(label,selector){
+  const measurement=await page.evaluate(selector=>{
+    const targets=[...document.querySelectorAll(selector)].slice(0,100).map(node=>{
+      const rect=node.getBoundingClientRect(),style=getComputedStyle(node);
+      return {id:node.id||null,label:node.getAttribute('aria-label')||node.textContent.trim().slice(0,100),
+        x:rect.x,y:rect.y,width:rect.width,height:rect.height,right:rect.right,bottom:rect.bottom,
+        insideViewport:rect.left>=0&&rect.top>=0&&rect.right<=innerWidth&&rect.bottom<=innerHeight,
+        disabled:node.disabled===true,display:style.display,visibility:style.visibility};
+    }).filter(target=>target.width>0&&target.height>0&&target.display!=='none'&&target.visibility!=='hidden');
+    return {viewport:{width:innerWidth,height:innerHeight,devicePixelRatio},targets};
+  },selector);
+  receipt.targetMeasurements.push({label,...measurement});
+  return measurement;
+}
+async function panelFrameEvidence(id){
+  return page.evaluate(id=>{
+    const panel=document.querySelector(`.canvas-panel[data-panel-id="${CSS.escape(id)}"]`),title=panel?.querySelector('.canvas-panel-titlebar');
+    const rect=node=>{if(!node)return null;const r=node.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height,right:r.right,bottom:r.bottom};};
+    const ancestors=[];
+    for(let node=panel;node&&ancestors.length<14;node=node.parentElement){
+      const style=getComputedStyle(node);
+      ancestors.push({tag:node.tagName,id:node.id||null,className:node.className,
+        scrollTop:node.scrollTop,scrollLeft:node.scrollLeft,clientWidth:node.clientWidth,clientHeight:node.clientHeight,
+        scrollWidth:node.scrollWidth,scrollHeight:node.scrollHeight,overflowX:style.overflowX,overflowY:style.overflowY,rect:rect(node)});
+    }
+    return{id,viewport:{width:innerWidth,height:innerHeight},panel:rect(panel),title:rect(title),
+      controls:rect(document.getElementById('workbench-controls')),documentScroll:{x:scrollX,y:scrollY},ancestors};
+  },id);
+}
+async function assertPanelTitleInView(id,label){
+  const evidence=await panelFrameEvidence(id);receipt.panelFrames.push({label,...evidence});
+  const title=evidence.title;
+  assert.ok(title&&title.width>0&&title.height>0,`${label}: the live panel has a measurable titlebar`);
+  const safeTop=Math.max(150,(evidence.controls?.bottom||0)+8);
+  assert.ok(title.x>=-1&&title.right<=evidence.viewport.width+1,`${label}: titlebar fits horizontally in the laptop viewport`);
+  assert.ok(title.y>=safeTop-1&&title.bottom<=evidence.viewport.height-1,`${label}: titlebar remains below the top HUD and inside the viewport (${JSON.stringify(title)})`);
+}
+async function captureCompanyViews(label,topFilename,perspectiveFilename){
+  const draft=await page.locator('#chat-message').inputValue();
+  const openIds=await page.locator('.canvas-panel[data-open="true"]').evaluateAll(nodes=>nodes.map(node=>node.dataset.panelId));
+  assert.ok(openIds.length<=8,'Company-shot setup closes only the bounded existing fixture surfaces');
+  // Use the public surface finder to bring each existing header into reach,
+  // then its real Close control. Never force-click or change camera state in JS.
+  for(const id of openIds){const panel=await openCanvasSurface(page,id);await panel.locator('.canvas-panel-close').click();}
+  assert.equal(await page.locator('.canvas-panel[data-open="true"]').count(),0,'Company geometry is captured without popup overlays');
+  await page.getByRole('button',{name:'Top view',exact:true}).click();
+  await page.getByRole('button',{name:'Fit scene to view',exact:true}).click();await settleCanvas(page);
+  await assertTopView(`${label} explicit company plan`);
+  const top=await captureGraphics(`${label} explicit company top view`,{requireGeometry:true});
+  await assertEndlessShell(page,`${label} company plan`);await assertBlueprintPlane(`${label} company plan`);
+  if(topFilename)await screenshot(topFilename);
+  await measureTargets(`${label} main HUD`,'#workbench-controls button,.ff-controls button,.canvas-launcher button,.workspace-topbar button');
+  await page.getByRole('button',{name:'Perspective view',exact:true}).click();
+  await page.getByRole('button',{name:'Fit scene to view',exact:true}).click();await settleCanvas(page);
+  const camera=await cameraState(`${label} explicit company relief`);
+  assert.ok(Math.abs(camera.pitch)>0&&Math.abs(camera.pitch)<=55,`${label}: the company itself is framed with actual tilt`);
+  const relief=await captureGraphics(`${label} explicit company relief`,{requireGeometry:true});
+  const visibleRooms=await page.locator('#freeflow-host .ff-node--room').evaluateAll(nodes=>nodes.filter(node=>{
+    const r=node.getBoundingClientRect();return r.width>0&&r.height>0&&r.right>0&&r.bottom>0&&r.left<innerWidth&&r.top<innerHeight;
+  }).map(node=>({id:node.dataset.nodeId,label:node.getAttribute('aria-label')})));
+  assert.ok(visibleRooms.length>0,`${label}: the framed company contains real room partitions, not just a floating popup`);
+  await screenshot(perspectiveFilename);
+  receipt.companyViews??=[];
+  receipt.companyViews.push({label,topGraphics:top.state,reliefGraphics:relief.state,reliefInstances:relief.instances,
+    tiltDegrees:Math.abs(camera.pitch),visibleRooms,closedSurfaces:openIds,webglVerified:top.state==='webgl'&&relief.state==='webgl'});
+  await page.getByRole('button',{name:'Top view',exact:true}).click();
+  await page.getByRole('button',{name:'Fit scene to view',exact:true}).click();await settleCanvas(page);
+  assert.equal(await page.locator('#chat-message').inputValue(),draft,'Public navigation for company images preserves the existing draft');
+  receipt.checks.push(`${label} company floorplan and raised partitions captured before popup framing through public Top/Fit/3D controls`);
 }
 async function checkGraphicsRecovery(){
   const before=await captureGraphics('1366×768 final plan before lifecycle checks');
@@ -174,7 +253,10 @@ async function checkGraphicsRecovery(){
       const root=document.querySelector('#freeflow-host .ff-scene');
       return root?.dataset.graphics==='webgl'&&Number(root.dataset.graphicsFrames)>previous;
     },before.frames);
-    const restored=await captureGraphics('1366×768 actual WebGL context restored');
+    // A cleared empty frame is insufficient evidence that restored material
+    // programs can draw. Public Fit brings actual company geometry back in view.
+    await page.getByRole('button',{name:'Fit scene to view',exact:true}).click();await settleCanvas(page);
+    const restored=await captureGraphics('1366×768 actual WebGL context restored',{requireGeometry:true});
     assert.equal(restored.contextLosses,lossCount+1,'One real context loss was observed and recovered');
     assert.equal(restored.geometries,before.geometries,'Restoration does not accumulate geometry objects');
     assert.equal(restored.materials,before.materials,'Restoration does not accumulate materials');
@@ -214,6 +296,7 @@ async function checkArrangeControls(){
     assert.deepEqual((await canvasPanelState(page,'donna')).rect,original.rect,'Inverse Arrange actions restore the exact starting geometry');
     assert.equal(await input.evaluate(node=>node===document.getElementById('chat-message')),true,'Arrange preserves the original input element');
     assert.match(await popup.locator('[role="status"]').innerText(),/Position .*Size /,'Arrange reports the resulting geometry');
+    await measureTargets('1366×768 Arrange popup','.canvas-panel[data-panel-id="donna"] .canvas-arrange-popup button,.canvas-panel[data-panel-id="donna"] .canvas-panel-controls button');
     await screenshot('08-arrange-1366x768');
     await page.keyboard.press('Escape');
     assert.equal(await popup.isHidden(),true,'Escape dismisses Arrange');
@@ -254,6 +337,7 @@ async function checkCompanyOwnership(company){
     assert.equal(await ownership.getAttribute('aria-label'),'People & ownership','Ownership reuses the registered people surface');
     assert.equal(await ownership.getAttribute('data-open'),'true');
     assert.equal(await ownership.evaluate(node=>!!node.closest('.ff-world')),true,'People and ownership stays on the infinite canvas');
+    await assertPanelTitleInView('workspace-softboard','People & ownership after company footer');
     const confirmed=await client.snapshot();
     assert.equal(confirmed.snapshot.activeCompanyId,company.id,'The footer waits for canonical native company selection');
     const officeId=await page.locator('#office-office-select').inputValue();
@@ -397,9 +481,10 @@ try{
   assert.equal(await page.locator('#workbench-controls').count(),1,'One editor connection control overlay');
   await assertTopView('Fresh 1440×900 session');
   await assertBlueprintPlane('Fresh 1440×900 session');
-  await captureGraphics('1440×900 default top view');
+  await captureGraphics('1440×900 default top view',{requireGeometry:true});
   receipt.checks.push('Canonical companies and saved native blueprints share one default top-view world at 1440×900');
   await screenshot('01-native-office');
+  stage='company-geometry-1440';await captureCompanyViews('1440×900',null,'10-company-relief-1440x900');
   stage='camera-and-overlay';
   const world=page.locator('#freeflow-host .ff-world');const beforeZoom=await world.evaluate(node=>node.style.transform);
   await page.getByRole('button',{name:'Zoom in',exact:true}).click();await settleCanvas(page);
@@ -455,7 +540,10 @@ try{
   await page.getByRole('button',{name:'Top view',exact:true}).click();await settleCanvas(page);
   await assertTopView('1366×768 top view');await assertEndlessShell(page,'1366×768 laptop');
   await assertBlueprintPlane('1366×768 laptop');
-  await captureGraphics('1366×768 top view');await screenshot('05-native-office-1366x768');
+  await assertPanelTitleInView('donna','Donna after 1366×768 viewport resize');
+  await captureGraphics('1366×768 existing popup framing after resize');
+  stage='company-geometry-1366';await captureCompanyViews('1366×768','05-native-office-1366x768','11-company-relief-1366x768');
+  stage='laptop-1366-interactions';
   receipt.panelInteractions=await checkEndlessPanelInteractions(page,'1366×768 laptop');
   receipt.checks.push('1366×768 laptop retains live popup drafts, keyboard move/resize, pinning, pointer Escape rollback and reduced motion');
   stage='arrange-popup';await checkArrangeControls();
@@ -489,6 +577,10 @@ try{
 }catch(error){
   receipt.status=stage==='browser-launch'?'blocked':'failed';receipt.failedStage=stage;receipt.error=cleanError(error);
   if(receipt.status==='blocked')receipt.blocker='The configured browser could not launch with its sandbox enabled. No sandbox exception, policy change or automatic fallback was attempted.';
+  try{
+    const ids=await page.locator('.canvas-panel[data-open="true"]').evaluateAll(nodes=>nodes.slice(0,8).map(node=>node.dataset.panelId));
+    receipt.failurePanelFrames=[];for(const id of ids)receipt.failurePanelFrames.push(await panelFrameEvidence(id));
+  }catch{}
   try{await screenshot('failure');}catch{}
   process.exitCode=1;
 }finally{

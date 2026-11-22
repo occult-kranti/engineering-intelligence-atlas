@@ -37,12 +37,12 @@ const COORD_LIMIT = 1e7;
 const DIM_LIMIT = 2e7;
 const CAP: Record<Bucket, number> = { slab: 256, floor: 512, wall: 1280 };
 
-const ROOM_COLORS = ['#dce9f4', '#d9eee8', '#f4e1db', '#e6dff2', '#f4ecd5', '#e4eddb'];
-const NEUTRAL_FLOOR = '#e8e6df';
+const ROOM_COLORS = ['#e6f0f8', '#e3f2ed', '#f8e9e3', '#eee8f7', '#f8f1df', '#eaf2e3'];
+const NEUTRAL_FLOOR = '#eef3f4';
 
-const PALETTE: Record<Theme, { table: string; slab: string; wall: string; restricted: string; ambient: number; sun: number }> = {
-  blueprint: { table: '#0b1730', slab: '#f3efe1', wall: '#2f56a8', restricted: '#18233b', ambient: 0.82, sun: 0.55 },
-  drafting: { table: '#c9d6e8', slab: '#fbf8ee', wall: '#3a5fae', restricted: '#2a3550', ambient: 0.9, sun: 0.4 },
+const PALETTE: Record<Theme, { slab: string; wall: string; restricted: string; ambient: number; sun: number }> = {
+  blueprint: { slab: '#f8f3e7', wall: '#526b86', restricted: '#18233b', ambient: 0.82, sun: 0.55 },
+  drafting: { slab: '#fffdfa', wall: '#56728a', restricted: '#2a3550', ambient: 0.9, sun: 0.4 },
 };
 
 interface Item {
@@ -203,8 +203,13 @@ export function mountRelief3D(host: HTMLElement, onStats?: (s: ReliefStats) => v
       threeScene.add(sun);
       boxGeo = new THREE.BoxGeometry(1, 1, 1);
       boxGeo.translate(0.5, 0.5, 0.5); // unit box with min corner at origin
-      const mk = (): any => new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.95, metalness: 0 });
-      mats = { slab: mk(), floor: mk(), wall: mk() };
+      // Drafting surfaces retain their specified color. Lighting belongs on the
+      // shallow partitions; it must not turn readable ivory plans muddy grey.
+      mats = {
+        slab: new THREE.MeshBasicMaterial({ color: 0xffffff }),
+        floor: new THREE.MeshBasicMaterial({ color: 0xffffff }),
+        wall: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.95, metalness: 0 }),
+      };
       meshes = {} as Record<Bucket, any>;
       (Object.keys(CAP) as Bucket[]).forEach((b) => {
         const m = new THREE.InstancedMesh(boxGeo, mats![b], CAP[b]);

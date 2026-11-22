@@ -1128,6 +1128,17 @@ html[data-theme] body { color: var(--ink); background: var(--canvas); }
   --info: #385974;
   --info-soft: #DFE9EE;
   --connection: #466B88;
+  --grid-minor: var(--plan-grid-minor);
+  --grid-major: var(--plan-grid-major);
+  --heat-fill-0: #EEEAF3;
+  --heat-fill-1: #EAE5F1;
+  --heat-fill-2: #E7EEDC;
+  --heat-fill-3: #EEF1D7;
+  --heat-fill-4: #F9EFCD;
+  --heat-unknown: #685F72;
+  --heat-unknown-fill: #ECE9E3;
+  --heat-unknown-ink: #28362F;
+  --heat-hatch: #AEA5B4;
   border-radius: 10px;
   box-shadow: 0 10px 32px rgb(0 8 20 / 22%);
 }
