@@ -1,0 +1,112 @@
+{
+  "run": "boards-flow-20261122",
+  "node": "integration",
+  "attempt": 6,
+  "status": "passed-local-awaiting-independent-resource-review",
+  "baseCommit": "583a70e36f66ffabb2ea6c9e0976b38f83ba394f",
+  "files": [
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/daftar/headless-runtime/model-resources-contract.mjs",
+      "sha256": "bc062b28e45225e1c0887bfdd3815397118834e214431e0585de05e9383b07da",
+      "bytes": 18555
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/daftar/headless-runtime/model-resources.mjs",
+      "sha256": "702c666fa1ecc98cf0127e0be6f97bebea0cb7e63151d7aee31dfc80d7f79a11",
+      "bytes": 36306
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/daftar/headless-runtime/test/model-resources.test.mjs",
+      "sha256": "2fb35e5df80870a1f98d0548ee98c92eab6925ed5b44b73c196d07d3c47855ae",
+      "bytes": 21345
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/daftar/headless-runtime/test/managed-wiring.test.mjs",
+      "sha256": "0a961d7dabc1e45412cde163ed48a190ec997e99bc507dc030fc5a8c91ea7f16",
+      "bytes": 9121
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/headless-mcp-resource-repair.log",
+      "sha256": "5887ea4a2f74bd1945af2fa7cdc067c0ce33d0c2222222742dc60e509ab4752e",
+      "bytes": 19252
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/native-repairs-confirmed.json",
+      "sha256": "bcbf7ef92528411c8bd88009fb61041574ffe625bf1d682aa2abe170f5465de3",
+      "bytes": 3035
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/owner-repair-confirmed.json",
+      "sha256": "97f4bb1f239f76e5c60c73524dd992bd6c0ba6edbbae08fccc2f6605a451538c",
+      "bytes": 699
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/verify-native-repairs.mjs",
+      "sha256": "e7ce023016048a41c04f4106cf87fe084de0149ed9506b8ff2c7dec6681c57ba",
+      "bytes": 7744
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/verify-owner-repair.mjs",
+      "sha256": "32d167ac7cc32ce996adaa805faf5370c8ba8327d6994e417592248fbaafe467",
+      "bytes": 5198
+    }
+  ],
+  "changes": [
+    "Freeze a distinct active canonical reviewer and its same-resource model assignment/use grant in every new expert plan; no automatic grants or model assignment.",
+    "Native enqueue receipts validate primary/review scopes, identities, immutable commands and split limits. Logical dependencies use accepted review IDs.",
+    "The original route token and minute caps cover both phases. Completion requires an accepted full-artifact review with matching canonical hashes.",
+    "Worker validation and cancellation cover both phases. Revoked reviewer authority blocks dispatch without substitution.",
+    "Historical unpaired plans require explicit replan; ambiguous old receipts recover exact native identities only for read/cancel and never enqueue again."
+  ],
+  "tests": [
+    {
+      "command": "node --test headless-runtime/test/model-resources.test.mjs headless-runtime/test/managed-wiring.test.mjs",
+      "total": 17,
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node --test headless-runtime/test/*.test.mjs tools/atlas-mcp.test.mjs tools/daftar-runtime-mcp.test.mjs",
+      "total": 189,
+      "passed": 187,
+      "failed": 0,
+      "skipped": 2,
+      "skipReasons": [
+        "real tmux controller lifecycle: tmux executable unavailable",
+        "real HTTP/MCP manual tmux command: required tmux executable unavailable"
+      ]
+    },
+    {
+      "command": "node verify-native-repairs.mjs",
+      "groups": 3,
+      "cases": 4,
+      "passed": 4,
+      "externalCalls": 0
+    },
+    {
+      "command": "node verify-owner-repair.mjs",
+      "passed": true,
+      "nativeBinarySha256": "45dbdb855d9b3fe9412fe32c96234a28b90eb1efb532a2556f9adcef3d038239",
+      "staleCASRejected": true,
+      "stableReplay": true,
+      "priorBudgetAndArtifactsPreserved": true,
+      "workersPaused": true,
+      "externalCalls": 0
+    },
+    {
+      "command": "git diff --check -- <four owned resource files>",
+      "passed": true
+    }
+  ],
+  "pendingOwnerRepairGate": false,
+  "limits": [
+    "No provider, SSH, Vast, live credential, or paid execution was used. Generations use bounded synthetic adapters.",
+    "The two genuine tmux checks were explicitly skipped locally; no tmux acceptance claim is made from these tests.",
+    "Full installed VSIX/browser CI is controlled by root, outside this subtask.",
+    "No commit, push, build, workflow mutation, or production-state mutation was performed by this node."
+  ],
+  "next": "Independent helper review of the four resource files; root owns integration and termination."
+}

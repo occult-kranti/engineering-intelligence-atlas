@@ -41,7 +41,7 @@ test('new workbench, HTTP and MCP routes share owner authentication and one reso
   assert.equal((await f.request('/v1/models/select',input)).status,403);
   const wb=await f.request('/v1/workbench/call',{id:'blocked-old-path',method:'modelPoolSelect',args:[input]});assert.equal(wb.status,403);
   await assert.rejects(f.mcp('model_pool_select',input));assert.equal(f.fetched(),0);
-  await assert.rejects(f.runtime.resources.validateJob({id:'old-job',provider:'ollama',...input}),error=>error.code==='RESOURCE_GRANT_REQUIRED');
+  await assert.rejects(f.runtime.resources.validateJob({id:'old-job',provider:'ollama',...input}),error=>error.code==='RESOURCE_PAIR_REQUIRED');
   assert.equal(f.generated(),0);
   await assert.rejects(f.mcp('environment_run',{id:'no-env',...input,environmentId:'missing',command:'print(1)',cwd:'/tmp'}));
 });
@@ -71,6 +71,70 @@ test('a real native expert DAG runs once with provenance and retains grants acro
   assert.equal(f.runtime.worker.status().enabled,false);
   await f.runtime.resourceOperation('configure',{expectedRevision:1,resources:[resource],grants:[],routes:[route]});
   await assert.rejects(f.runtime.modelOperation('select',{companyId:f.company.id,employeeId:f.employeeId,model:'qwen3:4b'}),error=>error.code==='RESOURCE_GRANT_REQUIRED');
+});
+test('ordinary native pairs require both model grants and assignments before reservation or generation',async t=>{
+  const f=await fixture(t),reviewerEmployeeId=f.company.assistantId;
+  const resource={id:'direct-model',companyId:f.company.id,ownerScope:{kind:'company',id:f.company.id},model:'qwen3:4b',digest};
+  const grant=employeeId=>({id:`direct-${employeeId}`,resourceId:resource.id,targetScope:{kind:'employee',id:employeeId},permissions:['use','assign','inspect']});
+  const configure=(expectedRevision,employees)=>f.runtime.resourceOperation('configure',{expectedRevision,resources:[resource],grants:employees.map(grant),routes:[]});
+  const enqueue=async idempotencyKey=>{
+    const state=await f.native({action:'enqueue_job',companyId:f.company.id,officeId:f.office.id,departmentId:null,
+      employeeId:f.employeeId,reviewerEmployeeId,goal:'Return a short synthetic report.',mode:'provider',provider:'ollama',model:resource.model,
+      authorized:true,allowedTools:['provider.run'],dependencies:[],maxTokens:64000,maxUsd:0,maxMinutes:1,idempotencyKey});
+    return [state.lastAction.jobId,state.lastAction.reviewJobId].map(id=>state.jobs.find(job=>job.id===id));
+  };
+  const assertBlocked=async pair=>{
+    for(const job of pair)await assert.rejects(f.runtime.resources.validateJob(job),error=>error.code==='RESOURCE_GRANT_REQUIRED');
+    await f.runtime.worker.runOnce();
+    const state=(await f.runtime.office.officeSnapshot()).snapshot;
+    const primary=state.jobs.find(job=>job.id===pair[0].id);
+    assert.equal(primary.status,'failed');assert.equal(primary.reservation,null);assert.equal(primary.pendingReservation,null);
+    assert.deepEqual(primary.usage,{inputTokens:0,outputTokens:0,costUsd:0});assert.equal(f.generated(),0);
+  };
+  await f.runtime.modelOperation('select',{companyId:f.company.id,employeeId:f.employeeId,model:resource.model});
+  await configure(0,[f.employeeId]);
+  const missingGrant=await enqueue('producer-only');await assertBlocked(missingGrant);
+  await configure(1,[f.employeeId,reviewerEmployeeId]);
+  const missingAssignment=await enqueue('reviewer-not-assigned');await assertBlocked(missingAssignment);
+  await f.runtime.modelOperation('select',{companyId:f.company.id,employeeId:reviewerEmployeeId,model:resource.model});
+  const revoked=await enqueue('reviewer-revoked');await configure(2,[f.employeeId]);await assertBlocked(revoked);
+  await configure(3,[f.employeeId,reviewerEmployeeId]);
+  await f.runtime.worker.runOnce();assert.equal(f.generated(),0,'grant repair does not retry settled failed attempts');
+  const valid=await enqueue('explicit-new-paired-attempt');
+  for(const job of valid)await f.runtime.resources.validateJob(job);
+  for(const job of [
+    {...valid[0],pair:null},
+    {...valid[0],pair:{...valid[0].pair,peerEmployeeId:f.employeeId}},
+    {...valid[0],pair:{...valid[0].pair,reviewJobId:'missing-review'}},
+    {...valid[1],companyId:'other-company'},
+    {...valid[1],model:'other-model'},
+    {...valid[1],allowedTools:['provider.run']},
+  ])await assert.rejects(f.runtime.resources.validateJob(job),error=>['RESOURCE_PAIR_REQUIRED','RESOURCE_NATIVE_CONFLICT'].includes(error.code));
+  // The native core normally rejects corrupt pairs itself. Independently check
+  // this resource boundary against malformed canonical adapter snapshots too.
+  const originalSnapshot=f.runtime.office.officeSnapshot;
+  const canonicalState=(await originalSnapshot.call(f.runtime.office)).snapshot;
+  try{
+    for(const mutate of [
+      state=>{state.jobs=state.jobs.filter(job=>job.id!==valid[1].id);},
+      state=>{state.jobs.push(structuredClone(state.jobs.find(job=>job.id===valid[1].id)));},
+      state=>{state.jobs.find(job=>job.id===valid[1].id).pair=null;},
+      state=>{state.jobs.find(job=>job.id===valid[1].id).pair.primaryJobId='different-primary';},
+      state=>{state.jobs.find(job=>job.id===valid[1].id).employeeId=f.employeeId;},
+      state=>{state.jobs.find(job=>job.id===valid[1].id).companyId='other-company';},
+      state=>{state.jobs.find(job=>job.id===valid[1].id).model='other-model';},
+    ]){
+      const projected=structuredClone(canonicalState);mutate(projected);
+      f.runtime.office.officeSnapshot=async()=>({ok:true,snapshot:projected});
+      await assert.rejects(f.runtime.resources.validateJob(valid[0]),error=>error.code==='RESOURCE_NATIVE_CONFLICT');
+    }
+  }finally{f.runtime.office.officeSnapshot=originalSnapshot;}
+  assert.equal(f.generated(),0);
+  await f.runtime.worker.runOnce();await f.runtime.worker.runOnce();
+  const completed=(await f.runtime.office.officeSnapshot()).snapshot;
+  assert.equal(f.generated(),2);assert.equal(completed.jobs.find(job=>job.id===valid[0].id).status,'completed');
+  assert.equal(completed.jobs.find(job=>job.id===valid[1].id).review?.verdict,'accepted');
+  for(const pair of [missingGrant,missingAssignment,revoked])assert.equal(completed.jobs.find(job=>job.id===pair[0].id).status,'failed');
 });
 test('an uncertain first resource configuration fences legacy routes before any model dispatch',async t=>{
   for(const committed of [false,true]){

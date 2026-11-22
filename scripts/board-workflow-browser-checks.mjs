@@ -10,6 +10,7 @@ async function eventually(read, predicate, label) {
 }
 
 export async function checkBoardWorkflows({ page, client, companyId, receipt, screenshot, expectConflict }) {
+  receipt.boardStage='seeding canonical records';
   const seed = (command, id) => client.command(command, { id: `board-browser-${id}` });
   await seed({ action:'select_company', companyId }, 'select');
   let snapshot = (await client.snapshot()).snapshot;
@@ -28,10 +29,15 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
     await seed({action:'set_goal_plan',goalId,steps:[{id:`browser-step-${suffix}`,title:`Paired board step ${suffix}`,
       employeeId:primary,reviewerEmployeeId:reviewer,goal:'Prepare a bounded board deliverable with an independent helper.',dependsOn:[],
       estimate:estimate(10,20,30),reviewEstimate:estimate(2,5,8)}]},`plan-${suffix}`);
+    const idempotencyKey=`board-browser-job-${suffix}`;
     const queued = await seed({action:'enqueue_job',companyId,officeId:office.id,employeeId:primary,reviewerEmployeeId:reviewer,
       goal:`Synthetic board job ${suffix}`,mode:'manual',provider:'ollama',model:'synthetic-not-running',authorized:false,
-      allowedTools:[],dependencies:[],maxTokens:32000,maxUsd:0,maxMinutes:5,idempotencyKey:`board-browser-job-${suffix}`}, `job-${suffix}`);
-    jobs.push(queued.snapshot.lastAction.jobId);
+      allowedTools:[],dependencies:[],maxTokens:32000,maxUsd:0,maxMinutes:5,idempotencyKey}, `job-${suffix}`);
+    // Public owner snapshots intentionally omit transient lastAction. Resolve
+    // the durable native identity with the same immutable request key instead.
+    const primaries=queued.snapshot.jobs.filter(row=>row.companyId===companyId&&row.idempotencyKey===idempotencyKey&&row.pair?.phase==='primary');
+    assert.equal(primaries.length,1,'The seed created exactly one durable native primary/reviewer pair');
+    jobs.push(primaries[0].id);
     const id = `board-browser-outcome-${suffix}`;
     await seed({action:'upsert_roadmap_item',id,scope:{kind:'company',id:companyId},title:`Reviewable outcome ${suffix}`,
       description:'A paired planning range with explicit ownership.',ownerEmployeeId:primary,reviewerEmployeeId:reviewer,
@@ -47,6 +53,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   await page.waitForFunction(id=>document.getElementById('office-company-select')?.value===id,companyId);
   await page.setViewportSize({width:1440,height:900});
   let panel = await openCanvasSurface(page,'workspace-whiteboard');
+  receipt.boardStage='editing linked whiteboard card';
   await page.locator('#whiteboard-search').fill('Linked delivery card');
   const card = () => page.locator(`[data-board-id="${boardId}"]`);
   await card().locator('.card-title').click();
@@ -63,6 +70,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   await screenshot('12-whiteboard-links-1440x900');
 
   // Simulate another editor, then refresh this stale form. Its retained base revision must survive.
+  receipt.boardStage='rejecting stale whiteboard draft';
   await card().locator('.card-title').click();
   await page.locator('#node-title').fill('Unsent stale card draft');
   await seed({action:'upsert_whiteboard',...renamed,officeId:office.id,expectedRevision:renamed.revision,title:'Saved by the other editor'}, 'other-editor');
@@ -83,6 +91,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   receipt.checks.push('Concurrent native edit plus background refresh rejects stale save and preserves the draft until explicit reload');
 
   // Both movement methods operate on the saved card, not on a second frontend work record.
+  receipt.boardStage='keyboard and tilted pointer movement';
   panel = await openCanvasSurface(page,'workspace-whiteboard');
   const beforeKey = await board();
   await card().locator('.card-title').focus();await page.keyboard.press('ArrowRight');
@@ -121,6 +130,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
     controlGeometry.push({label,viewport,panel:panelBox,control:controlBox});
   }
   for (const [width,height] of [[1440,900],[1366,768]]) {
+    receipt.boardStage=`laptop boards ${width}x${height}`;
     await page.setViewportSize({width,height});
     const whiteboard=await openCanvasSurface(page,'workspace-whiteboard');
     await reachable(whiteboard,'#whiteboard-search',`Whiteboard ${width}x${height}`);
@@ -131,6 +141,16 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
     assert.equal(await people.getAttribute('aria-label'),'People & ownership');
     assert.match(await people.innerText(),/greenboard/i,'Greenboard is a visible alias of the canonical ownership surface');
     assert.ok(await people.locator('.org-person').count()>0,'Ownership displays actual assigned people');
+    // Reset only fixture scroll positions to measure the initial layout at
+    // each size; the previous employee interaction deliberately scrolled it.
+    await people.evaluate(element=>element.querySelectorAll('.canvas-panel-body,.org-viewport').forEach(node=>{node.scrollTop=0;}));
+    await settleCanvas(page);
+    const firstPerson=await people.locator('.org-person-copy strong').first().evaluate(element=>{
+      const box=element.getBoundingClientRect(),body=element.closest('.canvas-panel')?.querySelector('.canvas-panel-body')?.getBoundingClientRect();
+      return {top:box.top,bottom:box.bottom,bodyTop:body?.top,bodyBottom:body?.bottom};
+    });
+    assert.ok(firstPerson.top>=firstPerson.bodyTop&&firstPerson.bottom<=firstPerson.bodyBottom,'An employee name is visible before scrolling Greenboard');
+    controlGeometry.push({label:`Greenboard first employee ${width}x${height}`,firstPerson});
     await reachable(people,'#softboard-search',`Greenboard ${width}x${height}`);
     await people.locator(`.org-person[data-employee-id="${reviewer}"]`).click();
     assert.match(await page.locator('#softboard-person-detail').innerText(),/Primary: Donna/);
@@ -150,6 +170,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   }
   receipt.boardWorkflows={companyId,officeId:office.id,boardId,linkedGoals:goals.length,linkedJobs:jobs.length,linkedOutcomes:outcomes.length,
     multiLinkEdit:true,staleDraftProtected:true,keyboardMove:true,tiltedCancel:true,viewports:[{width:1440,height:900},{width:1366,height:768}],
-    controlGeometry,providerExecution:false,acceptedReviewSimulated:false};
+    controlGeometry,greenboardInitialScrollReset:true,providerExecution:false,acceptedReviewSimulated:false};
   receipt.checks.push('Whiteboard, assigned Greenboard primary/helper roles and ETA roadmap render with reachable controls in the same world at both laptop viewports');
+  receipt.boardStage='complete';
 }

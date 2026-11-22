@@ -1,0 +1,24 @@
+{
+  "run": "boards-flow-20261122",
+  "node": "integration",
+  "attempt": 6,
+  "check": "real authenticated HTTP to MCP owner repair",
+  "passed": true,
+  "nativeBinary": {
+    "path": "desktop-shell/native/atlas-core",
+    "sha256": "45dbdb855d9b3fe9412fe32c96234a28b90eb1efb532a2556f9adcef3d038239"
+  },
+  "assertions": {
+    "unauthenticatedRejected": true,
+    "staleCASRejected": true,
+    "stableIdReplayedWithoutMutation": true,
+    "explicitIteration": 2,
+    "nativeJobCount": 4,
+    "syntheticGenerationCount": 2,
+    "existingBudgetUnchanged": true,
+    "existingArtifactsAndUsageUnchanged": true,
+    "workersPaused": true,
+    "externalCalls": 0
+  },
+  "pendingOwnerRepairGate": false
+}

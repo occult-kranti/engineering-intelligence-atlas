@@ -19,6 +19,29 @@ function acceptedPair(primary, review) {
     && record.primaryArtifactSha256 === primary.artifactSha256 && record.reviewArtifactSha256 === review.artifactSha256
     && typeof primary.artifactUri === 'string' && typeof review.artifactUri === 'string';
 }
+function canonicalPairForJob(job, state) {
+  if (!job.pair || !['primary', 'review'].includes(job.pair.phase)) fail('RESOURCE_PAIR_REQUIRED', 'A canonical producer and distinct reviewer are required before model dispatch.', 409);
+  const unique = id => { const rows = (state.jobs ?? []).filter(item => item.id === id); return rows.length === 1 ? rows[0] : null; };
+  const primary = unique(job.pair.primaryJobId), review = unique(job.pair.reviewJobId), canonical = unique(job.id);
+  const conflict = () => fail('RESOURCE_NATIVE_CONFLICT', 'The worker job must match its canonical reciprocal model pair.', 409);
+  if (!primary || !review || !canonical || primary.id === review.id || !validId(primary.employeeId) || !validId(review.employeeId)
+    || primary.employeeId === review.employeeId || !validId(primary.pair?.stepId)) conflict();
+  const pairMatches = (candidate, phase, peerEmployeeId) => Object.entries({ stepId: primary.pair.stepId, phase, peerEmployeeId,
+    primaryJobId: primary.id, reviewJobId: review.id }).every(([key, value]) => candidate.pair?.[key] === value);
+  if (!pairMatches(primary, 'primary', review.employeeId) || !pairMatches(review, 'review', primary.employeeId)
+    || !pairMatches(job, job.pair.phase, job.pair.phase === 'primary' ? review.employeeId : primary.employeeId)
+    || job.id !== (job.pair.phase === 'primary' ? primary.id : review.id)
+    || !['companyId', 'officeId', 'departmentId', 'provider', 'model', 'mode', 'goalId', 'goalIteration'].every(key => (primary[key] ?? null) === (review[key] ?? null))
+    || primary.provider !== 'ollama' || primary.mode !== 'provider' || !Array.isArray(review.allowedTools) || review.allowedTools.length !== 0
+    || !same(review.dependencies, [primary.id])) conflict();
+  // Claims/reservations can change lifecycle fields between snapshots. Bind the
+  // supplied work to the immutable native request, never to caller-selected scope.
+  if (!['companyId', 'officeId', 'departmentId', 'employeeId', 'goal', 'mode', 'provider', 'model', 'authorized', 'idempotencyKey',
+    'serviceContractId', 'goalId', 'goalIteration', 'requestSha256'].every(key => (job[key] ?? null) === (canonical[key] ?? null))
+    || !same(job.allowedTools, canonical.allowedTools) || !same(job.dependencies, canonical.dependencies)
+    || !['maxTokens', 'maxUsd', 'maxMinutes'].every(key => job.limits?.[key] === canonical.limits?.[key])) conflict();
+  return [primary, review];
+}
 function validateState(state) {
   if (!object(state) || state.version !== 1 || !Number.isSafeInteger(state.revision) || state.revision < 0) fail('RESOURCE_STATE_INVALID', 'The resource registry is malformed.', 503);
   for (const key of ['resources', 'grants', 'routes', 'officeParents', 'definitions', 'plans', 'runs']) {
@@ -363,6 +386,7 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
     validateJob: job => store.serial(async () => {
       if (job?.provider !== 'ollama') return;
       const state = await current();
+      let modelJobs = [job];
       const original = (state.jobs ?? []).find(item => item.id === job.pair?.primaryJobId);
       const belongs = step => step.jobId === job.id || step.reviewJobId === job.id
         || (step.expected?.companyId === job.companyId && [job.idempotencyKey, original?.idempotencyKey].includes(step.expected?.idempotencyKey));
@@ -374,11 +398,15 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
         await verifyStep(step, plan, state);
       } else {
         if (job.idempotencyKey?.startsWith('resource:') || original?.idempotencyKey?.startsWith('resource:')) fail('RESOURCE_NATIVE_CONFLICT', 'This resource-prefixed native pair has no matching managed receipt.', 409);
-        const candidates = store.value.resources.filter(resource => resource.model === job.model); let permitted = false;
-        for (const resource of candidates) { try { await resolveIn({ companyId: job.companyId, employeeId: job.employeeId, resourceId: resource.id, purpose: 'use' }, state, job, true); permitted = true; break; } catch {} }
-        if (!permitted) fail('RESOURCE_GRANT_REQUIRED', 'The worker has no current grant for this exact model.', 403);
+        modelJobs = canonicalPairForJob(job, state);
+        const candidates = store.value.resources.filter(resource => resource.model === job.model);
+        for (const actor of modelJobs) {
+          let permitted = false;
+          for (const resource of candidates) { try { await resolveIn({ companyId: actor.companyId, employeeId: actor.employeeId, resourceId: resource.id, purpose: 'use' }, state, actor, true); permitted = true; break; } catch {} }
+          if (!permitted) fail('RESOURCE_GRANT_REQUIRED', 'Both paired employees need a current resource use grant and exact model assignment before either phase can dispatch.', 403);
+        }
       }
-      await modelPool.validateJob?.(job);
+      for (const actor of modelJobs) await modelPool.validateJob?.(actor);
     }),
     isEnforced: () => { store.assertHealthy(); return store.value.revision > 0; },
     close: () => store.close()

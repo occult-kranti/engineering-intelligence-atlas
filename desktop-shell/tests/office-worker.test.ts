@@ -140,12 +140,21 @@ describe('independent review settlement',()=>{
   expect(f.worker.status().lastError).toBeNull();
  });
  it('settles an impossible helper prompt once without dispatch and records a repairable input failure',async()=>{
-  const f=reviewFixture('{}');f.reviewer.goal='The full required goal. '.repeat(300);f.reviewer.limits.maxTokens=3200;
+  const f=reviewFixture('{}');f.producer.goal='The full required goal. '.repeat(300);f.reviewer.limits.maxTokens=3200;
   await f.worker.runOnce();
   expect(f.generate).not.toHaveBeenCalled();expect(f.calls.some(c=>c.action==='reserve_job')).toBe(false);
   expect(f.calls.filter(c=>c.action==='finish_job')).toHaveLength(1);
   expect(f.reviewer.usage).toEqual({inputTokens:0,outputTokens:0,costUsd:0});
   expect(f.reviewer.reviewFailure?.reason).toBe('input-budget');
+ });
+ it('reviews the entire canonical producer requirement even when the saved review label is abbreviated',async()=>{
+  const f=reviewFixture(JSON.stringify({verdict:'accepted',summary:'Checked the complete requirement.',evidenceRefs:['producer-job']}));
+  f.producer.goal='Required detail. '.repeat(1150)+'MANDATORY_FINAL_ACCEPTANCE_CONDITION';
+  f.reviewer.goal=f.producer.goal.slice(0,18000);
+  expect(f.reviewer.goal).not.toContain('MANDATORY_FINAL_ACCEPTANCE_CONDITION');
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();expect(f.generate.mock.calls[0]![0].prompt).toContain(f.producer.goal);
+  expect(f.reviewer.review?.verdict).toBe('accepted');
  });
 });
 
