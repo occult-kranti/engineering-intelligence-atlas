@@ -43,7 +43,8 @@ async function screenshot(name){if(!page||page.isClosed())return;const filename=
 async function cameraState(label){
   const camera=await page.locator('#freeflow-host .ff-world').evaluate(node=>{
     const transform=node.style.transform;
-    return {transform,pitch:Number(transform.match(/rotateX\(([-+\d.e]+)deg\)/)?.[1]),yaw:Number(transform.match(/rotate\(([-+\d.e]+)deg\)/)?.[1])};
+    // The shared camera omits identity rotations from its CSS transform.
+    return {transform,pitch:Number(transform.match(/rotateX\(([-+\d.e]+)deg\)/)?.[1]??0),yaw:Number(transform.match(/rotate\(([-+\d.e]+)deg\)/)?.[1]??0)};
   });
   assert.ok(Number.isFinite(camera.pitch)&&Number.isFinite(camera.yaw),`${label}: shared camera has finite pitch and yaw`);
   return camera;
