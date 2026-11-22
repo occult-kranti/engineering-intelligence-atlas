@@ -79,7 +79,7 @@ export function mountImprovementPanel(options: ImprovementPanelOptions): Improve
   const kind = select('improvement-note-kind', [['comment', 'Comment'], ['todo', 'To-do']]);
   const color = select('improvement-note-color', Object.keys(STICKY_COLORS).map(key => [key, key[0]!.toUpperCase() + key.slice(1)]));
   const noteState = select('improvement-note-state', [['open', 'Open'], ['done', 'Done (annotation only)']]), steward = select('improvement-note-owner', []);
-  const x = input('improvement-note-x', 'number', '75'), y = input('improvement-note-y', 'number', '15'); for (const p of [x, y]) { p.min = '0'; p.max = '100'; p.step = '1'; }
+  const x = input('improvement-note-x', 'number', '75'), y = input('improvement-note-y', 'number', '15'); for (const p of [x, y]) { p.min = '0'; p.max = '100'; p.step = 'any'; }
   const goalSelect = select('improvement-note-goals', []); goalSelect.multiple = true; goalSelect.size = 3;
   const noteGrid = el('div', '', 'form-grid'); noteGrid.append(field('Kind', kind), field('Color', color), field('State', noteState), field('Board steward', steward), field('Horizontal · %', x), field('Vertical · %', y));
   const noteSubmit = el('button', 'Save note'); noteSubmit.type = 'submit'; noteSubmit.id = 'improvement-note-save';
@@ -118,7 +118,7 @@ export function mountImprovementPanel(options: ImprovementPanelOptions): Improve
   const tasks = select('improvement-todos', []); tasks.multiple = true; tasks.size = 3;
   const authorized = input('improvement-authorized', 'checkbox'); authorized.required = true;
   const readRepository = input('improvement-read-repository','checkbox'), publishChanges = input('improvement-publish-changes','checkbox');
-  const capabilities=el('fieldset','','stack improvement-capabilities');capabilities.append(el('legend','Use existing repository capabilities (optional)'),field('Read company repository',readRepository),field('Publish managed changes (also requires read)',publishChanges),el('p','These choices request existing capabilities; they do not grant access or connect an account. Outputs remain proposals unless an applied managed action is recorded.','form-help'));
+  const capabilities=el('fieldset','','stack improvement-capabilities');capabilities.append(el('legend','Use existing repository capabilities (optional)'),field('Read repository overview and README',readRepository),field('Allow producer to publish a changeset (also requires read)',publishChanges),el('p','These choices use existing access. Publishing happens before helper review; the helper gates the next cycle. This session does not run builds or tests. Without a recorded managed action, output remains a proposal.','form-help'));
   const limits = el('div', '', 'form-grid'); limits.append(field('Primary employee', producer), field('Independent reviewer', reviewer), field('Pair token limit', maxTokens), field('Pair USD limit', maxUsd), field('Time target · minutes', maxMinutes), field('Optional cycle cap', maxCycles));
   const create = el('button', 'Create paused session'); create.type = 'submit'; create.id = 'improvement-session-save';
   const discardSession = button('Discard session draft', () => { if (controller.pending()) return; sessionForm.reset(); sessionDirty = false; renderSessionChoices(); });
@@ -185,7 +185,11 @@ export function mountImprovementPanel(options: ImprovementPanelOptions): Improve
   }
   async function saveNote() {
     if (!scope) throw Error('Choose a saved company and office first.');
-    const text = noteText.value.trim(), nx = Number(x.value) / 100, ny = Number(y.value) / 100;
+    const text = noteText.value.trim(), percentX = Number(x.value), percentY = Number(y.value);
+    // Preserve the original native fraction on a text-only edit; multiplying
+    // and dividing by 100 can otherwise introduce a floating-point delta.
+    const nx = base && percentX === base.x * 100 ? base.x : percentX / 100;
+    const ny = base && percentY === base.y * 100 ? base.y : percentY / 100;
     if (!text || bytes(text) > 4000 || text.includes('\0')) throw Error('Keep note text between 1 and 4,000 UTF-8 bytes without NUL characters.');
     if (![nx, ny].every(v => Number.isFinite(v) && v >= 0 && v <= 1)) throw Error('Use a position between 0% and 100% in this scope.');
     const goalIds = Array.from(goalSelect.selectedOptions, o => o.value); if (goalIds.length > 100) throw Error('A note can link at most 100 native goals.');

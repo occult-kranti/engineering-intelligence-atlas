@@ -22,6 +22,23 @@ describe('improvement owner request identity', () => {
     const ctl = createMutationController(send); await expect(ctl.dispatch(command)).rejects.toThrow(code);
     expect(ctl.pending()).toBeNull(); expect(send).toHaveBeenCalledTimes(1);
   });
+  it.each(['STALE_REVISION', 'REVISION_CONFLICT', 'CLOUD_COMMAND_REJECTED', 'CLOUD_COMMAND_CANCELLED'])('recognizes a structured rejected bridge promise for %s without resubmitting', async code => {
+    const error = Object.assign(new Error('Native rejection received through postMessage'), { code });
+    const send = vi.fn().mockRejectedValueOnce(error).mockResolvedValue({ ok: true, snapshot: { saved: true } });
+    const ctl = createMutationController(send); await expect(ctl.dispatch(command)).rejects.toBe(error);
+    expect(ctl.pending()).toBeNull(); expect(send).toHaveBeenCalledTimes(1);
+    const rebased = { ...command, expectedRevision: 8, requestId: 'explicit-rebase' };
+    await ctl.dispatch(rebased); expect(send).toHaveBeenCalledTimes(2); expect(send.mock.calls[1]?.[0]).toEqual(rebased);
+  });
+  it('retains unknown rejected promises and never classifies rejection from message text', async () => {
+    const errors = [new Error('STALE_REVISION appears only in arbitrary prose'),
+      ...['IO_ERROR', 'deadline', 'transport', 'cancelled', 'NEW_NATIVE_FAILURE'].map(code => Object.assign(new Error(code), { code }))];
+    for (const error of errors) {
+      const send = vi.fn().mockRejectedValue(error), ctl = createMutationController(send);
+      await expect(ctl.dispatch(command)).rejects.toBe(error);
+      expect(ctl.pending()?.command).toEqual(command); expect(ctl.pending()?.state).toBe('uncertain'); expect(send).toHaveBeenCalledTimes(1);
+    }
+  });
   it('holds queued, malformed and unfamiliar errors until exact retry or native acknowledgement', async () => {
     for (const result of [{ ok: true, queued: true, snapshot: {} }, { ok: false, code: 'NEW_BACKEND_FAILURE' }, { ok: true, snapshot: null }]) {
       const ctl = createMutationController(async () => result); await expect(ctl.dispatch(command)).rejects.toThrow();

@@ -4,7 +4,7 @@ import { mountStudio } from './freeflow/studio.d7dbd056553a298b.js';
 import { mountCanvasWorkspace } from './freeflow/canvas-workspace.c8afd5b6c2c6aff6.js';
 import { buildDonnaTeam, proposeDonnaAction } from './freeflow/donna-team.5cb2baa7c7bddcfb.js';
 import { mountModelPool } from './model-pool.ea9e9ba1c164d356.js';
-import { mountImprovementPanel } from './improvement/panel.65c9f9d312621cef.js';
+import { mountImprovementPanel } from './improvement/panel.afb964d478a506d7.js';
 import { buildImprovementTelemetry } from './improvement/telemetry.5120fd08d951c755.js';
 const bridge = window.desktopBridge;
 let modelPoolPanel = null;

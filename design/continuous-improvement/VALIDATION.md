@@ -25,8 +25,12 @@ Local gates completed before the first candidate push: 139 Rust tests; 819 deskt
 | Unexpected settlement exceeded or lacked a reservation | Keep the reported charge, pause global dispatch and require review. |
 | Paid harness reported CLI ceiling instead of persisted lower ceiling | Print the effective ledger cap; regression checks a 20 ledger with 100 CLI input. |
 | Changing cycle headers defeated unchanged-output detection | Record a separate delivered-body SHA while preserving full artifact SHA for review; a real two-cycle worker regression checks the stop. |
+| Actual VS Code bridge rejected a stale note promise instead of returning an error DTO | Classify the existing explicit native rejection codes on structured promise errors too. Preserve the stale draft and revision while releasing controls; unfamiliar errors retain exact retry identity. |
+| Valid fractional coordinates saved by MCP made HTML note forms invalid | Accept fractional percentages, retain exact unchanged native fractions, and preserve range rejection. |
 
 The paid renderer review's proposed removal of the context-loss guard was rejected: the guard prevents deliberate terminal disposal from being misread as a recoverable context loss. No unsupported graphics lifecycle change was applied.
+
+Candidate `812a3416463774e3a167144125e231dcd69e6505`, [CI run 44996020970](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44996020970), passed Windows installation, Linux installation and all backend/DOM gates, then failed the actual-browser stale-note rejection check. The assertion was retained and the source defect was fixed; this candidate is not the final browser-accepted package. The independent runtime counterreview also clarified the existing optional publication ordering in the UI and product documentation: helper acceptance gates continuation after publication and is not pre-publication review or build evidence.
 
 ## Evidence distinctions
 

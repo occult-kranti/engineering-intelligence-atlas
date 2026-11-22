@@ -62,6 +62,15 @@ describe('movable improvement surface forms', () => {
     expect(m.calls[0]?.requestId).toMatch(/^note-request-/); expect(get('improvement-note-form').classList.contains('board-stale')).toBe(false);
     expect(get<HTMLSelectElement>('improvement-note-kind').disabled).toBe(true);
   });
+  it('allows a text-only edit of native fractional coordinates without rounding or weakening the range', async () => {
+    const saved = note({ x: 1 / 3, y: .271828 }); const m = mount({ ...fixture(), stickyNotes: [saved] });
+    panel!.open(scope, saved.id); change('improvement-note-text', 'Only the wording changed');
+    expect(get<HTMLFormElement>('improvement-note-form').checkValidity()).toBe(true);
+    await submit('improvement-note-form'); expect(m.calls).toHaveLength(1);
+    expect(m.calls[0]?.x).toBe(saved.x); expect(m.calls[0]?.y).toBe(saved.y); expect(m.calls[0]?.expectedRevision).toBe(saved.revision);
+    change('improvement-note-x', '100.001'); expect(get<HTMLFormElement>('improvement-note-form').checkValidity()).toBe(false);
+    await submit('improvement-note-form'); expect(m.calls).toHaveLength(1); expect(get('improvement-status').textContent).toContain('between 0% and 100%');
+  });
 
   it('preserves a stale draft through refresh and rejects without retry until explicit rebase', async () => {
     const m = mount(); panel!.open(scope, 'note'); change('improvement-note-text', 'My unsaved draft');
@@ -79,6 +88,17 @@ describe('movable improvement surface forms', () => {
     m.send.mockImplementationOnce(async command => { m.calls.push(structuredClone(command)); return { ok: true, snapshot: m.snapshot }; });
     get('improvement-retry').click(); await flush(); expect(m.calls).toHaveLength(2); expect(m.calls[1]).toEqual(m.calls[0]);
     expect(m.snapshot.stickyNotes).toHaveLength(1); expect(m.snapshot.stickyNotes?.[0]?.revision).toBe(1);
+  });
+  it('releases a stale form after the real bridge rejection shape while keeping its draft and original revision', async () => {
+    const m = mount(); panel!.open(scope, 'note'); change('improvement-note-text', 'Keep this rejected draft');
+    m.snapshot = { ...m.snapshot, stickyNotes: [note({ revision: 1, text: 'External saved value' })] }; panel!.refresh();
+    m.send.mockRejectedValueOnce(Object.assign(new Error('Runtime operation failed (STALE_REVISION). Inspect saved state before retrying.'), { code: 'STALE_REVISION' }));
+    await submit('improvement-note-form');
+    expect(m.send).toHaveBeenCalledTimes(1); expect(m.send.mock.calls[0]?.[0].expectedRevision).toBe(0);
+    expect(get('improvement-pending').hidden).toBe(true); expect(get<HTMLButtonElement>('improvement-note-save').disabled).toBe(false);
+    expect(get<HTMLTextAreaElement>('improvement-note-text').value).toBe('Keep this rejected draft'); expect(get('improvement-note-form').classList.contains('board-stale')).toBe(true);
+    expect(m.snapshot.stickyNotes?.[0]?.text).toBe('External saved value');
+    get('improvement-note-reload').click(); expect(get<HTMLTextAreaElement>('improvement-note-text').value).toBe('External saved value');
   });
 
   it('does not transfer a live draft when another company surface requests this popup', () => {

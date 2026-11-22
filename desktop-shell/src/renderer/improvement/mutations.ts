@@ -31,7 +31,13 @@ export function createMutationController<T>(send: (command: OwnerMutation) => Pr
       }
       pending = null; changed(); return result.snapshot;
     } catch (error) {
-      if (pending) pending.state = 'uncertain';
+      // Desktop responses can return a rejection object; the VS Code facade
+      // rejects its promise with the same structured native code. Only that
+      // explicit allowlist establishes a definite non-write in either form.
+      // Prose, transport failures, timeouts and unknown codes retain identity.
+      const code = error && typeof error === 'object' && 'code' in error && typeof error.code === 'string' ? error.code : null;
+      if (pending && code && REJECTED.has(code)) pending = null;
+      else if (pending) pending.state = 'uncertain';
       if (!disposed) changed();
       throw error;
     }
