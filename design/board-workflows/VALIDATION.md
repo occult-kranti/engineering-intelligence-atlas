@@ -51,6 +51,12 @@ The last independent resource counterreview also reproduced an ordinary native O
 
 The follow-up also makes the managed reviewer use the full canonical producer requirement, even when the review job's display label is abbreviated. Both full and compact prompt paths retain the complete criteria and bind them into the context hash. A requirement that cannot fit the original allowance fails explicitly without reservation. Greenboard's actual screenshot exposed excessive spacing above employees; the scoped CSS now compacts hierarchy spacing while preserving type and control sizes. The next browser gate measures initial employee-name visibility after an explicit fixture scroll reset.
 
+## Global refresh wiring correction
+
+Run [44988659972](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44988659972) tested `884fe704be033dbe1882dc0c0a1ba33651fec615`. Both installed VSIX checks passed again, as did every native/backend/editor suite. Linux ran all 123 headless tests with no skips. The browser passed twelve canvas checks and then timed out waiting for the selected company after an external native write and global Refresh. Its failed receipt is retained as `evidence/ci-884fe70-browser.json`.
+
+This exposed a production wiring defect: the global Refresh button read repository/project data but omitted the native office snapshot used by boards. It now awaits both existing, independently deduplicated read paths. The stale-board regression uses that visible global control and requires the externally changed card title and stale-revision status to render while preserving the unsent draft and original write revision. A separate helper reviewed this correction. The browser assertions are unchanged; the next run will exercise the corrected product behavior.
+
 ## Boundaries
 
 The stopped Vast instance remains stopped. No user GPU, SSH host, downloaded model, external service installation, trained MoE, live ChatGPT MCP session or physical-GPU soak was activated. The browser gate uses sandboxed Chrome in CI; software WebGL rendering is reported as such. Bounded lifecycle and idle tests cannot prove an indefinite absence of memory leaks.

@@ -564,8 +564,9 @@ for(const interacted of [false,true]){
  type('node-title','Title-only edit');await save();
  check(attempts.length===1&&attempts[0].expectedRevision===7&&attempts[0].officeId==='fixture-office','whiteboard edit uses its frozen revision and office');
  check(attempts[0].goalIds.join(',')==='goal-a,goal-b'&&attempts[0].jobIds.join(',')==='job-a,job-b'&&attempts[0].roadmapItemIds.join(',')==='outcome-a,outcome-b','title-only save preserves all link arrays');
- type('node-title','Local unfinished draft');bf.office.blueprints[0].whiteboards[0].revision=10;bf.office.blueprints[0].whiteboards[0].title='External edit';await press('office-refresh');
- check(bid('node-title').value==='Local unfinished draft'&&bid('node-save-status').textContent.includes('draft'),'native refresh preserves the visible local draft');
+ type('node-title','Local unfinished draft');bf.office.blueprints[0].whiteboards[0].revision=10;bf.office.blueprints[0].whiteboards[0].title='External edit';await press('workspace-refresh');
+ check(bid('node-title').value==='Local unfinished draft'&&bid('node-save-status').textContent.includes('draft'),'global refresh preserves the visible local draft');
+ check(bd.querySelector('[data-board-id="linked-board"] .card-title').textContent==='External edit'&&bid('node-save-status').textContent.includes('changed after'),'global refresh reads the native board and exposes its external revision without replacing the draft');
  const staleBefore=attempts.length;await save();await flush();
  check(attempts.length===staleBefore+1&&attempts.at(-1).expectedRevision===8,'stale edit sends the original base once without rebasing or retry');
  check(bid('node-title').value==='Local unfinished draft'&&bid('node-save-status').textContent.includes('STALE_REVISION'),'stale rejection stays visible and retains the typed draft');

@@ -1730,7 +1730,8 @@ function initWorkspace(): void {
     if (button.classList.contains('nav-item')) button.setAttribute('aria-label', VIEW_LABELS[view]); button.addEventListener('click', () => navigate(view));
   });
   $('header-new-project').addEventListener('click', openNewProject); document.querySelectorAll<HTMLButtonElement>('[data-new-project]').forEach((button) => button.addEventListener('click', openNewProject));
-  $('workspace-refresh').addEventListener('click', () => void safeTask(refreshWorkspace)); $('usage-refresh').addEventListener('click', () => void safeTask(refreshWorkspace));
+  $('workspace-refresh').addEventListener('click', () => void safeTask(async () => { await Promise.all([refreshWorkspace(), refreshOffice()]); }));
+  $('usage-refresh').addEventListener('click', () => void safeTask(refreshWorkspace));
   $('focus-action').addEventListener('click', () => {
     if (companyState?.company?.githubStatus !== 'verified') { navigate('settings'); ($('company-repo-url') as HTMLInputElement).focus(); }
     else if (companyState.tasks.some((t) => t.status === 'todo' || t.status === 'in-progress')) navigate('roadmap'); else openNewProject();
