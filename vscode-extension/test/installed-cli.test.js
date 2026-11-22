@@ -23,6 +23,18 @@ test('official insiders executable spelling and a BOM launcher remain literal',a
   const f=await fixture(t,{insiders:true});await fs.writeFile(f.launcher,'\uFEFF'+f.source);const {resolveWindowsCliEntry}=await helpers;
   assert.equal((await resolveWindowsCliEntry(f.executable,f.launcher)).entry,await fs.realpath(f.entryPath));
 });
+test('the captured VS Code 1.147.0 archive version directory resolves only its declared entry',async t=>{
+  const f=await fixture(t,{entry:'..\\8a14f0cc1b\\resources\\app\\out\\cli.js'});const {resolveWindowsCliEntry}=await helpers;
+  const result=await resolveWindowsCliEntry(f.executable,f.launcher);assert.equal(result.entry,await fs.realpath(f.entryPath));assert.match(result.entry,/[\\/]8a14f0cc1b[\\/]resources[\\/]app[\\/]out[\\/]cli\.js$/);
+  const direct=path.join(f.root,'resources','app','out','cli.js');await fs.mkdir(path.dirname(direct),{recursive:true});await fs.writeFile(direct,'wrong direct entry');
+  await fs.unlink(f.entryPath);await assert.rejects(resolveWindowsCliEntry(f.executable,f.launcher),/ENOENT/);
+});
+test('arbitrary or nested bundle-prefix directories remain unsupported',async t=>{
+  const {resolveWindowsCliEntry}=await helpers;
+  for(const entry of ['..\\arbitrary\\resources\\app\\out\\cli.js','..\\8a14f0cc1b\\8a14f0cc1b\\resources\\app\\out\\cli.js']){
+    const f=await fixture(t,{entry});await assert.rejects(resolveWindowsCliEntry(f.executable,f.launcher),/10-hex version directory/);
+  }
+});
 test('a missing declared CLI never falls back to a guessed module',async t=>{
   const f=await fixture(t,{entry:'..\\resources\\app\\out\\declared-missing.mjs',writeEntry:false});const other=path.join(f.root,'resources','app','out','cli.js');await fs.mkdir(path.dirname(other),{recursive:true});await fs.writeFile(other,'not the declared entry');
   const {resolveWindowsCliEntry}=await helpers;await assert.rejects(resolveWindowsCliEntry(f.executable,f.launcher),/ENOENT/);

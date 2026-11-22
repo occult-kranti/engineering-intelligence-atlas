@@ -410,7 +410,7 @@
     },
     "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
   },
-  "observedNativeUsd": 2.415546,
+  "observedNativeUsd": 2.523932,
   "newWorkstreamCapUsd": 20,
   "observedNativeUsdScope": "Historical field for all non-hosted development requests, including external provider authorship. It does not imply execution by native Donna.",
   "laterFrontendDesign": {

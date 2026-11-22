@@ -1,23 +1,24 @@
 # Claude development usage
 
-Current checkpoint: **Host-control development checkpoint added; Blueprint World Studio completed and published as owner-private Site version 17, with a graphics verification gap; outside the released 0.8.0 binary source**. The [0.8.0 release receipt](release-0.8.0.json) retains its original source and accounting boundary. Historical request receipts retain their original UTC timestamps. The historical development ceiling remains **$100 USD**; the latest Studio expansion has a separately recorded **additional $20 USD workstream ceiling**, of which **$0.515332** has now been observed across Studio and the subsequent host-control work. A ceiling is not a spend target. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
+Current checkpoint: **VS Code compute source and owner operations added; Blueprint World Studio completed and published as owner-private Site version 17, with a graphics verification gap; outside the released 0.8.0 binary source**. The [0.8.0 release receipt](release-0.8.0.json) retains its original source and accounting boundary. Historical request receipts retain their original UTC timestamps. The historical development ceiling remains **$100 USD**; the latest Studio expansion has a separately recorded **additional $20 USD workstream ceiling**, of which **$0.623718** has now been observed across Studio, host control and the VS Code connection source. A ceiling is not a spend target. This ledger contains sanitized request accounting; it does not contain private prompts, credentials or local source paths.
 
 | Accounting category | USD | Interpretation |
 | --- | ---: | --- |
-| Observed development requests | **2.415546** | Recorded non-hosted requests, including external frontend authorship; not evidence of native Donna execution |
+| Observed development requests | **2.523932** | Recorded non-hosted requests, including external frontend authorship; not evidence of native Donna execution |
 | Observed successful hosted request | **0.022140** | Confirmed cloud reply and usage |
-| Total observed usage | **2.437686** | Development plus cloud; no allocation added |
+| Total observed usage | **2.546072** | Development plus cloud; no allocation added |
 | Retained uncertain attempts | **0.769716** | Earlier 0.495762 plus the renderer process reservation 0.273954 after polling was blocked |
-| Conservative usage accounting | **3.207402** | Observed usage plus retained uncertainty; historical 100.000000 ledger ceiling retained |
+| Conservative usage accounting | **3.315788** | Observed usage plus retained uncertainty; historical 100.000000 ledger ceiling retained |
 | Cloud allocation | **5.000000 reserved capacity** | Held inside the same global ceiling; contains cloud usage and is not an additional charge |
 | Latest Studio expansion | **0.446882 observed / 20.000000 cap** | Four completed provider requests, including two incomplete source responses; no new uncertain reservation |
 | Subsequent host-control development | **0.068450 observed** | One completed Sonnet request; shared incremental ceiling now accounts for 0.515332 of 20.000000 |
+| VS Code compute source | **0.108386 observed** | One output-limited Sonnet request, completed and repaired locally; shared incremental usage is 0.623718 of 20.000000 |
 
 The totals reconcile to [claude-usage.json](claude-usage.json). Its historical `observedNativeUsd` field covers all non-hosted development requests, including external provider authorship. A reserved allocation, an uncertain attempt and observed usage are separate records. Do not add the $5 allocation to the observed or conservative usage totals, and do not describe an uncertain reservation as a confirmed provider charge.
 
 ## Host-control development checkpoint
 
-Sonnet supplied the read-only Vast status CLI and tests in request `b9a3ed18-3dbe-4bff-8de0-f921d6cdcb70`: 1,080 input tokens, 6,629 output tokens, `end_turn`, **$0.068450** observed. Local independent review tightened file, endpoint, hostname and response validation. The shared additional $20 ceiling now has **$19.484668** remaining. This is source authorship, not live VPS deployment or Donna execution. [Validation](HOST_CONTROL_VALIDATION.md) records the test and connectivity boundaries.
+Sonnet supplied the read-only Vast status CLI and tests in request `b9a3ed18-3dbe-4bff-8de0-f921d6cdcb70`: 1,080 input tokens, 6,629 output tokens, `end_turn`, **$0.068450** observed. Local independent review tightened file, endpoint, hostname and response validation. At that host-control checkpoint, the shared additional $20 ceiling had **$19.484668** remaining. This is source authorship, not live VPS deployment or Donna execution. [Validation](HOST_CONTROL_VALIDATION.md) records the test and connectivity boundaries.
 
 ## Request history
 
@@ -51,6 +52,8 @@ Sonnet supplied the read-only Vast status CLI and tests in request `b9a3ed18-3db
 | Studio expansion · edit layer initial source | 23,670 | 12,000 | 0.167340 | `max_tokens`; partial source, later completed through a distinct suffix and local repairs |
 | Studio expansion · attached UI | 8,153 | 11,000 | 0.126306 | `max_tokens`; partial source completed and repaired locally |
 | Studio expansion · edit layer bounded suffix | 18,210 | 5,312 | 0.089540 | `end_turn`; separate bounded completion, independently reviewed and repaired |
+| Host-control Vast status source | 1,080 | 6,629 | 0.068450 | `end_turn`; read-only CLI source reviewed and hardened locally |
+| VS Code compute connection source | 1,693 | 10,500 | 0.108386 | `max_tokens`; complete manager and partial tests, completed and repaired locally without a billed retry |
 
 The initial MCP call is recorded as incomplete delivery even though the HTTP call completed. Follow-on MCP requests used supported `between_tools` thinking with medium effort. The integrated server was reviewed and hardened by the director; generated code was not accepted merely because the provider returned it.
 
@@ -143,3 +146,5 @@ The historical production-adapter validation sent only a fixed synthetic string,
 Request 28 (`11444cac-b59f-4523-9eea-f560e87b6b7f`, Claude Sonnet 5.5) returned the connection manager and partial tests: 1,693 input tokens, 10,500 output tokens, observed cost **$0.108386**. The response stopped at `max_tokens`; the truncated tests and concrete lifecycle/validation defects were repaired locally. No billed retry was sent.
 
 The shared additional $20 ceiling now has **$0.623718** of observed source-generation usage and **$19.376282** remaining. This is development authorship accounting, not a claim that native Donna employees ran those calls or that VPS infrastructure is free. Earlier unresolved reservations remain preserved in the ledger.
+
+The subsequent God mode, activity journal, adaptive worker, setup flow and installed-package verification work introduced no additional Claude API request. Current totals retain all earlier uncertain reservations.

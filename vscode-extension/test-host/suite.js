@@ -185,7 +185,7 @@ exports.run = async function run() {
     assert.equal(info.connected, true, 'The installed standalone runtime must become authenticated and ready');
     assert.equal(info.kind, 'runtime'); assert.equal(info.url, runtimeOrigin);
     assert.equal(Object.hasOwn(info, 'controlToken'), false); assert.equal(Object.hasOwn(info, 'deviceToken'), false);
-    assert.equal(info.capabilities.methods.officeCommand.available, true);
+    assert.equal(info.capabilities.officeCommand, true);
     assert.equal(receipt.runtime?.workbench, true);
     phase = 'connected';
     await vscode.commands.executeCommand('atlas.openOffice');

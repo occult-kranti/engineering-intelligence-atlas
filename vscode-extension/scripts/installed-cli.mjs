@@ -50,7 +50,12 @@ export async function resolveWindowsCliEntry(executable, launcher) {
   if (await fs.realpath(declaredExecutable) !== await fs.realpath(executable)) throw new Error('The Windows launcher declares a different executable than the pinned download.');
   await regularFile(entry);
   const realEntry = await fs.realpath(entry);
-  if (!inside(root, realEntry) || !/^resources\/app\/out\/.+\.(?:js|mjs|cjs)$/i.test(path.relative(root, realEntry).split(path.sep).join('/'))) throw new Error('The declared CLI module must remain in the downloaded resources/app/out tree.');
+  const relativeEntry = path.relative(root, realEntry).split(path.sep).join('/');
+  // The captured 1.147.0 Windows archive launcher declares
+  // ../8a14f0cc1b/resources/app/out/cli.js (CI run 44973218752).
+  // Accept that observed single commit-prefix layout as well as the source
+  // template's direct tree; never search for or guess a different module.
+  if (!inside(root, realEntry) || !/^(?:[a-f0-9]{10}\/)?resources\/app\/out\/.+\.(?:js|mjs|cjs)$/i.test(relativeEntry)) throw new Error(`The declared CLI module must remain in the downloaded resources/app/out tree, optionally beneath one 10-hex version directory. Declared entry: ${text(relativeEntry).slice(0, 500)}`);
   return { executable, launcher: wrapper, entry: realEntry };
 }
 
