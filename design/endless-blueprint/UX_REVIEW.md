@@ -3,7 +3,7 @@
 **Run:** `laptop-blueprint-20261122` · **Node:** `ux` · **Attempt:** `1`  
 **Reviewer role:** UX author/reviewer; not independent acceptance authority for its own CSS  
 **Termination owner:** root director · **Record date:** 2026-11-22  
-**State:** `waiting` after document handoff; new build and visual gates remain pending.
+**Current status:** See [VALIDATION.md](VALIDATION.md) for the latest exact-source result. The original planning checkpoints below are preserved as history; later sections record the implementation and browser corrections.
 
 ## Scope and evidence boundary
 
@@ -40,7 +40,7 @@ The first two images originate from the earlier accepted product run at source `
 
 The default camera source already defines zero pitch and yaw; the old tilted screenshot is not proof of a default-camera defect. Acceptance must inspect startup with clean saved preferences as well as restored camera state. [Camera implementation](../../desktop-shell/src/renderer/freeflow/camera.ts)
 
-## Round 2 — implementation evidence register
+## Historical checkpoint — Round 2 implementation evidence register
 
 Round 2 is **in progress**, not accepted. Root owns the real Claude Sonnet authoring receipt, provider costs, native projection, GPU integration, build and packaged source. This UX node did not call Claude or bill a provider. Exact source-bound evidence is required before this section changes to accepted.
 
@@ -65,7 +65,7 @@ These checks are useful partial evidence, not a new installed-product, GPU or ac
 | Source-to-renderer-to-VSIX integrity | Pending | Build manifest hashes, platform receipts and artifact digests |
 | Preserved forms, drafts, shutdown and reconnect behavior | Partial baseline only | Relevant current-source regressions, not just earlier release receipts |
 
-## Round 3 — independent acceptance record
+## Historical checkpoint — Round 3 acceptance requirements
 
 **Status: waiting for root to deliver exact-source screenshots and results.** No new screenshot has been accepted by this document. The existing release images must not be relabelled as the redesign.
 
@@ -205,3 +205,34 @@ Two additional observations from this same review set were included before hando
 The current presentation source passed **32/32 existing tests** across `freeflow-studio`, `freeflow-tabletop`, `freeflow-blueprint-world` and `freeflow-member`, including native label updates, inert snapshot text, keyed identities and native actions. The renderer TypeScript check passed. All three stylesheets parsed in JSDOM; computed-style checks confirmed static viewport clipping while the live panel body retained scrolling and an exact textarea draft. `git diff --check` passed. These checks are source/DOM evidence, not a browser screenshot or GPU execution substitute.
 
 The correction is handed to root for the single confirmation CI and independent visual acceptance. **Round 3 remains open.** The root/core framing work and the final rendered label density, focus behavior, theme appearance, target sizes and 1366×768 recovery require the corrected exact-source receipt. No new browser session, model request, cloud rental, API connection or paid call was performed by this UX node. No WCAG conformance, live Vast execution or complete temporal scene replay is claimed.
+
+
+## Functional follow-up — finder clipping (007084f → 961a4b8)
+
+Root and the UX node independently inspected the exact-source failure image from run `44980854371`. The finder palette was missing from the painted area above its visible launcher, although its result existed in layout. The ordinary browser click hit `.ff-node-paper` underneath. The late launcher `overflow-x: auto` adjustment clipped the absolute palette; `.canvas-shortcuts` already provided the intended horizontal scrolling. This was a regression in the HUD adjustment, not evidence that static viewport `overflow: clip` should be removed.
+
+Root changed the outer launcher to `overflow: visible`, preserving the existing world/HUD z-order, static viewport clipping and actual form scrolling. All three CSS files parsed; renderer compilation and asset copying passed. The original actual-pointer browser gate is unchanged. Source `961a4b866f08822b22290289eca01c6c2ae8a283` is under confirmation in [run 44981425773](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44981425773). No new aesthetic pass, browser exception or force-click was introduced. The failed receipt and unexecuted later stages are retained in the verification record.
+
+
+## Cross-company browser navigation follow-up (961a4b8 → 887938c)
+
+Run `44981425773` confirmed that the finder opens Donna through an ordinary pointer click. It also captured the actual shared blueprint and live draft in perspective. The next failure was an offscreen Ownership footer for another company: the harness incorrectly assumed generic Fit would reveal that company. Root and the UX/verification nodes independently read the navigation handlers and reviewed the failure screenshot. Fit uses current scope bounds, while ordinary camera arrows can inspect another company without changing native selection.
+
+The bounded correction uses actual arrow keys to bring the target footer into the unobstructed viewport, verifies native selection is still unchanged, and then uses the normal pointer click. This retains the intended cross-company authority regression. The titlebar checks now assert that the document and static viewport ancestors have no hidden scroll offset. No production change accompanies this harness correction. Source `887938cf588f4eaab28408fa32285d049eb68b78` is under confirmation in [run 44981843233](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44981843233); the earlier failed receipt remains available in VALIDATION.md.
+
+
+## Final director acceptance — source 887938c
+
+**State: accepted for this shared-canvas pass.** [Run 44981843233](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44981843233) completed successfully on Linux and Windows. It records 129 Linux unit tests, 122 Windows unit tests with seven Linux-only skips, 11 installed Linux checks, nine installed Windows checks, and 13 actual canvas/browser checks. Duplicate prepublish suite invocations are not double-counted. Production renderer code is unchanged from `961a4b8`; the intervening change fixes the test's public navigation and strengthens scroll assertions.
+
+The root director independently viewed the final default top view, 1366×768 relief, and Ownership popup. The core reviewer separately inspected the 1366×768 top view and Arrange popup, plus the Ownership image and detailed receipt. The final [canvas receipt](evidence/ci-887938c-canvas.json) has SHA-256 `04c41b88857ef202c0f44aae3f1cc4596f8bdfbdc8c40659d192f0d9a1c8c052`; all 11 [screenshot hashes](evidence/ci-887938c-screenshots/SHA256.json) are retained.
+
+Observed results:
+
+- One continuous blueprint plane; native rooms and flat employee circles remain contained within company floorplans. No physical table or 3D figures appear.
+- Ownership's titlebar occupies y158.80–192.87 at 1440×900, clear of the top controls ending at y112. Its panel is framed within the viewport. It shows the clicked company's 11 canonical people while retaining Donna's exact draft and the same world.
+- After viewport resize, Donna's titlebar occupies y190.14–224.21 at 1366×768. Document and all recorded ancestor scroll offsets remain zero.
+- All eight Arrange controls are visible and passed real clicks at 20 world-unit steps. Drafts, input identity, camera position, pin restrictions and focus are preserved.
+- Actual software WebGL2 rendered both laptop sizes and recovered from one deliberately lost context. Restored geometry submitted 43 instances in three draw calls, with native state and draft unchanged.
+
+The tight 1366×768 company capture still has fixed HUD overlap at some company header/footer edges; pan/zoom remains necessary to inspect every world action at that framing. The receipt establishes ANGLE/SwiftShader software WebGL, not hardware performance. Installed VS Code results come from the separate platform receipts, while the canvas harness uses an emulated VS Code parent and real temporary native backend. Dedicated forced-colors and unavailable-WebGL screenshot audits, full accessibility certification, production/Vast workloads and long-duration memory/hardware profiling remain outside this acceptance. See [VALIDATION.md](VALIDATION.md) for the consolidated results and exact boundaries.

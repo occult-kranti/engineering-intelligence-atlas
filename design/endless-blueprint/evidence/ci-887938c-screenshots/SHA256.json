@@ -1,0 +1,18 @@
+{
+  "source": "887938cf588f4eaab28408fa32285d049eb68b78",
+  "run": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44981843233",
+  "status": "passed",
+  "screenshots": {
+    "01-native-office.png": "977305fdc3858b5015381ee419673e09257914418c864d78abb04dd1fa285ef2",
+    "10-company-relief-1440x900.png": "c6a7e7e7a5e356ec4a7f02fb7a07bfaa29aa8e6392b2bf06527fafb76b8616ed",
+    "04-perspective-1440x900.png": "a87f57d9bf798b153958c5220cb57e8a272138be6962f14234beb96f7c4b3fca",
+    "09-company-ownership-1440x900.png": "8b1b37eb0ac481830e973481d4b56479793e949811cadad48d5c8459252ee619",
+    "02-live-surfaces.png": "51d1f373a7612641a7c4c07e52a9950194e411b4c4210f372781acb97f7403f6",
+    "03-setup-flow.png": "a98b0616f3b6d1542c1b406cfbb1b25801a1cda71bb9960181ac4385fb2ab2b9",
+    "05-native-office-1366x768.png": "e445134a16097fad57dc9975070f95e8dfa4f5964b635d900fc5365ee5e44464",
+    "11-company-relief-1366x768.png": "c504329f3a973dbdf8143ec1d8024f67aacc01729c5a166b043428e25309b120",
+    "08-arrange-1366x768.png": "6f8c9553c2c5a6fe3038fb683470558499246de92865382bc89093535f63f9d4",
+    "06-perspective-1366x768.png": "e09e6d2f0f3a0190e9e51f0359a72d89f54b1331b09caef9f97307be3f45218a",
+    "07-webgl-restored-1366x768.png": "26809bc9e338bc0ec9ba039ea86878613944a28d4398277abca4537938db4663"
+  }
+}

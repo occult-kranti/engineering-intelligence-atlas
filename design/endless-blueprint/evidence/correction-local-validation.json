@@ -44,7 +44,7 @@
     "vscode-extension/scripts/smoke-canvas.mjs": "04431c764371f02fcb089a13431277f045501b73a5d35abbf64f7c5500ac0029"
   },
   "logs": {
-    "correction-freeflow-tests.log": "8b788f4ab02a05d6dfa748b8b153e369d061857968432674f52941af2802a5df",
-    "correction-extension-build-tests.log": "f6d43d4ba69f2caff0b678d28530c44957f66d955e947d0fc2e2430dd0bdec39"
+    "correction-freeflow-tests.txt": "8b788f4ab02a05d6dfa748b8b153e369d061857968432674f52941af2802a5df",
+    "correction-extension-build-tests.txt": "f6d43d4ba69f2caff0b678d28530c44957f66d955e947d0fc2e2430dd0bdec39"
   }
 }

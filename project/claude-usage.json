@@ -573,10 +573,12 @@
     "observedUsd": 0.125006,
     "retainedReservationUsd": 0,
     "remainingIncrementalCapUsd": 19.874994,
-    "status": "source-integrated-validation-in-progress",
+    "status": "accepted-shared-canvas-software-webgl-and-installed-platforms",
     "sourceReleaseExcluded": "0.9.0-preview.1",
     "authorship": "Claude relief modules with independent repairs; local design, canonical projection, integration and verification team.",
     "imageAccounting": "Native image generation exposes no provider billing receipt here; excluded from Claude API totals.",
-    "validationEvidence": "design/endless-blueprint/PLAN.md"
+    "validationEvidence": "design/endless-blueprint/VALIDATION.md",
+    "testedSource": "887938cf588f4eaab28408fa32285d049eb68b78",
+    "acceptanceRun": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44981843233"
   }
 }

@@ -2,8 +2,8 @@
 
 **A personal workspace for Donna, your permanent agent team, and the repositories they maintain.**
 
-One continuous canvas holds the company conference table, office blueprints,
-Donna conversation, ownership whiteboard and the controls used to run the work.
+One continuous blueprint canvas holds company-contained office floorplans,
+Donna conversation, ownership whiteboards and the controls used to run the work.
 Companies contain offices, departments and employees; goals become bounded
 dependency graphs with queues, checkpoints, budgets and evidence.
 
@@ -14,7 +14,15 @@ dependency graphs with queues, checkpoints, budgets and evidence.
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
-## Endless canvas — 0.8.0 released
+## Current design branch — endless blueprint for VS Code
+
+The `design/infinite-blueprint-canvas` branch now uses the blueprint itself as the entire world. Company identity, saved offices, departments, employee circles and workboards share one plane. Top-down is the default; optional 3D adds shallow architectural partitions. Donna and existing management forms remain movable canvas popups with preserved drafts, click-based Arrange controls and scoped native actions.
+
+The [three-round swarm plan](design/endless-blueprint/PLAN.md) uses the project's own agent-director, spatial-3D and computational-geometry skills. [Design evidence](design/endless-blueprint/UX_REVIEW.md), [concept provenance](design/endless-blueprint/CONCEPT.md), and the [exact-source verification record](design/endless-blueprint/VALIDATION.md) separate the concept, local tests, actual browser rendering and installed VS Code acceptance. The VS Code extension is the primary product; the shared renderer also supplies desktop/browser clients.
+
+This branch's new blueprint source follows the published `v0.9.0-preview.1` packages. That prerelease retains its original verified source and does not contain this later redesign. Earlier release sections below describe their own historical presentation.
+
+## Release history — endless canvas 0.8.0
 
 The desktop and private website now keep the workspace in one spatial world. Company seats stay at the conference table, with miniature sheets drawn from their saved office blueprints laid on the tabletop. Selecting a company reveals its full blueprint in the same world. Conversation, crew, goals, hiring, queue, ledger, models and settings are canvas elements that can be moved, resized, pinned, collapsed and reopened through **Find a surface**. Camera focus, keyboard controls, reduced motion and saved local layouts support the same workspace at different scales.
 

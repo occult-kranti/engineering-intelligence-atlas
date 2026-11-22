@@ -1,6 +1,6 @@
 # Claude development usage
 
-Current checkpoint: **Endless blueprint three-round laptop pass in progress**, separately from the already published0.9.0-preview.1. Historical receipts keep their original source and UTC timestamps. The historical **$100** ceiling and previous additional$20 workstream remain recorded. The latest user-authorized **another$20** is a new bounded ceiling for this pass, not a spend target. Its observed use is **$0.125006**. This ledger contains sanitized request accounting, not credentials or private prompts.
+Current checkpoint: **Endless blueprint three-round laptop canvas accepted on source 887938c**, separately from the already published0.9.0-preview.1. Historical receipts keep their original source and UTC timestamps. The historical **$100** ceiling and previous additional$20 workstream remain recorded. The latest user-authorized **another$20** is a new bounded ceiling for this pass, not a spend target. Its observed use is **$0.125006**. This ledger contains sanitized request accounting, not credentials or private prompts.
 
 | Accounting category | USD | Interpretation |
 | --- | ---: | --- |
@@ -154,3 +154,6 @@ The subsequent God mode, activity journal, adaptive worker, setup flow and insta
 The new user-authorized **additional $20** ceiling is recorded separately for `laptop-blueprint-20261122`, retaining all historical accounting and uncertain reservations. Request29 (`d477db0c-77e3-46ae-b9d0-3bb690926d43`) used actual Claude Sonnet5.5: **3,138 input /11,873 output tokens**, `end_turn`, **$0.125006 observed**. This pass has **$19.874994** remaining; there was no automatic retry. Updated observed total is **$2.671078**, retained uncertainty **$0.769716**, conservative total **$3.440794**.
 
 Claude supplied the rendering/projection modules. Independent integration removed the superseded table geometry, repaired a recursive error helper, aligned normalization and floating origins, and added failure/resource controls. Authorship does not certify GPU rendering or complete product acceptance; the [three-round plan](../design/endless-blueprint/PLAN.md) records those gates separately. Image-generation tool output has no billing receipt here and is excluded from Claude API token-derived totals.
+
+
+Final verification passed in [run 44981843233](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44981843233): 13 shared-canvas browser checks with actual software WebGL2 and context restoration, plus the installed Linux/Windows product gates. The [verification record](../design/endless-blueprint/VALIDATION.md) preserves prior failed candidates and coverage limits. This closeout made no additional Claude request and changes no historical observed/uncertain accounting. The published 0.9.0-preview.1 packages retain their earlier source.

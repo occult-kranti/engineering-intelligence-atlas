@@ -1,8 +1,8 @@
 # Endless Blueprint — three-round laptop plan
 
 **Run:** `laptop-blueprint-20261122` · **Node:** `ux` · **Attempt:** `1`  
-**Date:** 2026-11-22 · **Termination owner:** root director  
-**Status:** Round 1 accepted by the root director; Round 2 source integration and local checks complete; Round 3 independent corrections complete, exact-source browser acceptance pending.
+**Date:** 2026-11-21 (America/New_York; run identifier uses UTC) · **Termination owner:** root director
+**Status:** Round 1 accepted by the root director; Round 2 source integration and local checks complete; Round 3 accepted for the shared-canvas scope after exact-source Linux/Windows and browser verification. See VALIDATION.md for remaining coverage limits.
 
 ## 1. Product decision
 
@@ -35,7 +35,7 @@ World X/Y coordinates are presentation units, not metres. CSS pixels describe sc
 
 The integrated layout uses a `1120×760` company footprint with a 48×48 company marker at its upper-left. The company title begins after that marker. Native office content is fitted into a rectangle inset by 32 units horizontally, 92 at the top and 76 at the bottom. This leaves a readable header and a footer of actual work actions. These are implementation parameters to validate on the two laptop viewports, not physical dimensions or immutable product limits.
 
-The world can continue in every direction, but rendering and saved layout remain bounded. At this audit, the existing DOM scene caps rich nodes at 240, visible threads at 160, and canvas panels at 48. New GPU geometry must preserve equivalent bounded behavior and must not turn hidden records into a permission mechanism. [Scene budgets](../../desktop-shell/src/renderer/freeflow/scene.ts) · [panel bounds](../../desktop-shell/src/renderer/freeflow/workspace.ts)
+The world can continue in every direction, but rendering and saved layout remain bounded. At this audit, the existing DOM scene caps rich nodes at 240, visible threads at 160, and canvas panels at 48. At most 24 companies receive complete detailed plans near the camera; remaining companies use bounded footprint proxies. Canonical IDs remain stable, but adding/removing an earlier company in the presentation ordering can move later company anchors. Persisted popup positions use a separate layout store. New GPU geometry must preserve equivalent bounded behavior and must not turn hidden records into a permission mechanism. [Scene budgets](../../desktop-shell/src/renderer/freeflow/scene.ts) · [panel bounds](../../desktop-shell/src/renderer/freeflow/workspace.ts)
 
 ### Visual hierarchy
 
@@ -61,9 +61,9 @@ Donna is a movable conversation popup with current company/department/employee s
 
 The crew surface shows Donna, company/office assistants and department coordinators from native identities. Missing configuration stays visible. Employee definitions are not represented as running processes; activity comes from actual receipts or jobs. Connections and credentials remain in host-native controls, never new token fields on the canvas.
 
-## 4. Complete owner workflow map
+## 4. Owner workflow coverage and existing entry points
 
-This table maps the intended canvas entry to existing native surfaces. It does not claim that every new inline button has passed acceptance.
+This table maps the intended canvas entry to existing native surfaces. It is a coverage map, not certification that every UI/backend workflow has been exercised. This canvas pass directly targets company creation, Donna drafts and movement, company Ownership, camera/navigation, setup flow and the Compute command boundary. Cloud connections, visitor flows, downloads, installations and expert routes retain their separate product evidence and host capability limits; opening their entry points is not proof of executing those workflows.
 
 | Owner goal | Discoverable canvas entry | Existing behavior to retain | Required evidence / guard |
 | --- | --- | --- | --- |
@@ -74,13 +74,13 @@ This table maps the intended canvas entry to existing native surfaces. It does n
 | Hire, reuse and manage employees | Company footer Hire / People popup | Existing skill-linked hire and employee controls | Hiring saves a definition; paid work and host permissions remain separate. |
 | Coordinate Donna and sub-Donnas | Floating Donna / crew surface | Scoped conversation, goal draft, recorded-authority actions | Exact actor and scope shown; no invented assistant IDs or implicit access transfer. |
 | Share work with visiting employees | People & access / existing supported connection surface | Existing authenticated invitation and restricted visitor paths | Role, company and expiry explicit. Masking follows restricted data projection. VS Code capability gaps are disclosed. |
-| Assign work and ownership | Employee / board inspector; company Ownership action | Employee authority editor; board ownership; People & ownership | Company-only Ownership now routes to the company People & ownership surface; actual browser scope verification remains pending. |
+| Assign work and ownership | Employee / board inspector; company Ownership action | Employee authority editor; board ownership; People & ownership | Company-only Ownership now routes to the company People & ownership surface; actual browser scope verification passed in the final receipt, including 11 canonical people and retained Donna draft. |
 | Track a roadmap | Company footer Roadmap | Native timeline, milestone/goal ownership and evidence | Current company remains visible; no invented dates, progress or completion. |
 | Use a whiteboard | Company footer Whiteboard / board marker | Existing nodes, links, task references and owner forms | Same saved board identity; existing drafts survive popup movement. |
 | Inspect organizational flow | People & ownership / hierarchy popup | Actual company/department hierarchy and shared service contracts | Organizational edges, service relationships and authority grants remain distinguishable. |
 | Run and inspect work | Jobs / Donna / native queue popup | Bounded queue, receipts, pause/cancel and job details | Definitions, queued work and running work are separate states. Lost acknowledgement is not auto-retried. |
 | Connect desktop, website, SSH or VPS | Connections / Setup flow | Existing parent-native connection commands | Connection state and capability checks are truthful. An SSH banner is not GPU proof. |
-| Grant owner host control | Compute popup → manual/auto/God mode | Current-revision grants, attributed host script, revoke, inspect and Stop managed host work | Native owner action; no implicit rental, job, budget change or platform-approval bypass. |
+| Grant owner host control | Compute popup → manual/auto/God mode | Current-revision grants, attributed host script, revoke, inspect and Stop managed host work | Owner-authenticated runtime and its OS user execute host jobs. Company/employee scopes supply policy and attribution, not independent tenant or physical-host authority. No implicit rental, job, budget change or platform-approval bypass. |
 | Prepare environments and share models | Compute popup → maintained environment / resources | Durable environment proof, pinned installed digest, scoped model grants, explicit downloads | Company hierarchy does not silently enlarge sharing. An installed model is not proof of a successful inference. |
 | Plan expert/model routes | Compute popup → resource routes | 1–4 expert jobs, optional aggregator and provenance | Explicit bounded execution; no claim of trained MoE weights. |
 | Install supported design tools | Compute popup → design applications | Catalog, dependency plan, explicit install and proof inspection | Missing/root-required prerequisites remain blockers; no fake installed status. |
@@ -102,8 +102,8 @@ The root director owns assignments, budgets, source integration and termination.
 | Round | Assigned work | Output and acceptance | State at this handoff |
 | --- | --- | --- | --- |
 | **1 — Evidence and workflow design** | UX node reads the project skill, real screenshots, current handlers and primary UX sources. Root resolves the latest owner direction. | This plan plus `UX_REVIEW.md`, workflow matrix, baseline provenance and explicit unresolved questions. Director accepts the brief before promoting implementation claims. | Accepted by the root director. Latest no-table brief governs implementation. |
-| **2 — Claude/build integration** | Root coordinates real Claude Sonnet work, native layout and scene adapters, CSS, preserved DOM controls, packaging and focused regressions. | Exact source hash, provider authoring receipt/cost when available, build output, deterministic geometry/camera results, shared-renderer asset hashes and handler tests. Repair only observed discrepancies. | Integrated. Renderer build, 162 Freeflow checks and 129 VS Code checks passed locally. Live GPU/browser evidence remains the Round 3 gate. |
-| **3 — Independent visual and stress acceptance** | A reviewer independent of each changed component checks exact-source screenshots and functional receipts; a separate verification path exercises edge cases. | Laptop screenshots, actual browser renderer/backend receipt, permission/draft/camera tests, forced fallback/reduced-motion review, installed-platform evidence where affected, findings and bounded corrections. Root closes the gate only after re-verification. | Independent code review found and corrected extreme-grid placement, distant-company resource allocation and terminal GPU cleanup. Exact-source browser artifacts and visual review are pending. |
+| **2 — Claude/build integration** | Root coordinates real Claude Sonnet work, native layout and scene adapters, CSS, preserved DOM controls, packaging and focused regressions. | Exact source hash, provider authoring receipt/cost when available, build output, deterministic geometry/camera results, shared-renderer asset hashes and handler tests. Repair only observed discrepancies. | Integrated. Renderer build, 167 Freeflow checks and 129 VS Code checks passed locally after the grouped correction. Final source 887938c also passed the separate Round 3 browser/installed-product gates. |
+| **3 — Independent visual and stress acceptance** | A reviewer independent of each changed component checks exact-source screenshots and functional receipts; a separate verification path exercises edge cases. | Laptop screenshots, actual browser renderer/backend receipt, permission/draft/camera tests, forced fallback/reduced-motion review, installed-platform evidence where affected, findings and bounded corrections. Root closes the gate only after re-verification. | Independent code review corrected extreme-grid placement, distant-company resource allocation and terminal GPU cleanup. Accepted on source 887938c: 13 real-browser checks, 11 screenshots, 11 installed Linux checks and nine installed Windows checks. Software WebGL2, actual recovery, ownership, drafts and Arrange passed. Earlier failures and remaining coverage limits are retained in VALIDATION.md. |
 
 ### Round 2 closure checklist
 
@@ -131,9 +131,9 @@ The root director owns assignments, budgets, source integration and termination.
 
 Performance review should record browser/renderer, platform, viewport, device-pixel ratio, scene size, observed frame timing and context failures. A target such as a responsive laptop interaction is a goal; this plan does not claim measured frame rate or real Vast GPU operation.
 
-## 7. Provenance, budget and continuation
+## 7. Provenance, budget and original delegation
 
-This node owns only `PLAN.md` and `UX_REVIEW.md` for the planning task. Earlier CSS ownership has returned to root. The director contract bounds this attempt to 20,000 tokens, 30 tool calls and 35 minutes, subject to remaining run budget. No paid provider calls or external writes are authorized for this node. Reading public primary sources and writing these repository documents are within scope.
+The following paragraphs preserve the original UX-node handoff contract. Current director acceptance is recorded in [VALIDATION.md](VALIDATION.md); all three rounds have closed for the stated scope. The planning node originally owned only `PLAN.md` and `UX_REVIEW.md`. Earlier CSS ownership has returned to root. The director contract bounds this attempt to 20,000 tokens, 30 tool calls and 35 minutes, subject to remaining run budget. No paid provider calls or external writes are authorized for this node. Reading public primary sources and writing these repository documents are within scope.
 
 The normalized delegation transcription has SHA-256 `4be66d7e788307c813bb442e967cf16ed4d5b28bbe37f96e51ba4c8c96faa94e`. It records this run/node/attempt, owned paths, limits, root termination, no external writes and the next input: exact-source screenshot/acceptance artifacts. It is a documentation digest, not a runtime-signed approval. Skill and baseline hashes are recorded in the companion review.
 
@@ -141,7 +141,7 @@ After this handoff the UX node enters `waiting`. It resumes only when the direct
 
 ## Primary sources
 
-All links were opened or retrieved on 2026-11-22. Findings use paraphrases and limited source descriptions; no full books were copied.
+All links were opened or retrieved on 2026-11-22 UTC (2026-11-21 in the owner's America/New_York time zone). Findings use paraphrases and limited source descriptions; no full books were copied.
 
 - **S1:** Don Norman, [Preface: Design of Everyday Things, Revised Edition](https://jnd.org/preface-design-of-everyday-things-revised-edition/), author-published preface, 2013.
 - **S2:** Don Norman, [Living with Complexity](https://jnd.org/books/living-with-complexity/), author's book overview and contents. Complete book not reviewed.

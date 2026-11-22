@@ -2,6 +2,10 @@
 
 The VS Code extension now owns the full desktop office canvas and can launch its portable backend without Electron as a desktop application. Companies, departments, staff, blueprints, Donna, projects, models and management forms use the same compiled renderer and native core. The activity-bar view is an entry point; it opens the office in a full editor tab.
 
+## Current blueprint design branch
+
+The later `design/infinite-blueprint-canvas` source removes the physical table presentation and uses one continuous blueprint plane. Canonical company floorplans, flat employee circles, optional 3D partitions and live popups use the same packaged renderer. The [three-round design/build plan](../design/endless-blueprint/PLAN.md) and [verification record](../design/endless-blueprint/VALIDATION.md) describe this newer source. The published preview and its receipts below remain tied to their original commit.
+
 ## Choose where the workspace runs
 
 | Entry | Runtime location | Editor closes | Prerequisites |

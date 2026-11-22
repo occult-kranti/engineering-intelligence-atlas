@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "run": 44980854371,
+  "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44980854371",
+  "head": "007084fbb570d7c94f0e0375ef8f06ff960097a9",
+  "workflowConclusion": "failure",
+  "platforms": {
+    "linux": {
+      "installedReceipt": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/linux/artifact/.work/installed-smoke/receipt.json",
+      "installedStatus": "passed",
+      "installedCheckCount": 11,
+      "installedChecks": [
+        "VSIX installed separately from test host and source",
+        "Installed archive contains runtime files and no credential-shaped material",
+        "Installed extension activated in real VS Code extension host",
+        "All contributed Atlas commands registered",
+        "Open Office command completed; disconnected refresh and disconnect stayed offline",
+        "Installed native runtime and shared infinite-canvas asset manifests verified",
+        "Installed Electron Node child started native workbench; reads stayed on owned loopback with workers paused",
+        "Disconnect cleared editor state; awaited deactivation stopped its owned runtime",
+        "Installed Electron \u2192 tmux host runner completed one bounded printf job under its native company assistant; replay executed once and policy returned off",
+        "Installed Electron \u2192 dedicated tmux \u2192 native daemon survives detach and reconnect; exact supervisor cleanup verified",
+        "Error display removes credential-shaped text"
+      ],
+      "nodeSuiteCounters": [
+        [
+          "tests",
+          "129"
+        ],
+        [
+          "pass",
+          "129"
+        ],
+        [
+          "fail",
+          "0"
+        ],
+        [
+          "skipped",
+          "0"
+        ],
+        [
+          "tests",
+          "129"
+        ],
+        [
+          "pass",
+          "129"
+        ],
+        [
+          "fail",
+          "0"
+        ],
+        [
+          "skipped",
+          "0"
+        ]
+      ],
+      "unitRunsRepeatedByPrepublish": true,
+      "artifactSha256": "53f2307c48c98097893f98929bf3c461aace769db74bea912e859d60506d0f7e",
+      "artifactDigestMatches": true,
+      "artifact": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/linux/artifact.zip",
+      "log": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/linux/job.log",
+      "logSha256": "2462a08ff7e072a503175735e0602551160b766672361767e8649f3e47712b31",
+      "receiptSha256": "e3a0e7a87e7d26704961d105bba478be92f482b6537762d0592eaecf7ffd9987",
+      "network": {
+        "networkRequests": 27,
+        "loopbackRequests": 27,
+        "externalRequests": 0,
+        "blockedRequests": 0
+      },
+      "verifiedPersistent": true,
+      "verifiedPersistentHost": true,
+      "runtime": {
+        "execution": "headless",
+        "workersPaused": true,
+        "hostPolicy": "off",
+        "workbench": true,
+        "configuredProviderCount": 0
+      },
+      "persistentHost": {
+        "canonicalAssistant": true,
+        "exactCompanyMembership": true,
+        "ownerModeStartedNoJobs": true,
+        "completed": true,
+        "exitCode": 0,
+        "outputBytes": 29,
+        "stableReplay": true,
+        "singleExecution": true,
+        "shellElectronFlagScrubbed": true,
+        "workersPaused": true,
+        "policyRestored": "off"
+      },
+      "vsixSha256": "e3898eff0ea8627bd0aea8ff18449363a26241777c19ea9f097af685fe6a9fc3",
+      "vscodeVersion": "1.147.0",
+      "extensionVersion": "0.9.0",
+      "package": {
+        "platform": "linux",
+        "arch": "x64",
+        "runtimeFiles": 133,
+        "canvasFiles": 22,
+        "runtimeManifestSha256": "0a12d21f5d56726fd2e4a4fe470bf24854bb86f4ef581a62b963c79e1ea86860",
+        "canvasManifestSha256": "6e841e11cfe2cc37a6d94a3d1867fd7bce35d5a466be76d243cdbeb72bf6cc1c"
+      }
+    },
+    "windows": {
+      "installedReceipt": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/windows/artifact/.work/installed-smoke/receipt.json",
+      "installedStatus": "passed",
+      "installedCheckCount": 9,
+      "installedChecks": [
+        "VSIX installed separately from test host and source",
+        "Installed archive contains runtime files and no credential-shaped material",
+        "Installed extension activated in real VS Code extension host",
+        "All contributed Atlas commands registered",
+        "Open Office command completed; disconnected refresh and disconnect stayed offline",
+        "Installed native runtime and shared infinite-canvas asset manifests verified",
+        "Installed Electron Node child started native workbench; reads stayed on owned loopback with workers paused",
+        "Disconnect cleared editor state; awaited deactivation stopped its owned runtime",
+        "Error display removes credential-shaped text"
+      ],
+      "nodeSuiteCounters": [
+        [
+          "tests",
+          "129"
+        ],
+        [
+          "pass",
+          "122"
+        ],
+        [
+          "fail",
+          "0"
+        ],
+        [
+          "skipped",
+          "7"
+        ],
+        [
+          "tests",
+          "129"
+        ],
+        [
+          "pass",
+          "122"
+        ],
+        [
+          "fail",
+          "0"
+        ],
+        [
+          "skipped",
+          "7"
+        ]
+      ],
+      "unitRunsRepeatedByPrepublish": true,
+      "artifactSha256": "75f90c7581c64acff0e19328f5da2cc771458b29cb259195252d98fdc8ed552f",
+      "artifactDigestMatches": true,
+      "artifact": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/windows/artifact.zip",
+      "log": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/windows/job.log",
+      "logSha256": "f9a7aaf050af5f30f943572ac136128715872c2457bb5807fb5ffdf7c05e5849",
+      "receiptSha256": "68a5d082abae0be3151483cebfd59a5a2b4dbb8efdeb1508ce2fc91dd612802f",
+      "network": {
+        "networkRequests": 5,
+        "loopbackRequests": 5,
+        "externalRequests": 0,
+        "blockedRequests": 0
+      },
+      "verifiedPersistent": false,
+      "verifiedPersistentHost": false,
+      "runtime": {
+        "execution": "headless",
+        "workersPaused": true,
+        "hostPolicy": "off",
+        "workbench": true,
+        "configuredProviderCount": 0
+      },
+      "persistentHost": null,
+      "vsixSha256": "9a6ba08cdfcec161831dda27605df1aabbb431e1792df56b38388b1ee1dd7a93",
+      "vscodeVersion": "1.147.0",
+      "extensionVersion": "0.9.0",
+      "package": {
+        "platform": "win32",
+        "arch": "x64",
+        "runtimeFiles": 133,
+        "canvasFiles": 22,
+        "runtimeManifestSha256": "07c63033e5baffc10f2b2228a4ad97175a427afefc296a971b238467260bd486",
+        "canvasManifestSha256": "391f51144afd5405ecf1b901973351ad1c4c0a824be14df12e636b9b833c3c2b"
+      }
+    }
+  },
+  "canvas": {
+    "receipt": "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/linux/artifact/.work/canvas-smoke/receipt.json",
+    "receiptSha256": "d1e49b2aba899cfaeafcbea85e0b64889b091b1dbfdb729401711722d09e36f5",
+    "status": "failed",
+    "failedStage": "camera-and-overlay",
+    "error": "locator.click: Timeout 15000ms exceeded.\nCall log:\n  - waiting for locator('.canvas-palette:not([hidden])').locator('button[data-canvas-open=\"donna\"]')\n    - locator resolved to <button type=\"button\" data-canvas-open=\"donna\" class=\"canvas-search-result\" title=\"Open Donna \u00b7 conversation\" aria-label=\"Open Donna \u00b7 conversation\">\u2026</button>\n  - attempting click action\n    2 \u00d7 waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"ff-node-paper\" data-heat-text=\"No comparable data\">\u2026</div> from <div id=\"freeflow-host\" class=\"ff-surface-host\">\u2026</div> subtree intercepts pointer events\n    - retrying click action\n    - waiting 20ms\n    2 \u00d7 waiting for element to be visible, enabled and stable\n      - element is visible, enabled and stable\n      - scrolling into view if needed\n      - done scrolling\n      - <div class=\"ff-node-paper\" data-heat-text=\"No comparable data\">\u2026</div> from <div id=\"freeflow-host\" class=\"ff-surface-host\">\u2026</div> subtree intercepts pointer events\n    - retrying click action\n      - waiting 100ms\n    29 \u00d7 waiting for element to be visible, enabled and stable\n       - element is visible, enabled and stable\n       - scrolling into view if needed\n       - done scrolling\n       - <div class=\"ff-node-paper\" data-heat-text=\"No comparable data\">\u2026</div> from <div id=\"freeflow-host\" class=\"ff-surface-host\">\u2026</div> subtree intercepts pointer events\n     - retrying click action\n       - waiting 500ms\n",
+    "webglVerified": true,
+    "renderer": "ANGLE/SwiftShader (software)",
+    "checksCompleted": 2,
+    "screenshots": [
+      "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/linux/artifact/.work/canvas-smoke/01-native-office.png",
+      "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/linux/artifact/.work/canvas-smoke/10-company-relief-1440x900.png",
+      "/workspace/scratch/3cd2e045f9b8/release-candidates/laptop-blueprint-20261122/ci-007084f/linux/artifact/.work/canvas-smoke/failure.png"
+    ],
+    "providerCalls": 0,
+    "externalRequests": [],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "rpcFailures": [],
+    "companyViews": [
+      {
+        "label": "1440\u00d7900",
+        "topGraphics": "webgl",
+        "reliefGraphics": "webgl",
+        "reliefInstances": 69,
+        "tiltDegrees": 42,
+        "visibleRooms": [
+          {
+            "id": "universe:blueprint:room:company-369029d9-398a-43a8-806e-9eb40337688f:office-acfbcf66-4be6-4470-8fe1-28b3787fabd5:room-3e03ea8d-e499-4e14-9c4e-69b2a4303261",
+            "label": "room, Director office, Room, Unassigned department, status saved, No comparable data, 7 desks \u00b7 1 whiteboards"
+          },
+          {
+            "id": "universe:blueprint:room:company-369029d9-398a-43a8-806e-9eb40337688f:office-acfbcf66-4be6-4470-8fe1-28b3787fabd5:room-a0807abb-5c15-4222-8c4e-54aa4b74968c",
+            "label": "room, Engineering, Room, Engineering, status saved, No comparable data, 1 desks"
+          },
+          {
+            "id": "universe:blueprint:room:company-369029d9-398a-43a8-806e-9eb40337688f:office-acfbcf66-4be6-4470-8fe1-28b3787fabd5:room-f6656f2d-dbed-49e8-a1e1-8b932c811a5e",
+            "label": "room, Research, Room, Research, status saved, No comparable data, 1 desks"
+          },
+          {
+            "id": "universe:blueprint:room:company-5a5f1308-5d00-46a7-af0b-9e45192f0eda:office-4a4a6c9d-684e-4872-aab9-b80ea27bac88:room-1d59aff7-3d7a-4056-ac62-8ad17046ba00",
+            "label": "room, Director office, Room, Unassigned department, status saved, No comparable data, 7 desks \u00b7 1 whiteboards"
+          },
+          {
+            "id": "universe:blueprint:room:company-5a5f1308-5d00-46a7-af0b-9e45192f0eda:office-4a4a6c9d-684e-4872-aab9-b80ea27bac88:room-4883903b-68a7-4d9f-95a5-abdb75436ff9",
+            "label": "room, Research, Room, Research, status saved, No comparable data, 1 desks"
+          },
+          {
+            "id": "universe:blueprint:room:company-5a5f1308-5d00-46a7-af0b-9e45192f0eda:office-4a4a6c9d-684e-4872-aab9-b80ea27bac88:room-bab5c168-427c-49ab-bd57-de1c7f90f8fe",
+            "label": "room, Engineering, Room, Engineering, status saved, No comparable data, 1 desks"
+          }
+        ],
+        "closedSurfaces": [],
+        "webglVerified": true
+      }
+    ],
+    "graphics": [
+      {
+        "label": "1440\u00d7900 default top view",
+        "state": "webgl",
+        "instances": 56,
+        "drawCalls": 3,
+        "triangles": 672
+      },
+      {
+        "label": "1440\u00d7900 explicit company top view",
+        "state": "webgl",
+        "instances": 37,
+        "drawCalls": 3,
+        "triangles": 444
+      },
+      {
+        "label": "1440\u00d7900 explicit company relief",
+        "state": "webgl",
+        "instances": 69,
+        "drawCalls": 3,
+        "triangles": 828
+      }
+    ],
+    "notReached": [
+      "Ownership popup frame assertions",
+      "1366 viewport assertions",
+      "Arrange controls",
+      "real context recovery"
+    ]
+  }
+}
