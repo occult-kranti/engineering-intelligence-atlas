@@ -2,13 +2,19 @@
 
 ## Active delivery: 0.9 primary VS Code workspace
 
-The VS Code extension package metadata is now **0.9.0**. This section describes
-the current source and packaging work; it is not a release-publication receipt.
+The VS Code extension package metadata is now **0.9.0**. The verified product
+source is **`7766c91c6d6c3481b419623f1149a291d2da439d`**. The
+[product CI run](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262)
+retains the exact platform checks and canvas evidence. The prepared
+[0.9 preview draft](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/untagged-9238e2392bd6cf8af795)
+contains both platform packages, the verification archive and checksums.
+**Public release publication is pending owner approval.** Draft access requires
+the authorized GitHub account; these assets are not a published release.
 The earlier release sections below retain their historical evidence. Do not apply
 their test counts, package hashes or deployed-site claims to the 0.9 source tree.
 
-**Final installed Linux and Windows package CI is pending. The owner's Vast
-instance remains stopped.** No real GPU diagnostic, model-weight loading,
+**Installed Linux/Windows and shared-canvas CI passed. The owner's Vast instance
+remains stopped.** No real GPU diagnostic, model-weight loading,
 design-software installation or ChatGPT MCP registration is established by this
 source delivery. Resume compute only on the owner's request, then verify current
 connection details and the actual GPU/runtime before choosing workloads.
@@ -139,10 +145,11 @@ retry. Exact control credentials are removed from returned text; identity
 collisions are rejected rather than silently rewriting IDs. Persist only bounded
 view geometry/theme state, never form credentials, grants or command drafts.
 
-| Remaining acceptance | Status for this source delivery |
+| Acceptance | Status for this source delivery |
 | --- | --- |
-| Installed Linux VSIX, packaged backend and persistent tmux workflow | Final CI pending |
-| Installed Windows VSIX and packaged native/backend lifecycle | Final CI pending |
+| Installed Linux VSIX, packaged backend and persistent tmux/host workflow | 11 checks passed at `7766c91`; 129 extension tests passed |
+| Installed Windows VSIX and packaged native/backend lifecycle | 9 checks passed at `7766c91`; 122 extension tests passed, 7 Linux-only cases skipped |
+| Actual shared canvas, native company creation and movable setup popup | 5 real-browser checks passed at 1440 × 900 with sandboxed Chrome; zero page/CSP/console/RPC errors or external/provider work |
 | Actual Vast GPU/driver/model workload and long-run memory behavior | Not performed; keep the instance stopped |
 | Actual application installation, desktop/display and GPU rendering | Not performed |
 | ChatGPT account MCP registration and end-to-end tool call | Not established |
@@ -150,9 +157,12 @@ view geometry/theme state, never form credentials, grants or command drafts.
 The new local tests cover native/HTTP/stdio managed paths, resource revocation and
 digest checks, duplicate/uncertain receipts, policy-write faults, legacy route
 gates, stalled client I/O and repeated lifecycle cleanup. They do not prove
-universal absence of memory leaks or replace the installed Linux/Windows gates.
-Record the exact tested commit, final CI jobs and resulting package digests before
-claiming release acceptance; retain historical receipts unchanged.
+universal absence of memory leaks. Product run
+[44974716262](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262)
+passed both installed platforms and the separate browser gate. Runtime/container
+run [44973271977](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44973271977)
+passed at `f8ba6c5`; runtime source is unchanged in the verified product commit.
+Retain historical receipts unchanged and match package digests to their release.
 
 ## Product contract
 

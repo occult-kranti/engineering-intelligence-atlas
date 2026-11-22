@@ -1,8 +1,12 @@
 # Daftar operations control
 
 This guide describes the current source controls and their integration into the
-primary VS Code product. Final installed Linux/Windows package CI remains pending
-for this source revision. The owner's Vast instance remains stopped. No real GPU
+primary VS Code product. Installed Linux/Windows package acceptance and the shared
+canvas passed at `7766c91`; see the
+[successful product CI](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262)
+and [current handoff](../HANDOFF.md). The preview packages remain in an unpublished
+release draft pending approval for public publication.
+The owner's Vast instance remains stopped. No real GPU
 workload, software installation or ChatGPT MCP connection is claimed here.
 
 ## Control and evidence flow

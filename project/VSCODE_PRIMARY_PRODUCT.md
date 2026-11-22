@@ -58,9 +58,14 @@ one-shot remains immediate. The rolling private activity journal is bounded to
 by new events. The native job/authority/budget ledger remains authoritative.
 Readiness reports do not prove a successful GPU workload. See the
 [operations control guide](OPERATIONS_CONTROL.md) for the control-flow diagram,
-staged setup, provenance, cleanup and degraded-logging behavior. Final installed
-Linux/Windows CI remains pending; these source controls do not establish a real
-Vast workload, application installation or ChatGPT connection.
+staged setup, provenance, cleanup and degraded-logging behavior. Installed
+Linux/Windows acceptance and the shared-canvas browser gate passed at `7766c91`;
+[product CI](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262)
+preserves exact results. Both platform VSIXs, verification evidence and checksums
+are prepared in the [private release draft](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/untagged-9238e2392bd6cf8af795);
+public publication is pending owner approval.
+These controls do not establish a real Vast workload, application installation or
+ChatGPT connection.
 
 ## Model ownership and sharing
 
@@ -118,7 +123,7 @@ npm --prefix vscode-extension test
 npm --prefix vscode-extension run package
 ```
 
-The runtime package is platform-specific, contains the matching Rust binary and bundled pure Node modules, and does not ship Electron or npm dependencies as a runtime requirement. The installed smoke gate uses a fresh VS Code profile, verifies package manifests, starts the actual packaged backend through Electron's Node mode, checks authenticated readiness and paused workers, and proves owned shutdown. Linux additionally verifies the persistent tmux path.
+The runtime package is platform-specific, contains the matching Rust binary and bundled pure Node modules, and does not ship Electron or npm dependencies as a runtime requirement. The preview provides Linux x64 and Windows x64 packages. The Linux native core requires glibc 2.34 or newer and `libgcc_s.so.1`; tmux persistence additionally requires tmux on that host. The installed smoke gate uses a fresh VS Code profile, verifies package manifests, starts the actual packaged backend through Electron's Node mode, checks authenticated readiness and paused workers, and proves owned shutdown. Linux additionally verifies the persistent tmux and actual host-command path. The successful product CI retains the separate canvas receipt and screenshots.
 
 The headless workflow covers actual Rust/HTTP/stdio MCP and required real tmux acceptance. Synthetic provider adapters keep these checks independent of API billing. Fault tests cover stale CAS, duplicate IDs, revocation, digest changes, unknown launch outcomes, before/after-rename persistence failure, hung readers, cancellation and repeated open/close cycles.
 
