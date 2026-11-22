@@ -1,6 +1,6 @@
 'use strict';
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm');
-const {METHODS}=require('../src/workbench-panel');
+const {METHODS,SETUP_FLOW_MARKUP}=require('../src/workbench-panel');
 const source=fs.readFileSync(path.join(__dirname,'../media/workbench-bridge.js'),'utf8');
 class Target{constructor(){this.listeners=new Map();this.dataset={};this.textContent='';}addEventListener(name,fn){if(!this.listeners.has(name))this.listeners.set(name,new Set());this.listeners.get(name).add(fn);}removeEventListener(name,fn){this.listeners.get(name)?.delete(fn);}emit(name,value={}){for(const fn of [...this.listeners.get(name)||[]])fn(value);}}
 function harness(previous,connection={connected:true,kind:'runtime',connectionEpoch:1}){
@@ -47,4 +47,51 @@ test('shared cloud chat is exposed only for the authenticated cloud transport',a
   const cloud=harness(undefined,{connected:true,kind:'cloud',connectionEpoch:2});assert.equal(cloud.bridge.transport,'cloud-browser');assert.equal(cloud.bridge.rendererHost,'vscode');
   const reply=cloud.bridge.sendCloudChat({scope:{kind:'company',id:'c1'},message:'Hello',idempotencyKey:'chat1'});const request=cloud.sent.find(row=>row.method==='sendCloudChat');
   cloud.reply({type:'daftar:response',epoch:1,id:request.id,ok:true,value:{ok:true,reply:'Saved reply'}});assert.equal((await reply).reply,'Saved reply');cloud.dispose();
+});
+
+async function domHarness(t,connection={connected:false,configured:false,kind:'runtime',connectionEpoch:1}){
+  const {JSDOM}=require('../../desktop-shell/node_modules/jsdom');
+  const dom=new JSDOM(`<!doctype html><html><body><main id="canvas"><button id="canvas-focus">Canvas focus</button></main><aside id="workbench-controls"><span id="workbench-connection"></span><button id="workbench-connect">Connections</button><button id="workbench-compute">Compute</button><button id="workbench-setup" aria-expanded="false">Setup flow</button></aside>${SETUP_FLOW_MARKUP}</body></html>`,{runScripts:'outside-only',url:'https://webview.invalid/'});
+  const {window}=dom;await new Promise(resolve=>window.document.addEventListener('DOMContentLoaded',resolve,{once:true}));
+  const sent=[],saved=[];window.TextEncoder=TextEncoder;window.acquireVsCodeApi=()=>({postMessage:value=>sent.push(JSON.parse(JSON.stringify(value))),getState:()=>undefined,setState:value=>saved.push(value)});
+  Object.defineProperties(window,{innerWidth:{value:1440,writable:true},innerHeight:{value:900,writable:true}});
+  window.__DAFTAR_WORKBENCH__={version:1,epoch:1,connection,methods:METHODS,deadlineMs:1000,maxPending:32};
+  window.eval(source);t.after(()=>{window.dispatchEvent(new window.Event('pagehide'));window.close();});
+  const document=window.document,panel=document.getElementById('workbench-setup-panel');panel.getBoundingClientRect=()=>({width:420,height:760});
+  return{window,document,panel,sent,saved,trigger:document.getElementById('workbench-setup'),reply:value=>window.dispatchEvent(new window.MessageEvent('message',{data:value})),flush:()=>new Promise(resolve=>setImmediate(resolve))};
+}
+test('setup is one nonmodal canvas popup, truthful offline, and returns keyboard focus',async t=>{
+  const h=await domHarness(t);h.trigger.focus();h.trigger.click();
+  assert.equal(h.panel.hidden,false);assert.equal(h.panel.getAttribute('aria-modal'),'false');assert.equal(h.document.activeElement,h.panel);assert.equal(h.trigger.getAttribute('aria-expanded'),'true');
+  assert.equal(h.panel.querySelectorAll('ol>li').length,6);assert.equal(h.document.querySelectorAll('[role=dialog]').length,1);assert.equal(h.panel.querySelectorAll('iframe,input,form').length,0);assert.match(h.document.getElementById('workbench-setup-status').textContent,/Not connected/);
+  assert.equal(h.panel.querySelector('[data-setup-connected]').disabled,true);assert.equal(h.panel.querySelector('[data-setup-runtime]').disabled,true);assert.equal(h.panel.querySelector('[data-setup-action=connectRuntimePrompt]').disabled,false);
+  assert.equal(h.sent.filter(row=>row.type==='daftar:request').length,0);
+  h.panel.dispatchEvent(new h.window.KeyboardEvent('keydown',{key:'Escape',bubbles:true}));assert.equal(h.panel.hidden,true);assert.equal(h.document.activeElement,h.trigger);
+  h.trigger.click();assert.equal(h.document.querySelectorAll('[role=dialog]').length,1);h.document.getElementById('workbench-setup-close').click();assert.equal(h.panel.hidden,true);assert.equal(h.saved.length,0);
+});
+test('setup movement is bounded, keyboard accessible and leaves the canvas usable',async t=>{
+  const h=await domHarness(t);h.trigger.click();const move=h.document.getElementById('workbench-setup-move');move.focus();
+  const before=Number.parseFloat(h.panel.style.left);move.dispatchEvent(new h.window.KeyboardEvent('keydown',{key:'ArrowLeft',bubbles:true}));assert.equal(Number.parseFloat(h.panel.style.left),before-16);
+  move.dispatchEvent(new h.window.KeyboardEvent('keydown',{key:'ArrowRight',shiftKey:true,bubbles:true}));assert.ok(Number.parseFloat(h.panel.style.left)<=1010);
+  const pointer=(target,type,values)=>{const event=new h.window.Event(type,{bubbles:true,cancelable:true});Object.assign(event,values);target.dispatchEvent(event);};
+  pointer(move,'pointerdown',{button:0,pointerId:2,clientX:500,clientY:150});pointer(h.window,'pointermove',{pointerId:2,clientX:-10000,clientY:-10000});assert.equal(h.panel.style.left,'10px');assert.equal(h.panel.style.top,'10px');pointer(h.window,'pointerup',{pointerId:2});
+  pointer(h.window,'pointermove',{pointerId:2,clientX:1200,clientY:600});assert.equal(h.panel.style.left,'10px');
+  h.document.getElementById('canvas-focus').focus();assert.equal(h.document.activeElement.id,'canvas-focus');
+  const css=fs.readFileSync(path.join(__dirname,'../media/workbench.css'),'utf8');assert.match(css,/@media\(prefers-reduced-motion:reduce\).*#workbench-setup-panel\{animation:none;transition:none\}/);assert.match(css,/max-height:min\(760px,calc\(100vh - 24px\)\)/);
+});
+test('setup actions use existing native methods and metadata refresh cannot duplicate a pending action',async t=>{
+  const h=await domHarness(t,{connected:true,kind:'runtime',connectionEpoch:1});h.trigger.click();
+  const buttons=[...h.panel.querySelectorAll('[data-setup-action]')];assert.equal(buttons.every(button=>!button.disabled),true);
+  for(const method of ['connectRuntimePrompt','startLocalRuntime','openComputeCenter','copyEditorPairing']){
+    const button=buttons.find(row=>row.dataset.setupAction===method);button.click();const call=h.sent.filter(row=>row.type==='daftar:request').at(-1);assert.equal(call.method,method);assert.deepEqual(call.args,[]);
+    const before=h.sent.length;h.reply({type:'daftar:connection',epoch:1,connection:{connected:true,kind:'runtime',connectionEpoch:1}});assert.equal(button.disabled,true);button.click();assert.equal(h.sent.length,before);
+    h.reply({type:'daftar:response',epoch:1,id:call.id,ok:true,value:{ok:true}});await h.flush();assert.equal(button.disabled,false);
+  }
+  assert.match(h.document.getElementById('workbench-setup-status').textContent,/ChatGPT is not connected/);
+  h.reply({type:'daftar:connection',epoch:1,connection:{connected:true,kind:'cloud',connectionEpoch:1,notice:'<img src=x onerror=alert(1)>'}});assert.equal(h.panel.querySelector('[data-setup-runtime]').disabled,true);assert.equal(h.panel.querySelector('[data-setup-connected]').disabled,false);assert.equal(h.document.querySelectorAll('img').length,0);assert.match(h.panel.textContent,/readiness has not been checked/);
+});
+test('setup disposal cancels native request and removes its event handlers',async t=>{
+  const h=await domHarness(t,{connected:true,kind:'runtime',connectionEpoch:1});h.trigger.click();h.panel.querySelector('[data-setup-action=openComputeCenter]').click();const call=h.sent.find(row=>row.method==='openComputeCenter');
+  h.window.dispatchEvent(new h.window.Event('pagehide'));await h.flush();assert.ok(h.sent.some(row=>row.type==='daftar:cancel'&&row.id===call.id));
+  const before=h.sent.length;h.panel.querySelector('[data-setup-action=connectRuntimePrompt]').click();h.trigger.click();assert.equal(h.sent.length,before);
 });

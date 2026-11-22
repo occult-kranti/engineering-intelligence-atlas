@@ -14,6 +14,8 @@ import { validateEnvironmentOperation } from './managed-environments-contract.mj
 import { validateResourceOperation } from './model-resources-contract.mjs';
 import { createDesignToolchain } from './design-toolchain.mjs';
 import { validateDesignToolchainOperation } from './design-toolchain-contract.mjs';
+import { createActivityJournal } from './activity-journal.mjs';
+import { validateActivityJournalOperation, ACTIVITY_OPERATIONS } from './activity-journal-contract.mjs';
 
 const require = createRequire(import.meta.url);
 const defaultRepoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -26,6 +28,10 @@ function publicWorkerStatus(worker) {
     activeJobId: typeof state.activeJobId === 'string' ? state.activeJobId : null,
     activeJobIds: Array.isArray(state.activeJobIds) ? state.activeJobIds : [],
     concurrency: state.concurrency ?? 1,
+    scheduling: Array.isArray(state.scheduling) ? state.scheduling.slice(0, 4).map(slot => ({
+      baseIntervalMs: slot.baseIntervalMs, maxIntervalMs: slot.maxIntervalMs, lastOutcome: slot.lastOutcome,
+      idlePolls: slot.idlePolls, errorPolls: slot.errorPolls, pollDelayMs: slot.pollDelayMs, nextPollAt: slot.nextPollAt,
+    })) : [],
     // Worker errors can contain private paths/provider details. Expose status only.
     lastError: state.lastError ? 'A worker operation needs review. Inspect the saved job evidence.' : null,
   };
@@ -64,6 +70,7 @@ export class RuntimeController {
       : { configured: false, mode: 'off', revision: 0, grants: [], jobs: [], capabilities: {} };
     return { ok: true, execution: 'headless', worker: publicWorkerStatus(this.worker),
       observer: this.office.observerStatus?.() ?? null,
+      activity: this.activity ? (await this.activity.status()).activity : null,
       cloud: this.cloudSync?.enabled === true ? this.cloudSync.status()
         : this.workbench?.cloudStatus() ?? this.cloudSync?.status() ?? { configured: false, connected: false, revision: null, error: null },
       host: { configured: host.configured === true, available: host.available === true, mode: host.mode, revision: host.revision,
@@ -124,6 +131,9 @@ export class RuntimeController {
   async designOperation(operation, input = {}) {
     return this.managedOperation('design', operation, input, validateDesignToolchainOperation);
   }
+  async activityOperation(operation, input = {}) {
+    return this.managedOperation('activity', operation, input, validateActivityJournalOperation);
+  }
 
   async managedOperation(service, operation, input, validate) {
     try {
@@ -132,7 +142,7 @@ export class RuntimeController {
       return await this[service][operation](validated);
     } catch (error) {
       if (error instanceof RuntimeError) throw error;
-      if (['ManagedEnvironmentError', 'ModelResourcesError', 'DesignToolchainError'].includes(error?.name) && /^[A-Z_]{1,80}$/.test(error.code)) {
+      if (['ManagedEnvironmentError', 'ModelResourcesError', 'DesignToolchainError', 'ActivityJournalError'].includes(error?.name) && /^[A-Z_]{1,80}$/.test(error.code)) {
         throw new RuntimeError(error.code, error.message, [400,403,404,409,413,429,503].includes(error.status) ? error.status : 503);
       }
       throw new RuntimeError('SERVICE_UNAVAILABLE', 'This managed operation could not be confirmed. Inspect its original receipt before repeating it.', 503);
@@ -140,7 +150,7 @@ export class RuntimeController {
   }
 
   async hostOperation(operation, input = {}) {
-    if (!this.hostControl || !['status', 'configure', 'submit', 'approve', 'cancel', 'inspect', 'stopAll'].includes(operation)) {
+    if (!this.hostControl || !['status', 'configure', 'godMode', 'submit', 'approve', 'cancel', 'inspect', 'stopAll'].includes(operation)) {
       throw new RuntimeError('HOST_UNAVAILABLE', 'This runtime has no host-control controller.', 503);
     }
     try { return await this.hostControl[operation](validateHostOperation(operation, input)); }
@@ -192,6 +202,8 @@ export class RuntimeController {
     while (this.worker.status().running && Date.now() < deadline) {
       await new Promise(resolve => setTimeout(resolve, 50));
     }
+    await this.activity?.record({ family: 'runtime', operation: 'stop', outcome: 'success' });
+    await this.activity?.close();
   }
 }
 
@@ -220,7 +232,40 @@ export function createRuntime(options = {}) {
     throw new RuntimeError('BUILD_REQUIRED', 'Build the portable runtime modules before starting the service.', 503);
   }
   const secrets = options.secretFiles ?? {};
-  let workbench;
+  let workbench, activity;
+  const metadata = (input, result) => {
+    const source = input && typeof input === 'object' ? input : {};
+    const output = {};
+    for (const key of ['companyId', 'employeeId']) {
+      const value = source[key] ?? result?.job?.[key] ?? result?.run?.[key];
+      if (typeof value === 'string' && /^[A-Za-z0-9_.:-]{1,160}$/.test(value) && value.trim() === value) output[key] = value;
+    }
+    for (const [key, value] of [['requestId', source.requestId ?? source.id], ['jobId', source.jobId ?? result?.job?.id]]) {
+      if (typeof value === 'string' && /^[A-Za-z0-9_.:-]{1,160}$/.test(value) && value.trim() === value) output[key] = value;
+    }
+    return output;
+  };
+  const observe = async (family, operation, input, perform) => {
+    const started = Date.now();
+    const record = async (outcome, result, code) => {
+      if (!activity) return { recorded: true };
+      const entry = { family, operation, outcome, ...metadata(input, result),
+        durationMs: Math.min(604800000, Math.max(0, Date.now() - started)),
+        ...(typeof code === 'string' && /^[A-Z][A-Z0-9_]{0,79}$/.test(code) ? { code } : {}) };
+      try { return await activity.record(entry); } catch { return { recorded: false }; }
+    };
+    try {
+      const result = await perform();
+      const diagnostic = await record(result?.ok === false ? 'rejected' : result?.accepted === true || result?.pending === true ? 'accepted' : 'success', result, result?.code);
+      // Diagnostics never replace a committed action receipt or invite replay.
+      if (!diagnostic.recorded && result && typeof result === 'object') return { ...result,
+        activityWarning: 'The operation result is preserved, but its activity record needs review. Inspect activity status; do not repeat the operation.' };
+      return result;
+    } catch (error) {
+      await record(error?.status >= 400 && error.status < 500 ? 'rejected' : 'unknown', null, error?.code);
+      throw error;
+    }
+  };
   const getSecret = provider => secrets[provider] ? readSecretFile(secrets[provider]) : workbench?.getSecret(provider) ?? null;
   const office = new modules.OfficeService({
     userDataPath: dataDir, seedDir, binaryPath, githubToken: () => getSecret('github'),
@@ -260,7 +305,8 @@ export function createRuntime(options = {}) {
   });
   const worker = new modules.OfficeWorkerPool({
     snapshot: () => office.officeSnapshot(), command: request => office.workerCommand(request),
-    artifactRoot: path.join(dataDir, 'office-artifacts'), seedDir, generate,
+    artifactRoot: path.join(dataDir, 'office-artifacts'), seedDir,
+    generate: (request, job) => observe('worker', 'generate', { ...metadata(job), jobId: job?.id }, () => generate(request, job)),
     prepareContext: job => office.prepareWorkerContext(job),
     validateJob: job => resources.isEnforced() ? resources.validateJob(job) : modelPool.validateJob(job),
     executeTool: async (job, text) => {
@@ -282,7 +328,7 @@ export function createRuntime(options = {}) {
     capabilities: { providerAdapters: ['openai', 'anthropic', 'ollama-loopback'],
       configuredProviders: ['openai', 'anthropic'].filter(provider => !!secrets[provider]),
       githubRead: !!secrets.github, githubPublish: !!secrets.github, sharedModels: options.ollamaLocalOnly === true,
-      cloudSync: options.cloudSyncEnabled === true } });
+      cloudSync: options.cloudSyncEnabled === true, activityJournal: true } });
   runtime.binaryPath = binaryPath;
   runtime.resources = resources;
   runtime.environments = environments;
@@ -290,18 +336,47 @@ export function createRuntime(options = {}) {
   workbench = createWorkbench({ runtime, repoRoot, dataDir, secretFiles: secrets,
     platform: { ...(options.generate ? { generate: options.generate } : {}), ...options.workbenchPlatform } });
   runtime.workbench = workbench;
+  activity = createActivityJournal({ stateDir: dataDir });
+  runtime.activity = activity;
+  for (const [method, family, reads] of [
+    ['hostOperation', 'host', ['status', 'inspect']], ['environmentOperation', 'environment', ['status', 'inspect']],
+    ['resourceOperation', 'resource', ['status', 'inspect', 'resolve']], ['designOperation', 'design', ['catalog', 'inspect']],
+    ['modelOperation', 'model', ['snapshot']],
+  ]) {
+    const invoke = runtime[method].bind(runtime);
+    runtime[method] = (operation, input) => reads.includes(operation) || !ACTIVITY_OPERATIONS[family].includes(operation)
+      ? invoke(operation, input) : observe(family, operation, input, () => invoke(operation, input));
+  }
+  const command = runtime.command.bind(runtime);
+  runtime.command = input => observe('office', ACTIVITY_OPERATIONS.office.includes(input?.command?.action) ? input.command.action : 'command',
+    { ...metadata(input?.command), requestId: input?.id }, () => command(input));
+  for (const method of ['setEnabled', 'runOnce']) {
+    const invoke = runtime[method].bind(runtime);
+    runtime[method] = (...args) => observe('worker', method, {}, () => invoke(...args));
+  }
   const additional = {};
   for (const [prefix, operations, dispatch] of [
     ['environment', ['status', 'prepare', 'inspect', 'run'], (operation, input) => runtime.environmentOperation(operation, input)],
     ['resource', ['status', 'configure', 'resolve', 'plan', 'start', 'inspect', 'cancel'], (operation, input) => runtime.resourceOperation(operation, input)],
     ['design', ['catalog', 'plan', 'install', 'inspect'], (operation, input) => runtime.designOperation(operation, input)],
+    ['activity', ['status', 'query', 'summarize'], (operation, input) => runtime.activityOperation(operation, input)],
   ]) for (const operation of operations) {
     additional[prefix + operation[0].toUpperCase() + operation.slice(1)] = {
-      minArgs: ['status','catalog'].includes(operation) ? 0 : 1, maxArgs: operation === 'catalog' || prefix === 'environment' && operation === 'status' ? 0 : 1,
-      mutates: !['status', 'inspect', 'resolve','catalog'].includes(operation), handler: args => dispatch(operation, args[0] ?? {}),
+      minArgs: ['status','catalog'].includes(operation) || prefix === 'activity' ? 0 : 1, maxArgs: operation === 'catalog' || ['environment','activity'].includes(prefix) && operation === 'status' ? 0 : 1,
+      mutates: !['status', 'inspect', 'resolve','catalog','query','summarize'].includes(operation), handler: args => dispatch(operation, args[0] ?? {}),
     };
   }
   workbench.addMethods(additional);
+  const workbenchCall = workbench.call.bind(workbench);
+  workbench.call = (method, args = [], context = {}) => {
+    const { spec } = workbench.validateEnvelope({ method, args, ...(context.id !== undefined ? { id: context.id } : {}) });
+    const invoke = () => workbenchCall(method, args, context);
+    // Runtime-routed mutations already have their own precise audit entry.
+    const recordedByRuntime = method === 'officeCommand' || /^(host|environment|resource|design)/.test(method)
+      || ['setOfficeWorker','runOfficeQueue','modelPoolRequest','modelPoolCancel','modelPoolSelect'].includes(method);
+    return spec?.mutates && !recordedByRuntime ? observe('workbench', method,
+      { ...metadata(args[0]), requestId: context.id }, invoke) : invoke();
+  };
   office.startObserving(); cloudSync.start();
   return runtime;
 }

@@ -22,6 +22,8 @@ test('packages the shared transitive renderer graph and injects a network-free b
   assert.ok(f.panel.webview.html.indexOf('workbench-bridge.js')<f.panel.webview.html.indexOf('chrome.'));
   assert.equal(f.panel.options.retainContextWhenHidden,false);assert.equal(f.panel.options.localResourceRoots.length,1);
   assert.ok(METHODS.hostSubmit&&METHODS.environmentRun&&METHODS.resourcePlan&&METHODS.designInstall);
+  assert.deepEqual(METHODS.activityStatus,[0,0]);assert.deepEqual(METHODS.activityQuery,[0,1]);assert.deepEqual(METHODS.activitySummarize,[0,1]);
+  assert.equal((f.panel.webview.html.match(/id="workbench-setup-panel"/g)||[]).length,1);assert.match(f.panel.webview.html,/aria-modal="false"/);assert.match(f.panel.webview.html,/id="workbench-setup" aria-controls="workbench-setup-panel"/);assert.ok(!f.panel.webview.html.includes('<iframe'));
   const filename=Object.keys(readAssets(f.root).manifest.files).find(name=>name.startsWith('chrome.'));
   fs.appendFileSync(path.join(f.root,'media/studio',filename),'\nchanged');assert.throws(()=>readAssets(f.root),/integrity/);
 });

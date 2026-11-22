@@ -7,7 +7,7 @@ import {fileURLToPath} from 'node:url';
 import {OfficeWorker,OfficeWorkerPool,type OfficeWorkerOptions} from '../src/main/officeWorker';
 import type {GenerateFn} from '../src/main/projects';
 import type {OfficeCommand,OfficeJob,OfficeResult,OfficeSnapshot} from '../src/shared/office';
-const roots:string[]=[];const workers:OfficeWorker[]=[];
+const roots:string[]=[];const workers:Array<Pick<OfficeWorker,'stop'>>=[];
 const clone=<T>(v:T):T=>JSON.parse(JSON.stringify(v));
 function job(overrides:Partial<OfficeJob>={}):OfficeJob{
  const at=new Date().toISOString();return {id:crypto.randomUUID(),companyId:'company-a',officeId:'office-a',departmentId:null,employeeId:'donna',goal:'Review the release evidence.',mode:'provider',provider:'anthropic',model:'fixture-model',authorized:true,allowedTools:[],dependencies:[],contextHash:null,cacheKey:null,promptVersion:'test-v1',status:'queued',limits:{maxTokens:32000,maxUsd:1,maxMinutes:5},priceRates:{inputUsdPerMillion:2,outputUsdPerMillion:10},usage:{inputTokens:0,outputTokens:0,costUsd:0},costStatus:'none',reservation:null,usageRecorded:false,createdAt:at,updatedAt:at,dueAt:at,startedAt:null,finishedAt:null,workerId:null,leaseToken:null,leaseExpiresAt:null,artifactUri:null,summary:null,error:null,idempotencyKey:crypto.randomUUID(),...overrides};
@@ -33,6 +33,185 @@ function fixture(options:{jobs?:OfficeJob[];generate?:OfficeWorkerOptions['gener
  const worker=new OfficeWorker({snapshot:async()=>response(),command,generate,artifactRoot,seedDir,intervalMs:5000,prepareContext:options.prepareContext,validateJob:options.validateJob,executeTool:options.executeTool});workers.push(worker);return{worker,state,calls,chronology,command,generate,root,seedDir,artifactRoot,snapshot:async()=>response()};
 }
 afterEach(()=>{for(const w of workers.splice(0))w.stop();vi.useRealTimers();for(const root of roots.splice(0))fs.rmSync(root,{recursive:true,force:true});});
+
+describe('adaptive OfficeWorker scheduling', () => {
+ it('backs off consecutive idle polls to a bounded unref timer and clears it on stop', async () => {
+  vi.useFakeTimers();
+  const timers = vi.spyOn(globalThis, 'setTimeout');
+  const f = fixture({jobs:[]});
+  expect(vi.getTimerCount()).toBe(0);
+  expect(f.worker.status().scheduling[0]).toMatchObject({baseIntervalMs:5000,maxIntervalMs:120000,nextPollAt:null,pollDelayMs:null});
+  f.worker.setEnabled(true);
+  await vi.advanceTimersByTimeAsync(0);
+  const delays = [5000,10000,20000,40000,80000,120000,120000];
+  for (const [index, delay] of delays.entries()) {
+   expect(f.calls.filter(call => call.action === 'claim_job')).toHaveLength(index + 1);
+   expect(f.worker.status().scheduling[0]).toMatchObject({lastOutcome:'idle',idlePolls:index+1,errorPolls:0,pollDelayMs:delay,nextPollAt:Date.now()+delay});
+   expect(vi.getTimerCount()).toBe(1);
+   expect((timers.mock.results.at(-1)!.value as NodeJS.Timeout).hasRef()).toBe(false);
+   await vi.advanceTimersByTimeAsync(delay);
+  }
+  f.worker.stop();
+  const count = f.command.mock.calls.length;
+  expect(vi.getTimerCount()).toBe(0);
+  expect(f.worker.status().scheduling[0]).toMatchObject({pollDelayMs:null,nextPollAt:null});
+  await vi.advanceTimersByTimeAsync(360000);
+  expect(f.command).toHaveBeenCalledTimes(count);
+  expect(f.generate).not.toHaveBeenCalled();
+  timers.mockRestore();
+ });
+
+ it('executes a one-shot immediately during idle backoff and resets the next work interval', async () => {
+  vi.useFakeTimers();
+  const f = fixture({jobs:[]});
+  f.worker.setEnabled(true);
+  await vi.advanceTimersByTimeAsync(0);
+  await vi.advanceTimersByTimeAsync(5000);
+  expect(f.worker.status().scheduling[0]?.pollDelayMs).toBe(10000);
+  f.state.jobs.push(job());
+  const before = Date.now();
+  const result = await f.worker.runOnce();
+  expect(Date.now()).toBe(before);
+  expect(result.running).toBe(false);
+  expect(f.generate).toHaveBeenCalledOnce();
+  expect(f.worker.status().scheduling[0]).toMatchObject({lastOutcome:'work',idlePolls:0,errorPolls:0,pollDelayMs:5000,nextPollAt:before+5000});
+  expect(vi.getTimerCount()).toBe(1);
+  const claims = f.calls.filter(call => call.action === 'claim_job').length;
+  await vi.advanceTimersByTimeAsync(4999);
+  expect(f.calls.filter(call => call.action === 'claim_job')).toHaveLength(claims);
+  await vi.advanceTimersByTimeAsync(1);
+  expect(f.calls.filter(call => call.action === 'claim_job')).toHaveLength(claims+1);
+ });
+
+ it('resets idle backoff when a scheduled poll completes newly queued work', async () => {
+  vi.useFakeTimers();
+  const f = fixture({jobs:[]});
+  f.worker.setEnabled(true);
+  await vi.advanceTimersByTimeAsync(0);
+  await vi.advanceTimersByTimeAsync(15000);
+  expect(f.worker.status().scheduling[0]?.pollDelayMs).toBe(20000);
+  f.state.jobs.push(job());
+  await vi.advanceTimersByTimeAsync(20000);
+  expect(f.generate).toHaveBeenCalledOnce();
+  expect(f.worker.status().scheduling[0]).toMatchObject({lastOutcome:'work',idlePolls:0,errorPolls:0,pollDelayMs:5000});
+  expect(vi.getTimerCount()).toBe(1);
+ });
+
+ it('backs off repeated state errors and permits deliberate immediate recovery', async () => {
+  vi.useFakeTimers();
+  let fail = true;
+  const f = fixture({jobs:[],afterCommand:async request => {
+   if (fail && request.action === 'tick_schedules') throw new Error('State is temporarily unavailable');
+  }});
+  f.worker.setEnabled(true);
+  await vi.advanceTimersByTimeAsync(0);
+  for (const [index, delay] of [5000,10000,20000,40000,80000,120000].entries()) {
+   expect(f.worker.status().scheduling[0]).toMatchObject({lastOutcome:'error',errorPolls:index+1,idlePolls:0,pollDelayMs:delay});
+   expect(vi.getTimerCount()).toBe(1);
+   await vi.advanceTimersByTimeAsync(delay);
+  }
+  expect(f.generate).not.toHaveBeenCalled();
+  fail = false;
+  f.state.jobs.push(job());
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();
+  expect(f.worker.status()).toMatchObject({lastError:null,scheduling:[{lastOutcome:'work',errorPolls:0,idlePolls:0,pollDelayMs:5000}]});
+ });
+
+ it('never replays a failed provider attempt during later automatic polls', async () => {
+  vi.useFakeTimers();
+  const f = fixture({generate:async () => { throw new Error('Provider outcome is uncertain'); }});
+  f.worker.setEnabled(true);
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.worker.status().scheduling[0]).toMatchObject({lastOutcome:'error',errorPolls:1,pollDelayMs:5000});
+  expect(f.state.jobs[0]).toMatchObject({status:'failed',costStatus:'estimated'});
+  const reserved = clone(f.state.jobs[0]!.usage);
+  await vi.advanceTimersByTimeAsync(400000);
+  expect(f.generate).toHaveBeenCalledOnce();
+  expect(f.state.jobs[0]!.usage).toEqual(reserved);
+  expect(f.calls.filter(call => call.action === 'reserve_job')).toHaveLength(1);
+  expect(f.calls.filter(call => call.action === 'finish_job')).toHaveLength(1);
+ });
+
+ it('coalesces repeated enables and immediate requests while a native poll is in flight', async () => {
+  vi.useFakeTimers();
+  let release!:()=>void;
+  const barrier = new Promise<void>(resolve => release=resolve);
+  const f = fixture({afterCommand:async request => { if (request.action === 'tick_schedules') await barrier; }});
+  f.worker.setEnabled(true);
+  for (let i=0;i<25;i++) f.worker.setEnabled(true);
+  expect((await f.worker.runOnce()).running).toBe(true);
+  await vi.advanceTimersByTimeAsync(120000);
+  expect(f.calls).toHaveLength(1);
+  expect(vi.getTimerCount()).toBe(0);
+  release();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.generate).toHaveBeenCalledOnce();
+  expect(f.worker.status()).toMatchObject({enabled:true,running:false});
+  expect(vi.getTimerCount()).toBe(1);
+  for (let i=0;i<25;i++) f.worker.setEnabled(true);
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.calls.filter(call => call.action === 'claim_job')).toHaveLength(1);
+  expect(vi.getTimerCount()).toBe(1);
+ });
+
+ it('does not re-arm after disable while a native poll response is pending', async () => {
+  vi.useFakeTimers();
+  let release!:()=>void;
+  const barrier = new Promise<void>(resolve => release=resolve);
+  const f = fixture({afterCommand:async request => { if (request.action === 'tick_schedules') await barrier; }});
+  f.worker.setEnabled(true);
+  f.worker.stop();
+  release();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.worker.status()).toMatchObject({enabled:false,running:false,scheduling:[{pollDelayMs:null,nextPollAt:null}]});
+  expect(vi.getTimerCount()).toBe(0);
+  await vi.advanceTimersByTimeAsync(360000);
+  expect(f.calls).toHaveLength(1);
+  expect(f.generate).not.toHaveBeenCalled();
+ });
+
+ it('clears scheduling after a late provider response that ignored cancellation', async () => {
+  vi.useFakeTimers();
+  let entered!:()=>void;
+  let release!:()=>void;
+  const ready = new Promise<void>(resolve => entered=resolve);
+  const barrier = new Promise<void>(resolve => release=resolve);
+  const f = fixture({generate:async () => { entered(); await barrier; return {text:'Preserved late work',inputTokens:20,outputTokens:30}; }});
+  f.worker.setEnabled(true);
+  await ready;
+  expect(f.worker.status().running).toBe(true);
+  f.worker.stop();
+  release();
+  await vi.advanceTimersByTimeAsync(0);
+  expect(f.worker.status()).toMatchObject({enabled:false,running:false,scheduling:[{pollDelayMs:null,nextPollAt:null}]});
+  expect(vi.getTimerCount()).toBe(0);
+  expect(f.state.jobs[0]).toMatchObject({status:'failed',costStatus:'observed'});
+  expect(fs.readFileSync(f.state.jobs[0]!.artifactUri!,'utf8')).toContain('Preserved late work');
+  await vi.advanceTimersByTimeAsync(360000);
+  expect(f.generate).toHaveBeenCalledOnce();
+ });
+
+ it('keeps pool timers bounded per slot and disposes repeated enable/stop cycles', async () => {
+  vi.useFakeTimers();
+  const f = fixture({jobs:[]});
+  const pool = new OfficeWorkerPool({snapshot:f.snapshot,command:f.command,generate:f.generate,artifactRoot:f.artifactRoot,seedDir:f.seedDir,intervalMs:5000},2);
+  workers.push(pool);
+  for (let i=0;i<100;i++) {
+   pool.setEnabled(true);
+   pool.setEnabled(true);
+   await vi.advanceTimersByTimeAsync(0);
+   expect(pool.status().scheduling).toHaveLength(2);
+   expect(pool.status().scheduling.every(slot => slot.idlePolls === 1 && slot.pollDelayMs === 5000)).toBe(true);
+   expect(vi.getTimerCount()).toBe(2);
+   pool.stop();
+   expect(vi.getTimerCount()).toBe(0);
+  }
+  expect(f.calls.filter(call => call.action === 'claim_job')).toHaveLength(200);
+  expect(f.generate).not.toHaveBeenCalled();
+ });
+});
+
 describe('OfficeWorker accounting and dispatch',()=>{
  it('validates the exact model route before cache admission and reservation',async()=>{const f=fixture({cache:true,validateJob:async()=>{throw new Error('Selected local model digest changed');}});await f.worker.runOnce();expect(f.generate).not.toHaveBeenCalled();expect(f.calls.some(c=>['get_cache','reserve_job'].includes(c.action))).toBe(false);expect(f.state.jobs[0]?.usage.costUsd).toBe(0);expect(f.worker.status().lastError).toContain('digest changed');});
  it('revalidates after reservation and settles zero when the model assignment is revoked',async()=>{let calls=0;const f=fixture({validateJob:async()=>{calls++;if(calls===2)throw new Error('Model assignment revoked');}});await f.worker.runOnce();expect(calls).toBe(2);expect(f.calls.some(c=>c.action==='reserve_job')).toBe(true);expect(f.generate).not.toHaveBeenCalled();expect(f.state.jobs[0]).toMatchObject({costStatus:'observed',usage:{inputTokens:0,outputTokens:0,costUsd:0}});});
@@ -202,6 +381,40 @@ describe('bundled cloud operator context in actual worker prompts', () => {
   expect(prepareContext).toHaveBeenCalledTimes(allowedTools.length ? 1 : 0);
   expect(executeTool).not.toHaveBeenCalled();
   expect(f.calls.some(command => ['grant_authority', 'set_policy'].includes(command.action))).toBe(false);
+  expect(f.state.jobs[0]?.status).toBe('completed');
+ });
+});
+
+describe('operator role-title references without added authority', () => {
+ it.each([
+  ['Runtime Observer','runtime-observer'],
+  ['Knowledge Steward','knowledge-steward'],
+  ['Connector Steward','connector-steward'],
+ ])('resolves a newly hired %s without a shared assignment key', async (title, key) => {
+  const prepareContext = vi.fn(async () => 'Unexpected repository read');
+  const executeTool = vi.fn(async () => ({summary:'Unexpected managed action',evidenceUrl:'https://example.test/unexpected'}));
+  const f = fixture({jobs:[job({employeeId:'new-operator'})],prepareContext,executeTool});
+  f.state.employees.push({...f.state.employees[0]!,id:'new-operator',companyId:'company-a',officeId:'office-a',name:title,role:title,kind:'specialist',assignmentKey:null});
+  fs.mkdirSync(path.join(f.seedDir,'role-library'));
+  fs.mkdirSync(path.join(f.seedDir,'prompts'));
+  const brief = `Fixture ${key} role reference with a bounded review handoff.`;
+  fs.writeFileSync(path.join(f.seedDir,'role-library/index.json'),JSON.stringify({schemaVersion:1,roles:[{
+   key,title,brief,document:`company/role-library/${key}.md`,examples:[],references:[],
+   handoff:'Return the evidence to Donna.',capabilities:['Metadata does not grant execution'],
+  }]}));
+  fs.writeFileSync(path.join(f.seedDir,'prompts/specialists.json'),JSON.stringify({[key]:`Fixture ${key} specialist prompt.`}));
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();
+  const [request, scope] = f.generate.mock.calls[0]!;
+  expect(request.system).toContain(`Role reference ${key} (`);
+  expect(request.system).toContain(brief);
+  expect(request.system).toContain(`Fixture ${key} specialist prompt.`);
+  expect(request.system).toContain('Metadata does not grant tools. Only the job\'s allowedActions grant capabilities.');
+  expect(request.prompt).toContain('"allowedActions":[]');
+  expect(scope?.allowedTools).toEqual([]);
+  expect(prepareContext).not.toHaveBeenCalled();
+  expect(executeTool).not.toHaveBeenCalled();
+  expect(f.calls.some(call => ['grant_authority','set_policy'].includes(call.action))).toBe(false);
   expect(f.state.jobs[0]?.status).toBe('completed');
  });
 });

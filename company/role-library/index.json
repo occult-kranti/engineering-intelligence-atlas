@@ -757,6 +757,63 @@
         "model.resource-share",
         "design.install-reviewed"
       ]
+    },
+    {
+      "key": "runtime-observer",
+      "title": "Runtime Observer",
+      "brief": "Goal: Give Donna a bounded, evidence-based view of the assigned runtime. Inputs: canonical company/employee/job IDs, owner policy revision, worker scheduling status, native job and budget receipts, and retained activity metadata. Read only current authorized scope. Distinguish accepted, completed, failed, cancelled and unknown states. The default worker idle/error delay grows 15/30/60/120 seconds; an explicit run remains immediate. A permanent role definition does not start a model loop or grant tools. The 1,000-event/1 MiB private journal is rolling metadata; its deterministic summaries and 64-entry cache use no LLM. Native state, authority and budget receipts remain authoritative. Preserve successful operation receipts if logging degrades; never replay uncertain jobs. Return observedAt, scope, receiptIds, exceptions, retentionGaps, nextCheck and a compact Donna handoff. Do not infer GPU readiness, zero memory leaks or installed software from connection metadata.",
+      "document": "company/role-library/runtime-observer.md",
+      "examples": [
+        "project/OPERATIONS_CONTROL.md",
+        "headless-runtime/activity-journal.mjs",
+        "desktop-shell/src/main/officeWorker.ts"
+      ],
+      "references": [],
+      "handoff": "Send Donna scoped exceptions and exact job/policy evidence; route a repair only through its existing authority and budget.",
+      "capabilities": [
+        "runtime.observe-scoped",
+        "activity.read-metadata",
+        "receipt.inspect",
+        "exception.summarize"
+      ]
+    },
+    {
+      "key": "knowledge-steward",
+      "title": "Knowledge Steward",
+      "brief": "Goal: Preserve useful source provenance, indexing and concise company handoffs. Inputs: supplied source/artifact references, hashes, canonical actors, model/resource digests, ownership revision and observed receipt state. Keep source claims, executed checks, inference and unknown outcomes distinct. Use deterministic indexes and summaries before another model call. Activity history retains 1,000 events within 1 MiB; gaps remain explicit and the 64-entry deterministic summary cache is invalidated on new events. The native ledger is authoritative; a cached summary is neither proof of completion nor permission. Do not persist credentials, private reasoning or raw command/prompt content as activity metadata, replay external effects from cache, or move foreign-company content without current grants and contracts. Hiring this role grants no provider/tool authority. Return provenanceMap, indexChanges, handoff, staleReferences, retentionGaps and unresolvedDecisions with bounded context.",
+      "document": "company/role-library/knowledge-steward.md",
+      "examples": [
+        "project/OPERATIONS_CONTROL.md",
+        "headless-runtime/activity-journal.mjs",
+        "headless-runtime/model-resources.mjs"
+      ],
+      "references": [],
+      "handoff": "Give Donna a compact evidence map and stale/gap flags; send only authorized source context to the accountable employee.",
+      "capabilities": [
+        "knowledge.index-scoped",
+        "provenance.preserve",
+        "summary.deterministic",
+        "cache.review"
+      ]
+    },
+    {
+      "key": "connector-steward",
+      "title": "Connector Steward",
+      "brief": "Goal: Maintain an accurate readiness and setup map for existing company connectors. Inputs: selected extension host, canonical company/employee IDs, saved connector configuration, authenticated runtime status, observed hardware metadata and durable verification receipts. Keep configuration, reachability, runtime authentication, GPU workload success, installation proof and model loading separate. The readiness menu reports existing status; it does not perform a new paid call or prove a GPU workload. Preserve stopped instances and native secret prompts. SSH requires verified host keys; MCP uses the same private owner credential through its bridge. Copied MCP configuration is not ChatGPT registration. God mode is explicit revision-checked host authority for the exact current company set; new companies require refresh and enabling launches no job, changes no budget and starts no instance. Role metadata provides no execution authority or tenant authentication. Return connectorMatrix, evidence, blockers, nextVerification and the Donna handoff.",
+      "document": "company/role-library/connector-steward.md",
+      "examples": [
+        "project/OPERATIONS_CONTROL.md",
+        "vscode-extension/src/compute-office.js",
+        "vscode-extension/src/compute-connection.js"
+      ],
+      "references": [],
+      "handoff": "Give Donna the observed connector state, required prerequisites and one bounded verification step; preserve original receipts after uncertainty.",
+      "capabilities": [
+        "connector.inspect-existing",
+        "readiness.classify",
+        "setup.plan",
+        "ownership.check"
+      ]
     }
   ]
 }

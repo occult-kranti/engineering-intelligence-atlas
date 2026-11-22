@@ -5,6 +5,7 @@
   const vscode=acquireVsCodeApi(),methods=config.methods||{},pending=new Map();
   const listeners={job:new Set(),project:new Set(),mode:new Set()};
   let epoch=config.epoch,connection=config.connection||{},disposed=false,sequence=0;
+  let updateSetup=()=>{},disposeSetup=()=>{};
   const prefix=typeof crypto.randomUUID==='function'?crypto.randomUUID().replace(/-/g,''):String(Date.now());
   const byteLength=value=>new TextEncoder().encode(JSON.stringify(value)).length;
   const error=(code,message)=>Object.assign(new Error(message),{code});
@@ -82,6 +83,7 @@
     const bar=document.getElementById('workbench-controls'),label=document.getElementById('workbench-connection');
     if(bar)bar.dataset.connected=String(connection.connected===true);
     if(label){label.textContent=connection.connected?(connection.label||connection.location||connection.kind||'Connected office'):(connection.notice||'Connect your office');label.title=label.textContent;}
+    updateSetup();
   }
   function receive(event){
     const value=event.data;if(!value||typeof value!=='object'||Array.isArray(value))return;
@@ -101,6 +103,58 @@
     }catch{}
   }
   function compute(){void request('openComputeCenter',[]).catch(failure=>{const label=document.getElementById('workbench-connection');if(label)label.textContent=failure.message;});}
+  function setupFlow(){
+    const trigger=document.getElementById('workbench-setup'),panel=document.getElementById('workbench-setup-panel');
+    if(!trigger||!panel)return;
+    const move=document.getElementById('workbench-setup-move'),closeButton=document.getElementById('workbench-setup-close'),status=document.getElementById('workbench-setup-status');
+    const actions=[...panel.querySelectorAll('[data-setup-action]')],subscriptions=[],requests=new Set(),busyButtons=new Set();
+    const allowedActions=new Set(['connectRuntimePrompt','startLocalRuntime','openComputeCenter','copyEditorPairing']);
+    let position=null,drag=null,returnFocus=null,closed=false;
+    const listen=(target,type,handler,options)=>{target.addEventListener(type,handler,options);subscriptions.push(()=>target.removeEventListener(type,handler,options));};
+    function place(x,y){
+      const rect=panel.getBoundingClientRect(),width=rect.width||420,height=rect.height||620;
+      const padding=10;position={x:Math.max(padding,Math.min(x,Math.max(padding,window.innerWidth-width-padding))),y:Math.max(padding,Math.min(y,Math.max(padding,window.innerHeight-height-padding)))};
+      panel.style.left=`${position.x}px`;panel.style.top=`${position.y}px`;panel.style.right='auto';
+    }
+    function update(){
+      if(closed)return;const connected=connection.connected===true,standalone=connected&&connection.kind==='runtime';
+      document.getElementById('workbench-setup-runtime').textContent=connected?'The editor reports a connected office. GPU and workload readiness still need verification.':connection.configured?'A connection is saved, but the office is not verified as connected.':'Start on this extension host, or connect an existing private runtime.';
+      document.getElementById('workbench-setup-mcp').textContent=standalone?'Copy a VS Code MCP config through the extension host. ChatGPT requires separate MCP registration or a tunnel.':'Connect a standalone runtime before copying its MCP config. This does not connect ChatGPT automatically.';
+      status.textContent=connected?'Connection reported. Review each remaining step in its native controls; setup is not marked complete.':'Not connected. The office canvas remains available; connect before managing runtime work.';
+      for(const button of actions)button.disabled=unavailable(button);
+    }
+    function unavailable(button){return busyButtons.has(button)||!Object.hasOwn(methods,button.dataset.setupAction)||(button.hasAttribute('data-setup-connected')&&connection.connected!==true)||(button.hasAttribute('data-setup-runtime')&&!(connection.connected===true&&connection.kind==='runtime'));}
+    function hide(){if(panel.hidden)return;drag=null;panel.hidden=true;trigger.setAttribute('aria-expanded','false');const target=returnFocus?.isConnected?returnFocus:trigger;target.focus();}
+    function show(){
+      if(!panel.hidden){hide();return;}returnFocus=document.activeElement;panel.hidden=false;trigger.setAttribute('aria-expanded','true');update();
+      place(position?.x??window.innerWidth-438,position?.y??112);panel.focus();
+    }
+    function stop(event){event.stopPropagation();}
+    function keydown(event){
+      if(event.key==='Escape'){event.preventDefault();event.stopPropagation();hide();return;}
+      if(event.target!==move)return;
+      const step=event.shiftKey?48:16,offset={ArrowLeft:[-step,0],ArrowRight:[step,0],ArrowUp:[0,-step],ArrowDown:[0,step]}[event.key];
+      if(offset){event.preventDefault();event.stopPropagation();place((position?.x||10)+offset[0],(position?.y||10)+offset[1]);}
+      else if(event.key==='Home'){event.preventDefault();event.stopPropagation();place(window.innerWidth-438,112);}
+    }
+    function pointerDown(event){if(event.button!==0)return;event.preventDefault();event.stopPropagation();move.focus();drag={id:event.pointerId,x:event.clientX,y:event.clientY,origin:position||{x:10,y:10}};}
+    function pointerMove(event){if(!drag||event.pointerId!==drag.id)return;event.preventDefault();place(drag.origin.x+event.clientX-drag.x,drag.origin.y+event.clientY-drag.y);}
+    function pointerEnd(event){if(drag&&event.pointerId===drag.id)drag=null;}
+    function resize(){if(!panel.hidden&&position)place(position.x,position.y);}
+    async function action(event){
+      const button=event.currentTarget,method=button.dataset.setupAction;
+      if(button.disabled||!allowedActions.has(method))return;
+      const requestEpoch=epoch;busyButtons.add(button);button.disabled=true;status.textContent='Opening native controls…';
+      const pendingRequest=request(method,[]);requests.add(pendingRequest);
+      try{await pendingRequest;if(!closed&&epoch===requestEpoch){update();status.textContent=method==='copyEditorPairing'?'MCP configuration copied by the extension host. ChatGPT is not connected by this action.':'Native controls returned. Inspect their recorded result; this popup does not assume setup succeeded.';}}
+      catch{if(!closed&&epoch===requestEpoch){update();status.textContent='The native action did not complete. Review the connection or original receipt before retrying.';}}
+      finally{requests.delete(pendingRequest);busyButtons.delete(button);if(!closed)button.disabled=unavailable(button);}
+    }
+    listen(trigger,'click',show);listen(closeButton,'click',hide);listen(panel,'keydown',keydown);listen(panel,'pointerdown',stop);listen(panel,'wheel',stop,{passive:true});
+    listen(move,'pointerdown',pointerDown);listen(window,'pointermove',pointerMove);listen(window,'pointerup',pointerEnd);listen(window,'pointercancel',pointerEnd);listen(window,'resize',resize);
+    for(const button of actions)listen(button,'click',action);
+    updateSetup=update;disposeSetup=()=>{closed=true;drag=null;for(const request of requests)request.cancel?.();requests.clear();for(const dispose of subscriptions.splice(0))dispose();updateSetup=()=>{};};update();
+  }
   function secureInputs(){for(const input of document.querySelectorAll('input[type="password"]')){input.value='';input.disabled=true;input.placeholder='Use VS Code secure credential prompts';}}
   function credentialAction(event){
     let operation;
@@ -116,12 +170,12 @@
     if(operation){event.preventDefault();event.stopImmediatePropagation();secureInputs();void operation().then(()=>document.getElementById('workspace-refresh')?.click()).catch(failure=>{const label=document.getElementById('workbench-connection');if(label)label.textContent=failure.message;});}
   }
   let observer;
-  function ready(){connectionLabel();document.getElementById('workbench-compute')?.addEventListener('click',compute);document.getElementById('workbench-connect')?.addEventListener('click',compute);
+  function ready(){setupFlow();connectionLabel();document.getElementById('workbench-compute')?.addEventListener('click',compute);document.getElementById('workbench-connect')?.addEventListener('click',compute);
     secureInputs();document.addEventListener('submit',credentialAction,true);document.addEventListener('click',credentialAction,true);
     if(typeof MutationObserver==='function'){observer=new MutationObserver(secureInputs);observer.observe(document.body,{subtree:true,childList:true});}
     vscode.postMessage({type:'daftar:ready'});
   }
-  function dispose(){if(disposed)return;disposed=true;rejectAll('disposed','The office panel has closed.',true);for(const set of Object.values(listeners))set.clear();observer?.disconnect();window.removeEventListener('message',receive);window.removeEventListener('pagehide',dispose);document.removeEventListener('DOMContentLoaded',ready);document.removeEventListener('submit',credentialAction,true);document.removeEventListener('click',credentialAction,true);document.getElementById('workbench-compute')?.removeEventListener('click',compute);document.getElementById('workbench-connect')?.removeEventListener('click',compute);sessionMemory.clear();}
+  function dispose(){if(disposed)return;disposed=true;disposeSetup();rejectAll('disposed','The office panel has closed.',true);for(const set of Object.values(listeners))set.clear();observer?.disconnect();window.removeEventListener('message',receive);window.removeEventListener('pagehide',dispose);document.removeEventListener('DOMContentLoaded',ready);document.removeEventListener('submit',credentialAction,true);document.removeEventListener('click',credentialAction,true);document.getElementById('workbench-compute')?.removeEventListener('click',compute);document.getElementById('workbench-connect')?.removeEventListener('click',compute);sessionMemory.clear();}
   window.addEventListener('message',receive);window.addEventListener('pagehide',dispose,{once:true});
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',ready,{once:true});else ready();
 })();

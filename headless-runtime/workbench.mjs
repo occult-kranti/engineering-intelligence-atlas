@@ -122,7 +122,7 @@ export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, 
   };
   async function dispatch(method, args, id) {
     if (extraHandlers.has(method)) return extraHandlers.get(method)(args, { id, signal: lifetime.signal });
-    const host = { hostStatus: 'status', hostConfigure: 'configure', hostSubmit: 'submit', hostApprove: 'approve', hostCancel: 'cancel', hostInspect: 'inspect', hostStopAll: 'stopAll' };
+    const host = { hostStatus: 'status', hostConfigure: 'configure', hostGodMode: 'godMode', hostSubmit: 'submit', hostApprove: 'approve', hostCancel: 'cancel', hostInspect: 'inspect', hostStopAll: 'stopAll' };
     if (Object.hasOwn(host, method)) return runtime.hostOperation(host[method], args[0] ?? {});
     if (methods[method].platformDelegated) return { ok: false, code: 'PLATFORM_DELEGATION', delegated: true, action: method,
       error: 'This action belongs to the editor or desktop platform. No platform action was performed.' };
@@ -232,8 +232,12 @@ export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, 
       default: throw new WorkbenchError('WORKBENCH_METHOD', 'Workbench method is unavailable.', 404);
     }
   }
+  const resourceEnforcement = () => {
+    try { return runtime.resources?.isEnforced() === true; }
+    catch { throw new WorkbenchError('RESOURCE_STATE_UNCERTAIN', 'Resource ownership needs review before its capabilities can be confirmed.', 503); }
+  };
   const capabilities = () => ({ version: 1, transport: 'headless-workbench', credentialStorage: 'aes-256-gcm-protected-file-key', osKeychain: false,
-    legacyOllamaScopeRequiresResources: runtime.resources?.isEnforced() === true,
+    legacyOllamaScopeRequiresResources: resourceEnforcement(),
     legacyOllamaScopeGuidance: 'When shared model ownership is enabled, use resourcePlan/resourceStart with canonical company, employee and resource scope. Existing legacy projects can still use budgeted OpenAI/Anthropic providers.',
     officeCommandInput: '{expectedStateHash,command}', lifecycle: 'owned jobs are cancelled on close; uncertain mutations are never replayed automatically',
     methods: Object.fromEntries(Object.entries(methods).map(([name, value]) => [name, { available: !value.platformDelegated,

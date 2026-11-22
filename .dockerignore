@@ -20,6 +20,8 @@
 !headless-runtime/model-resources-contract.mjs
 !headless-runtime/design-toolchain.mjs
 !headless-runtime/design-toolchain-contract.mjs
+!headless-runtime/activity-journal.mjs
+!headless-runtime/activity-journal-contract.mjs
 !headless-runtime/runtime.mjs
 !headless-runtime/secrets.mjs
 !headless-runtime/server.mjs

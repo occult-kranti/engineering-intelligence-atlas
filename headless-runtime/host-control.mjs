@@ -9,7 +9,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
 import { atomicJson, exact, fail, hash, HostControlError, integer, LIMITS, LIVE, object, privateDirectory,
-  processIdentity, publicJob, readJson, readPrivate, request, safeEnvironment, STATES, TERMINAL, validId, validResult } from './host-control-contract.mjs';
+  processIdentity, publicJob, readJson, readPrivate, request, safeEnvironment, STATES, TERMINAL, validId, validResult, validateHostOperation } from './host-control-contract.mjs';
 export { HostControlError } from './host-control-contract.mjs';
 
 const exec = promisify(execFile);
@@ -55,7 +55,9 @@ function commandGroupState(metadata, nonce) {
 }
 function tmuxRunner(directory, tmuxPath) {
   const socket = `daftar-${hash(directory).slice(0, 24)}`;
-  const run = args => exec(tmuxPath, ['-L', socket, ...args], { env: safeEnvironment(), shell: false, timeout: args[0] === 'new-session' ? 10000 : 1500, maxBuffer: 16384 });
+  // process.execPath can be VS Code's Electron executable in Node mode. Keep
+  // that fixed mode through tmux; arbitrary caller Node options stay scrubbed.
+  const run = args => exec(tmuxPath, ['-L', socket, ...args], { env: { ...safeEnvironment(), ELECTRON_RUN_AS_NODE: '1' }, shell: false, timeout: args[0] === 'new-session' ? 10000 : 1500, maxBuffer: 16384 });
   return {
     async available() { try { await run(['-V']); return true; } catch { return false; } },
     async launch({ session, jobDir, cwd }) { await run(['new-session', '-d', '-s', session, '-c', cwd, '--', process.execPath, runnerFile, jobDir]); },
@@ -74,6 +76,18 @@ function validateRegistry(value) {
       fail('HOST_STATE_INVALID', 'Command-control grant registry is malformed.', 503);
     }
     ids.add(grant.id);
+  }
+  if (value.ownerPreset != null) {
+    const preset = value.ownerPreset;
+    if (!object(preset) || value.mode !== 'auto' || !Array.isArray(preset.companyIds) || !preset.companyIds.length
+      || preset.companyIds.length > LIMITS.grants || !preset.companyIds.every(validId)
+      || new Set(preset.companyIds).size !== preset.companyIds.length
+      || typeof preset.activatedAt !== 'string' || !Number.isFinite(Date.parse(preset.activatedAt))
+      || value.grants.length !== preset.companyIds.length
+      || !preset.companyIds.every(id => value.grants.some(grant => grant.companyId === id && grant.employeeId === null
+        && grant.id === `owner-${hash(id).slice(0, 32)}`))) {
+      fail('HOST_STATE_INVALID', 'Owner-mode membership is inconsistent with its explicit grants.', 503);
+    }
   }
   ids.clear();
   for (const job of value.jobs) {
@@ -210,6 +224,9 @@ export function createHostControl({ stateDir, enabled = false, snapshot, runner:
     if (reconcile) await refresh(); let available = false;
     if (enabled) { try { available = Boolean(await runner.available()); } catch {} }
     return { ok: true, host: { configured: Boolean(enabled), available, mode: registry.mode, revision: registry.revision,
+      godMode: { enabled: registry.mode === 'auto' && Boolean(registry.ownerPreset),
+        companyIds: registry.ownerPreset?.companyIds?.slice() ?? [], activatedAt: registry.ownerPreset?.activatedAt ?? null,
+        scope: 'Recorded active companies on this runtime account; new companies require an explicit refresh.' },
       grants: structuredClone(registry.grants), jobCount: registry.jobs.length, jobs: registry.jobs.map(publicJob), limits: { ...LIMITS, maxConcurrent },
       capabilities: { detached: true, tmux: true, manualApproval: true, inspectOutput: true, cancellation: true,
         availabilityCheck: 'tmux-version-only', launchVerified: registry.jobs.some(job => job.startedAt !== null),
@@ -293,7 +310,26 @@ export function createHostControl({ stateDir, enabled = false, snapshot, runner:
       // only new/changed grants; retained revoked scopes cannot dispatch anyway.
       const additions = grants.filter(grant => !registry.grants.some(old => JSON.stringify(old) === JSON.stringify(grant)));
       if (additions.length) { const current = await native(); for (const grant of additions) checkScope(current, grant.companyId, grant.employeeId); }
-      registry.mode = input.mode; registry.grants = grants; registry.revision++; persist(); return statusView();
+      registry.mode = input.mode; registry.grants = grants; registry.ownerPreset = null; registry.revision++; persist(); return statusView();
+    }),
+    godMode: input => serial(async () => {
+      requireEnabled(); validateHostOperation('godMode', input);
+      if (input.expectedRevision !== registry.revision) fail('HOST_REVISION_CONFLICT', 'Command-control policy changed; read its current revision first.', 409);
+      if (input.enabled) {
+        const current = await native();
+        const companyIds = current.companies.filter(company => company.status === 'active').map(company => company.id).sort();
+        const requested = [...input.companyIds].sort();
+        if (companyIds.length > LIMITS.grants || JSON.stringify(companyIds) !== JSON.stringify(requested)) {
+          fail('HOST_SCOPE_CHANGED', 'Company membership changed. Inspect the current office before enabling owner mode.', 409);
+        }
+        registry.grants = companyIds.map(companyId => ({ id: `owner-${hash(companyId).slice(0, 32)}`, companyId, employeeId: null }));
+        registry.ownerPreset = { companyIds, activatedAt: now() }; registry.mode = 'auto';
+      } else {
+        registry.mode = 'off'; registry.grants = []; registry.ownerPreset = null;
+      }
+      // One durable policy change; it neither starts a job nor changes worker,
+      // resource, spending, platform approvals, or infrastructure lifecycle.
+      registry.revision++; persist(); return statusView();
     }),
     submit: input => serial(async () => {
       requireEnabled(); const normalized = request(input); const requestHash = hash(JSON.stringify(normalized));
@@ -343,7 +379,7 @@ export function createHostControl({ stateDir, enabled = false, snapshot, runner:
         truncated: job.status === 'output_limit' || nextOffset < buffer.length };
     }),
     stopAll: () => serial(async () => {
-      requireEnabled(); registry.mode = 'off'; registry.revision++; persist();
+      requireEnabled(); registry.mode = 'off'; registry.ownerPreset = null; registry.revision++; persist();
       for (const job of registry.jobs) if (job.status === 'pending_approval' || LIVE.has(job.status) || ['uncertain', 'interrupted'].includes(job.status)) await cancelJob(job);
       return statusView(false);
     }),

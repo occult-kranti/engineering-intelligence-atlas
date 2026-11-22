@@ -21,6 +21,17 @@ export interface OfficeWorkerOptions {
   executeTool?: (job: OfficeJob, text: string) => Promise<{ summary: string; evidenceUrl: string }>;
 }
 
+/** Per-slot scheduler state; milliseconds are measured from the end of a poll. */
+export interface OfficeWorkerScheduling {
+  baseIntervalMs: number;
+  maxIntervalMs: number;
+  lastOutcome: 'idle' | 'work' | 'error' | null;
+  idlePolls: number;
+  errorPolls: number;
+  pollDelayMs: number | null;
+  nextPollAt: number | null;
+}
+
 export type OfficeWorkerController = Pick<OfficeWorker, 'status' | 'setEnabled' | 'stop' | 'runOnce'>;
 
 /** Bounded parallel dispatch shares the same atomic native lease/budget ledger. */
@@ -30,11 +41,12 @@ export class OfficeWorkerPool implements OfficeWorkerController {
     if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 4) throw new Error('Worker concurrency must be between one and four.');
     this.workers = Array.from({ length: concurrency }, () => new OfficeWorker(options));
   }
-  status(): OfficeWorkerStatus & { concurrency: number; activeJobIds: string[] } {
+  status(): OfficeWorkerStatus & { concurrency: number; activeJobIds: string[]; scheduling: OfficeWorkerScheduling[] } {
     const states = this.workers.map(worker => worker.status());
     const activeJobIds = states.flatMap(state => state.activeJobId ? [state.activeJobId] : []);
     return { enabled: states.some(state => state.enabled), running: states.some(state => state.running), activeJobId: activeJobIds[0] ?? null, activeJobIds, concurrency: this.workers.length, lastError: states.find(state => state.lastError)?.lastError ?? null,
-      sourceReviews: states.flatMap(state => state.sourceReviews ?? []).slice(0, 4) };
+      sourceReviews: states.flatMap(state => state.sourceReviews ?? []).slice(0, 4),
+      scheduling: states.flatMap(state => state.scheduling) };
   }
   setEnabled(enabled: boolean): OfficeWorkerStatus { this.workers.forEach(worker => worker.setEnabled(enabled)); return this.status(); }
   stop(): void { this.workers.forEach(worker => worker.stop()); }
@@ -71,27 +83,72 @@ export class OfficeWorker {
   private activeJobId: string | null = null;
   private lastError: string | null = null;
   private timer: NodeJS.Timeout | null = null;
+  private readonly baseIntervalMs: number;
+  private readonly maxIntervalMs = 120000;
+  private lastOutcome: OfficeWorkerScheduling['lastOutcome'] = null;
+  private idlePolls = 0;
+  private errorPolls = 0;
+  private pollDelayMs: number | null = null;
+  private nextPollAt: number | null = null;
   private activeController: AbortController | null = null;
   private latestSourceReview: SourceReviewReport | null = null;
   private readonly workerId = `desktop-${crypto.randomUUID()}`;
 
   constructor(private readonly options: OfficeWorkerOptions) {
+    const requestedInterval = options.intervalMs ?? 15000;
+    this.baseIntervalMs = Number.isFinite(requestedInterval)
+      ? Math.min(this.maxIntervalMs, Math.max(5000, Math.trunc(requestedInterval))) : 15000;
     fs.mkdirSync(options.artifactRoot, { recursive: true, mode: 0o700 });
   }
-  status(): OfficeWorkerStatus { return { enabled: this.enabled, running: this.running, activeJobId: this.activeJobId, lastError: this.lastError,
-    sourceReviews: this.latestSourceReview ? [this.latestSourceReview] : [] }; }
+  status(): OfficeWorkerStatus & { scheduling: OfficeWorkerScheduling[] } { return { enabled: this.enabled, running: this.running, activeJobId: this.activeJobId, lastError: this.lastError,
+    sourceReviews: this.latestSourceReview ? [this.latestSourceReview] : [],
+    scheduling: [{ baseIntervalMs: this.baseIntervalMs, maxIntervalMs: this.maxIntervalMs, lastOutcome: this.lastOutcome,
+      idlePolls: this.idlePolls, errorPolls: this.errorPolls, pollDelayMs: this.pollDelayMs, nextPollAt: this.nextPollAt }] }; }
   setEnabled(enabled: boolean): OfficeWorkerStatus {
+    // Repeated enable requests must not restart an idle poll or create another
+    // timer. Repeated disable still cancels an explicitly requested one-shot.
+    if (enabled && this.enabled) return this.status();
     this.enabled = enabled;
-    if (this.timer) clearInterval(this.timer);
-    this.timer = null;
+    this.clearPoll();
     if (enabled) {
-      this.timer = setInterval(() => { if (!this.running) void this.runOnce(); }, Math.max(5000, this.options.intervalMs ?? 15000));
-      this.timer.unref();
+      this.resetBackoff();
       void this.runOnce();
     } else { this.activeController?.abort(new Error('Office worker stopped; dispatched usage remains accounted.')); }
     return this.status();
   }
   stop(): void { this.setEnabled(false); }
+
+  private clearPoll(): void {
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = null;
+    this.pollDelayMs = null;
+    this.nextPollAt = null;
+  }
+
+  private resetBackoff(): void {
+    this.idlePolls = 0;
+    this.errorPolls = 0;
+    this.lastOutcome = null;
+  }
+
+  private schedulePoll(outcome: NonNullable<OfficeWorkerScheduling['lastOutcome']>): void {
+    this.lastOutcome = outcome;
+    // Saturated counters keep long-running idle services bounded. This is a
+    // delay before looking for a new native lease, never a retry of an attempt.
+    this.idlePolls = outcome === 'idle' ? Math.min(32, this.idlePolls + 1) : 0;
+    this.errorPolls = outcome === 'error' ? Math.min(32, this.errorPolls + 1) : 0;
+    this.clearPoll();
+    if (!this.enabled) return;
+    const streak = Math.max(this.idlePolls, this.errorPolls);
+    const delay = Math.min(this.maxIntervalMs, this.baseIntervalMs * 2 ** Math.min(8, Math.max(0, streak - 1)));
+    this.pollDelayMs = delay;
+    this.nextPollAt = Date.now() + delay;
+    this.timer = setTimeout(() => {
+      this.clearPoll();
+      if (this.enabled) void this.poll(false);
+    }, delay);
+    this.timer.unref();
+  }
 
   private prompts(job: OfficeJob, snapshot: OfficeSnapshot, preparedContext = ''): { system: string; prompt: string; contextHash: string; sourceReview: SourceReviewReport } {
     const employee = snapshot.employees.find(e => e.id === job.employeeId);
@@ -109,7 +166,8 @@ export class OfficeWorker {
     const specialistPath = path.join(this.options.seedDir, 'prompts', 'specialists.json');
     const aliases: Record<string, string> = { 'github-steward': 'github-release', 'knowledge-curator': 'knowledge', 'qa-lead': 'qa', 'blueprint-steward': 'design-architecture', 'code-engineer': 'engineering' };
     const assignment = employee.assignmentKey?.replace(/^shared:/, '');
-    const roleKey = employee.id === 'donna' ? 'donna' : assignment ? aliases[assignment] ?? assignment : employee.role === 'Cloud Compute Operator' ? 'cloud-operations' : null;
+    const roleTitles: Record<string, string> = { 'Cloud Compute Operator': 'cloud-operations', 'Runtime Observer': 'runtime-observer', 'Knowledge Steward': 'knowledge-steward', 'Connector Steward': 'connector-steward' };
+    const roleKey = employee.id === 'donna' ? 'donna' : assignment ? aliases[assignment] ?? assignment : roleTitles[employee.role] ?? null;
     const roleReference = loadRoleReference(this.options.seedDir, roleKey);
     let specialistBrief = '';
     if (roleKey && fs.existsSync(specialistPath) && fs.statSync(specialistPath).size < 32000) {
@@ -257,7 +315,14 @@ export class OfficeWorker {
   }
 
   async runOnce(): Promise<OfficeWorkerStatus> {
-    if (this.running) return this.status();
+    await this.poll(true);
+    return this.status();
+  }
+
+  private async poll(resetBackoff: boolean): Promise<void> {
+    if (this.running) return;
+    this.clearPoll();
+    if (resetBackoff) this.resetBackoff();
     this.running = true;
     this.lastError = null;
     // Install cancellation before the first await. A stop during a native claim
@@ -274,6 +339,7 @@ export class OfficeWorker {
     let settled = false;
     let producedArtifact: string | undefined;
     let observedUsage: { inputTokens: number; outputTokens: number; costUsd: number } | undefined;
+    let outcome: NonNullable<OfficeWorkerScheduling['lastOutcome']> = 'idle';
     let watch: NodeJS.Timeout | null = null;
     let deadline: NodeJS.Timeout | null = null;
     try {
@@ -285,7 +351,7 @@ export class OfficeWorker {
       controller.signal.throwIfAborted();
       const claimed = unwrap(await this.options.command({ action: 'claim_job', workerId: this.workerId, mode: 'provider' }));
       const id = claimed.lastAction?.jobId;
-      if (typeof id !== 'string') return { ...this.status(), running: false, activeJobId: null };
+      if (typeof id !== 'string') return;
       job = claimed.jobs.find(j => j.id === id);
       if (!job || !job.leaseToken) throw new Error('Claimed job or lease missing');
       this.activeJobId = job.id;
@@ -335,14 +401,15 @@ export class OfficeWorker {
           const reviewHandoff = sourceReview.artifactUri ? `\nSource Review → Donna: ${sourceReview.artifactUri}` : '';
           unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: 'completed', inputTokens: 0, outputTokens: 0, costUsd: 0, costStatus: 'observed', artifactUri: cachedPath, summary: utf8Prefix('Exact-context local cache reuse. No provider request was made.' + reviewHandoff, 800) }));
           settled = true;
-          return { ...this.status(), running: false, activeJobId: null };
+          outcome = 'work';
+          return;
         }
       }
       const reservation = unwrap(await this.options.command({ action: 'reserve_job', jobId: job.id, leaseToken, inputTokens: inputBound, maxOutputTokens: outputBound, costUsd: reservedUsd }));
       if (reservation.lastAction?.reserved === false) {
         // The core retains the pending attempt and prior checkpoints. A global
         // cap pauses admission; it never kills an already reserved request.
-        return { ...this.status(), running: false, activeJobId: null };
+        return;
       }
       const admitted = reservation.jobs.find(j => j.id === job!.id);
       if (admitted?.status !== 'running' || admitted.leaseToken !== leaseToken || admitted.costStatus !== 'reserved' || admitted.reservation?.inputTokens !== inputBound || admitted.reservation.maxOutputTokens !== outputBound || Math.abs(admitted.reservation.costUsd - reservedUsd) > 1e-9) throw new Error('The persisted reservation could not be verified. No provider request was sent.');
@@ -395,6 +462,7 @@ export class OfficeWorker {
       const reviewSummary = sourceReview.status === 'flagged' ? 'Source Review → Donna: external directives or partial coverage flagged; report linked in artifact.\n' : '';
       const final = unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: usageObserved && body.trim() ? 'completed' : 'failed', inputTokens: usageObserved ? result.inputTokens : inputBound, outputTokens: usageObserved ? result.outputTokens : outputBound, costUsd, costStatus: usageObserved ? 'observed' : 'estimated', artifactUri: artifact, summary: body.trim() ? (utf8Prefix(reviewSummary + toolSummary + body, 800) || 'Deliverable preserved in the private artifact.') : EMPTY_RESULT_SUMMARY, error: !usageObserved ? 'Provider usage is unavailable. Deliverable preserved; reservation retained for reconciliation.' : body.trim() ? undefined : 'Provider returned no text deliverable.' }));
       settled = true;
+      outcome = final.jobs.find(j => j.id === job!.id)?.status === 'completed' ? 'work' : 'error';
       if (body.trim() && job.allowedTools.includes('github.read_repository') && final.jobs.find(j => j.id === job!.id)?.status === 'completed') {
         unwrap(await this.options.command({ action: 'add_knowledge', companyId: job.companyId, title: `Repository review proposal · ${new Date().toISOString().slice(0, 10)}`, summary: utf8Prefix(`Model-authored proposal from a commit-pinned repository read. This is not build or publication evidence.\n${body}`, 3900), artifactUri: artifact }));
       }
@@ -402,6 +470,7 @@ export class OfficeWorker {
         await this.options.command({ action: 'put_cache', companyId: job.companyId, key: cacheKey, artifactUri: artifact, bytes: Buffer.byteLength(header + body), contentSha256: hash(header + body) });
       }
     } catch (error) {
+      outcome = 'error';
       this.lastError = redact(error instanceof Error ? error.message : String(error)).slice(0, 500);
       if (job && leaseToken && !settled) {
         await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: 'failed', inputTokens: observedUsage?.inputTokens ?? (dispatched ? reservedInputTokens : 0), outputTokens: observedUsage?.outputTokens ?? (dispatched ? reservedOutputTokens : 0), costUsd: observedUsage?.costUsd ?? (dispatched ? reservedUsd : 0), costStatus: observedUsage || !dispatched ? 'observed' : 'estimated', artifactUri: producedArtifact, error: this.lastError, summary: producedArtifact ? 'Returned work was preserved. Inspect the action error before a deliberate retry.' : dispatched ? 'Provider call failed or was interrupted. Conservative reservation retained until billing is reconciled; no automatic retry.' : 'No provider call dispatched.' }).catch(() => undefined);
@@ -412,7 +481,9 @@ export class OfficeWorker {
       this.activeController = null;
       this.activeJobId = null;
       this.running = false;
+      // Disabled workers never re-arm, including late responses from a provider
+      // that ignored AbortSignal. A later explicit enable starts a new loop.
+      this.schedulePoll(outcome);
     }
-    return this.status();
   }
 }

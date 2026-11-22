@@ -34,13 +34,19 @@ exports.run = async function run() {
     externalRequests: 0,
     blockedRequests: 0,
     verifiedPersistent: false,
+    verifiedPersistentHost: false,
+    hostFixtureRequests: 0,
   };
   const originalFetch = globalThis.fetch;
   let phase = 'offline', runtimeOrigin = null, installedEntry = null, deactivated = false;
   let persistentFixture = null;
+  let fixtureRequestPermit = null;
   async function stopPersistentFixture() {
     const fixture = persistentFixture;
     if (!fixture || fixture.stopped) return;
+    // A detached host job has its own tmux session. Confirm its bounded cleanup
+    // before stopping the daemon or removing any private receipt directory.
+    if (fixture.cleanupHost) await fixture.cleanupHost();
     await Promise.allSettled(fixture.adapters.map(adapter => adapter.close()));
     const env = { ELECTRON_RUN_AS_NODE: '1', NODE_ENV: 'production' };
     for (const name of ['PATH', 'HOME', 'USER', 'LOGNAME', 'LANG', 'LC_ALL', 'TMPDIR', 'TERM']) {
@@ -62,8 +68,9 @@ exports.run = async function run() {
     'getModelCatalog', 'companySnapshot', 'listProjects', 'getProject', 'listRuns', 'getJobStatus', 'cloudStatus',
     'modelPoolSnapshot', 'environmentStatus', 'resourceStatus', 'checkModelRequirements']);
   // The extension host is offline until an explicit local start. Thereafter it
-  // can read only the one owned loopback runtime. Never permit provider, Vast,
-  // SSH, or cloud traffic; the child starts with no provider keys and paused jobs.
+  // can read only the one owned loopback runtime. A dedicated Linux fixture
+  // additionally permits one exact request at a time for its synthetic host job.
+  // Never permit provider, Vast, SSH, or cloud traffic; workers stay paused.
   globalThis.fetch = async (input, init = {}) => {
     receipt.networkRequests += 1;
     let url;
@@ -79,10 +86,20 @@ exports.run = async function run() {
       try { const body = JSON.parse(init.body); allowed = Buffer.byteLength(init.body) <= 256 * 1024 && workbenchReads.has(body.method) && Array.isArray(body.args); }
       catch { allowed = false; }
     }
-    if (!allowed) { receipt.blockedRequests++; throw new Error('Only bounded reads of the owned Daftar runtime are permitted in the installed smoke test.'); }
+    if (['persistent-host', 'persistent-host-cleanup'].includes(phase) && url.origin === runtimeOrigin && !url.search && !url.hash) {
+      if (method === 'GET' && url.pathname === '/v1/host') allowed = true;
+      if (method === 'POST' && fixtureRequestPermit?.phase === phase && fixtureRequestPermit.route === url.pathname
+          && fixtureRequestPermit.unused && typeof init.body === 'string' && Buffer.byteLength(init.body) <= 16384
+          && init.body === fixtureRequestPermit.body) {
+        fixtureRequestPermit.unused = false;
+        receipt.hostFixtureRequests++;
+        allowed = true;
+      }
+    }
+    if (!allowed) { receipt.blockedRequests++; throw new Error('Only bounded owned-runtime reads and exact synthetic fixture requests are permitted in the installed smoke test.'); }
     receipt.loopbackRequests++;
     const result = await originalFetch(input, { ...init, redirect: 'error' });
-    assert.ok(!result.redirected, 'Owned runtime reads must not redirect');
+    assert.ok(!result.redirected, 'Owned runtime requests must not redirect');
     if (url.pathname === '/v1/status' && result.ok) {
       const state = await result.clone().json();
       assert.equal(state.execution, 'headless'); assert.equal(state.worker.enabled, false);
@@ -151,7 +168,10 @@ exports.run = async function run() {
     assert.equal(runtimeManifest.platform, process.platform); assert.equal(runtimeManifest.arch, process.arch);
     const studio = require(path.join(installedRoot, 'src/workbench-panel.js')).readAssets(installedRoot);
     assert.equal(studio.manifest.renderer, 'desktop-shared-freeflow');
-    for (const filename of ['freeflow/scene.js', 'freeflow/universe.js', 'freeflow/workspace.js']) assert.ok(studio.manifest.files[filename], `Missing shared canvas module ${filename}`);
+    for (const module of ['scene', 'universe', 'workspace']) {
+      const matches = Object.keys(studio.manifest.files).filter(filename => new RegExp(`^freeflow/${module}\\.[a-f0-9]{16}\\.js$`).test(filename));
+      assert.equal(matches.length, 1, `Missing or ambiguous content-hashed shared canvas module ${module}`);
+    }
     assert.match(studio.html, /id="freeflow-host"/);
     receipt.package = { platform: runtimeManifest.platform, arch: runtimeManifest.arch,
       runtimeFiles: Object.keys(runtimeManifest.files).length, canvasFiles: Object.keys(studio.manifest.files).length,
@@ -225,6 +245,121 @@ exports.run = async function run() {
       const ownerAfter = await readOwner(); const reconnected = await authenticatedStatus(secondConnection);
       assert.ok(ownerAfter.pid === ownerBefore.pid && ownerAfter.nonce === ownerBefore.nonce, 'Reconnecting must retain the same live native daemon');
       assert.equal(reconnected.host.mode, before.host.mode); assert.equal(reconnected.worker.enabled, before.worker.enabled);
+
+      // Exercise the actual installed Electron -> tmux -> Node runner -> bash
+      // chain. Ordinary provider workers remain paused throughout this fixture.
+      phase = 'persistent-host';
+      const fixtureRoutes = new Set(['/v1/commands', '/v1/host/god-mode', '/v1/host/submit', '/v1/host/inspect', '/v1/host/stop-all']);
+      const fixtureRequest = async (route, body) => {
+        const encoded = body === undefined ? undefined : JSON.stringify(body);
+        if (encoded !== undefined) {
+          assert.ok(fixtureRoutes.has(route) && Buffer.byteLength(encoded) <= 16384, 'Only fixed bounded fixture routes may mutate state');
+          assert.equal(fixtureRequestPermit, null, 'Synthetic fixture requests must be sequential');
+          fixtureRequestPermit = { phase, route, body: encoded, unused: true };
+        } else assert.ok(['/v1/office', '/v1/host'].includes(route), 'Unexpected fixture read route');
+        let reader, response;
+        try {
+          response = await globalThis.fetch(secondConnection.url + route, {
+            method: encoded === undefined ? 'GET' : 'POST', redirect: 'error', signal: AbortSignal.timeout(5000),
+            headers: { Authorization: `Bearer ${secondConnection.controlToken}`, Accept: 'application/json',
+              ...(encoded === undefined ? {} : { 'Content-Type': 'application/json' }) },
+            ...(encoded === undefined ? {} : { body: encoded }),
+          });
+          assert.equal(response.status, 200, 'The exact installed fixture request must be confirmed; no mutation is automatically retried');
+          assert.ok(response.headers.get('content-type')?.includes('application/json'), 'Fixture responses must be JSON');
+          reader = response.body.getReader();
+          const chunks = []; let bytes = 0;
+          for (;;) {
+            const part = await reader.read();
+            if (part.done) break;
+            bytes += part.value.byteLength;
+            assert.ok(bytes <= 9 * 1024 * 1024, 'Fixture response exceeds the runtime transport bound');
+            chunks.push(part.value);
+          }
+          const value = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+          assert.equal(value.ok, true, 'The installed native operation must succeed');
+          return value;
+        } finally {
+          if (reader) { try { await reader.cancel(); } catch {} try { reader.releaseLock(); } catch {} }
+          else if (response?.body) { try { await response.body.cancel(); } catch {} }
+          fixtureRequestPermit = null;
+        }
+      };
+      let hostStopAttempted = false, hostStopped = false;
+      persistentFixture.cleanupHost = async () => {
+        if (hostStopAttempted) {
+          assert.ok(hostStopped, 'Host cleanup was not confirmed; preserve its private receipts without another mutation');
+          return;
+        }
+        hostStopAttempted = true;
+        phase = 'persistent-host-cleanup';
+        const stopped = await fixtureRequest('/v1/host/stop-all', {});
+        assert.equal(stopped.host.mode, 'off');
+        assert.equal(stopped.host.godMode.enabled, false);
+        assert.ok(stopped.host.jobs.every(job => ['completed', 'failed', 'cancelled', 'timed_out', 'output_limit'].includes(job.status)),
+          'Synthetic host cleanup must leave no live or uncertain command');
+        hostStopped = true;
+      };
+      const initialOffice = await fixtureRequest('/v1/office');
+      assert.match(initialOffice.stateHash, /^[a-f0-9]{64}$/);
+      const companyId = 'installed-host-fixture-company';
+      const created = await fixtureRequest('/v1/commands', {
+        id: 'installed-host-create-company', expectedStateHash: initialOffice.stateHash,
+        command: { action: 'create_company', id: companyId, name: 'Installed host acceptance' },
+      });
+      assert.equal(created.id, 'installed-host-create-company');
+      const office = await fixtureRequest('/v1/office');
+      const company = office.snapshot.companies.find(candidate => candidate.id === companyId && candidate.status === 'active');
+      assert.ok(company && typeof company.assistantId === 'string', 'Native company creation must provide its canonical assistant');
+      const assistant = office.snapshot.employees.find(employee => employee.id === company.assistantId && employee.status === 'active');
+      assert.ok(assistant, 'The exact native company assistant must be active');
+      const companyIds = office.snapshot.companies.filter(candidate => candidate.status === 'active').map(candidate => candidate.id).sort();
+      const hostBefore = await fixtureRequest('/v1/host');
+      assert.equal(hostBefore.host.mode, 'off'); assert.equal(hostBefore.host.jobCount, 0);
+      const enabled = await fixtureRequest('/v1/host/god-mode', { expectedRevision: hostBefore.host.revision, enabled: true, companyIds });
+      assert.equal(enabled.host.mode, 'auto'); assert.equal(enabled.host.godMode.enabled, true);
+      assert.deepEqual(enabled.host.godMode.companyIds, companyIds);
+      assert.equal(enabled.host.jobCount, 0, 'Enabling owner control must not start a job');
+
+      const sentinel = 'daftar-installed-host-output\n';
+      const executionMarker = 'daftar-installed-host-once\n';
+      const jobRequest = {
+        id: 'installed-electron-host-job', companyId, employeeId: company.assistantId,
+        command: 'test -z "${ELECTRON_RUN_AS_NODE+x}" && printf \'daftar-installed-host-once\\n\' >> installed-host-execution-count.txt && printf \'daftar-installed-host-output\\n\'',
+        cwd: persistentFixture.dataDir, timeoutSeconds: 10, maxOutputBytes: 4096,
+      };
+      const submitted = await fixtureRequest('/v1/host/submit', jobRequest);
+      assert.equal(submitted.id, jobRequest.id); assert.equal(submitted.replayed, false);
+      assert.equal(submitted.job.companyId, companyId); assert.equal(submitted.job.employeeId, company.assistantId);
+      let inspected; const hostDeadline = Date.now() + 15000;
+      for (let attempt = 0; attempt < 60; attempt++) {
+        inspected = await fixtureRequest('/v1/host/inspect', { id: jobRequest.id, offset: 0 });
+        assert.equal(inspected.id, jobRequest.id); assert.equal(inspected.offset, 0);
+        if (inspected.eof || Date.now() >= hostDeadline) break;
+        await new Promise(resolve => setTimeout(resolve, 250));
+      }
+      assert.equal(inspected.job.status, 'completed', 'The real installed Electron host runner must finish its fixed printf job');
+      assert.equal(inspected.job.exitCode, 0); assert.equal(inspected.eof, true); assert.equal(inspected.truncated, false);
+      assert.equal(inspected.output, sentinel); assert.equal(inspected.nextOffset, Buffer.byteLength(sentinel));
+      const replay = await fixtureRequest('/v1/host/submit', jobRequest);
+      assert.equal(replay.id, jobRequest.id); assert.equal(replay.replayed, true); assert.equal(replay.job.status, 'completed');
+      assert.equal(replay.job.startedAt, inspected.job.startedAt); assert.equal(replay.job.finishedAt, inspected.job.finishedAt);
+      const replayInspect = await fixtureRequest('/v1/host/inspect', { id: jobRequest.id, offset: 0 });
+      assert.equal(replayInspect.output, sentinel); assert.equal(replayInspect.job.outputBytes, Buffer.byteLength(sentinel));
+      const markerFile = path.join(persistentFixture.dataDir, 'installed-host-execution-count.txt');
+      const markerStat = await fs.lstat(markerFile);
+      assert.ok(markerStat.isFile() && !markerStat.isSymbolicLink() && markerStat.size <= 128, 'Synthetic execution marker must remain a bounded fixture file');
+      assert.equal(await fs.readFile(markerFile, 'utf8'), executionMarker, 'Replaying the completed ID must not execute the shell twice');
+      assert.equal((await fixtureRequest('/v1/host')).host.jobCount, 1);
+      await persistentFixture.cleanupHost();
+      const afterHost = await authenticatedStatus(secondConnection);
+      assert.equal(afterHost.host.mode, 'off'); assert.equal(afterHost.worker.enabled, false); assert.equal(afterHost.worker.running, false);
+      receipt.verifiedPersistentHost = true;
+      receipt.persistentHost = { canonicalAssistant: true, exactCompanyMembership: true, ownerModeStartedNoJobs: true,
+        completed: true, exitCode: 0, outputBytes: Buffer.byteLength(sentinel), stableReplay: true,
+        singleExecution: true, shellElectronFlagScrubbed: true, workersPaused: true, policyRestored: 'off' };
+      receipt.checks.push('Installed Electron → tmux host runner completed one bounded printf job under its native company assistant; replay executed once and policy returned off');
+
       await second.close();
       assert.equal((await authenticatedStatus(secondConnection)).host.mode, before.host.mode);
       phase = 'persistent-shutdown';

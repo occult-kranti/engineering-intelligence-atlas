@@ -98,6 +98,10 @@ export function createServer({ runtime, token, allowedHosts = [], allowedOrigins
         }
         if (req.url === '/v1/office' && req.method === 'GET') return writeJson(res, 200, await runtime.snapshot());
         if (req.url === '/v1/host' && req.method === 'GET') return writeJson(res, 200, await runtime.hostOperation('status', {}));
+        if (req.url === '/v1/activity' && req.method === 'GET') return writeJson(res, 200, await runtime.activityOperation('status', {}));
+        if (['/v1/activity/query', '/v1/activity/summarize'].includes(req.url) && req.method === 'POST') {
+          return writeJson(res, 200, await runtime.activityOperation(req.url.split('/').at(-1), await readJson(req)));
+        }
         if (req.url === '/v1/environments' && req.method === 'GET') return writeJson(res, 200, await runtime.environmentOperation('status', {}));
         if (req.url === '/v1/resources' && req.method === 'GET') return writeJson(res, 200, await runtime.resourceOperation('status', {}));
         if (req.url === '/v1/design' && req.method === 'GET') return writeJson(res, 200, await runtime.designOperation('catalog', {}));
@@ -111,7 +115,7 @@ export function createServer({ runtime, token, allowedHosts = [], allowedOrigins
           const [method, operation] = managedRoutes[req.url];
           return writeJson(res, 200, await runtime[method](operation, await readJson(req)));
         }
-        const hostRoutes = { '/v1/host/configure': 'configure', '/v1/host/submit': 'submit',
+        const hostRoutes = { '/v1/host/configure': 'configure', '/v1/host/god-mode': 'godMode', '/v1/host/submit': 'submit',
           '/v1/host/approve': 'approve', '/v1/host/cancel': 'cancel', '/v1/host/inspect': 'inspect', '/v1/host/stop-all': 'stopAll' };
         if (Object.hasOwn(hostRoutes, req.url) && req.method === 'POST') {
           return writeJson(res, 200, await runtime.hostOperation(hostRoutes[req.url], await readJson(req)));
@@ -136,7 +140,7 @@ export function createServer({ runtime, token, allowedHosts = [], allowedOrigins
         }
         if (req.url === '/v1/workers/run-once' && req.method === 'POST') {
           if (Object.keys(await readJson(req)).length) throw new RuntimeError('INVALID_REQUEST', 'Provide an empty object.');
-          return writeJson(res, 202, runtime.runOnce());
+          return writeJson(res, 202, await runtime.runOnce());
         }
         throw new RuntimeError('NOT_FOUND', 'Runtime endpoint not found.', 404);
       } finally { active -= 1; }

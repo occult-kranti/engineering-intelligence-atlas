@@ -72,7 +72,7 @@ test('control credential is read only from a bounded private regular file, never
 test('the adapter advertises only owner-facing tools and accurate worker side effects', async () => {
   const f = fixture(); const process = await initialized(f.handler);
   const response = await process(JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' }));
-  assert.deepEqual(response.result.tools.map(t => t.name), ['design_catalog', 'design_plan', 'design_install', 'design_inspect', 'environment_status', 'environment_prepare', 'environment_inspect', 'environment_run', 'resource_status', 'resource_configure', 'resource_resolve', 'resource_plan', 'resource_start', 'resource_inspect', 'resource_cancel', 'runtime_status', 'office_summary', 'office_query', 'office_command', 'worker_set_enabled', 'model_pool_status', 'model_pool_request', 'model_pool_cancel', 'model_pool_select', 'host_status', 'host_configure', 'host_submit', 'host_approve', 'host_cancel', 'host_inspect', 'host_stop_all']);
+  assert.deepEqual(response.result.tools.map(t => t.name), ['activity_status', 'activity_query', 'activity_summarize', 'design_catalog', 'design_plan', 'design_install', 'design_inspect', 'environment_status', 'environment_prepare', 'environment_inspect', 'environment_run', 'resource_status', 'resource_configure', 'resource_resolve', 'resource_plan', 'resource_start', 'resource_inspect', 'resource_cancel', 'runtime_status', 'office_summary', 'office_query', 'office_command', 'worker_set_enabled', 'model_pool_status', 'model_pool_request', 'model_pool_cancel', 'model_pool_select', 'host_status', 'host_configure', 'host_god_mode', 'host_submit', 'host_approve', 'host_cancel', 'host_inspect', 'host_stop_all']);
   assert.equal(f.calls.length, 0);
   const owner = TOOL_DEFINITIONS.find(t => t.name === 'office_command');
   assert.equal(owner.annotations.openWorldHint, true);
@@ -412,4 +412,17 @@ test('CLI launches as a clean stdio subprocess against a synthetic HTTP runtime'
   const wire = Buffer.concat(out).toString('utf8'); assert.equal(wire.includes(TOKEN), false);
   const responses = wire.trim().split('\n').map(JSON.parse);
   assert.deepEqual(responses.map(r => r.id), [1, 2, 3]); assert.equal(responses[2].result.structuredContent.worker.enabled, false);
+});
+
+test('God mode uses the fixed owner route with current membership and rejects malformed scopes before transport', async () => {
+  const f = fixture({ request: async () => ({ ok: true, host: hostStatus({ godMode: { enabled: true, companyIds: ['company-a'], activatedAt: '2026-01-01T00:00:00.000Z' } }) }) });
+  const input = { expectedRevision: 4, enabled: true, companyIds: ['company-a'] };
+  const result = await f.handler('host_god_mode', input);
+  assert.deepEqual(f.calls.map(call => [call.method, call.route, call.body]), [['POST', '/v1/host/god-mode', input]]);
+  assert.equal(result.host.godMode.enabled, true); assert.deepEqual(result.host.godMode.companyIds, ['company-a']);
+  for (const malformed of [{ ...input, companyIds: [] }, { ...input, companyIds: ['a', 'a'] }, { ...input, enabled: false }, { ...input, disableChecks: true }]) {
+    await assert.rejects(f.handler('host_god_mode', malformed));
+  }
+  assert.equal(f.calls.length, 1);
+  assert.equal(TOOL_DEFINITIONS.find(tool => tool.name === 'host_god_mode').annotations.readOnlyHint, false);
 });

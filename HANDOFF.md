@@ -48,6 +48,30 @@ IDs, budgets and ownership. Role descriptions and source-index/observer services
 do not confer permissions or constitute extra model hires. Native eligibility and
 any applicable shared-service contract remain mandatory.
 
+### Owner controls and operations
+
+God mode now makes one revision-checked host policy change for the exact current
+active company set. It gives eligible employees and company assistants automatic
+host-command admission within that recorded scope; new companies require a
+refresh. It does not start jobs, enable provider workers, change budgets or start
+the stopped instance. Separate controls stop managed work and inspect its receipts.
+The [operations guide](project/OPERATIONS_CONTROL.md) describes the full setup flow.
+
+The canvas includes a movable Setup flow popup and native controls for connector
+readiness, permanent operations roles, model ownership, managed environments and
+design installation plans. Runtime Observer, Knowledge Steward and Connector
+Steward join the Cloud Compute Operator as hireable permanent role definitions.
+
+The private activity journal retains up to 1,000 metadata observations within
+1 MiB, supports scoped cursor queries with retention-gap reporting, and provides
+deterministic summaries with a 64-entry cache. It stores no prompts, command text,
+outputs or credential fields. It complements the native action/budget ledger.
+Uncertain journal writes preserve completed operation receipts and expose degraded
+status rather than inviting duplicate execution. Worker idle/error polling backs
+off to 120 seconds; explicit one-shot execution remains immediate, and disposal
+clears timers and owned requests. This is bounded cleanup evidence, not a proof
+that every possible memory leak is absent.
+
 ### Managed compute, environments and model sharing
 
 Host control uses explicit revision-checked off/manual/auto policy and grants.
@@ -86,7 +110,7 @@ experts and optional synthesis. They are **request routing and ensembles, not
 newly trained MoE models**. Shared bytes reside in the current host's model cache;
 automatic replication between VPSs and new MoE training are not implemented.
 
-The design-toolchain catalog covers Blender, Godot4, Penpot, Krita, GIMP and
+The design-toolchain catalog covers Blender, Godot 4, Penpot, Krita, GIMP and
 Inkscape. Plans are dry metadata operations. Blender/GIMP/Krita/Inkscape require
 exact signed Debian/Ubuntu package versions and an already-root container
 runtime; Godot uses an exact official release artifact and reviewed SHA-256.
@@ -98,7 +122,7 @@ demonstrate GPU rendering. See [the design runbook](deploy/DESIGN_TOOLCHAIN.md).
 
 ### Interfaces, credentials and final acceptance
 
-The packaged stdio runtime adapter exports **31 MCP tools**: office/runtime/worker,
+The packaged stdio runtime adapter exports **35 MCP tools**: office/runtime/worker,
 model pool, host control, managed environments, model resources and design
 toolchain. The [MCP guide](tools/DAFTAR_RUNTIME_MCP.md) lists every tool, exact
 managed API shape and receipt flow. Port 8788 serves authenticated REST, not HTTP

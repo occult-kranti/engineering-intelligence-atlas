@@ -9,12 +9,26 @@ const METHODS = Object.freeze({
   openOfflineAtlas:[0,0],connectRuntime:[1,1],backToLauncher:[0,0],getSettings:[0,0],openExternal:[1,1],getVaultStatus:[0,0],setApiKey:[1,1],revokeApiKey:[1,1],importCredentialFile:[1,1],listProviderModels:[1,1],detectOllama:[0,0],
   companySnapshot:[0,0],registerCompany:[1,1],refreshCompany:[0,0],updateCompanyTask:[1,1],indexCompanyRepository:[0,0],officeSnapshot:[0,0],officeCommand:[1,1],officeWorkerStatus:[0,0],setOfficeWorker:[1,1],runOfficeQueue:[0,0],
   modelPoolSnapshot:[1,1],modelPoolRequest:[1,1],modelPoolCancel:[1,1],modelPoolSelect:[1,1],listProjects:[0,0],createProject:[1,1],getProject:[1,1],startRun:[1,1],pauseRun:[1,1],resumeRun:[1,1],cancelRun:[1,1],listRuns:[0,1],readArtifact:[3,3],sendCloudChat:[1,1],
-  hostStatus:[0,0],hostConfigure:[1,1],hostSubmit:[1,1],hostApprove:[1,1],hostCancel:[1,1],hostInspect:[1,1],hostStopAll:[0,0],
+  hostStatus:[0,0],hostConfigure:[1,1],hostGodMode:[1,1],hostSubmit:[1,1],hostApprove:[1,1],hostCancel:[1,1],hostInspect:[1,1],hostStopAll:[0,0],
   environmentStatus:[0,1],environmentPrepare:[1,1],environmentInspect:[1,1],environmentRun:[1,1],
   resourceStatus:[0,1],resourceConfigure:[1,1],resourceResolve:[1,1],resourcePlan:[1,1],resourceStart:[1,1],resourceInspect:[1,1],resourceCancel:[1,1],
   designCatalog:[0,0],designPlan:[1,1],designInstall:[1,1],designInspect:[1,1],
+  activityStatus:[0,0],activityQuery:[0,1],activitySummarize:[0,1],
   openComputeCenter:[0,0],startLocalRuntime:[0,0],connectRuntimePrompt:[0,0],connectCompute:[0,0],connectDesktopPrompt:[0,0],connectCloudPrompt:[0,0],
 });
+const SETUP_FLOW_MARKUP=`<section id="workbench-setup-panel" role="dialog" aria-modal="false" aria-labelledby="workbench-setup-title" aria-describedby="workbench-setup-status" tabindex="-1" hidden>
+  <header class="workbench-setup-header"><div><p class="workbench-setup-eyebrow">YOUR OFFICE, ONE CANVAS</p><h2 id="workbench-setup-title">Setup flow</h2></div><div class="workbench-setup-tools"><button type="button" id="workbench-setup-move" aria-label="Move setup popup" aria-describedby="workbench-setup-move-help">Move</button><button type="button" id="workbench-setup-close" aria-label="Close setup flow">Close</button></div></header>
+  <p id="workbench-setup-move-help" class="workbench-setup-help">Drag Move, or focus it and use arrow keys. Escape returns to the canvas.</p>
+  <p id="workbench-setup-status" role="status" aria-live="polite">Connection has not been checked.</p>
+  <ol class="workbench-setup-steps" aria-label="Office setup sequence">
+    <li><span class="workbench-step-number" aria-hidden="true">1</span><div><h3>Runtime connection</h3><p id="workbench-setup-runtime">No connection reported.</p><div class="workbench-step-actions"><button type="button" data-setup-action="connectRuntimePrompt">Connect runtime</button><button type="button" data-setup-action="startLocalRuntime">Start on this host</button></div></div></li>
+    <li><span class="workbench-step-number" aria-hidden="true">2</span><div><h3>Donna &amp; company ownership</h3><p>Review companies, employees and explicit host grants. Hiring records do not enable paid work.</p><button type="button" data-setup-action="openComputeCenter" data-setup-connected>Ownership &amp; roles</button></div></li>
+    <li><span class="workbench-step-number" aria-hidden="true">3</span><div><h3>Maintained environment</h3><p>Prepare Python, then inspect its receipt. Environment readiness has not been checked here.</p><button type="button" data-setup-action="openComputeCenter" data-setup-connected>Environment controls</button></div></li>
+    <li><span class="workbench-step-number" aria-hidden="true">4</span><div><h3>Shared models &amp; design tools</h3><p>Register installed model digests, share scope and review installation plans before starting.</p><button type="button" data-setup-action="openComputeCenter" data-setup-connected>Models &amp; tools</button></div></li>
+    <li><span class="workbench-step-number" aria-hidden="true">5</span><div><h3>Work &amp; activity</h3><p>Start chosen work explicitly. Inspect job receipts and the bounded metadata journal.</p><button type="button" data-setup-action="openComputeCenter" data-setup-connected>Work &amp; activity controls</button></div></li>
+    <li><span class="workbench-step-number" aria-hidden="true">6</span><div><h3>MCP access</h3><p id="workbench-setup-mcp">A standalone runtime is required. ChatGPT connection is a separate setup step.</p><button type="button" data-setup-action="copyEditorPairing" data-setup-runtime>Copy runtime MCP config</button></div></li>
+  </ol><p class="workbench-setup-footnote">Native controls handle credentials. This popup stores no keys and runs no background setup.</p>
+</section>`;
 const MAX_REQUEST_BYTES=272*1024, MAX_RESPONSE_BYTES=9*1024*1024, MAX_PENDING=32, DEADLINE_MS=45000;
 const EVENTS=new Set(['job','project','mode','connection']);
 const ID=/^[A-Za-z0-9_-]{1,96}$/;
@@ -64,7 +78,7 @@ function htmlFor(vscode,context,webview,info,epoch){
   const bootstrap=JSON.stringify({version:1,epoch,connection:info,methods:METHODS,deadlineMs:DEADLINE_MS,maxPending:MAX_PENDING}).replace(/</g,'\\u003c').replace(/\u2028/g,'\\u2028').replace(/\u2029/g,'\\u2029');
   const csp=`default-src 'none'; script-src 'nonce-${nonce}' ${webview.cspSource}; style-src ${webview.cspSource} 'unsafe-inline'; img-src ${webview.cspSource} data:; font-src ${webview.cspSource}; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'`;
   html=html.replace('</head>',`<meta http-equiv="Content-Security-Policy" content="${escape(csp)}"><link rel="stylesheet" href="${escape(resource('workbench.css'))}"><script nonce="${nonce}">window.__DAFTAR_WORKBENCH__=${bootstrap};</script><script nonce="${nonce}" src="${escape(resource('workbench-bridge.js'))}"></script></head>`);
-  html=html.replace(/<body([^>]*)>/i,'<body$1><aside id="workbench-controls" aria-label="Editor connection"><span id="workbench-connection" role="status"></span><button type="button" id="workbench-connect">Connections</button><button type="button" id="workbench-compute">Compute</button></aside>');
+  html=html.replace(/<body([^>]*)>/i,`<body$1><aside id="workbench-controls" aria-label="Editor connection"><span id="workbench-connection" role="status"></span><button type="button" id="workbench-connect">Connections</button><button type="button" id="workbench-compute">Compute</button><button type="button" id="workbench-setup" aria-controls="workbench-setup-panel" aria-expanded="false">Setup flow</button></aside>${SETUP_FLOW_MARKUP}`);
   return html;
 }
 function createOfficePanel(vscode,context,{call,connectionInfo}){
@@ -103,4 +117,4 @@ function createOfficePanel(vscode,context,{call,connectionInfo}){
     notifyConnection(next){if(disposed)return;const updated=publicInfo(next),nextSignature=identity(updated);info=updated;if(nextSignature!==signature){signature=nextSignature;epoch++;cancelAll();panel.webview.html=htmlFor(vscode,context,panel.webview,info,epoch);}else post({type:'daftar:connection',epoch,connection:info});}
   };
 }
-module.exports={createOfficePanel,METHODS,publicInfo,readAssets,htmlFor,MAX_REQUEST_BYTES,MAX_RESPONSE_BYTES,MAX_PENDING,DEADLINE_MS};
+module.exports={createOfficePanel,METHODS,publicInfo,readAssets,htmlFor,SETUP_FLOW_MARKUP,MAX_REQUEST_BYTES,MAX_RESPONSE_BYTES,MAX_PENDING,DEADLINE_MS};

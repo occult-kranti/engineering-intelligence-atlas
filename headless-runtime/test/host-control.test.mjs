@@ -219,7 +219,7 @@ test('malformed commands, unsafe paths, caps, and unknown keys fail without laun
 });
 
 test('schema validators match public command contracts without filesystem side effects', () => {
-  assert.deepEqual(Object.keys(HOST_TOOL_SCHEMAS), ['status', 'configure', 'submit', 'approve', 'cancel', 'inspect', 'stopAll']);
+  assert.deepEqual(Object.keys(HOST_TOOL_SCHEMAS), ['status', 'configure', 'godMode', 'submit', 'approve', 'cancel', 'inspect', 'stopAll']);
   assert.equal(validateHostOperation('submit', { id: 'x', companyId: 'acme', employeeId: 'dev', command: 'true', cwd: '/no-such-directory' }).timeoutSeconds, 1800);
   for (const [operation, input] of [['status', { extra: true }], ['configure', { expectedRevision: 0.5, mode: 'auto', grants: [] }],
     ['inspect', { id: 'x', offset: 9000000 }], ['submit', { id: 'x' }], ['__proto__', {}]]) assert.throws(() => validateHostOperation(operation, input), HostControlError);
@@ -342,4 +342,55 @@ test('real tmux: close/reopen survival, literal shell syntax, cancellation, and 
   assert.equal((await until(() => restarted.inspect({ id: 'tmux-cancel' }), item => item.eof)).job.status, 'cancelled');
   assert.equal((await restarted.stopAll()).host.mode, 'off');
   assert.equal(spawnSync(tmuxPath, ['-L', socket, 'has-session', '-t', '=unrelated']).status, 0);
+});
+
+test('God mode records the exact current company set without starting work or widening future membership', async t => {
+  const f = setup(t);
+  await rejectCode(f.control.godMode({ expectedRevision: 0, enabled: true, companyIds: ['acme'] }), 'HOST_SCOPE_CHANGED');
+  const result = await f.control.godMode({ expectedRevision: 0, enabled: true, companyIds: ['other', 'acme'] });
+  assert.equal(result.host.mode, 'auto'); assert.equal(result.host.revision, 1);
+  assert.equal(result.host.godMode.enabled, true);
+  assert.deepEqual(result.host.godMode.companyIds, ['acme', 'other']);
+  assert.ok(result.host.grants.every(grant => grant.employeeId === null));
+  assert.equal(f.runner.launches, 0); assert.equal(result.host.jobs.length, 0);
+  await rejectCode(f.control.godMode({ expectedRevision: 0, enabled: false, companyIds: [] }), 'HOST_REVISION_CONFLICT');
+  f.state.companies.push({ id: 'newco', status: 'active', assistantId: 'new-donna' });
+  f.state.employees.push({ id: 'new-dev', companyId: 'newco', status: 'active', officeId: null, departmentId: null });
+  await rejectCode(f.control.submit(f.command('new-company', { companyId: 'newco', employeeId: 'new-dev' })), 'HOST_GRANT_REQUIRED');
+  await rejectCode(f.control.submit(f.command('foreign-label', { employeeId: 'foreign' })), 'HOST_SCOPE_DENIED');
+  assert.equal((await f.control.submit(f.command('assistant', { employeeId: 'donna' }))).job.status, 'running');
+  f.state.companies[0].status = 'archived';
+  await rejectCode(f.control.submit(f.command('inactive-company')), 'HOST_SCOPE_DENIED');
+});
+
+test('God mode survives restart and disable or custom policy removes its broad preset', async t => {
+  const f = setup(t); await f.control.godMode({ expectedRevision: 0, enabled: true, companyIds: ['acme', 'other'] });
+  await f.control.close(); const reopened = f.restart();
+  assert.equal((await reopened.status()).host.godMode.enabled, true);
+  const disabled = await reopened.godMode({ expectedRevision: 1, enabled: false, companyIds: [] });
+  assert.equal(disabled.host.mode, 'off'); assert.deepEqual(disabled.host.grants, []); assert.equal(disabled.host.godMode.enabled, false);
+  await rejectCode(reopened.submit(f.command()), 'HOST_POLICY_OFF');
+  await reopened.godMode({ expectedRevision: 2, enabled: true, companyIds: ['acme', 'other'] });
+  const custom = await reopened.configure({ expectedRevision: 3, mode: 'manual', grants: [{ id: 'one', companyId: 'acme', employeeId: 'dev' }] });
+  assert.equal(custom.host.godMode.enabled, false); assert.equal(custom.host.grants.length, 1);
+  assert.equal(f.runner.launches, 0);
+});
+
+test('God mode validates opt-in, bounded canonical membership and uncertain persistence', async t => {
+  const f = setup(t);
+  for (const input of [
+    { expectedRevision: 0, enabled: true, companyIds: [] },
+    { expectedRevision: 0, enabled: true, companyIds: ['acme', 'acme'] },
+    { expectedRevision: 0, enabled: true, companyIds: ['acme\n'] },
+    { expectedRevision: 0, enabled: false, companyIds: ['acme'] },
+    { expectedRevision: 0, enabled: true, companyIds: ['acme'], bypass: true },
+  ]) await rejectCode(f.control.godMode(input), 'HOST_INPUT_INVALID');
+  const disabled = createHostControl({ stateDir: f.directory, enabled: false, snapshot: async () => f.state });
+  await rejectCode(disabled.godMode({ expectedRevision: 0, enabled: true, companyIds: ['acme', 'other'] }), 'HOST_DISABLED'); await disabled.close();
+  const rename = fs.renameSync; const destination = path.join(f.directory, 'host-control', 'registry.json');
+  fs.renameSync = (source, target) => { if (target === destination) { rename(source, target); throw new Error('Injected uncertain commit'); } return rename(source, target); };
+  try { await rejectCode(f.control.godMode({ expectedRevision: 0, enabled: true, companyIds: ['acme', 'other'] }), 'HOST_STATE_UNCERTAIN'); }
+  finally { fs.renameSync = rename; }
+  await rejectCode(f.control.submit(f.command()), 'HOST_STATE_UNCERTAIN'); assert.equal(f.runner.launches, 0);
+  await f.control.close(); assert.equal((await f.restart().status()).host.godMode.enabled, true);
 });

@@ -22,7 +22,7 @@ export const WORKBENCH_METHODS = Object.freeze({
   openOfflineAtlas: definition(0, 0, false, true), connectRuntime: definition(1, 1, false, true),
   backToLauncher: definition(0, 0, false, true), openExternal: definition(1, 1, false, true), importCredentialFile: definition(1, 1, false, true),
   onJobEvent: definition(0, 0, false, true), onProjectEvent: definition(0, 0, false, true), onModeChanged: definition(0, 0, false, true),
-  hostStatus: definition(0, 0), hostConfigure: definition(1, 1, true), hostSubmit: definition(1, 1, true),
+  hostStatus: definition(0, 0), hostConfigure: definition(1, 1, true), hostGodMode: definition(1, 1, true), hostSubmit: definition(1, 1, true),
   hostApprove: definition(1, 1, true), hostCancel: definition(1, 1, true), hostInspect: definition(1, 1), hostStopAll: definition(0, 0, true),
 });
 export const MANAGED_OFFICE_ACTIONS = Object.freeze(['import_github_account', 'github_operation', 'schedule_repository_reviews']);

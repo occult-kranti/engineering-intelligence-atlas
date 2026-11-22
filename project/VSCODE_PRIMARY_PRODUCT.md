@@ -40,6 +40,28 @@ Host jobs are attributed to a canonical active company and employee. Company ass
 
 An owner credential controls a trusted operating-system account. An auto grant can authorize arbitrary commands as that account. This is not independent tenant authentication or a hostile-root sandbox; root inside a rented container is also not ownership of Vast's underlying physical host. Model sharing policies govern managed application paths, while explicitly granted host administration remains broad OS authority.
 
+## Operations control and permanent roles
+
+The current source adds an explicit **God mode — owner host control** preset,
+connector-readiness stages, activity metadata and native hiring/reuse of
+**Runtime Observer**, **Knowledge Steward** and **Connector Steward**. Permanent
+role definitions do not create execution authority or recurring provider work.
+God mode atomically checks the policy revision and exact current active company
+set before granting company-wide auto host control. Future companies need an
+explicit refresh. Enabling the preset starts no job or instance, changes no
+budget and bypasses no platform approval setting. Off prevents new dispatch;
+Stop managed host work requests cancellation of existing managed jobs.
+
+Worker idle/error polling backs off by default at 15/30/60/120 seconds; a direct
+one-shot remains immediate. The rolling private activity journal is bounded to
+1,000 events/1 MiB, with deterministic summaries and a 64-entry cache invalidated
+by new events. The native job/authority/budget ledger remains authoritative.
+Readiness reports do not prove a successful GPU workload. See the
+[operations control guide](OPERATIONS_CONTROL.md) for the control-flow diagram,
+staged setup, provenance, cleanup and degraded-logging behavior. Final installed
+Linux/Windows CI remains pending; these source controls do not establish a real
+Vast workload, application installation or ChatGPT connection.
+
 ## Model ownership and sharing
 
 The resource registry provides company, office, department and employee ownership, exact installed model digests, explicit sharing permissions, and immutable plan/run receipts. Company hierarchy and department hierarchy are native. Office parent grouping is a resource-view sidecar; the application does not claim native suboffice execution semantics.

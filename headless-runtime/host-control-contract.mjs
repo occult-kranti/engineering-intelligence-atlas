@@ -126,6 +126,9 @@ export const HOST_TOOL_SCHEMAS = Object.freeze({
     grants: { type: 'array', maxItems: LIMITS.grants, items: schema({ id: idSchema, companyId: idSchema,
       employeeId: { anyOf: [idSchema, { type: 'null' }] } }, ['id', 'companyId', 'employeeId']) }
   }, ['expectedRevision', 'mode', 'grants']),
+  godMode: schema({ expectedRevision: { type: 'integer', minimum: 0, maximum: Number.MAX_SAFE_INTEGER - 1 },
+    enabled: { type: 'boolean' }, companyIds: { type: 'array', maxItems: LIMITS.grants, uniqueItems: true, items: idSchema }
+  }, ['expectedRevision', 'enabled', 'companyIds']),
   submit: schema({ id: idSchema, companyId: idSchema, employeeId: idSchema,
     command: { type: 'string', minLength: 1, maxLength: LIMITS.commandBytes },
     cwd: { type: 'string', minLength: 1, maxLength: 4096, pattern: '^/' },
@@ -144,6 +147,14 @@ export function validateHostOperation(operation, input = {}) {
   if (operation === 'submit') return request(input);
   if (['approve', 'cancel', 'inspect'].includes(operation) && !validId(input.id)) fail('HOST_INPUT_INVALID', 'A valid job ID is required.');
   if (operation === 'inspect' && input.offset !== undefined) integer(input.offset, 0, LIMITS.outputBytes, 'Output offset');
+  if (operation === 'godMode') {
+    integer(input.expectedRevision, 0, Number.MAX_SAFE_INTEGER - 1, 'Revision');
+    if (typeof input.enabled !== 'boolean' || !Array.isArray(input.companyIds) || input.companyIds.length > LIMITS.grants
+      || !input.companyIds.every(validId) || new Set(input.companyIds).size !== input.companyIds.length
+      || (input.enabled ? input.companyIds.length === 0 : input.companyIds.length !== 0)) {
+      fail('HOST_INPUT_INVALID', 'Owner mode requires the exact current company membership, or an empty list when disabling.');
+    }
+  }
   if (operation === 'configure') {
     integer(input.expectedRevision, 0, Number.MAX_SAFE_INTEGER - 1, 'Revision');
     if (!['off', 'manual', 'auto'].includes(input.mode) || !Array.isArray(input.grants) || input.grants.length > LIMITS.grants) fail('HOST_INPUT_INVALID', 'A mode and complete explicit grant list are required.');

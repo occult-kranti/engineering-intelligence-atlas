@@ -25,11 +25,11 @@ Build and start the daemon using the runtime or deployment instructions. The MCP
 
 This is the conventional configuration shape for stdio MCP clients; each host may have its own import/setup interface. The file contains only configuration paths, not the credential itself. Saving this configuration is not evidence that the ChatGPT account has installed or authorized the plugin.
 
-## Tools — 31 exposed operations
+## Tools — 35 exposed operations
 
-The current adapter exports exactly 31 tools: five office/runtime/worker tools,
-four model-pool tools, seven host tools, four environment tools, seven resource
-tools and four design-toolchain tools. `TOOL_DEFINITIONS` in
+The current adapter exports exactly 35 tools: five office/runtime/worker tools,
+four model-pool tools, eight host tools, four environment tools, seven resource
+tools, four design-toolchain tools and three activity tools. `TOOL_DEFINITIONS` in
 [`daftar-runtime-mcp.mjs`](daftar-runtime-mcp.mjs) is the executable inventory;
 `tools/list` provides the exact bounded input schemas. The VS Code extension also
 uses authenticated workbench methods, which are not additional MCP tools.
@@ -47,6 +47,7 @@ uses authenticated workbench methods, which are not additional MCP tools.
 | `model_pool_select` | Assign an installed model digest | Does not rewrite jobs or enable workers |
 | `host_status` | Read explicit host policy, grants and recent job receipts | Read only; reports omitted older-job count |
 | `host_configure` | Replace mode and complete grant list | Uses `expectedRevision`; requires server opt-in |
+| `host_god_mode` | Enable owner auto host control for the exact current active company set, or disable it | Checks `expectedRevision` and full membership; enabling launches no job and changes no budget/instance lifecycle |
 | `host_submit` | Submit an attributed shell command | Stable ID; auto executes granted work, manual waits for approval |
 | `host_approve` | Dispatch a pending shell job | Rechecks active native scope and current grant |
 | `host_cancel` | Request cancellation of a managed job | Durable receipt first; poll for terminal outcome |
@@ -67,6 +68,9 @@ uses authenticated workbench methods, which are not additional MCP tools.
 | `design_plan` | Save an exact package/artifact installation plan | Stable ID; missing target, pin or prerequisite produces a blocked plan |
 | `design_install` | Submit the reviewed plan as a durable host job | Stable ID plus exact plan hash; applicable host grant required |
 | `design_inspect` | Inspect an installation plan, job and proof | Read only; a receipt alone does not mean software is installed |
+| `activity_status` | Read journal health, acknowledged sequence, retention and cache limits | Read only; remains diagnostic when journal persistence is uncertain |
+| `activity_query` | Read bounded retained operation metadata | Read only; explicit actor/outcome filters and sequence-gap reporting |
+| `activity_summarize` | Summarize retained metadata for an optional company/employee scope | Deterministic counts; bounded cache; no LLM call |
 
 The adapter omits the baseline local MCP's raw snapshots, worker leases and internal
 accounting operations. The host tools can execute arbitrary owner-authorized
@@ -75,6 +79,26 @@ granted. They preserve the OS user's privileges and do not isolate hostile users
 See the [SSH/tmux runbook](../deploy/SSH_TMUX_AUTOCONTROL.md) for policy, actual native
 assistant IDs, command files, cancellation and restart behavior. This code does not
 register a ChatGPT connection or expose a browser-accessible control token.
+
+### Explicit owner host control
+
+`host_god_mode` accepts `{expectedRevision, enabled, companyIds}`. Obtain the
+policy revision from `host_status` and the **complete** current active company ID
+set from native office reads, including any required metadata pages. Enabling
+requires an exact match and replaces host grants with company-wide auto grants
+for that reviewed set. New companies need an explicit refresh. Each dispatch
+still names an eligible native employee; roles and department labels alone grant
+nothing. Later eligible hires within an already covered company are included by
+that company's broad grant.
+
+For disabling, send `enabled:false` and `companyIds:[]` with the current revision.
+Off prevents new host launches; `host_stop_all` additionally requests cancellation
+of managed jobs. Neither operation undoes completed external effects. God mode
+uses the runtime OS account's privileges. It starts no job or instance, does not
+enable the paid worker, changes no budget and bypasses no ChatGPT/VS Code/platform
+approval rule. Model-resource controls and native job authority remain separate
+managed gates. Review [operations control](../project/OPERATIONS_CONTROL.md) before
+using the broad preset; the ordinary grant editor supports narrower employee scope.
 
 Model operations require a managed local-only Ollama daemon. An employee ID is a
 scope selection under the authenticated owner credential; it is not a separate
@@ -242,6 +266,12 @@ Design routes are `GET /v1/design` and
 must choose one operation. Corresponding workbench methods use camel case, such
 as `environmentRun`, `resourceStart` and `designInstall`.
 
+God mode uses `POST /v1/host/god-mode` or workbench `hostGodMode`. Activity uses
+`GET /v1/activity`, `POST /v1/activity/query` and
+`POST /v1/activity/summarize`, or workbench `activityStatus`, `activityQuery` and
+`activitySummarize`. These routes use the same runtime owner authentication;
+there is no public unauthenticated journal or separate employee login.
+
 All of these endpoints use the owner's runtime credential. Company, office,
 department and employee IDs are canonical ownership/attribution and managed-policy
 selectors; they are not independent tenant logins. Root in a rented container
@@ -253,6 +283,59 @@ conflict; an uncertain operation is not a reason to mint a fresh ID. Inspect the
 saved receipt first. Receipt limits require deliberate archival instead of silent
 eviction. Model/output text is untrusted data and does not authorize a follow-up
 tool call.
+
+## Activity metadata, summaries and setup
+
+| Tool | Exact input fields |
+| --- | --- |
+| `activity_status` | `{}` |
+| `activity_query` | `{afterSequence?, limit?, companyId?, employeeId?, outcome?}` |
+| `activity_summarize` | `{companyId?, employeeId?}` |
+
+`activity_query` defaults to 50 records and permits at most 100. Outcomes are
+`accepted`, `success`, `error`, `rejected`, `cancelled` and `unknown`. Continue with
+the returned `nextAfterSequence` while retaining the same filters; `hasMore`
+describes the filtered page. `retentionGap` and `missingSequenceRange` identify
+records no longer retained. Scope filters select owner-visible metadata; they do
+not authenticate separate tenants.
+
+The private journal retains at most 1,000 events within 1 MiB. It accepts only
+allowlisted operation/outcome metadata, symbolic codes, canonical actor/job/request
+IDs and bounded duration. Commands, prompts, outputs, keys and error stacks or
+messages are excluded. A request may have several observations, so counts are not
+counts of unique completed jobs. The native authority, budget, job and artifact
+receipts remain authoritative.
+
+Summaries use deterministic aggregation and at most 64 cached scoped entries;
+newly saved events invalidate that cache. No model is called to read, index or
+summarize this journal. Native exact-context model-output reuse is a separate cache
+and cannot supply authority or replay side effects. An unknown logging write fences
+further journal history reads/writes until reopening and review. Diagnostic status
+reports the last acknowledged sequence and an unknown latest sequence. The managed
+operation's original receipt remains intact and may carry a generic activity
+warning; do not repeat the mutation to repair a logging gap. Corrupt history is
+preserved rather than silently deleted.
+
+Use the staged [operations setup guide](../project/OPERATIONS_CONTROL.md):
+
+- Choose the intended extension host and editor-owned or persistent runtime
+  lifecycle, then verify the private service's authenticated readiness.
+- Select the native company and hire/reuse Runtime Observer, Knowledge Steward or
+  Connector Steward where useful. These permanent definitions do not start paid
+  loops or grant provider/host permissions merely by being hired.
+- Inspect host policy, exact company membership, maintained environments and model
+  ownership before dispatching scoped jobs. Keep stable original receipt IDs.
+- Read connector readiness as existing status evidence. Saved settings, SSH access,
+  a reported GPU, software proof and a successful GPU workload are distinct stages.
+- Inspect the journal's health and retention boundaries alongside native receipts.
+  Keep the Vast instance stopped until the owner requests its use.
+
+Default worker idle/error polling backs off at 15/30/60/120 seconds; an explicit
+one-shot remains immediate and still passes authority/budget checks. This delays
+new lease checks, not a retry of the previous attempt or suspension of the VPS.
+Stopping clears owned polling and requests cancellation of active work, while
+already-dispatched usage remains accounted. The activity journal itself has no
+recurring timer or provider execution.
 
 ### Example mutation flow
 
@@ -331,6 +414,7 @@ From the repository root, after the native core and portable runtime build:
 ```bash
 node --test tools/daftar-runtime-mcp.test.mjs
 node --test headless-runtime/test/managed-wiring.test.mjs headless-runtime/test/workbench-resource-gate.test.mjs
+node --test headless-runtime/test/activity-journal.test.mjs
 node scripts/smoke-runtime-mcp.mjs
 ```
 
