@@ -68,7 +68,14 @@ test('real tmux starts once, survives caller exit, and stops only its managed ru
   assert.ok(available, unavailableReason);
   const directory = temporary(t); const repo = path.join(directory, 'repo $(no-command)'); const data = path.join(directory, 'data ; no-command');
   for (const name of ['deploy', 'headless-runtime', 'desktop-shell/dist/main', 'native-core/target/release']) fs.mkdirSync(path.join(repo, name), { recursive: true });
-  fs.symlinkSync(fileURLToPath(new URL('../tmux-runtime.mjs', import.meta.url)), path.join(repo, 'deploy/tmux-runtime.mjs'));
+  // Use a real launcher file: Node resolves symlinked ESM entrypoints before
+  // import.meta.url, so an argv-vs-module main guard will not run a symlink.
+  fs.copyFileSync(fileURLToPath(new URL('../tmux-runtime.mjs', import.meta.url)), path.join(repo, 'deploy/tmux-runtime.mjs'));
+  fs.mkdirSync(path.join(repo, 'tools'));
+  fs.copyFileSync(fileURLToPath(new URL('../../tools/daftar-runtime-mcp.mjs', import.meta.url)), path.join(repo, 'tools/daftar-runtime-mcp.mjs'));
+  fs.copyFileSync(fileURLToPath(new URL('../../tools/atlas-mcp.mjs', import.meta.url)), path.join(repo, 'tools/atlas-mcp.mjs'));
+  fs.copyFileSync(fileURLToPath(new URL('../../headless-runtime/host-control-contract.mjs', import.meta.url)), path.join(repo, 'headless-runtime/host-control-contract.mjs'));
+  fs.copyFileSync(fileURLToPath(new URL('../../headless-runtime/contract.mjs', import.meta.url)), path.join(repo, 'headless-runtime/contract.mjs'));
   fs.writeFileSync(path.join(repo, 'desktop-shell/dist/main/office.js'), '// fixture');
   fs.writeFileSync(path.join(repo, 'native-core/target/release/atlas-core'), 'fixture');
   fs.writeFileSync(path.join(repo, 'headless-runtime/server.mjs'), `import fs from 'node:fs'; import path from 'node:path';

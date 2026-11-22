@@ -38,6 +38,7 @@ COPY --from=native-build /src/native-core/target/release/atlas-core /app/native-
 COPY --from=javascript-build /app/desktop-shell/dist /app/desktop-shell/dist
 COPY --from=production-dependencies /app/desktop-shell/node_modules /app/desktop-shell/node_modules
 COPY desktop-shell/package.json desktop-shell/package-lock.json /app/desktop-shell/
+COPY desktop-shell/models.catalog.json /app/desktop-shell/models.catalog.json
 COPY company /app/company
 COPY headless-runtime/*.mjs /app/headless-runtime/
 COPY tools/atlas-mcp.mjs tools/daftar-runtime-mcp.mjs /app/tools/
