@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "startedAt": "2026-11-22T02:11:02.204Z",
+  "scope": "Actual bundled shared renderer and workbench bridge in Chromium, connected through an emulated VS Code parent to a real temporary native headless runtime",
+  "installedVsCodeVerified": false,
+  "productionConnectionVerified": false,
+  "ownerDataUsed": false,
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "browserSandbox": true,
+  "providerCalls": 0,
+  "externalRequests": [],
+  "backendNetworkAttempts": [],
+  "pageErrors": [],
+  "consoleErrors": [],
+  "cspErrors": [],
+  "rpcFailures": [],
+  "checks": [
+    "Native canonical companies rendered in one full-size freeflow world at 1440×900",
+    "Real camera zoom/pan and keyboard movement of the live Donna surface",
+    "Company creation from its in-canvas form persisted in the temporary native office",
+    "Six-step setup remains an accessible movable popup with keyboard movement, isolated input and focus restoration",
+    "No page/CSP/console/RPC errors, external requests, provider calls or credential exposure"
+  ],
+  "screenshots": [
+    "01-native-office.png",
+    "02-live-surfaces.png",
+    "03-setup-flow.png"
+  ],
+  "rpcMethods": [
+    "cloudStatus",
+    "companySnapshot",
+    "getSettings",
+    "listProjects",
+    "listRuns",
+    "officeCommand",
+    "officeSnapshot",
+    "officeWorkerStatus",
+    "openComputeCenter"
+  ],
+  "controlCredentialInBrowser": false,
+  "controlCredentialLocation": "Node harness memory only",
+  "assetCount": 19,
+  "studioManifestSha256": "f40e827613407820cdac8ec98c1881855f0b13e46f334ac7c1f5a16fd0b0e250",
+  "bridgeSha256": "960163473b5dc4b7cf91259e9a81c7338513362aa79530864780cf039a01794c",
+  "nativeCoreSha256": "fbc2bca29d99429a7be7d28d475ec92ac95dbb6b0b4d15c130f6fe4168b513f6",
+  "browserChannel": "chrome",
+  "browserExecutable": "channel:chrome",
+  "browserVersion": "157.0.8103.78",
+  "initialCompanyCount": 3,
+  "initialCompanyIds": [
+    "engineering-intelligence-atlas",
+    "company-470a18f4-2690-41fa-9ca8-d0322e8125a9",
+    "company-f2dd3543-5fc0-4132-ae5d-80e97970f362"
+  ],
+  "createdCompanyId": "company-ee9f8737-ef15-4bc7-b076-9675c3b49b72",
+  "finishedAt": "2026-11-22T02:11:05.968Z"
+}

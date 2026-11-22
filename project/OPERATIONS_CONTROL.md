@@ -4,8 +4,12 @@ This guide describes the current source controls and their integration into the
 primary VS Code product. Installed Linux/Windows package acceptance and the shared
 canvas passed at `7766c91`; see the
 [successful product CI](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262)
-and [current handoff](../HANDOFF.md). The preview packages remain in an unpublished
-release draft pending approval for public publication.
+and [current handoff](../HANDOFF.md).
+[v0.9.0-preview.1](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.9.0-preview.1)
+is a public prerelease containing both platform packages, verification evidence
+and checksums. All four assets were independently downloaded without
+authentication and their actual bytes verified; the
+[publication receipt](release-0.9.0-preview.1.json) records the result.
 The owner's Vast instance remains stopped. No real GPU
 workload, software installation or ChatGPT MCP connection is claimed here.
 

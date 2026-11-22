@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "collectedAt": "2026-11-22T02:07:18.471600+00:00",
+  "repository": "occult-kranti/engineering-intelligence-atlas",
+  "testedHead": "f8ba6c5a7e1ec56737889b8c462a6383b92e1498",
+  "run": {
+    "id": 44973271977,
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44973271977"
+  },
+  "runtimeJob": {
+    "id": 137057473538,
+    "conclusion": "success",
+    "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44973271977/job/137057473538",
+    "vitest": {
+      "files": 3,
+      "tests": 86,
+      "passed": 86,
+      "evidenceFile": "test-totals.log"
+    },
+    "nodeTestRunner": {
+      "tests": 158,
+      "passed": 158,
+      "failed": 0,
+      "cancelled": 0,
+      "skipped": 0,
+      "todo": 0,
+      "evidenceFile": "test-totals.log"
+    },
+    "pythonUnittest": {
+      "tests": 26,
+      "result": "OK",
+      "evidenceFile": "test-totals.log"
+    },
+    "requiredTmux": {
+      "workflowEnvironment": {
+        "DAFTAR_REQUIRE_TMUX": "1"
+      },
+      "installationStepConclusion": "success",
+      "passedActualLifecycleTests": [
+        "real tmux starts once, survives caller exit, and stops only its managed runtime",
+        "real tmux: close/reopen survival, literal shell syntax, cancellation, and unrelated session preservation",
+        "real HTTP and MCP: native company scope, manual tmux approval, bounded output and stable receipts"
+      ],
+      "evidenceFiles": [
+        "workflow-at-tested-head.yml",
+        "test-totals.log"
+      ]
+    },
+    "nativeHttpStdioAcceptance": {
+      "suite": "real-native-http-stdio",
+      "checks": 12,
+      "passed": 12,
+      "hostTmuxRequired": true,
+      "hostTmuxVerified": true,
+      "providerCalls": 0,
+      "infrastructureProvisioned": false,
+      "privateWorkspaceUsed": false,
+      "flagsScope": "This real-native-http-stdio acceptance run; not a claim that CI performed no container build or dependency download.",
+      "actualToolNamesAsserted": 35,
+      "toolNames": [
+        "activity_query",
+        "activity_status",
+        "activity_summarize",
+        "design_catalog",
+        "design_inspect",
+        "design_install",
+        "design_plan",
+        "environment_inspect",
+        "environment_prepare",
+        "environment_run",
+        "environment_status",
+        "host_approve",
+        "host_cancel",
+        "host_configure",
+        "host_god_mode",
+        "host_inspect",
+        "host_status",
+        "host_stop_all",
+        "host_submit",
+        "model_pool_cancel",
+        "model_pool_request",
+        "model_pool_select",
+        "model_pool_status",
+        "office_command",
+        "office_query",
+        "office_summary",
+        "resource_cancel",
+        "resource_configure",
+        "resource_inspect",
+        "resource_plan",
+        "resource_resolve",
+        "resource_start",
+        "resource_status",
+        "runtime_status",
+        "worker_set_enabled"
+      ],
+      "receiptLabelCaveat": "The original f8ba6c5 receipt retains a stale first-check label saying thirty-one tools. Its exact-set assertion contains 35 distinct tools, including host_god_mode and activity_status/query/summarize. Preserve this original receipt; do not treat its label as the tool count.",
+      "evidenceFile": "native-http-stdio-receipt.json"
+    }
+  },
+  "containerJob": {
+    "id": 137057473410,
+    "conclusion": "success",
+    "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44973271977/job/137057473410",
+    "composeValidatedAndBuilt": true,
+    "syntheticOwnerCredentialCreated": true,
+    "protectedSecretsRebuild": {
+      "passed": true,
+      "checks": [
+        "secret directory is not readable by the build user",
+        "secret directory mode is 700",
+        "container rebuild succeeds with existing protected secrets"
+      ]
+    },
+    "healthyBootWithoutProviderCredentials": true,
+    "privateApi": {
+      "passed": true,
+      "checks": [
+        "status.ok is true",
+        "worker.enabled is false",
+        "execution is headless"
+      ]
+    },
+    "inContainerMcp": {
+      "passed": true,
+      "checks": [
+        "initialize request sent",
+        "office_summary returns isError false",
+        "structuredContent.stateHash is 64 lowercase hexadecimal characters"
+      ]
+    },
+    "syntheticContainerAndVolumeCleanup": true,
+    "failureDiagnostics": "skipped because no failure occurred",
+    "separateContainerRebootExercised": false,
+    "rebootCaveat": "The workflow proves rebuild and healthy boot, not a separate container reboot/restart acceptance check.",
+    "statusPayloadRetention": "Container status and MCP response payloads were checked inside CI but not retained in the job log; source assertions plus successful step conclusions are the available evidence.",
+    "evidenceFiles": [
+      "container-job.json",
+      "container-acceptance-evidence.log",
+      "workflow-at-tested-head.yml"
+    ]
+  },
+  "collection": {
+    "readOnly": true,
+    "newTestsRun": false,
+    "newWorkflowRunsCreated": false,
+    "sourceFilesWritten": false,
+    "bearerSentOnlyTo": "api.github.com",
+    "bearerForwardedOnRedirect": false,
+    "boundedRawLogsSaved": true,
+    "runtimeLogBytes": 53906,
+    "containerLogBytes": 48607
+  },
+  "countingNote": "Keep the Vitest, Node and Python totals separate. The 12 native acceptance checks are a separate receipt, not an extra automated-test total or a second execution of those suites."
+}

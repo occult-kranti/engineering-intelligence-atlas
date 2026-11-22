@@ -1,15 +1,19 @@
 # Daftar maintainer handoff
 
-## Active delivery: 0.9 primary VS Code workspace
+## Published preview: 0.9 primary VS Code workspace
 
 The VS Code extension package metadata is now **0.9.0**. The verified product
 source is **`7766c91c6d6c3481b419623f1149a291d2da439d`**. The
 [product CI run](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262)
-retains the exact platform checks and canvas evidence. The prepared
-[0.9 preview draft](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/untagged-9238e2392bd6cf8af795)
-contains both platform packages, the verification archive and checksums.
-**Public release publication is pending owner approval.** Draft access requires
-the authorized GitHub account; these assets are not a published release.
+retains the exact platform checks and canvas evidence.
+**[v0.9.0-preview.1](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.9.0-preview.1)
+was publicly published as a prerelease at `2026-11-22T02:34:51Z`.** Its tag points
+to the verified product source. Both platform VSIXs, the verification archive and
+`SHA256SUMS` were independently downloaded without authentication; their actual
+bytes match the local package hashes and GitHub asset digests. The checksum
+manifest covers exactly the two VSIXs and verification archive. The
+[publication receipt](project/release-0.9.0-preview.1.json) records release
+`454137767`, public readback and download verification.
 The earlier release sections below retain their historical evidence. Do not apply
 their test counts, package hashes or deployed-site claims to the 0.9 source tree.
 
@@ -21,6 +25,9 @@ connection details and the actual GPU/runtime before choosing workloads.
 
 The [primary VS Code product guide](project/VSCODE_PRIMARY_PRODUCT.md) describes
 build commands, runtime placement and acceptance. The
+[preview notes](project/RELEASE_0_9_PREVIEW.md) and
+[product validation record](project/VSCODE_PRODUCT_VALIDATION.md) identify the
+matching packages, receipts and screenshots. The
 [host-control checkpoint](project/HOST_CONTROL_VALIDATION.md) and
 [SSH/tmux runbook](deploy/SSH_TMUX_AUTOCONTROL.md) document the underlying durable
 jobs and owner policy. These additions are outside the published 0.8.0 binaries.
@@ -129,8 +136,8 @@ demonstrate GPU rendering. See [the design runbook](deploy/DESIGN_TOOLCHAIN.md).
 ### Interfaces, credentials and final acceptance
 
 The packaged stdio runtime adapter exports **35 MCP tools**: office/runtime/worker,
-model pool, host control, managed environments, model resources and design
-toolchain. The [MCP guide](tools/DAFTAR_RUNTIME_MCP.md) lists every tool, exact
+model pool, host control, managed environments, model resources, design
+toolchain and activity metadata. The [MCP guide](tools/DAFTAR_RUNTIME_MCP.md) lists every tool, exact
 managed API shape and receipt flow. Port 8788 serves authenticated REST, not HTTP
 MCP. The editor's MCP command copies configuration containing a protected token
 file path. A supported transport and account-authorized registration are still

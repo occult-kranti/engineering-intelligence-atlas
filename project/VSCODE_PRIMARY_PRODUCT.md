@@ -62,8 +62,13 @@ staged setup, provenance, cleanup and degraded-logging behavior. Installed
 Linux/Windows acceptance and the shared-canvas browser gate passed at `7766c91`;
 [product CI](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262)
 preserves exact results. Both platform VSIXs, verification evidence and checksums
-are prepared in the [private release draft](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/untagged-9238e2392bd6cf8af795);
-public publication is pending owner approval.
+are publicly available in the
+[v0.9.0-preview.1 prerelease](https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.9.0-preview.1).
+All four assets were independently downloaded without authentication and hashed;
+the [publication receipt](release-0.9.0-preview.1.json) records matching local/API
+digests and the tag's exact verified source.
+The [preview notes](RELEASE_0_9_PREVIEW.md) describe the matching package, and
+[product validation](VSCODE_PRODUCT_VALIDATION.md) retains the exact evidence.
 These controls do not establish a real Vast workload, application installation or
 ChatGPT connection.
 

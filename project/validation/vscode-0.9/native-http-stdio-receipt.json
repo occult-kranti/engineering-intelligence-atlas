@@ -1,0 +1,60 @@
+{
+  "ok": true,
+  "suite": "real-native-http-stdio",
+  "checkedAt": "2026-11-22T01:51:21.888Z",
+  "checks": [
+    {
+      "name": "MCP initializes and advertises all thirty-one runtime, host, environment and resource tools",
+      "passed": true
+    },
+    {
+      "name": "real headless runtime begins paused with honest capability metadata",
+      "passed": true
+    },
+    {
+      "name": "stdio command crosses HTTP and commits through the real native core",
+      "passed": true
+    },
+    {
+      "name": "same mutation receipt replays without a second company",
+      "passed": true
+    },
+    {
+      "name": "stale state rejection survives all three transport boundaries",
+      "passed": true
+    },
+    {
+      "name": "metadata query returns the new record without private execution fields",
+      "passed": true
+    },
+    {
+      "name": "MCP refuses internal worker settlement before dispatch",
+      "passed": true
+    },
+    {
+      "name": "MCP host status accurately distinguishes process opt-in and policy off",
+      "passed": true
+    },
+    {
+      "name": "owner stdio MCP dispatches a granted real native-company shell job through HTTP and tmux",
+      "passed": true
+    },
+    {
+      "name": "daemon remains available after the stdio client disconnects",
+      "passed": true
+    },
+    {
+      "name": "real tmux work survives daemon/client replacement and MCP replay executes it exactly once",
+      "passed": true
+    },
+    {
+      "name": "new daemon and MCP processes retain native receipts and start paused",
+      "passed": true
+    }
+  ],
+  "hostTmuxRequired": true,
+  "hostTmuxVerified": true,
+  "providerCalls": 0,
+  "infrastructureProvisioned": false,
+  "privateWorkspaceUsed": false
+}

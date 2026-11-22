@@ -1,0 +1,410 @@
+{
+  "schemaVersion": 1,
+  "version": "0.9.0",
+  "tag": "v0.9.0-preview.1",
+  "codeCommit": "7766c91c6d6c3481b419623f1149a291d2da439d",
+  "sourceTree": "f629f4d44647d99391586a9343e5a29d3e0690e6",
+  "releaseId": 454137767,
+  "releaseUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/tag/v0.9.0-preview.1",
+  "publishedAt": "2026-11-22T02:34:51Z",
+  "displayDate": "2026-11-21",
+  "displayTimezone": "America/New_York",
+  "draft": false,
+  "prerelease": true,
+  "userApprovedPublication": true,
+  "releaseAssets": [
+    {
+      "id": 777578331,
+      "name": "daftar-0.9.0-preview.1-verification.zip",
+      "bytes": 1170857,
+      "sha256": "924231aa06c5d0d9e9bf3091c9f0c81b6835200553437fde4de3068037699143",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.9.0-preview.1/daftar-0.9.0-preview.1-verification.zip",
+      "state": "uploaded",
+      "publicDownloadVerified": true,
+      "downloadHosts": [
+        "github.com",
+        "release-assets.githubusercontent.com"
+      ],
+      "authenticatedDownload": false
+    },
+    {
+      "id": 777578046,
+      "name": "daftar-office-0.9.0-linux-x64.vsix",
+      "bytes": 2166598,
+      "sha256": "da3d01037e83f019723b71c3c6053e39ae110e24467c0931c544a6aeb85c3eac",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.9.0-preview.1/daftar-office-0.9.0-linux-x64.vsix",
+      "state": "uploaded",
+      "publicDownloadVerified": true,
+      "downloadHosts": [
+        "github.com",
+        "release-assets.githubusercontent.com"
+      ],
+      "authenticatedDownload": false
+    },
+    {
+      "id": 777578199,
+      "name": "daftar-office-0.9.0-win32-x64.vsix",
+      "bytes": 2148069,
+      "sha256": "8848fa6261a847184a88f96f988cea7a49b2005b1ca32b29a91a74c89d2a1c18",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.9.0-preview.1/daftar-office-0.9.0-win32-x64.vsix",
+      "state": "uploaded",
+      "publicDownloadVerified": true,
+      "downloadHosts": [
+        "github.com",
+        "release-assets.githubusercontent.com"
+      ],
+      "authenticatedDownload": false
+    },
+    {
+      "id": 777578488,
+      "name": "SHA256SUMS",
+      "bytes": 308,
+      "sha256": "6d0a9b82751654957c10d20cba4d17b410e6fb5859506a8b193475afd8bdcea3",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/releases/download/v0.9.0-preview.1/SHA256SUMS",
+      "state": "uploaded",
+      "publicDownloadVerified": true,
+      "downloadHosts": [
+        "github.com",
+        "release-assets.githubusercontent.com"
+      ],
+      "authenticatedDownload": false
+    }
+  ],
+  "downloadVerification": {
+    "verifiedAt": "2026-11-22T02:35:06.407392+00:00",
+    "allPublishedBytesIndependentlyDownloadedAndHashed": true,
+    "authenticatedDownload": false,
+    "checksumManifestExactlyCoversOtherAssets": true,
+    "packagesReexecutedDuringPublicDownloadCheck": false
+  },
+  "productVerification": {
+    "sourceCommit": "7766c91c6d6c3481b419623f1149a291d2da439d",
+    "runId": 44974716262,
+    "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262",
+    "conclusion": "success",
+    "vscodeVersion": "1.147.0",
+    "extensionVersion": "0.9.0",
+    "linux": {
+      "jobId": 137061912671,
+      "artifactId": 14735615280,
+      "unitTests": 129,
+      "passed": 129,
+      "failed": 0,
+      "skipped": 0,
+      "installedChecks": 11,
+      "verifiedPersistent": true,
+      "verifiedPersistentHost": true,
+      "loopbackRequests": 28,
+      "externalRequests": 0,
+      "blockedRequests": 0
+    },
+    "windows": {
+      "jobId": 137061912361,
+      "artifactId": 14735058281,
+      "unitTests": 129,
+      "passed": 122,
+      "failed": 0,
+      "skipped": 7,
+      "skipReason": "Seven persistent-supervisor cases are Linux-only.",
+      "installedChecks": 9,
+      "loopbackRequests": 5,
+      "externalRequests": 0,
+      "blockedRequests": 0,
+      "persistentTmuxSupported": false
+    },
+    "countingNote": "Extension tests execute in the normal step and prepublish; each platform suite is counted once."
+  },
+  "canvasVerification": {
+    "status": "passed",
+    "checks": [
+      "Native canonical companies rendered in one full-size freeflow world at 1440\u00d7900",
+      "Real camera zoom/pan and keyboard movement of the live Donna surface",
+      "Company creation from its in-canvas form persisted in the temporary native office",
+      "Six-step setup remains an accessible movable popup with keyboard movement, isolated input and focus restoration",
+      "No page/CSP/console/RPC errors, external requests, provider calls or credential exposure"
+    ],
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "browserChannel": "chrome",
+    "browserVersion": "157.0.8103.78",
+    "browserSandbox": true,
+    "scope": "Actual bundled shared renderer and workbench bridge in Chromium, connected through an emulated VS Code parent to a real temporary native headless runtime",
+    "installedVsCodeInteractionVerifiedByBrowserHarness": false,
+    "providerCalls": 0,
+    "externalRequests": [],
+    "backendNetworkAttempts": [],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "cspErrors": [],
+    "rpcFailures": [],
+    "controlCredentialInBrowser": false,
+    "assetHashesMatchedInstalledPackage": true,
+    "screenshots": [
+      {
+        "file": "canvas/screenshots/01-native-office.png",
+        "sha256": "6be4c1f7a8e7403c4208a76d2e81ba217cc171eaa5e161557a176b7e1317a271",
+        "bytes": 493879
+      },
+      {
+        "file": "canvas/screenshots/02-live-surfaces.png",
+        "sha256": "1b6749c7017d235399540811193a7ac28f867477a7a679c113bd58e6459caba5",
+        "bytes": 307596
+      },
+      {
+        "file": "canvas/screenshots/03-setup-flow.png",
+        "sha256": "b731ca61ef43826d6bec4b3848c55fe56a9fb2768aab1ecf9ed1a20f67381402",
+        "bytes": 318480
+      }
+    ]
+  },
+  "runtimeVerification": {
+    "sourceCommit": "f8ba6c5a7e1ec56737889b8c462a6383b92e1498",
+    "run": {
+      "id": 44973271977,
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44973271977"
+    },
+    "runtimeSourceUnchangedAtProductCommit": true,
+    "comparedPaths": [
+      "headless-runtime",
+      "desktop-shell",
+      "native-core",
+      "tools",
+      "deploy",
+      "company"
+    ],
+    "changedPaths": [],
+    "runtimeJob": {
+      "id": 137057473538,
+      "conclusion": "success",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44973271977/job/137057473538",
+      "vitest": {
+        "files": 3,
+        "tests": 86,
+        "passed": 86,
+        "evidenceFile": "test-totals.log"
+      },
+      "nodeTestRunner": {
+        "tests": 158,
+        "passed": 158,
+        "failed": 0,
+        "cancelled": 0,
+        "skipped": 0,
+        "todo": 0,
+        "evidenceFile": "test-totals.log"
+      },
+      "pythonUnittest": {
+        "tests": 26,
+        "result": "OK",
+        "evidenceFile": "test-totals.log"
+      },
+      "requiredTmux": {
+        "workflowEnvironment": {
+          "DAFTAR_REQUIRE_TMUX": "1"
+        },
+        "installationStepConclusion": "success",
+        "passedActualLifecycleTests": [
+          "real tmux starts once, survives caller exit, and stops only its managed runtime",
+          "real tmux: close/reopen survival, literal shell syntax, cancellation, and unrelated session preservation",
+          "real HTTP and MCP: native company scope, manual tmux approval, bounded output and stable receipts"
+        ],
+        "evidenceFiles": [
+          "workflow-at-tested-head.yml",
+          "test-totals.log"
+        ]
+      },
+      "nativeHttpStdioAcceptance": {
+        "suite": "real-native-http-stdio",
+        "checks": 12,
+        "passed": 12,
+        "hostTmuxRequired": true,
+        "hostTmuxVerified": true,
+        "providerCalls": 0,
+        "infrastructureProvisioned": false,
+        "privateWorkspaceUsed": false,
+        "flagsScope": "This real-native-http-stdio acceptance run; not a claim that CI performed no container build or dependency download.",
+        "actualToolNamesAsserted": 35,
+        "toolNames": [
+          "activity_query",
+          "activity_status",
+          "activity_summarize",
+          "design_catalog",
+          "design_inspect",
+          "design_install",
+          "design_plan",
+          "environment_inspect",
+          "environment_prepare",
+          "environment_run",
+          "environment_status",
+          "host_approve",
+          "host_cancel",
+          "host_configure",
+          "host_god_mode",
+          "host_inspect",
+          "host_status",
+          "host_stop_all",
+          "host_submit",
+          "model_pool_cancel",
+          "model_pool_request",
+          "model_pool_select",
+          "model_pool_status",
+          "office_command",
+          "office_query",
+          "office_summary",
+          "resource_cancel",
+          "resource_configure",
+          "resource_inspect",
+          "resource_plan",
+          "resource_resolve",
+          "resource_start",
+          "resource_status",
+          "runtime_status",
+          "worker_set_enabled"
+        ],
+        "receiptLabelCaveat": "The original f8ba6c5 receipt retains a stale first-check label saying thirty-one tools. Its exact-set assertion contains 35 distinct tools, including host_god_mode and activity_status/query/summarize. Preserve this original receipt; do not treat its label as the tool count.",
+        "evidenceFile": "native-http-stdio-receipt.json"
+      }
+    },
+    "containerJob": {
+      "id": 137057473410,
+      "conclusion": "success",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44973271977/job/137057473410",
+      "composeValidatedAndBuilt": true,
+      "syntheticOwnerCredentialCreated": true,
+      "protectedSecretsRebuild": {
+        "passed": true,
+        "checks": [
+          "secret directory is not readable by the build user",
+          "secret directory mode is 700",
+          "container rebuild succeeds with existing protected secrets"
+        ]
+      },
+      "healthyBootWithoutProviderCredentials": true,
+      "privateApi": {
+        "passed": true,
+        "checks": [
+          "status.ok is true",
+          "worker.enabled is false",
+          "execution is headless"
+        ]
+      },
+      "inContainerMcp": {
+        "passed": true,
+        "checks": [
+          "initialize request sent",
+          "office_summary returns isError false",
+          "structuredContent.stateHash is 64 lowercase hexadecimal characters"
+        ]
+      },
+      "syntheticContainerAndVolumeCleanup": true,
+      "failureDiagnostics": "skipped because no failure occurred",
+      "separateContainerRebootExercised": false,
+      "rebootCaveat": "The workflow proves rebuild and healthy boot, not a separate container reboot/restart acceptance check.",
+      "statusPayloadRetention": "Container status and MCP response payloads were checked inside CI but not retained in the job log; source assertions plus successful step conclusions are the available evidence.",
+      "evidenceFiles": [
+        "container-job.json",
+        "container-acceptance-evidence.log",
+        "workflow-at-tested-head.yml"
+      ]
+    },
+    "countingNote": "Keep the Vitest, Node and Python totals separate. The 12 native acceptance checks are a separate receipt, not an extra automated-test total or a second execution of those suites."
+  },
+  "linuxNativeRequirements": {
+    "highestRequiredGLIBC": "2.34",
+    "requiredGLIBC": [
+      "2.2.5",
+      "2.3",
+      "2.3.4",
+      "2.14",
+      "2.16",
+      "2.17",
+      "2.18",
+      "2.25",
+      "2.28",
+      "2.30",
+      "2.32",
+      "2.33",
+      "2.34"
+    ],
+    "machine": "Advanced Micro Devices X86-64",
+    "interpreter": "/lib64/ld-linux-x86-64.so.2",
+    "neededLibraries": [
+      "libc.so.6",
+      "libgcc_s.so.1"
+    ]
+  },
+  "artifactProvenance": {
+    "linux-x64": {
+      "jobId": 137061912671,
+      "jobUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262/job/137061912671",
+      "jobConclusion": "success",
+      "artifactId": 14735615280,
+      "artifactName": "daftar-vscode-Linux-X64",
+      "artifactMetadataDigest": "sha256:b22efc097bf5d767604bcbc35a9adee059a0e58fe5a72746861d5e7e70fb84b7",
+      "artifactZipFile": "artifacts/linux-x64-ci-artifact.zip",
+      "artifactZipSha256": "b22efc097bf5d767604bcbc35a9adee059a0e58fe5a72746861d5e7e70fb84b7",
+      "artifactSizeBytes": 3275456,
+      "vsixFile": "daftar-office-0.9.0-linux-x64.vsix",
+      "vsixSha256": "da3d01037e83f019723b71c3c6053e39ae110e24467c0931c544a6aeb85c3eac",
+      "vsixBytes": 2166598,
+      "installedReceiptFile": "receipts/linux-x64-installed-receipt.json",
+      "installedReceiptSha256": "111aed1c0970a7d69a9d033aeb076e5425aad70123b82064295d13fcc8b78efc",
+      "installedChecks": 11,
+      "vscodeVersion": "1.147.0",
+      "targetPlatform": "linux-x64",
+      "nativeCoreSha256": "fbc2bca29d99429a7be7d28d475ec92ac95dbb6b0b4d15c130f6fe4168b513f6",
+      "installedRuntimeHashesMatched": true,
+      "verifiedPersistent": true,
+      "verifiedPersistentHost": true
+    },
+    "win32-x64": {
+      "jobId": 137061912361,
+      "jobUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44974716262/job/137061912361",
+      "jobConclusion": "success",
+      "artifactId": 14735058281,
+      "artifactName": "daftar-vscode-Windows-X64",
+      "artifactMetadataDigest": "sha256:0523e8ac00fc3b6aa319a16d332cbb201908ef703603bb24cb0ab61280fc98f0",
+      "artifactZipFile": "artifacts/win32-x64-ci-artifact.zip",
+      "artifactZipSha256": "0523e8ac00fc3b6aa319a16d332cbb201908ef703603bb24cb0ab61280fc98f0",
+      "artifactSizeBytes": 2147920,
+      "vsixFile": "daftar-office-0.9.0-win32-x64.vsix",
+      "vsixSha256": "8848fa6261a847184a88f96f988cea7a49b2005b1ca32b29a91a74c89d2a1c18",
+      "vsixBytes": 2148069,
+      "installedReceiptFile": "receipts/win32-x64-installed-receipt.json",
+      "installedReceiptSha256": "28e2f7bd51a768c669352c747931027890daa2c6e0b7fa678f10e0395602f082",
+      "installedChecks": 9,
+      "vscodeVersion": "1.147.0",
+      "targetPlatform": "win32-x64",
+      "nativeCoreSha256": "96988542f0bb340062bdda8539d4bf4a9a1496d891008eddb9fbd3433a000ba5",
+      "installedRuntimeHashesMatched": true,
+      "verifiedPersistent": false,
+      "verifiedPersistentHost": false
+    }
+  },
+  "archiveMetadataNote": "The verification archive retains its original candidate extraction metadata with releasePublished:false. This file records the later user-approved publication. Historical evidence was not rewritten.",
+  "remainingLiveAcceptance": [
+    "Selected Vast instance GPU, driver and actual runtime compatibility; no instance was resumed for this release.",
+    "Actual model loading/inference and long-running GPU memory behavior.",
+    "Actual design-software installation, desktop/display and GPU rendering.",
+    "ChatGPT account MCP registration/tunnel and an authenticated end-to-end tool call.",
+    "Owner-device editor/display/credential-store acceptance."
+  ],
+  "featureLimits": [
+    "Current binary release matrix is Linux x64 and Windows x64.",
+    "Expert routes compose native jobs; new MoE weight training is not implemented.",
+    "Model sharing uses the current host cache; automatic cross-VPS replication is not implemented.",
+    "Penpot managed container deployment remains pending.",
+    "Host control uses one trusted runtime OS account; company selectors are attribution and managed policy, not independent hostile-tenant authentication."
+  ],
+  "scope": {
+    "vastInstanceResumed": false,
+    "liveGpuWorkloadPerformed": false,
+    "modelWeightsDownloaded": false,
+    "designApplicationsInstalledOnOwnerVps": false,
+    "chatgptMcpRegistered": false,
+    "absenceOfAllMemoryLeaksProven": false
+  }
+}
