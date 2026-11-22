@@ -612,9 +612,12 @@
     "sharedIncrementalAccountedUsd": 0.234182,
     "sharedIncrementalRemainingUsd": 19.765818,
     "budgetInterpretation": "Continues the latest USD20 laptop-blueprint allowance. This run does not create or reset another USD20 cap. Older reservations and historical ceilings are unchanged.",
-    "status": "implementation-complete-acceptance-in-progress",
+    "status": "implementation-and-exact-source-acceptance-complete",
     "authorship": "Actual Sonnet planner contribution, independently repaired and reviewed; native, worker, UX, MCP and VS Code changes by the coordinated development team.",
     "validationEvidence": "design/board-workflows/VALIDATION.md",
-    "cloudActions": 0
+    "cloudActions": 0,
+    "testedSource": "2b8086fab5d564868f9d3b7d5650e56fe731960f",
+    "acceptanceRun": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44991164221",
+    "acceptanceEvidence": "design/board-workflows/evidence/acceptance.json"
   }
 }

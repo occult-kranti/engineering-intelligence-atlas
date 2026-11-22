@@ -1,5 +1,17 @@
 # Daftar maintainer handoff
 
+## Current branch: paired boards and the endless blueprint canvas
+
+The current verified implementation is **`2b8086fab5d564868f9d3b7d5650e56fe731960f`** on `design/infinite-blueprint-canvas`. The [exact-source CI run](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44991164221) passed Linux and Windows. This is later than the published preview described below. Use the source-matched platform packages identified in the [board validation record](design/board-workflows/VALIDATION.md).
+
+The product remains one endless blueprint world with flat employee circles, optional architectural relief and live popups; the physical conference-table underlay is removed. Whiteboard keeps all canonical work links and protects stale drafts. Greenboard presents real people, hierarchy, primary/helper responsibilities and existing permissions. Roadmaps include separate production/review estimates and dependency/staffing scenarios. Donna creates durable paired workflows atomically; new production work has a distinct helper and native evidence gates before downstream acceptance.
+
+The [three-round plan](design/board-workflows/PLAN.md) explains design, geometry, scheduling assumptions, ownership and independent reviews. The [validation record](design/board-workflows/VALIDATION.md) retains failed attempts, reproduced defects, corrections, passing receipts, screenshots and package checksums. VS Code request tracking is bounded, stale edits retain their original revision, and MCP exposes the canonical records without granting worker-only review settlement.
+
+The outer workspace schema remains 1; the native office schema upgrades to 2 while preserving historical records. Old native binaries reject office schema2. Use the matching new native core/package and keep a private export before changing versions. The stopped Vast instance remains stopped; this delivery does not establish live GPU/model execution or a ChatGPT MCP registration.
+
+The following published-release sections are historical. Their source IDs, binary hashes and site claims do not describe this later branch.
+
 ## Published preview: 0.9 primary VS Code workspace
 
 The VS Code extension package metadata is now **0.9.0**. The verified product
@@ -32,7 +44,7 @@ matching packages, receipts and screenshots. The
 [SSH/tmux runbook](deploy/SSH_TMUX_AUTOCONTROL.md) document the underlying durable
 jobs and owner policy. These additions are outside the published 0.8.0 binaries.
 
-### Current source behavior
+### Published preview behavior (historical)
 
 The extension opens the shared compiled desktop office renderer in a full editor
 tab. Companies, departments, employees, Donna, blueprints, the conference table,

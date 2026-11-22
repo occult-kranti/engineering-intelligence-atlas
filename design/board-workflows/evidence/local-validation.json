@@ -1,6 +1,6 @@
 {
   "run": "boards-flow-20261122",
-  "status": "local gates passed; final sandboxed browser acceptance pending",
+  "status": "local gates passed; exact-source CI and independent captured-view acceptance passed",
   "observedGates": {
     "desktop": {
       "passed": 740,
@@ -35,7 +35,7 @@
       "passed": 188,
       "failed": 0,
       "skipped": 2,
-      "skipReason": "tmux unavailable locally; both real tmux tests passed in first CI"
+      "skipReason": "tmux unavailable locally; all 190 headless/MCP tests ran without skips in final Linux CI"
     },
     "resourcePairCounterreview": {
       "passed": 18,
@@ -56,19 +56,17 @@
       "passed": 62,
       "files": 3,
       "includedInDesktop": true,
-      "scope": "existing canvas workspace, panel geometry and card geometry regressions; browser visual acceptance pending"
+      "scope": "existing canvas workspace, panel geometry and card geometry regressions; final browser visual acceptance passed separately"
     }
   },
-  "pending": [
-    "sandboxed real-browser and installed-platform CI for follow-up source"
-  ],
+  "pending": [],
   "sourceHashes": {
     "native-core/src/office.rs": "cb7ede2e0a42f890a5dae8e33bf7872d4b80e5e79641d940948d4e86ab238fcf",
     "native-core/src/governance.rs": "bce9b1185a6abfd599b29d6564feef90e48e5ffbd77abca53ddfc32b1818a488",
     "native-core/src/remote_commands.rs": "c15bb8a552214359c8491f574d4e07667cec354c9f184388347a8a38f80b1991",
     "desktop-shell/src/main/officeWorker.ts": "127b6b80d07b70fdbf33045a5c90090b34ce4c047bceef21813b38666c16958d",
     "desktop-shell/src/main/pairedReview.ts": "c6bcbf4c9b7b11770ed103235468e16186dc4813ca0da08788024790c7a07427",
-    "desktop-shell/src/renderer/chrome.ts": "7d3fcae8b0026156246bc5504422944d1db5e9cfa30a0f74e436fc5f62e81273",
+    "desktop-shell/src/renderer/chrome.ts": "3595d0a46f3add6dd698c32998605e60268420ddc0406f992a0cc9c13c8efd06",
     "desktop-shell/src/renderer/boards/planning.ts": "1a37d954e11b7b91775ee622737326b088521a82978b6a0936c88cd842e45e12",
     "desktop-shell/src/renderer/boards/geometry.ts": "da16726d1a3c6b498674dc1bed9f3c4d61b24d38adf6ff1cf56cc612f449cad5",
     "vscode-extension/src/runtime-client.js": "ee2d8ddf9483dbed5cbacd6e59a2497a87b41ade8bd33c8f19e95b94c3c0e3c4",
@@ -81,5 +79,56 @@
     "externalTestProviderCalls": 0,
     "physicalGpu": false,
     "indefiniteLeakGuarantee": false
+  },
+  "testedSource": "2b8086fab5d564868f9d3b7d5650e56fe731960f",
+  "acceptanceRun": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44991164221",
+  "finalCi": {
+    "linux": {
+      "extension": {
+        "total": 132,
+        "passed": 132,
+        "skipped": 0
+      },
+      "native": 118,
+      "python": 9,
+      "desktop": 740,
+      "desktopFiles": 50,
+      "rendererChecks": 422,
+      "mcp": 67,
+      "headless": {
+        "total": 123,
+        "passed": 123,
+        "skipped": 0
+      }
+    },
+    "windows": {
+      "extension": {
+        "total": 132,
+        "passed": 125,
+        "skipped": 7,
+        "skipReason": "Linux-only persistent wrapper tests"
+      }
+    },
+    "installed": {
+      "linux": 11,
+      "windows": 9
+    },
+    "browser": {
+      "status": "passed",
+      "checks": 17,
+      "screenshots": 19,
+      "viewports": [
+        [
+          1440,
+          900
+        ],
+        [
+          1366,
+          768
+        ]
+      ],
+      "driver": "sandboxed ANGLE/SwiftShader software WebGL2"
+    },
+    "summary": "design/board-workflows/evidence/ci-2b8086f-summary.json"
   }
 }

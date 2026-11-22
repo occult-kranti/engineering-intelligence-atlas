@@ -1,0 +1,2671 @@
+{
+  "run": "boards-flow-20261122",
+  "node": "ci-observer",
+  "workflow": "Verify standalone VS Code product",
+  "githubRunId": 44991164221,
+  "runUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44991164221",
+  "sourceSha": "2b8086fab5d564868f9d3b7d5650e56fe731960f",
+  "overall": "success",
+  "platforms": {
+    "linux": {
+      "jobId": 137112307239,
+      "status": "success",
+      "tests": {
+        "extension": {
+          "total": 132,
+          "passed": 132,
+          "skipped": 0
+        },
+        "native": 118,
+        "python": 9,
+        "desktop": 740,
+        "desktopFiles": 50,
+        "rendererChecks": 422,
+        "mcp": 67,
+        "headless": {
+          "total": 123,
+          "passed": 123,
+          "skipped": 0
+        }
+      },
+      "installed": {
+        "status": "passed",
+        "vscodeVersion": "1.147.0",
+        "verifiedPersistent": true,
+        "verifiedPersistentHost": true,
+        "externalRequests": 0,
+        "loopbackRequests": 27,
+        "runtime": {
+          "execution": "headless",
+          "workersPaused": true,
+          "hostPolicy": "off",
+          "workbench": true,
+          "configuredProviderCount": 0
+        },
+        "persistentHost": {
+          "canonicalAssistant": true,
+          "exactCompanyMembership": true,
+          "ownerModeStartedNoJobs": true,
+          "completed": true,
+          "exitCode": 0,
+          "outputBytes": 29,
+          "stableReplay": true,
+          "singleExecution": true,
+          "shellElectronFlagScrubbed": true,
+          "workersPaused": true,
+          "policyRestored": "off"
+        },
+        "persistent": {
+          "platform": "linux",
+          "electronNodeChain": true,
+          "detachedAlive": true,
+          "sameDaemonOnReconnect": true,
+          "credentialStable": true,
+          "policyPreserved": true,
+          "cleanupStopped": true
+        }
+      },
+      "installedCheckCount": 11,
+      "installedReceipt": {
+        "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/installed-smoke/receipt.json",
+        "bytes": 7448,
+        "sha256": "b12b67cf2a41577dee964c0b853b890eb415f48b8b7ce107c79e7dfa970b924f"
+      }
+    },
+    "windows": {
+      "jobId": 137112307036,
+      "status": "success",
+      "tests": {
+        "extension": {
+          "total": 132,
+          "passed": 125,
+          "skipped": 7,
+          "skipReason": "Linux-only persistent wrapper tests"
+        }
+      },
+      "installed": {
+        "status": "passed",
+        "vscodeVersion": "1.147.0",
+        "verifiedPersistent": false,
+        "verifiedPersistentHost": false,
+        "externalRequests": 0,
+        "loopbackRequests": 5,
+        "runtime": {
+          "execution": "headless",
+          "workersPaused": true,
+          "hostPolicy": "off",
+          "workbench": true,
+          "configuredProviderCount": 0
+        },
+        "persistent": {
+          "supported": false,
+          "reason": "Persistent tmux mode is Linux-only; ordinary installed runtime acceptance completed on this platform."
+        }
+      },
+      "installedCheckCount": 9,
+      "installedReceipt": {
+        "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/windows/.work/installed-smoke/receipt.json",
+        "bytes": 6752,
+        "sha256": "9f37beea44f1389f3b097fdda082d197c073ae60f3167b2802f87a486410c843"
+      }
+    }
+  },
+  "browser": {
+    "receipt": {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/receipt.json",
+      "bytes": 84698,
+      "sha256": "b3b497b749bb201c31de92768f600f52bff63c48834b4818b364aa7fadd11861"
+    },
+    "scope": "Actual bundled shared renderer and workbench bridge in Chromium, connected through an emulated VS Code parent to a real temporary native headless runtime",
+    "status": "passed",
+    "failedStage": null,
+    "boardStage": "complete",
+    "error": null,
+    "completedChecks": 17,
+    "completedCheckLabels": [
+      "Canonical companies and saved native blueprints share one default top-view world at 1440\u00d7900",
+      "1440\u00d7900 company floorplan and raised partitions captured before popup framing through public Top/Fit/3D controls",
+      "Real camera zoom/pan and keyboard movement of the live Donna surface",
+      "Optional 3D camera shares the native canvas and preserves the live Donna draft",
+      "Company Ownership footer opens the existing People & ownership popup in confirmed native company scope without replacing the canvas or draft",
+      "Company creation from its in-canvas form persisted in the temporary native office",
+      "Six-step setup remains an accessible movable popup with keyboard movement, isolated input and focus restoration",
+      "1366\u00d7768 company floorplan and raised partitions captured before popup framing through public Top/Fit/3D controls",
+      "1366\u00d7768 laptop retains live popup drafts, keyboard move/resize, pinning, pointer Escape rollback and reduced motion",
+      "Arrange click controls move/resize in exact steps, preserve live drafts, keep the camera fixed and restore focus",
+      "Tilted and rotated laptop view keeps popup keyboard input isolated from the shared camera",
+      "Actual WebGL context loss/restoration preserves native state, live drafts and fixed graphics resource bounds",
+      "Whiteboard title edit preserves all six native work links and increments the saved revision",
+      "Concurrent native edit plus background refresh rejects stale save and preserves the draft until explicit reload",
+      "Whiteboard keyboard placement persists canonical coordinates; tilted pointer Escape restores geometry with no write",
+      "Whiteboard, assigned Greenboard primary/helper roles and ETA roadmap render with reachable controls in the same world at both laptop viewports",
+      "No page/CSP/console/RPC errors, external requests, provider calls or credential exposure"
+    ],
+    "sandbox": true,
+    "version": "157.0.8103.78",
+    "driver": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+    "finalGraphics": {
+      "state": "webgl",
+      "reason": "ok",
+      "frames": 46,
+      "geometries": 1,
+      "materials": 3,
+      "instances": 43,
+      "pending": "false",
+      "drawCalls": 3,
+      "triangles": 516,
+      "contextLosses": 1,
+      "scene": {
+        "width": 1366,
+        "height": 768
+      },
+      "canvasCount": 1,
+      "canvas": {
+        "width": 1366,
+        "height": 768,
+        "cssWidth": 1366,
+        "cssHeight": 768,
+        "inTransformedWorld": false,
+        "pointerEvents": "none",
+        "display": "block",
+        "visibility": "visible",
+        "opacity": 1
+      },
+      "viewport": {
+        "width": 1366,
+        "height": 768,
+        "devicePixelRatio": 1
+      },
+      "context": {
+        "version": "WebGL 2.0 (OpenGL ES 3.0 Chromium)",
+        "shadingLanguage": "WebGL GLSL ES 3.00 (OpenGL ES GLSL ES 3.0 Chromium)",
+        "vendor": "WebKit",
+        "renderer": "WebKit WebGL",
+        "unmaskedVendor": "Google Inc. (Google)",
+        "unmaskedRenderer": "ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)",
+        "lost": false,
+        "drawingBufferWidth": 1366,
+        "drawingBufferHeight": 768
+      },
+      "label": "1366\u00d7768 actual WebGL context restored",
+      "geometryRequired": true,
+      "reportedRendererKind": "software"
+    },
+    "contextRecovery": {
+      "status": "passed",
+      "contextLosses": 1,
+      "framesBefore": 44,
+      "framesAfter": 46,
+      "nativeStateUnchanged": true,
+      "draftRetained": true
+    },
+    "webglVerified": true,
+    "hardwareAccelerationVerified": false,
+    "idleGraphics": {
+      "milliseconds": 300,
+      "frames": 0
+    },
+    "providerCalls": 0,
+    "externalRequests": [],
+    "pageErrors": [],
+    "consoleErrors": [],
+    "cspErrors": [],
+    "rpcFailures": [],
+    "panelFrames": [
+      {
+        "label": "People & ownership after company footer",
+        "id": "workspace-softboard",
+        "viewport": {
+          "width": 1440,
+          "height": 900
+        },
+        "panel": {
+          "x": 265.2503967285156,
+          "y": 213.1512451171875,
+          "width": 909.499267578125,
+          "height": 473.697509765625,
+          "right": 1174.7496643066406,
+          "bottom": 686.8487548828125
+        },
+        "title": {
+          "x": 266.19781494140625,
+          "y": 214.09864807128906,
+          "width": 907.6044311523438,
+          "height": 39.79058837890625,
+          "right": 1173.80224609375,
+          "bottom": 253.8892364501953
+        },
+        "controls": {
+          "x": 890.609375,
+          "y": 66,
+          "width": 531.390625,
+          "height": 46,
+          "right": 1422,
+          "bottom": 112
+        },
+        "documentScroll": {
+          "x": 0,
+          "y": 0
+        },
+        "ancestors": [
+          {
+            "tag": "SECTION",
+            "id": null,
+            "className": "canvas-panel is-active",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 958,
+            "clientHeight": 498,
+            "scrollWidth": 958,
+            "scrollHeight": 503,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "rect": {
+              "x": 265.2503967285156,
+              "y": 213.1512451171875,
+              "width": 909.499267578125,
+              "height": 473.697509765625,
+              "right": 1174.7496643066406,
+              "bottom": 686.8487548828125
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "canvas-panel-layer",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 0,
+            "clientHeight": 0,
+            "scrollWidth": 1040,
+            "scrollHeight": 630,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "rect": {
+              "x": 189.45880126953125,
+              "y": 89.98989868164062,
+              "width": 0,
+              "height": 0,
+              "right": 189.45880126953125,
+              "bottom": 89.98989868164062
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "ff-world",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 0,
+            "clientHeight": 0,
+            "scrollWidth": 2432,
+            "scrollHeight": 1640,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "rect": {
+              "x": 189.45880126953125,
+              "y": 89.98989868164062,
+              "width": 0,
+              "height": 0,
+              "right": 189.45880126953125,
+              "bottom": 89.98989868164062
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "ff-scene",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 2494,
+            "scrollHeight": 1644,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "ff-canvas-host",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "ff-workbench",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "SECTION",
+            "id": null,
+            "className": "ff-studio ff-studio--continuous",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "freeflow-host",
+            "className": "ff-surface-host",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "SECTION",
+            "id": "freeflow-surface",
+            "className": "ff-surface",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "SECTION",
+            "id": "office-view",
+            "className": "view",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "MAIN",
+            "id": "workspace-main",
+            "className": "",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "workspace-body",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "workspace-shell",
+            "className": "workspace-shell",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          },
+          {
+            "tag": "BODY",
+            "id": null,
+            "className": "endless-canvas ff-canvas-mode",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1440,
+            "clientHeight": 900,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 900,
+              "right": 1440,
+              "bottom": 900
+            }
+          }
+        ]
+      },
+      {
+        "label": "Donna after 1366\u00d7768 viewport resize",
+        "id": "donna",
+        "viewport": {
+          "width": 1366,
+          "height": 768
+        },
+        "panel": {
+          "x": 504.5494384765625,
+          "y": 189.32662963867188,
+          "width": 356.90118408203125,
+          "height": 389.3467102050781,
+          "right": 861.4506225585938,
+          "bottom": 578.67333984375
+        },
+        "title": {
+          "x": 505.3605651855469,
+          "y": 190.13778686523438,
+          "width": 355.2789001464844,
+          "height": 34.06782531738281,
+          "right": 860.6394653320312,
+          "bottom": 224.2056121826172
+        },
+        "controls": {
+          "x": 816.609375,
+          "y": 66,
+          "width": 531.390625,
+          "height": 46,
+          "right": 1348,
+          "bottom": 112
+        },
+        "documentScroll": {
+          "x": 0,
+          "y": 0
+        },
+        "ancestors": [
+          {
+            "tag": "SECTION",
+            "id": null,
+            "className": "canvas-panel is-active",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 438,
+            "clientHeight": 478,
+            "scrollWidth": 438,
+            "scrollHeight": 483,
+            "overflowX": "hidden",
+            "overflowY": "hidden",
+            "rect": {
+              "x": 504.5494384765625,
+              "y": 189.32662963867188,
+              "width": 356.90118408203125,
+              "height": 389.3467102050781,
+              "right": 861.4506225585938,
+              "bottom": 578.67333984375
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "canvas-panel-layer",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 0,
+            "clientHeight": 0,
+            "scrollWidth": 1150,
+            "scrollHeight": 740,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "rect": {
+              "x": 163.7960205078125,
+              "y": 75.76718139648438,
+              "width": 0,
+              "height": 0,
+              "right": 163.7960205078125,
+              "bottom": 75.76718139648438
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "ff-world",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 0,
+            "clientHeight": 0,
+            "scrollWidth": 2432,
+            "scrollHeight": 1640,
+            "overflowX": "visible",
+            "overflowY": "visible",
+            "rect": {
+              "x": 163.7960205078125,
+              "y": 75.76718139648438,
+              "width": 0,
+              "height": 0,
+              "right": 163.7960205078125,
+              "bottom": 75.76718139648438
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "ff-scene",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 2137,
+            "scrollHeight": 1406,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "ff-canvas-host",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "ff-workbench",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "SECTION",
+            "id": null,
+            "className": "ff-studio ff-studio--continuous",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "freeflow-host",
+            "className": "ff-surface-host",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "SECTION",
+            "id": "freeflow-surface",
+            "className": "ff-surface",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "SECTION",
+            "id": "office-view",
+            "className": "view",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "MAIN",
+            "id": "workspace-main",
+            "className": "",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": null,
+            "className": "workspace-body",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "DIV",
+            "id": "workspace-shell",
+            "className": "workspace-shell",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          },
+          {
+            "tag": "BODY",
+            "id": null,
+            "className": "endless-canvas ff-canvas-mode",
+            "scrollTop": 0,
+            "scrollLeft": 0,
+            "clientWidth": 1366,
+            "clientHeight": 768,
+            "scrollWidth": 1366,
+            "scrollHeight": 768,
+            "overflowX": "clip",
+            "overflowY": "clip",
+            "rect": {
+              "x": 0,
+              "y": 0,
+              "width": 1366,
+              "height": 768,
+              "right": 1366,
+              "bottom": 768
+            }
+          }
+        ]
+      }
+    ],
+    "targetMeasurements": [
+      {
+        "label": "1440\u00d7900 main HUD",
+        "viewport": {
+          "width": 1440,
+          "height": 900,
+          "devicePixelRatio": 1
+        },
+        "targets": [
+          {
+            "id": "workbench-connect",
+            "label": "Connections",
+            "x": 1137.640625,
+            "y": 74,
+            "width": 96.15625,
+            "height": 30,
+            "right": 1233.796875,
+            "bottom": 104,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": "workbench-compute",
+            "label": "Compute",
+            "x": 1241.796875,
+            "y": 74,
+            "width": 76.734375,
+            "height": 30,
+            "right": 1318.53125,
+            "bottom": 104,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": "workbench-setup",
+            "label": "Setup flow",
+            "x": 1326.53125,
+            "y": 74,
+            "width": 85.46875,
+            "height": 30,
+            "right": 1412,
+            "bottom": 104,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": "workspace-save-status",
+            "label": "Workspace storage and cloud connection",
+            "x": 1137.390625,
+            "y": 28.140625,
+            "width": 109.078125,
+            "height": 36,
+            "right": 1246.46875,
+            "bottom": 64.140625,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "flex",
+            "visibility": "visible"
+          },
+          {
+            "id": "workspace-refresh",
+            "label": "Refresh workspace",
+            "x": 1254.46875,
+            "y": 26,
+            "width": 34,
+            "height": 40.296875,
+            "right": 1288.46875,
+            "bottom": 66.296875,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": "header-new-goal",
+            "label": "+ New goal",
+            "x": 1296.46875,
+            "y": 28.140625,
+            "width": 111.53125,
+            "height": 36,
+            "right": 1408,
+            "bottom": 64.140625,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Fit scene to view",
+            "x": 922.40625,
+            "y": 816.5,
+            "width": 36,
+            "height": 36,
+            "right": 958.40625,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Reset camera",
+            "x": 962.40625,
+            "y": 816.5,
+            "width": 50.734375,
+            "height": 36,
+            "right": 1013.140625,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Top view",
+            "x": 1017.140625,
+            "y": 816.5,
+            "width": 38.5625,
+            "height": 36,
+            "right": 1055.703125,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Perspective view",
+            "x": 1059.703125,
+            "y": 816.5,
+            "width": 36,
+            "height": 36,
+            "right": 1095.703125,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Rotate left 15 degrees",
+            "x": 1099.703125,
+            "y": 816.5,
+            "width": 36,
+            "height": 36,
+            "right": 1135.703125,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Rotate right 15 degrees",
+            "x": 1139.703125,
+            "y": 816.5,
+            "width": 36,
+            "height": 36,
+            "right": 1175.703125,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Zoom out",
+            "x": 1179.703125,
+            "y": 816.5,
+            "width": 36,
+            "height": 36,
+            "right": 1215.703125,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Zoom in",
+            "x": 1219.703125,
+            "y": 816.5,
+            "width": 36,
+            "height": 36,
+            "right": 1255.703125,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Toggle edge panning: move the pointer near a canvas edge",
+            "x": 1259.703125,
+            "y": 816.5,
+            "width": 71.875,
+            "height": 36,
+            "right": 1331.578125,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": true,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Browse company seats automatically. Interact or press again to pause.",
+            "x": 1335.578125,
+            "y": 816.5,
+            "width": 70.421875,
+            "height": 36,
+            "right": 1406,
+            "bottom": 852.5,
+            "insideViewport": true,
+            "disabled": true,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Return to the blueprint world",
+            "x": 31,
+            "y": 829,
+            "width": 56.484375,
+            "height": 40,
+            "right": 87.484375,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Find a surface",
+            "x": 91.484375,
+            "y": 829,
+            "width": 102.9375,
+            "height": 40,
+            "right": 194.421875,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Donna \u00b7 conversation",
+            "x": 198.421875,
+            "y": 829,
+            "width": 141.46875,
+            "height": 40,
+            "right": 339.890625,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Donna & sub-Donnas",
+            "x": 341.890625,
+            "y": 829,
+            "width": 140.734375,
+            "height": 40,
+            "right": 482.625,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Budget & autonomy",
+            "x": 484.625,
+            "y": 829,
+            "width": 134.828125,
+            "height": 40,
+            "right": 619.453125,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Company & department",
+            "x": 621.453125,
+            "y": 829,
+            "width": 156.984375,
+            "height": 40,
+            "right": 778.4375,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Find a company",
+            "x": 780.4375,
+            "y": 829,
+            "width": 110.96875,
+            "height": 40,
+            "right": 891.40625,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Office blueprint",
+            "x": 893.40625,
+            "y": 829,
+            "width": 109.234375,
+            "height": 40,
+            "right": 1002.640625,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open People & ownership",
+            "x": 1004.640625,
+            "y": 829,
+            "width": 132.859375,
+            "height": 40,
+            "right": 1137.5,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Company roadmap",
+            "x": 1139.5,
+            "y": 829,
+            "width": 129,
+            "height": 40,
+            "right": 1268.5,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Whiteboard",
+            "x": 1270.5,
+            "y": 829,
+            "width": 87.75,
+            "height": 40,
+            "right": 1358.25,
+            "bottom": 869,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Decision room",
+            "x": 1360.25,
+            "y": 829,
+            "width": 102.796875,
+            "height": 40,
+            "right": 1463.046875,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Goals & conversation history",
+            "x": 1465.046875,
+            "y": 829,
+            "width": 182.78125,
+            "height": 40,
+            "right": 1647.828125,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open CEO \u00b7 portfolio & authority",
+            "x": 1649.828125,
+            "y": 829,
+            "width": 169.484375,
+            "height": 40,
+            "right": 1819.3125,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Company management",
+            "x": 1821.3125,
+            "y": 829,
+            "width": 153.515625,
+            "height": 40,
+            "right": 1974.828125,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Employees & hiring",
+            "x": 1976.828125,
+            "y": 829,
+            "width": 131.34375,
+            "height": 40,
+            "right": 2108.171875,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Jobs & schedules",
+            "x": 2110.171875,
+            "y": 829,
+            "width": 117.296875,
+            "height": 40,
+            "right": 2227.46875,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Knowledge & transfers",
+            "x": 2229.46875,
+            "y": 829,
+            "width": 149.21875,
+            "height": 40,
+            "right": 2378.6875,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Ledger & observer",
+            "x": 2380.6875,
+            "y": 829,
+            "width": 126.0625,
+            "height": 40,
+            "right": 2506.75,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Overview",
+            "x": 2508.75,
+            "y": 829,
+            "width": 75.796875,
+            "height": 40,
+            "right": 2584.546875,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Projects",
+            "x": 2586.546875,
+            "y": 829,
+            "width": 67.375,
+            "height": 40,
+            "right": 2653.921875,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Team",
+            "x": 2655.921875,
+            "y": 829,
+            "width": 53.078125,
+            "height": 40,
+            "right": 2709,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Roadmap",
+            "x": 2711,
+            "y": 829,
+            "width": 76.046875,
+            "height": 40,
+            "right": 2787.046875,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Usage & activity",
+            "x": 2789.046875,
+            "y": 829,
+            "width": 114.390625,
+            "height": 40,
+            "right": 2903.4375,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Research library",
+            "x": 2905.4375,
+            "y": 829,
+            "width": 113.34375,
+            "height": 40,
+            "right": 3018.78125,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Models & system",
+            "x": 3020.78125,
+            "y": 829,
+            "width": 118.109375,
+            "height": 40,
+            "right": 3138.890625,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Settings",
+            "x": 3140.890625,
+            "y": 829,
+            "width": 69.125,
+            "height": 40,
+            "right": 3210.015625,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Object inspector",
+            "x": 3212.015625,
+            "y": 829,
+            "width": 114.453125,
+            "height": 40,
+            "right": 3326.46875,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Source review",
+            "x": 3328.46875,
+            "y": 829,
+            "width": 101.65625,
+            "height": 40,
+            "right": 3430.125,
+            "bottom": 869,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          }
+        ]
+      },
+      {
+        "label": "1366\u00d7768 main HUD",
+        "viewport": {
+          "width": 1366,
+          "height": 768,
+          "devicePixelRatio": 1
+        },
+        "targets": [
+          {
+            "id": "workbench-connect",
+            "label": "Connections",
+            "x": 1063.640625,
+            "y": 74,
+            "width": 96.15625,
+            "height": 30,
+            "right": 1159.796875,
+            "bottom": 104,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": "workbench-compute",
+            "label": "Compute",
+            "x": 1167.796875,
+            "y": 74,
+            "width": 76.734375,
+            "height": 30,
+            "right": 1244.53125,
+            "bottom": 104,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": "workbench-setup",
+            "label": "Setup flow",
+            "x": 1252.53125,
+            "y": 74,
+            "width": 85.46875,
+            "height": 30,
+            "right": 1338,
+            "bottom": 104,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": "workspace-save-status",
+            "label": "Workspace storage and cloud connection",
+            "x": 1063.390625,
+            "y": 28.140625,
+            "width": 109.078125,
+            "height": 36,
+            "right": 1172.46875,
+            "bottom": 64.140625,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "flex",
+            "visibility": "visible"
+          },
+          {
+            "id": "workspace-refresh",
+            "label": "Refresh workspace",
+            "x": 1180.46875,
+            "y": 26,
+            "width": 34,
+            "height": 40.296875,
+            "right": 1214.46875,
+            "bottom": 66.296875,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": "header-new-goal",
+            "label": "+ New goal",
+            "x": 1222.46875,
+            "y": 28.140625,
+            "width": 111.53125,
+            "height": 36,
+            "right": 1334,
+            "bottom": 64.140625,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Fit scene to view",
+            "x": 998.703125,
+            "y": 684.5,
+            "width": 36,
+            "height": 36,
+            "right": 1034.703125,
+            "bottom": 720.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Reset camera",
+            "x": 1038.703125,
+            "y": 684.5,
+            "width": 50.734375,
+            "height": 36,
+            "right": 1089.4375,
+            "bottom": 720.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Top view",
+            "x": 1093.4375,
+            "y": 684.5,
+            "width": 38.5625,
+            "height": 36,
+            "right": 1132,
+            "bottom": 720.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Perspective view",
+            "x": 1136,
+            "y": 684.5,
+            "width": 36,
+            "height": 36,
+            "right": 1172,
+            "bottom": 720.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Rotate left 15 degrees",
+            "x": 1176,
+            "y": 684.5,
+            "width": 36,
+            "height": 36,
+            "right": 1212,
+            "bottom": 720.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Rotate right 15 degrees",
+            "x": 1216,
+            "y": 684.5,
+            "width": 36,
+            "height": 36,
+            "right": 1252,
+            "bottom": 720.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Zoom out",
+            "x": 1256,
+            "y": 684.5,
+            "width": 36,
+            "height": 36,
+            "right": 1292,
+            "bottom": 720.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Zoom in",
+            "x": 1296,
+            "y": 684.5,
+            "width": 36,
+            "height": 36,
+            "right": 1332,
+            "bottom": 720.5,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Return to the blueprint world",
+            "x": 31,
+            "y": 697,
+            "width": 56.484375,
+            "height": 40,
+            "right": 87.484375,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Find a surface",
+            "x": 91.484375,
+            "y": 697,
+            "width": 102.9375,
+            "height": 40,
+            "right": 194.421875,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Donna \u00b7 conversation",
+            "x": 198.421875,
+            "y": 697,
+            "width": 141.46875,
+            "height": 40,
+            "right": 339.890625,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Donna & sub-Donnas",
+            "x": 341.890625,
+            "y": 697,
+            "width": 140.734375,
+            "height": 40,
+            "right": 482.625,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Budget & autonomy",
+            "x": 484.625,
+            "y": 697,
+            "width": 134.828125,
+            "height": 40,
+            "right": 619.453125,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Company & department",
+            "x": 621.453125,
+            "y": 697,
+            "width": 156.984375,
+            "height": 40,
+            "right": 778.4375,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Find a company",
+            "x": 780.4375,
+            "y": 697,
+            "width": 110.96875,
+            "height": 40,
+            "right": 891.40625,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Office blueprint",
+            "x": 893.40625,
+            "y": 697,
+            "width": 109.234375,
+            "height": 40,
+            "right": 1002.640625,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open People & ownership",
+            "x": 1004.640625,
+            "y": 697,
+            "width": 132.859375,
+            "height": 40,
+            "right": 1137.5,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Company roadmap",
+            "x": 1139.5,
+            "y": 697,
+            "width": 129,
+            "height": 40,
+            "right": 1268.5,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Whiteboard",
+            "x": 1270.5,
+            "y": 697,
+            "width": 87.75,
+            "height": 40,
+            "right": 1358.25,
+            "bottom": 737,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Decision room",
+            "x": 1360.25,
+            "y": 697,
+            "width": 102.796875,
+            "height": 40,
+            "right": 1463.046875,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Goals & conversation history",
+            "x": 1465.046875,
+            "y": 697,
+            "width": 182.78125,
+            "height": 40,
+            "right": 1647.828125,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open CEO \u00b7 portfolio & authority",
+            "x": 1649.828125,
+            "y": 697,
+            "width": 169.484375,
+            "height": 40,
+            "right": 1819.3125,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Company management",
+            "x": 1821.3125,
+            "y": 697,
+            "width": 153.515625,
+            "height": 40,
+            "right": 1974.828125,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Employees & hiring",
+            "x": 1976.828125,
+            "y": 697,
+            "width": 131.34375,
+            "height": 40,
+            "right": 2108.171875,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Jobs & schedules",
+            "x": 2110.171875,
+            "y": 697,
+            "width": 117.296875,
+            "height": 40,
+            "right": 2227.46875,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Knowledge & transfers",
+            "x": 2229.46875,
+            "y": 697,
+            "width": 149.21875,
+            "height": 40,
+            "right": 2378.6875,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Ledger & observer",
+            "x": 2380.6875,
+            "y": 697,
+            "width": 126.0625,
+            "height": 40,
+            "right": 2506.75,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Overview",
+            "x": 2508.75,
+            "y": 697,
+            "width": 75.796875,
+            "height": 40,
+            "right": 2584.546875,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Projects",
+            "x": 2586.546875,
+            "y": 697,
+            "width": 67.375,
+            "height": 40,
+            "right": 2653.921875,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Team",
+            "x": 2655.921875,
+            "y": 697,
+            "width": 53.078125,
+            "height": 40,
+            "right": 2709,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Roadmap",
+            "x": 2711,
+            "y": 697,
+            "width": 76.046875,
+            "height": 40,
+            "right": 2787.046875,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Usage & activity",
+            "x": 2789.046875,
+            "y": 697,
+            "width": 114.390625,
+            "height": 40,
+            "right": 2903.4375,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Research library",
+            "x": 2905.4375,
+            "y": 697,
+            "width": 113.34375,
+            "height": 40,
+            "right": 3018.78125,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Models & system",
+            "x": 3020.78125,
+            "y": 697,
+            "width": 118.109375,
+            "height": 40,
+            "right": 3138.890625,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Settings",
+            "x": 3140.890625,
+            "y": 697,
+            "width": 69.125,
+            "height": 40,
+            "right": 3210.015625,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Object inspector",
+            "x": 3212.015625,
+            "y": 697,
+            "width": 114.453125,
+            "height": 40,
+            "right": 3326.46875,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Open Source review",
+            "x": 3328.46875,
+            "y": 697,
+            "width": 101.65625,
+            "height": 40,
+            "right": 3430.125,
+            "bottom": 737,
+            "insideViewport": false,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          }
+        ]
+      },
+      {
+        "label": "1366\u00d7768 Arrange popup",
+        "viewport": {
+          "width": 1366,
+          "height": 768,
+          "devicePixelRatio": 1
+        },
+        "targets": [
+          {
+            "id": null,
+            "label": "Arrange Donna \u00b7 conversation",
+            "x": 690.237548828125,
+            "y": 194.8000030517578,
+            "width": 49.5625,
+            "height": 28.800003051757812,
+            "right": 739.800048828125,
+            "bottom": 223.60000610351562,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "grid",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Focus Donna \u00b7 conversation",
+            "x": 741.4000854492188,
+            "y": 194.8000030517578,
+            "width": 28.79998779296875,
+            "height": 28.800003051757812,
+            "right": 770.2000732421875,
+            "bottom": 223.60000610351562,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "grid",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Lock Donna \u00b7 conversation position",
+            "x": 771.800048828125,
+            "y": 194.8000030517578,
+            "width": 28.79998779296875,
+            "height": 28.800003051757812,
+            "right": 800.6000366210938,
+            "bottom": 223.60000610351562,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "grid",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Collapse Donna \u00b7 conversation",
+            "x": 802.2000732421875,
+            "y": 194.8000030517578,
+            "width": 28.79998779296875,
+            "height": 28.800003051757812,
+            "right": 831.0000610351562,
+            "bottom": 223.60000610351562,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "grid",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Close Donna \u00b7 conversation",
+            "x": 832.6000366210938,
+            "y": 194.8000030517578,
+            "width": 28.800048828125,
+            "height": 28.800003051757812,
+            "right": 861.4000854492188,
+            "bottom": 223.60000610351562,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "grid",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Close arrangement controls for Donna \u00b7 conversation",
+            "x": 822.2000732421875,
+            "y": 238.40000915527344,
+            "width": 28.79998779296875,
+            "height": 28.800003051757812,
+            "right": 851.0000610351562,
+            "bottom": 267.20001220703125,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Move left: Donna \u00b7 conversation",
+            "x": 644.60009765625,
+            "y": 289.0375061035156,
+            "width": 49.199951171875,
+            "height": 28.800018310546875,
+            "right": 693.800048828125,
+            "bottom": 317.8375244140625,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Move right: Donna \u00b7 conversation",
+            "x": 697.0000610351562,
+            "y": 289.0375061035156,
+            "width": 49.20001220703125,
+            "height": 28.800018310546875,
+            "right": 746.2000732421875,
+            "bottom": 317.8375244140625,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Move up: Donna \u00b7 conversation",
+            "x": 749.4000854492188,
+            "y": 289.0375061035156,
+            "width": 49.199951171875,
+            "height": 28.800018310546875,
+            "right": 798.6000366210938,
+            "bottom": 317.8375244140625,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Move down: Donna \u00b7 conversation",
+            "x": 801.800048828125,
+            "y": 289.0375061035156,
+            "width": 49.20001220703125,
+            "height": 28.800018310546875,
+            "right": 851.0000610351562,
+            "bottom": 317.8375244140625,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Make narrower: Donna \u00b7 conversation",
+            "x": 644.60009765625,
+            "y": 339.6750183105469,
+            "width": 101.5999755859375,
+            "height": 28.79998779296875,
+            "right": 746.2000732421875,
+            "bottom": 368.4750061035156,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Make wider: Donna \u00b7 conversation",
+            "x": 749.4000854492188,
+            "y": 339.6750183105469,
+            "width": 101.5999755859375,
+            "height": 28.79998779296875,
+            "right": 851.0000610351562,
+            "bottom": 368.4750061035156,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Make shorter: Donna \u00b7 conversation",
+            "x": 644.60009765625,
+            "y": 371.6750183105469,
+            "width": 101.5999755859375,
+            "height": 28.79998779296875,
+            "right": 746.2000732421875,
+            "bottom": 400.4750061035156,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          },
+          {
+            "id": null,
+            "label": "Make taller: Donna \u00b7 conversation",
+            "x": 749.4000854492188,
+            "y": 371.6750183105469,
+            "width": 101.5999755859375,
+            "height": 28.79998779296875,
+            "right": 851.0000610351562,
+            "bottom": 400.4750061035156,
+            "insideViewport": true,
+            "disabled": false,
+            "display": "block",
+            "visibility": "visible"
+          }
+        ]
+      }
+    ],
+    "targetMeasurementScope": "Rendered CSS-pixel bounding boxes; no WCAG conformance assessment",
+    "tiltedBoardPointer": {
+      "x": 753.8353881835938,
+      "y": 524.5455017089844,
+      "hitsTitle": true,
+      "insideBody": true,
+      "hitTag": "BUTTON",
+      "hitClass": "card-title",
+      "hitPanel": "workspace-whiteboard",
+      "activePanel": "workspace-whiteboard"
+    },
+    "boardWorkflows": {
+      "companyId": "company-98aa6e4b-b784-4f74-8983-7c2014f69d4b",
+      "officeId": "office-2945fdf1-49cc-4326-b8aa-3c8d30f33cf9",
+      "boardId": "board-browser-linked-card",
+      "linkedGoals": 2,
+      "linkedJobs": 2,
+      "linkedOutcomes": 2,
+      "multiLinkEdit": true,
+      "staleDraftProtected": true,
+      "keyboardMove": true,
+      "tiltedCancel": true,
+      "viewports": [
+        {
+          "width": 1440,
+          "height": 900
+        },
+        {
+          "width": 1366,
+          "height": 768
+        }
+      ],
+      "controlGeometry": [
+        {
+          "label": "Whiteboard 1440x900",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "panel": {
+            "x": 265.2503967285156,
+            "y": 213.1512451171875,
+            "width": 909.4992370605469,
+            "height": 473.697509765625
+          },
+          "control": {
+            "x": 283.25091552734375,
+            "y": 367.5174255371094,
+            "width": 322.11431884765625,
+            "height": 40.73797607421875
+          }
+        },
+        {
+          "label": "Greenboard first employee 1440x900",
+          "firstPerson": {
+            "top": 629.8865966796875,
+            "bottom": 647.117431640625,
+            "bodyTop": 253.8892364501953,
+            "bodyBottom": 685.9013824462891
+          }
+        },
+        {
+          "label": "Greenboard 1440x900",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "panel": {
+            "x": 265.2503967285156,
+            "y": 213.1512451171875,
+            "width": 909.4992370605469,
+            "height": 473.697509765625
+          },
+          "control": {
+            "x": 886.2826538085938,
+            "y": 297.46942138671875,
+            "width": 270.46649169921875,
+            "height": 40.73797607421875
+          }
+        },
+        {
+          "label": "Roadmap 1440x900",
+          "viewport": {
+            "width": 1440,
+            "height": 900
+          },
+          "panel": {
+            "x": 265.25042724609375,
+            "y": 213.1512451171875,
+            "width": 909.4992065429688,
+            "height": 473.697509765625
+          },
+          "control": {
+            "x": 283.25091552734375,
+            "y": 387.5903625488281,
+            "width": 322.11431884765625,
+            "height": 40.73797607421875
+          }
+        },
+        {
+          "label": "Whiteboard 1366x768",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "panel": {
+            "x": 249.06080627441406,
+            "y": 157.99002075195312,
+            "width": 867.8784027099609,
+            "height": 452.0199890136719
+          },
+          "control": {
+            "x": 266.237548828125,
+            "y": 305.2920227050781,
+            "width": 307.3736572265625,
+            "height": 38.87371826171875
+          }
+        },
+        {
+          "label": "Greenboard first employee 1366x768",
+          "firstPerson": {
+            "top": 555.654541015625,
+            "bottom": 572.0968017578125,
+            "bodyTop": 196.8637237548828,
+            "bodyBottom": 609.1059722900391
+          }
+        },
+        {
+          "label": "Greenboard 1366x768",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "panel": {
+            "x": 249.06080627441406,
+            "y": 157.99002075195312,
+            "width": 867.8784027099609,
+            "height": 452.0199890136719
+          },
+          "control": {
+            "x": 841.6731567382812,
+            "y": 238.44956970214844,
+            "width": 258.08929443359375,
+            "height": 38.87373352050781
+          }
+        },
+        {
+          "label": "Roadmap 1366x768",
+          "viewport": {
+            "width": 1366,
+            "height": 768
+          },
+          "panel": {
+            "x": 249.06082153320312,
+            "y": 157.99002075195312,
+            "width": 867.8783874511719,
+            "height": 452.0199890136719
+          },
+          "control": {
+            "x": 266.2375793457031,
+            "y": 324.4463806152344,
+            "width": 307.3735656738281,
+            "height": 38.87371826171875
+          }
+        }
+      ],
+      "afterSaveLayout": {
+        "bodyScrollTop": 0,
+        "boardScrollTop": 0,
+        "inspectorScrollTop": 1112
+      },
+      "greenboardInitialScrollReset": true,
+      "providerExecution": false,
+      "acceptedReviewSimulated": false
+    },
+    "backendNetworkAttempts": [],
+    "controlCredentialInBrowser": false,
+    "controlCredentialLocation": "Node harness memory only",
+    "studioManifestSha256": "be46a3dcd5f6539379e58526135e7ca09fb5114fc1b08da34635e58d3803c178",
+    "bridgeSha256": "960163473b5dc4b7cf91259e9a81c7338513362aa79530864780cf039a01794c",
+    "nativeCoreSha256": "170574413f119c0f380c03f782c99224958b6251af469d0653c82bf8247935ec"
+  },
+  "packages": [
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/atlas-office-0.9.0.vsix",
+      "bytes": 2484712,
+      "sha256": "b624ffbefc778426cf3e945b0bb27344df356865f892eeff72dea913b727be1d",
+      "platform": "linux"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/windows/atlas-office-0.9.0.vsix",
+      "bytes": 2473689,
+      "sha256": "9652a7a48d5a57328c52d1ea20ac2ef0714ffddbc707534a65c3453d4032d09f",
+      "platform": "windows"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/01-native-office.png",
+      "bytes": 276209,
+      "sha256": "1c608ebc1c3d1a9bfe02bfc544679e9fb9b8f5ecf62db0e1a4dd020881f6eabd"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/10-company-relief-1440x900.png",
+      "bytes": 374986,
+      "sha256": "620f3ea695336d9ab52bbf9bd948247e7f7aae6a0fd4c2009b57cd5b93d2c9d8"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/04-perspective-1440x900.png",
+      "bytes": 308840,
+      "sha256": "062e6abfd4b84af7808d0f78f5670c8ce1e1c47524eeccb88597fc6f316ada16"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/09-company-ownership-1440x900.png",
+      "bytes": 254903,
+      "sha256": "9abc7d4de9af560bc7a1f25d15d044c5639e77ecb91ed634265f5f4930ef3976"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/02-live-surfaces.png",
+      "bytes": 207175,
+      "sha256": "b982cc4a9f60aa155f2d7182c40bd626287c3f48f53ba5c9bf3cce61ec40a388"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/03-setup-flow.png",
+      "bytes": 265842,
+      "sha256": "e9b5c0d0a45bec6987fabd0add05290cc5cacc7d7dedbf8c91ac667334010d77"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/05-native-office-1366x768.png",
+      "bytes": 125931,
+      "sha256": "9531d7a468dbf932c5b08989cf952479ac8dc3f452368bab8153fbc38e480259"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/11-company-relief-1366x768.png",
+      "bytes": 237857,
+      "sha256": "dfdf5a47efbad97a972cd7f6c72245fcd02199d2fbeaee218982aae7189e95a3"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/08-arrange-1366x768.png",
+      "bytes": 204508,
+      "sha256": "1d27456b617ebf08e805908ac99f13fe8ee9aa948e4fb90650acfc6634c7d632"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/06-perspective-1366x768.png",
+      "bytes": 513704,
+      "sha256": "4645b916af52fc733c1f5818195b9bbdf79034d50c0dae3d5f14a9c2c7027e7e"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/07-webgl-restored-1366x768.png",
+      "bytes": 222914,
+      "sha256": "4ba228c8705fb50c46f7a108180ceae3c01ccba042285a64f11805faaee83a91"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/12-whiteboard-links-1440x900.png",
+      "bytes": 239463,
+      "sha256": "87506e3a2d24a9de09ff7b812c5eb51b3b07ab67c19c2cc794a458245f1411bb"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/13-whiteboard-tilted-1440x900.png",
+      "bytes": 605924,
+      "sha256": "65ce5f5c52f029ed57a86fadea86a0557619bd591942a460b951bfe51dd7666e"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/16-whiteboard-1440x900.png",
+      "bytes": 239178,
+      "sha256": "d5d342ebedc00b05dc381f38ca76ea478b73ab7c04bf117697a3dcb99ef6fd8f"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/14-greenboard-1440x900.png",
+      "bytes": 280107,
+      "sha256": "f7531b59703e4bfe21fa4dd6215b6f10ddac98c53afd059c37027011dc64e52d"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/15-roadmap-1440x900.png",
+      "bytes": 277363,
+      "sha256": "db95b40f50a441ef08af8490ea5f203faff0a8ec2892dfda18deab7aacb9bf08"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/16-whiteboard-1366x768.png",
+      "bytes": 215417,
+      "sha256": "06ea3da265345a1a12762d5fe57362b17c1cb52b55d9c5a9883ac1a126ef7116"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/14-greenboard-1366x768.png",
+      "bytes": 249266,
+      "sha256": "2b449c13dd05b519d5329b997df6a2dd35b2de4a19fd08ca7fa7e6e69f72a08f"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux/.work/canvas-smoke/15-roadmap-1366x768.png",
+      "bytes": 245707,
+      "sha256": "b89864d2b4035a21a8aca118e0d088b3545c8c820c90c7d3ccb8045fd9d54c5a"
+    }
+  ],
+  "logs": [
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/linux-job.log",
+      "bytes": 181554,
+      "sha256": "f4b908c9036035235ee0d99ea3854875365d60b68203f0fd746f3a183d728619"
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/windows-job.log",
+      "bytes": 121334,
+      "sha256": "8e3aa40b7744d78ae8a7e59fd127587de9e947aefe4c33db619789b24dbc2298"
+    }
+  ],
+  "artifactZips": [
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/daftar-vscode-Linux-X64.zip",
+      "bytes": 7786772,
+      "sha256": "4ee04ff347720d4264a88c7ec61fc6705fbd633105f56a686c305bfba5eb73c1",
+      "githubArtifactId": 14741813285,
+      "githubDigest": "sha256:4ee04ff347720d4264a88c7ec61fc6705fbd633105f56a686c305bfba5eb73c1",
+      "githubDigestVerified": true
+    },
+    {
+      "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/boards-flow-20261122/ci-2b8086f/daftar-vscode-Windows-X64.zip",
+      "bytes": 2473357,
+      "sha256": "ba48640b897fe7d7f38501bde32e6a9a517460efe3a96e9ae089a81a568140ed",
+      "githubArtifactId": 14742430495,
+      "githubDigest": "sha256:ba48640b897fe7d7f38501bde32e6a9a517460efe3a96e9ae089a81a568140ed",
+      "githubDigestVerified": true
+    }
+  ],
+  "limits": [
+    "Browser acceptance runs the actual bundled shared renderer and workbench bridge with an emulated VS Code parent connected to a temporary native backend; the separate installed acceptance verifies the real VS Code extension host.",
+    "Actual sandboxed WebGL2 frames and context restoration passed on the recorded SwiftShader software driver; hardware acceleration and GPU frame-time performance were not verified.",
+    "Windows persistent tmux mode is unsupported; its seven Linux-only wrapper cases were explicitly skipped, while ordinary installed runtime checks passed.",
+    "No live provider, Vast.ai or owner data was used. Browser and installed receipts recorded zero external requests.",
+    "Target dimensions are measured CSS-pixel bounding boxes, not a WCAG conformance assessment."
+  ],
+  "diagnostic": "Both platform jobs passed on exact source 2b8086fab5d564868f9d3b7d5650e56fe731960f. All 17 browser checks passed through complete board workflows, including the strengthened stale-warning class assertions present in this source. Final installed package hashes match the installed acceptance receipts; both raw artifact ZIP hashes match GitHub metadata."
+}

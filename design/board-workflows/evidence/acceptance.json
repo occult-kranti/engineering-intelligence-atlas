@@ -1,0 +1,226 @@
+{
+  "schemaVersion": 1,
+  "run": "boards-flow-20261122",
+  "status": "accepted",
+  "testedSource": "2b8086fab5d564868f9d3b7d5650e56fe731960f",
+  "branch": "design/infinite-blueprint-canvas",
+  "ciUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44991164221",
+  "scope": "Final product source passed the listed gates. The final evidence-only commit preserves that source without further product changes.",
+  "linux": {
+    "extension": {
+      "total": 132,
+      "passed": 132,
+      "skipped": 0
+    },
+    "native": 118,
+    "python": 9,
+    "desktop": 740,
+    "desktopFiles": 50,
+    "rendererChecks": 422,
+    "mcp": 67,
+    "headless": {
+      "total": 123,
+      "passed": 123,
+      "skipped": 0
+    }
+  },
+  "windows": {
+    "extension": {
+      "total": 132,
+      "passed": 125,
+      "skipped": 7,
+      "skipReason": "Linux-only persistent wrapper tests"
+    }
+  },
+  "installedChecks": {
+    "linux": 11,
+    "windows": 9
+  },
+  "browserChecks": 17,
+  "screenshots": 19,
+  "browserScope": "Actual bundled shared renderer and workbench bridge in Chromium, connected through an emulated VS Code parent to a real temporary native headless runtime",
+  "independentVisualReview": {
+    "status": "passed",
+    "reviewer": "host_cli_deploy",
+    "capturedViewsOnly": true,
+    "priorReview": "Seven captured board views accepted except stale-warning decoration.",
+    "finalReview": "Both final Whiteboard laptop captures accepted; stale-warning correction confirmed, layout unchanged.",
+    "viewports": [
+      [
+        1440,
+        900
+      ],
+      [
+        1366,
+        768
+      ]
+    ]
+  },
+  "stress": {
+    "completedReads": 10000,
+    "retainedReadIdentities": 512,
+    "pendingAfterReads": 0,
+    "mutationReplayPrevented": true,
+    "requestCloseCycles": 200,
+    "includedInExtensionSuite": true
+  },
+  "packages": [
+    {
+      "extensionHost": "linux-x64",
+      "filename": "atlas-office-0.9.0.vsix",
+      "bytes": 2484712,
+      "sha256": "b624ffbefc778426cf3e945b0bb27344df356865f892eeff72dea913b727be1d",
+      "githubArtifactId": 14741813285,
+      "githubArtifactDigest": "sha256:4ee04ff347720d4264a88c7ec61fc6705fbd633105f56a686c305bfba5eb73c1",
+      "installedReceiptMatched": true
+    },
+    {
+      "extensionHost": "windows-x64",
+      "filename": "atlas-office-0.9.0.vsix",
+      "bytes": 2473689,
+      "sha256": "9652a7a48d5a57328c52d1ea20ac2ef0714ffddbc707534a65c3453d4032d09f",
+      "githubArtifactId": 14742430495,
+      "githubArtifactDigest": "sha256:ba48640b897fe7d7f38501bde32e6a9a517460efe3a96e9ae089a81a568140ed",
+      "installedReceiptMatched": true
+    }
+  ],
+  "boundaries": {
+    "vastResumed": false,
+    "liveCloudProviderTests": false,
+    "hardwareGpuVerified": false,
+    "chatgptMcpRegistered": false,
+    "indefiniteLeakGuarantee": false,
+    "browserDriver": "sandboxed ANGLE/SwiftShader software WebGL2",
+    "previousPublishedReleaseReplaced": false
+  },
+  "cost": {
+    "thisPassObservedUsd": 0.109176,
+    "sharedIncrementalCapUsd": 20,
+    "sharedIncrementalAccountedUsd": 0.234182,
+    "sharedIncrementalRemainingUsd": 19.765818,
+    "kind": "usage accounting, not account balance"
+  },
+  "evidence": [
+    {
+      "path": "ci-2b8086f-summary.json",
+      "bytes": 82641,
+      "sha256": "56b4b3000b3234920dce37dad5a7476c71ca1e03e67de2a0a12f17ac5b5a6519"
+    },
+    {
+      "path": "ci-2b8086f-browser.json",
+      "bytes": 84698,
+      "sha256": "b3b497b749bb201c31de92768f600f52bff63c48834b4818b364aa7fadd11861"
+    },
+    {
+      "path": "ci-2b8086f-linux-installed.json",
+      "bytes": 7448,
+      "sha256": "b12b67cf2a41577dee964c0b853b890eb415f48b8b7ce107c79e7dfa970b924f"
+    },
+    {
+      "path": "ci-2b8086f-windows-installed.json",
+      "bytes": 6752,
+      "sha256": "9f37beea44f1389f3b097fdda082d197c073ae60f3167b2802f87a486410c843"
+    },
+    {
+      "path": "ci-2b8086f-artifact-SHA256SUMS.txt",
+      "bytes": 11072,
+      "sha256": "7117103abdecab6ca9157d157513019c641a2d0cf026979f725eb83a25400e60"
+    },
+    {
+      "path": "screenshots/01-native-office.png",
+      "bytes": 276209,
+      "sha256": "1c608ebc1c3d1a9bfe02bfc544679e9fb9b8f5ecf62db0e1a4dd020881f6eabd"
+    },
+    {
+      "path": "screenshots/02-live-surfaces.png",
+      "bytes": 207175,
+      "sha256": "b982cc4a9f60aa155f2d7182c40bd626287c3f48f53ba5c9bf3cce61ec40a388"
+    },
+    {
+      "path": "screenshots/03-setup-flow.png",
+      "bytes": 265842,
+      "sha256": "e9b5c0d0a45bec6987fabd0add05290cc5cacc7d7dedbf8c91ac667334010d77"
+    },
+    {
+      "path": "screenshots/04-perspective-1440x900.png",
+      "bytes": 308840,
+      "sha256": "062e6abfd4b84af7808d0f78f5670c8ce1e1c47524eeccb88597fc6f316ada16"
+    },
+    {
+      "path": "screenshots/05-native-office-1366x768.png",
+      "bytes": 125931,
+      "sha256": "9531d7a468dbf932c5b08989cf952479ac8dc3f452368bab8153fbc38e480259"
+    },
+    {
+      "path": "screenshots/06-perspective-1366x768.png",
+      "bytes": 513704,
+      "sha256": "4645b916af52fc733c1f5818195b9bbdf79034d50c0dae3d5f14a9c2c7027e7e"
+    },
+    {
+      "path": "screenshots/07-webgl-restored-1366x768.png",
+      "bytes": 222914,
+      "sha256": "4ba228c8705fb50c46f7a108180ceae3c01ccba042285a64f11805faaee83a91"
+    },
+    {
+      "path": "screenshots/08-arrange-1366x768.png",
+      "bytes": 204508,
+      "sha256": "1d27456b617ebf08e805908ac99f13fe8ee9aa948e4fb90650acfc6634c7d632"
+    },
+    {
+      "path": "screenshots/09-company-ownership-1440x900.png",
+      "bytes": 254903,
+      "sha256": "9abc7d4de9af560bc7a1f25d15d044c5639e77ecb91ed634265f5f4930ef3976"
+    },
+    {
+      "path": "screenshots/10-company-relief-1440x900.png",
+      "bytes": 374986,
+      "sha256": "620f3ea695336d9ab52bbf9bd948247e7f7aae6a0fd4c2009b57cd5b93d2c9d8"
+    },
+    {
+      "path": "screenshots/11-company-relief-1366x768.png",
+      "bytes": 237857,
+      "sha256": "dfdf5a47efbad97a972cd7f6c72245fcd02199d2fbeaee218982aae7189e95a3"
+    },
+    {
+      "path": "screenshots/12-whiteboard-links-1440x900.png",
+      "bytes": 239463,
+      "sha256": "87506e3a2d24a9de09ff7b812c5eb51b3b07ab67c19c2cc794a458245f1411bb"
+    },
+    {
+      "path": "screenshots/13-whiteboard-tilted-1440x900.png",
+      "bytes": 605924,
+      "sha256": "65ce5f5c52f029ed57a86fadea86a0557619bd591942a460b951bfe51dd7666e"
+    },
+    {
+      "path": "screenshots/14-greenboard-1366x768.png",
+      "bytes": 249266,
+      "sha256": "2b449c13dd05b519d5329b997df6a2dd35b2de4a19fd08ca7fa7e6e69f72a08f"
+    },
+    {
+      "path": "screenshots/14-greenboard-1440x900.png",
+      "bytes": 280107,
+      "sha256": "f7531b59703e4bfe21fa4dd6215b6f10ddac98c53afd059c37027011dc64e52d"
+    },
+    {
+      "path": "screenshots/15-roadmap-1366x768.png",
+      "bytes": 245707,
+      "sha256": "b89864d2b4035a21a8aca118e0d088b3545c8c820c90c7d3ccb8045fd9d54c5a"
+    },
+    {
+      "path": "screenshots/15-roadmap-1440x900.png",
+      "bytes": 277363,
+      "sha256": "db95b40f50a441ef08af8490ea5f203faff0a8ec2892dfda18deab7aacb9bf08"
+    },
+    {
+      "path": "screenshots/16-whiteboard-1366x768.png",
+      "bytes": 215417,
+      "sha256": "06ea3da265345a1a12762d5fe57362b17c1cb52b55d9c5a9883ac1a126ef7116"
+    },
+    {
+      "path": "screenshots/16-whiteboard-1440x900.png",
+      "bytes": 239178,
+      "sha256": "d5d342ebedc00b05dc381f38ca76ea478b73ab7c04bf117697a3dcb99ef6fd8f"
+    }
+  ],
+  "artifactManifestScope": "ci-2b8086f-artifact-SHA256SUMS.txt is the unchanged manifest for the complete downloaded CI collection; its relative paths refer to that collection. The evidence array here hashes the files checked into this repository."
+}
