@@ -1,7 +1,7 @@
 import { createMutationController, newOwnerId, type MutationResult, type OwnerMutation } from './mutations.js';
 import { STICKY_COLORS } from './notes.js';
 import { buildImprovementTelemetry, type TelemetryOptions } from './telemetry.js';
-import type { ImprovementSnapshot, ImprovementSession, StickyNote, StickyColor } from './model.js';
+import type { ImprovementSnapshot, ImprovementSession, StickyNote, StickyColor, ImprovementCoordinatorStatus } from './model.js';
 
 export interface ImprovementScope { companyId: string; officeId: string; departmentId: string | null }
 export interface ImprovementPanelOptions {
@@ -9,6 +9,7 @@ export interface ImprovementPanelOptions {
   scope(): ImprovementScope | null;
   sampledAt(): string;
   workerEvidence(): TelemetryOptions['workerEvidence'];
+  coordinatorStatus?(): ImprovementCoordinatorStatus | null | undefined;
   freshnessMs?(): number;
   readOnly(): boolean;
   command(command: OwnerMutation): Promise<MutationResult<ImprovementSnapshot>>;
@@ -247,6 +248,30 @@ export function mountImprovementPanel(options: ImprovementPanelOptions): Improve
   function control(session: ImprovementSession, operation: 'start' | 'pause' | 'resume' | 'cancel') {
     void save({ action: 'control_improvement_session', requestId: newOwnerId(`session-${operation}`), sessionId: session.id, expectedRevision: session.revision, operation }).catch(showError);
   }
+  function coordinatorMessage(session: ImprovementSession): HTMLElement {
+    const status = options.coordinatorStatus?.(), node = el('p', '', 'form-help improvement-coordinator-status');
+    const unknown = (text = 'Coordinator status unavailable here. Active is a saved scheduling state, not proof of a running call.') => { node.dataset.state = 'unavailable'; node.textContent = text; return node; };
+    if (!status) return unknown();
+    const now = Date.now(), freshness = options.freshnessMs?.() ?? 15000;
+    const fresh = (stamp: string) => { const age = now - Date.parse(stamp); return Number.isFinite(age) && age >= 0 && age < freshness; };
+    if (!fresh(status.sampledAt)) { node.dataset.state = 'stale'; node.textContent = 'Coordinator status is stale. Current scheduling and model activity are unknown; refresh records.'; return node; }
+    if (!status.enabled) { node.dataset.state = 'disabled'; node.textContent = 'The runtime improvement coordinator is stopped. This saved session is not being scheduled here.'; return node; }
+    const observation = status.observation;
+    if (!observation || observation.sessionId !== session.id || observation.sessionRevision !== session.revision || !sameScope(observation, session)) return unknown('No current coordinator check matches this session and revision. Model activity is unknown.');
+    if (!fresh(observation.checkedAt)) { node.dataset.state = 'stale'; node.textContent = 'The last coordinator check is stale. Its earlier result does not confirm current model availability; refresh records.'; return node; }
+    if (observation.outcome === 'checking' && !status.checking) return unknown('The earlier coordinator check did not provide a current result. Refresh records; model activity is unknown.');
+    node.dataset.state = observation.outcome;
+    if (observation.reason) node.dataset.reason = observation.reason;
+    node.title = `Coordinator checked ${observation.checkedAt}${observation.reason ? ` · ${observation.reason}` : ''}`;
+    if (observation.outcome === 'checking') node.textContent = 'The coordinator is checking this session. A model call is not confirmed.';
+    else if (observation.reason === 'no-current-eligible-priced-route') node.textContent = 'No permitted model has both a live connection and a current price quote. Check Connections and allowed routes. No new job was created by this check.';
+    else if (observation.reason === 'attempt-needs-review') node.textContent = 'The last attempt needs review. Inspect its saved evidence and native stop reason before further work.';
+    else if (observation.reason === 'improvement-state-needs-review') node.textContent = 'The coordinator could not confirm this attempt. Refresh records and inspect the saved state; no automatic retry of model work is implied.';
+    else if (observation.outcome === 'progress') node.textContent = 'The last coordinator check recorded progress. See Activity & output for actual calls and results.';
+    else if (observation.outcome === 'idle') node.textContent = 'The last coordinator check found no new attempt to run. This is not evidence of a running model.';
+    else return unknown();
+    return node;
+  }
   function renderSessions() {
     sessions.replaceChildren(); const snapshot = options.snapshot(), all = inScope(snapshot?.improvementSessions, scope);
     for (const session of all.slice(0, 64)) {
@@ -254,6 +279,7 @@ export function mountImprovementPanel(options: ImprovementPanelOptions): Improve
       item.append(el('h3', session.title), el('p', `${session.status === 'active' ? 'Enabled' : session.status.replaceAll('-', ' ')} · cycle ${session.cycle}${session.maxCycles === null ? '' : ` / ${session.maxCycles}`}`, 'improvement-session-state'),
         el('p', `Primary: ${snapshot?.employees.find(e => e.id === session.primaryEmployeeId)?.name || session.primaryEmployeeId} · Independent reviewer: ${snapshot?.employees.find(e => e.id === session.reviewerEmployeeId)?.name || session.reviewerEmployeeId}`, 'form-help'));
       if (session.stopReason) item.append(el('p', session.stopReason, 'improvement-stop-reason'));
+      if (['active', 'waiting-work', 'waiting-budget'].includes(session.status)) item.append(coordinatorMessage(session));
       if (session.status === 'active') item.append(el('p', 'Enabled allows scheduling. Activity & output shows actual calls; an eligible connected model and a current reviewed price are still required.', 'form-help'));
       const actions = el('div', '', 'row wrap');
       if (session.status === 'paused') actions.append(button(session.cycle ? 'Resume' : 'Start', () => control(session, session.cycle ? 'resume' : 'start')));

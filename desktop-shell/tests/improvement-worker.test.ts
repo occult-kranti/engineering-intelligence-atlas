@@ -72,6 +72,45 @@ describe('durable improvement scheduling adapter',()=>{
   const result=combineWorkerExecution({enabled:false,running:false,execution:{sampledAt,activeCalls:[]}}, {enabled:false,running:true,activeJobId:'primary',execution:{sampledAt,activeCalls:[call]}} as ReturnType<OfficeWorker['status']>);
   expect(result.enabled).toBe(false);expect(result.execution.activeCalls).toEqual([call]);expect(result.running).toBe(true);
  });
+ it('reports an exact scoped missing-route check without generation and clears it on progress',async()=>{
+  const f=fixture();f.eligible.mockResolvedValue([]);f.controller.start();await vi.advanceTimersByTimeAsync(0);
+  const first=f.controller.coordinatorStatus();
+  expect(first).toMatchObject({enabled:true,checking:false,observation:{sessionId:f.session.id,sessionRevision:0,companyId:'company',officeId:'office',departmentId:null,outcome:'blocked',reason:'no-current-eligible-priced-route'}});
+  expect(f.command).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
+  await vi.advanceTimersByTimeAsync(1000);
+  const polled=f.controller.coordinatorStatus();expect(polled.sampledAt).not.toBe(first.sampledAt);expect(polled.observation?.checkedAt).toBe(first.observation?.checkedAt);
+  f.eligible.mockResolvedValue([route]);
+  f.command.mockImplementation(async()=>{f.session.revision=1;f.state.jobs=[{id:'new-paired-job'}];return{ok:true,snapshot:structuredClone(f.state)} as OfficeResult;});
+  f.controller.wake();await vi.advanceTimersByTimeAsync(0);
+  expect(f.controller.coordinatorStatus().observation).toMatchObject({sessionId:f.session.id,sessionRevision:1,outcome:'progress',reason:null});
+  const merged=combineWorkerExecution({enabled:false,running:false},null,f.controller.coordinatorStatus());
+  expect(merged.enabled).toBe(false);expect(merged.improvement?.observation?.reason).toBeNull();expect(merged.execution.activeCalls).toEqual([]);
+ });
+ it('reports incomplete discovery as checking and never publishes late observations after disposal',async()=>{
+  const f=fixture();let release!:(rows:typeof route[])=>void;const pending=new Promise<typeof route[]>(resolve=>release=resolve);f.eligible.mockReturnValue(pending);
+  f.controller.start();await vi.advanceTimersByTimeAsync(0);
+  const before=f.controller.coordinatorStatus();expect(before).toMatchObject({enabled:true,checking:true,observation:{sessionId:f.session.id,outcome:'checking',reason:null}});
+  await vi.advanceTimersByTimeAsync(30000);expect(f.controller.coordinatorStatus().observation?.checkedAt).toBe(before.observation?.checkedAt);
+  f.controller.close();release([]);await vi.advanceTimersByTimeAsync(0);
+  expect(f.controller.coordinatorStatus()).toMatchObject({enabled:false,checking:false,observation:null});
+  expect(f.command).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();expect(vi.getTimerCount()).toBe(0);
+ });
+ it.each(['missing','paused'])('clears checking evidence when tick returns a %s session',async(status)=>{
+  const f=fixture();f.command.mockImplementation(async()=>({ok:true,snapshot:{...f.state,improvementSessions:status==='missing'?[]:[{...f.session,status}]}}) as OfficeResult);
+  f.controller.start();await vi.advanceTimersByTimeAsync(0);
+  expect(f.controller.coordinatorStatus()).toMatchObject({enabled:true,checking:false,observation:null});expect(f.createWorker).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
+ });
+ it('retains a bounded rejected-discovery reason and clears aborted discovery without a late result',async()=>{
+  const f=fixture();f.eligible.mockRejectedValueOnce(new Error('Private provider path must not escape'));
+  f.controller.start();await vi.advanceTimersByTimeAsync(0);
+  expect(f.controller.coordinatorStatus().observation).toMatchObject({outcome:'blocked',reason:'improvement-state-needs-review'});
+  expect(JSON.stringify(f.controller.coordinatorStatus())).not.toContain('Private provider');
+  let release!:(rows:typeof route[])=>void;f.eligible.mockReturnValueOnce(new Promise(resolve=>release=resolve));
+  f.controller.wake();await vi.advanceTimersByTimeAsync(0);expect(f.controller.coordinatorStatus().observation?.outcome).toBe('checking');
+  f.session.status='paused';f.controller.wake({action:'control_improvement_session',sessionId:f.session.id,operation:'pause'});
+  release([]);await vi.advanceTimersByTimeAsync(0);expect(f.controller.coordinatorStatus()).toMatchObject({enabled:true,checking:false,observation:null});
+  expect(f.command).not.toHaveBeenCalled();expect(f.generate).not.toHaveBeenCalled();
+ });
 });
 describe('bounded model discovery',()=>{
  it('coalesces discovery, invalidates changed credentials and never enlarges frozen candidates',async()=>{

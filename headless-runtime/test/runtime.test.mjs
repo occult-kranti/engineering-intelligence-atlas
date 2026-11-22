@@ -70,6 +70,28 @@ test('health reveals no state; all control routes need a valid credential', asyn
   assert.equal((await request('/v1/workers/run-once', {})).status, 202);
 });
 
+test('worker status carries only bounded coordinator evidence without refreshing its check timestamp', async t => {
+  const checkedAt='2026-11-22T12:00:00Z';
+  const coordinator={sampledAt:'2026-11-22T12:00:20Z',enabled:true,checking:false,privateDetail:'do-not-project',observation:{
+    sessionId:'session-a',sessionRevision:3,companyId:'company-a',officeId:'office-a',departmentId:null,
+    checkedAt,outcome:'blocked',reason:'no-current-eligible-priced-route',privateDetail:'do-not-project',
+  }};
+  const runtime=new RuntimeController({office:{},worker:{status:()=>({enabled:false,running:false})}});
+  runtime.improvement={status:()=>({started:true}),workerStatus:()=>null,coordinatorStatus:()=>coordinator};
+  runtime.combineWorkerExecution=(ordinary,_worker,evidence)=>({...ordinary,improvement:evidence});
+  const {request}=await withServer(t,runtime);
+  const first=await (await request('/v1/status')).json();
+  assert.equal(first.worker.enabled,false);assert.equal(first.worker.improvement.observation.checkedAt,checkedAt);
+  assert.equal(first.worker.improvement.observation.sessionId,'session-a');assert.equal(first.worker.improvement.observation.reason,'no-current-eligible-priced-route');
+  assert.doesNotMatch(JSON.stringify(first),/do-not-project|privateDetail/);
+  coordinator.sampledAt='2026-11-22T12:00:40Z';
+  assert.equal((await (await request('/v1/status')).json()).worker.improvement.observation.checkedAt,checkedAt);
+  coordinator.observation.reason='provider-private-failure';
+  assert.equal((await (await request('/v1/status')).json()).worker.improvement.observation,null);
+  coordinator.sampledAt='invalid';
+  assert.equal((await (await request('/v1/status')).json()).worker.improvement,undefined);
+});
+
 test('shared model endpoints require owner authentication and reject unrecognized query fields before dispatch', async t => {
   const calls = [];
   const { request, origin } = await withServer(t, fakeRuntime({ modelOperation: async (operation, input) => { calls.push({ operation, input }); return { ok: true, snapshot: { companyId: input.companyId } }; } }));

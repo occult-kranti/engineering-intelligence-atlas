@@ -1,12 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { installDom, type FreeflowDom } from './fixtures/freeflow-dom.js';
 import { mountImprovementPanel, type ImprovementPanel } from '../src/renderer/improvement/panel.js';
-import type { ImprovementSnapshot, StickyNote } from '../src/renderer/improvement/model.js';
+import type { ImprovementSnapshot, StickyNote, ImprovementSession, ImprovementCoordinatorStatus } from '../src/renderer/improvement/model.js';
 import type { OwnerMutation } from '../src/renderer/improvement/mutations.js';
 
 let dom: FreeflowDom, panel: ImprovementPanel | null;
 beforeEach(() => { dom = installDom(); panel = null; });
-afterEach(() => { panel?.destroy(); dom.restore(); });
+afterEach(() => { panel?.destroy(); dom.restore(); vi.restoreAllMocks(); });
 const stamp = '2026-11-22T12:00:00Z';
 const scope = { companyId: 'a', officeId: 'o', departmentId: null };
 function note(extra: Partial<StickyNote> = {}): StickyNote { return { id: 'note', revision: 0, ...scope, kind: 'todo', color: 'yellow', text: 'Original saved note', status: 'open', ownerEmployeeId: 'primary', goalIds: ['g1', 'g2'], x: .7, y: .2, createdAt: stamp, updatedAt: stamp, ...extra }; }
@@ -20,6 +20,7 @@ function fixture(): ImprovementSnapshot { return { schemaVersion: 3,
   budget: { remainingUsd: 4, observedUsd: 1, estimatedUsd: .5, reservedUsd: 1, heldUsd: .5, committedUsd: 6 }, portfolio: { contracts: [] } }; }
 function mount(initial = fixture()) {
   let snapshot = initial; const calls: OwnerMutation[] = [];
+  let coordinator: ImprovementCoordinatorStatus | undefined;
   const send = vi.fn(async (command: OwnerMutation) => {
     calls.push(structuredClone(command));
     if (command.action === 'upsert_sticky_note') {
@@ -33,9 +34,10 @@ function mount(initial = fixture()) {
     return { ok: true, snapshot: structuredClone(snapshot) };
   });
   const donna = vi.fn();
-  panel = mountImprovementPanel({ snapshot: () => snapshot, scope: () => scope, sampledAt: () => stamp, workerEvidence: () => undefined, readOnly: () => false,
+  panel = mountImprovementPanel({ snapshot: () => snapshot, scope: () => scope, sampledAt: () => stamp, workerEvidence: () => undefined, coordinatorStatus:()=>coordinator, readOnly: () => false,
     command: send, apply: value => { snapshot = value; }, refresh: async () => { panel?.refresh(); }, openDonna: donna }); document.body.append(panel.element);
-  return { calls, send, donna, get snapshot() { return snapshot; }, set snapshot(next: ImprovementSnapshot) { snapshot = next; } };
+  return { calls, send, donna, get snapshot() { return snapshot; }, set snapshot(next: ImprovementSnapshot) { snapshot = next; },
+    get coordinator(){return coordinator;},set coordinator(value:ImprovementCoordinatorStatus|undefined){coordinator=value;} };
 }
 const get = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T;
 function change(id: string, value: string) { const control = get<HTMLInputElement>(id); control.value = value; control.dispatchEvent(new dom.window.Event('input', { bubbles: true })); }
@@ -48,6 +50,42 @@ function fillSession() {
 }
 
 describe('movable improvement surface forms', () => {
+  function activeSession(id='session-a'):ImprovementSession { return {id,revision:3,...scope,status:'active',title:id,primaryEmployeeId:'primary',reviewerEmployeeId:'reviewer',cycle:0,maxCycles:null,activeGoalId:null,stopReason:null} as ImprovementSession; }
+  function coordinator():ImprovementCoordinatorStatus { return {sampledAt:stamp,enabled:true,checking:false,observation:{sessionId:'session-a',sessionRevision:3,...scope,checkedAt:stamp,outcome:'blocked',reason:'no-current-eligible-priced-route'}}; }
+  it('shows missing-route evidence only on its exact runnable session and keeps model activity separate',()=>{
+    vi.spyOn(Date,'now').mockReturnValue(Date.parse(stamp));
+    const m=mount({...fixture(),improvementSessions:[activeSession(),activeSession('session-b'),{...activeSession('paused'),status:'paused'}]});
+    m.coordinator=coordinator();panel!.refresh();
+    const card=document.querySelector('[data-session-id="session-a"] .improvement-coordinator-status') as HTMLElement;
+    expect(card.dataset.state).toBe('blocked');expect(card.dataset.reason).toBe('no-current-eligible-priced-route');expect(card.textContent).toContain('No permitted model has both a live connection and a current price quote');
+    expect(card.textContent).toContain('Check Connections and allowed routes');expect(card.textContent).not.toContain('generating');
+    expect(document.querySelector('[data-session-id="session-b"] .improvement-coordinator-status')?.textContent).toContain('No current coordinator check matches');
+    expect(document.querySelector('[data-session-id="paused"] .improvement-coordinator-status')).toBeNull();
+    expect(m.calls).toEqual([]);expect(m.donna).not.toHaveBeenCalled();
+  });
+  it('rejects wrong scope, changed revision, future or stale checks even when a status read is fresh',()=>{
+    vi.spyOn(Date,'now').mockReturnValue(Date.parse(stamp));const m=mount({...fixture(),improvementSessions:[activeSession()]});
+    for(const change of [{companyId:'b'},{officeId:'other'},{departmentId:'d'},{sessionRevision:4}]){
+      m.coordinator=coordinator();Object.assign(m.coordinator.observation!,change);panel!.refresh();
+      expect(document.querySelector('.improvement-coordinator-status')?.getAttribute('data-state')).toBe('unavailable');
+      expect(document.querySelector('.improvement-coordinator-status')?.textContent).not.toContain('No permitted model');
+    }
+    for(const checkedAt of [new Date(Date.parse(stamp)-16000).toISOString(),new Date(Date.parse(stamp)+1000).toISOString()]){
+      m.coordinator=coordinator();m.coordinator.observation!.checkedAt=checkedAt;panel!.refresh();
+      expect(document.querySelector('.improvement-coordinator-status')?.getAttribute('data-state')).toBe('stale');
+    }
+    m.coordinator=coordinator();m.coordinator.sampledAt=new Date(Date.parse(stamp)-16000).toISOString();panel!.refresh();
+    expect(document.querySelector('.improvement-coordinator-status')?.textContent).toContain('Current scheduling and model activity are unknown');
+  });
+  it('distinguishes absent, checking, idle and progress evidence and clears on disposal without adding timers',()=>{
+    vi.spyOn(Date,'now').mockReturnValue(Date.parse(stamp));const timers=dom.timers.pending();const m=mount({...fixture(),improvementSessions:[activeSession()]});
+    expect(document.querySelector('.improvement-coordinator-status')?.textContent).toContain('Coordinator status unavailable here');
+    m.coordinator=coordinator();panel!.refresh();expect(document.querySelector('.improvement-coordinator-status')?.getAttribute('data-reason')).toBe('no-current-eligible-priced-route');
+    for(const outcome of ['checking','idle','progress'] as const){m.coordinator={...coordinator(),checking:outcome==='checking',observation:{...coordinator().observation!,outcome,reason:null}};panel!.refresh();expect(document.querySelector('.improvement-coordinator-status')?.getAttribute('data-state')).toBe(outcome);expect(document.querySelector('.improvement-coordinator-status')?.hasAttribute('data-reason')).toBe(false);}
+    m.coordinator={...coordinator(),checking:false,observation:{...coordinator().observation!,outcome:'checking',reason:null}};panel!.refresh();expect(document.querySelector('.improvement-coordinator-status')?.textContent).toContain('did not provide a current result');
+    m.coordinator={...coordinator(),enabled:false,observation:null};panel!.refresh();expect(document.querySelector('.improvement-coordinator-status')?.getAttribute('data-state')).toBe('disabled');
+    panel!.destroy();m.coordinator=coordinator();panel!.refresh();expect(document.querySelector('.improvement-coordinator-status')).toBeNull();expect(dom.timers.pending()).toBe(timers);expect(m.calls).toEqual([]);
+  });
   it('preserves fractional micro-dollar carry values through browser validation and native submission', async () => {
     const m = mount({ ...fixture(), improvementAllowance: null, improvementBudget: null });
     change('improvement-carry-observed', '1.1316496'); change('improvement-carry-estimated', '0.00000003'); change('improvement-carry-source', 'Reviewed actual token ledger');

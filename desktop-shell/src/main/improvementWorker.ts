@@ -1,4 +1,4 @@
-import type { OfficeCommand, OfficeJob, OfficeResult, OfficeSnapshot, OfficeGoalRunSettings } from '../shared/office';
+import type { OfficeCommand, OfficeJob, OfficeResult, OfficeSnapshot, OfficeGoalRunSettings, OfficeImprovementCoordinatorStatus } from '../shared/office';
 import crypto from 'node:crypto';
 import { OfficeWorker, type OfficeWorkerOptions, type OfficeWorkerActivity } from './officeWorker';
 import { assertImprovementPriceQuote, readImprovementPriceCatalog, selectImprovementRoute, type ImprovementRoute, type ImprovementPriceQuote } from './improvementPricing';
@@ -44,6 +44,7 @@ export class ImprovementWorker {
   private nextPollAt: number | null = null;
   private lastOutcome: 'idle'|'work'|'error'|null = null;
   private blockedReason: string | null = null;
+  private observation: OfficeImprovementCoordinatorStatus['observation'] = null;
   private readonly intervalMs: number;
   constructor(private readonly options: ImprovementWorkerOptions) {
     this.intervalMs = Math.max(5000,Math.min(120000,Number.isFinite(options.intervalMs) ? Math.trunc(options.intervalMs!) : 15000));
@@ -55,6 +56,15 @@ export class ImprovementWorker {
       execution: this.current?.status().execution ?? emptyExecution() };
   }
   workerStatus() { return this.current?.status() ?? null; }
+  coordinatorStatus(): OfficeImprovementCoordinatorStatus {
+    return { sampledAt: new Date().toISOString(), enabled: this.started && !this.closed,
+      checking: !this.closed && this.pending !== null, observation: this.observation ? { ...this.observation } : null };
+  }
+  private observe(session: ImprovementSessionRecord, outcome: NonNullable<OfficeImprovementCoordinatorStatus['observation']>['outcome'], reason: NonNullable<OfficeImprovementCoordinatorStatus['observation']>['reason'] = null): void {
+    if (this.closed) return;
+    this.observation = { sessionId: session.id, sessionRevision: session.revision, companyId: session.companyId,
+      officeId: session.officeId, departmentId: session.departmentId, checkedAt: new Date().toISOString(), outcome, reason };
+  }
   start(): void { if (this.closed || this.started) return; this.started = true; this.wake(); }
   wake(command?: OfficeCommand): void {
     if (this.closed || !this.started) return;
@@ -75,27 +85,31 @@ export class ImprovementWorker {
   }
   close(): void {
     this.closed = true; this.started = false; this.requestedWake = false;
+    this.observation = null;
     this.clearTimer(); this.controller?.abort(); this.current?.stop();
   }
   private clearTimer(): void { if(this.timer)clearTimeout(this.timer);this.timer=null;this.nextPollAt=null; }
   private async poll(): Promise<void> {
     let outcome:'idle'|'work'|'error'='idle'; const controller=new AbortController();this.controller=controller;
-    this.blockedReason=null;
+    this.blockedReason=null; this.observation=null;
+    let observedSession: ImprovementSessionRecord | null = null;
     try {
       const snapshot=state(await this.options.snapshot());controller.signal.throwIfAborted();
       const sessions=(snapshot.improvementSessions ?? []).filter(session=>RUNNABLE.has(session.status)).slice(0,256);
       if (!sessions.length || snapshot.policy?.dispatchPaused) { this.blockedReason=snapshot.policy?.dispatchPaused?'global-dispatch-paused':null; return; }
       const previous=sessions.findIndex(session=>session.id===this.lastSessionId);
       const session=sessions[(previous+1)%sessions.length]!;this.sessionId=session.id;this.lastSessionId=session.id;
+      observedSession=session; this.observe(session,'checking');
       const catalog=readImprovementPriceCatalog(this.options.priceCatalogPath);
       const eligible=await this.options.eligibleRoutes(session,controller.signal);controller.signal.throwIfAborted();
       const selectedRoute=selectImprovementRoute(catalog,session.allowedRoutes,eligible,session.runSettings.maxTokens);
-      if (!selectedRoute) {this.blockedReason='no-current-eligible-priced-route';return;}
+      if (!selectedRoute) {this.blockedReason='no-current-eligible-priced-route';this.observe(session,'blocked','no-current-eligible-priced-route');return;}
       const beforeJobs=new Set(snapshot.jobs.map(job=>job.id));
       const ticked=state(await this.options.command({action:'tick_improvements',sessionId:session.id,selectedRoute} as OfficeCommand));
       controller.signal.throwIfAborted();
       const updated=ticked.improvementSessions?.find(item=>item.id===session.id);
-      if (!updated || !RUNNABLE.has(updated.status)) {this.blockedReason=updated?.status ?? 'session-unavailable';return;}
+      if (!updated || !RUNNABLE.has(updated.status)) {this.blockedReason=updated?.status ?? 'session-unavailable';this.observation=null;return;}
+      observedSession=updated; this.observe(updated,'checking');
       const eligibleForDispatch=async(job:OfficeJob)=>{
         const quote=(job as OfficeJob & {improvementRoute?:ImprovementPriceQuote|null}).improvementRoute;
         assertImprovementPriceQuote(quote,job as OfficeJob & {priceRates:ImprovementPriceQuote['priceRates']},job.limits.maxTokens);
@@ -114,9 +128,12 @@ export class ImprovementWorker {
       const result=this.current.status();
       outcome=result.lastError?'error':result.scheduling?.some(slot=>slot.lastOutcome==='work')||ticked.jobs.some(job=>!beforeJobs.has(job.id))?'work':'idle';
       if (result.lastError) this.blockedReason='attempt-needs-review';
+      this.observe(updated,outcome==='error'?'blocked':outcome==='work'?'progress':'idle',result.lastError?'attempt-needs-review':null);
     } catch {
       outcome=controller.signal.aborted?'idle':'error';
       this.blockedReason=controller.signal.aborted?'paused-or-closed':'improvement-state-needs-review';
+      if (controller.signal.aborted) this.observation=null;
+      else if (observedSession) this.observe(observedSession,'blocked','improvement-state-needs-review');
     } finally {
       this.current?.stop();this.current=null;this.controller=null;this.sessionId=null;
       this.lastOutcome=outcome;this.idlePolls=outcome==='idle'?Math.min(32,this.idlePolls+1):0;
@@ -126,10 +143,11 @@ export class ImprovementWorker {
 }
 
 /** Preserve the ordinary-pool switch while reporting real execution from either pool. */
-export function combineWorkerExecution<T extends {execution?:OfficeWorkerActivity['execution'];running?:boolean;activeJobId?:string|null;activeJobIds?:string[]}>(ordinary:T, improvement:ReturnType<ImprovementWorker['workerStatus']>):T & {execution:OfficeWorkerActivity['execution']} {
+export function combineWorkerExecution<T extends {execution?:OfficeWorkerActivity['execution'];running?:boolean;activeJobId?:string|null;activeJobIds?:string[]}>(ordinary:T, improvement:ReturnType<ImprovementWorker['workerStatus']>, coordinator?:OfficeImprovementCoordinatorStatus):T & {execution:OfficeWorkerActivity['execution'];improvement?:OfficeImprovementCoordinatorStatus} {
   const activeCalls=[...(ordinary.execution?.activeCalls??[]),...(improvement?.execution.activeCalls??[])].slice(0,8);
   const activeJobIds=[...(ordinary.activeJobIds??(ordinary.activeJobId?[ordinary.activeJobId]:[])),...(improvement?.activeJobId?[improvement.activeJobId]:[])];
   return {...ordinary,running:ordinary.running===true||improvement?.running===true,activeJobId:activeJobIds[0]??null,activeJobIds,
+    ...(coordinator ? {improvement:coordinator} : {}),
     execution:{sampledAt:new Date().toISOString(),activeCalls}};
 }
 

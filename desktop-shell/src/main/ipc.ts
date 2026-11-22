@@ -122,7 +122,7 @@ export function registerIpc(ctx: IpcContext): Map<string, (...args: unknown[]) =
   register(CHANNELS.indexCompanyRepository, guard(() => companyService.indexCompanyRepository()));
   register(CHANNELS.officeSnapshot, guard(() => officeService.officeSnapshot()));
   register(CHANNELS.officeCommand, guard(async (_event, request) => {const result=await officeService.officeCommand(request);if(result.ok)ctx.improvementWorker?.wake(request.command??request);return result;}));
-  register(CHANNELS.officeWorkerStatus, guard(() => combineWorkerExecution(officeWorker.status(),ctx.improvementWorker?.workerStatus()??null)));
+  register(CHANNELS.officeWorkerStatus, guard(() => combineWorkerExecution(officeWorker.status(),ctx.improvementWorker?.workerStatus()??null,ctx.improvementWorker?.coordinatorStatus())));
   register(CHANNELS.setOfficeWorker, guard((_event, request: unknown) => {
     if (!request || typeof request !== 'object' || typeof (request as { enabled?: unknown }).enabled !== 'boolean') {
       throw new Error('Worker enabled must be a boolean');

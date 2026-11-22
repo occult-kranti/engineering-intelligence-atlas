@@ -1,6 +1,15 @@
 /** Structural renderer copies of the native office-3 DTOs. No authority or
  * execution is implemented here; every mutation goes to the native bridge. */
 export type StickyColor = 'yellow' | 'blue' | 'green' | 'pink' | 'purple' | 'gray';
+/** Optional runtime-only evidence, absent from the website's native projection. */
+export interface ImprovementCoordinatorStatus {
+  sampledAt: string; enabled: boolean; checking: boolean;
+  observation: {
+    sessionId: string; sessionRevision: number; companyId: string; officeId: string; departmentId: string | null;
+    checkedAt: string; outcome: 'checking' | 'blocked' | 'progress' | 'idle';
+    reason: 'no-current-eligible-priced-route' | 'attempt-needs-review' | 'improvement-state-needs-review' | null;
+  } | null;
+}
 export interface StickyNote {
   id: string; revision: number; companyId: string; officeId: string; departmentId: string | null;
   kind: 'comment' | 'todo'; color: StickyColor; text: string; status: 'open' | 'done' | 'archived';

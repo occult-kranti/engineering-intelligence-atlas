@@ -4,7 +4,7 @@ import { mountStudio } from './freeflow/studio.34cf99b090f496dc.js';
 import { mountCanvasWorkspace } from './freeflow/canvas-workspace.c8afd5b6c2c6aff6.js';
 import { buildDonnaTeam, proposeDonnaAction } from './freeflow/donna-team.5cb2baa7c7bddcfb.js';
 import { mountModelPool } from './model-pool.ea9e9ba1c164d356.js';
-import { mountImprovementPanel } from './improvement/panel.30356f7791e1c52a.js';
+import { mountImprovementPanel } from './improvement/panel.a7637186bbede6a0.js';
 import { buildImprovementTelemetry } from './improvement/telemetry.5120fd08d951c755.js';
 const bridge = window.desktopBridge;
 let modelPoolPanel = null;
@@ -1529,6 +1529,8 @@ async function refreshOffice() {
         }
         if (worker.status === 'fulfilled')
             officeWorker = worker.value;
+        else if (officeWorker)
+            officeWorker = { ...officeWorker, improvement: undefined };
         renderOffice();
     })().finally(() => { officeRefreshing = null; });
     return officeRefreshing;
@@ -5282,7 +5284,10 @@ function ffScheduleActivityTimer() {
     ffStopActivityTimer();
     if (document.hidden || !ffStudio)
         return;
-    const next = Math.min(...[...ffActivityCache.values()].map(data => data.nextChangeAt ? Date.parse(data.nextChangeAt) : Infinity));
+    const coordinator = officeWorker?.improvement, freshness = bridge?.transport === 'cloud-browser' ? 45000 : 15000;
+    const coordinatorDeadlines = endlessWorkspace?.isOpen('improvement') && coordinator
+        ? [coordinator.sampledAt, coordinator.observation?.checkedAt].map(stamp => Date.parse(stamp || '') + freshness).filter(at => Number.isFinite(at) && at > Date.now()) : [];
+    const next = Math.min(...[...ffActivityCache.values()].map(data => data.nextChangeAt ? Date.parse(data.nextChangeAt) : Infinity), ...coordinatorDeadlines);
     if (!Number.isFinite(next))
         return;
     ffActivityTimer = setTimeout(() => { ffActivityTimer = null; if (document.hidden)
@@ -6065,7 +6070,7 @@ function initEndlessWorkspace() {
     if (!studio)
         return;
     const surface = $('freeflow-surface');
-    improvementPanel = mountImprovementPanel({ snapshot: () => officeState, scope: improvementScope, sampledAt: () => officeSampledAt, workerEvidence: () => officeWorker?.execution, freshnessMs: () => bridge?.transport === 'cloud-browser' ? 45000 : 15000,
+    improvementPanel = mountImprovementPanel({ snapshot: () => officeState, scope: improvementScope, sampledAt: () => officeSampledAt, workerEvidence: () => officeWorker?.execution, coordinatorStatus: () => officeWorker?.improvement, freshnessMs: () => bridge?.transport === 'cloud-browser' ? 45000 : 15000,
         readOnly: () => workspaceReadOnly() || !officeState || officeState.schemaVersion < 3,
         command: async (command) => { if (!bridge?.officeCommand)
             throw new Error('Native workspace unavailable.'); return await bridge.officeCommand(command); },

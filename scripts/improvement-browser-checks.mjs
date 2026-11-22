@@ -105,8 +105,53 @@ export async function checkImprovementWorkflows({ page, client, companyId, recei
   await directory.locator('.ff-list-search').fill('External saved comment');
   await directory.locator(`.ff-list-button[data-node-id="sticky:${created.id}"]`).click();
   await settleCanvas(page);
+  // Prior board checks deliberately retain their live panels. Close them via
+  // the normal finder/header controls so the world evidence is not a picture
+  // of an unrelated popup in front of otherwise valid node geometry.
+  const openIds=await page.locator('.canvas-panel[data-open="true"]').evaluateAll(nodes=>nodes.map(node=>node.dataset.panelId));
+  assert.ok(openIds.length<=12,'World capture closes only the bounded existing fixture surfaces');
+  for(const id of openIds){const surface=await openCanvasSurface(page,id);await surface.locator('.canvas-panel-close').click();}
+  assert.equal(await page.locator('.canvas-panel[data-open="true"]').count(),0,'World note and caption evidence has no floating panel overlays');
+  await page.getByRole('button',{name:'Top view',exact:true}).click();
+  await page.getByRole('button',{name:'Fit scene to view',exact:true}).click();await settleCanvas(page);
+  const footprint=page.locator(`.ff-node[data-node-id="universe:table-plan:${companyId}"]`),size=page.viewportSize();
+  assert.ok(size);const safe={left:80,right:size.width-80,top:150,bottom:size.height-110};
+  const frameLimit={width:safe.right-safe.left-80,height:safe.bottom-safe.top-80};
+  const frameFill=box=>Math.max(box.width/frameLimit.width,box.height/frameLimit.height);
+  let zoomOutSteps=0;
+  for(;zoomOutSteps<8;zoomOutSteps++){
+    const box=await footprint.boundingBox();assert.ok(box&&Object.values(box).every(Number.isFinite));
+    if(frameFill(box)<=1)break;
+    await page.getByRole('button',{name:'Zoom out',exact:true}).click();await settleCanvas(page);
+  }
+  // Fit may include other companies or retained panel positions. Use the real
+  // 1.25x camera control until this company fills 80–100% of the limiting frame
+  // dimension. At 1440×900 this bounds the 760-unit plan to 448–560 screen px
+  // high: a note is at least 85×50 px and its work-caption strip at least 11 px.
+  let zoomInSteps=0;
+  for(;zoomInSteps<12;zoomInSteps++){
+    const box=await footprint.boundingBox();assert.ok(box&&Object.values(box).every(Number.isFinite));
+    if(frameFill(box)>=.8)break;
+    await page.getByRole('button',{name:'Zoom in',exact:true}).click();await settleCanvas(page);
+    const next=await footprint.boundingBox();assert.ok(next&&next.width>box.width,'Public zoom makes the target company more readable');
+  }
+  const sizedFrame=await footprint.boundingBox();assert.ok(sizedFrame&&frameFill(sizedFrame)>=.8-1e-6&&frameFill(sizedFrame)<=1+1e-6,'Target company is neither a miniature overview nor larger than the safe capture frame');
+  const viewport=page.locator('.ff-canvas-host'),panKeys=[];await viewport.focus();
+  for(let step=0;step<64;step++){
+    const box=await footprint.boundingBox();assert.ok(box&&Object.values(box).every(Number.isFinite));
+    const dx=box.x+box.width/2-(safe.left+safe.right)/2,dy=box.y+box.height/2-(safe.top+safe.bottom)/2;
+    if(Math.abs(dx)<=40&&Math.abs(dy)<=40)break;
+    const key=Math.abs(dx)>40?(dx>0?'ArrowRight':'ArrowLeft'):(dy>0?'ArrowDown':'ArrowUp');
+    const before=await page.locator('#freeflow-host .ff-world').evaluate(node=>node.style.transform);
+    await page.keyboard.press(key);await settleCanvas(page);panKeys.push(key);
+    assert.notEqual(await page.locator('#freeflow-host .ff-world').evaluate(node=>node.style.transform),before,'Normal camera navigation makes progress');
+  }
+  const frame=await footprint.boundingBox();assert.ok(frame&&frame.x>=safe.left-.5&&frame.y>=safe.top-.5&&frame.x+frame.width<=safe.right+.5&&frame.y+frame.height<=safe.bottom+.5,'The native company fits between the persistent laptop controls');
+  receipt.improvementWorldCapture={closedPanels:openIds,zoomOutSteps,zoomInSteps,panKeys,frameLimit,minimumFrameFill:.8,footprint:frame};
   const marker=page.locator(`.ff-node[data-node-id="sticky:${created.id}"]`);
   await marker.waitFor({state:'visible'});
+  const markerBox=await marker.boundingBox();assert.ok(markerBox&&markerBox.width>=85&&markerBox.height>=50,'World note retains a measurable preview at the capture scale');
+  receipt.improvementWorldCapture.notePreview=markerBox;
   const containment=await marker.evaluate((element,company)=>{
     const plan=document.querySelector(`.ff-node[data-node-id="universe:table-plan:${company}"]`);
     const rect=node=>{const transform=new DOMMatrixReadOnly(getComputedStyle(node).transform);return{x:transform.m41,y:transform.m42,width:parseFloat(node.style.width),height:parseFloat(node.style.height)};};
@@ -131,10 +176,20 @@ export async function checkImprovementWorkflows({ page, client, companyId, recei
   assert.ok(workCaptions.length>=2,'The actual native queued work exercises both office and room captions');
   for(const caption of workCaptions){
     assert.match(caption.label,/unresolved jobs?/);assert.match(caption.details,/Counts describe saved work/);
+    assert.ok(caption.box.width>=60&&caption.box.height>=11,'Work caption retains measurable text-strip geometry at the capture scale');
     assert.ok(caption.box.x>=caption.parent.x-.5&&caption.box.y>=caption.parent.y-.5&&caption.box.right<=caption.parent.right+.5&&caption.box.bottom<=caption.parent.bottom+.5,'Work captions stay inside their own saved boundary');
     assert.deepEqual(caption.collisions,[],`Work caption does not cover room labels or people: ${caption.nodeId}`);
   }
   receipt.improvementWorkCaptions=workCaptions;
+  const visibility=await page.evaluate(({company,noteId})=>{
+    const note=document.querySelector(`.ff-node[data-node-id="sticky:${noteId}"]`);
+    const captions=[...document.querySelectorAll('.ff-node')].filter(node=>node.dataset.nodeId?.includes(company)).flatMap(node=>[...node.querySelectorAll('.ff-node-heat')]).filter(node=>{const r=node.getBoundingClientRect();return r.width>0&&r.height>0;});
+    return[note,...captions].map(node=>{const r=node.getBoundingClientRect(),owner=node.closest('.ff-node').dataset.nodeId;
+      return{nodeId:owner,label:node.textContent,samples:[.1,.5,.9].map(fraction=>{const x=r.x+r.width*fraction,y=r.y+r.height/2,hit=document.elementFromPoint(x,y);return{x,y,hitNodeId:hit?.closest('.ff-node')?.dataset.nodeId??null,reachable:hit?.closest('.ff-node')?.dataset.nodeId===owner};})};});
+  },{company:companyId,noteId:created.id});
+  assert.equal(visibility.length,workCaptions.length+1);
+  for(const target of visibility)assert.ok(target.samples.every(sample=>sample.reachable),`World note/caption is actually unobscured: ${target.nodeId}`);
+  receipt.improvementWorldCapture.visibility=visibility;
   await screenshot('17-improvement-note-world-1440x900');
   receipt.checks.push('Literal comment and colored to-do are canonical notes; the actual world preview stays inside its company footprint');
 

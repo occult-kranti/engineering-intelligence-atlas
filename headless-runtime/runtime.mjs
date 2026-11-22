@@ -20,14 +20,31 @@ import { validateActivityJournalOperation, ACTIVITY_OPERATIONS } from './activit
 const require = createRequire(import.meta.url);
 const defaultRepoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+function publicImprovementCoordinator(value) {
+  const time = stamp => typeof stamp === 'string' && stamp.length <= 40 && Number.isFinite(Date.parse(stamp));
+  const id = identity => typeof identity === 'string' && /^[A-Za-z0-9_.:-]{1,160}$/.test(identity);
+  if (!value || !time(value.sampledAt) || typeof value.enabled !== 'boolean' || typeof value.checking !== 'boolean') return undefined;
+  const row = value.observation;
+  const valid = row && id(row.sessionId) && id(row.companyId) && id(row.officeId)
+    && (row.departmentId === null || id(row.departmentId)) && Number.isSafeInteger(row.sessionRevision) && row.sessionRevision >= 0
+    && time(row.checkedAt) && ['checking','blocked','progress','idle'].includes(row.outcome)
+    && [null,'no-current-eligible-priced-route','attempt-needs-review','improvement-state-needs-review'].includes(row.reason);
+  return { sampledAt: value.sampledAt, enabled: value.enabled, checking: value.checking, observation: valid ? {
+    sessionId: row.sessionId, sessionRevision: row.sessionRevision, companyId: row.companyId, officeId: row.officeId,
+    departmentId: row.departmentId, checkedAt: row.checkedAt, outcome: row.outcome, reason: row.reason,
+  } : null };
+}
+
 function publicWorkerStatus(worker) {
   const state = typeof worker.status === 'function' ? worker.status() : worker;
+  const improvement = publicImprovementCoordinator(state.improvement);
   return {
     enabled: state.enabled === true,
     running: state.running === true,
     activeJobId: typeof state.activeJobId === 'string' ? state.activeJobId : null,
     activeJobIds: Array.isArray(state.activeJobIds) ? state.activeJobIds : [],
     concurrency: state.concurrency ?? 1,
+    ...(improvement ? { improvement } : {}),
     execution: { sampledAt: new Date().toISOString(), activeCalls: Array.isArray(state.execution?.activeCalls)
       ? state.execution.activeCalls.slice(0, 8).filter(call => typeof call.jobId === 'string' && /^[A-Za-z0-9_.:-]{1,160}$/.test(call.jobId)
         && ['provider','model'].includes(call.phase) && Number.isFinite(Date.parse(call.startedAt))).map(call => ({ jobId: call.jobId, phase: call.phase, startedAt: call.startedAt })) : [] },
@@ -91,7 +108,7 @@ export class RuntimeController {
       'The workspace cannot be safely projected within the current limits. Inspect it locally.', 503); }
   }
 
-  workerStatus() { return this.combineWorkerExecution ? this.combineWorkerExecution(this.worker.status(), this.improvement?.workerStatus()) : this.worker.status(); }
+  workerStatus() { return this.combineWorkerExecution ? this.combineWorkerExecution(this.worker.status(), this.improvement?.workerStatus(), this.improvement?.coordinatorStatus()) : this.worker.status(); }
 
   async snapshot() {
     return { ok: true, ...this.projection(unwrap(await this.office.officeSnapshot())) };

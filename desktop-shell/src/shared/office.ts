@@ -245,11 +245,22 @@ export type OfficeAction = 'create_company' | 'select_company' | 'import_reposit
 export interface OfficeCommand { action: OfficeAction; [key: string]: unknown }
 export interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: string; code?: string; observer?: import('./office-observer').OfficeObservation }
 
+/** Read-only scheduler evidence. This does not attest to provider execution. */
+export interface OfficeImprovementCoordinatorStatus {
+  sampledAt: string; enabled: boolean; checking: boolean;
+  observation: {
+    sessionId: string; sessionRevision: number; companyId: string; officeId: string; departmentId: string | null;
+    checkedAt: string; outcome: 'checking' | 'blocked' | 'progress' | 'idle';
+    reason: 'no-current-eligible-priced-route' | 'attempt-needs-review' | 'improvement-state-needs-review' | null;
+  } | null;
+}
+
 export interface OfficeWorkerStatus {
   enabled: boolean; running: boolean; activeJobId: string | null; lastError: string | null;
   concurrency?: number; activeJobIds?: string[];
   /** Live generation callbacks, distinct from a loaded model or a claimed job. */
   execution?: { sampledAt:string; activeCalls:Array<{jobId:string;phase:'provider'|'model';startedAt:string}> };
+  improvement?: OfficeImprovementCoordinatorStatus;
   /** Latest bounded deterministic reviews. Flagged reports are linked by the job's artifact. */
   sourceReviews?: import('./source-review').SourceReviewReport[];
 }

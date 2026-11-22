@@ -6,7 +6,7 @@ import { buildDonnaTeam, proposeDonnaAction, type DonnaSnapshot, type DonnaInten
 import type { FreeflowFocus, FreeflowSnapshot, SceneNode } from './freeflow/model.js';
 import { mountModelPool, type ModelPoolBridge, type ModelPoolPanel } from './model-pool.js';
 import { mountImprovementPanel, type ImprovementPanel, type ImprovementScope } from './improvement/panel.js';
-import type { ImprovementSnapshot, StickyNote, ImprovementAllowance, ImprovementSession } from './improvement/model.js';
+import type { ImprovementSnapshot, StickyNote, ImprovementAllowance, ImprovementSession, ImprovementCoordinatorStatus } from './improvement/model.js';
 import { buildImprovementTelemetry, type ImprovementTelemetry } from './improvement/telemetry.js';
 /**
  * Local chrome/launcher page logic. Runs only on file:// inside the sandboxed
@@ -481,6 +481,7 @@ interface OfficeWorkerStatus {
   enabled: boolean; running: boolean; activeJobId: string | null; lastError: string | null;
   concurrency?: number; activeJobIds?: string[];
   execution?: { sampledAt: string; activeCalls: Array<{ jobId: string; phase: 'provider' | 'model'; startedAt: string }> };
+  improvement?: ImprovementCoordinatorStatus;
   sourceReviews?: Array<{ companyId?: string; jobId: string; status: string; coverage: string; artifactUri?: string; handoff: { state: string; reason: string }; sources: Array<{ findings: Array<{ code: string }> }> }>;
 }
 
@@ -1811,6 +1812,7 @@ async function refreshOffice(): Promise<void> {
       setStatus($('office-status'), unloadedHosted ? 'Cloud workspace could not be loaded. Open welcome to check sign-in, or refresh to try again.' : error || 'Office state could not be loaded.', 'error'); $('office-native-status').textContent = unloadedHosted ? 'Cloud not loaded' : 'Workspace unavailable'; $('office-native-status').className='pill neutral';
     }
     if (worker.status === 'fulfilled') officeWorker = worker.value;
+    else if (officeWorker) officeWorker = { ...officeWorker, improvement: undefined };
     renderOffice();
   })().finally(() => { officeRefreshing = null; });
   return officeRefreshing;
@@ -3449,7 +3451,10 @@ function ffActivity(node: Readonly<SceneNode>) {
 function ffStopActivityTimer(): void { if(ffActivityTimer!==null)clearTimeout(ffActivityTimer);ffActivityTimer=null; }
 function ffScheduleActivityTimer(): void {
   ffStopActivityTimer(); if(document.hidden||!ffStudio)return;
-  const next=Math.min(...[...ffActivityCache.values()].map(data=>data.nextChangeAt?Date.parse(data.nextChangeAt):Infinity));
+  const coordinator = officeWorker?.improvement, freshness = bridge?.transport==='cloud-browser'?45000:15000;
+  const coordinatorDeadlines = endlessWorkspace?.isOpen('improvement') && coordinator
+    ? [coordinator.sampledAt,coordinator.observation?.checkedAt].map(stamp=>Date.parse(stamp||'')+freshness).filter(at=>Number.isFinite(at)&&at>Date.now()) : [];
+  const next=Math.min(...[...ffActivityCache.values()].map(data=>data.nextChangeAt?Date.parse(data.nextChangeAt):Infinity),...coordinatorDeadlines);
   if(!Number.isFinite(next))return;
   ffActivityTimer=setTimeout(()=>{ffActivityTimer=null;if(document.hidden)return;ffActivityKey='';ffRefresh();if(endlessWorkspace?.isOpen('improvement'))improvementPanel?.refresh();},Math.max(30,next-Date.now()+25));
 }
@@ -3883,7 +3888,7 @@ function renderCanvasCrew(): void {
 function initEndlessWorkspace(): void {
   const studio=ffStudio; if(!studio)return;
   const surface=$('freeflow-surface');
-  improvementPanel=mountImprovementPanel({snapshot:()=>officeState as unknown as ImprovementSnapshot|null,scope:improvementScope,sampledAt:()=>officeSampledAt,workerEvidence:()=>officeWorker?.execution,freshnessMs:()=>bridge?.transport==='cloud-browser'?45000:15000,
+  improvementPanel=mountImprovementPanel({snapshot:()=>officeState as unknown as ImprovementSnapshot|null,scope:improvementScope,sampledAt:()=>officeSampledAt,workerEvidence:()=>officeWorker?.execution,coordinatorStatus:()=>officeWorker?.improvement,freshnessMs:()=>bridge?.transport==='cloud-browser'?45000:15000,
     readOnly:()=>workspaceReadOnly()||!officeState||officeState.schemaVersion<3,
     command:async command=>{if(!bridge?.officeCommand)throw new Error('Native workspace unavailable.');return await bridge.officeCommand(command as OfficeCommand) as unknown as {ok:boolean;snapshot?:ImprovementSnapshot|null;code?:string;error?:string;queued?:boolean};},
     apply:snapshot=>{officeState=appliedOfficeSnapshot({ok:true,snapshot:snapshot as unknown as OfficeSnapshot});officeSampledAt=new Date().toISOString();renderOffice();},refresh:refreshOffice,
