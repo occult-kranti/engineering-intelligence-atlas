@@ -1,5 +1,15 @@
 name: Verify standalone VS Code product
 on:
+  push:
+    branches: [design/infinite-blueprint-canvas]
+    paths:
+      - 'vscode-extension/**'
+      - 'headless-runtime/**'
+      - 'desktop-shell/**'
+      - 'company/**'
+      - 'tools/**'
+      - 'deploy/**'
+      - '.github/workflows/vscode-product.yml'
   workflow_call:
   workflow_dispatch:
 permissions:
