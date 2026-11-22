@@ -182,6 +182,11 @@ async function assertPanelTitleInView(id,label){
   const safeTop=Math.max(150,(evidence.controls?.bottom||0)+8);
   assert.ok(title.x>=-1&&title.right<=evidence.viewport.width+1,`${label}: titlebar fits horizontally in the laptop viewport`);
   assert.ok(title.y>=safeTop-1&&title.bottom<=evidence.viewport.height-1,`${label}: titlebar remains below the top HUD and inside the viewport (${JSON.stringify(title)})`);
+  assert.deepEqual(evidence.documentScroll,{x:0,y:0},`${label}: the document does not scroll behind the camera`);
+  for(const ancestor of evidence.ancestors.slice(1)){
+    assert.equal(ancestor.scrollLeft,0,`${label}: ${ancestor.id||ancestor.className||ancestor.tag} has no hidden horizontal scroll offset`);
+    assert.equal(ancestor.scrollTop,0,`${label}: ${ancestor.id||ancestor.className||ancestor.tag} has no hidden vertical scroll offset`);
+  }
 }
 async function captureCompanyViews(label,topFilename,perspectiveFilename){
   const draft=await page.locator('#chat-message').inputValue();
@@ -329,6 +334,24 @@ async function checkCompanyOwnership(company){
     const footer=page.getByRole('button',{name:`Ownership · ${company.name}`,exact:true});
     assert.equal(await footer.count(),1,'The selected company has one Ownership footer action');
     assert.equal(await footer.evaluate(node=>node.closest('.ff-node')?.dataset.companyFootprint),'true','Ownership is attached to its company floorplan');
+    // Fit deliberately frames one readable company. Reach another company's
+    // action through real camera input, without browser scrolling, forced
+    // clicks, JS camera writes, or selecting its native scope in advance.
+    const viewport=page.locator('.ff-canvas-host');await viewport.focus();
+    const size=page.viewportSize();assert.ok(size);const navigation=[];
+    for(let step=0;step<64;step++){
+      const box=await footer.boundingBox();assert.ok(box&&Object.values(box).every(Number.isFinite),'The company footer retains finite geometry');
+      const dx=box.x+box.width/2-size.width/2,dy=box.y+box.height/2-size.height/2;
+      if(Math.abs(dx)<=100&&Math.abs(dy)<=80)break;
+      const key=Math.abs(dx)>100?(dx>0?'ArrowRight':'ArrowLeft'):(dy>0?'ArrowDown':'ArrowUp');
+      const transform=await page.locator('#freeflow-host .ff-world').evaluate(node=>node.style.transform);
+      await page.keyboard.press(key);await settleCanvas(page);navigation.push(key);
+      assert.notEqual(await page.locator('#freeflow-host .ff-world').evaluate(node=>node.style.transform),transform,'Public keyboard navigation makes camera progress');
+    }
+    const targetBox=await footer.boundingBox();assert.ok(targetBox);
+    assert.ok(targetBox.x>=24&&targetBox.x+targetBox.width<=size.width-24&&targetBox.y>=150&&targetBox.y+targetBox.height<=size.height-150,'The other company footer is inside the unobstructed canvas before its real pointer click');
+    const navigated=await client.snapshot();assert.equal(navigated.snapshot.activeCompanyId,before.snapshot.activeCompanyId,'Camera navigation does not select the other native company');
+    receipt.ownershipNavigation={method:'public camera arrow keys',keys:navigation,activeCompanyUnchanged:true,footer:targetBox};
     await footer.click();
     const ownership=page.locator('.canvas-panel[data-panel-id="workspace-softboard"]');
     await ownership.waitFor({state:'visible'});
