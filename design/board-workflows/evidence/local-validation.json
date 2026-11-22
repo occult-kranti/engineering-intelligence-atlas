@@ -7,7 +7,7 @@
       "files": 50
     },
     "renderer": {
-      "passed": 419,
+      "passed": 420,
       "kind": "DOM fixture, not visual acceptance"
     },
     "planner": {
@@ -42,6 +42,21 @@
       "failed": 0,
       "skipped": 0,
       "includes": "ordinary native and managed pairs; zero-dispatch missing/revoked helper grant regression"
+    },
+    "vscodeStress": {
+      "completedReads": 10000,
+      "retainedReadIdentities": 512,
+      "pendingAfterReads": 0,
+      "mutationReplayPrevented": true,
+      "requestCloseCycles": 200,
+      "includedInVscodeLocal": true,
+      "scope": "bounded request lifecycle, not indefinite heap leak proof"
+    },
+    "canvasFollowup": {
+      "passed": 62,
+      "files": 3,
+      "includedInDesktop": true,
+      "scope": "existing canvas workspace, panel geometry and card geometry regressions; browser visual acceptance pending"
     }
   },
   "pending": [
@@ -53,13 +68,14 @@
     "native-core/src/remote_commands.rs": "c15bb8a552214359c8491f574d4e07667cec354c9f184388347a8a38f80b1991",
     "desktop-shell/src/main/officeWorker.ts": "127b6b80d07b70fdbf33045a5c90090b34ce4c047bceef21813b38666c16958d",
     "desktop-shell/src/main/pairedReview.ts": "c6bcbf4c9b7b11770ed103235468e16186dc4813ca0da08788024790c7a07427",
-    "desktop-shell/src/renderer/chrome.ts": "f4e281f46dcf341f050cc1298191f9b797334b2057f3204cc3fe5bbe45dbe904",
+    "desktop-shell/src/renderer/chrome.ts": "e4bb76b5ca2cad56ee5905d4176b1997fc8521b81436cd45b2c6f1d324db6911",
     "desktop-shell/src/renderer/boards/planning.ts": "1a37d954e11b7b91775ee622737326b088521a82978b6a0936c88cd842e45e12",
     "desktop-shell/src/renderer/boards/geometry.ts": "da16726d1a3c6b498674dc1bed9f3c4d61b24d38adf6ff1cf56cc612f449cad5",
     "vscode-extension/src/runtime-client.js": "ee2d8ddf9483dbed5cbacd6e59a2497a87b41ade8bd33c8f19e95b94c3c0e3c4",
     "vscode-extension/src/workbench-panel.js": "ef4f414c37f1a6fa41fc11c8bac31da21eac6fff37c29570e1bd38043b57bf0e",
     "headless-runtime/model-resources.mjs": "d01f7974d8bba4341dab84720ccf2a134ac3d63ec40c1db486930776362131b6",
-    "desktop-shell/src/renderer/chrome.css": "190bcfaf142c86a48fce5f8e1f248885c0d47b376ac6f2c7a3be764cd0cf6b2b"
+    "desktop-shell/src/renderer/chrome.css": "e64d19f9712105aab1b6063bd3fdc01e7b90d8f24ff5125ee3e120a7f5525369",
+    "desktop-shell/src/renderer/freeflow/canvas-workspace.ts": "fcfd5e15f1c28635651cead966769d7dbd67cf95cacad3bc783b53bd551889af"
   },
   "claims": {
     "externalTestProviderCalls": 0,

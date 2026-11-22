@@ -68,7 +68,10 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
     const element = mk('button', cls, text); element.type = 'button'; element.title = label; element.setAttribute('aria-label', label); return element;
   };
   const layer = mk('div', 'canvas-panel-layer');
-  layer.style.cssText = 'position:absolute;left:0;top:0;transform-style:preserve-3d';
+  // Live forms share the blueprint's z=0 plane. Composite their normal stacking
+  // order together before applying the world's 3D camera, so raising a surface
+  // also raises its pointer targets. Architectural nodes retain their 3D relief.
+  layer.style.cssText = 'position:absolute;left:0;top:0;transform-style:flat;isolation:isolate';
   options.world.append(layer);
   const launcher = mk('nav', 'canvas-launcher'); launcher.setAttribute('aria-label', 'Workspace surfaces');
   const home = button('canvas-home', 'Return to the blueprint world', 'Home');

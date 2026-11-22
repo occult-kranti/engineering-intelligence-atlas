@@ -29,7 +29,7 @@ Additional counterreview corrections include actual-byte revalidation of accepte
 | --- | --- |
 | Rust native core | 118 passed; no failures or skips |
 | Desktop/portable backend | 740 passed in 50 test files |
-| Shared renderer interactions | 419 passed; DOM fixtures, not visual acceptance |
+| Shared renderer interactions | 420 passed; DOM fixtures, not visual acceptance |
 | ETA planner | 17 passed, included in the desktop count |
 | Board geometry | 7 passed, included in the desktop count |
 | Headless runtime + both MCP suites | 188 passed, 2 explicitly skipped for unavailable tmux, 0 failures; 190 total |
@@ -56,6 +56,14 @@ The follow-up also makes the managed reviewer use the full canonical producer re
 Run [44988659972](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44988659972) tested `884fe704be033dbe1882dc0c0a1ba33651fec615`. Both installed VSIX checks passed again, as did every native/backend/editor suite. Linux ran all 123 headless tests with no skips. The browser passed twelve canvas checks and then timed out waiting for the selected company after an external native write and global Refresh. Its failed receipt is retained as `evidence/ci-884fe70-browser.json`.
 
 This exposed a production wiring defect: the global Refresh button read repository/project data but omitted the native office snapshot used by boards. It now awaits both existing, independently deduplicated read paths. The stale-board regression uses that visible global control and requires the externally changed card title and stale-revision status to render while preserving the unsent draft and original write revision. A separate helper reviewed this correction. The browser assertions are unchanged; the next run will exercise the corrected product behavior.
+
+## Tilted interaction and inspector follow-up
+
+Run [44989411163](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44989411163) tested `d4f8face58780f84a5f3f0172011a53c4b55fe2a`. All native, backend and installed-platform checks passed, including 420 renderer interactions. The browser advanced to fourteen checks: it confirmed native multi-link saves and stale-draft rejection through the corrected global Refresh. The tilted pointer did not reach the intended card; the resulting screenshot showed the overlapping Blueprint panel active. This was a pointer-target failure, not proof of incorrect inverse geometry. Its receipt remains in `evidence/ci-d4f8fac-browser.json`.
+
+The live form layer now composes its coplanar panels with normal stacking before the shared world camera transform. Architectural relief retains its 3D rendering context, and no artificial depth offset changes pointer projection. The browser now records the real element hit at the pointer location, checks that Whiteboard remains active after tilt, and keeps all overlapping panels present. Its existing nonzero drag-preview and Escape/no-native-write assertions remain.
+
+The screenshots also showed that the long inspector scrolled the board itself out of view. Whiteboard now constrains the work area and scrolls its inspector independently. The browser requires Save to leave the board body at its original scroll position. Actual acceptance of these final visual changes remains pending.
 
 ## Boundaries
 

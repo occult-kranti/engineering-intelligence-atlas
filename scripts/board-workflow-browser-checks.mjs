@@ -64,6 +64,12 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   await page.locator('#node-save').click();
   const renamed = await eventually(board,row=>row.title==='Linked delivery card · renamed','Whiteboard title did not persist');
   await page.waitForFunction(()=>document.getElementById('node-save-status')?.textContent.startsWith('Card saved.'));
+  const afterSaveLayout=await panel.evaluate(element=>{
+    const body=element.querySelector('.canvas-panel-body'),viewport=element.querySelector('.blueprint-viewport'),inspector=element.querySelector('#whiteboard-inspector');
+    return {bodyScrollTop:body.scrollTop,boardScrollTop:viewport.scrollTop,inspectorScrollTop:inspector.scrollTop};
+  });
+  assert.equal(afterSaveLayout.bodyScrollTop,0,'Saving through the long inspector does not scroll the board away');
+  assert.ok(afterSaveLayout.inspectorScrollTop>0,'The inspector scrolls independently to reach Save card');
   assert.deepEqual(renamed.goalIds,goals);assert.deepEqual(renamed.jobIds,jobs);assert.deepEqual(renamed.roadmapItemIds,outcomes);
   assert.equal(renamed.revision,1,'The real native save increments the record revision');
   receipt.checks.push('Whiteboard title edit preserves all six native work links and increments the saved revision');
@@ -93,6 +99,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   // Both movement methods operate on the saved card, not on a second frontend work record.
   receipt.boardStage='keyboard and tilted pointer movement';
   panel = await openCanvasSurface(page,'workspace-whiteboard');
+  assert.match(await panel.getAttribute('class'),/\bis-active\b/,'Opening Whiteboard makes it the foreground work surface');
   const beforeKey = await board();
   await card().locator('.card-title').focus();await page.keyboard.press('ArrowRight');
   const afterKey = await eventually(board,row=>row.revision>beforeKey.revision,'Keyboard card move did not persist');
@@ -105,11 +112,22 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   const tiltedTransform = await page.locator('#freeflow-host .ff-world').evaluate(element=>element.style.transform);
   assert.match(tiltedTransform,/rotateX\((?!0(?:deg)?\))/,'The card drag is exercised with actual pitch');
   assert.match(tiltedTransform,/rotate\((?!0(?:deg)?\))/,'The card drag is exercised with actual rotation');
+  assert.match(await panel.getAttribute('class'),/\bis-active\b/,'Camera tilt preserves the active Whiteboard');
   const title = card().locator('.card-title');await title.scrollIntoViewIfNeeded();
   const bounds = await title.boundingBox();assert.ok(bounds&&bounds.width>0&&bounds.height>0);
+  const pointerTarget=await title.evaluate(element=>{
+    const box=element.getBoundingClientRect(),body=element.closest('.canvas-panel').querySelector('.canvas-panel-body').getBoundingClientRect();
+    const x=box.x+box.width/2,y=box.y+box.height/2,hit=document.elementFromPoint(x,y);
+    return {x,y,hitsTitle:hit===element||element.contains(hit),insideBody:x>=body.left&&x<=body.right&&y>=body.top&&y<=body.bottom,
+      hitTag:hit?.tagName,hitClass:hit?.className,hitPanel:hit?.closest('.canvas-panel')?.getAttribute('data-panel-id'),
+      activePanel:document.querySelector('.canvas-panel.is-active')?.getAttribute('data-panel-id')};
+  });
+  receipt.tiltedBoardPointer=pointerTarget;
+  assert.ok(pointerTarget.insideBody,'The transformed card pointer is inside the visible board body');
+  assert.ok(pointerTarget.hitsTitle,'The foreground Whiteboard card receives the actual tilted pointer hit');
   const saved = await board(), style = await card().getAttribute('style');
-  await page.mouse.move(bounds.x+bounds.width/2,bounds.y+bounds.height/2);await page.mouse.down();
-  await page.mouse.move(bounds.x+bounds.width/2+28,bounds.y+bounds.height/2+16,{steps:4});
+  await page.mouse.move(pointerTarget.x,pointerTarget.y);await page.mouse.down();
+  await page.mouse.move(pointerTarget.x+28,pointerTarget.y+16,{steps:4});
   assert.match(await card().getAttribute('class'),/\bis-moving\b/,'The transformed pointer actually starts a drag');
   assert.notEqual(await card().getAttribute('style'),style,'A nonzero drag preview precedes cancellation');
   await page.keyboard.press('Escape');await page.mouse.up();await settleCanvas(page);
@@ -170,7 +188,7 @@ export async function checkBoardWorkflows({ page, client, companyId, receipt, sc
   }
   receipt.boardWorkflows={companyId,officeId:office.id,boardId,linkedGoals:goals.length,linkedJobs:jobs.length,linkedOutcomes:outcomes.length,
     multiLinkEdit:true,staleDraftProtected:true,keyboardMove:true,tiltedCancel:true,viewports:[{width:1440,height:900},{width:1366,height:768}],
-    controlGeometry,greenboardInitialScrollReset:true,providerExecution:false,acceptedReviewSimulated:false};
+    controlGeometry,afterSaveLayout,greenboardInitialScrollReset:true,providerExecution:false,acceptedReviewSimulated:false};
   receipt.checks.push('Whiteboard, assigned Greenboard primary/helper roles and ETA roadmap render with reachable controls in the same world at both laptop viewports');
   receipt.boardStage='complete';
 }

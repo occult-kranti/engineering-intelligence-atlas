@@ -63,6 +63,7 @@ Design references consulted:
 - [Nielsen Norman Group — Visibility of System Status](https://www.nngroup.com/articles/visibility-system-status/): timely feedback and visible results of actions.
 - [W3C — Animation from Interactions](https://www.w3.org/WAI/WCAG22/Understanding/animation-from-interactions.html): suppress nonessential interaction motion.
 - [W3C — Dragging Movements](https://www.w3.org/WAI/WCAG22/Understanding/dragging-movements.html): provide alternatives to dragging.
+- [W3C — CSS Transforms Level 2, 3D rendering contexts](https://www.w3.org/TR/css-transforms-2/#3d-rendering-contexts): retain architectural depth while composing coplanar live forms in a predictable local stacking context.
 - [GAO Schedule Assessment Guide](https://www.gao.gov/assets/gao-16-89g.pdf): distinguish dependency structure, resource constraints and schedule uncertainty. The implementation's weighted formula and greedy staffing scenario are declared modeling choices, not claims of GAO certification.
 
 ## Verification boundaries

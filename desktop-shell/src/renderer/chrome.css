@@ -1247,3 +1247,30 @@ html[data-theme] body { color: var(--ink); background: var(--canvas); }
 #workspace-panel-softboard .org-count { margin-bottom: 0; }
 #workspace-panel-softboard .org-people-disclosure > summary { min-height: 36px; margin: 4px 0; font-size: 14px; line-height: 1.4; }
 #workspace-panel-softboard .org-person { min-height: 44px; padding: 10px; }
+
+/* Whiteboard's fixed world rectangle supplies the container size. On a laptop,
+ * editing a long inspector must not scroll the board and its toolbar away.
+ * Small or short resized panels keep the existing accessible document flow. */
+.canvas-panel[data-panel-id='workspace-whiteboard'] { container-type: size; container-name: whiteboard-surface; }
+@container whiteboard-surface (min-width: 760px) and (min-height: 420px) {
+  .canvas-panel[data-panel-id='workspace-whiteboard'] > .canvas-panel-body { display: flex; flex-direction: column; overflow: clip; }
+  .canvas-panel-body > #workspace-panel-whiteboard { display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; overflow: clip; }
+  #workspace-panel-whiteboard > .canvas-toolbar { flex: 0 0 auto; margin-bottom: 10px; }
+  #workspace-panel-whiteboard > .board-record-tools { flex: 0 0 auto; margin: 8px 0 12px; }
+  #workspace-panel-whiteboard > .board-layout {
+    flex: 1 1 0;
+    min-height: 0;
+    grid-template-columns: minmax(0,1fr) 248px;
+    grid-template-rows: minmax(0,1fr);
+    align-items: stretch;
+    overflow: clip;
+  }
+  #workspace-panel-whiteboard > .board-layout > :is(.blueprint-viewport,#whiteboard-inspector) {
+    min-height: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+  #workspace-panel-whiteboard #workspace-whiteboard { min-width: 0; }
+}
