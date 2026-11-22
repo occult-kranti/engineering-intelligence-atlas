@@ -1,6 +1,6 @@
 /** Read-only visitor canvas. Accepts the member DTO, never the native owner snapshot.
  * Network, identity validation, membership expiry and proposals remain with the host page. */
-import { mountStudio } from './studio.d7dbd056553a298b.js';
+import { mountStudio } from './studio.34cf99b090f496dc.js';
 import { STICKY_COLORS } from '../improvement/notes.d28913ba9f0342d1.js';
 const object = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 const rows = (v, limit) => Array.isArray(v) ? v.filter(object).slice(0, limit) : [];

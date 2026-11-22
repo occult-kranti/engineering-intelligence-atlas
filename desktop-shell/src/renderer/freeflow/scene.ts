@@ -102,6 +102,7 @@ export function describeNode(n: SceneNode): string {
   if (n.kind === 'room') bits.push(typeof md['assignment'] === 'string' ? (md['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department'));
   if (n.status) bits.push(`status ${n.status}`);
   if (typeof md['heatLabel'] === 'string') bits.push(md['heatLabel']);
+  if (typeof md['heatMetric'] === 'string') bits.push(md['heatMetric']);
   if (typeof md.activityLabel === 'string') bits.push(md.activityLabel);
   const c = countsText(n);
   if (c) bits.push(c);
@@ -201,7 +202,8 @@ function applyHeat(e: HTMLElement, paper: HTMLElement, n: SceneNode, lod: 'rich'
   if (lod === 'rich' && h.level !== 'unknown') {
     let badge = old as HTMLElement | null;
     if (!badge) { badge = el('span', 'ff-node-heat'); paper.appendChild(badge); }
-    badge.textContent = text;
+    badge.textContent = h.label;
+    badge.title = text; badge.setAttribute('aria-label', text);
   } else old?.remove();
 }
 
@@ -214,6 +216,7 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   e.classList.toggle('ff-node--company-marker', n.metadata['companyMarker'] === true);
   e.classList.toggle('ff-node--sticky', n.metadata.stickyNote === true);
   e.dataset.activity = String(n.metadata.activityState ?? 'unknown');
+  e.dataset.heatPlacement = n.rect.height >= 72 ? 'footer' : 'inline';
   const rawExecuting = n.metadata.executing;
   const executing = e.dataset.activity === 'running' && typeof rawExecuting === 'number' && Number.isInteger(rawExecuting) && rawExecuting > 0 && rawExecuting <= 60000 ? rawExecuting : 0;
   e.dataset.executing = String(executing);

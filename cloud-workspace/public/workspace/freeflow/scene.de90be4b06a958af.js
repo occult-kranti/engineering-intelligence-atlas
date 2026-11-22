@@ -76,6 +76,8 @@ export function describeNode(n) {
         bits.push(`status ${n.status}`);
     if (typeof md['heatLabel'] === 'string')
         bits.push(md['heatLabel']);
+    if (typeof md['heatMetric'] === 'string')
+        bits.push(md['heatMetric']);
     if (typeof md.activityLabel === 'string')
         bits.push(md.activityLabel);
     const c = countsText(n);
@@ -184,7 +186,9 @@ function applyHeat(e, paper, n, lod) {
             badge = el('span', 'ff-node-heat');
             paper.appendChild(badge);
         }
-        badge.textContent = text;
+        badge.textContent = h.label;
+        badge.title = text;
+        badge.setAttribute('aria-label', text);
     }
     else
         old?.remove();
@@ -198,6 +202,7 @@ function fillNode(e, n, lod, selected, tabStop) {
     e.classList.toggle('ff-node--company-marker', n.metadata['companyMarker'] === true);
     e.classList.toggle('ff-node--sticky', n.metadata.stickyNote === true);
     e.dataset.activity = String(n.metadata.activityState ?? 'unknown');
+    e.dataset.heatPlacement = n.rect.height >= 72 ? 'footer' : 'inline';
     const rawExecuting = n.metadata.executing;
     const executing = e.dataset.activity === 'running' && typeof rawExecuting === 'number' && Number.isInteger(rawExecuting) && rawExecuting > 0 && rawExecuting <= 60000 ? rawExecuting : 0;
     e.dataset.executing = String(executing);

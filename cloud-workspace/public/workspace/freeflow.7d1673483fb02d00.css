@@ -540,6 +540,19 @@ html:has(> body.endless-canvas),
 .endless-canvas .ff-node[data-company-level='true'] :is(.ff-node-sub,.ff-node-status,.ff-node-counts,.ff-node-svg) { display: none; }
 .endless-canvas .ff-node[data-company-level='true'] .ff-node-paper::after { content: none; }
 .endless-canvas :is(.ff-wall,.ff-measure,.ff-dimension,.ff-door) { stroke: var(--plan-line); }
+/* Retained work counts belong in a quiet boundary caption, not a paragraph
+ * across room labels or native employees. Full evidence remains in title,
+ * accessible names and the inspector. This adds no floating screen. */
+.endless-canvas :is(.ff-node--office,.ff-node--room,.ff-node--department) .ff-node-heat {
+  position: absolute; left: 8px; bottom: 7px; max-width: calc(100% - 16px); height: 19px;
+  margin: 0; padding: 2px 5px; box-sizing: border-box; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  border: 1px solid var(--plan-edge); border-left: 3px solid var(--heat-color); border-radius: 3px;
+  background: var(--plan-paper); color: var(--plan-ink); font: 600 10px/1.3 'Segoe UI',system-ui,sans-serif; pointer-events: none;
+}
+.endless-canvas :is(.ff-node--office,.ff-node--room,.ff-node--department)[data-heat-placement='inline'] .ff-node-heat {
+  left: auto; right: 6px; top: 8px; bottom: auto; max-width: 34px;
+}
+.endless-canvas :is(.ff-node--office,.ff-node--room,.ff-node--department)[data-heat-placement='inline'][data-heat-level]:not([data-heat-level='unknown']) .ff-node-title { max-width: calc(100% - 40px); }
 
 /* Canonical company markers sit inside their own blueprint headers. */
 .endless-canvas :is(.ff-node--seat,.ff-node--company-marker) > .ff-node-paper {

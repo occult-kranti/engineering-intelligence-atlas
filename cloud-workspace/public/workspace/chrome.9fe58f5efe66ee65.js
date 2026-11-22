@@ -1,10 +1,10 @@
 import { estimateMinutes, formatMinuteRange, buildBoardForecast } from './boards/planning.7336d94d8e000811.js';
 import { BOARD_HEIGHT, boardPoint, cardMap, moveOnBoard, projectedDelta } from './boards/geometry.24fa69391422cd5b.js';
-import { mountStudio } from './freeflow/studio.d7dbd056553a298b.js';
+import { mountStudio } from './freeflow/studio.34cf99b090f496dc.js';
 import { mountCanvasWorkspace } from './freeflow/canvas-workspace.c8afd5b6c2c6aff6.js';
 import { buildDonnaTeam, proposeDonnaAction } from './freeflow/donna-team.5cb2baa7c7bddcfb.js';
 import { mountModelPool } from './model-pool.ea9e9ba1c164d356.js';
-import { mountImprovementPanel } from './improvement/panel.afb964d478a506d7.js';
+import { mountImprovementPanel } from './improvement/panel.30356f7791e1c52a.js';
 import { buildImprovementTelemetry } from './improvement/telemetry.5120fd08d951c755.js';
 const bridge = window.desktopBridge;
 let modelPoolPanel = null;

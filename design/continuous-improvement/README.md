@@ -44,6 +44,8 @@ The runtime selects the lowest conservative declared token cost among the sessio
 
 The bounded price catalog records its first-party source, observation, expiry and digest. Each frozen execution quote has a short lifetime, and route membership, capability and quote validity are checked again before dispatch. Cache keys and route discovery are bounded and credential-sensitive. Discovery does not generate paid responses.
 
+This source's [reviewed catalog](../../company/provider-price-catalog.json) contains `anthropic claude-haiku-5-5` and `anthropic claude-sonnet-5-5`. They still require live discovery under the runtime's configured credential. An explicitly permitted installed Ollama model can qualify through both employees' existing assignments and grants. Other hosted routes, including OpenAI routes accepted by the form, require a reviewed matching catalog entry before this loop can dispatch them. A session's native `active` state means scheduling is enabled; it is not evidence of an executing call. If no priced route is eligible, the headless runtime's improvement status reports `no-current-eligible-priced-route`, creates no jobs, and spends nothing. The current canvas session card does not expose that coordinator-only reason; use the runtime status and Activity & output view when diagnosing an enabled but idle session.
+
 Unknown outcomes retain their reservations and never replay automatically. Unexpected unreserved or over-reservation managed charges are recorded truthfully and pause further global dispatch. This increment does not add an owner reconciliation command for uncertain historical costs. Resetting the allowance is not a substitute for reconciliation.
 
 The development-call ledger is separate from the app's native ledger. Importing a reviewed carry checkpoint is explicit so a commitment cannot silently be counted twice. Current external-development accounting is recorded in [the budget receipt](evidence/development-budget.json).
@@ -90,5 +92,15 @@ The outer workspace schema remains 1; the office is schema 3. Schema 1/2 migrati
 For an existing paired website, upgrade the original runtime in place while retaining its pairing credentials and saved cloud revision. Sync that runtime to schema 3 before exporting and relocating it. A fresh runtime restored from a schema 2 data-only archive does not automatically match an unclaimed schema 2 website after migration; this path deliberately refuses a first-sync overwrite. The existing authenticated, verified bootstrap path is separate. Neither path rebases mismatched work or changes the budget merely to make synchronization succeed.
 
 Implementation and review were paired across native state, runtime/MCP and UI/graphics. Claude supplied the initial website activity projector and independent reviews; the coordinator corrected and tested the projector and rejected unsupported review claims. [Validation](VALIDATION.md) separates unit tests, synthetic provider wiring, real browser rendering and installed VS Code acceptance.
+
+## Start in VS Code
+
+1. Run **Daftar: Start Workspace on This Host**, or connect the existing private runtime. On an already running Linux host, **Daftar: Start Persistent Workspace in tmux** keeps that service independent of the editor. No Vast instance needs to be resumed to use a local workspace.
+2. Open **Daftar: Open Office**, select the saved company/office, and configure its provider connection through the runtime credential control.
+3. Open **Notes & improvement → Improvement mode**. Reuse an existing allowance, or register the one-time cap with a reviewed, nonduplicated carry checkpoint. The current development accounting is linked above; it has not been imported into a user's application state automatically.
+4. Enter a concrete objective or select scoped to-dos. Choose distinct primary/helper employees and explicit eligible model routes. New-session defaults are 32,000 combined pair tokens, a USD 0.25 pair ceiling, and a ten-minute target. These do not override a stricter global policy.
+5. Choose **Continue within remaining budget**, select only the optional repository capabilities you intend to use, and save the paused session. **Start** enables scheduling. Leave the runtime running and use **Activity & output** plus the session's recorded reason to monitor progress. The ordinary worker queue can remain disabled.
+
+No real user improvement session was started during this increment's automated acceptance. Browser tests used isolated native state with dispatch globally paused; runtime wiring tests used synthetic provider replies. The paid development reviews are recorded separately.
 
 Current durable bounds include 2,000 notes, 256 sessions, 4,096 mutation receipts, 5,000 jobs and 2,000 goals. History is not silently discarded to keep a spending loop running. The infinite canvas describes navigation, not an unbounded database.

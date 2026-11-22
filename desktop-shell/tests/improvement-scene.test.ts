@@ -10,13 +10,25 @@ const note: StickyNote = { id: 'native-note', revision: 0, companyId: 'a', offic
 const snapshot: FreeflowSnapshot = { companies: [{ id: 'a', name: 'Company', status: 'active' }], offices: [{ id: 'o', companyId: 'a', name: 'Office', status: 'active' }],
   departments: [{ id: 'd', companyId: 'a', officeId: 'o', name: 'Department', status: 'active' }], employees: [{ id: 'e', companyId: 'a', officeId: 'o', departmentId: 'd', name: 'Employee', role: 'Engineer', kind: 'specialist', status: 'active' }],
   jobs: [], stickyNotes: [note], blueprints: [{ id: 'bp', companyId: 'a', officeId: 'o', rooms: [{ id: 'r', name: 'Room', departmentId: 'd', x: .1, y: .1, width: .5, height: .5 }], desks: [{ id: 'desk', roomId: 'r', employeeId: 'e', x: .3, y: .5 }], whiteboards: [] }] };
-function mount(activity: () => { state: string; label: string; executing: number | null }) {
+function mount(activity: () => { state: string; label: string; executing: number | null }, heat?: Parameters<typeof mountStudio>[1]['heat']) {
   const host = document.createElement('div'); document.body.append(host); const actions: unknown[] = [];
-  studio = mountStudio(host, { continuousCanvas: true, storage: null, onNavigate: () => {}, onAction: (action, context) => actions.push({ action, context }), activity });
+  studio = mountStudio(host, { continuousCanvas: true, storage: null, onNavigate: () => {}, onAction: (action, context) => actions.push({ action, context }), activity, heat });
   dom.setGeometry(studio.elements.canvasHost, { width: 1440, height: 900, top: 0, left: 0 }); dom.fireResize();
   studio.update(snapshot, { kind: 'company', companyId: 'a' }); dom.raf.drain(); return { host, actions };
 }
 describe('saved notes and truthful activity in the mounted shared world', () => {
+  it('keeps the native work count visible with full details in accessible evidence instead of a room-sized ribbon', () => {
+    const label='4 unresolved jobs',metric='4 queued · 0 recorded running. Counts describe saved work, not worker capacity or CPU use.';
+    const before=JSON.stringify(snapshot);
+    const {host}=mount(()=>({state:'queued',label:'4 queued',executing:0}),()=>({level:2,label,metric}));
+    for(const kind of ['office','room']) {
+      const node=host.querySelector<HTMLElement>(`.ff-node--${kind}`)!,badge=node.querySelector<HTMLElement>('.ff-node-heat')!;
+      expect(badge.textContent).toBe(label);expect(badge.title).toBe(`${label} · ${metric}`);expect(badge.getAttribute('aria-label')).toBe(badge.title);
+      expect(node.getAttribute('aria-label')).toContain(metric);expect(node.dataset.heatPlacement).toBe('footer');
+      expect(node.querySelector('.ff-node-title')?.textContent).toBe(kind==='office'?'Office':'Room');
+    }
+    expect(JSON.stringify(snapshot)).toBe(before);expect(host.querySelector('.ff-node--employee .ff-node-monogram')).not.toBeNull();
+  });
   it('keeps count-based live floor light contained, bounded, and absent for zero or stale activity', () => {
     let evidence = { state: 'quiet', label: 'No recorded leased work', executing: 0 as number | null };
     const {host}=mount(()=>evidence),room=host.querySelector<HTMLElement>('.ff-node--room')!;

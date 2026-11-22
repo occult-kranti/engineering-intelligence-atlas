@@ -27,10 +27,14 @@ Local gates completed before the first candidate push: 139 Rust tests; 819 deskt
 | Changing cycle headers defeated unchanged-output detection | Record a separate delivered-body SHA while preserving full artifact SHA for review; a real two-cycle worker regression checks the stop. |
 | Actual VS Code bridge rejected a stale note promise instead of returning an error DTO | Classify the existing explicit native rejection codes on structured promise errors too. Preserve the stale draft and revision while releasing controls; unfamiliar errors retain exact retry identity. |
 | Valid fractional coordinates saved by MCP made HTML note forms invalid | Accept fractional percentages, retain exact unchanged native fractions, and preserve range rejection. |
+| Captured work-summary ribbons obscured room names and employee circles | Keep the native count visible in a contained caption and retain metric details in accessible descriptions and the inspector; actual-browser rectangle checks cover containment and collisions. |
+| The initial browser note assertion read shared zero-valued CSS anchors | Read actual world transform translations and require nontrivial note offsets before testing geometric containment. |
 
 The paid renderer review's proposed removal of the context-loss guard was rejected: the guard prevents deliberate terminal disposal from being misread as a recoverable context loss. No unsupported graphics lifecycle change was applied.
 
 Candidate `812a3416463774e3a167144125e231dcd69e6505`, [CI run 44996020970](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44996020970), passed Windows installation, Linux installation and all backend/DOM gates, then failed the actual-browser stale-note rejection check. The assertion was retained and the source defect was fixed; this candidate is not the final browser-accepted package. The independent runtime counterreview also clarified the existing optional publication ordering in the UI and product documentation: helper acceptance gates continuation after publication and is not pre-publication review or build evidence.
+
+Candidate `56168848c8d595d9ecfcfb3f8fc2ea38a30c4058`, [CI run 44996970294](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44996970294), passed both platform jobs, 21 browser checks and 26 captures. Independent screenshot review accepted its Notes, Sessions and Evidence panels at both laptop sizes, then identified the map-caption collision above. The note-containment assertion was strengthened at the same time. The session label now says **Enabled** for the native scheduling state; actual execution still requires fresh callback evidence. The route form explains the reviewed catalog's current coverage.
 
 ## Evidence distinctions
 

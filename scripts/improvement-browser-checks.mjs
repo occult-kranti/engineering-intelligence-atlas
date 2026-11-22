@@ -109,12 +109,32 @@ export async function checkImprovementWorkflows({ page, client, companyId, recei
   await marker.waitFor({state:'visible'});
   const containment=await marker.evaluate((element,company)=>{
     const plan=document.querySelector(`.ff-node[data-node-id="universe:table-plan:${company}"]`);
-    const rect=node=>({x:parseFloat(node.style.left),y:parseFloat(node.style.top),width:parseFloat(node.style.width),height:parseFloat(node.style.height)});
+    const rect=node=>{const transform=new DOMMatrixReadOnly(getComputedStyle(node).transform);return{x:transform.m41,y:transform.m42,width:parseFloat(node.style.width),height:parseFloat(node.style.height)};};
     return{note:rect(element),company:plan?rect(plan):null,color:element.style.getPropertyValue('--sticky-color'),sameWorld:!!element.closest('.ff-world')};
   },companyId);
   assert.ok(containment.company&&containment.sameWorld);assert.equal(containment.color,'#dfd4ee');
   for(const box of [containment.note,containment.company])assert.ok(Object.values(box).every(Number.isFinite));
+  assert.ok(Math.abs(containment.note.x-containment.company.x)>1&&Math.abs(containment.note.y-containment.company.y)>1,'Read actual node translations, not the zero left/top anchors shared by every world node');
   assert.ok(containment.note.x>=containment.company.x&&containment.note.y>=containment.company.y&&containment.note.x+containment.note.width<=containment.company.x+containment.company.width&&containment.note.y+containment.note.height<=containment.company.y+containment.company.height,'The rendered native note stays inside its company footprint');
+  const workCaptions=await page.evaluate(company=>{
+    const rect=node=>{const b=node.getBoundingClientRect();return{x:b.x,y:b.y,width:b.width,height:b.height,right:b.right,bottom:b.bottom};};
+    const visible=node=>{const b=rect(node),style=getComputedStyle(node);return b.width>0&&b.height>0&&style.display!=='none'&&style.visibility!=='hidden'&&style.opacity!=='0';};
+    const nodes=[...document.querySelectorAll('.ff-node')].filter(node=>node.dataset.nodeId?.includes(company));
+    const protectedElements=nodes.flatMap(node=>[...node.querySelectorAll('.ff-node-title,.ff-node-monogram')]).filter(visible);
+    const overlaps=(a,b)=>Math.min(a.right,b.right)-Math.max(a.x,b.x)>.5&&Math.min(a.bottom,b.bottom)-Math.max(a.y,b.y)>.5;
+    return nodes.flatMap(node=>[...node.querySelectorAll('.ff-node-heat')]).filter(visible).map(badge=>{
+      const box=rect(badge),parent=rect(badge.closest('.ff-node'));
+      return{nodeId:badge.closest('.ff-node').dataset.nodeId,label:badge.textContent,details:badge.title,box,parent,
+        collisions:protectedElements.filter(element=>overlaps(box,rect(element))).map(element=>({nodeId:element.closest('.ff-node').dataset.nodeId,className:element.className,label:element.textContent}))};
+    });
+  },companyId);
+  assert.ok(workCaptions.length>=2,'The actual native queued work exercises both office and room captions');
+  for(const caption of workCaptions){
+    assert.match(caption.label,/unresolved jobs?/);assert.match(caption.details,/Counts describe saved work/);
+    assert.ok(caption.box.x>=caption.parent.x-.5&&caption.box.y>=caption.parent.y-.5&&caption.box.right<=caption.parent.right+.5&&caption.box.bottom<=caption.parent.bottom+.5,'Work captions stay inside their own saved boundary');
+    assert.deepEqual(caption.collisions,[],`Work caption does not cover room labels or people: ${caption.nodeId}`);
+  }
+  receipt.improvementWorkCaptions=workCaptions;
   await screenshot('17-improvement-note-world-1440x900');
   receipt.checks.push('Literal comment and colored to-do are canonical notes; the actual world preview stays inside its company footprint');
 

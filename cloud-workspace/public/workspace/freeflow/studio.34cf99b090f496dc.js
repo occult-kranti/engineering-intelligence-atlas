@@ -14,7 +14,7 @@ import { fitBounds, normalizeCamera, worldToScreen, isVisible, screenToWorld } f
 import { buildUniverse } from './universe.309127abbacf4d84.js';
 import { loadCameraPref, mountControls } from './controls.6c09b8861f669efa.js';
 import { buildScene } from './model.0662349412329ff5.js';
-import { mountScene } from './scene.c620d4b6fac1d0b4.js';
+import { mountScene } from './scene.de90be4b06a958af.js';
 import { mountA11yList } from './a11y-list.c972998eb8ad6bc6.js';
 import { mountInspector } from './inspector.9a51312c921b9311.js';
 const WARN_VISIBLE = 3;
