@@ -683,6 +683,8 @@ html:has(> body.endless-canvas),
   .endless-canvas .ff-breadcrumbs { flex-wrap: nowrap; max-width: 210px; gap: 3px; font-size: 9px; overflow-x: auto; scrollbar-width: none; }
   .endless-canvas .ff-breadcrumbs button { min-height: 24px; white-space: nowrap; }
   .endless-canvas .ff-tools { flex-wrap: nowrap; }
-  .endless-canvas .canvas-launcher { max-width: min(600px,calc(100vw - 820px)); flex-wrap: nowrap; overflow-x: auto; }
+  /* Only the shortcut strip scrolls. Clipping the launcher also clips its
+   * absolutely positioned finder and lets the world receive those clicks. */
+  .endless-canvas .canvas-launcher { max-width: min(600px,calc(100vw - 820px)); flex-wrap: nowrap; overflow: visible; }
   .endless-canvas .canvas-launcher button { flex-shrink: 0; }
 }
