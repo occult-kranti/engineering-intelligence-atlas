@@ -76,6 +76,7 @@ test('real tmux starts once, survives caller exit, and stops only its managed ru
   fs.copyFileSync(fileURLToPath(new URL('../../tools/atlas-mcp.mjs', import.meta.url)), path.join(repo, 'tools/atlas-mcp.mjs'));
   fs.copyFileSync(fileURLToPath(new URL('../../headless-runtime/host-control-contract.mjs', import.meta.url)), path.join(repo, 'headless-runtime/host-control-contract.mjs'));
   fs.copyFileSync(fileURLToPath(new URL('../../headless-runtime/contract.mjs', import.meta.url)), path.join(repo, 'headless-runtime/contract.mjs'));
+  for (const name of ['managed-environments-contract.mjs', 'model-resources-contract.mjs', 'design-toolchain-contract.mjs']) fs.copyFileSync(fileURLToPath(new URL('../../headless-runtime/' + name, import.meta.url)), path.join(repo, 'headless-runtime', name));
   fs.writeFileSync(path.join(repo, 'desktop-shell/dist/main/office.js'), '// fixture');
   fs.writeFileSync(path.join(repo, 'native-core/target/release/atlas-core'), 'fixture');
   fs.writeFileSync(path.join(repo, 'headless-runtime/server.mjs'), `import fs from 'node:fs'; import path from 'node:path';

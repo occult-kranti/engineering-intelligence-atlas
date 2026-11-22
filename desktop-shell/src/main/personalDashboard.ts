@@ -5,7 +5,7 @@ import path from 'node:path';
 
 export interface DashboardOptions { rendererRoot: string; dispatch: (method: string, args: unknown[]) => Promise<unknown> | unknown }
 const STATIC_ASSETS = ['chrome.html','chrome.css','chrome.js','browser-bridge.js','studio-tokens.css','office-signals.js','freeflow.css','model-pool.js',
-  ...['camera','layout','model','threads','scene','controls','a11y-list','inspector','studio','intake','staffing-plan','manage'].map(n=>`freeflow/${n}.js`)];
+  ...['camera','layout','model','threads','scene','controls','a11y-list','inspector','studio','intake','staffing-plan','manage','canvas-workspace','donna-team','universe','workspace'].map(n=>`freeflow/${n}.js`)];
 /** Explicit manifest: only these compiled renderer files are ever served. */
 const ALLOWED_FILES: Record<string,string> = Object.freeze({'/':'chrome.html',...Object.fromEntries(STATIC_ASSETS.map(f=>['/'+f,f]))});
 const has = (o:object,k:string)=>Object.prototype.hasOwnProperty.call(o,k);

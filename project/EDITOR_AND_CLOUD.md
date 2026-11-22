@@ -1,5 +1,7 @@
 # Editor and cloud workspace handoff
 
+> VS Code 0.9 now includes the full shared office canvas and a standalone local/Remote-SSH backend. See [Primary VS Code product](VSCODE_PRIMARY_PRODUCT.md) for the current product path. The companion-only operating instructions below document the earlier 0.8 compatibility workflow.
+
 ## Purpose and ownership
 
 The installed desktop owns the Rust office state and executes validated commands. The private website stores a sanitized office projection, scoped chat and a durable command queue. VS Code is a thin client of either endpoint. These are views into one company model, not separate sets of employees.

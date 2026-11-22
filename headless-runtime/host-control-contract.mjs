@@ -17,7 +17,7 @@ export function fail(code, message, status = 400) { throw new HostControlError(c
 export const hash = value => crypto.createHash('sha256').update(value).digest('hex');
 export const object = value => value !== null && typeof value === 'object' && !Array.isArray(value)
   && (Object.getPrototypeOf(value) === Object.prototype || Object.getPrototypeOf(value) === null);
-export const validId = value => typeof value === 'string' && /^[A-Za-z0-9_.:-]{1,160}$/.test(value);
+export const validId = value => typeof value === 'string' && value.trim() === value && /^[A-Za-z0-9_.:-]{1,160}$/.test(value);
 export function exact(input, keys) {
   if (!object(input) || Object.keys(input).some(key => !keys.includes(key))) fail('HOST_INPUT_INVALID', 'Unexpected command-control input.');
 }
@@ -48,9 +48,14 @@ export function privateDirectory(directory, create = false) {
 export function readPrivate(filename, maxBytes, optional = false) {
   let fd;
   try {
-    fd = fs.openSync(filename, fs.constants.O_RDONLY | fs.constants.O_NOFOLLOW);
+    // Windows uses the protected user directory/ACL rather than POSIX modes.
+    // Check links before opening there too; NOFOLLOW alone is not portable.
+    const before = fs.lstatSync(filename);
+    if (!before.isFile() || before.isSymbolicLink()) fail('HOST_STATE_INVALID', 'Command-control storage must contain regular files.', 503);
+    fd = fs.openSync(filename, fs.constants.O_RDONLY | (fs.constants.O_NOFOLLOW ?? 0));
     const stat = fs.fstatSync(fd);
-    if (!stat.isFile() || stat.size > maxBytes || (stat.mode & 0o077)) fail('HOST_STATE_INVALID', 'Command-control file permissions or size are invalid.', 503);
+    if (!stat.isFile() || stat.size > maxBytes || before.dev !== stat.dev || before.ino !== stat.ino
+      || (process.platform !== 'win32' && (stat.mode & 0o077))) fail('HOST_STATE_INVALID', 'Command-control file permissions or size are invalid.', 503);
     return fs.readFileSync(fd);
   } catch (error) {
     if (optional && error.code === 'ENOENT') return null;
@@ -71,8 +76,13 @@ export function atomicJson(filename, value) {
     fd = fs.openSync(temp, 'wx', 0o600);
     fs.writeFileSync(fd, JSON.stringify(value)); fs.fsyncSync(fd); fs.closeSync(fd); fd = undefined;
     fs.renameSync(temp, filename);
-    const directoryFd = fs.openSync(path.dirname(filename), 'r');
-    try { fs.fsyncSync(directoryFd); } finally { fs.closeSync(directoryFd); }
+    // Windows supports flushing the file and renaming it, but Node cannot open
+    // directories for fsync there. Directory-entry crash durability is therefore
+    // weaker on Windows; do not pretend this is a portable directory fsync.
+    if (process.platform !== 'win32') {
+      const directoryFd = fs.openSync(path.dirname(filename), 'r');
+      try { fs.fsyncSync(directoryFd); } finally { fs.closeSync(directoryFd); }
+    }
   } finally {
     if (fd !== undefined) fs.closeSync(fd);
     try { fs.unlinkSync(temp); } catch (error) { if (error.code !== 'ENOENT') throw error; }

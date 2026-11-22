@@ -7,6 +7,13 @@ import { readSecretFile } from './secrets.mjs';
 import { HeadlessCloudSync } from './cloud-sync.mjs';
 import { createHostControl } from './host-control.mjs';
 import { validateHostOperation } from './host-control-contract.mjs';
+import { createWorkbench } from './workbench.mjs';
+import { createManagedEnvironments } from './managed-environments.mjs';
+import { createModelResources } from './model-resources.mjs';
+import { validateEnvironmentOperation } from './managed-environments-contract.mjs';
+import { validateResourceOperation } from './model-resources-contract.mjs';
+import { createDesignToolchain } from './design-toolchain.mjs';
+import { validateDesignToolchainOperation } from './design-toolchain-contract.mjs';
 
 const require = createRequire(import.meta.url);
 const defaultRepoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -52,14 +59,18 @@ export class RuntimeController {
   }
 
   async status() {
+    const credentialConfigured = provider => { try { return Boolean(this.workbench?.getSecret(provider)); } catch { return false; } };
     const host = this.hostControl ? (await this.hostOperation('status', {})).host
       : { configured: false, mode: 'off', revision: 0, grants: [], jobs: [], capabilities: {} };
     return { ok: true, execution: 'headless', worker: publicWorkerStatus(this.worker),
       observer: this.office.observerStatus?.() ?? null,
-      cloud: this.cloudSync?.status() ?? { configured: false, connected: false, revision: null, error: null },
+      cloud: this.cloudSync?.enabled === true ? this.cloudSync.status()
+        : this.workbench?.cloudStatus() ?? this.cloudSync?.status() ?? { configured: false, connected: false, revision: null, error: null },
       host: { configured: host.configured === true, available: host.available === true, mode: host.mode, revision: host.revision,
         grantCount: host.grants.length, jobCount: host.jobCount ?? host.jobs.length },
       capabilities: { providerJobs: true, cloudSync: false, ...this.capabilities,
+        ...(this.workbench ? { workbench: true, configuredProviders: ['openai', 'anthropic'].filter(credentialConfigured),
+          githubRead: credentialConfigured('github'), githubPublish: credentialConfigured('github') } : {}),
         hostControl: host.configured === true, arbitraryCode: host.configured === true,
         hostControlActive: host.configured === true && host.mode !== 'off' } };
   }
@@ -91,12 +102,40 @@ export class RuntimeController {
     if (!this.modelPool || !['snapshot', 'request', 'cancel', 'select'].includes(operation)) {
       throw new RuntimeError('MODEL_POOL_UNAVAILABLE', 'This runtime has no shared model controller.', 503);
     }
-    try { return await this.modelPool[operation](input); }
+    try {
+      if (this.resources?.isEnforced()) await this.resources.authorizeModelOperation(operation, input);
+      return await this.modelPool[operation](input);
+    }
     catch (error) {
-      if (error?.name === 'ModelPoolError' && /^[A-Z_]{1,80}$/.test(error.code)) {
+      if (['ModelPoolError', 'ModelResourcesError'].includes(error?.name) && /^[A-Z_]{1,80}$/.test(error.code)) {
         throw new RuntimeError(error.code, error.message, error.status);
       }
       throw new RuntimeError('MODEL_UNAVAILABLE', 'The local model operation could not be confirmed. Inspect model status before a new request.', 503);
+    }
+  }
+
+  async resourceOperation(operation, input = {}) {
+    return this.managedOperation('resources', operation, input, validateResourceOperation);
+  }
+
+  async environmentOperation(operation, input = {}) {
+    return this.managedOperation('environments', operation, input, validateEnvironmentOperation);
+  }
+  async designOperation(operation, input = {}) {
+    return this.managedOperation('design', operation, input, validateDesignToolchainOperation);
+  }
+
+  async managedOperation(service, operation, input, validate) {
+    try {
+      const validated = validate(operation, input);
+      if (!this[service] || typeof this[service][operation] !== 'function') throw new RuntimeError('SERVICE_UNAVAILABLE', 'This managed service is unavailable.', 503);
+      return await this[service][operation](validated);
+    } catch (error) {
+      if (error instanceof RuntimeError) throw error;
+      if (['ManagedEnvironmentError', 'ModelResourcesError', 'DesignToolchainError'].includes(error?.name) && /^[A-Z_]{1,80}$/.test(error.code)) {
+        throw new RuntimeError(error.code, error.message, [400,403,404,409,413,429,503].includes(error.status) ? error.status : 503);
+      }
+      throw new RuntimeError('SERVICE_UNAVAILABLE', 'This managed operation could not be confirmed. Inspect its original receipt before repeating it.', 503);
     }
   }
 
@@ -140,7 +179,11 @@ export class RuntimeController {
   async close() {
     this.office.stopObserving?.();
     this.worker.stop();
+    await this.workbench?.close();
     await this.cloudSync?.close();
+    await this.resources?.close();
+    await this.environments?.close();
+    await this.design?.close();
     await this.modelPool?.close();
     await this.hostControl?.close();
     // The pool aborts provider calls. A short grace period allows their durable
@@ -177,7 +220,8 @@ export function createRuntime(options = {}) {
     throw new RuntimeError('BUILD_REQUIRED', 'Build the portable runtime modules before starting the service.', 503);
   }
   const secrets = options.secretFiles ?? {};
-  const getSecret = provider => secrets[provider] ? readSecretFile(secrets[provider]) : null;
+  let workbench;
+  const getSecret = provider => secrets[provider] ? readSecretFile(secrets[provider]) : workbench?.getSecret(provider) ?? null;
   const office = new modules.OfficeService({
     userDataPath: dataDir, seedDir, binaryPath, githubToken: () => getSecret('github'),
   });
@@ -198,6 +242,11 @@ export function createRuntime(options = {}) {
     ...(options.modelFetch ? { fetchFn: options.modelFetch } : {}) });
   const hostControl = createHostControl({ stateDir: dataDir, enabled: options.hostControlEnabled === true,
     snapshot: () => office.officeSnapshot() });
+  const environments = createManagedEnvironments({ stateDir: dataDir, hostControl, snapshot: () => office.officeSnapshot(),
+    ...(options.pythonPath ? { pythonPath: options.pythonPath } : {}) });
+  const resources = createModelResources({ stateDir: dataDir, snapshot: () => office.officeSnapshot(), modelPool,
+    nativeCommand: command => office.officeCommand(command), environmentService: environments });
+  const design = createDesignToolchain({ stateDir: dataDir, hostControl, snapshot: () => office.officeSnapshot() });
   const generate = options.generate ?? (async (request, job) => {
     if (request.provider === 'ollama') {
       return modelPool.generateForJob(job, request);
@@ -213,7 +262,7 @@ export function createRuntime(options = {}) {
     snapshot: () => office.officeSnapshot(), command: request => office.workerCommand(request),
     artifactRoot: path.join(dataDir, 'office-artifacts'), seedDir, generate,
     prepareContext: job => office.prepareWorkerContext(job),
-    validateJob: job => modelPool.validateJob(job),
+    validateJob: job => resources.isEnforced() ? resources.validateJob(job) : modelPool.validateJob(job),
     executeTool: async (job, text) => {
       if (!job.allowedTools.includes('github.publish_changes')) throw new Error('GitHub publication capability is unavailable.');
       await office.assertWorkerCapability(job, 'github.publish_changes');
@@ -228,12 +277,31 @@ export function createRuntime(options = {}) {
       return { summary: `Published commit ${published.commit}`, evidenceUrl: published.url };
     },
   }, concurrency);
-  office.startObserving();
-  cloudSync.start();
-  return new RuntimeController({ office, worker, modelPool, cloudSync, hostControl,
+  const runtime = new RuntimeController({ office, worker, modelPool, cloudSync, hostControl,
     projectSnapshot: modules.cloudSnapshot, stateHash: modules.syncStateHash,
     capabilities: { providerAdapters: ['openai', 'anthropic', 'ollama-loopback'],
       configuredProviders: ['openai', 'anthropic'].filter(provider => !!secrets[provider]),
       githubRead: !!secrets.github, githubPublish: !!secrets.github, sharedModels: options.ollamaLocalOnly === true,
       cloudSync: options.cloudSyncEnabled === true } });
+  runtime.binaryPath = binaryPath;
+  runtime.resources = resources;
+  runtime.environments = environments;
+  runtime.design = design;
+  workbench = createWorkbench({ runtime, repoRoot, dataDir, secretFiles: secrets,
+    platform: { ...(options.generate ? { generate: options.generate } : {}), ...options.workbenchPlatform } });
+  runtime.workbench = workbench;
+  const additional = {};
+  for (const [prefix, operations, dispatch] of [
+    ['environment', ['status', 'prepare', 'inspect', 'run'], (operation, input) => runtime.environmentOperation(operation, input)],
+    ['resource', ['status', 'configure', 'resolve', 'plan', 'start', 'inspect', 'cancel'], (operation, input) => runtime.resourceOperation(operation, input)],
+    ['design', ['catalog', 'plan', 'install', 'inspect'], (operation, input) => runtime.designOperation(operation, input)],
+  ]) for (const operation of operations) {
+    additional[prefix + operation[0].toUpperCase() + operation.slice(1)] = {
+      minArgs: ['status','catalog'].includes(operation) ? 0 : 1, maxArgs: operation === 'catalog' || prefix === 'environment' && operation === 'status' ? 0 : 1,
+      mutates: !['status', 'inspect', 'resolve','catalog'].includes(operation), handler: args => dispatch(operation, args[0] ?? {}),
+    };
+  }
+  workbench.addMethods(additional);
+  office.startObserving(); cloudSync.start();
+  return runtime;
 }

@@ -45,8 +45,13 @@ try {
     if (/(?:TOKEN|SECRET|PASSWORD|API_KEY|ACCESS_KEY|CREDENTIAL)/i.test(name) || ['NODE_OPTIONS', 'ELECTRON_RUN_AS_NODE'].includes(name)) delete process.env[name];
   }
   const profileArgs = [`--user-data-dir=${userData}`, `--extensions-dir=${extensions}`];
-  const install = spawnSync(cli, [...cliArgs, ...profileArgs, '--install-extension', vsix, '--force'], {
-    env: process.env, encoding: 'utf8', timeout: 90_000,
+  // Windows .cmd launchers require a shell. Use the downloaded executable's
+  // own Node CLI entry instead, keeping arguments literal on every platform.
+  const installExecutable = process.platform === 'win32' ? executable : cli;
+  const installPrefix = process.platform === 'win32' ? [path.join(path.dirname(executable), 'resources/app/out/cli.js')] : cliArgs;
+  const install = spawnSync(installExecutable, [...installPrefix, ...profileArgs, '--install-extension', vsix, '--force'], {
+    env: process.platform === 'win32' ? { ...process.env, ELECTRON_RUN_AS_NODE: '1' } : process.env,
+    encoding: 'utf8', timeout: 90_000, shell: false,
   });
   await fs.writeFile(path.join(output, 'install.log'), `${install.stdout || ''}${install.stderr || ''}`);
   assert.equal(install.error, undefined, 'VS Code install command must finish');

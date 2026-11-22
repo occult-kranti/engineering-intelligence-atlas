@@ -1,5 +1,9 @@
 # Daftar Office for VS Code
 
+## Version 0.9: primary workspace
+
+Open the full infinite office canvas inside VS Code, run its packaged backend on this host or in Remote-SSH, and manage Donna’s compute ownership, environments and model resources. See the [complete product and setup guide](../project/VSCODE_PRIMARY_PRODUCT.md). The activity view is a launcher; all office tools live on the shared canvas. Earlier companion connection details are retained below for compatibility.
+
 Keep Donna, permanent teams, company roadmaps, goals and the work queue beside your code. This extension is a client of the installed Daftar desktop or the private Daftar website. The Rust core remains the execution authority.
 
 ## Install

@@ -92,9 +92,9 @@ try {
   await initialize(client);
   const listed = await client.call('tools/list', {});
   assert.deepEqual(listed.result.tools.map(t => t.name).sort(),
-    ['host_approve', 'host_cancel', 'host_configure', 'host_inspect', 'host_status', 'host_stop_all', 'host_submit',
-      'model_pool_cancel', 'model_pool_request', 'model_pool_select', 'model_pool_status', 'office_command', 'office_query', 'office_summary', 'runtime_status', 'worker_set_enabled']);
-  record('MCP initializes and advertises all sixteen runtime and host tools');
+    ['design_catalog', 'design_plan', 'design_install', 'design_inspect', 'environment_inspect', 'environment_prepare', 'environment_run', 'environment_status', 'resource_cancel', 'resource_configure', 'resource_inspect', 'resource_plan', 'resource_resolve', 'resource_start', 'resource_status', 'host_approve', 'host_cancel', 'host_configure', 'host_inspect', 'host_status', 'host_stop_all', 'host_submit',
+      'model_pool_cancel', 'model_pool_request', 'model_pool_select', 'model_pool_status', 'office_command', 'office_query', 'office_summary', 'runtime_status', 'worker_set_enabled'].sort());
+  record('MCP initializes and advertises all thirty-one runtime, host, environment and resource tools');
 
   const status = await tool(client, 'runtime_status');
   assert.equal(status.worker.enabled, false);

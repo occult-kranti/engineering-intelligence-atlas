@@ -137,3 +137,9 @@ This is token-derived development accounting, not a provider invoice, account ba
 The application has an owner-editable policy. A fresh installation's $10 default, 80% warning and disabled dispatcher are distinct from this authorized $100 development session. Permanent employee records, company imports, authority grants, source indexing and the recorded live sync do not themselves make model calls. The completed management setup and synchronization receipts report zero provider calls.
 
 The historical production-adapter validation sent only a fixed synthetic string, with no repository, portfolio or connected account data; see [its receipt](PUBLIC_ADAPTER_VALIDATION.json). The blocked private attempt remains recorded separately. Later owner-authorized native rounds and the hosted reply now have their own observed usage. No uncertain billed attempt was automatically retried or silently cleared.
+
+## VS Code compute connection source
+
+Request 28 (`11444cac-b59f-4523-9eea-f560e87b6b7f`, Claude Sonnet 5.5) returned the connection manager and partial tests: 1,693 input tokens, 10,500 output tokens, observed cost **$0.108386**. The response stopped at `max_tokens`; the truncated tests and concrete lifecycle/validation defects were repaired locally. No billed retry was sent.
+
+The shared additional $20 ceiling now has **$0.623718** of observed source-generation usage and **$19.376282** remaining. This is development authorship accounting, not a claim that native Donna employees ran those calls or that VPS infrastructure is free. Earlier unresolved reservations remain preserved in the ledger.

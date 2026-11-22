@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 3.207402,
+  "accountedUsd": 3.315788,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -366,9 +366,25 @@
       "costUsd": 0.06845,
       "retainedReservationUsd": 0,
       "contribution": "Complete source returned; endpoint, credential-file, hostname, and response-handling repairs integrated locally."
+    },
+    {
+      "number": 28,
+      "model": "claude-sonnet-5-5",
+      "workstream": "vscode-compute-connection",
+      "releaseScope": "VS Code0.9.0 source development.",
+      "executionContext": "External bounded source authorship; independently repaired and verified locally. No native employee execution claim.",
+      "requestId": "11444cac-b59f-4523-9eea-f560e87b6b7f",
+      "task": "Existing SSH compute connection manager and tests",
+      "state": "completed-partial-source",
+      "stopReason": "max_tokens",
+      "inputTokens": 1693,
+      "outputTokens": 10500,
+      "costUsd": 0.108386,
+      "retainedReservationUsd": 0,
+      "contribution": "Complete manager and truncated tests returned. Local repairs covered cancellation, host validation, profile identity, cleanup and metadata; no billed retry."
     }
   ],
-  "observedUsd": 2.437686,
+  "observedUsd": 2.546072,
   "retainedReservationUsd": 0.769716,
   "cloud": {
     "allocationUsd": 5,
@@ -520,5 +536,16 @@
     "sharedIncrementalAccountedUsd": 0.515332,
     "sharedIncrementalRemainingUsd": 19.484668,
     "validationEvidence": "project/HOST_CONTROL_VALIDATION.md"
+  },
+  "vscodeComputeDevelopment": {
+    "requestNumbers": [
+      28
+    ],
+    "observedUsd": 0.108386,
+    "retainedReservationUsd": 0,
+    "sharedIncrementalCapUsd": 20,
+    "sharedIncrementalAccountedUsd": 0.623718,
+    "sharedIncrementalRemainingUsd": 19.376282,
+    "validationEvidence": "project/VSCODE_PRIMARY_PRODUCT.md"
   }
 }

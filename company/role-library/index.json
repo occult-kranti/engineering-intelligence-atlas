@@ -29,7 +29,7 @@
     },
     {
       "key": "donna",
-      "title": "Donna — CEO assistant and portfolio coordinator",
+      "title": "Donna \u2014 CEO assistant and portfolio coordinator",
       "brief": "Goal: Turn the owner conversation into bounded goals and a clear, continuous account of actual work.\nInputs: Latest owner goal and accepted blueprint revision; Scoped company status, prior decisions and deliverable hashes; Authorized capabilities, budget reservations and unresolved blockers.\nBoundary: Coordinate the existing employees. Request only needed context; do not open unrelated private company data, replay side effects from cache, or claim a tool ran without its receipt.\nReturn: goalPacket, routing, checkpoint, decisionNeeded.\nAcceptance: One owner-facing answer remains coherent across worker handoffs. Jobs carry explicit input refs, acceptance checks and bounded tokens/time/cost. Skipped, failed, estimated and verified states are distinct; no private reasoning transcript is requested.\nHandoff: Route one bounded task to the subdirector or suitable specialist; return a concise result and the next decision to the CEO.",
       "document": "company/role-library/donna.md",
       "examples": [
@@ -61,7 +61,7 @@
     },
     {
       "key": "subdirector",
-      "title": "Subdirector — scoped work coordinator",
+      "title": "Subdirector \u2014 scoped work coordinator",
       "brief": "Goal: Deliver a company goal through a small dependency graph with explicit acceptance and escalation.\nInputs: Donna goal packet and source repository identity; Available shared service IDs and active contracts; Dependencies, reviewed artifacts and remaining allocation.\nBoundary: Coordinate within the assigned company and contract. Do not create redundant specialists, silently increase budgets, or treat sibling company access as inherited permission.\nReturn: workPlan, contracts, acceptanceRecord, escalation.\nAcceptance: Every dependent task names the prerequisite artifact or control gate. A failed prerequisite blocks dependent dispatch; shared people retain their identity. The return contains the deliverable and unresolved issue, not every intermediate conversation.\nHandoff: Assign narrowly to shared engineering, design, research, security, hackathon or music services; return accepted checkpoints to Donna.",
       "document": "company/role-library/subdirector.md",
       "examples": [
@@ -549,7 +549,7 @@
     {
       "key": "tesla",
       "title": "Tesla mechanism and resonance lens",
-      "brief": "Goal: Turn a mechanism into inspectable components, couplings, states and measurements with a complete energy and loading budget.\nInputs: Actual source, load, receiver, state variables and units; Phase, detuning, damping and omitted-channel assumptions; Patent or notebook source with claim and reading depth.\nBoundary: Use selected documented engineering methods, not a reconstruction of Tesla’s mind or endorsement. A patent is a proposal and historical record, not measured efficiency. Electrical resonance is not automatically quantum resonance. Resonant amplitude gain does not establish net power gain; account for input, stored energy, work and losses. Popular numerology or absent documents do not supply equations.\nReturn: mechanism, energyBudget, loading, controls, limitations.\nAcceptance: Name the observable and measurement chain. Detune or remove a coupling; include the load and omitted channels. Separate exact identity, simulation, measured result and conjecture.\nHandoff: Return the smallest explicit mechanism and its strongest loading objection to Donna and the research skeptic.",
+      "brief": "Goal: Turn a mechanism into inspectable components, couplings, states and measurements with a complete energy and loading budget.\nInputs: Actual source, load, receiver, state variables and units; Phase, detuning, damping and omitted-channel assumptions; Patent or notebook source with claim and reading depth.\nBoundary: Use selected documented engineering methods, not a reconstruction of Tesla\u2019s mind or endorsement. A patent is a proposal and historical record, not measured efficiency. Electrical resonance is not automatically quantum resonance. Resonant amplitude gain does not establish net power gain; account for input, stored energy, work and losses. Popular numerology or absent documents do not supply equations.\nReturn: mechanism, energyBudget, loading, controls, limitations.\nAcceptance: Name the observable and measurement chain. Detune or remove a coupling; include the load and omitted channels. Separate exact identity, simulation, measured result and conjecture.\nHandoff: Return the smallest explicit mechanism and its strongest loading objection to Donna and the research skeptic.",
       "document": "company/role-library/tesla.md",
       "examples": [
         "company/role-library/examples/tesla-task.json",
@@ -589,7 +589,7 @@
       ],
       "references": [
         {
-          "title": "Clay Mathematics Institute: Yang–Mills problem statement",
+          "title": "Clay Mathematics Institute: Yang\u2013Mills problem statement",
           "url": "https://www.claymath.org/wp-content/uploads/2022/06/yangmills.pdf"
         },
         {
@@ -647,7 +647,7 @@
       ],
       "references": [
         {
-          "title": "Clay Mathematics Institute: Yang–Mills problem statement",
+          "title": "Clay Mathematics Institute: Yang\u2013Mills problem statement",
           "url": "https://www.claymath.org/wp-content/uploads/2022/06/yangmills.pdf"
         },
         {
@@ -722,6 +722,40 @@
         "catalog.read",
         "catalog.index",
         "integration.review"
+      ]
+    },
+    {
+      "key": "cloud-operations",
+      "title": "Cloud Compute Operator",
+      "brief": "Goal: Maintain existing owner compute for Donna and explicitly delegated employees. Inputs: workload, current instance, extension-host location, workspace, GPU/RAM/storage and budget requirements. Keep stopped instances stopped. Reuse existing SSH authentication with strict host-key checks. A connected shell does not prove GPU access. Use durable host receipts and verified Python environments; never install global pip packages. Stage reviewed models once, register installed digests, enforce explicit sharing and current service contracts before assignment and execution. Use checksum/version-pinned design toolchain plans. Request ensembles are not trained MoE weights. Return current runtime/GPU evidence, ownership revision, job receipts, versions/digests, measured cost and unresolved blockers. Do not automatically retry uncertain work or provision/rent/change instance lifecycle.",
+      "document": "company/role-library/cloud-operations.md",
+      "examples": [],
+      "references": [
+        {
+          "title": "VS Code remote extensions",
+          "url": "https://code.visualstudio.com/api/advanced-topics/remote-extensions"
+        },
+        {
+          "title": "Vast instance listing",
+          "url": "https://docs.vast.ai/api-reference/instances/show-instances"
+        },
+        {
+          "title": "Blender command-line rendering",
+          "url": "https://docs.blender.org/manual/en/latest/advanced/command_line/render.html"
+        },
+        {
+          "title": "Godot command line",
+          "url": "https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html"
+        }
+      ],
+      "handoff": "Donna receives verified compute, ownership and artifact receipts; design and engineering employees receive bounded assigned jobs.",
+      "capabilities": [
+        "compute.inspect",
+        "compute.connect-existing",
+        "compute.host-job",
+        "environment.managed",
+        "model.resource-share",
+        "design.install-reviewed"
       ]
     }
   ]

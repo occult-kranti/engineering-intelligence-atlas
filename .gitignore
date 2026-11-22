@@ -31,3 +31,10 @@ local.properties
 *.aab
 *.keystore
 *.jks
+
+# Reproducible platform VSIX payloads
+vscode-extension/resources/runtime/
+vscode-extension/resources/runtime.building-*/
+vscode-extension/media/studio/
+vscode-extension/media/studio.building-*/
+vscode-extension/media/studio.build-*/

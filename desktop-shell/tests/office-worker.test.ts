@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
+import {fileURLToPath} from 'node:url';
 import {OfficeWorker,OfficeWorkerPool,type OfficeWorkerOptions} from '../src/main/officeWorker';
 import type {GenerateFn} from '../src/main/projects';
 import type {OfficeCommand,OfficeJob,OfficeResult,OfficeSnapshot} from '../src/shared/office';
@@ -158,6 +159,51 @@ describe('managed source context and bounded parallel workers',()=>{
   expect(f.state.jobs[1]?.usage.costUsd).toBe(0);
  });
  it('executes at most two distinct leased jobs in parallel and retains both artifacts',async()=>{let release!:()=>void;let both!:()=>void;const ready=new Promise<void>(r=>both=r);const barrier=new Promise<void>(r=>release=r);let calls=0;const f=fixture({jobs:[job(),job(),job()],generate:async()=>{calls++;if(calls===2)both();await barrier;return{text:'Parallel fixture deliverable',inputTokens:20,outputTokens:20};}});const pool=new OfficeWorkerPool({snapshot:f.snapshot,command:f.command,generate:f.generate,artifactRoot:f.artifactRoot,seedDir:f.seedDir},2);const pending=pool.runOnce();await ready;expect(pool.status().activeJobIds).toHaveLength(2);expect(new Set(pool.status().activeJobIds).size).toBe(2);expect(calls).toBe(2);expect(f.state.jobs[2]?.status).toBe('queued');release();await pending;expect(f.state.jobs.filter(j=>j.status==='completed')).toHaveLength(2);expect(f.state.jobs.filter(j=>j.artifactUri&&fs.existsSync(j.artifactUri))).toHaveLength(2);pool.stop();});
+});
+
+describe('bundled cloud operator context in actual worker prompts', () => {
+ it.each([
+  ['text-only', []],
+  ['explicit repository read', ['github.read_repository']],
+ ] as Array<[string, OfficeJob['allowedTools']]>)('loads a newly hired operator with no assignment key and preserves %s authority', async (_label, allowedTools) => {
+  const executeTool = vi.fn(async () => ({summary:'Unexpected execution', evidenceUrl:'https://example.test/unexpected'}));
+  const prepareContext = vi.fn(async () => 'Verified repository fixture: no command execution requested.');
+  const f = fixture({jobs:[job({employeeId:'cloud-operator', allowedTools:[...allowedTools]})], executeTool, prepareContext});
+  const bundledSeed = fileURLToPath(new URL('../../company/', import.meta.url));
+  for (const relative of ['role-library/index.json', 'prompts/specialists.json']) {
+   const target = path.join(f.seedDir, relative);
+   fs.mkdirSync(path.dirname(target), {recursive:true});
+   fs.copyFileSync(path.join(bundledSeed, relative), target);
+  }
+  const roleIndex = JSON.parse(fs.readFileSync(path.join(f.seedDir, 'role-library/index.json'), 'utf8')) as {roles:Array<{key:string; brief:string; handoff:string}>};
+  const role = roleIndex.roles.find(candidate => candidate.key === 'cloud-operations');
+  const specialists = JSON.parse(fs.readFileSync(path.join(f.seedDir, 'prompts/specialists.json'), 'utf8')) as Record<string, string>;
+  expect(role).toBeDefined();
+  expect(specialists['cloud-operations']).toBeTruthy();
+  // hire_employee creates a specialist with this role and a null assignmentKey.
+  // The fixture deliberately supplies no shared-role assignment or tool grant.
+  f.state.employees.push({...f.state.employees[0]!, id:'cloud-operator', companyId:'company-a', officeId:'office-a', name:'Cloud Compute Operator', role:'Cloud Compute Operator', kind:'specialist', assignmentKey:null, skillPaths:['skills/local-model-runtime-engineering/SKILL.md', 'skills/agent-research-director/SKILL.md']});
+
+  await f.worker.runOnce();
+
+  expect(f.generate).toHaveBeenCalledOnce();
+  const [request, scope] = f.generate.mock.calls[0]!;
+  expect(request.system).toMatch(/Role reference cloud-operations \([0-9a-f]{64}\):/);
+  expect(request.system).toContain(role!.brief);
+  expect(request.system).toContain(`Handoff: ${role!.handoff}`);
+  expect(request.system).toContain(specialists['cloud-operations']);
+  expect(request.system).toContain('Metadata does not grant tools. Only the job\'s allowedActions grant capabilities.');
+  expect(request.system).toContain('This job produces text; it cannot execute code or publish externally.');
+  const taskPacket = JSON.parse(request.prompt.split('\n\nTask packet:\n')[1]!.split('\n\nSource Review observations')[0]!);
+  expect(taskPacket.allowedActions).toEqual(allowedTools);
+  expect(scope?.allowedTools).toEqual(allowedTools);
+  expect(f.state.jobs[0]?.allowedTools).toEqual(allowedTools);
+  expect(f.state.employees.find(employee => employee.id === 'cloud-operator')?.assignmentKey).toBeNull();
+  expect(prepareContext).toHaveBeenCalledTimes(allowedTools.length ? 1 : 0);
+  expect(executeTool).not.toHaveBeenCalled();
+  expect(f.calls.some(command => ['grant_authority', 'set_policy'].includes(command.action))).toBe(false);
+  expect(f.state.jobs[0]?.status).toBe('completed');
+ });
 });
 
 describe('company-kit task context in actual worker prompts', () => {

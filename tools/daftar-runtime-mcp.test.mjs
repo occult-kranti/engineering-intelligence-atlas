@@ -72,7 +72,7 @@ test('control credential is read only from a bounded private regular file, never
 test('the adapter advertises only owner-facing tools and accurate worker side effects', async () => {
   const f = fixture(); const process = await initialized(f.handler);
   const response = await process(JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' }));
-  assert.deepEqual(response.result.tools.map(t => t.name), ['runtime_status', 'office_summary', 'office_query', 'office_command', 'worker_set_enabled', 'model_pool_status', 'model_pool_request', 'model_pool_cancel', 'model_pool_select', 'host_status', 'host_configure', 'host_submit', 'host_approve', 'host_cancel', 'host_inspect', 'host_stop_all']);
+  assert.deepEqual(response.result.tools.map(t => t.name), ['design_catalog', 'design_plan', 'design_install', 'design_inspect', 'environment_status', 'environment_prepare', 'environment_inspect', 'environment_run', 'resource_status', 'resource_configure', 'resource_resolve', 'resource_plan', 'resource_start', 'resource_inspect', 'resource_cancel', 'runtime_status', 'office_summary', 'office_query', 'office_command', 'worker_set_enabled', 'model_pool_status', 'model_pool_request', 'model_pool_cancel', 'model_pool_select', 'host_status', 'host_configure', 'host_submit', 'host_approve', 'host_cancel', 'host_inspect', 'host_stop_all']);
   assert.equal(f.calls.length, 0);
   const owner = TOOL_DEFINITIONS.find(t => t.name === 'office_command');
   assert.equal(owner.annotations.openWorldHint, true);

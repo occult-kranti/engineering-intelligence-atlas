@@ -109,12 +109,13 @@ export class OfficeWorker {
     const specialistPath = path.join(this.options.seedDir, 'prompts', 'specialists.json');
     const aliases: Record<string, string> = { 'github-steward': 'github-release', 'knowledge-curator': 'knowledge', 'qa-lead': 'qa', 'blueprint-steward': 'design-architecture', 'code-engineer': 'engineering' };
     const assignment = employee.assignmentKey?.replace(/^shared:/, '');
-    const roleKey = employee.id === 'donna' ? 'donna' : assignment ? aliases[assignment] ?? assignment : null;
+    const roleKey = employee.id === 'donna' ? 'donna' : assignment ? aliases[assignment] ?? assignment : employee.role === 'Cloud Compute Operator' ? 'cloud-operations' : null;
     const roleReference = loadRoleReference(this.options.seedDir, roleKey);
     let specialistBrief = '';
-    if (employee.assignmentKey && fs.existsSync(specialistPath) && fs.statSync(specialistPath).size < 32000) {
+    if (roleKey && fs.existsSync(specialistPath) && fs.statSync(specialistPath).size < 32000) {
       const briefs = JSON.parse(fs.readFileSync(specialistPath, 'utf8')) as Record<string, unknown>;
-      if (typeof briefs[employee.assignmentKey] === 'string') specialistBrief = String(briefs[employee.assignmentKey]).slice(0, 8000);
+      const specialistKey = employee.assignmentKey || roleKey;
+      if (typeof briefs[specialistKey] === 'string') specialistBrief = String(briefs[specialistKey]).slice(0, 8000);
     }
     const system = [
       `You are ${employee.name}, a permanent ${employee.role} in the Atlas company workspace.`,

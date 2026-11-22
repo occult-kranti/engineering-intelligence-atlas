@@ -1,14 +1,134 @@
 # Daftar maintainer handoff
 
-## Active work: VS Code as the main product
+## Active delivery: 0.9 primary VS Code workspace
 
-The owner has prioritized a full VS Code office with desktop capability coverage,
-the shared infinite canvas, a cloud-operations employee, maintained environments,
-scoped model sharing and MCP control. The [host-control checkpoint](project/HOST_CONTROL_VALIDATION.md)
-provides the underlying SSH/tmux jobs, owner HTTP/MCP tools and deployment launcher.
-It is development-branch source, outside the 0.8.0 binaries. Preserve the stopped
-Vast instance and verify its current connection/GPU after an owner-requested resume.
-VS Code parity and live cloud deployment require their own acceptance evidence.
+The VS Code extension package metadata is now **0.9.0**. This section describes
+the current source and packaging work; it is not a release-publication receipt.
+The earlier release sections below retain their historical evidence. Do not apply
+their test counts, package hashes or deployed-site claims to the 0.9 source tree.
+
+**Final installed Linux and Windows package CI is pending. The owner's Vast
+instance remains stopped.** No real GPU diagnostic, model-weight loading,
+design-software installation or ChatGPT MCP registration is established by this
+source delivery. Resume compute only on the owner's request, then verify current
+connection details and the actual GPU/runtime before choosing workloads.
+
+The [primary VS Code product guide](project/VSCODE_PRIMARY_PRODUCT.md) describes
+build commands, runtime placement and acceptance. The
+[host-control checkpoint](project/HOST_CONTROL_VALIDATION.md) and
+[SSH/tmux runbook](deploy/SSH_TMUX_AUTOCONTROL.md) document the underlying durable
+jobs and owner policy. These additions are outside the published 0.8.0 binaries.
+
+### Current source behavior
+
+The extension opens the shared compiled desktop office renderer in a full editor
+tab. Companies, departments, employees, Donna, blueprints, the conference table,
+projects and management forms remain elements of the same continuous canvas. The
+activity-bar view is the entry point. The VSIX packages the renderer asset graph,
+portable Node backend and matching native binary for its target platform; it does
+not require the Electron desktop application to provide the backend.
+
+| Runtime entry | Ownership and lifecycle |
+| --- | --- |
+| Start Workspace on This Host | Starts an editor-owned backend on the current extension host; shutdown follows editor disposal |
+| Start Persistent Workspace in tmux | Linux path; starts a separately supervised daemon that remains after editor detachment |
+| Connect Private Runtime | Connects an existing owner-authenticated service; editor closure does not own its lifecycle |
+| Connect Vast.ai / SSH Compute | Lists existing instances and uses strict-host-key SSH forwarding to an already-running private runtime; a stopped instance remains stopped |
+| Connect Desktop / Website | Retains existing pairing workflows; website commands remain queued until their native outcome is confirmed |
+
+In a VS Code Remote-SSH window, workspace extension execution places the backend
+on that remote host. A separate terminal login does not attach this chat or move
+ChatGPT onto a GPU. The extension's `atlas.hostControlEnabled` setting exposes
+Linux host capabilities; initial host policy remains **off**. It does not enable
+automatic approval in ChatGPT, VS Code, the OS or the hosting provider.
+
+The Cloud Compute Operator role can be hired or reused as a native employee.
+Donna's compute controls capture requirements and assign actual company/employee
+IDs, budgets and ownership. Role descriptions and source-index/observer services
+do not confer permissions or constitute extra model hires. Native eligibility and
+any applicable shared-service contract remain mandatory.
+
+### Managed compute, environments and model sharing
+
+Host control uses explicit revision-checked off/manual/auto policy and grants.
+The owner credential authorizes a trusted OS account; company/employee selectors
+record attribution and managed policy. They are **not independent tenant
+authentication or hostile-user isolation**. An auto host grant permits arbitrary
+commands with that OS account's privileges. Root inside a rented container is not
+control of the provider's physical host. Jobs retain stable IDs, timeout/output
+bounds and durable receipts. Unknown outcomes are inspected rather than rerun;
+`stopAll` blocks dispatch and requests cancellation of managed jobs without
+killing unrelated processes.
+
+Managed Python jobs prepare private copied virtualenvs and verify interpreter
+identity and prefix before execution. `environment_run.command` is Python source,
+not shell text. Runs use the verified interpreter and scrubbed environment with
+`PIP_REQUIRE_VIRTUALENV`/`PYTHONNOUSERSITE`; there is no automatic global package
+installation or requirements installer. System administration is an explicit
+host operation. A submitted preparation job must not be presented as a ready
+environment until its proof is verified.
+
+Model resources register verified installed Ollama digests and explicit `use`,
+`assign` and `inspect` grants across canonical company/office/department/employee
+scopes. The first explicit configuration enables enforcement for old HTTP/model
+selection, workbench, MCP and managed worker paths. Unscoped Ollama projects are
+blocked at start/resume and before another generation once enforcement is active.
+Budgeted OpenAI/Anthropic project runs remain available. Owner-directed catalog
+downloads may stage weights before registration; staged bytes grant no execution
+authority. Digest drift, revoked eligibility and uncertain policy persistence fail
+closed. Descendant grants capture reviewed membership and do not silently expand
+after new children or reparenting. Native companies/departments have hierarchy;
+office parent grouping remains a validated resource-view sidecar.
+
+Single-expert and bounded ensemble plans enqueue native dependent jobs with
+employee/resource provenance and artifact receipts. They support up to four
+experts and optional synthesis. They are **request routing and ensembles, not
+newly trained MoE models**. Shared bytes reside in the current host's model cache;
+automatic replication between VPSs and new MoE training are not implemented.
+
+The design-toolchain catalog covers Blender, Godot4, Penpot, Krita, GIMP and
+Inkscape. Plans are dry metadata operations. Blender/GIMP/Krita/Inkscape require
+exact signed Debian/Ubuntu package versions and an already-root container
+runtime; Godot uses an exact official release artifact and reviewed SHA-256.
+Installation is a separately requested host job with verified proof. Penpot
+remains blocked pending a reviewed Compose deployment with pinned image digests.
+These application runtimes are separate from maintained project Python
+virtualenvs. They do not install Figma/Photoshop, create a graphical desktop or
+demonstrate GPU rendering. See [the design runbook](deploy/DESIGN_TOOLCHAIN.md).
+
+### Interfaces, credentials and final acceptance
+
+The packaged stdio runtime adapter exports **31 MCP tools**: office/runtime/worker,
+model pool, host control, managed environments, model resources and design
+toolchain. The [MCP guide](tools/DAFTAR_RUNTIME_MCP.md) lists every tool, exact
+managed API shape and receipt flow. Port 8788 serves authenticated REST, not HTTP
+MCP. The editor's MCP command copies configuration containing a protected token
+file path. A supported transport and account-authorized registration are still
+needed to connect that bridge to ChatGPT.
+
+The webview has a bounded method allowlist and no direct network capability.
+Provider/cloud credentials use native prompts, remain outside canvas storage,
+and are bound to the selected connection. Connection epochs reject stale results.
+Runtime-client deadlines settle stalled fetch/read adapters, late bodies are
+cancelled, and uncertain POSTs retain their original identity without an automatic
+retry. Exact control credentials are removed from returned text; identity
+collisions are rejected rather than silently rewriting IDs. Persist only bounded
+view geometry/theme state, never form credentials, grants or command drafts.
+
+| Remaining acceptance | Status for this source delivery |
+| --- | --- |
+| Installed Linux VSIX, packaged backend and persistent tmux workflow | Final CI pending |
+| Installed Windows VSIX and packaged native/backend lifecycle | Final CI pending |
+| Actual Vast GPU/driver/model workload and long-run memory behavior | Not performed; keep the instance stopped |
+| Actual application installation, desktop/display and GPU rendering | Not performed |
+| ChatGPT account MCP registration and end-to-end tool call | Not established |
+
+The new local tests cover native/HTTP/stdio managed paths, resource revocation and
+digest checks, duplicate/uncertain receipts, policy-write faults, legacy route
+gates, stalled client I/O and repeated lifecycle cleanup. They do not prove
+universal absence of memory leaks or replace the installed Linux/Windows gates.
+Record the exact tested commit, final CI jobs and resulting package digests before
+claiming release acceptance; retain historical receipts unchanged.
 
 ## Product contract
 

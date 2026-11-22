@@ -204,6 +204,14 @@ describe('personal dashboard request boundaries', () => {
     expect((await send(f.origin, '/studio-tokens.css')).status).toBe(200);
     expect((await send(f.origin, '/office-signals.js')).headers['content-type']).toMatch(/javascript/);
     expect((await send(f.origin, '/chrome.js')).status).toBe(200);
+    // These are transitive imports of the shared office renderer. A missing
+    // allowlist entry previously left the real page unable to load its canvas.
+    for (const module of ['canvas-workspace', 'donna-team', 'universe', 'workspace']) {
+      fs.writeFileSync(path.join(renderer, 'freeflow', `${module}.js`), 'export const loaded = true;');
+      const response = await send(f.origin, `/freeflow/${module}.js`);
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toMatch(/javascript/);
+    }
     for (const missing of ['/freeflow/manage.js', '/freeflow/intake.js', '/freeflow/camera.js']) {
       const reply = await send(f.origin, missing);
       expect(reply.status).toBe(404);

@@ -492,6 +492,7 @@ interface CloudConnectionResult { ok: boolean; status: CloudConnectionStatus; er
 interface DesktopBridge extends ModelPoolBridge {
   version: number;
   transport?: 'personal-browser' | 'public-preview' | 'cloud-browser';
+  rendererHost?: 'vscode';
   openPersonalDashboard?(): Promise<{ok:boolean;url?:string;error?:string}>;
   importCredentialFile?(provider:CredentialProvider): Promise<{ok:boolean;error?:string;cancelled?:boolean;status?:VaultStatus}>;
   getSystemInfo(): Promise<SystemInfo>;
@@ -910,7 +911,9 @@ function initVenvForm(): void {
     }
     setStatus(status, 'Creating venv…');
     const res = await bridge.createVenv({ name, confirmed, installHuggingFaceHub });
-    if (res.ok) setStatus(status, `Venv ready at ${res.path}`, 'ok');
+    if (res.ok && res.jobId) setStatus(status, `Environment preparation queued as ${res.jobId}. Inspect its status before running Python; it is not ready yet.`, 'ok');
+    else if (res.ok && res.path) setStatus(status, `Venv ready at ${res.path}`, 'ok');
+    else if (res.ok) setStatus(status, 'Environment preparation accepted. Inspect its status before running Python.', 'ok');
     else setStatus(status, res.error ?? 'Failed to create venv.', 'error');
     void refreshJobs();
   });
@@ -3664,7 +3667,7 @@ function initEndlessWorkspace(): void {
   add('source-review','Source review',source,'Donna',760,600);
   const portals=new Map<string,HTMLIFrameElement>();
   const portalScopeLabels=new Map<string,HTMLElement>();
-  if(bridge?.transport==='cloud-browser') {
+  if(bridge?.transport==='cloud-browser'&&bridge.rendererHost!=='vscode') {
     const outerParams=new URLSearchParams(location.search);
     for(const [id,title,path] of [['connections','Website & device connections','/'],['access','People & access','/access'],['applications','Applications & integrations','/applications'],['visit','Visiting employees','/visit'],['join','Invitation review','/join']]) {
       const wrapper=textElement('section','','canvas-web-surface');

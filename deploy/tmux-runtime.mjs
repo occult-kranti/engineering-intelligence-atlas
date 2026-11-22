@@ -98,7 +98,10 @@ export function sessionIdentity(data) {
 }
 
 function cleanEnvironment() {
-  const result = {};
+  // The launcher can be the VS Code Electron executable in Node mode. Preserve
+  // that fixed mode across the dedicated tmux server and daemon child; never
+  // inherit NODE_OPTIONS, arbitrary Electron options, or provider credentials.
+  const result = { ELECTRON_RUN_AS_NODE: '1' };
   for (const key of ['PATH', 'HOME', 'USER', 'LOGNAME', 'LANG', 'LC_ALL', 'TMPDIR', 'TERM']) {
     if (process.env[key] !== undefined) result[key] = process.env[key];
   }
