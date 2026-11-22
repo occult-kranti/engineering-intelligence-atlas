@@ -156,7 +156,10 @@ try{
   const moved=await canvasPanelState(page,'donna');assert.equal(moved.rect.x,prior.rect.x+20,'Movable chat surface uses the shared canvas geometry');
   receipt.checks.push('Real camera zoom/pan and keyboard movement of the live Donna surface');
   stage='native-company-popup';
-  await openCanvasSurface(page,'office-overview');
+  const overview=await openCanvasSurface(page,'office-overview');
+  const creation=overview.locator('details').filter({has:page.locator('#office-create-company')});
+  assert.equal(await creation.count(),1,'The company form belongs to one disclosure in its canvas surface');
+  if(await creation.getAttribute('open')===null)await creation.locator(':scope > summary').click();
   await page.locator('#office-new-company-name').fill('Canvas Created Through UI');
   await page.locator('#office-create-company button[type="submit"]').click();
   await within(uiCompanyCommitted.promise,15000,'The canvas company form did not commit a native result.');await settleCanvas(page);
