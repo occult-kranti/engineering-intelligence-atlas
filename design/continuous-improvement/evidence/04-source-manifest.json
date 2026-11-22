@@ -1,0 +1,47 @@
+[
+  {
+    "file": "native-core/src/improvements.rs",
+    "sha256": "482488931e97d0a3d089ef80be3ac77ee4ba5ffee435ce2a905aa1817536ec69",
+    "bytes": 65191
+  },
+  {
+    "file": "native-core/src/office.rs",
+    "sha256": "4d279c433f00be15261f5aff12333dabf1cccd69b437427af6f8624e53d5548d",
+    "bytes": 139268
+  },
+  {
+    "file": "native-core/src/lib.rs",
+    "sha256": "3c064d1a5456b76b2156a5bd2f528fe5361b9ef602e78d7c5f7232669ae655f8",
+    "bytes": 40285
+  },
+  {
+    "file": "native-core/src/authority.rs",
+    "sha256": "f67485286a4b69f23398382acc038f6739cb470b81a80b4ad320b02d60fd3fd0",
+    "bytes": 84339
+  },
+  {
+    "file": "native-core/src/governance.rs",
+    "sha256": "c4a371dd93ef1cff726691676cf4b199effb169fcf4b9b708ed5464018e68798",
+    "bytes": 111681
+  },
+  {
+    "file": "native-core/src/remote_commands.rs",
+    "sha256": "946525e5341b86a73c24b718ed9e10d42deaa65a5dc83bc34e7f2cbd6ba244f8",
+    "bytes": 30918
+  },
+  {
+    "file": "desktop-shell/src/main/officeWorker.ts",
+    "sha256": "7c579e2c4bd555b84eef419eb4698772d26adb8fd95ed43f233db660f129f6b6",
+    "bytes": 50569
+  },
+  {
+    "file": "desktop-shell/src/main/improvementWorker.ts",
+    "sha256": "26fbec217c6a9f1f94c0a81f37b6e490b840f53ee41da799fc1d074356affba4",
+    "bytes": 12061
+  },
+  {
+    "file": "desktop-shell/src/main/pairedReview.ts",
+    "sha256": "8e70fc33ecbf8b7acbc8d59ffaa2420eedc2bc3bf8317fd29b5b1e966117d9c5",
+    "bytes": 2635
+  }
+]

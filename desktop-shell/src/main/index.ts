@@ -6,12 +6,14 @@ import { JobManager } from './jobs';
 import { SettingsStore } from './settings';
 import { registerIpc } from './ipc';
 import { CredentialVault } from './vault';
-import { generateWithProvider } from './providers';
+import { generateWithProvider, listProviderModels } from './providers';
 import { generateWithOllama } from './ollama';
 import { ProjectRunner, ProjectStore, rejectLegacyProjectGeneration, type GenerateFn } from './projects';
 import { CompanyService, findNativeCore } from './company';
 import { OfficeService } from './office';
-import { OfficeWorkerPool } from './officeWorker';
+import { OfficeWorkerPool, type OfficeWorkerOptions } from './officeWorker';
+import { ImprovementWorker, createImprovementRouteDiscovery, fingerprintCredential, combineWorkerExecution } from './improvementWorker';
+import type { OfficeJob } from '../shared/office';
 import { ModelPoolService } from './modelPool';
 import { PersonalDashboardServer } from './personalDashboard';
 import { CloudSyncService } from './cloudSync';
@@ -177,12 +179,14 @@ async function main(): Promise<void> {
     localOnlyConfirmed: process.env.DAFTAR_OLLAMA_LOCAL_ONLY === '1',
   });
   officeService.startObserving();
+  let improvementWorker: ImprovementWorker | undefined;
   const cloudSync = new CloudSyncService({
     userDataPath, safeStorage,
     snapshot: () => officeService.officeSnapshot(),
-    command: request => officeService.officeCommand(request),
+    command: async request => {const result=await officeService.officeCommand(request);if(result.ok)improvementWorker?.wake(request.command as never ?? request);return result;},
+    getWorkerExecution: () => combineWorkerExecution(officeWorker.status(),improvementWorker?.workerStatus()??null).execution,
   });
-  const officeWorker = new OfficeWorkerPool({
+  const officeWorkerOptions: OfficeWorkerOptions = {
     prepareContext: (job) => officeService.prepareWorkerContext(job),
     executeTool: async (job, text) => {
       if (!job.allowedTools.includes('github.publish_changes')) throw new Error('Publishing is not an allowed capability for this job.');
@@ -202,8 +206,24 @@ async function main(): Promise<void> {
     generate: (request, job) => request.provider === 'ollama' ? modelPool.generateForJob(job, request) : generate(request),
     artifactRoot: path.join(userDataPath, 'office-artifacts'),
     seedDir: app.isPackaged ? path.join(process.resourcesPath, 'company') : path.join(checkoutRoot, 'company'),
+  };
+  const officeWorker = new OfficeWorkerPool(officeWorkerOptions);
+  const improvementDiscovery=createImprovementRouteDiscovery({
+    credentialFingerprint:provider=>{const key=vault.getKey(provider);return key?fingerprintCredential(key):null;},
+    discover:async(provider,signal)=>{const key=vault.getKey(provider);if(!key)return [];return listProviderModels(provider,key,(url,init)=>fetch(url,{...init,signal}));},
+    localEligible:async(session,route)=>{
+      try {
+        for(const [employeeId,serviceContractId] of [[session.primaryEmployeeId,session.serviceContractId],[session.reviewerEmployeeId,session.reviewerServiceContractId]]) {
+          await modelPool.validateJob({provider:'ollama',model:route.model,companyId:session.companyId,officeId:session.officeId,departmentId:session.departmentId,employeeId,serviceContractId} as OfficeJob);
+        }
+        return true;
+      } catch {return false;}
+    },
   });
-  app.once('before-quit', () => { officeService.stopObserving(); officeWorker.stop(); void modelPool.close(); });
+  improvementWorker=new ImprovementWorker({snapshot:()=>officeService.officeSnapshot(),command:request=>officeService.workerCommand(request),
+    workerOptions:officeWorkerOptions,priceCatalogPath:path.join(officeWorkerOptions.seedDir,'provider-price-catalog.json'),eligibleRoutes:improvementDiscovery.eligibleRoutes});
+  improvementWorker.start();
+  app.once('before-quit', () => { officeService.stopObserving(); officeWorker.stop(); improvementWorker?.close(); improvementDiscovery.close(); cloudSync.close(); void modelPool.close(); });
 
   let browserHandlers = new Map<string, (...args: unknown[]) => unknown>();
   const personalDashboard = new PersonalDashboardServer({
@@ -214,7 +234,7 @@ async function main(): Promise<void> {
       return handler(...args);
     },
   });
-  browserHandlers = registerIpc({ windowManager, jobManager, settings, vault, projectStore, projectRunner, companyService, officeService, officeWorker, modelPool, cloudSync, catalogPath, userDataPath,
+  browserHandlers = registerIpc({ windowManager, jobManager, settings, vault, projectStore, projectRunner, companyService, officeService, officeWorker, improvementWorker, modelPool, cloudSync, catalogPath, userDataPath,
     copyEditorPairing: async () => {
       try { clipboard.writeText(await personalDashboard.launchUrl()); return { ok: true, expiresAt: new Date(Date.now() + 5 * 60000).toISOString() }; }
       catch { return { ok: false, error: 'The editor pairing link could not be copied.' }; }

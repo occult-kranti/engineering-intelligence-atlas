@@ -3,7 +3,7 @@
 //
 // DOM CLASS CONTRACT (for the next CSS packet):
 //   .ff-scene                 host root (role=application, tabindex=-1)
-//   .ff-table                 tactile conference table / drafting mat (behind world)
+//   .ff-table                 continuous blueprint grid (no physical table object)
 //   .ff-grid                  coordinate grid inside table
 //   .ff-world                 CSS3D world layer (transform-origin 0 0, inline transform = cameraTransform)
 //   .ff-threads               svg behind cards; .ff-thread[data-kind] + .ff-thread--contract|staff|ownership
@@ -17,8 +17,14 @@
 //   .ff-empty                 empty/loading/missing state (data-state=empty|loading|missing)
 // Theme variables: --canvas --surface --ink --muted --accent --brand-gold --connection --line --grid-minor --grid-major --heat-*
 import { DEFAULT_CAMERA, cameraTransform, normalizeCamera, visibleRect, } from './camera.457a3ca4fd1e3c65.js';
+import { mountRelief3D } from './relief3d.3fb6993474cdba6a.js';
+import { STICKY_COLORS } from '../improvement/notes.d28913ba9f0342d1.js';
 export const RICH_NODE_BUDGET = 240;
 export const THREAD_BUDGET = 160;
+const GRID_MAX_EXTENT = 150000;
+// Common multiple of the shipped 16/80, 24/120 and 32/160px grid periods.
+// Moving the finite patch must not move its lines relative to native geometry.
+const GRID_PHASE = 480;
 const SVGNS = 'http://www.w3.org/2000/svg';
 function el(tag, cls, text) {
     const e = document.createElement(tag);
@@ -43,8 +49,12 @@ function countsText(n) {
 export function describeNode(n) {
     const md = n.metadata || {};
     let prefix = n.kind;
+    if (md.stickyNote === true)
+        return `${md.stickyKind === 'todo' ? 'To-do' : 'Comment'}, ${n.label}, status ${n.status}, ${md.annotationReadOnly === true ? 'read-only shared annotation' : 'saved annotation. Open to inspect or edit'}.`;
     if (n.kind === 'reference') {
-        if (md['organizational'] === true || md['portal'] === true)
+        if (md['tableBlueprint'] === true)
+            prefix = 'Saved blueprint preview';
+        else if (md['organizational'] === true || md['portal'] === true)
             prefix = md['role'] === 'parent' ? 'Parent company link' : md['role'] === 'child' ? 'Subcompany link' : 'Company link';
         else if (md['globalAssistant'] === true)
             prefix = 'Global assistant reference';
@@ -66,6 +76,8 @@ export function describeNode(n) {
         bits.push(`status ${n.status}`);
     if (typeof md['heatLabel'] === 'string')
         bits.push(md['heatLabel']);
+    if (typeof md.activityLabel === 'string')
+        bits.push(md.activityLabel);
     const c = countsText(n);
     if (c)
         bits.push(c);
@@ -87,6 +99,38 @@ function detailSvg(n, lod) {
     else if (n.kind === 'room' || n.kind === 'whiteboard') {
         s.appendChild(svg('path', { class: 'ff-door', d: `M ${w * 0.1} ${h} A ${Math.min(24, w * 0.2)} ${Math.min(24, w * 0.2)} 0 0 1 ${w * 0.1 + Math.min(24, w * 0.2)} ${h - Math.min(24, w * 0.2)}`, fill: 'none' }));
     }
+    return s;
+}
+/** Each outline comes from a saved room; each office is fitted separately without invented rooms. */
+function tablePlanSvg(n) {
+    const offices = (n.blueprintPreview?.offices ?? []).slice(0, 2);
+    if (!offices.some(office => office.rooms.length > 0))
+        return null;
+    const s = svg('svg', { class: 'ff-table-plan-svg', viewBox: '0 0 220 84', 'aria-hidden': 'true', focusable: 'false' });
+    let remaining = 32;
+    const cellWidth = 220 / offices.length;
+    offices.forEach((office, index) => {
+        const rooms = office.rooms.slice(0, remaining).filter(room => Object.values(room.rect).every(Number.isFinite) && room.rect.width > 0 && room.rect.height > 0);
+        remaining -= rooms.length;
+        const label = svg('text', { class: 'ff-table-plan-office-label', x: String(index * cellWidth + 4), y: '10' });
+        label.textContent = office.label;
+        s.append(label);
+        if (!rooms.length)
+            return;
+        const x0 = Math.min(...rooms.map(room => room.rect.x)), y0 = Math.min(...rooms.map(room => room.rect.y));
+        const width = Math.max(...rooms.map(room => room.rect.x + room.rect.width)) - x0;
+        const height = Math.max(...rooms.map(room => room.rect.y + room.rect.height)) - y0;
+        const scale = Math.min((cellWidth - 12) / Math.max(1, width), 64 / Math.max(1, height));
+        const ox = index * cellWidth + (cellWidth - width * scale) / 2, oy = 16 + (64 - height * scale) / 2;
+        for (const room of rooms) {
+            const rect = svg('rect', { class: 'ff-table-plan-room', x: String(ox + (room.rect.x - x0) * scale), y: String(oy + (room.rect.y - y0) * scale), width: String(room.rect.width * scale), height: String(room.rect.height * scale), fill: 'none' });
+            rect.dataset.roomId = room.id;
+            const title = svg('title');
+            title.textContent = room.label;
+            rect.append(title);
+            s.append(rect);
+        }
+    });
     return s;
 }
 /** Bounded inline SVG chair, decorative only; rotated by seat side, never the label. */
@@ -149,8 +193,42 @@ function fillNode(e, n, lod, selected, tabStop) {
     e.style.cssText = `position:absolute;left:0;top:0;width:${Math.max(1, fin(n.rect.width))}px;height:${Math.max(1, fin(n.rect.height))}px;transform:translate(${fin(n.rect.x)}px,${fin(n.rect.y)}px)`;
     e.dataset.lod = lod;
     e.dataset.status = n.status;
+    e.classList.toggle('ff-node--table-plan', n.metadata['tableBlueprint'] === true);
+    e.classList.toggle('ff-node--company-plan', n.metadata['companyFootprint'] === true);
+    e.classList.toggle('ff-node--company-marker', n.metadata['companyMarker'] === true);
+    e.classList.toggle('ff-node--sticky', n.metadata.stickyNote === true);
+    e.dataset.activity = String(n.metadata.activityState ?? 'unknown');
+    const rawExecuting = n.metadata.executing;
+    const executing = e.dataset.activity === 'running' && typeof rawExecuting === 'number' && Number.isInteger(rawExecuting) && rawExecuting > 0 && rawExecuting <= 60000 ? rawExecuting : 0;
+    e.dataset.executing = String(executing);
+    e.style.setProperty('--activity-light', String(executing ? Math.min(.30, .12 + .035 * Math.log2(1 + executing)) : 0));
+    if (n.metadata.stickyNote === true) {
+        const color = String(n.metadata.stickyColor);
+        e.style.setProperty('--sticky-color', STICKY_COLORS[color] ?? STICKY_COLORS.yellow);
+    }
+    e.dataset.companyFootprint = String(n.metadata['companyFootprint'] === true);
+    e.dataset.companyLevel = String(n.metadata['companyLevel'] === true);
+    if (n.metadata['companyFootprint'] === true || n.kind === 'office' || n.kind === 'room')
+        e.dataset.geometry = 'container';
+    else
+        delete e.dataset.geometry;
+    // Department color conveys a saved assignment, never inferred authority.
+    let hue = 2166136261;
+    for (const char of n.departmentId ?? '') {
+        hue ^= char.charCodeAt(0);
+        hue = Math.imul(hue, 16777619);
+    }
+    const swatches = ['#32639a', '#267b73', '#ac5141', '#7953a1', '#89641f', '#4b763c'];
+    e.style.setProperty('--person-color', n.departmentId ? swatches[(hue >>> 0) % swatches.length] : '#526579');
+    e.style.setProperty('--person-ink', '#fff');
+    e.style.setProperty('--person-diameter', `${Math.max(10, Math.min(32, n.rect.height - 18))}px`);
+    e.style.setProperty('--person-label-size', `${Math.max(11, Math.min(12, n.rect.height * .22))}px`);
+    // Tiny saved desk rectangles keep a legible circle, revealing the exact name
+    // on focus/hover instead of laying overlapping microtext across nearby desks.
+    e.dataset.personLabel = n.rect.width < 100 || n.rect.height < 44 ? 'detail' : 'visible';
     e.classList.toggle('is-selected', selected);
     e.setAttribute('aria-label', describeNode(n));
+    e.title = describeNode(n);
     e.setAttribute('aria-pressed', String(selected));
     if (n.kind === 'restricted')
         e.setAttribute('aria-disabled', 'true');
@@ -160,10 +238,54 @@ function fillNode(e, n, lod, selected, tabStop) {
     const paper = e.firstElementChild;
     const hk = heatOf(n);
     const assign = typeof n.metadata['assignment'] === 'string' ? n.metadata['assignment'] : (n.departmentId ? 'Department unavailable' : 'Unassigned department');
-    const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}`;
+    e.dataset.assignmentDuplicate = String(assign.trim().toLocaleLowerCase() === n.label.trim().toLocaleLowerCase());
+    const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}|${n.metadata['blueprintDetail'] ?? ''}|${n.metadata['companyFootprint'] ?? ''}|${n.metadata.stickyColor ?? ''}|${n.metadata.stickyRevision ?? ''}|${n.blueprintPreview ? JSON.stringify(n.blueprintPreview) : ''}`;
     if (e.dataset.sig === key)
         return;
     e.dataset.sig = key;
+    if (n.metadata.stickyNote === true) {
+        paper.replaceChildren(el('span', 'ff-sticky-kind', `${n.metadata.stickyKind === 'todo' ? 'To-do' : 'Comment'}${n.status === 'done' ? ' · Done' : ''}`), el('span', 'ff-sticky-text', n.label), el('span', n.metadata.annotationReadOnly === true ? 'ff-sticky-open' : 'ff-node-open ff-sticky-open', n.metadata.annotationReadOnly === true ? 'Read only' : 'Edit note ↵'));
+        return;
+    }
+    if (n.metadata['companyMarker'] === true) {
+        const initials = n.label.trim().split(/\s+/).slice(0, 2).map(word => Array.from(word)[0] ?? '').join('').toUpperCase();
+        paper.replaceChildren(el('div', 'ff-node-title', initials || 'CO'));
+        return;
+    }
+    if (n.metadata['companyFootprint'] === true) {
+        e.setAttribute('role', 'group');
+        const header = el('div', 'ff-company-plan-header');
+        header.append(el('div', 'ff-table-plan-title', n.label), el('div', 'ff-table-plan-caption', n.subtitle));
+        const boards = el('div', 'ff-company-plan-boards');
+        boards.setAttribute('aria-label', `Tools for ${n.label}`);
+        for (const [action, label] of [['chat', 'Donna'], ['roadmap', 'Roadmap'], ['whiteboard', 'Whiteboard'], ['ownership', 'Ownership'], ['notes', 'Notes'], ['hire', 'Hire employee']]) {
+            const button = el('button', 'ff-company-board-action', label);
+            button.type = 'button';
+            button.dataset.canvasAction = action;
+            button.setAttribute('aria-label', `${label} · ${n.label}`);
+            boards.append(button);
+        }
+        paper.replaceChildren(header, boards);
+        if (n.metadata['blueprintDetail'] === 'proxy') {
+            const preview = tablePlanSvg(n);
+            if (preview) {
+                preview.classList.add('ff-company-proxy-plan');
+                paper.append(preview);
+            }
+            paper.append(el('span', 'ff-company-proxy-hint', 'Zoom or open this company to explore its rooms'));
+        }
+        return;
+    }
+    if (n.metadata['tableBlueprint'] === true) {
+        paper.replaceChildren(el('div', 'ff-table-plan-title', n.label));
+        const plan = tablePlanSvg(n);
+        if (plan)
+            paper.append(plan);
+        else
+            paper.append(el('div', 'ff-table-plan-empty', n.blueprintPreview?.officeCount ? 'No saved room geometry' : 'No saved blueprint'));
+        paper.append(el('div', 'ff-table-plan-caption', n.subtitle), el('span', 'ff-table-plan-open ff-node-open', 'Open layout ↵'));
+        return;
+    }
     paper.replaceChildren(detailSvg(n, lod));
     if (n.kind === 'folio' && n.metadata['seat'] === true) {
         const chair = el('div', 'ff-chair');
@@ -177,6 +299,16 @@ function fillNode(e, n, lod, selected, tabStop) {
         tag.setAttribute('aria-label', `Department: ${assign}`);
         paper.appendChild(tag);
     }
+    if (n.kind === 'room' || n.kind === 'department') {
+        const light = el('span', 'ff-activity-floor');
+        light.setAttribute('aria-hidden', 'true');
+        paper.appendChild(light);
+        if (executing && n.rect.width >= 90 && n.rect.height >= 72) {
+            const count = el('span', 'ff-activity-count', `${executing} live ${executing === 1 ? 'call' : 'calls'}`);
+            count.setAttribute('aria-hidden', 'true');
+            paper.appendChild(count);
+        }
+    }
     const title = el('div', 'ff-node-title', n.label);
     paper.appendChild(title);
     if (n.kind === 'restricted') {
@@ -184,13 +316,13 @@ function fillNode(e, n, lod, selected, tabStop) {
         paper.appendChild(el('div', 'ff-node-sub', n.subtitle));
         return;
     }
+    if (n.kind === 'employee' || n.kind === 'reference') {
+        const mono = n.metadata['monogram'];
+        paper.insertBefore(el('div', 'ff-node-monogram', typeof mono === 'string' ? mono : '?'), title);
+    }
     if (lod === 'rich' || n.kind === 'folio') {
         if (n.subtitle)
             paper.appendChild(el('div', 'ff-node-sub', n.subtitle));
-        if (n.kind === 'employee' || n.kind === 'reference') {
-            const mono = n.metadata['monogram'];
-            paper.insertBefore(el('div', 'ff-node-monogram', typeof mono === 'string' ? mono : '?'), title);
-        }
         const state = n.kind === 'folio' && n.status === 'active' ? `Company ${Number(n.metadata['seatIndex'] ?? 0) + 1}` : n.status;
         paper.appendChild(el('div', 'ff-node-status', state));
         const c = countsText(n);
@@ -256,14 +388,52 @@ export function mountScene(host, callbacks = {}) {
     let focusedId = null;
     let tabId = null; // roving tab stop
     let destroyed = false;
+    let relief = null;
+    let gpuSurfaces = new Set();
     let silent = 0; // suppress callbacks during internal clears
     const live = new Map();
     const threadEls = new Map();
     const nodesById = new Map();
     let labelEl = null;
     const st = { total: 0, visible: 0, rich: 0, simple: 0, threads: 0, threadsVisible: 0, domCreated: 0, domRemoved: 0, updates: 0, cameraUpdates: 0, capped: false, message: '' };
+    let themeObserver = null;
+    if (callbacks.graphics) {
+        world.style.zIndex = '1';
+        relief = mountRelief3D(root, value => {
+            root.dataset.graphics = value.state;
+            root.dataset.graphicsReason = value.reason;
+            for (const key of ['frames', 'geometries', 'materials', 'instances', 'drawCalls', 'triangles', 'contextLosses']) {
+                root.dataset[`graphics${key[0].toUpperCase()}${key.slice(1)}`] = String(value[key]);
+            }
+            root.dataset.graphicsPending = String(value.pending);
+            gpuSurfaces = new Set(value.state === 'webgl' ? value.surfaceIds : []);
+            for (const [id, node] of live)
+                node.dataset.gpuSurface = String(gpuSurfaces.has(id));
+        });
+        const syncTheme = () => relief?.setTheme(document.documentElement.dataset.theme === 'drafting' ? 'drafting' : 'blueprint');
+        syncTheme();
+        if (typeof MutationObserver !== 'undefined') {
+            themeObserver = new MutationObserver(syncTheme);
+            themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+        }
+    }
     function paintCamera() {
         world.style.transform = cameraTransform(camera, viewport);
+        relief?.setCamera(camera, viewport);
+        // The blueprint grid is in the same world plane as rooms, including tilt.
+        const grid = table.firstElementChild;
+        if (grid && callbacks.graphics) {
+            const vr = visibleRect(camera, viewport, 400);
+            const width = Math.min(GRID_MAX_EXTENT, vr.width + GRID_PHASE);
+            const height = Math.min(GRID_MAX_EXTENT, vr.height + GRID_PHASE);
+            // A capped patch stays around the camera instead of the far corner of an
+            // unbounded horizon extent. Uncapped spans still cover the complete view;
+            // one phase of padding absorbs the origin's downward snap.
+            const snap = (value) => Math.floor(value / GRID_PHASE) * GRID_PHASE;
+            const x = snap(vr.width + GRID_PHASE > GRID_MAX_EXTENT ? camera.x - width / 2 : vr.x);
+            const y = snap(vr.height + GRID_PHASE > GRID_MAX_EXTENT ? camera.y - height / 2 : vr.y);
+            grid.style.cssText = `position:absolute;left:0;top:0;transform-origin:0 0;width:${width}px;height:${height}px;transform:${cameraTransform(camera, viewport)} translate(${x}px,${y}px)`;
+        }
     }
     function threadPath(t) {
         const a = nodesById.get(t.fromId), b = nodesById.get(t.toId);
@@ -304,6 +474,7 @@ export function mountScene(host, callbacks = {}) {
         root.dataset.scope = scene ? (scene.focus.kind === 'portfolio' ? 'portfolio' : 'company') : 'portfolio';
         paintWorldTable();
         if (!scene) {
+            relief?.update(null);
             for (const [, e] of live) {
                 e.remove();
                 st.domRemoved++;
@@ -331,9 +502,26 @@ export function mountScene(host, callbacks = {}) {
             tab = (interactive.find(eligible) ?? null)?.id ?? null;
         tabId = tab;
         const cands = scene.nodes.filter((n) => n.id === selectedId || n.id === focusedId || n.id === tabId || intersects(n.rect, vis));
-        // Container-first ordering then smaller (more specific) nodes win the rich budget.
-        const rank = (n) => (n.id === selectedId || n.id === focusedId || n.id === tabId ? 0 : 1);
-        const sorted = [...cands].sort((a, b) => rank(a) - rank(b) || a.rect.width * a.rect.height - b.rect.width * b.rect.height);
+        // Keep the parent footprint and its company marker reachable before detail.
+        // Dense teams still have an independent searchable native record list.
+        const rank = (n) => n.id === selectedId || n.id === focusedId || n.id === tabId ? 0
+            : n.metadata['companyFootprint'] === true || n.metadata['companyMarker'] === true ? 1
+                : n.kind === 'office' || n.kind === 'room' ? 2 : 3;
+        const distance = (r) => {
+            const dx = Math.max(r.x - camera.x, 0, camera.x - r.x - r.width);
+            const dy = Math.max(r.y - camera.y, 0, camera.y - r.y - r.height);
+            return dx * dx + dy * dy;
+        };
+        const companyDistance = new Map();
+        for (const n of cands)
+            if (n.companyId && n.metadata['companyFootprint'] === true)
+                companyDistance.set(n.companyId, distance(n.rect));
+        const proximity = (n) => companyDistance.get(n.companyId ?? '') ?? distance(n.rect);
+        // Preserve active focus, then spend the budget near the camera. The
+        // conservative horizon extent must not select only the first stored firms.
+        const sorted = [...cands].sort((a, b) => Number(rank(b) === 0) - Number(rank(a) === 0)
+            || proximity(a) - proximity(b) || rank(a) - rank(b) || distance(a.rect) - distance(b.rect)
+            || a.rect.width * a.rect.height - b.rect.width * b.rect.height);
         const chosen = sorted.slice(0, RICH_NODE_BUDGET);
         const chosenIds = new Set(chosen.map((n) => n.id));
         st.capped = cands.length > chosen.length;
@@ -353,6 +541,7 @@ export function mountScene(host, callbacks = {}) {
                 st.domCreated++;
             }
             fillNode(e, n, lod, n.id === selectedId, n.id === tabId);
+            e.dataset.gpuSurface = String(gpuSurfaces.has(n.id));
         }
         for (const [id, e] of live) {
             if (chosenIds.has(id))
@@ -409,6 +598,7 @@ export function mountScene(host, callbacks = {}) {
         st.threadsVisible = tv;
         st.message = `Showing ${chosen.length} of ${scene.nodes.length} nodes${st.capped ? ' (render budget reached; use the list for all records)' : ''}`;
         budget.textContent = st.message;
+        relief?.update(scene);
         paintThreadLabel();
         updateCaption();
         paintCamera();
@@ -490,6 +680,14 @@ export function mountScene(host, callbacks = {}) {
     };
     const onClick = (ev) => {
         const id = nodeAt(ev.target);
+        const action = ev.target.closest('button[data-canvas-action]')?.dataset.canvasAction;
+        if (action && id && ['chat', 'roadmap', 'whiteboard', 'ownership', 'hire', 'notes'].includes(action)) {
+            const node = nodesById.get(id);
+            if (node)
+                callbacks.onCanvasAction?.(action, node);
+            ev.stopPropagation();
+            return;
+        }
         if (ev.target.closest?.('.ff-node-open') && id) {
             const n = nodesById.get(id);
             if (n)
@@ -501,9 +699,12 @@ export function mountScene(host, callbacks = {}) {
             live.get(id)?.focus({ preventScroll: true });
         }
     };
-    const onDbl = (ev) => { const id = nodeAt(ev.target); const n = id ? nodesById.get(id) : null; if (n)
+    const onDbl = (ev) => { if (ev.target.closest?.('button[data-canvas-action]'))
+        return; const id = nodeAt(ev.target); const n = id ? nodesById.get(id) : null; if (n)
         callbacks.onOpen?.(n); };
     const onKey = (ev) => {
+        if (ev.target.closest?.('button[data-canvas-action]'))
+            return;
         const id = nodeAt(ev.target);
         const handle = () => { ev.preventDefault(); ev.stopPropagation(); };
         if (!id) {
@@ -673,11 +874,16 @@ export function mountScene(host, callbacks = {}) {
         },
         getViewport: () => ({ ...viewport }),
         getCamera: () => ({ ...camera }),
+        setActive: (active) => relief?.setActive(active),
         stats: () => ({ ...st }),
         destroy() {
             if (destroyed)
                 return;
             destroyed = true;
+            themeObserver?.disconnect();
+            themeObserver = null;
+            relief?.destroy();
+            relief = null;
             silent = 1;
             root.removeEventListener('click', onClick);
             root.removeEventListener('dblclick', onDbl);

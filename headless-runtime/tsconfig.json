@@ -8,6 +8,7 @@
   "include": [
     "../desktop-shell/src/main/office.ts",
     "../desktop-shell/src/main/officeWorker.ts",
+    "../desktop-shell/src/main/improvementWorker.ts",
     "../desktop-shell/src/main/providers.ts",
     "../desktop-shell/src/main/ollama.ts",
     "../desktop-shell/src/main/modelPool.ts",

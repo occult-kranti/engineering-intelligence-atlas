@@ -2,6 +2,7 @@
 // Structural readonly snapshot types mirror shared/office.ts; no runtime shared imports.
 import { cmp, gridColumns, looksNormalized, packGrid, unionBounds } from './layout.a2beae2ddc99ac8a.js';
 import { projectThread, sortThreads } from './threads.fb21bcd42ffa67d5.js';
+import { projectStickyNotes } from '../improvement/notes.d28913ba9f0342d1.js';
 const FOLIO_W = 360, FOLIO_H = 240, GAP = 60;
 const SHEET_W = 900, SHEET_H = 640;
 const SCALE_W = 860, SCALE_H = 440; // normalized room extents inside an office sheet
@@ -118,6 +119,12 @@ function applyMemberAccess(scene, snapshot) {
     // A fixed, generic boundary communicates limited access without revealing whether
     // hidden companies exist, their names, record identifiers, or their population.
     scene.breadcrumbs = scene.breadcrumbs.filter((c) => c.focus.kind !== 'portfolio');
+    const notes = projectStickyNotes(snapshot.stickyNotes, scene.nodes, true);
+    scene.nodes.push(...notes.nodes);
+    if (notes.omitted)
+        scene.warnings.push(`${notes.omitted} shared notes do not fit this bounded spatial preview.`);
+    if (snapshot.memberNoteTruncation?.truncated)
+        scene.warnings.push(`Shared note coverage: ${snapshot.memberNoteTruncation.returned} of ${snapshot.memberNoteTruncation.matched} authorized notes returned.`);
     if (snapshot.access.restricted) {
         const b = unionBounds(scene.nodes.map((n) => n.rect), 0);
         scene.nodes.push({ id: 'restricted:private-workspace', kind: 'restricted', entityId: '', companyId: '', parentId: null,

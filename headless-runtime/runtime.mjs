@@ -21,13 +21,16 @@ const require = createRequire(import.meta.url);
 const defaultRepoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 function publicWorkerStatus(worker) {
-  const state = worker.status();
+  const state = typeof worker.status === 'function' ? worker.status() : worker;
   return {
     enabled: state.enabled === true,
     running: state.running === true,
     activeJobId: typeof state.activeJobId === 'string' ? state.activeJobId : null,
     activeJobIds: Array.isArray(state.activeJobIds) ? state.activeJobIds : [],
     concurrency: state.concurrency ?? 1,
+    execution: { sampledAt: new Date().toISOString(), activeCalls: Array.isArray(state.execution?.activeCalls)
+      ? state.execution.activeCalls.slice(0, 8).filter(call => typeof call.jobId === 'string' && /^[A-Za-z0-9_.:-]{1,160}$/.test(call.jobId)
+        && ['provider','model'].includes(call.phase) && Number.isFinite(Date.parse(call.startedAt))).map(call => ({ jobId: call.jobId, phase: call.phase, startedAt: call.startedAt })) : [] },
     scheduling: Array.isArray(state.scheduling) ? state.scheduling.slice(0, 4).map(slot => ({
       baseIntervalMs: slot.baseIntervalMs, maxIntervalMs: slot.maxIntervalMs, lastOutcome: slot.lastOutcome,
       idlePolls: slot.idlePolls, errorPolls: slot.errorPolls, pollDelayMs: slot.pollDelayMs, nextPollAt: slot.nextPollAt,
@@ -68,7 +71,7 @@ export class RuntimeController {
     const credentialConfigured = provider => { try { return Boolean(this.workbench?.getSecret(provider)); } catch { return false; } };
     const host = this.hostControl ? (await this.hostOperation('status', {})).host
       : { configured: false, mode: 'off', revision: 0, grants: [], jobs: [], capabilities: {} };
-    return { ok: true, execution: 'headless', worker: publicWorkerStatus(this.worker),
+    return { ok: true, execution: 'headless', worker: publicWorkerStatus(this.workerStatus()), improvement: this.improvement?.status() ?? null,
       observer: this.office.observerStatus?.() ?? null,
       activity: this.activity ? (await this.activity.status()).activity : null,
       cloud: this.cloudSync?.enabled === true ? this.cloudSync.status()
@@ -88,6 +91,8 @@ export class RuntimeController {
       'The workspace cannot be safely projected within the current limits. Inspect it locally.', 503); }
   }
 
+  workerStatus() { return this.combineWorkerExecution ? this.combineWorkerExecution(this.worker.status(), this.improvement?.workerStatus()) : this.worker.status(); }
+
   async snapshot() {
     return { ok: true, ...this.projection(unwrap(await this.office.officeSnapshot())) };
   }
@@ -95,6 +100,7 @@ export class RuntimeController {
   async command(body) {
     const envelope = validateCommandEnvelope(body);
     const snapshot = unwrap(await this.office.officeCommand({ action: 'apply_remote_command', ...envelope }));
+    this.improvement?.wake(envelope.command);
     const receipt = { ok: true, id: envelope.id, replayed: snapshot.lastAction?.replayed === true };
     try { return { ...receipt, ...this.projection(snapshot) }; }
     catch {
@@ -171,10 +177,10 @@ export class RuntimeController {
     if (typeof enabled !== 'boolean') throw new RuntimeError('INVALID_REQUEST', 'enabled must be boolean.');
     const current = this.worker.status();
     if ((enabled && current.enabled) || (!enabled && !current.enabled && !current.running)) {
-      return { ok: true, worker: publicWorkerStatus(this.worker) };
+      return { ok: true, worker: publicWorkerStatus(this.workerStatus()) };
     }
     this.worker.setEnabled(enabled);
-    return { ok: true, worker: publicWorkerStatus(this.worker) };
+    return { ok: true, worker: publicWorkerStatus(this.workerStatus()) };
   }
 
   runOnce() {
@@ -183,12 +189,13 @@ export class RuntimeController {
     }
     this.singleRun = Promise.resolve(this.worker.runOnce()).catch(() => undefined)
       .finally(() => { this.singleRun = null; });
-    return { ok: true, accepted: true, worker: publicWorkerStatus(this.worker) };
+    return { ok: true, accepted: true, worker: publicWorkerStatus(this.workerStatus()) };
   }
 
   async close() {
     this.office.stopObserving?.();
     this.worker.stop();
+    this.improvement?.close(); this.improvementDiscovery?.close();
     await this.workbench?.close();
     await this.cloudSync?.close();
     await this.resources?.close();
@@ -199,7 +206,7 @@ export class RuntimeController {
     // The pool aborts provider calls. A short grace period allows their durable
     // settlement; an unconfirmed attempt is reconciled by native lease recovery.
     const deadline = Date.now() + 10000;
-    while (this.worker.status().running && Date.now() < deadline) {
+    while (this.workerStatus().running && Date.now() < deadline) {
       await new Promise(resolve => setTimeout(resolve, 50));
     }
     await this.activity?.record({ family: 'runtime', operation: 'stop', outcome: 'success' });
@@ -223,6 +230,7 @@ export function createRuntime(options = {}) {
     modules = {
       ...require(path.join(dist, 'office.js')),
       ...require(path.join(dist, 'officeWorker.js')),
+      ...require(path.join(dist, 'improvementWorker.js')),
       ...require(path.join(dist, 'providers.js')),
       ...require(path.join(dist, 'ollama.js')),
       ...require(path.join(dist, 'modelPool.js')),
@@ -232,7 +240,7 @@ export function createRuntime(options = {}) {
     throw new RuntimeError('BUILD_REQUIRED', 'Build the portable runtime modules before starting the service.', 503);
   }
   const secrets = options.secretFiles ?? {};
-  let workbench, activity;
+  let workbench, activity, improvement;
   const metadata = (input, result) => {
     const source = input && typeof input === 'object' ? input : {};
     const output = {};
@@ -280,7 +288,8 @@ export function createRuntime(options = {}) {
     stateDir: dataDir, CloudSyncService: modules.CloudSyncService,
     stateHash: modules.syncStateHash,
     allowKnownSchemaDefaults: options.cloudAllowKnownSchemaDefaults === true, knownParentDefaultsMatch: modules.knownParentDefaultsMatch,
-    snapshot: () => office.officeSnapshot(), command: request => office.officeCommand(request),
+    snapshot: () => office.officeSnapshot(), command: async request => { const result = await office.officeCommand(request); if(result.ok)improvement?.wake(request.command ?? request); return result; },
+    getWorkerExecution: () => runtime.workerStatus().execution,
     ...(options.cloudFetch ? { fetchImpl: options.cloudFetch } : {}) });
   const modelPool = new modules.ModelPoolService({ stateDir: dataDir, snapshot: () => office.officeSnapshot(),
     baseUrl: options.ollamaBaseUrl, localOnlyConfirmed: options.ollamaLocalOnly === true,
@@ -303,7 +312,7 @@ export function createRuntime(options = {}) {
     if (!key) throw new RuntimeError('SECRET_UNAVAILABLE', 'The selected provider secret is not configured.', 503);
     return modules.generateWithProvider(request.provider, key, request);
   });
-  const worker = new modules.OfficeWorkerPool({
+  const workerOptions = {
     snapshot: () => office.officeSnapshot(), command: request => office.workerCommand(request),
     artifactRoot: path.join(dataDir, 'office-artifacts'), seedDir,
     generate: (request, job) => observe('worker', 'generate', { ...metadata(job), jobId: job?.id }, () => generate(request, job)),
@@ -322,7 +331,8 @@ export function createRuntime(options = {}) {
       if (typeof published?.url !== 'string') throw new Error('GitHub publication returned no verified evidence.');
       return { summary: `Published commit ${published.commit}`, evidenceUrl: published.url };
     },
-  }, concurrency);
+  };
+  const worker = new modules.OfficeWorkerPool(workerOptions, concurrency);
   const runtime = new RuntimeController({ office, worker, modelPool, cloudSync, hostControl,
     projectSnapshot: modules.cloudSnapshot, stateHash: modules.syncStateHash,
     capabilities: { providerAdapters: ['openai', 'anthropic', 'ollama-loopback'],
@@ -333,9 +343,27 @@ export function createRuntime(options = {}) {
   runtime.resources = resources;
   runtime.environments = environments;
   runtime.design = design;
+  runtime.combineWorkerExecution = modules.combineWorkerExecution;
   workbench = createWorkbench({ runtime, repoRoot, dataDir, secretFiles: secrets,
     platform: { ...(options.generate ? { generate: options.generate } : {}), ...options.workbenchPlatform } });
   runtime.workbench = workbench;
+  const discovery = modules.createImprovementRouteDiscovery({
+    credentialFingerprint: provider => { const key=getSecret(provider); return key ? modules.fingerprintCredential(key) : null; },
+    discover: (provider, signal) => modules.listProviderModels(provider,getSecret(provider),
+      (url,init) => (options.workbenchPlatform?.fetch ?? fetch)(url,{...init,signal})),
+    localEligible: async (session,route) => {
+      try {
+        if(resources.isEnforced()) await resources.validateImprovementRoute(session,route);
+        else for(const [employeeId,serviceContractId] of [[session.primaryEmployeeId,session.serviceContractId],[session.reviewerEmployeeId,session.reviewerServiceContractId]]) {
+          await modelPool.validateJob({provider:'ollama',model:route.model,companyId:session.companyId,officeId:session.officeId,departmentId:session.departmentId,employeeId,serviceContractId});
+        }
+        return true;
+      } catch { return false; }
+    },
+  });
+  improvement = new modules.ImprovementWorker({snapshot:()=>office.officeSnapshot(),command:request=>office.workerCommand(request),
+    workerOptions,priceCatalogPath:path.join(seedDir,'provider-price-catalog.json'),eligibleRoutes:discovery.eligibleRoutes});
+  runtime.improvement=improvement;runtime.improvementDiscovery=discovery;
   activity = createActivityJournal({ stateDir: dataDir });
   runtime.activity = activity;
   for (const [method, family, reads] of [
@@ -377,6 +405,6 @@ export function createRuntime(options = {}) {
     return spec?.mutates && !recordedByRuntime ? observe('workbench', method,
       { ...metadata(args[0]), requestId: context.id }, invoke) : invoke();
   };
-  office.startObserving(); cloudSync.start();
+  office.startObserving(); cloudSync.start(); improvement.start();
   return runtime;
 }

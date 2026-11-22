@@ -5,35 +5,37 @@
 :root:not([data-theme]),
 :root[data-theme='blueprint'] {
   color-scheme: dark;
-  --canvas: #151126;
-  --surface: #211B35;
-  --surface-soft: #1B162C;
-  --elevated: #2D2544;
-  --sidebar-canvas: #18132A;
-  --ink: #F4F1FB;
-  --muted: #BFB4D0;
-  --line: #453956;
-  --line-strong: #887A9F;
-  --accent: #BEF264;
-  --accent-hover: #D3FF85;
-  --accent-ink: #17220B;
-  --accent-soft: #2F3D22;
-  --focus: #BEF264;
-  --focus-gap: #151126;
-  --brand-gold: #E8BA64;
-  --emphasis-surface: #302247;
-  --emphasis-ink: #F4F1FB;
+  --canvas: #081A2D;
+  --surface: #122A40;
+  --surface-soft: #0D2237;
+  --elevated: #1C354B;
+  --sidebar-canvas: #0D2237;
+  --ink: #F7F1E5;
+  --muted: #BECBD6;
+  --line: #38516A;
+  --line-strong: #8094A6;
+  --accent: #ECD6A7;
+  --accent-hover: #F6E4C1;
+  --accent-ink: #182D42;
+  --accent-soft: #33404B;
+  --focus: #F3D58E;
+  --focus-gap: #081A2D;
+  --brand-gold: #D5B879;
+  --emphasis-surface: #1C354B;
+  --emphasis-ink: #F7F1E5;
   --success: #A5D6A9;
   --success-soft: #263E30;
   --warning: #E8C676;
   --warning-soft: #463722;
   --danger: #FFAA97;
   --danger-soft: #492C32;
-  --info: #C6B6F3;
-  --info-soft: #3A2C58;
-  --grid-minor: #282139;
-  --grid-major: #443852;
-  --connection: #B5A1FF;
+  --info: #BCD4E7;
+  --info-soft: #233E55;
+  --grid-minor: #142C43;
+  --grid-major: #243F56;
+  --connection: #9BBAD0;
+  --table-top: #102942;
+  --table-edge: #8A7657;
   --shadow-soft: 0 10px 28px rgb(0 8 20 / 18%);
   --shadow-panel: 0 16px 40px rgb(0 8 20 / 28%);
   --heat-fill-0: #241F34;
@@ -43,42 +45,44 @@
   --heat-fill-4: #51452A;
   --heat-unknown: #C3BDCE;
   --heat-unknown-fill: #302A3D;
-  --heat-unknown-ink: #F4F1FB;
+  --heat-unknown-ink: #F1EEE4;
   --heat-hatch: #6D637E;
   --font-heading: 'Manrope', 'Segoe UI', system-ui, sans-serif;
 }
 
 :root[data-theme='drafting'] {
   color-scheme: light;
-  --canvas: #F6F2E8;
-  --surface: #FFFDFA;
-  --surface-soft: #F3EEE4;
-  --elevated: #EEE8DC;
-  --sidebar-canvas: #F0EBE0;
-  --ink: #251D36;
-  --muted: #685E75;
-  --line: #CFC8B9;
-  --line-strong: #81718B;
-  --accent: #385D20;
-  --accent-hover: #284716;
+  --canvas: #E7E3D9;
+  --surface: #FFFAF0;
+  --surface-soft: #F2ECDD;
+  --elevated: #E6DECB;
+  --sidebar-canvas: #E6DECB;
+  --ink: #17324E;
+  --muted: #51667C;
+  --line: #C7C2B3;
+  --line-strong: #718295;
+  --accent: #173C60;
+  --accent-hover: #0C2D4D;
   --accent-ink: #FFFFFF;
-  --accent-soft: #E7F0DD;
-  --focus: #385D20;
-  --focus-gap: #FFFDFA;
-  --brand-gold: #77591B;
-  --emphasis-surface: #251D36;
-  --emphasis-ink: #FFFDFA;
+  --accent-soft: #DEE8EE;
+  --focus: #173C60;
+  --focus-gap: #FFFAF0;
+  --brand-gold: #88652B;
+  --emphasis-surface: #17324E;
+  --emphasis-ink: #FFFAF0;
   --success: #33613A;
-  --success-soft: #E7F0DD;
+  --success-soft: #DBE4CD;
   --warning: #795618;
   --warning-soft: #FAEDD2;
   --danger: #9B352A;
   --danger-soft: #FBE8E3;
-  --info: #634292;
-  --info-soft: #EEE7F9;
-  --grid-minor: #E1DDD2;
-  --grid-major: #C8C2B6;
-  --connection: #7052A0;
+  --info: #385974;
+  --info-soft: #DFE9EE;
+  --grid-minor: #DDDCD0;
+  --grid-major: #C9CBBC;
+  --connection: #466B88;
+  --table-top: #E4DCC8;
+  --table-edge: #A38B60;
   --shadow-soft: 0 10px 28px rgb(48 42 26 / 7%);
   --shadow-panel: 0 16px 40px rgb(48 42 26 / 12%);
   --heat-fill-0: #EEEAF3;
@@ -88,13 +92,32 @@
   --heat-fill-4: #F9EFCD;
   --heat-unknown: #685F72;
   --heat-unknown-fill: #ECE9E3;
-  --heat-unknown-ink: #251D36;
+  --heat-unknown-ink: #28362F;
   --heat-hatch: #AEA5B4;
   --font-heading: Georgia, 'Times New Roman', serif;
 }
 
 :root:not([data-theme]),
 :root[data-theme] {
+  /* Blueprint geometry is warm paper in either workspace theme. These colors
+   * are shared with the optional GPU scene; employee color describes a team,
+   * never permissions or a claim that a saved employee is running. */
+  --plan-paper: #F8F3E7;
+  --plan-floor: #EEF3F4;
+  --plan-ink: #17324E;
+  --plan-muted: #51667C;
+  --plan-line: #526B86;
+  --plan-edge: #CBBFAA;
+  --plan-grid-minor: #E6E9E6;
+  --plan-grid-major: #CFD8D9;
+  --person-color: #3169AB;
+  --person-ink: #FFFFFF;
+  --department-blue: #3169AB;
+  --department-teal: #217977;
+  --department-coral: #AF5143;
+  --department-purple: #7557A6;
+  --department-gold: #90691E;
+  --department-green: #397346;
   /* Identical ordered swatches in both modes. Use -fill for large room surfaces;
    * solid swatches need their paired -ink, not the page's general text color. */
   --heat-0: #4B3F68;
@@ -104,9 +127,9 @@
   --heat-4: #F0D38B;
   --heat-ink-0: #FFFFFF;
   --heat-ink-1: #FFFFFF;
-  --heat-ink-2: #151126;
-  --heat-ink-3: #151126;
-  --heat-ink-4: #151126;
+  --heat-ink-2: #111719;
+  --heat-ink-3: #111719;
+  --heat-ink-4: #111719;
   --font-data: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   /* Compatibility with existing controls while components adopt semantic names. */
   --paper: var(--canvas);
@@ -165,6 +188,14 @@
     --connection: CanvasText;
     --grid-minor: Canvas;
     --grid-major: Canvas;
+    --plan-paper: Canvas;
+    --plan-floor: Canvas;
+    --plan-ink: CanvasText;
+    --plan-muted: CanvasText;
+    --plan-line: CanvasText;
+    --plan-edge: CanvasText;
+    --plan-grid-minor: Canvas;
+    --plan-grid-major: Canvas;
     --heat-0: CanvasText;
     --heat-1: CanvasText;
     --heat-2: CanvasText;

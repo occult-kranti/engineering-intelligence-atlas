@@ -688,3 +688,38 @@ html:has(> body.endless-canvas),
   .endless-canvas .canvas-launcher { max-width: min(600px,calc(100vw - 820px)); flex-wrap: nowrap; overflow: visible; }
   .endless-canvas .canvas-launcher button { flex-shrink: 0; }
 }
+
+/* Saved annotations occupy the same blueprint plane. Their colored preview is
+ * an editable record, not an employee, permission marker or execution result. */
+:is(.endless-canvas,.ff-member-host) .ff-node.ff-node--sticky { z-index: 18; pointer-events: auto; }
+:is(.endless-canvas,.ff-member-host) .ff-node.ff-node--sticky > .ff-node-paper {
+  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 5px; width: 100%; height: 100%;
+  padding: 9px 10px; border: 1px solid #64717a55; border-radius: 3px;
+  background: var(--sticky-color,#f6e5a9); color: #24313c;
+  box-shadow: 0 2px 2px #12223318; overflow: hidden; transform: none;
+}
+.ff-node--sticky .ff-sticky-kind { font: 600 10px/1.2 'Segoe UI',system-ui,sans-serif; letter-spacing: .03em; text-transform: uppercase; color: #3d4b55; }
+.ff-node--sticky .ff-sticky-text { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font: 500 12px/1.3 'Segoe UI',system-ui,sans-serif; overflow-wrap: anywhere; }
+.ff-node--sticky .ff-sticky-open { margin-top: auto; font: 600 10px/1.2 'Segoe UI',system-ui,sans-serif; color: #29485a; opacity: 0; }
+.ff-node--sticky:is(:hover,:focus-visible,.is-selected) .ff-sticky-open { opacity: 1; }
+.ff-node--sticky[data-status='done'] .ff-sticky-text { text-decoration: line-through; color: #52616b; }
+/* The halo is fresh callback + native lease evidence, never loaded inventory.
+ * It is static: no infinite animation, speculative GPU utilization or idle RAF. */
+.ff-node--employee .ff-node-monogram { transition: box-shadow 140ms ease, border-color 140ms ease; }
+:is(.endless-canvas,.ff-member-host) .ff-node--employee[data-activity='running'] .ff-node-monogram { box-shadow: 0 0 0 3px #d3f5e6,0 0 0 5px #238e6e,0 0 14px #42d6a64a; }
+.ff-node--employee[data-activity='preparing'] .ff-node-monogram { outline: 2px dashed #98702d; outline-offset: 3px; }
+.ff-node:is(.ff-node--room,.ff-node--department)[data-activity='running'] > .ff-node-paper { outline: 1.5px solid #26896a; outline-offset: -4px; }
+.ff-activity-floor { position: absolute; inset: 4px; border-radius: inherit; pointer-events: none; opacity: var(--activity-light,0); background: radial-gradient(ellipse at 42% 52%,#1ca77c 0%,#2bb79899 58%,#319c8c30 100%); box-shadow: inset 0 0 12px #1b856f; transition: opacity 140ms ease; }
+.ff-activity-count { position: absolute; right: 7px; bottom: 7px; padding: 3px 5px; border-radius: 3px; background: #e4f8eeeb; color: #155e48; font: 600 10px/1.2 'Segoe UI',system-ui,sans-serif; pointer-events: none; }
+.ff-node:is(.ff-node--room,.ff-node--department)[data-activity='preparing'] > .ff-node-paper { outline: 1px dashed #98702d; outline-offset: -4px; }
+.ff-node:is(.ff-node--room,.ff-node--department)[data-activity='unknown'] > .ff-node-paper { outline: 1px dotted #75818c; outline-offset: -4px; }
+@media (prefers-reduced-motion: reduce) { .ff-node--employee .ff-node-monogram { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .ff-activity-floor { transition: none; } }
+@media (forced-colors: active) {
+  :is(.endless-canvas,.ff-member-host) .ff-node.ff-node--sticky > .ff-node-paper { background: Canvas; color: CanvasText; border-color: CanvasText; box-shadow: none; }
+  .ff-node--sticky :is(.ff-sticky-kind,.ff-sticky-text,.ff-sticky-open) { color: CanvasText; }
+  :is(.endless-canvas,.ff-member-host) .ff-node--employee[data-activity='running'] .ff-node-monogram { box-shadow: none; outline: 3px solid Highlight; outline-offset: 2px; }
+  .ff-activity-floor { background: none; box-shadow: none; opacity: 1; }
+  .ff-activity-count { background: Canvas; color: CanvasText; border: 1px solid Highlight; }
+  .ff-node:is(.ff-node--room,.ff-node--department)[data-activity='running'] > .ff-node-paper { outline-color: Highlight; }
+}

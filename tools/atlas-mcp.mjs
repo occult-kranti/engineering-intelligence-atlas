@@ -281,7 +281,7 @@ export function validateCommit(commit) {
 // ---------------------------------------------------------------------------
 
 const EMPTY_SCHEMA = Object.freeze({ type: 'object', properties: {}, additionalProperties: false });
-export const OFFICE_COLLECTIONS = Object.freeze(['companies','offices','departments','employees','jobs','schedules','knowledge','events','chatThreads','goals','checkpoints','blueprints','rooms','desks','whiteboards','goalSteps','groups','services','contracts','transfers','roadmap','decisionPanels','authorityGrants','authorityLedger','index']);
+export const OFFICE_COLLECTIONS = Object.freeze(['companies','offices','departments','employees','jobs','schedules','knowledge','events','chatThreads','goals','checkpoints','blueprints','rooms','desks','whiteboards','goalSteps','groups','services','contracts','transfers','roadmap','decisionPanels','authorityGrants','authorityLedger','index','stickyNotes','improvementSessions','improvementAllowances']);
 const QUERY_SCOPE_KINDS = Object.freeze(['company','office','department','employee','goal','group']);
 const NESTED_COLLECTIONS = Object.freeze({ rooms: 100, desks: 1000, whiteboards: 200, goalSteps: 12 });
 const NESTED_SCOPE_KINDS = Object.freeze({ rooms: ['company','office'], desks: ['company','office'], whiteboards: ['company','office'], goalSteps: ['company','office','department','employee','goal'] });
@@ -292,7 +292,7 @@ const NESTED_FIELDS = Object.freeze({
   goalSteps: ['id','title','employeeId','dependsOn','serviceContractId','knowledgeTransferIds','reviewerEmployeeId','reviewerServiceContractId','estimate','reviewEstimate','officeId','departmentId'],
 });
 
-export const OFFICE_ACTIONS = Object.freeze(['create_company','select_company','create_office','create_department','hire_employee','pause_employee','resume_employee','fire_employee','pause_company','resume_company','pause_office','resume_office','pause_department','resume_department','enqueue_job','claim_job','reserve_job','finish_job','heartbeat_job','cancel_job','pause_job','resume_job','create_schedule','pause_schedule','resume_schedule','tick_schedules','configure_cache','clear_cache','get_cache','put_cache','add_knowledge','configure_policy','reserve_external','settle_external','approve_job','bootstrap_directors','post_chat','post_assistant_message','create_goal','create_paired_workflow','plan_goal','set_goal_plan','execute_goal','advance_goal','tick_goals','pause_goal','resume_goal','checkpoint_goal','ensure_blueprint','save_blueprint','upsert_room','place_employee','upsert_whiteboard','configure_ceo','upsert_portfolio_group','ensure_shared_services','optimize_portfolio','contract_service','share_knowledge','upsert_roadmap_item','convene_panel','start_panel_round','record_panel_decision','pause_panel','resume_panel','grant_authority','promote_employee','revoke_authority','set_authority_enforcement','rebuild_office_index','apply_employee_command','check_worker_authority','rename_company','set_company_parent','set_department_parent']);
+export const OFFICE_ACTIONS = Object.freeze(['create_company','select_company','create_office','create_department','hire_employee','pause_employee','resume_employee','fire_employee','pause_company','resume_company','pause_office','resume_office','pause_department','resume_department','enqueue_job','claim_job','reserve_job','finish_job','heartbeat_job','cancel_job','pause_job','resume_job','create_schedule','pause_schedule','resume_schedule','tick_schedules','configure_cache','clear_cache','get_cache','put_cache','add_knowledge','configure_policy','reserve_external','settle_external','approve_job','bootstrap_directors','post_chat','post_assistant_message','create_goal','create_paired_workflow','plan_goal','set_goal_plan','execute_goal','advance_goal','tick_goals','pause_goal','resume_goal','checkpoint_goal','ensure_blueprint','save_blueprint','upsert_room','place_employee','upsert_whiteboard','configure_ceo','upsert_portfolio_group','ensure_shared_services','optimize_portfolio','contract_service','share_knowledge','upsert_roadmap_item','convene_panel','start_panel_round','record_panel_decision','pause_panel','resume_panel','grant_authority','promote_employee','revoke_authority','set_authority_enforcement','rebuild_office_index','apply_employee_command','check_worker_authority','rename_company','set_company_parent','set_department_parent','upsert_sticky_note','archive_sticky_note','register_improvement_allowance','create_improvement_session','control_improvement_session']);
 
 export const TOOL_DEFINITIONS = Object.freeze([
   { name:'office_snapshot', title:'Office control snapshot', description:'Read the local office. Large wire results are successful metadata summaries with snapshotOmitted:true; use office_query for paginated metadata. No provider calls.', inputSchema:EMPTY_SCHEMA, annotations:{readOnlyHint:true,destructiveHint:false,idempotentHint:true,openWorldHint:false} },
@@ -407,6 +407,7 @@ function summaryId(value) {
 }
 
 function collectionRows(snapshot, name) {
+  if (name === 'improvementAllowances') return snapshot.improvementAllowance ? [snapshot.improvementAllowance] : [];
   if (['groups','services','contracts','transfers','roadmap'].includes(name)) return list(snapshot.portfolio?.[name]);
   if (name === 'authorityGrants') return list(snapshot.authority?.grants);
   if (name === 'authorityLedger') return list(snapshot.authority?.ledger);
@@ -431,7 +432,7 @@ function canonicalMap(rows) {
   return result;
 }
 function officeMetadataContext(snapshot) {
-  const maps = Object.fromEntries(['companies','offices','departments','employees','goals','jobs','contracts','transfers','roadmap','groups'].map(name => [name, canonicalMap(collectionRows(snapshot, name))]));
+  const maps = Object.fromEntries(['companies','offices','departments','employees','goals','jobs','contracts','transfers','roadmap','groups','stickyNotes','improvementSessions'].map(name => [name, canonicalMap(collectionRows(snapshot, name))]));
   const companiesForScope = scope => {
     if (scope?.kind === 'company') return new Set(maps.companies.has(scope.id) ? [scope.id] : []);
     if (scope?.kind === 'global' && scope.id === 'portfolio') return new Set(maps.companies.keys());
@@ -509,6 +510,12 @@ function linkedMetadata(out, row, collection, context) {
     }
     out[key] = result; if (omitted) missing[key] = omitted;
   };
+  if (['stickyNotes','improvementSessions'].includes(collection)) {
+    ids('goalIds',100,id=>maps.goals.get(id)?.companyId===row.companyId);
+    if(collection==='improvementSessions')ids('taskNoteIds',128,id=>{
+      const note=maps.stickyNotes.get(id);return note?.companyId===row.companyId&&note.officeId===row.officeId&&note.departmentId===(row.departmentId??null);
+    });
+  }
   if (collection === 'whiteboards' || collection === 'roadmap') {
     ids('goalIds', 100, id => companies.has(maps.goals.get(id)?.companyId));
     ids('jobIds', 100, id => companies.has(maps.jobs.get(id)?.companyId));
@@ -520,7 +527,7 @@ function linkedMetadata(out, row, collection, context) {
     ids('dependsOn', 12, id => id !== row.id && siblings.has(id));
     ids('knowledgeTransferIds', 100, id => maps.transfers.get(id)?.recipientCompanyId === row.companyId);
   }
-  if (['whiteboards','roadmap','goalSteps'].includes(collection)) {
+  if (['whiteboards','roadmap','goalSteps','stickyNotes','improvementSessions'].includes(collection)) {
     out.referencesComplete = Object.keys(missing).length === 0;
     out.omittedReferences = missing;
   }
@@ -542,7 +549,7 @@ function linkedMetadata(out, row, collection, context) {
     }
   }
   if (collection === 'jobs') {
-    for (const key of ['requestSha256','artifactSha256']) if (typeof row[key] === 'string' && /^[a-f0-9]{64}$/.test(row[key])) out[key] = row[key];
+    for (const key of ['requestSha256','artifactSha256','deliverableSha256']) if (typeof row[key] === 'string' && /^[a-f0-9]{64}$/.test(row[key])) out[key] = row[key];
     if (row.pair === null) out.pair = null;
     else if (row.pair && ['primary','review'].includes(row.pair.phase) && ['stepId','peerEmployeeId','primaryJobId','reviewJobId'].every(key => summaryId(row.pair[key]))) out.pair = Object.fromEntries(['stepId','phase','peerEmployeeId','primaryJobId','reviewJobId'].map(key => [key, row.pair[key]]));
     else if (row.pair !== undefined) out.metadataIncomplete = true;
@@ -570,10 +577,29 @@ function metadataSummary(row, collection, context) {
   const out = {};
   if (!row || typeof row !== 'object') return out;
   for (const key of ID_FIELDS) { const value = summaryId(row[key]); if (value !== undefined) out[key] = value; }
+  for(const key of ['improvementSessionId','allowanceId','primaryEmployeeId','activeGoalId','activeNoteId']) {
+    if(row[key]===null)out[key]=null;else if(summaryId(row[key]))out[key]=row[key];
+  }
   for (const key of ['parentCompanyId','parentDepartmentId','departmentId','serviceContractId','reviewerEmployeeId','reviewerServiceContractId']) if (row[key] === null) out[key] = null;
   for (const key of TEXT_FIELDS) if (typeof row[key] === 'string') out[key] = summaryText(row[key]);
   for (const key of DATE_FIELDS) if (isIsoDate(row[key])) out[key] = row[key];
   for (const key of NUMBER_FIELDS) if (Number.isFinite(row[key])) out[key] = row[key];
+  for(const key of ['cycle','budgetHoldUsd','capUsd','carriedObservedUsd','carriedEstimatedUsd'])if(Number.isFinite(row[key])&&row[key]>=0)out[key]=row[key];
+  if(collection==='improvementSessions') {
+    out.continuation=['until-budget','backlog'].includes(row.continuation)?row.continuation:null;
+    out.maxCycles=row.maxCycles===null?null:Number.isInteger(row.maxCycles)&&row.maxCycles>=1&&row.maxCycles<=1000?row.maxCycles:null;
+    out.objectivePreview=summaryText(row.objective??'',1000);out.objectiveIncomplete=out.objectivePreview!==row.objective;
+    out.stopReason=row.stopReason===null?null:summaryText(row.stopReason??'',300);
+    const routes=list(row.allowedRoutes);out.allowedRoutes=routes.slice(0,16).filter(route=>['anthropic','openai','ollama'].includes(route?.provider)&&typeof route.model==='string'&&/^[A-Za-z0-9][A-Za-z0-9._/:+-]{0,199}$/.test(route.model)).map(route=>({provider:route.provider,model:route.model}));
+    out.omittedRoutes=routes.length-out.allowedRoutes.length;
+    out.outcomeKind='proposed-artifact-unless-tool-evidence';
+  }
+  if(collection==='stickyNotes') {
+    out.text=summaryText(row.text??'',4000);out.textIncomplete=out.text!==row.text;
+    if(['yellow','blue','green','pink','purple','gray'].includes(row.color))out.color=row.color;
+    for(const key of ['x','y'])if(Number.isFinite(row[key])&&row[key]>=0&&row[key]<=1)out[key]=row[key];
+  }
+  if(collection==='improvementAllowances')out.sourceReference=summaryText(row.sourceReference??'',300);
   for (const key of BOOL_FIELDS) if (typeof row[key] === 'boolean') out[key] = row[key];
   for (const key of ARRAY_COUNTS) if (Array.isArray(row[key])) out[`${key}Count`] = row[key].length;
   if (row.scope && typeof row.scope.kind === 'string' && summaryId(row.scope.id)) out.scope = { kind: summaryText(row.scope.kind, 30), id: summaryId(row.scope.id) };
@@ -608,6 +634,8 @@ function scopeMatcher(snapshot, scope) {
       for (const key of ['departmentId','recipientDepartmentId']) add('department', entity[key]);
       const located = entity.companyId || entity.officeId || entity.departmentId;
       add('employee', entity.employeeId, !located);
+      add('employee', entity.primaryEmployeeId, !located);
+      add('employee', entity.reviewerEmployeeId, !located);
       add('employee', entity.ownerEmployeeId, !located && !entity.scope);
       add('goal', entity.goalId, !located);
       for (const id of list(entity.goalIds)) add('goal', id, false);

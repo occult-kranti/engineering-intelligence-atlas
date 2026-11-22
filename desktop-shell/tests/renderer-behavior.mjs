@@ -14,7 +14,7 @@ const signalScript=readFileSync(path.join(root,'dist/renderer/office-signals.js'
 const rendererRoot=path.join(root,'dist/renderer');
 let checks=0;
 function check(condition,message){assert.ok(condition,message);checks++;}
-async function makeDom(fixture=true,transport,query='',beforeBoot){const dom=new JSDOM(html,{url:'https://fixture.invalid/chrome.html'+query,runScripts:'outside-only',pretendToBeVisual:true});const w=dom.window;w.scrollTo=()=>{};w.TextEncoder=TextEncoder;w.HTMLElement.prototype.scrollIntoView=()=>{};if(fixture){installRendererFixture(w);if(transport)w.desktopBridge.transport=transport;}beforeBoot?.(w);
+async function makeDom(fixture=true,transport,query='',beforeBoot){const dom=new JSDOM(html,{url:'https://fixture.invalid/chrome.html'+query,runScripts:'outside-only',pretendToBeVisual:true});const w=dom.window;w.scrollTo=()=>{};w.TextEncoder=TextEncoder;w.structuredClone=structuredClone;w.HTMLElement.prototype.scrollIntoView=()=>{};if(fixture){installRendererFixture(w);if(transport)w.desktopBridge.transport=transport;}beforeBoot?.(w);
 // JSDOM has no layout: stub geometry/ResizeObserver only so Freeflow can mount; this does not prove visual layout.
 if(!w.ResizeObserver)w.ResizeObserver=class{observe(){}unobserve(){}disconnect(){}};
 if(!w.Element.prototype.getBoundingClientRect.__stub){const orig=w.Element.prototype.getBoundingClientRect;const stub=function(){const r=orig.call(this);return r.width||r.height?r:{x:0,y:0,left:0,top:0,right:1200,bottom:800,width:1200,height:800,toJSON(){return this;}};};stub.__stub=true;w.Element.prototype.getBoundingClientRect=stub;}
@@ -703,5 +703,42 @@ for(const interacted of [false,true]){
  const queued=pf.calls.filter(call=>call.name==='officeCommand'&&call.args.action==='advance_goal');check(queued.length===1&&queued[0].args.reviewed===true&&queued[0].args.reason===reason.value,'only the explicit owner iteration submission sends reviewed:true');
  pf.office.policy.approvalMode='autonomous';pe('office-refresh').click();await flush();const automatic=pd.querySelector('[data-goal-id="repair-goal"] .goal-advance');automatic.querySelector('textarea').value='A separately requested iteration within the same limits';const autoSubmit=automatic.querySelector('button[type="submit"]');automatic.dispatchEvent(new pw.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:autoSubmit}));await flush();const last=pf.calls.filter(call=>call.name==='officeCommand'&&call.args.action==='advance_goal').at(-1);check(autoSubmit.textContent==='Queue next iteration'&&!Object.prototype.hasOwnProperty.call(last.args,'reviewed'),'autonomous policy does not add an unsolicited review flag');
  repairDom.window.close();
+}
+// Office-3 integration uses the actual shared renderer, forms and world. The
+// bridge below is a deterministic transport fixture, never provider evidence.
+{
+ let loss=true,execution=null;const receipts=new Map();
+ const improvementDom=await makeDom(true,undefined,'',(iw)=>{
+   const f=iw.__atlasFixture,s=f.office;s.schemaVersion=3;s.stickyNotes=[{id:'saved-comment',revision:0,companyId:'fixture-company',officeId:'fixture-office',departmentId:null,kind:'comment',color:'pink',text:'A literal <img src=x> comment',status:'open',ownerEmployeeId:'donna',goalIds:[],x:.25,y:.2,createdAt:new Date().toISOString(),updatedAt:new Date().toISOString()}];s.improvementSessions=[];s.improvementAllowance=null;s.improvementBudget=null;
+   const original=iw.desktopBridge.officeCommand;
+   iw.desktopBridge.officeWorkerStatus=async()=>({enabled:false,running:false,activeJobId:null,lastError:null,...(execution?{execution}:{} )});
+   iw.desktopBridge.officeCommand=async(command)=>{
+     if(command.action!=='upsert_sticky_note')return original(command);
+     f.calls.push({name:'officeCommand',args:structuredClone(command)});
+     if(receipts.has(command.requestId))return{ok:true,snapshot:structuredClone(s)};
+     const saved=s.stickyNotes.find(n=>n.id===command.id);if(saved&&saved.revision!==command.expectedRevision)return{ok:false,code:'STALE_REVISION',error:'Fixture stale note'};
+     const next={...command,revision:saved?saved.revision+1:0,createdAt:saved?.createdAt||new Date().toISOString(),updatedAt:new Date().toISOString()};s.stickyNotes=s.stickyNotes.filter(n=>n.id!==next.id);s.stickyNotes.push(next);receipts.set(command.requestId,structuredClone(command));
+     if(loss){loss=false;return{ok:false,code:'IO_ERROR',error:'Fixture acknowledgement lost after persistence'};}return{ok:true,snapshot:structuredClone(s)};
+   };
+ });
+ const iw=improvementDom.window,id=iw.document,ie=name=>id.getElementById(name),f=iw.__atlasFixture;
+ const sticky=id.querySelector('.ff-node[data-node-id="sticky:saved-comment"]');check(Boolean(sticky)&&sticky.textContent.includes('<img src=x>')&&!sticky.querySelector('img'),'native comment appears literally as one in-world sticky preview');
+ sticky.dispatchEvent(new iw.KeyboardEvent('keydown',{key:'Enter',bubbles:true}));await flush();
+ const panel=id.querySelector('.canvas-panel[data-panel-id="improvement"]');check(Boolean(panel)&&!panel.hidden&&panel.closest('.ff-world')&&id.querySelectorAll('#improvement-note-form').length===1,'opening a sticky reveals one live editor in the existing world');
+ check(ie('improvement-note-text').value==='A literal <img src=x> comment','world note opens its exact saved record');
+ ie('improvement-note-text').value='Owner wording retained across retry';ie('improvement-note-text').dispatchEvent(new iw.Event('input',{bubbles:true}));ie('improvement-note-color').value='purple';
+ ie('improvement-note-form').dispatchEvent(new iw.SubmitEvent('submit',{bubbles:true,cancelable:true,submitter:ie('improvement-note-save')}));await flush();
+ check(!ie('improvement-pending').hidden&&ie('improvement-note-text').disabled&&ie('improvement-status').textContent.includes('IO_ERROR'),'an uncertain saved note keeps its original request and locks mutation fields');
+ ie('improvement-retry').click();await flush();const writes=f.calls.filter(c=>c.name==='officeCommand'&&c.args.action==='upsert_sticky_note');
+ check(writes.length===2&&JSON.stringify(writes[0].args)===JSON.stringify(writes[1].args)&&f.office.stickyNotes.length===1&&f.office.stickyNotes[0].revision===1,'explicit exact retry yields one saved note revision');
+ check(id.querySelector('.ff-node[data-node-id="sticky:saved-comment"]')?.style.getPropertyValue('--sticky-color')==='#dfd4ee','saved color survives full shared-canvas refresh');
+ const at=new Date().toISOString(),finish=new Date(Date.now()+60000).toISOString();f.office.jobs.push({id:'activity-fixture',companyId:'fixture-company',officeId:'fixture-office',departmentId:null,employeeId:'fixture-reviewer',status:'running',goal:'Fixture metadata only',mode:'provider',provider:'anthropic',model:'fixture',authorized:true,allowedTools:[],dependencies:[],limits:{maxTokens:1,maxUsd:.01,maxMinutes:1},usage:{inputTokens:0,outputTokens:0,costUsd:0},costStatus:'none',usageRecorded:false,createdAt:at,updatedAt:at,startedAt:at,finishedAt:null,workerId:'fixture',leaseExpiresAt:finish});
+ ie('workspace-refresh').click();await flush();let person=Array.from(id.querySelectorAll('.ff-node--employee')).find(n=>n.getAttribute('aria-label')?.includes('Fixture independent reviewer'));
+ check(Boolean(person)&&person.dataset.activity==='preparing','native running plus lease means preparation without an active provider callback');
+ execution={sampledAt:new Date().toISOString(),activeCalls:[{jobId:'activity-fixture',phase:'provider',startedAt:at}]};ie('workspace-refresh').click();await flush();person=Array.from(id.querySelectorAll('.ff-node--employee')).find(n=>n.getAttribute('aria-label')?.includes('Fixture independent reviewer'));
+ check(person.dataset.activity==='running'&&person.getAttribute('aria-label').includes('fresh runtime evidence'),'fresh callback and matching lease enable the activity state in the actual renderer');
+ execution={sampledAt:new Date(Date.now()-60000).toISOString(),activeCalls:execution.activeCalls};ie('workspace-refresh').click();await flush();check(person.dataset.activity!=='running','stale runtime evidence clears the running highlight');
+ check(!f.calls.some(c=>['setOfficeWorker','runOfficeQueue'].includes(c.name)),'inspection, note save and activity projection do not enable workers');
+ improvementDom.window.close();
 }
 console.log(JSON.stringify({suite:'renderer pure-DOM interaction',checks,passed:true,fixtureOnly:true,networkCalls:0,providerCalls:0,visualVerification:false},null,2));

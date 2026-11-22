@@ -2,6 +2,8 @@
 // Structural readonly snapshot types mirror shared/office.ts; no runtime shared imports.
 import { cmp, gridColumns, looksNormalized, packClusters, packGrid, unionBounds, type LRect } from './layout.js';
 import { projectThread, sortThreads, type SceneThread } from './threads.js';
+import type { StickyNote } from '../improvement/model.js';
+import { projectStickyNotes } from '../improvement/notes.js';
 
 export type { SceneThread } from './threads.js';
 export type { LRect } from './layout.js';
@@ -31,6 +33,8 @@ export interface FreeflowSnapshot {
   readonly employees?: readonly RO<SEmployee>[];
   readonly jobs?: readonly RO<SJob>[];
   readonly blueprints?: readonly RO<SBlueprint>[];
+  readonly stickyNotes?: readonly StickyNote[];
+  readonly memberNoteTruncation?: { readonly matched: number; readonly returned: number; readonly truncated: boolean };
   readonly memberReferences?: readonly RO<MemberRoleReference>[];
   readonly access?: Readonly<MemberAccess>;
   readonly portfolio?: {
@@ -201,6 +205,9 @@ function applyMemberAccess(scene: FreeflowScene, snapshot: FreeflowSnapshot): Fr
   // A fixed, generic boundary communicates limited access without revealing whether
   // hidden companies exist, their names, record identifiers, or their population.
   scene.breadcrumbs = scene.breadcrumbs.filter((c) => c.focus.kind !== 'portfolio');
+  const notes = projectStickyNotes(snapshot.stickyNotes, scene.nodes, true); scene.nodes.push(...notes.nodes);
+  if(notes.omitted)scene.warnings.push(`${notes.omitted} shared notes do not fit this bounded spatial preview.`);
+  if(snapshot.memberNoteTruncation?.truncated)scene.warnings.push(`Shared note coverage: ${snapshot.memberNoteTruncation.returned} of ${snapshot.memberNoteTruncation.matched} authorized notes returned.`);
   if (snapshot.access.restricted) {
     const b = unionBounds(scene.nodes.map((n) => n.rect), 0);
     scene.nodes.push({ id: 'restricted:private-workspace', kind: 'restricted', entityId: '', companyId: '', parentId: null,

@@ -8,10 +8,29 @@
  const unavailable=async()=>({ok:false,error:'This operation runs in the connected desktop application. Open the desktop app to continue.'});
  const bridge={version:3,transport:'cloud-browser'};
  bridge.officeSnapshot=office;
- bridge.officeCommand=async(command)=>{if(command.action==='select_company'){selected=command.companyId;sessionStorage.setItem('atlas-cloud-company',selected);return office();}if(!workspace)await office();const{action,...payload}=command;const result=await api('/api/commands',{method:'POST',body:JSON.stringify({command:{action,payload},expectedRevision:workspace.revision,idempotencyKey:crypto.randomUUID()})});return{ok:true,snapshot:last,queued:true,commandId:result.commandId};};
+ bridge.officeCommand=async(command)=>{
+  if(command.action==='select_company'){selected=command.companyId;sessionStorage.setItem('atlas-cloud-company',selected);return office();}
+  if(!workspace)await office();
+  const{action,...payload}=command;
+  const idempotencyKey=typeof command.requestId==='string'&&command.requestId?command.requestId:crypto.randomUUID();
+  const result=await api('/api/commands',{method:'POST',body:JSON.stringify({command:{action,payload},expectedRevision:workspace.revision,idempotencyKey})});
+  const status=result.status;
+  if(['failed','conflict','cancelled'].includes(status))return{ok:false,snapshot:last,queued:false,commandId:result.commandId,relayStatus:status,code:status==='conflict'?'REVISION_CONFLICT':status==='cancelled'?'CLOUD_COMMAND_CANCELLED':'CLOUD_COMMAND_REJECTED',error:result.error||'The native workspace rejected or cancelled this saved command. Your draft is retained.'};
+  if(['completed','completed-after-cancel'].includes(status)){
+   const refreshed=await office();
+   const improvementActions=['upsert_sticky_note','archive_sticky_note','register_improvement_allowance','create_improvement_session','control_improvement_session'];
+   const confirmed=improvementActions.includes(action)
+    ? Array.isArray(refreshed.snapshot.improvementReceipts)&&refreshed.snapshot.improvementReceipts.some(receipt=>receipt.id===command.requestId&&receipt.action===action)
+    : Number.isSafeInteger(result.baseRevision)&&workspace.revision>result.baseRevision;
+   // Native acknowledgement can precede its snapshot upload. Keep the same
+   // request pending until its durable native receipt is actually visible.
+   return{...refreshed,queued:!confirmed,commandId:result.commandId,relayStatus:confirmed?status:'awaiting-snapshot'};
+  }
+  return{ok:true,snapshot:last,queued:true,commandId:result.commandId,relayStatus:status};
+ };
  bridge.sendCloudChat=async(request)=>{try{const result=await api('/api/chat',{method:'POST',body:JSON.stringify(request)});return{...result,...await office()};}catch(error){return{ok:false,error:error.message,snapshot:last};}};
  bridge.companySnapshot=async()=>{const{snapshot}=await office();const c=snapshot.companies.find(c=>c.id===snapshot.activeCompanyId);return{available:false,backend:'unavailable',error:'Repository execution and local project files are available in the desktop app.',company:c?{...c,githubStatus:'unchecked',githubError:null,headSha:null,lastCheckedAt:null}:null,employees:[],tasks:[],milestones:[],activity:[],index:null,usage:{inputTokens:0,outputTokens:0,costUsd:0,runCount:0,completedRuns:0,failedRuns:0,source:'local-project-runs'}};};
- bridge.officeWorkerStatus=async()=>({enabled:false,running:false,activeJobId:null,lastError:null});
+ bridge.officeWorkerStatus=async()=>{try{const sample=await api('/api/runtime-activity');const execution=sample.available?sample.execution:undefined;return{enabled:false,running:!!execution?.activeCalls?.length,activeJobId:execution?.activeCalls?.[0]?.jobId??null,lastError:null,execution,activitySource:'paired-runtime-sample',activityUnavailableReason:sample.reason??null};}catch{return{enabled:false,running:false,activeJobId:null,lastError:null,activitySource:'unavailable',activityUnavailableReason:'Runtime activity is unavailable through this relay.'};}};
  bridge.getVaultStatus=async()=>{const s=await api('/api/session');return{encryptionAvailable:true,providers:{anthropic:{configured:s.capabilities.chat,readable:false,updatedAt:null},openai:{configured:false,readable:false,updatedAt:null},github:{configured:false,readable:false,updatedAt:null}}};};
  bridge.cloudStatus=async()=>{const w=await api('/api/workspace'),q=await api('/api/commands');return{configured:true,connected:true,url:location.origin,revision:w.revision,lastSyncedAt:w.updatedAt,pendingCommands:q.commands.length,error:null,capability:'snapshot-and-commands',encryptionAvailable:true};};
  bridge.syncCloud=async()=>({ok:true,status:await bridge.cloudStatus()});

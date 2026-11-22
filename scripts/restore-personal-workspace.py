@@ -83,9 +83,9 @@ def parse_state(raw):
     if not isinstance(data, dict) or type(data.get('schemaVersion')) is not int or data.get('schemaVersion') != 1 or not isinstance(data.get('office'), dict):
         raise ValueError('Expected a complete schema-version-1 Atlas company state.')
     office = data['office']
-    if type(office.get('schemaVersion')) is not int or office.get('schemaVersion') not in (1, 2):
+    if type(office.get('schemaVersion')) is not int or office.get('schemaVersion') not in (1, 2, 3):
         raise ValueError('Unsupported office state version.')
-    limits = {'companies': 2000, 'offices': 5000, 'departments': 16000, 'employees': 30000, 'jobs': 5000, 'schedules': 1000, 'knowledge': 5000, 'events': 1000, 'goals': 2000, 'checkpoints': 20000, 'blueprints': 5000, 'chatThreads': 5000, 'externalAttempts': 10000}
+    limits = {'companies': 2000, 'offices': 5000, 'departments': 16000, 'employees': 30000, 'jobs': 5000, 'schedules': 1000, 'knowledge': 5000, 'events': 1000, 'goals': 2000, 'checkpoints': 20000, 'blueprints': 5000, 'chatThreads': 5000, 'externalAttempts': 10000, 'stickyNotes': 2000, 'improvementSessions': 256, 'improvementReceipts': 4096}
     for key, maximum in limits.items():
         values = office.get(key, [])
         if not isinstance(values, list) or len(values) > maximum:

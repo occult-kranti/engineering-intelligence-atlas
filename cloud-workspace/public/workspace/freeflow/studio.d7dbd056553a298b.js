@@ -11,11 +11,12 @@
 //   studio.destroy()
 // Heat: callback returns per-node { level: 0..4, label, metric? } or null (shown as unknown).
 import { fitBounds, normalizeCamera, worldToScreen, isVisible, screenToWorld } from './camera.457a3ca4fd1e3c65.js';
-import { loadCameraPref, mountControls } from './controls.0198fad9fd170198.js';
-import { buildScene } from './model.21b07fb6c63ec187.js';
-import { mountScene } from './scene.e16cf6e3dc094d97.js';
+import { buildUniverse } from './universe.309127abbacf4d84.js';
+import { loadCameraPref, mountControls } from './controls.6c09b8861f669efa.js';
+import { buildScene } from './model.0662349412329ff5.js';
+import { mountScene } from './scene.c620d4b6fac1d0b4.js';
 import { mountA11yList } from './a11y-list.c972998eb8ad6bc6.js';
-import { mountInspector } from './inspector.2ad19899cbf7dd2d.js';
+import { mountInspector } from './inspector.9a51312c921b9311.js';
 const WARN_VISIBLE = 3;
 function focusKey(f) {
     return f.kind === 'portfolio' ? 'portfolio' : f.kind === 'company' ? `c:${f.companyId}` : f.kind === 'office' ? `o:${f.companyId}:${f.officeId}` : `d:${f.companyId}:${f.officeId}:${f.departmentId}`;
@@ -40,6 +41,8 @@ function mk(tag, cls, text) {
 }
 export function mountStudio(host, options) {
     const root = mk('section', 'ff-studio');
+    if (options.continuousCanvas)
+        root.classList.add('ff-studio--continuous');
     root.setAttribute('aria-label', 'Office studio');
     const header = mk('header', 'ff-header');
     const left = mk('div', '');
@@ -78,6 +81,7 @@ export function mountStudio(host, options) {
     let snapshot = {};
     let focus = { kind: 'portfolio' };
     let scene = null;
+    let focusBounds = null;
     let selectedId = null;
     let selectedThread = null;
     let active = true;
@@ -88,14 +92,23 @@ export function mountStudio(host, options) {
     let inspectorOpen = false;
     let warnExpanded = false;
     let currentKey = '';
+    // A deep-linked panel can frame before the first snapshot assigns a scope.
+    // Adopt that explicit choice once; subsequent scope changes keep normal restore/fit behavior.
+    let initialCamera = null;
     let fitPending = false;
     let canvasShown = true;
     let capsFn = options.capabilities ?? null;
     const storage = options.storage === undefined ? undefined : options.storage;
     const cams = new Map();
+    let detailTimer = null;
+    let detailCenter = null;
     const openNode = (n) => {
         if (n.kind === 'restricted')
             return;
+        if (n.metadata.stickyNote === true) {
+            options.onAction('notes', { companyId: n.companyId, officeId: n.officeId, departmentId: n.departmentId, noteId: n.entityId, nodeId: n.id });
+            return;
+        }
         const f = focusOf(n);
         if (f) {
             options.onNavigate(f);
@@ -113,6 +126,8 @@ export function mountStudio(host, options) {
     inspector.setCapabilities(capsFn);
     let list = mountA11yList(listHost, { onSelect: (id) => selectNode(id, 'list'), onOpen: openNode });
     let sceneR = mountScene(canvasHost, {
+        graphics: options.continuousCanvas === true,
+        onCanvasAction: (action, node) => options.onAction(action, { companyId: node.companyId, nodeId: node.id }),
         onSelect: (id) => selectNode(id, 'canvas'),
         onOpen: openNode,
         onThreadSelect: (t) => { selectedThread = t ? t.id : null; if (t && !inspectorOpen) {
@@ -134,15 +149,17 @@ export function mountStudio(host, options) {
         getViewportSize: () => sceneR.getViewport(),
         getCamera: () => sceneR.getCamera(),
         setCamera: (c) => sceneR.setCamera(c),
-        onCameraChange: (c, ph) => { if (ph === 'end' && currentKey)
-            cams.set(currentKey, c); },
-        getBounds: () => (scene ? scene.bounds : null),
+        onCameraChange: (c, ph) => { if (ph === 'end' && currentKey) {
+            cams.set(currentKey, c);
+            scheduleDetails();
+        } },
+        getBounds: () => focusBounds ?? (scene ? scene.bounds : null),
         focusKey: 'pending',
         active: false,
         storage,
         ownsCamera: false,
     });
-    function syncControlsActive() { controls.setActive(active && canvasShown && !listMode); }
+    function syncControlsActive() { controls.setActive(active && canvasShown && !listMode); sceneR.setActive(active && canvasShown && !listMode); }
     function readStored(key) {
         try {
             const st = storage === undefined ? (typeof localStorage !== 'undefined' ? localStorage : null) : storage;
@@ -168,6 +185,12 @@ export function mountStudio(host, options) {
             controls.sync();
             return;
         }
+        // An empty loading projection has placeholder extents, not a useful saved
+        // camera. Wait for actual nodes and the full-size canvas before framing.
+        if (!scene.nodes.length) {
+            fitPending = true;
+            return;
+        }
         const saved = readStored(currentKey);
         if (saved) {
             fitPending = false;
@@ -182,7 +205,8 @@ export function mountStudio(host, options) {
             return;
         }
         fitPending = false;
-        const c = fitBounds(sceneR.getCamera(), sceneR.getViewport(), scene.bounds, 24);
+        const base = options.continuousCanvas ? normalizeCamera({ ...sceneR.getCamera(), pitch: 0, yaw: 0 }) : sceneR.getCamera();
+        const c = fitBounds(base, sceneR.getViewport(), focusBounds ?? scene.bounds, options.continuousCanvas ? 90 : 24);
         cams.set(currentKey, c);
         sceneR.setCamera(c);
         controls.sync();
@@ -191,6 +215,12 @@ export function mountStudio(host, options) {
         const nodes = sc.nodes.map((n) => {
             const h = options.heat?.(n) ?? null;
             const metadata = { ...n.metadata };
+            const activity = options.activity?.(n);
+            if (activity) {
+                metadata.activityState = activity.state;
+                metadata.activityLabel = activity.label.slice(0, 160);
+                metadata.executing = activity.executing;
+            }
             const lv = h ? h.level : undefined;
             const labelOk = !!h && typeof h.label === 'string' && h.label.length > 0;
             if (h && labelOk && lv === 'off') {
@@ -216,12 +246,37 @@ export function mountStudio(host, options) {
         const thread = selectedThread && scene ? scene.threads.find((t) => t.id === selectedThread) ?? null : null;
         inspector.setSelection(node, thread, scene);
     }
+    // Recompose detailed company geometry after navigation settles. Its anchor
+    // never changes, and real forms are not rebuilt while someone pans a popup.
+    function scheduleDetails() {
+        if (!options.continuousCanvas || destroyed || !active)
+            return;
+        if (detailTimer !== null)
+            clearTimeout(detailTimer);
+        detailTimer = setTimeout(() => {
+            detailTimer = null;
+            if (destroyed || !active || !scene)
+                return;
+            const c = sceneR.getCamera();
+            if (detailCenter && Math.hypot(c.x - detailCenter.x, c.y - detailCenter.y) < 600)
+                return;
+            detailCenter = { x: c.x, y: c.y };
+            const next = applyHeat(buildUniverse(snapshot, focus, { detailCenter }));
+            scene = next;
+            sceneR.update(next);
+            list.update(next);
+            sceneR.select(selectedId);
+            list.setSelected(selectedId);
+            syncInspector();
+        }, 180);
+    }
     function selectNode(id, from) {
         selectedId = id;
         selectedThread = null;
         if (id && !inspectorOpen) {
             inspectorOpen = true;
-            layout();
+            if (!options.continuousCanvas)
+                layout();
         }
         if (from !== 'canvas')
             sceneR.select(id);
@@ -297,6 +352,18 @@ export function mountStudio(host, options) {
         }
     }
     function layout() {
+        if (options.continuousCanvas) {
+            canvasShown = true;
+            listMode = false;
+            cameraBar.hidden = false;
+            canvasHost.hidden = false;
+            listHost.hidden = false;
+            inspHost.hidden = false;
+            viewBtn.textContent = 'Find company';
+            viewBtn.setAttribute('aria-pressed', 'false');
+            syncControlsActive();
+            return;
+        }
         canvasShown = !listMode;
         cameraBar.hidden = listMode;
         canvasHost.hidden = listMode;
@@ -313,53 +380,86 @@ export function mountStudio(host, options) {
                     tryFit(); });
         }
     }
-    const onView = () => { userToggled = true; listMode = !listMode; layout(); };
-    const onInsp = () => { inspectorOpen = !inspectorOpen; layout(); };
+    const onView = () => { if (options.continuousCanvas) {
+        options.onSurface?.('company-directory');
+        return;
+    } userToggled = true; listMode = !listMode; layout(); };
+    const onInsp = () => { if (options.continuousCanvas) {
+        options.onSurface?.('object-inspector');
+        return;
+    } inspectorOpen = !inspectorOpen; layout(); };
     const onWarn = () => { warnExpanded = !warnExpanded; renderHeader(); };
     viewBtn.addEventListener('click', onView);
     inspBtn.addEventListener('click', onInsp);
     noticeBtn.addEventListener('click', onWarn);
     const mq = typeof matchMedia !== 'undefined' ? matchMedia('(max-width: 720px)') : null;
-    const onMq = () => { narrow = !!mq?.matches; if (!userToggled) {
+    const onMq = () => { narrow = !!mq?.matches; if (!userToggled && !options.continuousCanvas) {
         listMode = narrow;
         layout();
     } };
     mq?.addEventListener('change', onMq);
     if (mq) {
         narrow = mq.matches;
-        listMode = narrow;
+        listMode = options.continuousCanvas ? false : narrow;
     }
     layout();
     return {
-        elements: { root, canvasHost, listHost },
+        elements: { root, canvasHost, listHost, world: sceneR.elements.world, inspectorHost: inspHost },
+        getCamera: () => sceneR.getCamera(),
+        getViewport: () => sceneR.getViewport(),
+        setCamera(c) {
+            if (destroyed)
+                return;
+            const camera = normalizeCamera(c);
+            fitPending = false;
+            if (currentKey)
+                cams.set(currentKey, camera);
+            else
+                initialCamera = camera;
+            sceneR.setCamera(camera);
+            controls.sync();
+            scheduleDetails();
+        },
+        stopMotion() { controls.stopMotion(); },
+        showCanvas() { userToggled = true; listMode = false; layout(); },
+        frame() { if (focusBounds)
+            controls.goTo(fitBounds(sceneR.getCamera(), sceneR.getViewport(), focusBounds, 80)); },
         update(snap, f) {
             if (destroyed)
                 return;
             snapshot = snap;
             const nextFocus = f ?? focus;
-            const key = focusKey(nextFocus);
+            const key = (options.continuousCanvas ? 'universe:' : '') + focusKey(nextFocus);
             const changed = key !== currentKey;
             focus = nextFocus;
-            const built = applyHeat(buildScene(snapshot, focus));
+            const raw = options.continuousCanvas ? buildUniverse(snapshot, focus, !changed && detailCenter ? { detailCenter } : {}) : buildScene(snapshot, focus);
+            focusBounds = 'focusBounds' in raw ? raw.focusBounds : raw.bounds;
+            const built = applyHeat(raw);
             scene = built;
-            controls.setBrowseBounds(focus.kind === 'portfolio' && built.nodes.length > 1 ? built.tableBounds ?? null : null);
+            controls.setBrowseBounds(focus.kind === 'portfolio' && built.nodes.length > 1 ? built.bounds : null);
             if (changed) {
                 currentKey = key;
+                if (initialCamera) {
+                    cams.set(key, initialCamera);
+                    initialCamera = null;
+                }
                 selectedId = null;
                 selectedThread = null;
                 fitPending = true;
-                controls.setBounds(built.bounds);
+                controls.setBounds(focusBounds);
                 sceneR.update(built);
                 controls.setFocusKey(key);
                 tryFit();
             }
             else {
-                controls.setBounds(built.bounds);
+                controls.setBounds(focusBounds);
                 if (selectedId && !built.nodes.some((n) => n.id === selectedId))
                     selectedId = null;
                 if (selectedThread && !built.threads.some((t) => t.id === selectedThread))
                     selectedThread = null;
                 sceneR.update(built);
+                if (fitPending)
+                    tryFit();
             }
             list.update(built);
             sceneR.select(selectedId);
@@ -372,6 +472,10 @@ export function mountStudio(host, options) {
             if (destroyed)
                 return;
             active = a;
+            if (!a && detailTimer !== null) {
+                clearTimeout(detailTimer);
+                detailTimer = null;
+            }
             root.hidden = !a;
             syncControlsActive();
             if (a) {
@@ -386,6 +490,9 @@ export function mountStudio(host, options) {
             if (destroyed)
                 return;
             destroyed = true;
+            if (detailTimer !== null)
+                clearTimeout(detailTimer);
+            detailTimer = null;
             viewBtn.removeEventListener('click', onView);
             inspBtn.removeEventListener('click', onInsp);
             noticeBtn.removeEventListener('click', onWarn);

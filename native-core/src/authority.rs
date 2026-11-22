@@ -909,6 +909,7 @@ impl OfficeSnapshot {
             "put_cache",
             "tick_schedules",
             "tick_goals",
+            "tick_improvements",
             "reserve_external",
             "settle_external",
             "post_assistant_message",
@@ -1081,6 +1082,12 @@ impl OfficeSnapshot {
                     },
                     s,
                 ))
+            }
+            "upsert_sticky_note" => Ok(("work.manage", self.scoped_payload(p)?)),
+            "archive_sticky_note" => {
+                let note = self.sticky_notes.iter().find(|n| p.get("noteId").and_then(Value::as_str) == Some(&n.id))
+                    .ok_or_else(|| fail("NOT_FOUND", "Sticky note not found"))?;
+                Ok(("work.manage", Scope { kind: if note.department_id.is_some() { "department" } else { "office" }.into(), id: note.department_id.clone().unwrap_or_else(|| note.office_id.clone()) }))
             }
             "plan_goal" | "set_goal_plan" | "execute_goal" | "pause_goal" | "resume_goal"
             | "checkpoint_goal" => Ok(("work.manage", scope("goal", "goalId")?)),
@@ -1601,6 +1608,15 @@ impl OfficeSnapshot {
                 &e.updated_at,
                 e.skill_paths.clone(),
             );
+        }
+        for note in &self.sticky_notes {
+            let title: String = note.text.chars().take(160).collect();
+            add("sticky-note", &note.id, &title, Some(&note.company_id), note.department_id.as_deref().or(Some(&note.office_id)),
+                note.owner_employee_id.as_deref(), &note.status, &note.updated_at, note.goal_ids.clone());
+        }
+        for session in &self.improvement_sessions {
+            add("improvement-session", &session.id, &session.title, Some(&session.company_id), session.department_id.as_deref().or(Some(&session.office_id)),
+                Some(&session.primary_employee_id), &session.status, &session.updated_at, session.goal_ids.iter().chain(&session.task_note_ids).cloned().collect());
         }
         for g in &self.goals {
             add(

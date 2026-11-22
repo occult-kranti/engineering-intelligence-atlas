@@ -19,6 +19,8 @@ export type MemberView = {
   jobs: Array<{ id: string; label: string | null; status: string | null; employeeId: string | null; goalId: string | null }>;
   goals: Array<{ id: string; title: string | null; status: string | null }>;
   roadmap: Array<{ id: string; title: string | null; status: string | null; ownerEmployeeId: string | null }>;
+  stickyNotes?: Array<{ id: string; companyId: string; officeId: string; departmentId: string | null; kind: 'comment' | 'todo'; color: string; text: string | null; status: 'open' | 'done'; x: number; y: number; ownerEmployeeId: string | null; goalIds: string[]; editable: false }>;
+  noteTruncation?: { matched: number; returned: number; truncated: boolean };
   counts: Record<string, number>;
   truncation: Record<string, unknown>;
   membership: { role: MemberRole; expiresAt: string | null; aclRevision: number };

@@ -22,7 +22,7 @@ export function parseReviewReply(text: string): ReviewReply {
 /** Defence in depth; the native core rechecks the full pair and current grants before dispatch. */
 export function assertPairedAttempt(job: OfficeJob, snapshot: OfficeSnapshot): void {
   const p = job.pair;
-  if (snapshot.schemaVersion !== 2 || !p || !p.stepId || !p.peerEmployeeId || p.peerEmployeeId === job.employeeId
+  if (![2,3].includes(snapshot.schemaVersion) || !p || !p.stepId || !p.peerEmployeeId || p.peerEmployeeId === job.employeeId
     || !p.primaryJobId || !p.reviewJobId || p.primaryJobId === p.reviewJobId
     || !['primary', 'review'].includes(p.phase) || job.id !== (p.phase === 'primary' ? p.primaryJobId : p.reviewJobId)) {
     throw new Error('PAIR_REQUIRED: plan this work with a distinct helper in the current office before dispatch. Historical work is preserved.');

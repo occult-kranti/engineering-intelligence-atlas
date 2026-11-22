@@ -35,6 +35,11 @@ fn cloud_projection(state: &OfficeSnapshot) -> Result<Value> {
         "portfolio",
         "decisionPanels",
         "authority",
+        "stickyNotes",
+        "improvementAllowance",
+        "improvementBudget",
+        "improvementSessions",
+        "improvementReceipts",
     ];
     value
         .as_object_mut()
@@ -191,6 +196,11 @@ fn permitted(action: &str) -> bool {
             | "clear_cache"
             | "add_knowledge"
             | "configure_policy"
+            | "upsert_sticky_note"
+            | "archive_sticky_note"
+            | "register_improvement_allowance"
+            | "create_improvement_session"
+            | "control_improvement_session"
             | "approve_job"
             | "bootstrap_directors"
             | "post_chat"
@@ -504,6 +514,18 @@ mod tests {
         assert_eq!(result.unwrap_err().code, "CONFLICT");
         assert_eq!(state.companies.len(), before);
         assert!(state.remote_receipts.is_empty());
+    }
+    #[test]
+    fn improvement_receipts_are_part_of_the_exact_cloud_projection_and_cas_hash() {
+        let mut state=fixture();
+        state.apply(&json!({"action":"register_improvement_allowance","requestId":"visible-owner-receipt","id":"shared-20","capUsd":20,"carriedObservedUsd":0,"carriedEstimatedUsd":0,"sourceReference":"Synthetic owner checkpoint"})).unwrap();
+        let projected=cloud_projection(&state).unwrap();
+        assert_eq!(projected["improvementReceipts"],serde_json::to_value(&state.improvement_receipts).unwrap());
+        assert_eq!(projected["improvementReceipts"][0]["result"]["allowanceId"],"shared-20");
+        let old_hash=state.sync_state_hash().unwrap();
+        state.improvement_receipts[0].request_sha256="f".repeat(64);
+        assert_ne!(state.sync_state_hash().unwrap(),old_hash);
+        assert_eq!(state.apply(&json!({"action":"apply_remote_command","id":"stale-improvement-receipt","expectedStateHash":old_hash,"command":{"action":"select_company","companyId":state.active_company_id}})).unwrap_err().code,"CONFLICT");
     }
     #[test]
     fn relocated_evidence_has_a_stable_projection_without_rewriting_chat_or_sources() {

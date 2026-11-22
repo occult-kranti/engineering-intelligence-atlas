@@ -116,6 +116,7 @@ export class HeadlessCloudSync {
       this.service = new options.CloudSyncService({ userDataPath: options.stateDir, safeStorage: this.storage,
         snapshot: options.snapshot, command: options.command,
         allowKnownSchemaDefaultsMigration: options.allowKnownSchemaDefaults === true,
+        getWorkerExecution: options.getWorkerExecution,
         isVerifiedBootstrapBase: ({ revision, snapshotSha256 }) => this.bootstrapProof?.deviceDigest === this.deviceDigest
           && this.bootstrapProof?.revision === revision && this.bootstrapProof?.snapshotHash === snapshotSha256,
         fetch: async (target, init = {}) => {
@@ -218,6 +219,7 @@ export class HeadlessCloudSync {
     if (this.stopped) { if (this.pending) await this.pending; return; }
     this.stopped = true; if (this.timer) clearTimeout(this.timer);
     this.abort.abort();
+    this.service?.close?.();
     if (this.pending) await this.pending;
     this.storage?.destroy();
   }

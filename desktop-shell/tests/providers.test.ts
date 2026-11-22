@@ -158,6 +158,12 @@ describe('Anthropic version-specific request shapes', () => {
   const sonnet = { anthropic: { thinking: { type: 'between_tools' }, effort: 'medium' } };
   const opus = { anthropic: { effort: 'medium' } };
 
+  it('Haiku 5.5 explicitly disables thinking without enabling between_tools', async () => {
+    for (const model of ['claude-haiku-5-5','claude-haiku-5-5-20261101']) {
+      expect(await run('anthropic',model)).toEqual({anthropic:{thinking:{type:'disabled'},effort:'medium'}});
+    }
+  });
+
   it('Sonnet 5.5 keeps between_tools with medium effort', async () => {
     expect(await run('anthropic', 'claude-sonnet-5-5')).toEqual(sonnet);
   });
@@ -179,7 +185,7 @@ describe('Anthropic version-specific request shapes', () => {
   });
 
   it('older, unknown and lookalike models receive no provider options', async () => {
-    for (const model of ['claude-opus-4', 'claude-sonnet-4-5', 'claude-opus-5-50', 'claude-sonnet-5-55', 'claude-haiku-5-5', 'mystery']) {
+    for (const model of ['claude-opus-4', 'claude-sonnet-4-5', 'claude-opus-5-50', 'claude-sonnet-5-55', 'claude-haiku-5-50', 'mystery']) {
       expect(await run('anthropic', model)).toBeUndefined();
     }
   });

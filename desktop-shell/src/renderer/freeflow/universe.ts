@@ -3,6 +3,7 @@
 import { buildScene, type FreeflowFocus, type FreeflowScene, type FreeflowSnapshot, type SceneNode, type SceneBlueprintPreview } from './model.js';
 import { cmp, unionBounds, type LRect } from './layout.js';
 import { MAX_COORD } from './camera.js';
+import { projectStickyNotes } from '../improvement/notes.js';
 
 const FOCUS_PAD = 40;
 const BLUEPRINT_PREFIX = 'universe:blueprint:';
@@ -255,6 +256,8 @@ export function buildUniverse(snapshot: FreeflowSnapshot, focus: FreeflowFocus, 
     scenes.set(plan.companyId, fitCompany(source, plan, companyIds));
   }
   const nodes = [...portfolio.nodes, ...plans.flatMap(plan => scenes.get(plan.companyId)?.nodes ?? [])];
+  const stickies = projectStickyNotes(snapshot.stickyNotes, nodes);
+  nodes.push(...stickies.nodes);
   const nodeIds = new Set(nodes.map(node => node.id));
   const threadIds = new Set<string>();
   const threads = [...portfolio.threads, ...plans.flatMap(plan => scenes.get(plan.companyId)?.threads ?? [])]
@@ -272,6 +275,7 @@ export function buildUniverse(snapshot: FreeflowSnapshot, focus: FreeflowFocus, 
   }
   const warnings = [...portfolio.warnings, ...[...scenes.values()].flatMap(scene => scene.warnings), ...scoped.warnings]
     .filter(warning => warning !== 'Scoped view: company leadership, other offices and the shared global assistant are outside this scope.');
+  if (stickies.omitted) warnings.push(`${stickies.omitted} notes are outside the bounded spatial preview; use Notes & improvement to inspect saved records.`);
   return { ...portfolio, worldMode: 'blueprint', focus: { ...focus }, title: focus.kind === 'portfolio' ? 'Blueprint world' : scoped.title,
     breadcrumbs: scoped.breadcrumbs.map(crumb => ({ label: crumb.focus.kind === 'portfolio' ? 'Blueprint world' : crumb.label, focus: { ...crumb.focus } })),
     tableBounds: undefined, nodes, threads, bounds: safeRect(unionBounds(plans.map(plan => plan.rect), 40)), focusBounds,

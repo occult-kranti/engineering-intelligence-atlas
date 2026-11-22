@@ -11,9 +11,11 @@ describe('managed pair boundary', () => {
       JSON.stringify({...reply,evidenceRefs:Array(21).fill('evidence')}),JSON.stringify({...reply,evidenceRefs:['é'.repeat(151)]}),
       JSON.stringify({...reply,summary:'é'.repeat(1001)}), 'x'.repeat(16001), 'null', '[]' ]) expect(()=>parseReviewReply(invalid)).toThrow();
   });
-  it('requires schema2 and a distinct pair before provider dispatch', () => {
+  it('requires supported schema2/3 and a distinct pair before provider dispatch', () => {
     const job = {id:'p',employeeId:'producer',allowedTools:[],dependencies:[],pair:{stepId:'s',phase:'primary',peerEmployeeId:'reviewer',primaryJobId:'p',reviewJobId:'r'}} as unknown as OfficeJob;
     expect(()=>assertPairedAttempt(job,{schemaVersion:2} as OfficeSnapshot)).not.toThrow();
+    expect(()=>assertPairedAttempt(job,{schemaVersion:3} as unknown as OfficeSnapshot)).not.toThrow();
+    expect(()=>assertPairedAttempt(job,{schemaVersion:4} as unknown as OfficeSnapshot)).toThrow(/PAIR_REQUIRED/);
     expect(()=>assertPairedAttempt(job,{schemaVersion:1} as OfficeSnapshot)).toThrow(/PAIR_REQUIRED/);
     expect(()=>assertPairedAttempt({...job,pair:null},{schemaVersion:2} as OfficeSnapshot)).toThrow(/PAIR_REQUIRED/);
     expect(()=>assertPairedAttempt({...job,pair:{...job.pair!,peerEmployeeId:'producer'}},{schemaVersion:2} as OfficeSnapshot)).toThrow(/PAIR_REQUIRED/);

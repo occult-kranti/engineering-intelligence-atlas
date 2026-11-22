@@ -76,7 +76,7 @@ export const TOOL_DEFINITIONS = Object.freeze([
   },
   {
     name: 'office_command', title: 'Apply a Daftar owner command',
-    description: 'Apply one explicitly requested owner action using a unique id and expectedStateHash from a recent office read. Enqueue, approve, execute, or resume actions may start paid work when workers are enabled. The runtime enforces authority, budgets, and atomic command receipts. A successful result is a compact receipt. Never create a new id to repeat an uncertain mutation; inspect state first. Worker lease/accounting operations are unavailable.',
+    description: 'Apply one explicitly requested owner action using a unique id and expectedStateHash from a recent office read. Enqueue, approve, execute, or resume actions may start paid work when ordinary workers are enabled. Improvement-session start/resume controls a separate scoped coordinator and may dispatch with the ordinary pool disabled. Use session pause/cancel to stop that work. The runtime enforces authority, budgets, and atomic command receipts. A successful result is a compact receipt. Never create a new id to repeat an uncertain mutation; inspect state first. Worker lease/accounting operations are unavailable.',
     inputSchema: {
       type: 'object', properties: {
         id: { type: 'string', pattern: '^[A-Za-z0-9_-]{1,100}$', description: 'Unique stable command receipt ID; retain it if delivery is uncertain.' },
@@ -88,7 +88,7 @@ export const TOOL_DEFINITIONS = Object.freeze([
   },
   {
     name: 'worker_set_enabled', title: 'Enable or disable Daftar workers',
-    description: 'Set the runtime worker pool enabled state. Enabling can immediately dispatch already-authorized jobs and incur model-provider charges within their budgets. Disabling stops dispatch and requests cancellation of active work; already-dispatched usage may still be charged. No automatic retry is performed. Inspect runtime_status after an uncertain response.',
+    description: 'Set the ordinary runtime worker pool enabled state. Enabling can immediately dispatch already-authorized ordinary jobs and incur model-provider charges within their budgets. Disabling stops that pool and requests cancellation of its active work; already-dispatched usage may still be charged. Improvement sessions have separate native start/pause/cancel controls and are not enabled or stopped by this switch. No automatic retry is performed. Inspect runtime_status after an uncertain response.',
     inputSchema: { type: 'object', properties: { enabled: { type: 'boolean' } }, required: ['enabled'], additionalProperties: false },
     // Re-enabling can trigger work, so advertise conservatively despite a Boolean setting.
     annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: false, openWorldHint: true },
@@ -347,6 +347,11 @@ function workerSummary(worker) {
   out.activeJobId = safeId(worker.activeJobId) ?? null;
   if (Array.isArray(worker.activeJobIds)) out.activeJobIds = worker.activeJobIds.slice(0, 100).map(safeId).filter(Boolean);
   out.hasError = Boolean(worker.lastError || worker.error);
+  if(isObject(worker.execution)&&typeof worker.execution.sampledAt==='string'&&Number.isFinite(Date.parse(worker.execution.sampledAt))) {
+    out.execution={sampledAt:worker.execution.sampledAt,activeCalls:(Array.isArray(worker.execution.activeCalls)?worker.execution.activeCalls:[]).slice(0,8)
+      .filter(call=>isObject(call)&&hostId(call.jobId)&&['provider','model'].includes(call.phase)&&typeof call.startedAt==='string'&&Number.isFinite(Date.parse(call.startedAt)))
+      .map(call=>({jobId:hostId(call.jobId),phase:call.phase,startedAt:call.startedAt}))};
+  }
   if (Array.isArray(worker.scheduling)) out.scheduling = worker.scheduling.slice(0, 4).map(slot => ({
     baseIntervalMs: nonnegative(slot?.baseIntervalMs), maxIntervalMs: nonnegative(slot?.maxIntervalMs),
     lastOutcome: ['idle','work','error'].includes(slot?.lastOutcome) ? slot.lastOutcome : null,
@@ -376,10 +381,14 @@ function officeSummary(snapshot) {
   if (Number.isSafeInteger(snapshot.schemaVersion)) out.schemaVersion = snapshot.schemaVersion;
   if (isObject(snapshot.budget)) {
     out.budget = {};
-    for (const key of ['observedUsd', 'estimatedUsd', 'reservedUsd', 'committedUsd', 'remainingUsd', 'committedTokens', 'remainingTokens']) {
+    for (const key of ['observedUsd', 'estimatedUsd', 'reservedUsd', 'heldUsd', 'committedUsd', 'remainingUsd', 'committedTokens', 'remainingTokens']) {
       if (Number.isFinite(snapshot.budget[key])) out.budget[key] = snapshot.budget[key];
     }
     for (const key of ['warning', 'atCap']) if (typeof snapshot.budget[key] === 'boolean') out.budget[key] = snapshot.budget[key];
+  }
+  if(isObject(snapshot.improvementBudget)) {
+    out.improvementBudget={};for(const key of ['capUsd','carriedObservedUsd','carriedEstimatedUsd','observedUsd','estimatedUsd','reservedUsd','heldUsd','committedUsd','remainingUsd','effectiveRemainingUsd'])
+      if(Number.isFinite(snapshot.improvementBudget[key])&&snapshot.improvementBudget[key]>=0)out.improvementBudget[key]=snapshot.improvementBudget[key];
   }
   return out;
 }
@@ -551,6 +560,9 @@ export function createToolHandler({ request }) {
         if (result.execution !== 'headless') throw new ToolError('Connected service is not a headless Daftar runtime.', 'runtime_bad_response');
         const cloud = result.cloud;
         return { ok: true, execution: 'headless', worker: workerSummary(result.worker), capabilities: capabilitiesSummary(result.capabilities),
+          ...(isObject(result.improvement)?{improvement:{started:result.improvement.started===true,running:result.improvement.running===true,activeSessionId:hostId(result.improvement.activeSessionId)??null,
+            blockedReason:result.improvement.blockedReason? safeText(result.improvement.blockedReason,100):null,
+            nextPollAt:Number.isSafeInteger(result.improvement.nextPollAt)?result.improvement.nextPollAt:null}}:{}),
           ...(result.host ? { host: hostSummary(result.host, false) } : {}),
           ...(isObject(result.activity) ? { activity: { available: result.activity.available === true,
             degraded: result.activity.degraded === true, fenced: result.activity.fenced === true,
@@ -595,7 +607,7 @@ export function createToolHandler({ request }) {
         exactArgs(args, ['enabled']);
         if (typeof args.enabled !== 'boolean') throw new InvalidParams('enabled must be a Boolean.');
         const result = await request('POST', '/v1/workers', { enabled: args.enabled });
-        return { ok: true, worker: workerSummary(result.worker), guidance: 'Inspect runtime_status to follow dispatch. Already-dispatched usage can remain billable after disabling workers.' };
+        return { ok: true, worker: workerSummary(result.worker), guidance: 'Inspect runtime_status to follow dispatch. This switch controls the ordinary queue; improvement sessions use their own pause/cancel controls. Already-dispatched usage can remain billable after stopping.' };
       }
       case 'model_pool_status': {
         const input = modelArgs(args, 'status');

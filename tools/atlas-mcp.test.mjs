@@ -114,6 +114,26 @@ function officeHarness(snapshot) {
   return {calls,handler,wire};
 }
 
+test('improvement metadata preserves identities, bounded notes, scope links and immutable allowance values',async()=>{
+ const state=boardFixture();state.schemaVersion=3;
+ state.stickyNotes=[{id:'sk-12345678',revision:4,companyId:'company-a',officeId:'office-a',departmentId:null,kind:'todo',color:'yellow',status:'open',text:'Review the actual board evidence.',goalIds:['goal-a','goal-b'],x:.2,y:.4},
+  {id:'foreign-note',revision:0,companyId:'company-b',officeId:'office-b',departmentId:null,kind:'comment',text:'Other company',goalIds:[]}];
+ state.improvementSessions=[{id:'session-a',revision:2,companyId:'company-a',officeId:'office-a',departmentId:null,allowanceId:'shared-allowance',primaryEmployeeId:'sk-12345678',reviewerEmployeeId:'employee-0000',status:'paused',objective:'Useful scoped work',continuation:'until-budget',maxCycles:null,cycle:0,goalIds:['goal-a','goal-b'],taskNoteIds:['sk-12345678','foreign-note','absent'],allowedRoutes:[{provider:'anthropic',model:'claude-haiku-5-5'}]}];
+ state.improvementAllowance={id:'shared-allowance',capUsd:20,carriedObservedUsd:4,carriedEstimatedUsd:1,sourceReference:'owner-reviewed-checkpoint'};
+ const f=officeHarness(state),query=collection=>f.handler('office_query',{collection,scope:{kind:'company',id:'company-a'}});
+ const note=(await query('stickyNotes')).items[0];assert.equal(note.id,'sk-12345678');assert.equal(note.text,state.stickyNotes[0].text);assert.equal(note.revision,4);assert.deepEqual(note.goalIds,['goal-a']);assert.equal(note.referencesComplete,false);
+ const session=(await query('improvementSessions')).items[0];assert.equal(session.primaryEmployeeId,'sk-12345678');assert.equal(session.maxCycles,null);assert.deepEqual(session.taskNoteIds,['sk-12345678']);assert.equal(session.omittedReferences.taskNoteIds,2);assert.deepEqual(session.goalIds,['goal-a']);
+ const allowance=(await f.handler('office_query',{collection:'improvementAllowances'})).items[0];assert.equal(allowance.capUsd,20);assert.equal(allowance.carriedObservedUsd,4);assert.equal(allowance.carriedEstimatedUsd,1);
+ state.stickyNotes[0].text='Do not disclose '+['s','k','-','12345678901234567890'].join('');const redacted=(await query('stickyNotes')).items[0];assert.equal(redacted.textIncomplete,true);assert.equal(redacted.text.includes('12345678901234567890'),false);
+});
+
+test('owner improvement actions preserve native receipt identities while internal ticks stay hidden',async()=>{
+ const f=fixture();const actions=['upsert_sticky_note','archive_sticky_note','register_improvement_allowance','create_improvement_session','control_improvement_session'];
+ for(const action of actions){assert.ok(TOOL_DEFINITIONS.find(tool=>tool.name==='office_command').inputSchema.properties.action.enum.includes(action));await f.handler('office_command',{action,payload:{requestId:'stable-request',expectedRevision:4}});}
+ assert.ok(f.calls.every(call=>call.payload.requestId==='stable-request'&&call.payload.expectedRevision===4));
+ await assert.rejects(f.handler('office_command',{action:'tick_improvements',payload:{sessionId:'session-a'}}));assert.equal(f.calls.length,actions.length);
+});
+
 test('Daftar server keeps its protocol name and advertises bounded read-only queries',()=>{
   assert.deepEqual(SERVER_INFO,{name:'atlas-company',version:'0.5.0'});
   const query=TOOL_DEFINITIONS.find(t=>t.name==='office_query');
@@ -308,10 +328,11 @@ test('roadmap and paired-job metadata preserve references and hashes without pro
   const snapshot=boardFixture(),f=officeHarness(snapshot),primaryHash='a'.repeat(64),reviewHash='b'.repeat(64);
   const road=(await f.handler('office_query',{collection:'roadmap',scope:{kind:'company',id:'company-a'}})).items.find(row=>row.id==='roadmap-a');
   assert.deepEqual(road.dependencies,['roadmap-global']);assert.deepEqual(road.goalIds,['goal-a','goal-a2']);assert.equal(road.evidencePresent,true);assert.equal('evidence' in road,false);
-  Object.assign(snapshot.jobs[0],{requestSha256:primaryHash,artifactSha256:reviewHash,pair:{stepId:'write',phase:'review',peerEmployeeId:'sk-12345678',primaryJobId:'job-a2',reviewJobId:'job-a'},
+  Object.assign(snapshot.jobs[0],{requestSha256:primaryHash,artifactSha256:reviewHash,deliverableSha256:'c'.repeat(64),pair:{stepId:'write',phase:'review',peerEmployeeId:'sk-12345678',primaryJobId:'job-a2',reviewJobId:'job-a'},
     review:{verdict:'accepted',primaryArtifactSha256:primaryHash,reviewArtifactSha256:reviewHash,primaryArtifactComplete:true,summary:'Verified sk-proj-1234567890 /workspace/private/report',evidenceRefs:['job-a2','bad/path'],recordedAt:'2026-11-22T00:00:00Z'}});
   const job=(await f.handler('office_query',{collection:'jobs'})).items.find(row=>row.id==='job-a');
   assert.equal(job.pair.peerEmployeeId,'sk-12345678');assert.equal(job.artifactSha256,reviewHash);assert.equal(job.review.primaryArtifactSha256,primaryHash);
+  assert.equal(job.deliverableSha256,'c'.repeat(64));
   assert.deepEqual(job.review.evidenceRefs,['job-a2']);assert.equal(job.review.omittedEvidenceRefs,1);assert.match(job.review.summary,/credential omitted/);
   assert.equal(job.review.primaryArtifactComplete,true);
   for(const forbidden of ['PRIVATE PROMPT','PRIVATE LEASE','PRIVATE EVIDENCE','/workspace/private','sk-proj-1234567890'])assert.equal(JSON.stringify(job).includes(forbidden),false);

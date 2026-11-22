@@ -44,7 +44,7 @@ describe('native blueprint company surfaces', () => {
     expect(plan.querySelectorAll('img,script,path')).toHaveLength(0);
     expect(plan.querySelector('.ff-table-plan-title')?.textContent).toBe('Alpha <img src=x>');
     expect([...plan.querySelectorAll<HTMLButtonElement>('button[data-canvas-action]')].map(button => button.dataset.canvasAction))
-      .toEqual(['chat', 'roadmap', 'whiteboard', 'ownership', 'hire']);
+      .toEqual(['chat', 'roadmap', 'whiteboard', 'ownership', 'notes', 'hire']);
     const room = host.querySelector<HTMLElement>('[data-node-id="universe:blueprint:room:alpha:hq:one"]')!;
     const roomNode = scene.nodes.find(node => node.id === room.dataset.nodeId)!;
     expect(room.querySelector('.ff-node-title')?.textContent).toBe('Review <img src=x onerror=bad()>');
@@ -145,13 +145,13 @@ describe('native blueprint company surfaces', () => {
       expect(dom.key(button, 'Enter').defaultPrevented).toBe(false);
       button.click();
     }
-    expect(actions.map(item => item.action)).toEqual(['chat', 'roadmap', 'whiteboard', 'ownership', 'hire']);
+    expect(actions.map(item => item.action)).toEqual(['chat', 'roadmap', 'whiteboard', 'ownership', 'notes', 'hire']);
     expect(actions.every(item => item.context.companyId === 'empty' && item.context.nodeId === 'universe:table-plan:empty')).toBe(true);
     expect(nav).toEqual([]);
     expect(JSON.stringify(snap)).toBe(saved);
     studio.destroy();
     buttons[3]!.click();
-    expect(actions).toHaveLength(5);
+    expect(actions).toHaveLength(6);
   });
 
   it('keeps company entry points and footprints available within the shared DOM budget', () => {

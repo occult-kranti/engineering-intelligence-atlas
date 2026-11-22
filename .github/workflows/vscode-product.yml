@@ -6,6 +6,7 @@ on:
       - 'vscode-extension/**'
       - 'headless-runtime/**'
       - 'desktop-shell/**'
+      - 'cloud-workspace/**'
       - 'native-core/**'
       - 'scripts/*browser-checks.mjs'
       - 'scripts/*personal*workspace*.py'
@@ -66,10 +67,12 @@ jobs:
         run: |
           cargo test --locked --manifest-path native-core/Cargo.toml
           python3 -m unittest discover -s scripts -p 'test_personal_workspace.py'
+          python3 -m unittest discover -s tools -p 'test_claude_worker.py'
           npm --prefix desktop-shell test
           npm --prefix desktop-shell run test:renderer
           node --test tools/atlas-mcp.test.mjs tools/daftar-runtime-mcp.test.mjs
           node --test headless-runtime/test/*.test.mjs
+          node --test cloud-workspace/tests/*.test.mjs
       - name: Activate installed Linux VSIX in a fresh editor
         if: runner.os == 'Linux'
         working-directory: vscode-extension

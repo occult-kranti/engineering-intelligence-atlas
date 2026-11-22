@@ -5,7 +5,7 @@ import type { FreeflowScene, SceneNode, SceneThread } from './model.js';
 
 export type StudioActionKind =
   | 'chat' | 'jobs' | 'roadmap' | 'whiteboard' | 'ownership' | 'manage' | 'new-job'
-  | 'new-company' | 'new-office' | 'new-department' | 'hire' | 'services' | 'settings';
+  | 'new-company' | 'new-office' | 'new-department' | 'hire' | 'services' | 'settings' | 'notes';
 
 export interface StudioActionContext {
   companyId?: string;
@@ -17,6 +17,7 @@ export interface StudioActionContext {
   contractId?: string;
   nodeId?: string;
   threadId?: string;
+  noteId?: string;
 }
 
 export interface StudioActionState { enabled: boolean; reason?: string }
@@ -47,6 +48,7 @@ function ctxOf(n: SceneNode): StudioActionContext {
   if (n.boardId) c.boardId = n.boardId;
   if (n.roomId) c.roomId = n.roomId;
   if (n.contractId) c.contractId = n.contractId;
+  if (typeof n.metadata.stickyNoteId === 'string') c.noteId = n.metadata.stickyNoteId;
   return c;
 }
 
@@ -91,6 +93,7 @@ function companyName(scene: FreeflowScene | null, id: string): string {
 
 export function rowsForNode(n: SceneNode, scene: FreeflowScene | null = null): Array<[string, string]> {
   const m = n.metadata;
+  if(m.stickyNote===true)return [['Kind',m.stickyKind==='todo'?'To-do annotation':'Comment annotation'],['Text',String(m.stickyText??n.label)],['Status',n.status],['Access',m.annotationReadOnly===true?'Read-only shared annotation':'Saved annotation; no execution grant'],['Board steward',typeof m.ownerEmployeeId==='string'?nameOf(scene,m.ownerEmployeeId)??m.ownerEmployeeId:'Unassigned']];
   if (n.kind === 'restricted') return [['Access', 'Restricted'], ['Reason', String(m['reason'] ?? 'A separate company membership is required.')]];
   const sub = n.kind === 'reference' ? refSubtype(n) : 'other';
   const kindLabel: Record<string, string> = {
@@ -170,12 +173,13 @@ export function rowsForNode(n: SceneNode, scene: FreeflowScene | null = null): A
 export function actionsForNode(n: SceneNode): InspectorActionSpec[] {
   const c = ctxOf(n);
   const a = (action: StudioActionKind, label: string, context: StudioActionContext = c): InspectorActionSpec => ({ action, label, context });
+  if (n.metadata.stickyNote === true) return n.metadata.annotationReadOnly === true ? [] : [a('notes', 'Edit saved note')];
   switch (n.kind) {
     case 'restricted': return [];
     case 'folio': return [a('chat', 'Open company chat'), a('jobs', 'Jobs'), a('roadmap', 'Roadmap'), a('manage', 'Manage company'), a('new-office', 'Add office'), a('hire', 'Hire')];
     case 'office': return [a('chat', 'Chat in office'), a('jobs', 'Jobs'), a('new-department', 'Add department'), a('manage', 'Manage office'), a('hire', 'Hire')];
-    case 'department': return [a('chat', 'Chat in department'), a('jobs', 'Jobs'), a('new-job', 'New job'), a('manage', 'Manage department'), a('hire', 'Hire')];
-    case 'room': return [a('chat', 'Chat in room scope'), a('new-job', 'New job'), a('manage', 'Manage department'), a('hire', 'Hire')];
+    case 'department': return [a('chat', 'Chat in department'), a('notes', 'Notes & improvement'), a('jobs', 'Jobs'), a('new-job', 'New job'), a('manage', 'Manage department'), a('hire', 'Hire')];
+    case 'room': return [a('chat', 'Chat in room scope'), a('notes', 'Notes & improvement'), a('new-job', 'New job'), a('manage', 'Manage department'), a('hire', 'Hire')];
     case 'employee': return [a('chat', 'Ask this employee'), a('jobs', 'Linked jobs'), a('new-job', 'Assign job'), a('ownership', 'Ownership'), a('manage', 'Manage employee')];
     case 'reference': {
       const sub = refSubtype(n);

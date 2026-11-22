@@ -15,7 +15,7 @@ export interface OfficeServiceOptions {
   execute?: (binary: string, request: NativeRequest) => Promise<OfficeSnapshot>;
 }
 
-const WORKER_ACTIONS = new Set(['claim_job', 'reserve_job', 'finish_job', 'record_step_review', 'record_review_failure', 'complete_job', 'heartbeat_job', 'get_cache', 'put_cache', 'reserve_external', 'settle_external', 'post_assistant_message', 'tick_goals', 'record_github_activity', 'check_worker_authority']);
+const WORKER_ACTIONS = new Set(['claim_job', 'reserve_job', 'finish_job', 'record_step_review', 'record_review_failure', 'complete_job', 'heartbeat_job', 'get_cache', 'put_cache', 'reserve_external', 'settle_external', 'post_assistant_message', 'tick_goals', 'tick_improvements', 'record_github_activity', 'check_worker_authority']);
 
 /** Check immediately before a managed side effect, after potentially long model work. */
 export function assertWorkerCapability(snapshot: OfficeSnapshot, job: OfficeJob, capability: string): void {

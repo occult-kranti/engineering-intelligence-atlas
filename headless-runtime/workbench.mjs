@@ -75,7 +75,8 @@ export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, 
   // Otherwise the same explicit manual CloudSyncService used by desktop is reused.
   const managedCloud = runtime.cloudSync?.enabled === true;
   const cloud = managedCloud ? runtime.cloudSync.service : new modules.CloudSyncService({ userDataPath: dataDir, safeStorage: storage,
-    snapshot: () => runtime.office.officeSnapshot(), command: request => runtime.office.officeCommand(request), fetch: fetcher });
+    snapshot: () => runtime.office.officeSnapshot(), command: async request => {const result=await runtime.office.officeCommand(request);if(result.ok)runtime.improvement?.wake(request.command??request);return result;}, fetch: fetcher,
+    getWorkerExecution: () => runtime.workerStatus?.().execution ?? {sampledAt:new Date().toISOString(),activeCalls:[]} });
   const saveReceipts = () => {
     try { const bytes = JSON.stringify(receipts); if (Buffer.byteLength(bytes) > 16 * 1024 * 1024) throw new Error(); atomicJson(receiptFile, receipts); }
     catch { fenced = true; throw new WorkbenchError('WORKBENCH_STORAGE_UNCERTAIN', 'Receipt persistence is uncertain. Reopen and inspect this workbench before further mutations.', 503); }
@@ -261,6 +262,7 @@ export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, 
   async function close() {
     if (closed) return;
     closing = true; lifetime.abort();
+    cloud.close?.();
     for (const id of ownedJobs) jobs.cancel(id);
     for (const id of activeRuns) runner.cancel(id);
     await chain;

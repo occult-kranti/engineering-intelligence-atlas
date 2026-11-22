@@ -88,7 +88,7 @@ describe('blueprint relief adapter CPU lifecycle (mocked WebGLRenderer)', () => 
     expect(dom.raf.pending()).toBe(1);
     expect(handle.stats().state).toBe('fallback'); // no successful render yet
     dom.raf.step();
-    expect(handle.stats()).toMatchObject({ state: 'webgl', frames: 1, pending: false, geometries: 1, materials: 3, instances: 6 });
+    expect(handle.stats()).toMatchObject({ state: 'webgl', frames: 1, pending: false, geometries: 1, materials: 3, instances: 7 });
     expect(dom.raf.pending()).toBe(0);
     for (let i = 0; i < 25; i++) { handle.update(fixture); dom.raf.step(); }
     expect(renderer().geometries.size).toBe(1);
@@ -104,8 +104,8 @@ describe('blueprint relief adapter CPU lifecycle (mocked WebGLRenderer)', () => 
     const rooms = Array.from({ length: 2000 }, (_, i) => node(`room-${i}`, { x: i % 50 * 110, y: Math.floor(i / 50) * 110, width: 100, height: 100 }));
     handle.setCamera({ ...DEFAULT_CAMERA, zoom: 0.02 }, { width: 1440, height: 900 });
     handle.update(scene(rooms)); dom.raf.step();
-    expect(handle.stats()).toMatchObject({ instances: 1440, geometries: 1, materials: 3, drawCalls: 2 });
-    expect(handle.stats().triangles).toBe(1440 * 12);
+    expect(handle.stats()).toMatchObject({ instances: 1680, geometries: 1, materials: 3, drawCalls: 2 });
+    expect(handle.stats().triangles).toBe(1680 * 12);
     expect(handle.stats().instances).toBeLessThanOrEqual(2048);
     handle.update(scene([
       node('nan', { x: NaN, y: 0, width: 100, height: 80 }),
@@ -115,7 +115,7 @@ describe('blueprint relief adapter CPU lifecycle (mocked WebGLRenderer)', () => 
       node('employee', undefined, 'employee'), node('reference', undefined, 'reference'),
       node('valid'),
     ])); dom.raf.step();
-    expect(handle.stats().instances).toBe(6);
+    expect(handle.stats().instances).toBe(7);
   });
 
   it('keeps real box geometry inside its room and leaves an actual doorway gap', () => {
@@ -140,6 +140,29 @@ describe('blueprint relief adapter CPU lifecycle (mocked WebGLRenderer)', () => 
     const doorwayPoint = { x: 72, y: 79 };
     expect(walls.some(box => doorwayPoint.x > box.x0 && doorwayPoint.x < box.x1 && doorwayPoint.y > box.y0 && doorwayPoint.y < box.y1)).toBe(false);
     expect(walls.some(box => 20 > box.x0 && 20 < box.x1 && 79 > box.y0 && 79 < box.y1)).toBe(true);
+  });
+
+  it('grounds shallow partitions with a contained contact threshold without shadow passes or muddying the floor', () => {
+    const { handle } = mount(); handle.update(scene([node('room')])); dom.raf.step();
+    const floors: any[] = [], walls: any[] = [];
+    renderer().scene.traverse((mesh: any) => {
+      if (!mesh.isInstancedMesh || !mesh.count) return;
+      if (mesh.material.isMeshStandardMaterial) walls.push(mesh); else floors.push(mesh);
+    });
+    expect(floors).toHaveLength(1); expect(walls).toHaveLength(1);
+    expect(floors[0].count).toBe(2);
+    expect(floors[0].material.vertexColors).toBe(false);
+    expect(walls[0].material.vertexColors).toBe(true);
+    const matrix = new THREE.Matrix4(); floors[0].getMatrixAt(0, matrix);
+    const edge = new THREE.Vector3(1, 1, 1).applyMatrix4(matrix);
+    expect(edge.x).toBeCloseTo(100); expect(edge.z).toBeLessThan(0.4);
+    floors[0].getMatrixAt(1, matrix);
+    const interior = new THREE.Vector3(0, 0, 0).applyMatrix4(matrix);
+    expect(interior.x).toBeGreaterThan(2.4); // contact band is exposed just inside the wall
+    expect(interior.z).toBeGreaterThan(0); // no coplanar floor overlap
+    expect(walls[0].castShadow).toBe(false); expect(walls[0].receiveShadow).toBe(false);
+    expect(renderer().scene.children.filter((n: any) => n.isLight).every((light: any) => !light.castShadow)).toBe(true);
+    expect(dom.raf.pending()).toBe(0);
   });
 
   it('spends the horizon budget on the current distant company and retains per-surface ownership', () => {

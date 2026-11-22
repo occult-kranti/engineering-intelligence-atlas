@@ -383,6 +383,24 @@ export function createModelResources({ stateDir, snapshot, modelPool, nativeComm
       let denied; for (const resource of candidates) { try { return await resolveIn({ companyId: input.companyId, employeeId: input.employeeId, resourceId: resource.id, purpose: 'assign' }, state); } catch (error) { denied = error; } }
       throw denied;
     }),
+    // Internal read-only preflight before a native improvement pair exists.
+    // No download, assignment, grant or job is created by route selection.
+    validateImprovementRoute: (session, route) => store.serial(async () => {
+      const state = await current();
+      const canonical = (state.improvementSessions ?? []).find(item => item.id === session?.id);
+      if (!canonical || route?.provider !== 'ollama' || !canonical.allowedRoutes?.some(item => item.provider === route.provider && item.model === route.model)) {
+        fail('RESOURCE_SCOPE_DENIED', 'Choose a model allowed by the canonical improvement session.', 403);
+      }
+      const candidates = store.value.resources.filter(resource => resource.model === route.model);
+      for (const [employeeId, serviceContractId] of [[canonical.primaryEmployeeId, canonical.serviceContractId], [canonical.reviewerEmployeeId, canonical.reviewerServiceContractId]]) {
+        const actor = { provider: 'ollama', model: route.model, companyId: canonical.companyId, officeId: canonical.officeId,
+          departmentId: canonical.departmentId, employeeId, serviceContractId };
+        let permitted = false;
+        for (const resource of candidates) { try { await resolveIn({ companyId: actor.companyId, employeeId, resourceId: resource.id, purpose: 'use' }, state, actor, true); permitted = true; break; } catch {} }
+        if (!permitted) fail('RESOURCE_GRANT_REQUIRED', 'Both improvement employees need an existing resource use grant and exact model assignment.', 403);
+        await modelPool.validateJob?.(actor);
+      }
+    }),
     validateJob: job => store.serial(async () => {
       if (job?.provider !== 'ollama') return;
       const state = await current();

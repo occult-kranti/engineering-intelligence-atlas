@@ -117,7 +117,7 @@ class PersonalWorkspaceTests(unittest.TestCase):
             self.assertEqual(json.loads(archive.read('company-state.json')), data)
 
     def test_future_and_noninteger_state_versions_are_rejected_before_writes(self):
-        for index, (outer_version, office_version) in enumerate([(1, 3), (1, 99), (2, 2), (True, 2), (1, True), (1, 2.0)]):
+        for index, (outer_version, office_version) in enumerate([(1, 4), (1, 99), (2, 3), (True, 3), (1, True), (1, 3.0)]):
             with self.subTest(outer=outer_version, office=office_version):
                 data = json.loads(json.dumps(self.data))
                 data['schemaVersion'] = outer_version
@@ -141,6 +141,33 @@ class PersonalWorkspaceTests(unittest.TestCase):
                 self.assertNotEqual(restored.returncode, 0)
                 self.assertIn('version', restored.stderr.lower())
                 self.assertFalse(destination.exists())
+
+    def test_schema_three_roundtrip_preserves_notes_allowance_and_paused_session(self):
+        data = json.loads(json.dumps(self.data)); office = data['office']; office['schemaVersion'] = 3
+        stamp = '2026-11-22T00:00:00Z'
+        office['stickyNotes'] = [{'id': 'sticky-fixture', 'revision': 7, 'companyId': 'fixture', 'officeId': 'office-fixture', 'departmentId': None,
+            'kind': 'todo', 'color': 'purple', 'text': 'Review the next iteration 🎨', 'status': 'open', 'ownerEmployeeId': 'donna',
+            'goalIds': ['goal-fixture'], 'x': 0.2, 'y': 0.3, 'createdAt': stamp, 'updatedAt': stamp}]
+        office['improvementAllowance'] = {'id': 'allowance-fixture', 'capUsd': 20, 'carriedObservedUsd': 0.234182, 'carriedEstimatedUsd': 0, 'sourceReference': 'fixture:prior-usage', 'createdAt': stamp}
+        office['improvementSessions'] = [{'id': 'session-fixture', 'revision': 4, 'allowanceId': 'allowance-fixture', 'companyId': 'fixture',
+            'continuation': 'until-budget', 'maxCycles': None, 'status': 'paused', 'cycle': 2, 'activeGoalId': 'goal-fixture',
+            'goalIds': ['goal-fixture'], 'taskNoteIds': ['sticky-fixture'], 'stopReason': 'owner-paused', 'objective': str(self.artifact)}]
+        office['improvementReceipts'] = [{'requestId': 'create-fixture', 'requestSha256': 'a' * 64, 'result': {'sessionId': 'session-fixture'}}]
+        office['jobs'][0].update({'improvementSessionId': 'session-fixture', 'budgetHoldUsd': 0.12})
+        self.state.write_text(json.dumps(data))
+        exported = self.command('export-personal-workspace.py', '--state', self.state, '--out', self.archive, '--artifact-root', self.artifacts)
+        self.assertEqual(exported.returncode, 0, exported.stderr)
+        destination = self.root / 'v3-restored'
+        restored_run = self.command('restore-personal-workspace.py', '--archive', self.archive, '--user-data-path', destination)
+        self.assertEqual(restored_run.returncode, 0, restored_run.stderr)
+        restored = json.loads((destination / 'company' / 'company-state.json').read_text())
+        for field in ['stickyNotes', 'improvementAllowance', 'improvementSessions', 'improvementReceipts']:
+            self.assertEqual(restored['office'][field], office[field])
+        self.assertEqual(restored['office']['jobs'][0]['improvementSessionId'], 'session-fixture')
+        self.assertEqual(restored['office']['jobs'][0]['budgetHoldUsd'], 0.12)
+        self.assertEqual(restored['office']['schemaVersion'], 3)
+        self.assertEqual(restored['office']['improvementSessions'][0]['objective'], str(self.artifact))
+        self.assertEqual(json.loads(self.state.read_text()), data)
 
     def test_export_reports_missing_structured_review_artifacts_only(self):
         missing = str(self.artifacts / ('f' * 64 + '.md'))

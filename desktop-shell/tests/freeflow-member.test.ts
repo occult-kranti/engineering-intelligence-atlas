@@ -63,3 +63,13 @@ it('department navigation includes descendants with bounded paths and no authori
   expect(child.breadcrumbs.map((b) => b.label)).toEqual(['Visible company', 'Main', 'Design', 'Research']);
   expect(child.nodes.some((n) => n.roomId === 'room')).toBe(false);
 });
+
+it('shows only scoped readonly shared annotations and keeps improvement authority private',()=>{
+  const input={...dto(),stickyNotes:[{id:'shared:note',companyId:'visible',officeId:'office',departmentId:'dept',kind:'todo',color:'green',text:'Read-only shared task',status:'open',x:.4,y:.3,ownerEmployeeId:'local',goalIds:[],editable:false,private:'SECRET'},
+    {id:'private-note',companyId:'private',officeId:'hidden',departmentId:null,kind:'comment',color:'pink',text:'SECRET',status:'open',x:.2,y:.2,editable:false}],
+    improvementAllowance:{id:'SECRET',capUsd:20},improvementSessions:[{objective:'SECRET'}],noteTruncation:{matched:205,returned:200,truncated:true}};
+  const projected=projectMemberSnapshot(input);expect(projected.stickyNotes).toHaveLength(1);expect(JSON.stringify(projected)).not.toContain('SECRET');
+  const scene=buildScene(projected,{kind:'company',companyId:'visible'}),note=scene.nodes.find(n=>n.metadata.stickyNote===true)!;
+  expect(note).toBeDefined();expect(note.metadata.annotationReadOnly).toBe(true);expect(actionsForNode(note)).toEqual([]);
+  expect(rowsForNode(note)).toContainEqual(['Text','Read-only shared task']);expect(scene.warnings.some(w=>w.includes('200 of 205'))).toBe(true);
+});

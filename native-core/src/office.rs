@@ -26,6 +26,9 @@ pub use remote_commands::*;
 #[path = "authority.rs"]
 mod authority;
 pub use authority::*;
+#[path = "improvements.rs"]
+mod improvements;
+pub use improvements::*;
 
 fn id(prefix: &str) -> String {
     format!("{prefix}-{}", Uuid::new_v4())
@@ -242,6 +245,12 @@ pub struct Job {
     pub reservation: Option<Reservation>,
     #[serde(default)]
     pub pending_reservation: Option<Reservation>,
+    #[serde(default)]
+    pub improvement_session_id: Option<String>,
+    #[serde(default)]
+    pub improvement_route: Option<ImprovementRoute>,
+    #[serde(default)]
+    pub budget_hold_usd: f64,
     pub usage_recorded: bool,
     pub created_at: String,
     pub updated_at: String,
@@ -269,6 +278,10 @@ pub struct Job {
     pub request_sha256: Option<String>,
     #[serde(default)]
     pub artifact_sha256: Option<String>,
+    /// Hash of the complete delivered model body, excluding artifact bookkeeping.
+    /// The full artifact digest remains the paired-review integrity identity.
+    #[serde(default)]
+    pub deliverable_sha256: Option<String>,
     #[serde(default)]
     pub review: Option<StepReview>,
     #[serde(default)]
@@ -397,11 +410,21 @@ pub struct OfficeSnapshot {
     pub remote_receipts: Vec<RemoteCommandReceipt>,
     #[serde(default)]
     pub authority: OfficeAuthority,
+    #[serde(default)]
+    pub sticky_notes: Vec<StickyNote>,
+    #[serde(default)]
+    pub improvement_allowance: Option<ImprovementAllowance>,
+    #[serde(default)]
+    pub improvement_budget: Option<ImprovementBudget>,
+    #[serde(default)]
+    pub improvement_sessions: Vec<ImprovementSession>,
+    #[serde(default)]
+    pub improvement_receipts: Vec<ImprovementReceipt>,
 }
 
 impl OfficeSnapshot {
     pub fn validate(&self) -> Result<()> {
-        if ![1, 2].contains(&self.schema_version)
+        if ![1, 2, 3].contains(&self.schema_version)
             || self.companies.is_empty()
             || self.companies.len() > 2000
             || self.offices.len() > 5000
@@ -626,11 +649,12 @@ impl OfficeSnapshot {
         self.validate_remote_receipts()?;
         self.validate_authority()?;
         self.validate_pairs()?;
+        self.validate_improvements()?;
         Ok(())
     }
     pub fn seeded(company: &Company, specialists: &[Employee]) -> Result<Self> {
         let mut state = Self {
-            schema_version: 2,
+            schema_version: 3,
             active_company_id: company.id.clone(),
             companies: vec![],
             offices: vec![],
@@ -660,6 +684,8 @@ impl OfficeSnapshot {
             decision_panels: vec![],
             remote_receipts: vec![],
             authority: OfficeAuthority::default(),
+            sticky_notes: vec![], improvement_allowance: None, improvement_budget: None,
+            improvement_sessions: vec![], improvement_receipts: vec![],
         };
         let stamp = now();
         state.employees.push(Staff {
@@ -1086,6 +1112,7 @@ impl OfficeSnapshot {
             cost_status: "none".into(),
             reservation: None,
             pending_reservation: None,
+            improvement_session_id: None, improvement_route: None, budget_hold_usd: 0.0,
             usage_recorded: false,
             created_at: stamp.clone(),
             updated_at: stamp,
@@ -1106,6 +1133,7 @@ impl OfficeSnapshot {
             pair: None,
             request_sha256: None,
             artifact_sha256: None,
+            deliverable_sha256: None,
             review: None,
             review_failure: None,
         })
@@ -1239,7 +1267,7 @@ impl OfficeSnapshot {
     fn validate_pairs(&self) -> Result<()> {
         let digest = |s: &str| s.len() == 64 && s.bytes().all(|c| c.is_ascii_hexdigit());
         for job in &self.jobs {
-            if job.request_sha256.as_ref().is_some_and(|s| !digest(s)) || job.artifact_sha256.as_ref().is_some_and(|s| !digest(s)) { return Err(fail("OFFICE_STATE_INVALID", "Invalid paired artifact or request digest")); }
+            if job.request_sha256.as_ref().is_some_and(|s| !digest(s)) || job.artifact_sha256.as_ref().is_some_and(|s| !digest(s)) || job.deliverable_sha256.as_ref().is_some_and(|s| !digest(s)) { return Err(fail("OFFICE_STATE_INVALID", "Invalid paired artifact, deliverable or request digest")); }
             let Some(pair) = &job.pair else {
                 if job.review.is_some() || job.review_failure.is_some() { return Err(fail("OFFICE_STATE_INVALID", "Unpaired job cannot carry a review receipt")); }
                 continue;
@@ -1338,6 +1366,7 @@ impl OfficeSnapshot {
     }
     fn eligible(&self, job: &Job, clock: OffsetDateTime) -> std::result::Result<(), String> {
         self.pair_allows_dispatch(job)?;
+        self.improvement_allows_dispatch(job, clock)?;
         self.governance_allows_dispatch(job)?;
         self.portfolio_allows_dispatch(job)?;
         self.authority_allows_dispatch(job, clock)?;
@@ -1496,7 +1525,7 @@ impl OfficeSnapshot {
             self.authority_prepare_owner_action()?;
         }
         self.apply_inner(p)?;
-        self.schema_version = 2;
+        self.schema_version = 3;
         if audit {
             self.authority_record_owner_action(&action, p)?;
         }
@@ -1507,10 +1536,14 @@ impl OfficeSnapshot {
         self.last_action = None;
         self.expire_leases();
         let action = string(p, "action", 50)?;
+        self.guard_improvement_owned_work(&action, p)?;
         if self.apply_authority(&action, p)? {
             return Ok(());
         }
         if self.apply_remote_command(&action, p)? {
+            return Ok(());
+        }
+        if self.apply_improvements(&action, p)? {
             return Ok(());
         }
         if self.apply_decision_panel(&action, p)? {
@@ -1763,6 +1796,9 @@ impl OfficeSnapshot {
                 );
             }
             "enqueue_job" => {
+                if p.get("improvementSessionId").is_some() || p.get("budgetHoldUsd").is_some() || p.get("improvementRoute").is_some() {
+                    return Err(fail("IMPROVEMENT_WORKER_REQUIRED", "Session work is created only by the managed improvement tick"));
+                }
                 let job_id = self.enqueue(p)?;
                 let review_id = self.jobs.iter().find(|j| j.id == job_id).and_then(|j| j.pair.as_ref()).map(|p| p.review_job_id.clone());
                 self.last_action = Some(json!({"jobId":job_id,"reviewJobId":review_id}));
@@ -1770,6 +1806,8 @@ impl OfficeSnapshot {
             "claim_job" => {
                 let worker_id = string(p, "workerId", 150)?;
                 let mode = opt_string(p, "mode", 20)?;
+                let improvement_session_id = opt_string(p, "improvementSessionId", 100)?;
+                self.validate_improvement_claim(improvement_session_id.as_deref(), &worker_id)?;
                 if mode
                     .as_ref()
                     .is_some_and(|m| !["manual", "provider"].contains(&m.as_str()))
@@ -1781,6 +1819,7 @@ impl OfficeSnapshot {
                 for i in 0..self.jobs.len() {
                     if self.jobs[i].status != "queued"
                         || mode.as_ref().is_some_and(|m| m != &self.jobs[i].mode)
+                        || self.jobs[i].improvement_session_id != improvement_session_id
                     {
                         continue;
                     }
@@ -1830,6 +1869,7 @@ impl OfficeSnapshot {
                     .find(|job| job.id == job_id)
                     .ok_or_else(|| fail("NOT_FOUND", "Job not found"))?;
                 if existing.reservation.is_none() {
+                    self.improvement_allows_dispatch(existing, OffsetDateTime::now_utc()).map_err(|reason| fail("IMPROVEMENT_DISPATCH_DENIED", reason))?;
                     self.pair_allows_dispatch(existing).map_err(|reason| fail(if existing.pair.is_none() { "PAIR_REQUIRED" } else { "DISPATCH_PERMISSION_REVOKED" }, reason))?;
                     self.authority_allows_dispatch(existing, OffsetDateTime::now_utc())
                         .map_err(|reason| fail("AUTHORITY_DENIED", reason))?;
@@ -1885,6 +1925,7 @@ impl OfficeSnapshot {
                     cost_usd: cost,
                 });
                 job.pending_reservation = None;
+                job.budget_hold_usd = 0.0;
                 job.usage = Usage {
                     input_tokens: input,
                     output_tokens: output,
@@ -1946,6 +1987,8 @@ impl OfficeSnapshot {
                     opt_string(p, "artifactUri", 3000)?.or(opt_string(p, "artifactPath", 3000)?);
                 let artifact_sha256 = opt_string(p, "artifactSha256", 64)?;
                 if artifact_sha256.as_ref().is_some_and(|h| h.len() != 64 || !h.bytes().all(|c| c.is_ascii_hexdigit())) { return Err(fail("INVALID_INPUT", "artifactSha256 must be an exact SHA-256 digest")); }
+                let deliverable_sha256 = opt_string(p, "deliverableSha256", 64)?;
+                if deliverable_sha256.as_ref().is_some_and(|h| h.len() != 64 || !h.bytes().all(|c| c.is_ascii_hexdigit())) { return Err(fail("INVALID_INPUT", "deliverableSha256 must be an exact SHA-256 digest")); }
                 let summary = opt_string(p, "summary", 4000)?;
                 let error = opt_string(p, "error", 1000)?;
                 let job = self
@@ -1970,6 +2013,16 @@ impl OfficeSnapshot {
                 let over = input + output > job.limits.max_tokens
                     || cost > job.limits.max_usd
                     || clock > deadline;
+                // Provider billing truth must be retained even when the managed
+                // caller violated reserve-before-dispatch. Halt new admission
+                // instead of rejecting (and thereby hiding) a reported charge.
+                let improvement_breach = if job.improvement_session_id.is_some() && cost > 1e-9 {
+                    match job.reservation.as_ref() {
+                        None => Some("unreserved-cost"),
+                        Some(reservation) if cost > reservation.cost_usd + 1e-9 => Some("reservation-exceeded-cost"),
+                        _ => None,
+                    }
+                } else { None };
                 job.usage = Usage {
                     input_tokens: input,
                     output_tokens: output,
@@ -1979,6 +2032,7 @@ impl OfficeSnapshot {
                 job.usage_recorded = true;
                 job.artifact_uri = artifact;
                 job.artifact_sha256 = artifact_sha256;
+                job.deliverable_sha256 = deliverable_sha256;
                 job.summary = summary;
                 if !preserve {
                     job.status = if over {
@@ -1997,8 +2051,10 @@ impl OfficeSnapshot {
                 }
                 job.updated_at = at(clock);
                 job.finished_at = Some(at(clock));
-                let final_status = job.status.clone();
-                self.last_action = Some(json!({"jobId":job_id,"status":final_status}));
+                job.budget_hold_usd = 0.0;
+                if let Some(reason) = improvement_breach { self.record_improvement_settlement_breach(&job_id, reason); }
+                let final_status = self.jobs.iter().find(|j| j.id == job_id).unwrap().status.clone();
+                self.last_action = Some(json!({"jobId":job_id,"status":final_status,"budgetInvariant":improvement_breach}));
                 self.log("worker","job-settled",&job_id,format!("Usage and artifact recorded; final status {final_status}. A cancellation or pause is never revived."));
             }
             "cancel_job" | "pause_job" | "resume_job" => {
@@ -2036,6 +2092,7 @@ impl OfficeSnapshot {
                     .into();
                     if action == "cancel_job" {
                         job.finished_at = Some(now());
+                        if job.reservation.is_none() { job.budget_hold_usd = 0.0; }
                     }
                 }
                 job.updated_at = now();
@@ -2568,7 +2625,7 @@ mod paired_work_tests {
         let mut s=state();let p=request(&s,"legacy");let (a,_)=enqueue(&mut s,p);
         let (id,lease)=claim(&mut s).unwrap();assert_eq!(id,a);
         s.jobs.truncate(1);s.jobs[0].pair=None;s.jobs[0].request_sha256=None;s.schema_version=1;
-        settle(&mut s,&id,&lease,"completed");assert_eq!(s.schema_version,2);assert_eq!(s.jobs[0].status,"completed");
+        settle(&mut s,&id,&lease,"completed");assert_eq!(s.schema_version,3);assert_eq!(s.jobs[0].status,"completed");
         let mut queued=s.jobs[0].clone();queued.id="legacy-queued".into();queued.idempotency_key="legacy-queued".into();queued.status="queued".into();queued.started_at=None;queued.usage_recorded=false;queued.lease_token=None;s.jobs.push(queued);
         assert!(claim(&mut s).is_none());assert!(s.jobs[1].error.as_deref().unwrap().contains("PAIR_REQUIRED"));s.validate().unwrap();
     }

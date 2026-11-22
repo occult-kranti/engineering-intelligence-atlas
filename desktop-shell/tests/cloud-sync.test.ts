@@ -3,12 +3,13 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import { CloudSyncService, cloudMessageContent, cloudSnapshot, normalizeCloudUrl, parsePairing, syncStateHash } from '../src/main/cloudSync';
+import { CloudSyncService, cloudMessageContent, cloudSnapshot, normalizeCloudUrl, parsePairing, syncStateHash, type CloudSyncOptions } from '../src/main/cloudSync';
 import type { OfficeSnapshot } from '../src/shared/office';
 const dirs: string[]=[];
+const services:CloudSyncService[]=[];
 const json=(body:unknown,status=200)=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json'}});
 const token='atlas-device-test-01234567890123456789';
-function fixture() {
+function fixture(options:Pick<CloudSyncOptions,'getWorkerExecution'|'allowKnownSchemaDefaultsMigration'>={}) {
   const dir=fs.mkdtempSync(path.join(os.tmpdir(),'atlas-cloud-'));dirs.push(dir);
   const key=crypto.randomBytes(32);
   const safeStorage={isEncryptionAvailable:()=>true,encryptString:(s:string)=>{const iv=crypto.randomBytes(12),cipher=crypto.createCipheriv('aes-256-gcm',key,iv);const bytes=Buffer.concat([cipher.update(s,'utf8'),cipher.final()]);return Buffer.concat([iv,cipher.getAuthTag(),bytes]);},decryptString:(b:Buffer)=>{const dec=crypto.createDecipheriv('aes-256-gcm',key,b.subarray(0,12));dec.setAuthTag(b.subarray(12,28));return Buffer.concat([dec.update(b.subarray(28)),dec.final()]).toString('utf8');}};
@@ -20,8 +21,10 @@ function fixture() {
   let messagePageSize=100;
   let failAck=false; let failPutAck=false; let writes=0;let effects=0;
   const acknowledgements:any[]=[];
+  const activities:any[]=[];
   const fetcher=vi.fn(async(url:any,init:any)=>{
     const pathname=new URL(url).pathname;
+    if(pathname==='/api/runtime-activity'){activities.push(JSON.parse(init.body));return json({ok:true});}
     if(pathname==='/api/session')return json({signedIn:true,clientId:'desktop-one'});
     if(pathname==='/api/workspace' && init.method==='GET')return json(remote);
     if(pathname==='/api/workspace/claim-writer') {
@@ -71,13 +74,80 @@ function fixture() {
     snapshot.lastAction={replayed};
     return {ok:true,snapshot};
   });
-  const createService=()=>new CloudSyncService({userDataPath:dir,safeStorage,fetch:fetcher,snapshot:async()=>({ok:true,snapshot}),command});
+  const createService=()=>{const value=new CloudSyncService({userDataPath:dir,safeStorage,fetch:fetcher,snapshot:async()=>({ok:true,snapshot}),command,...options});services.push(value);return value;};
   const service=createService();
   const configure=()=>service.configure({url:'https://atlas.example',token:JSON.stringify({deviceToken:token,clientId:'desktop-one',siteAccessToken:'site-access-test-1234567890'})});
-  return {dir,safeStorage,service,configure,createService,fetcher,command,remote,acknowledgements,cloudMessages,pageSize(size:number){messagePageSize=size;},get snapshot(){return snapshot;},get writes(){return writes;},get effects(){return effects;},get commands(){return commands;},enqueue(){commands.push({id:'command-1',baseRevision:remote.revision,command:{action:'pause_employee',payload:{employeeId:snapshot.employees[0]!.id}}});},failAckOnce(){failAck=true;},failPutAckOnce(){failPutAck=true;}};
+  return {dir,safeStorage,service,configure,createService,fetcher,command,remote,acknowledgements,activities,cloudMessages,pageSize(size:number){messagePageSize=size;},get snapshot(){return snapshot;},get writes(){return writes;},get effects(){return effects;},get commands(){return commands;},enqueue(){commands.push({id:'command-1',baseRevision:remote.revision,command:{action:'pause_employee',payload:{employeeId:snapshot.employees[0]!.id}}});},failAckOnce(){failAck=true;},failPutAckOnce(){failPutAck=true;}};
 }
-afterEach(()=>{for(const dir of dirs.splice(0))fs.rmSync(dir,{recursive:true,force:true});});
+afterEach(()=>{for(const service of services.splice(0))service.close();vi.useRealTimers();for(const dir of dirs.splice(0))fs.rmSync(dir,{recursive:true,force:true});});
+describe('separate bounded runtime activity telemetry',()=>{
+ it('publishes coalesced safe execution samples without altering snapshot revisions',async()=>{
+  vi.useFakeTimers();vi.setSystemTime(new Date('2026-11-22T12:00:00Z'));
+  const sample={sampledAt:new Date().toISOString(),activeCalls:Array.from({length:10},(_,i)=>({jobId:`job-${i}`,phase:'provider' as const,startedAt:new Date().toISOString(),prompt:'private text'}))};
+  const f=fixture({getWorkerExecution:()=>sample});await f.configure();const before=syncStateHash(f.snapshot),revision=f.remote.revision;
+  await Promise.all(Array.from({length:100},()=>f.service.publishExecution()));
+  expect(f.activities).toHaveLength(1);expect(f.activities[0].clientId).toBe('desktop-one');expect(f.activities[0].execution.activeCalls).toHaveLength(8);
+  expect(JSON.stringify(f.activities)).not.toContain('private text');expect(syncStateHash(f.snapshot)).toBe(before);expect(f.remote.revision).toBe(revision);expect(f.command).not.toHaveBeenCalled();
+  await f.service.publishExecution();expect(f.activities).toHaveLength(1);
+  await vi.advanceTimersByTimeAsync(15000);expect(f.activities).toHaveLength(2);f.service.close();expect(vi.getTimerCount()).toBe(0);
+ });
+ it('aborts in-flight telemetry on disconnect without failing native state or retaining a timer',async()=>{
+  vi.useFakeTimers();vi.setSystemTime(new Date('2026-11-22T12:00:00Z'));
+  const f=fixture({getWorkerExecution:()=>({sampledAt:new Date().toISOString(),activeCalls:[]})});await f.configure();
+  const original=vi.mocked(f.fetcher).getMockImplementation()!;let signal:AbortSignal|undefined;
+  vi.mocked(f.fetcher).mockImplementation((async(url,init)=>{
+   if(String(url).endsWith('/api/runtime-activity')){signal=init?.signal as AbortSignal;return new Promise((_resolve,reject)=>signal?.addEventListener('abort',()=>reject(new Error('aborted')),{once:true}));}
+   return original(url,init);
+  }) as typeof fetch);
+  const pending=f.service.publishExecution();expect(signal?.aborted).toBe(false);expect(f.service.disconnect().ok).toBe(true);await pending;
+  expect(signal?.aborted).toBe(true);expect(f.command).not.toHaveBeenCalled();expect(vi.getTimerCount()).toBe(0);
+ });
+ it('treats a website snapshot lag rejection as telemetry-only, without native mutations or worker failure',async()=>{
+  const f=fixture({getWorkerExecution:()=>({sampledAt:new Date().toISOString(),activeCalls:[{jobId:'newly-started',phase:'provider',startedAt:new Date().toISOString()}]})});
+  await f.configure();const before=syncStateHash(f.snapshot),status=f.service.status();
+  const original=vi.mocked(f.fetcher).getMockImplementation()!;
+  vi.mocked(f.fetcher).mockImplementation((async(url,init)=>String(url).endsWith('/api/runtime-activity')
+   ?json({error:'The running job is not present in the latest cloud snapshot.'},409):original(url,init)) as typeof fetch);
+  await expect(f.service.publishExecution()).resolves.toBeUndefined();
+  expect(syncStateHash(f.snapshot)).toBe(before);expect(f.service.status()).toEqual(status);expect(f.command).not.toHaveBeenCalled();
+ });
+ it('keeps durable schema3 sessions, allowance and held budget in snapshot hashing',()=>{
+  const f=fixture();const state=f.snapshot as any;
+  state.schemaVersion=3;state.stickyNotes=[{id:'note-a',revision:1,text:'A scoped task'}];state.improvementSessions=[{id:'session-a',revision:1,status:'paused'}];
+  state.improvementAllowance={id:'allowance-a',capUsd:20,carriedObservedUsd:4,carriedEstimatedUsd:1,sourceReference:'owner-reviewed-checkpoint'};
+  state.improvementBudget={capUsd:20,heldUsd:1,committedUsd:6,remainingUsd:14,effectiveRemainingUsd:3};
+  const exported=cloudSnapshot(state) as any;expect(exported.improvementAllowance).toEqual(state.improvementAllowance);expect(exported.improvementBudget).toEqual(state.improvementBudget);
+  const before=syncStateHash(state);state.improvementSessions[0].revision++;expect(syncStateHash(state)).not.toBe(before);expect(exported.stickyNotes).toEqual(state.stickyNotes);
+ });
+ it('preserves native owner receipt identity for exact cloud draft reconciliation',()=>{
+  const state:any=structuredClone(fixture().snapshot);
+  state.schemaVersion=3;state.improvementReceipts=[{id:'sticky-request-once',action:'upsert_sticky_note',requestSha256:'a'.repeat(64),
+   result:{noteId:'sticky-one',revision:1},at:'2026-11-22T12:00:00Z'}];
+  expect((cloudSnapshot(state) as any).improvementReceipts).toEqual(state.improvementReceipts);
+  const before=syncStateHash(state);state.improvementReceipts[0].result.revision=2;expect(syncStateHash(state)).not.toBe(before);
+  expect(JSON.stringify(cloudSnapshot(state))).not.toContain('workerId');
+ });
+});
 describe('explicit desktop cloud pairing and synchronization',()=>{
+  it('publishes schema3 from the original paired runtime using its saved matching cloud revision',async()=>{
+    const f=fixture();f.snapshot.schemaVersion=2;await f.configure();expect((await f.service.sync()).ok).toBe(true);
+    const revision=f.remote.revision,priorBudget=structuredClone(f.snapshot.budget),priorPolicy=structuredClone(f.snapshot.policy);
+    f.service.close();
+    Object.assign(f.snapshot,{schemaVersion:3,stickyNotes:[],improvementAllowance:null,improvementBudget:null,improvementSessions:[],improvementReceipts:[]});
+    const restored=f.createService();expect((await restored.sync()).ok).toBe(true);
+    expect(f.remote.revision).toBe(revision+1);expect(f.remote.snapshot?.schemaVersion).toBe(3);
+    expect(f.remote.snapshot?.budget).toEqual(priorBudget);expect(f.remote.snapshot?.policy).toEqual(priorPolicy);
+    expect(f.command).not.toHaveBeenCalled();
+  });
+  it('refuses fresh unclaimed schema2 pairing after local schema3 migration even with known-parent migration enabled',async()=>{
+    const f=fixture({allowKnownSchemaDefaultsMigration:true});f.snapshot.schemaVersion=2;
+    f.remote.revision=4;f.remote.snapshot=cloudSnapshot(f.snapshot);
+    Object.assign(f.snapshot,{schemaVersion:3,stickyNotes:[],improvementAllowance:null,improvementBudget:null,improvementSessions:[],improvementReceipts:[]});
+    const cloudBefore=JSON.stringify(f.remote.snapshot);await f.configure();
+    const result=await f.service.sync();expect(result.ok).toBe(false);expect(result.error).toContain('Restore your latest private workspace bundle');
+    expect(JSON.stringify(f.remote.snapshot)).toBe(cloudBefore);expect(f.remote.revision).toBe(4);expect(f.remote.clientId).toBeNull();
+    expect(f.writes).toBe(0);expect(f.command).not.toHaveBeenCalled();expect(f.acknowledgements).toEqual([]);
+  });
   it('refuses insecure endpoints and secret-bearing URLs',()=>{
     for(const value of ['http://example.com','https://x:y@example.com','https://example.com/path','https://example.com/?token=secret','https://example.com/#secret','file:///tmp/app'])expect(()=>normalizeCloudUrl(value)).toThrow();
     expect(normalizeCloudUrl('https://atlas.example/')).toBe('https://atlas.example');

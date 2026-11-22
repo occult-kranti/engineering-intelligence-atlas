@@ -1,0 +1,237 @@
+{
+  "run": "improvement-mode-20261122",
+  "node": "runtime-integration",
+  "attempt": 2,
+  "status": "implemented-and-locally-verified",
+  "baseline": "249a71944f40f61545220fe756fd6f99f3ad17c4",
+  "files": [
+    {
+      "path": "desktop-shell/src/main/officeWorker.ts",
+      "sha256": "235628d4484129ba4828a4c49f277feb29a9319f2e646e2f325139d10ae8e692"
+    },
+    {
+      "path": "desktop-shell/src/main/providers.ts",
+      "sha256": "38f84fc08a45f1b422f2e6a00e5229f5c6953b82da77a6ed47b10b7effbfa691"
+    },
+    {
+      "path": "desktop-shell/src/main/pairedReview.ts",
+      "sha256": "8e70fc33ecbf8b7acbc8d59ffaa2420eedc2bc3bf8317fd29b5b1e966117d9c5"
+    },
+    {
+      "path": "desktop-shell/src/main/office.ts",
+      "sha256": "302b0ec74a0a1b40990da51c6c9f69ee9c3c31c435cb54d98b230b29138993c0"
+    },
+    {
+      "path": "desktop-shell/src/main/company.ts",
+      "sha256": "35293d8e8380c01e83bb679a7aa58b2a14c1fcf4751c8ef188a0f5d84c41ad32"
+    },
+    {
+      "path": "desktop-shell/src/main/cloudSync.ts",
+      "sha256": "ef31dac0f6d1a86cbf242a1ad44049bc2abf7f8ef4a1c4dcc106dd078bca2f01"
+    },
+    {
+      "path": "desktop-shell/src/main/index.ts",
+      "sha256": "ce216d773a941d7a1f1fbdb34ca0e53ddbd562802b663ae0f2a867c7b7e54ab3"
+    },
+    {
+      "path": "desktop-shell/src/main/ipc.ts",
+      "sha256": "a26138bda453aef318057c415d5da3d66d9e3889b085f942a1cf3661dde79a84"
+    },
+    {
+      "path": "desktop-shell/src/main/improvementPricing.ts",
+      "sha256": "8164b5b57d10fa27dcc5d6c0f7b69924a7a7d1e2db41e4ed341cbdde9a88ec23"
+    },
+    {
+      "path": "desktop-shell/src/main/improvementWorker.ts",
+      "sha256": "26fbec217c6a9f1f94c0a81f37b6e490b840f53ee41da799fc1d074356affba4"
+    },
+    {
+      "path": "desktop-shell/tests/office-worker.test.ts",
+      "sha256": "111e86525505f0308c7384f760a665dc8fcaa280dfc0c3dff007b48f2618d2a5"
+    },
+    {
+      "path": "desktop-shell/tests/providers.test.ts",
+      "sha256": "9a92f23d3c8febb97822cfc9cfe226e12753e56eb9ad8d6b3f2e0677ef6f78dc"
+    },
+    {
+      "path": "desktop-shell/tests/paired-review.test.ts",
+      "sha256": "af6966d3ab62e8f3c432eb43d5a68dc736d094a8015b6172a0d54a3fdc43a58f"
+    },
+    {
+      "path": "desktop-shell/tests/company.test.ts",
+      "sha256": "6f390a7f7000d3a80c2a5e75ea7bd11f41c6f34b18bf134adb13d3be216217e9"
+    },
+    {
+      "path": "desktop-shell/tests/cloud-sync.test.ts",
+      "sha256": "d8d5d46c763fa30636a65dacb9a99f4fd27e8b61b46b00cc68e8097e82373665"
+    },
+    {
+      "path": "desktop-shell/tests/improvement-pricing.test.ts",
+      "sha256": "90c12eed70e6f8a6be91aae15e754e6205588e1c01d1d2569cd7ff5a277bcfd8"
+    },
+    {
+      "path": "desktop-shell/tests/improvement-worker.test.ts",
+      "sha256": "64f3a3f163b060ae86c28d6bafaa58201ba3809f6f8c518b7bdef5416575fa7c"
+    },
+    {
+      "path": "headless-runtime/runtime.mjs",
+      "sha256": "2537eae372471458fe2deef24e0f05dd65ce5a083c4c80c909ffb05fc5a320d0"
+    },
+    {
+      "path": "headless-runtime/contract.mjs",
+      "sha256": "04406150c7508499a48534b4e01eec2e786d0ed111dd24ab751effdd38b26a50"
+    },
+    {
+      "path": "headless-runtime/model-resources.mjs",
+      "sha256": "b1e858dfd146e4d61044f7895a3843a258ac0e537f866794ed5a9d0dc65f6b45"
+    },
+    {
+      "path": "headless-runtime/workbench.mjs",
+      "sha256": "a2d069e91bdad0971df448dc6a25a8079d1af4782423755c23fcff4ac0e6b853"
+    },
+    {
+      "path": "headless-runtime/cloud-sync.mjs",
+      "sha256": "febf8b06aef0390505650d450856e01e50f705fd047caaff2cf9a11fb76c094e"
+    },
+    {
+      "path": "headless-runtime/tsconfig.json",
+      "sha256": "369b1fc84613ea0d93d10c6fdc185ef337cf40756016ba4dc05f651818dcd932"
+    },
+    {
+      "path": "headless-runtime/test/improvement-wiring.test.mjs",
+      "sha256": "6c3fe61db80e01e87e2e4c5c48def7c37e3b195a5ee36502446bdd035a7fa1e0"
+    },
+    {
+      "path": "tools/atlas-mcp.mjs",
+      "sha256": "dc1204fecb50318e467b41e09520bdfa0eb3e4a77c81928a3d9562c5011db125"
+    },
+    {
+      "path": "tools/atlas-mcp.test.mjs",
+      "sha256": "a128502a5c33ccf8c8ef99cf83fc2f4c5d8e01d3d19d139787a110f5eb34bab8"
+    },
+    {
+      "path": "tools/daftar-runtime-mcp.mjs",
+      "sha256": "294df2c63c80e5877eca80feb1f872341ff1c6dbc8e56f0b53e2ee5fb72bbb9c"
+    },
+    {
+      "path": "tools/daftar-runtime-mcp.test.mjs",
+      "sha256": "1270a0d8cf7fa7469d856b0db0b250729ed4ca79c2be596dd3e1a695c5458240"
+    }
+  ],
+  "nativeBinary": {
+    "path": "desktop-shell/native/atlas-core",
+    "sha256": "095e020420acf5463c5e5073adc3993dfe00ec041c69a68c36c93650af18a34c"
+  },
+  "checks": [
+    {
+      "name": "focused desktop worker/provider/pricing/coordinator/cloud/native-contract suite",
+      "passed": 169,
+      "failed": 0,
+      "files": 8,
+      "log": "runtime-desktop-focused.txt",
+      "note": "Full169-check run preceded the final added STATE_BUSY scheduler case; the updated nine-case scheduler file passed separately."
+    },
+    {
+      "name": "all headless runtime plus local and remote MCP",
+      "total": 200,
+      "passed": 198,
+      "failed": 0,
+      "skipped": 2,
+      "log": "runtime-headless-mcp-confirm.txt",
+      "note": "Full confirmation preceded deterministic contention-fixture correction; final targeted native contender case passed separately without a timeout increase."
+    },
+    {
+      "name": "new real schema3 runtime wiring",
+      "passed": 6,
+      "failed": 0,
+      "cases": [
+        "authenticated HTTP/MCP stable CAS and replay; current real-catalog quote; scoped pair only",
+        "restart resumes helper without primary replay",
+        "pause abort and uncertain billing do not redispatch",
+        "an independent coordinator actually receives no eligible claim while the primary provider call is held; exactly one call per phase",
+        "8000 partial evidence rejected;12000 short artifact accepted with unchanged limits",
+        "same delivered content with different managed-file headers stops before third cycle"
+      ]
+    },
+    {
+      "name": "desktop main TypeScript noEmit",
+      "passed": true
+    },
+    {
+      "name": "portable runtime TypeScript build",
+      "passed": true
+    },
+    {
+      "name": "independent synthetic development-ledger tests",
+      "passed": 10,
+      "failed": 0
+    },
+    {
+      "name": "final deterministic held-claim contender plus pre-dispatch STATE_BUSY backoff",
+      "nativeChecksPassed": 1,
+      "schedulerChecksPassed": 9,
+      "failed": 0,
+      "log": "runtime-contention-final.txt"
+    },
+    {
+      "name": "final cloud sync schema2-to3 upgrade boundaries",
+      "passed": 40,
+      "failed": 0,
+      "command": "node node_modules/vitest/vitest.mjs run tests/cloud-sync.test.ts",
+      "cwd": "desktop-shell",
+      "cases": [
+        "Original paired runtime retains saved matching revision and publishes3 by CAS without budget/policy changes",
+        "Fresh unclaimed schema2 cloud plus migrated local3 remains blocked with no writer claim, snapshot write, acknowledgment or command"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "file": "runtime-desktop-focused.txt",
+      "sha256": "4b5d865d1c950a5086b6ae37d0560bb22080ceec202da12ee2c421171a6ecabe"
+    },
+    {
+      "file": "runtime-headless-mcp-confirm.txt",
+      "sha256": "7b69cb3ff47cf99925978ffa30dcaa36987e6d71c88880ecd9d41c2e2b02fed5"
+    },
+    {
+      "file": "runtime-headless-mcp.txt",
+      "sha256": "d3168e409923f4478b841800a04590d02337853b5913084954682cebb2e30c22"
+    },
+    {
+      "file": "runtime-contention-final.txt",
+      "sha256": "d874bb83acefd6c5897bb795983ee4dfdc28da49cbde806ebe31315b4b931205"
+    }
+  ],
+  "decisions": [
+    "Native records own immutable parent allowance, carried costs, both phase holds, receipts and pair acceptance. Runtime only schedules scoped attempts.",
+    "The ordinary worker switch is separate from native improvement session start/pause/cancel.",
+    "Select the lowest conservative quoted rate among frozen allowed routes that current credentials or both local-model actors permit; no installation or grant is invented.",
+    "Quote validity is one hour or the earlier catalog expiry. Source document and catalog digest preserve provenance.",
+    "Default32000 is an explicit UI recommendation; existing allocations are never increased by the scheduler. The measured499-byte primary artifact needs more than an8000-total pair to be fully reviewed.",
+    "Actual call telemetry exists only while the provider/model callback is in flight. Website publication failures cannot fail or replay native work.",
+    "Cloud projection includes owner-private native improvement receipts so accepted cloud commands can be reconciled exactly; member filtering is root-owned.",
+    "Deliverable body digest is distinct from full artifact integrity hash. Improvement jobs bypass legacy cache entries without a trustworthy body digest.",
+    "Cloud migration normalization remains limited to the prior exact null-parent defaults; no new schema rebase or permissive equality was added."
+  ],
+  "review": [
+    {
+      "file": "tools/claude-worker.py",
+      "sha256": "2b186d3d32abff2ce28ee01f2ab528f1c9c42addb139f80f2ff3d64fab09a3e1",
+      "finding": "No reset/unknown-outcome undercount found. Printed cap mismatch was reported to root and fixed with a new synthetic regression."
+    }
+  ],
+  "limits": [
+    "No live provider, Vast, SSH, model download, infrastructure spend, or production state mutation occurred in this node.",
+    "Two tmux integration checks skip locally because this environment forbids required AF_UNIX sockets; prior installed CI gates remain separate from this source acceptance.",
+    "The earlier full-suite8s readiness timeout is retained in runtime-headless-mcp.txt. Root required a deterministic fixture: it now holds an already-claimed primary, verifies a second native claim returns null, and separately verifies STATE_BUSY causes visible bounded no-paid-call backoff. No production retry or timeout relaxation was introduced.",
+    "Exact delivered-byte repetition is detected; semantic near-duplication is not claimed.",
+    "Observed cost uses returned token usage and frozen declared rates, not independently audited provider invoices.",
+    "Final installed VSIX/browser/platform CI and root independent source review are outside this node.",
+    "Fresh first pairing to a populated schema2 cloud is not seamless after local schema3 migration. Upgrade and sync the original paired runtime before exporting/relocating, retaining its authenticated writer metadata, or use a previously verified bootstrap base. Data-only restore does not synthesize that authority."
+  ],
+  "spendUsd": 0,
+  "committed": false,
+  "pushed": false,
+  "sourceReleased": true
+}

@@ -28,6 +28,7 @@ export interface CloudSyncOptions {
   allowKnownSchemaDefaultsMigration?: boolean;
   /** Internal headless recovery only: an encrypted, credential-bound first-sync base. */
   isVerifiedBootstrapBase?: (base: { revision: number; snapshotSha256: string }) => boolean;
+  getWorkerExecution?: () => {sampledAt:string;activeCalls:Array<{jobId:string;phase:'provider'|'model';startedAt:string}>};
 }
 
 export function normalizeCloudUrl(raw: unknown): string {
@@ -53,7 +54,7 @@ export function parsePairing(token: unknown): Pairing {
 
 /** Explicit sync exports the shared office and full chat, without live secrets or local artifact paths. */
 export function cloudSnapshot(snapshot: OfficeSnapshot): OfficeSnapshot {
-  const fields = ['schemaVersion','activeCompanyId','companies','offices','departments','employees','jobs','schedules','cache','knowledge','events','lastAction','policy','budget','chatThreads','goals','checkpoints','blueprints','portfolio','decisionPanels','authority'];
+  const fields = ['schemaVersion','activeCompanyId','companies','offices','departments','employees','jobs','schedules','cache','knowledge','events','lastAction','policy','budget','chatThreads','goals','checkpoints','blueprints','portfolio','decisionPanels','authority','stickyNotes','improvementAllowance','improvementBudget','improvementSessions','improvementReceipts'];
   const selected: Record<string, unknown> = {};
   for (const field of fields) if (field in snapshot) selected[field] = (snapshot as unknown as Record<string, unknown>)[field];
   const serialized = JSON.stringify(selected, (key, value) => {
@@ -127,6 +128,11 @@ export class CloudSyncService {
   private chatHasMore = false;
   private inFlight: Promise<CloudConnectionResult> | null = null;
   private readonly fetcher: typeof fetch;
+  private activityTimer: NodeJS.Timeout | null = null;
+  private activityPending: Promise<void> | null = null;
+  private activityAbort = new AbortController();
+  private lastActivityAt = 0;
+  private closed = false;
   constructor(private readonly options: CloudSyncOptions) {
     this.dir = path.join(options.userDataPath, 'cloud');
     this.fetcher = options.fetch ?? fetch;
@@ -138,6 +144,33 @@ export class CloudSyncService {
       }
     } catch { /* Start disconnected when metadata is absent or invalid. */ }
   }
+  /** Separate ephemeral telemetry; never changes snapshot revision or native work. */
+  publishExecution(): Promise<void> {
+    if (this.activityPending) return this.activityPending;
+    if (this.closed || !this.connected || !this.options.getWorkerExecution || Date.now()-this.lastActivityAt<2000) return Promise.resolve();
+    this.lastActivityAt=Date.now();
+    this.activityPending=(async()=>{
+      try {
+        const connection=this.credential();const sample=this.options.getWorkerExecution!();
+        if(!sample||!Number.isFinite(Date.parse(sample.sampledAt))||!Array.isArray(sample.activeCalls))return;
+        const execution={sampledAt:sample.sampledAt,activeCalls:sample.activeCalls.slice(0,8).filter(call=>typeof call.jobId==='string'&&/^[A-Za-z0-9_.:-]{1,160}$/.test(call.jobId)
+          && ['provider','model'].includes(call.phase)&&typeof call.startedAt==='string'&&Number.isFinite(Date.parse(call.startedAt)))
+          .map(call=>({jobId:call.jobId,phase:call.phase,startedAt:call.startedAt}))};
+        const body=JSON.stringify({clientId:this.meta.clientId,execution});if(Buffer.byteLength(body)>16384)return;
+        const headers:Record<string,string>={Authorization:`Bearer ${connection.pairing.deviceToken}`,'Content-Type':'application/json',Accept:'application/json'};
+        if(connection.pairing.siteAccessToken)headers['OAI-Sites-Authorization']=`Bearer ${connection.pairing.siteAccessToken}`;
+        const response=await this.fetcher(`${connection.url}/api/runtime-activity`,{method:'PUT',headers,body,redirect:'error',signal:AbortSignal.any([this.activityAbort.signal,AbortSignal.timeout(5000)])});
+        await response.body?.cancel();
+      } catch { /* A telemetry failure cannot fail or replay native work. */ }
+    })().finally(()=>{this.activityPending=null;});
+    return this.activityPending;
+  }
+  private scheduleActivity():void {
+    if(this.closed||this.activityTimer||!this.connected||!this.options.getWorkerExecution)return;
+    this.activityTimer=setTimeout(()=>{this.activityTimer=null;void this.publishExecution().finally(()=>this.scheduleActivity());},15000);
+    this.activityTimer.unref();
+  }
+  close():void {this.closed=true;if(this.activityTimer)clearTimeout(this.activityTimer);this.activityTimer=null;this.activityAbort.abort();}
   private encrypted(): boolean {
     try { return this.options.safeStorage.isEncryptionAvailable() && this.options.safeStorage.getSelectedStorageBackend?.() !== 'basic_text'; }
     catch { return false; }
@@ -207,12 +240,14 @@ export class CloudSyncService {
         this.meta.clientId = connection.pairing.clientId; this.meta.revision = null; this.meta.lastSyncedAt = null; this.meta.snapshotSha256 = null;
       }
       this.meta.url = connection.url; this.persist(); this.connected = true;
+      this.scheduleActivity();
       return this.result(true);
     } catch (err) { this.connected = false; return this.result(false, err instanceof Error ? err.message : 'Device pairing failed.'); }
   }
   disconnect(): CloudConnectionResult {
     if (this.inFlight) return this.result(false, 'A sync is in progress. Wait before disconnecting.');
     try {
+      if(this.activityTimer)clearTimeout(this.activityTimer);this.activityTimer=null;this.activityAbort.abort();this.activityAbort=new AbortController();
       fs.rmSync(path.join(this.dir, 'device.bin'), { force: true });
       this.meta.url = null; this.meta.revision = null; this.meta.lastSyncedAt = null; this.meta.snapshotSha256 = null; this.meta.chatCursor = ''; this.persist();
       this.connected = false; this.pendingCommands = 0;
@@ -221,7 +256,7 @@ export class CloudSyncService {
   }
   sync(): Promise<CloudConnectionResult> {
     if (this.inFlight) return this.inFlight;
-    this.inFlight = this.performSync().finally(() => { this.inFlight = null; });
+    this.inFlight = this.performSync().finally(() => { this.inFlight = null; this.scheduleActivity(); void this.publishExecution(); });
     return this.inFlight;
   }
   private async performSync(): Promise<CloudConnectionResult> {

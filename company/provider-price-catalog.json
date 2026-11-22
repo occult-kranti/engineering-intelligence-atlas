@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-22T00:00:00Z",
+  "expiresAt": "2026-12-22T00:00:00Z",
+  "basis": "Official first-party standard/global token prices, observed 2026-11-22. Eligibility requires current configured credentials and a discovered model. This catalog is not a provider invoice or proof of model access.",
+  "routes": [
+    {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "source": "https://platform.claude.com/docs/en/models/haiku-5-5/overview",
+      "tiers": [
+        { "maxInputTokens": 100000, "inputUsdPerMillion": 0.1, "outputUsdPerMillion": 0.5, "cacheWrite5mUsdPerMillion": 0.125, "cacheWrite1hUsdPerMillion": 0.2, "cacheReadUsdPerMillion": 0.01 },
+        { "maxInputTokens": 1000000, "inputUsdPerMillion": 0.5, "outputUsdPerMillion": 2.5, "cacheWrite5mUsdPerMillion": 0.625, "cacheWrite1hUsdPerMillion": 1, "cacheReadUsdPerMillion": 0.05 }
+      ]
+    },
+    {
+      "provider": "anthropic",
+      "model": "claude-sonnet-5-5",
+      "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "tiers": [
+        { "maxInputTokens": 1000000, "inputUsdPerMillion": 2, "outputUsdPerMillion": 10, "cacheWrite5mUsdPerMillion": 2.5, "cacheWrite1hUsdPerMillion": 4, "cacheReadUsdPerMillion": 0.1 }
+      ]
+    }
+  ]
+}

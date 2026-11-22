@@ -1,0 +1,159 @@
+   Compiling atlas-core v0.1.0 (/workspace/scratch/3cd2e045f9b8/daftar/native-core)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 7.27s
+     Running unittests src/lib.rs (native-core/target/debug/build/atlas-core/1d430732b9684f40/out/atlas_core-1d430732b9684f40)
+
+running 139 tests
+test office::authority::tests::department_parent_grant_never_inherits_to_child_and_expired_parent_blocks_reparent ... ok
+test office::authority::tests::employee_commands_cannot_escape_scope_or_enable_provider_work_from_management_only ... ok
+test office::authority::tests::cloud_commands_recheck_authority_but_completed_receipts_remain_noops_after_revocation ... ok
+test office::authority::tests::donna_delegation_is_bounded_by_parents_scope_capabilities_and_lifetime ... ok
+test office::authority::tests::historic_state_migrates_index_without_inventing_permissions ... ok
+test office::authority::tests::layout_authority_uses_the_mutated_office_not_a_supplied_blueprint_alias ... ok
+test office::authority::tests::department_reparent_requires_child_old_and_new_parent_authority ... ok
+test office::authority::tests::detach_needs_old_parent_grant ... ok
+test office::authority::tests::revocation_between_claim_and_dispatch_blocks_calls_but_keeps_inflight_settlement ... ok
+test office::authority::tests::department_all_grants_allow_reparent_and_index_falls_back_to_office_on_detach ... ok
+test office::authority::tests::parent_company_grant_does_not_authorize_child_company_command ... ok
+test office::company_hierarchy::tests::malformed_restored_parent_fails_validation ... ok
+test office::authority::tests::scoped_grants_expire_and_revoke_without_falling_back_to_legacy_dispatch ... ok
+test office::authority::tests::all_affected_grants_allow_reparent_detach_and_update_index ... ok
+test office::company_hierarchy::tests::old_json_without_parent_loads ... ok
+test office::company_hierarchy::tests::missing_null_and_wrong_type ... ok
+test office::company_hierarchy::tests::rejected_operation_leaves_state_unchanged ... ok
+test office::company_hierarchy::tests::reimport_preserves_parent ... ok
+test office::authority::tests::promotion_is_temporary_and_rename_preserves_repository_and_restored_history ... ok
+test office::authority::tests::reparent_requires_child_and_every_affected_parent_grant ... ok
+test office::authority::tests::expired_or_revoked_extra_grant_denies_reparent ... ok
+test office::company_hierarchy::tests::repeated_assignment_is_not_changed ... ok
+test office::company_hierarchy::tests::attach_reparent_detach ... ok
+test office::company_hierarchy::tests::serialization_preserves_parent ... ok
+test office::decision_panels::tests::convening_reuses_roles_without_dispatch_and_old_states_default_empty ... ok
+test office::company_hierarchy::tests::self_and_three_node_cycle_rejected ... ok
+test office::decision_panels::tests::research_lenses_are_explicit_permanent_roles_and_do_not_resume_paused_staff ... ok
+test office::department_hierarchy::tests::cross_office_and_cross_company_parents_are_rejected ... ok
+test office::department_hierarchy::tests::attach_reparent_detach_are_explicit_and_do_not_copy_staff_or_permissions ... ok
+test office::decision_panels::tests::provider_round_requires_authorization_and_builds_parallel_then_moderator_dag ... ok
+test office::decision_panels::tests::department_scope_and_read_only_tools_are_enforced ... ok
+test office::decision_panels::tests::scoped_contracts_are_reused_and_revocation_blocks_round_creation ... ok
+test office::department_hierarchy::tests::restored_dangling_self_and_cycle_fail_validation ... ok
+test office::decision_panels::tests::group_labels_do_not_authorize_other_company_scope_or_knowledge ... ok
+test office::governance::tests::blueprint_positions_and_ownership_cannot_cross_company_boundaries ... ok
+test office::department_hierarchy::tests::old_json_and_roundtrip_keep_organizational_parent_optional ... ok
+test office::governance::tests::conversation_scope_is_single_durable_thread_and_donna_keeps_goal_company ... ok
+test office::governance::tests::external_and_employee_usage_share_token_caps_and_idempotent_settlement ... ok
+test office::governance::tests::autonomous_mode_is_explicit_and_never_fakes_a_provider_reply ... ok
+test office::governance::tests::explicit_review_approves_only_the_requested_goal_iteration ... ok
+test office::department_hierarchy::tests::invalid_inputs_self_cycle_and_missing_parent_do_not_mutate_relations ... ok
+test office::governance::tests::global_reservations_pause_new_calls_and_allow_in_flight_settlement ... ok
+test office::governance::tests::bounded_autonomous_iterations_use_previous_handoffs_and_stop_at_limit ... ok
+test office::governance::tests::goal_graph_rejects_cycles_and_plan_mode_has_no_dispatch ... ok
+test office::governance::tests::private_catalog_provenance_and_default_staffing_are_preserved ... ok
+test office::governance::tests::migration_adds_persistent_definitions_once_and_preserves_old_records ... ok
+test office::department_hierarchy::tests::remote_replay_has_one_effect_and_a_stale_hash_cannot_reparent ... ok
+test office::governance::tests::pausing_a_goal_stops_future_steps_without_interrupting_reserved_work ... ok
+test office::governance::tests::time_target_stops_between_iterations_without_erasing_completed_artifacts ... ok
+test office::governance::tests::released_reservation_admits_waiting_work_without_a_policy_edit ... ok
+test office::improvements::tests::global_limit_and_uncertain_carry_stop_new_cycles_without_claiming_completion ... ok
+test office::improvements::tests::exact_global_cap_allows_its_reserved_pair_but_not_another_admission ... ok
+test office::improvements::tests::immutable_allowance_preserves_global_policy_and_counts_reviewed_carry ... ok
+test office::improvements::tests::competing_sessions_hold_both_phases_and_reservation_replaces_only_its_hold ... ok
+test office::improvements::tests::notes_are_revisioned_scoped_annotations_with_durable_exact_receipts ... ok
+test office::improvements::tests::accepted_review_advances_with_real_handoff_and_repeated_artifact_stops ... ok
+test office::decision_panels::tests::pause_retains_inflight_work_and_resume_does_not_rebill_it ... ok
+test office::improvements::tests::missing_deliverable_digest_preserves_completed_review_but_cannot_advance ... ok
+test office::improvements::tests::identical_delivered_body_stops_despite_changed_cycle_artifact_headers ... ok
+test office::improvements::tests::quote_expiry_and_scope_revocation_are_checked_again_before_dispatch ... ok
+test office::governance::tests::synthesized_plan_titles_are_bounded_without_losing_the_full_brief ... ok
+test office::improvements::tests::notes_cannot_link_another_office_goal_and_unknown_cost_blocks_other_sessions ... ok
+test office::improvements::tests::schema_three_survives_restart_and_legacy_fields_default_without_budget_invention ... ok
+test office::improvements::tests::pause_cancel_and_restart_preserve_held_or_dispatched_accounting ... ok
+test office::improvements::tests::unsupported_model_foreign_scope_and_worker_self_grants_fail_closed ... ok
+test office::improvements::tests::session_creation_is_paused_and_claims_require_the_exact_scoped_worker ... ok
+test office::improvements::tests::unreserved_or_over_reserved_settlement_retains_charges_and_stops_new_dispatch ... ok
+test office::paired_work_tests::atomic_workflow_rejects_oversized_combined_brief_without_partial_records ... ok
+test office::improvements::tests::todo_changes_during_work_are_not_overwritten_by_accepted_old_revision ... ok
+test office::paired_work_tests::cancelled_reviewer_blocks_primary_claim_reservation_and_dispatch_but_not_settlement ... ok
+test office::paired_work_tests::employee_scope_is_not_widened_and_estimates_are_validated ... ok
+test office::paired_work_tests::dependency_waits_for_review_acceptance_not_just_review_execution ... ok
+test office::paired_work_tests::explicit_repair_iteration_does_not_depend_on_failed_prior_leaf ... ok
+test office::paired_work_tests::goal_compiles_two_jobs_per_step_and_accepts_only_all_reviews ... ok
+test office::paired_work_tests::legacy_unpaired_work_cannot_start_but_an_existing_attempt_can_settle ... ok
+test office::paired_work_tests::explicit_review_failure_unblocks_repair_without_racing_normal_settlement ... ok
+test office::paired_work_tests::paired_acceptance_requires_exact_hashes_full_coverage_and_is_idempotent_after_revocation ... ok
+test office::paired_work_tests::paired_index_links_boards_steps_reviews_without_artifact_bodies ... ok
+test office::paired_work_tests::paired_workflow_cannot_escalate_provider_policy_and_creates_real_dag_once ... ok
+test office::paired_work_tests::pairing_creates_real_distinct_read_only_review_and_preserves_total_budget ... ok
+test office::paired_work_tests::atomic_workflow_keeps_full_source_brief_after_chat_rolloff_with_optional_context ... ok
+test office::paired_work_tests::paired_workflow_is_atomic_and_replays_after_restart_without_duplicate_briefs ... ok
+test office::paired_work_tests::pairing_rejects_same_employee_cross_company_and_changed_key_body ... ok
+test office::paired_work_tests::reviewer_pause_blocks_claim_and_recheck_without_losing_settlement ... ok
+test office::paired_work_tests::review_failure_receipts_are_lease_bound_immutable_and_cannot_replace_acceptance ... ok
+test office::paired_work_tests::reviewer_revocation_between_claim_and_reserve_cannot_start_provider ... ok
+test office::paired_work_tests::roadmap_done_requires_real_accepted_pair_and_revision ... ok
+test office::decision_panels::tests::decision_requires_settled_artifacts_then_explicit_revision_before_next_round ... ok
+test office::paired_work_tests::whiteboard_revisions_protect_single_and_full_blueprint_edits ... ok
+test office::portfolio::tests::knowledge_is_reference_only_and_must_be_selected_and_granted ... ok
+test office::portfolio::tests::old_state_migrates_portfolio_defaults_without_losing_progress ... ok
+test office::portfolio::tests::optimization_is_idempotent_and_reuses_worker_ids_without_merging_repositories ... ok
+test office::portfolio::tests::optimizer_keeps_owned_progress_and_only_pauses_idle_duplicate_assignments ... ok
+test office::paired_work_tests::uncertain_prior_execution_blocks_repair_and_rejected_review_blocks_dependents ... ok
+test office::portfolio::tests::optimizer_retains_queued_and_planned_reviewers_but_pauses_unassigned_duplicates ... ok
+test office::portfolio::tests::owned_roadmaps_validate_dependencies_evidence_and_contracted_whiteboards ... ok
+test office::portfolio::tests::shared_hierarchy_and_tool_scope_are_checked_at_dispatch ... ok
+test office::portfolio::tests::shared_dispatch_requires_live_contract_and_revocation_preserves_settlement ... ok
+test office::department_hierarchy::tests::sixteen_thousand_deep_links_validate_without_recursion_and_cycles_are_bounded ... ok
+test office::portfolio::tests::paused_schedules_and_goal_steps_preserve_explicit_contract_and_transfer_ids ... ok
+test office::remote_commands::tests::owner_remote_advance_repairs_once_within_iteration_cap_and_cannot_record_worker_failure ... ok
+test office::improvements::tests::rejected_reviews_and_capacity_are_visible_stops_without_retries_or_partial_pairs ... ok
+test office::remote_commands::tests::malformed_cloud_messages_do_not_consume_receipts_or_change_conversations ... ok
+test office::remote_commands::tests::cloud_messages_are_durable_data_only_and_cannot_change_identity ... ok
+test office::remote_commands::tests::receipts_are_never_evicted_to_admit_a_replay ... ok
+test office::remote_commands::tests::reused_id_with_changed_payload_is_rejected ... ok
+test office::remote_commands::tests::repeat_after_roundtrip_preserves_single_effect ... ok
+test office::remote_commands::tests::improvement_receipts_are_part_of_the_exact_cloud_projection_and_cas_hash ... ok
+test office::remote_commands::tests::validation_failure_does_not_consume_receipt_or_partially_change_state ... ok
+test office::tests::budgets_and_stale_leases_fail_closed ... ok
+test office::tests::cache_counts_real_lookup_and_clear_preserves_knowledge ... ok
+test office::tests::cancellation_preserves_reserved_and_observed_usage ... ok
+test office::remote_commands::tests::remote_set_company_parent_attach_detach_replay_and_errors ... ok
+test office::tests::cancelled_prerequisite_moves_dependents_to_review ... ok
+test office::tests::cloud_dispatch_requires_authorization_and_prices ... ok
+test office::tests::dependencies_must_exist_and_stay_inside_company ... ok
+test office::tests::donna_cannot_be_fired ... ok
+test office::tests::expired_cancelled_reservation_becomes_estimate_without_reviving ... ok
+test office::remote_commands::tests::full_cloud_text_survives_utf8_and_json_escape_expansion ... ok
+test office::tests::hierarchy_and_idempotent_import ... ok
+test office::tests::hierarchy_pause_blocks_claim ... ok
+test office::tests::no_duplicate_enqueue_or_claim ... ok
+test office::tests::invalid_schedule_does_not_roll_back_other_due_schedules ... ok
+test tests::concurrent_access_is_bounded_and_lock_releases ... ok
+test tests::fresh_state_is_unchecked_and_persists ... ok
+test tests::corrupt_state_is_preserved_instead_of_reset ... ok
+test office::remote_commands::tests::relocated_evidence_has_a_stable_projection_without_rewriting_chat_or_sources ... ok
+test tests::github_failure_never_fakes_verification ... ok
+test tests::index_is_bounded_sorted_and_excludes_generated_and_secret_files ... ok
+test tests::registration_requires_metadata_and_sets_first_task ... ok
+test tests::rejects_unknown_commands_and_path_traversal ... ok
+test tests::symlinks_cannot_escape_index_or_state ... ok
+test tests::shipped_development_registration_does_not_verify_a_fresh_install ... ok
+test tests::task_updates_are_persistent_and_cannot_forge_registration ... ok
+test office::remote_commands::tests::stale_snapshot_hash_conflicts_before_mutation ... ok
+test office::remote_commands::tests::worker_and_nested_actions_cannot_cross_remote_boundary ... ok
+test office::improvements::tests::sticky_unicode_capacity_and_frozen_kind_have_explicit_non_destructive_failures ... ok
+test office::improvements::tests::competing_sessions_control_restart_and_observed_settlement_keep_one_parent_ceiling ... ok
+test office::improvements::tests::until_budget_has_no_hidden_hundred_cycle_completion_limit ... ok
+
+test result: ok. 139 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.66s
+
+     Running unittests src/main.rs (native-core/target/debug/build/atlas-core/e7a347adcb1d3540/out/atlas_core-e7a347adcb1d3540)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+   Doc-tests atlas_core
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

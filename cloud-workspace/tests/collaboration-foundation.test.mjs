@@ -63,6 +63,21 @@ function build(){
   return s;
 }
 const snapshot=build();
+
+test('shared notes retain scope and color while excluding private improvement controls',()=>{
+ const s=build();const note={id:'note-1',companyId:'child',officeId:'o1',departmentId:'d1',kind:'todo',color:'pink',text:'Improve the blueprint',status:'open',ownerEmployeeId:'e1',goalIds:['g1','gx'],x:.3,y:.4,createdAt:'2026-11-22T00:00:00Z',updatedAt:'2026-11-22T00:00:00Z'};
+ s.stickyNotes=[note,{...note,id:'foreign',companyId:'other',officeId:'ox',departmentId:'dx',text:'FOREIGN NOTE'},{...note,id:'cross-dept',departmentId:'d2'},{...note,id:'archived',status:'archived'},{...note,id:'off-plan',x:2},{...note,id:'bad-color',color:'red'}];
+ s.improvementAllowance={capUsd:20,sourceReference:'PRIVATE ALLOWANCE'};s.improvementSessions=[{objective:'PRIVATE OBJECTIVE'}];s.improvementReceipts=[{requestId:'PRIVATE RECEIPT'}];
+ const v=projectCompanyForMember(s,'child');assert.equal(v.stickyNotes.length,1);assert.equal(v.stickyNotes[0].color,'pink');assert.equal(v.stickyNotes[0].editable,false);assert.deepEqual(v.stickyNotes[0].goalIds,['g1']);assert.equal(v.counts.stickyNotes,1);
+ for(const privateText of ['FOREIGN NOTE','PRIVATE ALLOWANCE','PRIVATE OBJECTIVE','PRIVATE RECEIPT'])assert.equal(JSON.stringify(v).includes(privateText),false);
+ const before=JSON.stringify(v);s.stickyNotes[1].text='Changed foreign content';assert.equal(JSON.stringify(projectCompanyForMember(s,'child')),before);
+});
+test('shared note bounds apply after scope filtering and all links resolve',()=>{
+ const s=build();const note={companyId:'child',officeId:'o1',departmentId:null,kind:'comment',color:'yellow',text:'Note',status:'open',ownerEmployeeId:'foreign-owner',goalIds:['g1','gx'],x:0,y:1};
+ s.stickyNotes=[...Array.from({length:1000},(_,i)=>({...note,id:'foreign-'+i,companyId:'other'})),...Array.from({length:205},(_,i)=>({...note,id:'note-'+i}))];
+ const v=projectCompanyForMember(s,'child');assert.equal(v.stickyNotes.length,200);assert.equal(v.noteTruncation.matched,205);assert.equal(v.noteTruncation.truncated,true);
+ for(const n of v.stickyNotes){assert.equal(n.ownerEmployeeId,null);assert.deepEqual(n.goalIds,['g1']);assert.equal(n.editable,false);}
+});
 function setup(snap=snapshot){const DB=database();DB.raw.prepare("INSERT INTO atlas_workspace (id,revision,snapshot,updated_at) VALUES ('owner',3,?,?)").run(JSON.stringify(snap),'t');const env={DB,ATLAS_OWNER_EMAIL:'owner@example.com'};const req=(headers={},method='GET')=>new Request(origin+'/api/collaboration/x',{method,headers});return{DB,env,req};}
 const H=(sub,email)=>({...(sub?{'oai-authenticated-user-id':sub}:{}),...(email?{'oai-authenticated-user-email':email}:{})});
 async function denies(p,code){await assert.rejects(p,(e)=>e instanceof CollabError&&(!code||e.code===code));}

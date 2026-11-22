@@ -58,3 +58,62 @@ test('cloud Donna ignores company-kit metadata before bounding source context',(
  const before=JSON.stringify(fixture);const result=scopedContext(fixture,{kind:'company',id:'atlas'});
  assert.deepEqual(result.knowledge,[{title:'Selected',summary:'Allowed'}]);assert.equal(JSON.stringify(fixture),before);assert.equal(JSON.stringify(result).includes('PRIVATE FOREIGN SOURCE'),false);
 });
+
+async function activitySetup(){
+ const t=setup();await t.seed();
+ const d=(await t.call('/api/devices','POST',{name:'Runtime',kind:'desktop'})).body;
+ const {clientId,deviceToken}=d.pairing;
+ const startedAt=new Date(Date.now()-20000).toISOString();
+ const snapshot={...structuredClone(state),schemaVersion:3,jobs:[{id:'active-job',companyId:'atlas',status:'running',provider:'anthropic',startedAt,leaseExpiresAt:new Date(Date.now()+120000).toISOString(),leaseToken:'PRIVATE-LEASE'}]};
+ assert.equal((await t.call('/api/workspace','PUT',{expectedRevision:1,clientId,snapshot},deviceToken)).status,200);
+ const execution={sampledAt:new Date().toISOString(),activeCalls:[{jobId:'active-job',phase:'provider',startedAt}]};
+ return {...t,d,clientId,deviceToken,execution,snapshot};
+}
+test('runtime activity is bounded separate telemetry and never bumps workspace revision',async()=>{
+ const t=await activitySetup(),packet={clientId:t.clientId,execution:t.execution};
+ assert.equal((await t.call('/api/runtime-activity','PUT',packet,t.deviceToken)).status,200);
+ const read=await t.call('/api/runtime-activity');assert.equal(read.body.available,true);assert.deepEqual(read.body.execution,t.execution);
+ assert.equal(JSON.stringify(read.body).includes('PRIVATE-LEASE'),false);
+ assert.equal((await t.call('/api/workspace')).body.revision,2);
+ assert.equal((await t.call('/api/runtime-activity','PUT',packet,t.deviceToken)).body.reused,true);
+ assert.equal((await t.call('/api/runtime-activity','PUT',{...packet,execution:{...t.execution,activeCalls:[]}},t.deviceToken)).status,409);
+ const newer={...t.execution,sampledAt:new Date(Date.parse(t.execution.sampledAt)+1).toISOString(),activeCalls:[]};
+ assert.equal((await t.call('/api/runtime-activity','PUT',{...packet,execution:newer},t.deviceToken)).status,200);
+ assert.equal((await t.call('/api/runtime-activity','PUT',packet,t.deviceToken)).status,409);
+ assert.deepEqual((await t.call('/api/runtime-activity')).body.execution.activeCalls,[]);
+});
+test('only current runtime writer can publish; revocation hides prior activity immediately',async()=>{
+ const t=await activitySetup(),packet={clientId:t.clientId,execution:t.execution};
+ assert.equal((await t.call('/api/runtime-activity','PUT',packet,'browser')).status,403);
+ const other=(await t.call('/api/devices','POST',{name:'Other',kind:'desktop'})).body.pairing;
+ assert.equal((await t.call('/api/runtime-activity','PUT',packet,other.deviceToken)).status,403);
+ assert.equal((await t.call('/api/runtime-activity','PUT',{...packet,clientId:other.clientId},other.deviceToken)).status,409);
+ assert.equal((await t.call('/api/runtime-activity','PUT',packet,t.deviceToken)).status,200);
+ assert.equal((await t.call('/api/runtime-activity','GET',undefined,null)).status,401);
+ await t.call('/api/devices/'+t.d.deviceId,'DELETE');
+ assert.equal((await t.call('/api/runtime-activity')).body.available,false);
+ assert.equal((await t.call('/api/runtime-activity','PUT',packet,t.deviceToken)).status,401);
+ // Even the admin cannot replay an identical receipt after the writer is revoked.
+ assert.equal((await t.call('/api/runtime-activity','PUT',packet)).status,409);
+});
+test('runtime activity rejects stale, oversized, unknown and no-longer-running samples',async()=>{
+ const t=await activitySetup(),packet={clientId:t.clientId,execution:t.execution};
+ for(const execution of [{...t.execution,sampledAt:new Date(Date.now()-60000).toISOString()},{...t.execution,activeCalls:[{...t.execution.activeCalls[0],jobId:'missing'}]},{...t.execution,token:'not-allowed'}])assert.equal((await t.call('/api/runtime-activity','PUT',{...packet,execution},t.deviceToken)).status,400);
+ assert.equal((await t.call('/api/runtime-activity','PUT',{...packet,padding:'x'.repeat(16000)},t.deviceToken)).status,413);
+ await t.call('/api/runtime-activity','PUT',packet,t.deviceToken);
+ t.snapshot.jobs[0].status='completed';await t.call('/api/workspace','PUT',{expectedRevision:2,clientId:t.clientId,snapshot:t.snapshot},t.deviceToken);
+ assert.deepEqual((await t.call('/api/runtime-activity')).body.execution.activeCalls,[]);
+ assert.equal((await t.call('/api/runtime-activity','PUT',packet,t.deviceToken)).status,400);
+});
+test('cloud relay cannot forge native worker ticks or review receipts',async()=>{
+ const t=setup();await t.seed();
+ for(const action of ['tick_improvements','tick_goals','tick_schedules','record_step_review','record_review_failure'])assert.equal((await t.call('/api/commands','POST',{command:{action,payload:{}},expectedRevision:1,idempotencyKey:action})).status,403);
+ assert.equal((await t.call('/api/commands')).body.commands.length,0);
+});
+test('owner relay bounds chunked upload before decoding or persisting',async()=>{
+ const t=await activitySetup();let cancelled=false;
+ const stream=new ReadableStream({start(c){c.enqueue(new Uint8Array(16001));},cancel(){cancelled=true;}});
+ const req=new Request(origin+'/api/runtime-activity',{method:'PUT',headers:{authorization:'Bearer '+t.deviceToken,'content-type':'application/json'},body:stream,duplex:'half'});
+ assert.equal((await handleAtlasApi(req,t.env)).status,413);assert.equal(cancelled,true);
+ assert.equal(t.DB.raw.prepare('SELECT COUNT(*) n FROM atlas_runtime_activity').get().n,0);
+});

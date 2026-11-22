@@ -5,6 +5,9 @@ import { mountCanvasWorkspace, type CanvasWorkspace, type CanvasWorkspacePanel }
 import { buildDonnaTeam, proposeDonnaAction, type DonnaSnapshot, type DonnaIntent } from './freeflow/donna-team.js';
 import type { FreeflowFocus, FreeflowSnapshot, SceneNode } from './freeflow/model.js';
 import { mountModelPool, type ModelPoolBridge, type ModelPoolPanel } from './model-pool.js';
+import { mountImprovementPanel, type ImprovementPanel, type ImprovementScope } from './improvement/panel.js';
+import type { ImprovementSnapshot, StickyNote, ImprovementAllowance, ImprovementSession } from './improvement/model.js';
+import { buildImprovementTelemetry, type ImprovementTelemetry } from './improvement/telemetry.js';
 /**
  * Local chrome/launcher page logic. Runs only on file:// inside the sandboxed
  * shell window. Structural copies of the bridge types live here so the
@@ -440,7 +443,7 @@ interface AuthorityLedgerEntry { id:string; at:string; actor:string; action:stri
 interface OfficeIndexEntry { id:string; entityId:string; kind:string; title:string; companyId:string|null; parentId:string|null; ownerEmployeeId:string|null; status:string; updatedAt:string; relatedIds:string[] }
 interface OfficeAuthority { schemaVersion:1; managedEmployeeIds:string[]; grants:AuthorityGrant[]; ledger:AuthorityLedgerEntry[]; index:OfficeIndexEntry[] }
 interface OfficeSnapshot {
-  schemaVersion: 1 | 2; activeCompanyId: string;
+  schemaVersion: 1 | 2 | 3; activeCompanyId: string;
   companies: OfficeCompany[]; offices: OfficeLocation[]; departments: OfficeDepartment[]; employees: OfficeEmployee[];
   jobs: OfficeJob[]; schedules: OfficeSchedule[]; cache: OfficeCache; knowledge: OfficeKnowledge[]; events: OfficeEvent[];
   /** Result metadata from the most recent command; never a provider credential. */
@@ -451,6 +454,8 @@ interface OfficeSnapshot {
   portfolio?: OfficePortfolio;
   decisionPanels?: DecisionPanel[];
   authority?: OfficeAuthority;
+  stickyNotes?: StickyNote[]; improvementAllowance?: ImprovementAllowance | null; improvementSessions?: ImprovementSession[];
+  improvementBudget?: ImprovementSnapshot['improvementBudget'];
 }
 type OfficeAction = 'create_company' | 'select_company' | 'import_repositories' | 'import_github_account'
   | 'create_office' | 'create_department' | 'hire_employee' | 'pause_employee' | 'resume_employee' | 'fire_employee'
@@ -466,7 +471,8 @@ type OfficeAction = 'create_company' | 'select_company' | 'import_repositories' 
   | 'contract_service' | 'share_knowledge' | 'upsert_roadmap_item' | 'schedule_repository_reviews'
   | 'convene_panel' | 'start_panel_round' | 'record_panel_decision' | 'pause_panel' | 'resume_panel' | 'apply_remote_command'
   | 'grant_authority' | 'promote_employee' | 'revoke_authority' | 'set_authority_enforcement' | 'apply_employee_command' | 'rebuild_office_index'
-  | 'set_company_parent' | 'set_department_parent';
+  | 'set_company_parent' | 'set_department_parent'
+  | 'upsert_sticky_note' | 'archive_sticky_note' | 'register_improvement_allowance' | 'create_improvement_session' | 'control_improvement_session';
 /** Every action has a fixed Rust-side schema; unknown fields are never executed. */
 interface OfficeCommand { action: OfficeAction; [key: string]: unknown }
 interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: string; code?: string; queued?: boolean; commandId?: string; observer?: { checkedAt: string; health: 'healthy' | 'attention'; modelCalls: 0; issues: Array<{ code: string; count: number }> } }
@@ -474,6 +480,7 @@ interface OfficeResult { ok: boolean; snapshot: OfficeSnapshot | null; error?: s
 interface OfficeWorkerStatus {
   enabled: boolean; running: boolean; activeJobId: string | null; lastError: string | null;
   concurrency?: number; activeJobIds?: string[];
+  execution?: { sampledAt: string; activeCalls: Array<{ jobId: string; phase: 'provider' | 'model'; startedAt: string }> };
   sourceReviews?: Array<{ companyId?: string; jobId: string; status: string; coverage: string; artifactUri?: string; handoff: { state: string; reason: string }; sources: Array<{ findings: Array<{ code: string }> }> }>;
 }
 
@@ -1765,10 +1772,12 @@ function initWorkspace(): void {
 let officeState: OfficeSnapshot | null = null;
 let officeSampledAt = '';
 let officeWorker: OfficeWorkerStatus | null = null;
+let improvementPanel: ImprovementPanel | null = null;
 let selectedOfficeId = '';
 let selectedDepartmentId = '';
 let officeTab = 'overview';
 let officeRefreshing: Promise<void> | null = null;
+let officeLastReadAt = 0;
 let officeWriteRevision = 0;
 let officePoll: ReturnType<typeof setInterval> | null = null;
 let officeObservation: OfficeResult['observer'];
@@ -1788,6 +1797,7 @@ async function refreshOffice(): Promise<void> {
   if (officeRefreshing) return officeRefreshing;
   if (!bridge?.officeSnapshot) { $('office-native-status').textContent = 'Desktop required'; noData($('office-employees'), 'Open the desktop app to load your permanent employees.'); return; }
   const readRevision=officeWriteRevision;
+  officeLastReadAt = Date.now();
   const snapshotRead=bridge.officeSnapshot();
   const workerRead=bridge.officeWorkerStatus ? bridge.officeWorkerStatus() : Promise.resolve(null);
   officeRefreshing = (async () => {
@@ -1956,13 +1966,15 @@ function renderWorker(): void {
   renderCompanyHierarchy();
   renderDepartmentHierarchy();
   const status = officeWorker;
-  $('worker-status').textContent = !status ? 'Unavailable' : status.running ? 'Processing a job' : status.enabled ? 'Dispatcher enabled' : 'Dispatcher off';
+  $('worker-status').textContent = !status ? 'Unavailable' : status.running ? 'Worker processing' : status.enabled ? 'Ordinary queue enabled' : 'Ordinary queue paused';
   $('worker-status').className = `pill ${status?.enabled || status?.running ? 'ok' : 'neutral'}`;
-  $('worker-detail').textContent = status?.activeJobId ? `Active job: ${status.activeJobId}. Stopping dispatch prevents the next job from starting.` : 'Dispatch is opt-in. Due schedules are processed while this desktop app is open.';
+  const queueBoundary = 'These controls affect the ordinary queue. Improvement sessions have separate Start and Pause controls; global dispatch pause applies to both.';
+  $('worker-detail').textContent = status?.activeJobId ? `Active job: ${status.activeJobId}. Pausing the ordinary queue prevents its next job from starting. ${queueBoundary}` : `Ordinary dispatch is opt-in and needs a connected runtime. ${queueBoundary}`;
+  $('worker-enable').textContent = 'Enable ordinary queue'; $('worker-disable').textContent = 'Pause ordinary queue'; $('worker-run-once').textContent = 'Run ordinary queue once';
   ($('worker-enable') as HTMLButtonElement).disabled = !bridge?.setOfficeWorker || status?.enabled === true;
   ($('worker-disable') as HTMLButtonElement).disabled = !bridge?.setOfficeWorker || !status?.enabled;
   ($('worker-run-once') as HTMLButtonElement).disabled = !bridge?.runOfficeQueue || status?.running === true;
-  if(status?.concurrency)$('worker-detail').textContent=`${status.concurrency} worker slots · ${status.activeJobIds?.length||(status.running?1:0)} active. Global reservations and company scopes bound dispatch. Schedules need the app to stay open.`;
+  if(status?.concurrency)$('worker-detail').textContent=`${status.concurrency} worker slots · ${status.activeJobIds?.length||(status.running?1:0)} active. Global reservations and company scopes bound dispatch. ${queueBoundary}`;
   if (status?.lastError) setStatus($('worker-result'), status.lastError, 'error');
   renderCanvasCrew();
 }
@@ -2187,13 +2199,13 @@ function initOffice(): void {
     const result=await bridge.setOfficeWorker({enabled});
     const outcome=result as unknown as {ok?:boolean;error?:string;enabled?:boolean};
     if(outcome?.ok===false||typeof outcome?.enabled!=='boolean'||outcome.enabled!==enabled)throw new Error(outcome?.error||'The runtime did not confirm the dispatcher change. Refresh its status before continuing.');
-    officeWorker=result; renderWorker(); setStatus($('worker-result'),enabled ? 'Dispatcher enabled. Authorized due jobs can now run.' : 'Dispatcher stopped. New jobs will remain queued.','ok');
+    officeWorker=result; renderWorker(); setStatus($('worker-result'),enabled ? 'Ordinary queue enabled. Authorized due jobs can now run. Improvement sessions remain separately controlled.' : 'Ordinary queue paused. New ordinary jobs remain queued; improvement sessions retain their own controls.','ok');
   }));
   $('worker-run-once').addEventListener('click',() => void safeTask(async () => {
     if(!bridge?.runOfficeQueue) throw new Error('The dispatcher is unavailable in this build.'); const button=$('worker-run-once') as HTMLButtonElement; button.disabled=true;
     try { officeWorker=await bridge.runOfficeQueue(); renderWorker(); await refreshOffice(); } finally { button.disabled=officeWorker?.running === true; }
   }));
-  officePoll=setInterval(() => { if((endlessWorkspace || activeView === 'office') && !document.hidden && officeWorker?.enabled) void safeTask(refreshOffice); },5000);
+  officePoll=setInterval(() => { if((endlessWorkspace || activeView === 'office') && !document.hidden && (officeWorker?.enabled || officeWorker?.running || officeState?.improvementSessions?.some(session=>['active','waiting-work','waiting-budget'].includes(session.status)) || bridge?.transport==='cloud-browser'&&Date.now()-officeLastReadAt>=15000)) void safeTask(refreshOffice); },5000);
   window.addEventListener('beforeunload',() => { if(officePoll) clearInterval(officePoll); });
 }
 
@@ -2576,6 +2588,7 @@ function renderUnifiedWorkspace():void{
   renderWorkspaceControls();renderPortfolio();renderWorkspaceLocator();renderDecisionPanels();renderCloudConnection();
   if(spatialOfficeId!==selectedOfficeId){cancelSpatialGestures();spatialOfficeId=selectedOfficeId;whiteboardPage=0;roadmapPage=0;resetRoomForm();if(!canvasFormDrafts.has('workspace-node-form'))resetBoardForm();else setStatus($('node-save-status'),'This draft belongs to a different office. It is kept until you discard it or return to that office.','error');}
   renderWorkspacePolicy();renderConversation();renderWorkspaceGoals();renderSpatialSelectors();renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();renderStudioRoadmap();syncDonnaDock();
+  improvementPanel?.refresh();
   $('github-repository-label').textContent=officeCompany()?.repoUrl||'Choose a repository company.';
   endlessWorkspace?.refresh();
 }
@@ -3412,6 +3425,34 @@ const FF_CLOCK_MS = 30_000;
 const FF_SNAPSHOT_IDS = new WeakMap<object, number>();
 let ffSnapshotSeq = 0;
 let ffHeatTimer: ReturnType<typeof setTimeout> | null = null;
+let ffActivityTimer: ReturnType<typeof setTimeout> | null = null;
+const ffActivityCache = new Map<string, ImprovementTelemetry>();
+let ffActivityKey = '';
+function improvementScope(): ImprovementScope | null {
+  const companyId = officeCompany()?.id, office = officeState?.offices.find(o=>o.id===selectedOfficeId&&o.companyId===companyId);
+  return companyId && office ? {companyId,officeId:office.id,departmentId:selectedDepartmentId||null} : null;
+}
+function ffActivity(node: Readonly<SceneNode>) {
+  if (!officeState || !['employee','room','department','office'].includes(node.kind) || !node.officeId) return null;
+  const generation = `${ffSnapshotId()}|${officeSampledAt}|${officeWorker?.execution?.sampledAt||''}|${Math.floor(Date.now()/1000)}`;
+  if (ffActivityKey !== generation) { ffActivityKey = generation; ffActivityCache.clear(); }
+  const key = `${node.companyId}/${node.officeId}`;
+  let data = ffActivityCache.get(key);
+  if (!data) {
+    if (ffActivityCache.size >= 64) return null;
+    data = buildImprovementTelemetry(officeState,{scope:{companyId:node.companyId,officeId:node.officeId},now:new Date().toISOString(),sampledAt:officeSampledAt,workerEvidence:officeWorker?.execution,freshnessMs:bridge?.transport==='cloud-browser'?45000:15000});
+    ffActivityCache.set(key,data);
+  }
+  const group = node.kind === 'employee' && node.employeeId ? data.activity?.perEmployee[node.employeeId] : node.departmentId ? data.activity?.perDepartment[node.departmentId] : data.activity?.summary;
+  return group ? {state:group.state,label:group.label,executing:group.executing} : null;
+}
+function ffStopActivityTimer(): void { if(ffActivityTimer!==null)clearTimeout(ffActivityTimer);ffActivityTimer=null; }
+function ffScheduleActivityTimer(): void {
+  ffStopActivityTimer(); if(document.hidden||!ffStudio)return;
+  const next=Math.min(...[...ffActivityCache.values()].map(data=>data.nextChangeAt?Date.parse(data.nextChangeAt):Infinity));
+  if(!Number.isFinite(next))return;
+  ffActivityTimer=setTimeout(()=>{ffActivityTimer=null;if(document.hidden)return;ffActivityKey='';ffRefresh();if(endlessWorkspace?.isOpen('improvement'))improvementPanel?.refresh();},Math.max(30,next-Date.now()+25));
+}
 function ffSnapshotId(): number {
   if (!officeState) return 0;
   let id = FF_SNAPSHOT_IDS.get(officeState);
@@ -3514,6 +3555,7 @@ function ffRefresh(): void {
   const needs = Boolean(officeState && selectedOfficeId && !currentBlueprint() && !workspaceReadOnly() && workspaceAvailable());
   btn.classList.toggle('hidden', !needs);
   ffStudio.update((officeState || {}) as unknown as FreeflowSnapshot, ffFocus);
+  ffScheduleActivityTimer();
   $('ff-surface-heat').textContent = studioHeatMode() === 'off' ? 'Heat off' : `Heat: ${studioHeatMode()}`;
   ffApplyMode();
 }
@@ -3646,7 +3688,7 @@ function ffActionFocusStillCurrent(focus: FreeflowFocus): boolean {
   return ffFocusMatches(ffFocus, focus) && officeState?.activeCompanyId === (focus.kind === 'portfolio' ? '' : focus.companyId);
 }
 function ffAction(action: StudioActionKind, ctx: StudioActionContext): void {
-  const scopeBound: StudioActionKind[] = ['chat', 'new-job', 'ownership', 'jobs', 'manage', 'hire', 'new-office', 'new-department', 'roadmap', 'whiteboard', 'services'];
+  const scopeBound: StudioActionKind[] = ['chat', 'new-job', 'ownership', 'jobs', 'manage', 'hire', 'new-office', 'new-department', 'roadmap', 'whiteboard', 'services', 'notes'];
   if (action === 'new-goal' as unknown as StudioActionKind || scopeBound.includes(action) && (ctx.companyId || ctx.officeId || ctx.departmentId)) {
     const focus = ffActionFocus(ctx);
     if (!focus) { setStatus($('workspace-action-status'), 'Choose a company first.', 'error'); return; }
@@ -3691,6 +3733,7 @@ function ffActionConfirmed(action: StudioActionKind, ctx: StudioActionContext): 
   const readOnly = workspaceReadOnly();
   const toWorkspace = (tab: string, focusId: string) => { ffOperations = true; ffSetNav('operations'); ffApplyMode(); setPortfolioOpen(false); switchWorkspaceTab(tab); window.setTimeout(() => ffOpenPanel('', focusId), 0); };
   switch (action) {
+    case 'notes': improvementPanel?.open(improvementScope(),ctx.noteId);endlessWorkspace?.open('improvement');break;
     case 'chat': {
       renderOffice();
       const target = ffChatTarget(ctx);
@@ -3764,7 +3807,7 @@ function initFreeflowHost(): void {
   $('ff-open-activity').onclick = () => { ffShowOps(); switchOfficeTab('ledger'); };
   const host = $('freeflow-host');
   document.body.classList.add('endless-canvas');
-  ffStudio = mountStudio(host, { continuousCanvas: true, onSurface: (id) => endlessWorkspace?.open(id, {nearCamera:true}), onNavigate: ffNavigate, onAction: ffAction, heat: ffHeat, capabilities: ffReadOnlyCaps });
+  ffStudio = mountStudio(host, { continuousCanvas: true, onSurface: (id) => endlessWorkspace?.open(id, {nearCamera:true}), onNavigate: ffNavigate, onAction: ffAction, heat: ffHeat, activity: ffActivity, capabilities: ffReadOnlyCaps });
   document.querySelectorAll<HTMLButtonElement>('[data-ff-nav]').forEach((b) => b.addEventListener('click', () => {
     const name = b.dataset.ffNav || 'table'; ffSetNav(name);
     if (name === 'table') { ffOperations = false; setPortfolioOpen(false); ffNavigate({ kind: 'portfolio' }); ffApplyMode(); ffSerializeUrl(); }
@@ -3778,10 +3821,10 @@ function initFreeflowHost(): void {
   $('workspace-heat-mode').addEventListener('change', ffRefresh);
   $('workspace-theme').addEventListener('change', () => ffRefresh());
   ffMountHeatControls();
-  document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (ffStudio) ffRefresh(); renderStudioSignals(); } ffScheduleHeatTimer(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { if (ffStudio) ffRefresh(); renderStudioSignals(); } else ffStopActivityTimer(); ffScheduleHeatTimer(); });
   $('workspace-heat-mode').addEventListener('change', ffScheduleHeatTimer);
-  window.addEventListener('beforeunload', () => { cancelSpatialGestures();ffStopHeatTimer(); endlessWorkspace?.destroy(); endlessWorkspace = null; ffStudio?.destroy(); ffStudio = null; });
-  window.addEventListener('pagehide', ()=>{cancelSpatialGestures();ffStopHeatTimer();});
+  window.addEventListener('beforeunload', () => { cancelSpatialGestures();ffStopHeatTimer();ffStopActivityTimer(); improvementPanel?.destroy();improvementPanel=null; endlessWorkspace?.destroy(); endlessWorkspace = null; ffStudio?.destroy(); ffStudio = null; });
+  window.addEventListener('pagehide', ()=>{cancelSpatialGestures();ffStopHeatTimer();ffStopActivityTimer();});
   window.addEventListener('hashchange', () => { ffApplyMode(); });
 }
 // ---------------------------------------------------------------- One endless workspace; live forms are spatial elements.
@@ -3798,9 +3841,10 @@ function renderCanvasCrew(): void {
   const focus = canvasCrewFocus();
   const team = buildDonnaTeam((officeState || {}) as unknown as DonnaSnapshot, focus, canvasCrewOptions());
   $('canvas-crew-scope').textContent = officeCompany()?.name || 'Choose a company to see its crew';
-  $('canvas-crew-runtime').textContent = !officeWorker ? 'Runtime not connected' : officeWorker.running ? `${officeWorker.activeJobIds?.length || 1} requests running` : officeWorker.enabled ? 'Dispatch enabled' : 'Dispatch paused';
+  $('canvas-crew-runtime').textContent = !officeWorker ? 'Runtime not connected' : officeWorker.running ? `${officeWorker.activeJobIds?.length || 1} requests processing` : officeWorker.enabled ? 'Ordinary queue enabled' : 'Ordinary queue paused';
   const dispatch = $('canvas-dispatch-toggle') as HTMLButtonElement;
-  dispatch.textContent = officeWorker?.enabled ? 'Pause dispatch' : 'Enable dispatch';
+  dispatch.textContent = officeWorker?.enabled ? 'Pause ordinary queue' : 'Enable ordinary queue';
+  dispatch.title = 'Controls the ordinary queue. Use improvement-session controls separately, or global dispatch pause for both.';
   dispatch.disabled = !bridge?.setOfficeWorker || workspaceReadOnly();
   list.replaceChildren();
   for (const node of team.nodes) {
@@ -3839,6 +3883,11 @@ function renderCanvasCrew(): void {
 function initEndlessWorkspace(): void {
   const studio=ffStudio; if(!studio)return;
   const surface=$('freeflow-surface');
+  improvementPanel=mountImprovementPanel({snapshot:()=>officeState as unknown as ImprovementSnapshot|null,scope:improvementScope,sampledAt:()=>officeSampledAt,workerEvidence:()=>officeWorker?.execution,freshnessMs:()=>bridge?.transport==='cloud-browser'?45000:15000,
+    readOnly:()=>workspaceReadOnly()||!officeState||officeState.schemaVersion<3,
+    command:async command=>{if(!bridge?.officeCommand)throw new Error('Native workspace unavailable.');return await bridge.officeCommand(command as OfficeCommand) as unknown as {ok:boolean;snapshot?:ImprovementSnapshot|null;code?:string;error?:string;queued?:boolean};},
+    apply:snapshot=>{officeState=appliedOfficeSnapshot({ok:true,snapshot:snapshot as unknown as OfficeSnapshot});officeSampledAt=new Date().toISOString();renderOffice();},refresh:refreshOffice,
+    openDonna:brief=>{ffRevealComposer();($('chat-message') as HTMLTextAreaElement).value=brief;markCanvasDraft('workspace-chat-form');setStatus($('chat-status'),'Inspection brief prepared. Review and send explicitly; no work was started.');}});
   const scope=textElement('section','','canvas-scope-content');scope.id='canvas-scope-content';
   scope.append(textElement('p','Choose where Donna and the controls are working.','canvas-surface-intro'));
   for(const el of [document.querySelector('.office-heading-state'),$('office-status'),document.querySelector('#company-workspace .office-scope'),document.querySelector('#company-workspace .workspace-locator'),document.getElementById('ff-heat-controls'),$('workspace-studio-signals'),document.querySelector('.studio-theme-control')])if(el)scope.append(el);
@@ -3866,6 +3915,7 @@ function initEndlessWorkspace(): void {
   add('workspace-softboard','People & ownership',$('workspace-panel-softboard'),'Office',960,500);
   add('workspace-timeline','Company roadmap',$('workspace-panel-timeline'),'Work',960,500);
   add('workspace-whiteboard','Whiteboard',$('workspace-panel-whiteboard'),'Work',960,500);
+  add('improvement','Notes & improvement',improvementPanel.element,'Work',960,540);
   add('workspace-decisions','Decision room',$('workspace-panel-decisions'),'Work',1000,740);
   add('goals','Goals & conversation history',$('workspace-panel-chat'),'Donna',900,680);
   add('portfolio','CEO · portfolio & authority',$('ceo-panel'),'Office',1080,760);

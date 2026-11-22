@@ -31,6 +31,7 @@ export interface StudioOptions {
   onNavigate(focus: FreeflowFocus): void;
   onAction(action: StudioActionKind, context: StudioActionContext): void;
   heat?(node: Readonly<SceneNode>): StudioHeat | null | undefined;
+  activity?(node: Readonly<SceneNode>): { state: string; label: string; executing: number | null } | null;
   capabilities?(spec: InspectorActionSpec): StudioActionState;
   storage?: Pick<Storage, 'getItem' | 'setItem'> | null;
 }
@@ -136,6 +137,7 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
 
   const openNode = (n: SceneNode) => {
     if (n.kind === 'restricted') return;
+    if (n.metadata.stickyNote === true) { options.onAction('notes', { companyId: n.companyId, officeId: n.officeId, departmentId: n.departmentId, noteId: n.entityId, nodeId: n.id }); return; }
     const f = focusOf(n);
     if (f) { options.onNavigate(f); return; }
     if (n.kind === 'whiteboard') options.onAction('whiteboard', { companyId: n.companyId, officeId: n.officeId, boardId: n.boardId, roomId: n.roomId, employeeId: n.employeeId, nodeId: n.id });
@@ -208,6 +210,8 @@ export function mountStudio(host: HTMLElement, options: StudioOptions): Studio {
     const nodes = sc.nodes.map((n) => {
       const h = options.heat?.(n) ?? null;
       const metadata: NodeMeta = { ...n.metadata };
+      const activity = options.activity?.(n);
+      if (activity) { metadata.activityState = activity.state; metadata.activityLabel = activity.label.slice(0, 160); metadata.executing = activity.executing; }
       const lv = h ? h.level : undefined;
       const labelOk = !!h && typeof h.label === 'string' && h.label.length > 0;
       if (h && labelOk && lv === 'off') { metadata['heatLabel'] = h.label.slice(0, 80); metadata['heatLevel'] = 'off'; }

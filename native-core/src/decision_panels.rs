@@ -148,6 +148,7 @@ impl OfficeSnapshot {
             updated_at: now(),
             stop_reason: None,
             source_request_id: None, request_sha256: None, source_message_id: None,
+            improvement_session_id: None,
         })
     }
     fn panel_hire_or_reuse(&mut self, panel: &DecisionPanel, key: &str) -> Result<PanelMember> {

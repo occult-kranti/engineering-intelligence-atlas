@@ -14,6 +14,8 @@ function ctxOf(n) {
         c.roomId = n.roomId;
     if (n.contractId)
         c.contractId = n.contractId;
+    if (typeof n.metadata.stickyNoteId === 'string')
+        c.noteId = n.metadata.stickyNoteId;
     return c;
 }
 function str(v) {
@@ -58,6 +60,8 @@ function companyName(scene, id) {
 }
 export function rowsForNode(n, scene = null) {
     const m = n.metadata;
+    if (m.stickyNote === true)
+        return [['Kind', m.stickyKind === 'todo' ? 'To-do annotation' : 'Comment annotation'], ['Text', String(m.stickyText ?? n.label)], ['Status', n.status], ['Access', m.annotationReadOnly === true ? 'Read-only shared annotation' : 'Saved annotation; no execution grant'], ['Board steward', typeof m.ownerEmployeeId === 'string' ? nameOf(scene, m.ownerEmployeeId) ?? m.ownerEmployeeId : 'Unassigned']];
     if (n.kind === 'restricted')
         return [['Access', 'Restricted'], ['Reason', String(m['reason'] ?? 'A separate company membership is required.')]];
     const sub = n.kind === 'reference' ? refSubtype(n) : 'other';
@@ -153,12 +157,14 @@ export function rowsForNode(n, scene = null) {
 export function actionsForNode(n) {
     const c = ctxOf(n);
     const a = (action, label, context = c) => ({ action, label, context });
+    if (n.metadata.stickyNote === true)
+        return n.metadata.annotationReadOnly === true ? [] : [a('notes', 'Edit saved note')];
     switch (n.kind) {
         case 'restricted': return [];
         case 'folio': return [a('chat', 'Open company chat'), a('jobs', 'Jobs'), a('roadmap', 'Roadmap'), a('manage', 'Manage company'), a('new-office', 'Add office'), a('hire', 'Hire')];
         case 'office': return [a('chat', 'Chat in office'), a('jobs', 'Jobs'), a('new-department', 'Add department'), a('manage', 'Manage office'), a('hire', 'Hire')];
-        case 'department': return [a('chat', 'Chat in department'), a('jobs', 'Jobs'), a('new-job', 'New job'), a('manage', 'Manage department'), a('hire', 'Hire')];
-        case 'room': return [a('chat', 'Chat in room scope'), a('new-job', 'New job'), a('manage', 'Manage department'), a('hire', 'Hire')];
+        case 'department': return [a('chat', 'Chat in department'), a('notes', 'Notes & improvement'), a('jobs', 'Jobs'), a('new-job', 'New job'), a('manage', 'Manage department'), a('hire', 'Hire')];
+        case 'room': return [a('chat', 'Chat in room scope'), a('notes', 'Notes & improvement'), a('new-job', 'New job'), a('manage', 'Manage department'), a('hire', 'Hire')];
         case 'employee': return [a('chat', 'Ask this employee'), a('jobs', 'Linked jobs'), a('new-job', 'Assign job'), a('ownership', 'Ownership'), a('manage', 'Manage employee')];
         case 'reference': {
             const sub = refSubtype(n);

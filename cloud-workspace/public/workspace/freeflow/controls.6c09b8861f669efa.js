@@ -25,7 +25,7 @@ function isTyping(t) {
     if (!e || !e.tagName)
         return false;
     const tag = e.tagName;
-    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.isContentEditable === true || !!e.closest?.('[contenteditable="true"],.donna-dock,.ff-list-search');
+    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.isContentEditable === true || !!e.closest?.('[contenteditable="true"],.donna-dock,.ff-list-search,.canvas-panel,.canvas-launcher');
 }
 function validPref(v) {
     if (!v || typeof v !== 'object')
@@ -274,9 +274,11 @@ export function mountControls(host, o) {
         go(zoomAt(o.getCamera(), s, { x: s.width / 2, y: s.height / 2 }, f));
     }
     const rectPt = (e) => { const r = vp.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; };
-    const onBackground = (e) => !e.target?.closest?.('.ff-node,.ff-controls,button,input,textarea,select,a');
+    const onBackground = (e) => !e.target?.closest?.('.ff-node,.ff-controls,.canvas-panel,.canvas-launcher,button,input,textarea,select,a');
     function onWheel(e) {
         if (!active || destroyed)
+            return;
+        if (e.target?.closest?.('.canvas-panel,.canvas-launcher'))
             return;
         e.preventDefault();
         pauseBrowsing();
@@ -546,6 +548,12 @@ export function mountControls(host, o) {
         fit, reset, topView, perspective, rotate,
         sync() { if (!destroyed)
             readAngle(); },
+        stopMotion() { if (!destroyed)
+            cancelAll(); },
+        goTo(camera) { if (!destroyed) {
+            cancelAll();
+            go(normalizeCamera(camera));
+        } },
         destroy() {
             if (destroyed)
                 return;

@@ -141,7 +141,7 @@ export function executeNativeCore<T = NativeSnapshot>(binary: string, request: N
         if (result.ok !== true) throw new CompanyError(typeof result.error === 'string' ? result.error.slice(0, 500) : 'Rust core refused the request.', result.code);
         const state = result.snapshot;
         const office = request.command.startsWith('office_');
-        if (!state || state.schemaVersion !== (office ? 2 : 1) || !Array.isArray(state.employees)
+        if (!state || (office ? ![2,3].includes(state.schemaVersion) : state.schemaVersion !== 1) || !Array.isArray(state.employees)
           || (office ? !Array.isArray(state.companies) || !Array.isArray(state.jobs)
             : !state.company || !Array.isArray(state.tasks) || !Array.isArray(state.milestones) || !Array.isArray(state.activity))) {
           throw new CompanyError('Rust core returned an incompatible state.', 'CORE_INVALID');

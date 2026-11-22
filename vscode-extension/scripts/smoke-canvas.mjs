@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 import { startServer } from '../../headless-runtime/server.mjs';
 import { assertEndlessShell, openCanvasSurface, settleCanvas, canvasPanelState, checkEndlessPanelInteractions } from '../../scripts/endless-canvas-browser-checks.mjs';
 import { checkBoardWorkflows } from '../../scripts/board-workflow-browser-checks.mjs';
+import { checkImprovementWorkflows } from '../../scripts/improvement-browser-checks.mjs';
 
 const extension=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const repository=path.resolve(extension,'..');
@@ -32,6 +33,8 @@ const receipt={schemaVersion:2,status:'running',startedAt:new Date().toISOString
   controlCredentialInBrowser:false,controlCredentialLocation:'Node harness memory only',
 };
 let browser,page,service,uiServer,controller,client,stage='preflight',token='',html='',uiOrigin='',boardConflictExpected=false;
+let noteAcknowledgementLossExpected=false,noteAcknowledgementLossArmed=false;
+const improvementNoteRequests=[];
 const subscription={};const methods=new Set();let persistedView=null;
 const deferred=()=>{let resolve;const promise=new Promise(done=>{resolve=done;});return{promise,resolve};};
 const uiCompanyCommitted=deferred(),computeObserved=deferred();
@@ -475,10 +478,20 @@ try{
     // Scope this acceptance to reads and the tested native company transaction.
     const denied=new Set(['setOfficeWorker','runOfficeQueue','startRun','createVenv','downloadModel','modelPoolRequest','hostSubmit','hostApprove','environmentPrepare','environmentRun','resourceStart','designInstall','setApiKey','configureCloud']);
     if(denied.has(method))throw new Error('This browser acceptance does not dispatch runtime jobs or credential operations.');
-    if(method==='officeCommand')assert.ok(['create_company','select_company','ensure_blueprint','upsert_whiteboard'].includes(args[0]?.action),'Only the tested company/blueprint/whiteboard state mutations are permitted');
+    if(method==='officeCommand')assert.ok(['create_company','select_company','ensure_blueprint','upsert_whiteboard','upsert_sticky_note','register_improvement_allowance','create_improvement_session'].includes(args[0]?.action),'Only the tested company, board and paused improvement state mutations are permitted');
+    if(method==='officeCommand'&&args[0]?.action==='upsert_sticky_note')improvementNoteRequests.push(structuredClone(args[0]));
     if(method==='openComputeCenter'){computeObserved.resolve();return{ok:true,harness:'native-command-entry-observed'};}
-    try{const result=await client.call(method,args,context);if(method==='officeCommand'&&args[0]?.action==='create_company'&&args[0]?.name==='Canvas Created Through UI')uiCompanyCommitted.resolve(result);return result;}catch(error){
-      const expected=boardConflictExpected&&['STALE_REVISION','CONFLICT'].includes(error.code);
+    try{
+      const result=await client.call(method,args,context);
+      if(method==='officeCommand'&&args[0]?.action==='create_company'&&args[0]?.name==='Canvas Created Through UI')uiCompanyCommitted.resolve(result);
+      if(noteAcknowledgementLossArmed&&method==='officeCommand'&&args[0]?.action==='upsert_sticky_note'){
+        noteAcknowledgementLossArmed=false;
+        assert.ok(result?.ok&&result.snapshot?.stickyNotes?.some(note=>note.id===args[0].id&&note.text===args[0].text),'Acknowledgement loss is injected only after the actual native write is visible');
+        const error=new Error('Fixture acknowledgement lost after native persistence');error.code='IO_ERROR';throw error;
+      }
+      return result;
+    }catch(error){
+      const expected=boardConflictExpected&&['STALE_REVISION','CONFLICT'].includes(error.code)||noteAcknowledgementLossExpected&&error.code==='IO_ERROR';
       if(expected){receipt.expectedRpcFailures??=[];receipt.expectedRpcFailures.push({method,code:error.code,error:cleanError(error)});}
       else receipt.rpcFailures.push({method,error:cleanError(error)});throw error;}
   }});
@@ -593,6 +606,8 @@ try{
   receipt.checks.push('Tilted and rotated laptop view keeps popup keyboard input isolated from the shared camera');
   stage='graphics-lifecycle';await checkGraphicsRecovery();
   stage='board-workflows';await checkBoardWorkflows({page,client,companyId:seeded.id,receipt,screenshot,expectConflict:value=>{boardConflictExpected=value;}});
+  stage='improvement-workflows';await checkImprovementWorkflows({page,client,companyId:seeded.id,receipt,screenshot,
+    expectConflict:value=>{boardConflictExpected=value;},expectNoteAcknowledgementLoss:value=>{noteAcknowledgementLossExpected=value;noteAcknowledgementLossArmed=value;},noteRequests:()=>improvementNoteRequests});
   persistedView=await page.evaluate(()=>window.__DAFTAR_VIEW_STATE||null);
   assert.ok(!JSON.stringify(persistedView).includes('Unsent'),'Only view preferences persist');
   const rendered=await page.content();receipt.controlCredentialInBrowser=rendered.includes(token)||JSON.stringify(persistedView).includes(token);

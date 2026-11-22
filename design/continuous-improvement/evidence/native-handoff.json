@@ -1,0 +1,106 @@
+{
+  "run": "improvement-mode-20261122",
+  "node": "host_core",
+  "attempt": 2,
+  "status": "implemented-local-tests-passed",
+  "baseline": "249a719",
+  "files": [
+    {
+      "path": "native-core/src/improvements.rs",
+      "sha256": "db2eb2bf0d350dd1907f84f93969f09d126ac801eafc0f368dd13e572cb7a5a7"
+    },
+    {
+      "path": "native-core/src/office.rs",
+      "sha256": "96827d26dc3e040553a57d502a3e421976b02d60834527e8de1709b3c545b81d"
+    },
+    {
+      "path": "native-core/src/governance.rs",
+      "sha256": "d6c78a241b05fc0fb809bcf396e0abb55e0baa4be1e74043d24ef662bf17c499"
+    },
+    {
+      "path": "native-core/src/decision_panels.rs",
+      "sha256": "5b9afa6a92dbdbdadd2a9f730efdc683901a911eb6a6a4e1b9c910d1162c80b9"
+    },
+    {
+      "path": "native-core/src/lib.rs",
+      "sha256": "3c064d1a5456b76b2156a5bd2f528fe5361b9ef602e78d7c5f7232669ae655f8"
+    },
+    {
+      "path": "native-core/src/remote_commands.rs",
+      "sha256": "95df73a5f3faf6763fd4c2c56c048ded07642c5c7c250d258b325fee02203203"
+    },
+    {
+      "path": "native-core/src/authority.rs",
+      "sha256": "f67485286a4b69f23398382acc038f6739cb470b81a80b4ad320b02d60fd3fd0"
+    },
+    {
+      "path": "desktop-shell/src/shared/office.ts",
+      "sha256": "7f046829d42c53e4955fc844767402412af3f2805f8244bfb4ec7bdb63f596f6"
+    }
+  ],
+  "binary": {
+    "path": "desktop-shell/native/atlas-core",
+    "platform": "linux",
+    "arch": "x64",
+    "sha256": "095e020420acf5463c5e5073adc3993dfe00ec041c69a68c36c93650af18a34c",
+    "build": "npm --prefix desktop-shell run build:native",
+    "releaseBuildSucceeded": true
+  },
+  "contract": {
+    "path": "/workspace/scratch/3cd2e045f9b8/release-candidates/improvement-mode-20261122/native-contract.md",
+    "sha256": "8910f89a6c6342756f63fe97e608d97ede6461bcdb7d58b0732be3a50fb9158d",
+    "officeSchemaVersion": 3,
+    "outerSchemaVersion": 1,
+    "maxOwnerReceipts": 4096,
+    "maxNotes": 2000,
+    "maxSessions": 256,
+    "maxQuoteValidityDays": 7,
+    "cloudProjectionIncludesImprovementReceipts": true,
+    "deliverableSha256": "optional exact64hex complete delivered-model-body digest; required for improvement progression, separate from reviewed artifact file hash"
+  },
+  "tests": {
+    "command": "cargo test --manifest-path native-core/Cargo.toml --offline",
+    "passed": 139,
+    "failed": 0,
+    "ignored": 0,
+    "improvementTestsIncluded": 20,
+    "log": "/workspace/scratch/3cd2e045f9b8/release-candidates/improvement-mode-20261122/native-full.log",
+    "logSha256": "6cec71aa1d6c3e1813f12acf550a247b00a1322d92d6bc923da4af31e4c0e54f",
+    "stress": [
+      "20 competing sessions share one $2 fixture allowance across exact-scoped claims, holds, observed settlements, pause/resume, cancellation and state roundtrips",
+      "101 accepted native paired local-route cycles without a hidden 100-cycle completion boundary; synthetic zero-cost settlements only",
+      "2000-note capacity with 4000-byte Unicode, stale CAS and immutable referenced todo kind",
+      "Distinct cycle/header artifact hashes with identical delivered-body hash stop after accepted second cycle; full artifact review hashes remain exact",
+      "Missing body digest preserves completed accepted evidence and costs, but blocks the next managed cycle",
+      "Metadata receipts participate in exact cloud projection and native CAS hashing"
+    ],
+    "externalProviderCalls": 0,
+    "infrastructureActions": 0
+  },
+  "observedCorrections": [
+    "Office schema 3 migration expectation updated; legacy in-flight settlement retained",
+    "Exact-cap reservations remain dispatchable without admitting another job",
+    "Office-scoped note links reject a different office and frozen todo kind has explicit error",
+    "Uncertainty in any parent-session settlement blocks new cycle materialization",
+    "Owner cancellation remains the goal stop cause after sync/restart",
+    "Unexpected managed charge is retained, global new dispatch pauses, and cancelled state stays terminal",
+    "Native cloud projection includes improvementReceipts to match TypeScript projection and website acknowledgement",
+    "Progress repetition compares deliverableSha256 excluding bookkeeping headers, not the changing full artifact file hash"
+  ],
+  "limits": [
+    "No actual provider/model/GPU run, cloud activity, deployment or native Windows build in this node",
+    "Native quotes are validated supplied metadata; current discovered pricing and credentials are runtime responsibilities",
+    "No owner cost-reconciliation API; estimated carry/unknown charges deliberately stop, remain recorded and need future explicit reconciliation capability",
+    "No generic worker-authored note-content or repository application API; accepted unchanged source note may be marked done and linked",
+    "Exact digest repetition guard does not prove semantic novelty",
+    "Capacity stops remain explicit; no silent rollover or erasure of accounting/history",
+    "Trusted owner/runtime scope policy is not independent multi-tenant authentication",
+    "Runtime computes the trusted complete delivered-body digest; native validates format and records it but does not independently read artifact files. Existing legacy ordinary jobs may omit it."
+  ],
+  "review": {
+    "parent": "/root",
+    "counterreview": "/root/host_runtime_mcp",
+    "awaitingRuntimeIntegration": true,
+    "noCommitOrPushByNode": true
+  }
+}

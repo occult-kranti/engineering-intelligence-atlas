@@ -40,9 +40,9 @@ const CAP: Record<Bucket, number> = { slab: 256, floor: 512, wall: 1280 };
 const ROOM_COLORS = ['#e6f0f8', '#e3f2ed', '#f8e9e3', '#eee8f7', '#f8f1df', '#eaf2e3'];
 const NEUTRAL_FLOOR = '#eef3f4';
 
-const PALETTE: Record<Theme, { slab: string; wall: string; restricted: string; ambient: number; sun: number }> = {
-  blueprint: { slab: '#f8f3e7', wall: '#526b86', restricted: '#18233b', ambient: 0.82, sun: 0.55 },
-  drafting: { slab: '#fffdfa', wall: '#56728a', restricted: '#2a3550', ambient: 0.9, sun: 0.4 },
+const PALETTE: Record<Theme, { slab: string; wall: string; contact: string; restricted: string; ambient: number; sun: number }> = {
+  blueprint: { slab: '#f8f3e7', wall: '#526b86', contact: '#b8cad2', restricted: '#18233b', ambient: 0.82, sun: 0.55 },
+  drafting: { slab: '#fffdfa', wall: '#56728a', contact: '#c4d1d5', restricted: '#2a3550', ambient: 0.9, sun: 0.4 },
 };
 
 interface Item {
@@ -203,12 +203,22 @@ export function mountRelief3D(host: HTMLElement, onStats?: (s: ReliefStats) => v
       threeScene.add(sun);
       boxGeo = new THREE.BoxGeometry(1, 1, 1);
       boxGeo.translate(0.5, 0.5, 0.5); // unit box with min corner at origin
+      // Face tint gives shallow partitions a quiet architectural edge without
+      // shadow-map passes. Unlit drafting floors deliberately ignore these
+      // vertex colors. The same one box geometry remains shared by every pool.
+      const normals = boxGeo.getAttribute('normal');
+      const colors = new Float32Array(normals.count * 3);
+      for (let i = 0; i < normals.count; i++) {
+        const shade = normals.getZ(i) > 0 ? 1 : normals.getX(i) > 0 ? 0.82 : normals.getY(i) < 0 ? 0.88 : 0.94;
+        colors[i * 3] = shade; colors[i * 3 + 1] = shade; colors[i * 3 + 2] = shade;
+      }
+      boxGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
       // Drafting surfaces retain their specified color. Lighting belongs on the
       // shallow partitions; it must not turn readable ivory plans muddy grey.
       mats = {
         slab: new THREE.MeshBasicMaterial({ color: 0xffffff }),
         floor: new THREE.MeshBasicMaterial({ color: 0xffffff }),
-        wall: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.95, metalness: 0 }),
+        wall: new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.95, metalness: 0, vertexColors: true }),
       };
       meshes = {} as Record<Bucket, any>;
       (Object.keys(CAP) as Bucket[]).forEach((b) => {
@@ -290,7 +300,13 @@ export function mountRelief3D(host: HTMLElement, onStats?: (s: ReliefStats) => v
       } else if (n.kind === 'office') {
         items.push({ nodeId: n.id, bucket: 'floor', x: r.x, y: r.y, z: -0.8, w: r.width, h: r.height, d: 0.8, color: roomColor(n) });
       } else if (n.kind === 'room') {
-        items.push({ nodeId: n.id, bucket: 'floor', x: r.x, y: r.y, z: 0, w: r.width, h: r.height, d: 0.4, color: roomColor(n) });
+        // A contained contact band grounds the partitions, and the band visible
+        // through their real doorway reads as its threshold. Two floor
+        // instances per room remain within the 512-slot pool at MAX_NODES=240.
+        const inset = Math.min(4.2, r.width / 8, r.height / 8);
+        items.push({ nodeId: n.id, bucket: 'floor', x: r.x, y: r.y, z: 0, w: r.width, h: r.height, d: 0.32, color: p.contact });
+        items.push({ bucket: 'floor', x: r.x + inset, y: r.y + inset, z: 0.32,
+          w: r.width - 2 * inset, h: r.height - 2 * inset, d: 0.08, color: roomColor(n) });
         wallItems(r, p.wall, 14, items);
       } else if (n.kind === 'restricted') {
         items.push({ nodeId: n.id, bucket: 'floor', x: r.x, y: r.y, z: 0, w: r.width, h: r.height, d: 0.4, color: p.restricted });

@@ -1,6 +1,7 @@
 /** Read-only visitor canvas. Accepts the member DTO, never the native owner snapshot.
  * Network, identity validation, membership expiry and proposals remain with the host page. */
-import { mountStudio } from './studio.91756b36b1be6a19.js';
+import { mountStudio } from './studio.d7dbd056553a298b.js';
+import { STICKY_COLORS } from '../improvement/notes.d28913ba9f0342d1.js';
 const object = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
 const rows = (v, limit) => Array.isArray(v) ? v.filter(object).slice(0, limit) : [];
 const text = (v, max = 200) => typeof v === 'string' ? v.slice(0, max) : '';
@@ -56,9 +57,19 @@ export function projectMemberSnapshot(input) {
         employeeId: roleIds.has(id(j.employeeId)) ? id(j.employeeId) : '',
         officeId: officeIds.has(id(j.officeId)) ? id(j.officeId) : undefined,
         departmentId: depts.has(id(j.departmentId)) ? id(j.departmentId) : null }));
+    const noteIds = new Set();
+    const stickyNotes = rows(input.stickyNotes, 200).filter(n => {
+        if (typeof n.id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/.test(n.id) || noteIds.has(n.id) || n.companyId !== companyId || !officeIds.has(id(n.officeId)) || n.departmentId != null && depts.get(id(n.departmentId))?.officeId !== n.officeId
+            || !['comment', 'todo'].includes(String(n.kind)) || !['open', 'done'].includes(String(n.status)) || !Object.hasOwn(STICKY_COLORS, String(n.color)) || unit(n.x) === null || unit(n.y) === null || !text(n.text, 4000) || n.editable !== false)
+            return false;
+        noteIds.add(n.id);
+        return true;
+    }).map(n => ({ id: n.id, revision: 0, companyId, officeId: id(n.officeId), departmentId: id(n.departmentId) || null, kind: n.kind, color: n.color, text: text(n.text, 4000), status: n.status, ownerEmployeeId: roleIds.has(id(n.ownerEmployeeId)) ? id(n.ownerEmployeeId) : null, goalIds: links(n.goalIds), x: n.x, y: n.y, createdAt: text(n.createdAt, 64), updatedAt: text(n.updatedAt, 64) }));
+    const truncation = object(input.noteTruncation) ? input.noteTruncation : null;
+    const memberNoteTruncation = truncation && Number.isSafeInteger(truncation.matched) && Number.isSafeInteger(truncation.returned) && Number(truncation.matched) >= 0 && Number(truncation.matched) <= 2000 && Number(truncation.returned) >= 0 && Number(truncation.returned) <= 200 ? { matched: Number(truncation.matched), returned: Number(truncation.returned), truncated: truncation.truncated === true } : undefined;
     return {
         companies: [{ id: companyId, name: text(input.company.name), status: status(input.company.status) }],
-        offices, departments, employees, memberReferences, blueprints, jobs,
+        offices, departments, employees, memberReferences, blueprints, jobs, stickyNotes, memberNoteTruncation,
         access: { mode: 'member', role: input.membership.role, restricted: true },
     };
 }

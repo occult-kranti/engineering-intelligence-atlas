@@ -1,0 +1,26 @@
+[
+  {
+    "path": "native-core/src/office.rs",
+    "sha256": "daaa4a0d4110ae7e6fc346fe518d19e8b9d28278b987228ae795b80983e33449"
+  },
+  {
+    "path": "native-core/src/governance.rs",
+    "sha256": "30f56b0e140d08a7f0b84eb98ecff62438c03126fc102539436422d5e73adf69"
+  },
+  {
+    "path": "native-core/src/authority.rs",
+    "sha256": "3e6e27e7fd7006eb59441b9643ed6dcdc85f9133826bf2ea3c97f889457a05ca"
+  },
+  {
+    "path": "native-core/src/remote_commands.rs",
+    "sha256": "3f514a235da72a8d45986a75c5dc23de78f281cf462882962af42af390300412"
+  },
+  {
+    "path": "desktop-shell/src/main/officeWorker.ts",
+    "sha256": "2f85cb4fc73bbb93b82eae8bacbc4cb410d6a4a2d4fbb8f592081975c17d914f"
+  },
+  {
+    "path": "desktop-shell/src/main/pairedReview.ts",
+    "sha256": "c6bcbf4c9b7b11770ed103235468e16186dc4813ca0da08788024790c7a07427"
+  }
+]

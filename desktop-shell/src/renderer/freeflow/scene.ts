@@ -22,8 +22,9 @@ import {
 } from './camera.js';
 import type { FreeflowScene, SceneNode, SceneThread } from './model.js';
 import { mountRelief3D, type ReliefHandle } from './relief3d.js';
+import { STICKY_COLORS } from '../improvement/notes.js';
 
-export type CanvasNodeAction = 'chat' | 'roadmap' | 'whiteboard' | 'ownership' | 'hire';
+export type CanvasNodeAction = 'chat' | 'roadmap' | 'whiteboard' | 'ownership' | 'hire' | 'notes';
 
 export const RICH_NODE_BUDGET = 240;
 export const THREAD_BUDGET = 160;
@@ -86,6 +87,7 @@ function countsText(n: SceneNode): string {
 export function describeNode(n: SceneNode): string {
   const md = n.metadata || {};
   let prefix: string = n.kind;
+  if (md.stickyNote === true) return `${md.stickyKind === 'todo' ? 'To-do' : 'Comment'}, ${n.label}, status ${n.status}, ${md.annotationReadOnly===true?'read-only shared annotation':'saved annotation. Open to inspect or edit'}.`;
   if (n.kind === 'reference') {
     if (md['tableBlueprint'] === true) prefix = 'Saved blueprint preview';
     else if (md['organizational'] === true || md['portal'] === true) prefix = md['role'] === 'parent' ? 'Parent company link' : md['role'] === 'child' ? 'Subcompany link' : 'Company link';
@@ -100,6 +102,7 @@ export function describeNode(n: SceneNode): string {
   if (n.kind === 'room') bits.push(typeof md['assignment'] === 'string' ? (md['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department'));
   if (n.status) bits.push(`status ${n.status}`);
   if (typeof md['heatLabel'] === 'string') bits.push(md['heatLabel']);
+  if (typeof md.activityLabel === 'string') bits.push(md.activityLabel);
   const c = countsText(n);
   if (c) bits.push(c);
   return bits.join(', ');
@@ -209,6 +212,16 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   e.classList.toggle('ff-node--table-plan', n.metadata['tableBlueprint'] === true);
   e.classList.toggle('ff-node--company-plan', n.metadata['companyFootprint'] === true);
   e.classList.toggle('ff-node--company-marker', n.metadata['companyMarker'] === true);
+  e.classList.toggle('ff-node--sticky', n.metadata.stickyNote === true);
+  e.dataset.activity = String(n.metadata.activityState ?? 'unknown');
+  const rawExecuting = n.metadata.executing;
+  const executing = e.dataset.activity === 'running' && typeof rawExecuting === 'number' && Number.isInteger(rawExecuting) && rawExecuting > 0 && rawExecuting <= 60000 ? rawExecuting : 0;
+  e.dataset.executing = String(executing);
+  e.style.setProperty('--activity-light', String(executing ? Math.min(.30, .12 + .035 * Math.log2(1 + executing)) : 0));
+  if (n.metadata.stickyNote === true) {
+    const color = String(n.metadata.stickyColor) as keyof typeof STICKY_COLORS;
+    e.style.setProperty('--sticky-color', STICKY_COLORS[color] ?? STICKY_COLORS.yellow);
+  }
   e.dataset.companyFootprint = String(n.metadata['companyFootprint'] === true);
   e.dataset.companyLevel = String(n.metadata['companyLevel'] === true);
   if (n.metadata['companyFootprint'] === true || n.kind === 'office' || n.kind === 'room') e.dataset.geometry = 'container';
@@ -234,9 +247,14 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
   const hk = heatOf(n);
   const assign = typeof n.metadata['assignment'] === 'string' ? (n.metadata['assignment'] as string) : (n.departmentId ? 'Department unavailable' : 'Unassigned department');
   e.dataset.assignmentDuplicate = String(assign.trim().toLocaleLowerCase() === n.label.trim().toLocaleLowerCase());
-  const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}|${n.metadata['blueprintDetail'] ?? ''}|${n.metadata['companyFootprint'] ?? ''}|${n.blueprintPreview ? JSON.stringify(n.blueprintPreview) : ''}`;
+  const key = `${e.getAttribute('aria-label')}|${assign}|${n.departmentId ?? ''}|${n.label}|${n.subtitle}|${n.status}|${countsText(n)}|${lod}|${n.rect.width}x${n.rect.height}|${hk ? `${hk.level}/${hk.label}/${hk.metric}` : 'noheat'}|${n.metadata['blueprintDetail'] ?? ''}|${n.metadata['companyFootprint'] ?? ''}|${n.metadata.stickyColor??''}|${n.metadata.stickyRevision??''}|${n.blueprintPreview ? JSON.stringify(n.blueprintPreview) : ''}`;
   if (e.dataset.sig === key) return;
   e.dataset.sig = key;
+  if (n.metadata.stickyNote === true) {
+    paper.replaceChildren(el('span', 'ff-sticky-kind', `${n.metadata.stickyKind === 'todo' ? 'To-do' : 'Comment'}${n.status === 'done' ? ' · Done' : ''}`),
+      el('span', 'ff-sticky-text', n.label), el('span', n.metadata.annotationReadOnly===true?'ff-sticky-open':'ff-node-open ff-sticky-open', n.metadata.annotationReadOnly===true?'Read only':'Edit note ↵'));
+    return;
+  }
   if (n.metadata['companyMarker'] === true) {
     const initials = n.label.trim().split(/\s+/).slice(0, 2).map(word => Array.from(word)[0] ?? '').join('').toUpperCase();
     paper.replaceChildren(el('div', 'ff-node-title', initials || 'CO'));
@@ -248,7 +266,7 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
     header.append(el('div', 'ff-table-plan-title', n.label), el('div', 'ff-table-plan-caption', n.subtitle));
     const boards = el('div', 'ff-company-plan-boards');
     boards.setAttribute('aria-label', `Tools for ${n.label}`);
-    for (const [action, label] of [['chat', 'Donna'], ['roadmap', 'Roadmap'], ['whiteboard', 'Whiteboard'], ['ownership', 'Ownership'], ['hire', 'Hire employee']] as const) {
+    for (const [action, label] of [['chat', 'Donna'], ['roadmap', 'Roadmap'], ['whiteboard', 'Whiteboard'], ['ownership', 'Ownership'], ['notes', 'Notes'], ['hire', 'Hire employee']] as const) {
       const button = el('button', 'ff-company-board-action', label); button.type = 'button';
       button.dataset.canvasAction = action;
       button.setAttribute('aria-label', `${label} · ${n.label}`);
@@ -281,6 +299,12 @@ function fillNode(e: HTMLElement, n: SceneNode, lod: 'rich' | 'simple', selected
     const tag = el('div', 'ff-segment-tag', assign);
     tag.setAttribute('aria-label', `Department: ${assign}`);
     paper.appendChild(tag);
+  }
+  if (n.kind === 'room' || n.kind === 'department') {
+    const light = el('span', 'ff-activity-floor'); light.setAttribute('aria-hidden', 'true'); paper.appendChild(light);
+    if (executing && n.rect.width >= 90 && n.rect.height >= 72) {
+      const count = el('span', 'ff-activity-count', `${executing} live ${executing === 1 ? 'call' : 'calls'}`); count.setAttribute('aria-hidden', 'true'); paper.appendChild(count);
+    }
   }
   const title = el('div', 'ff-node-title', n.label);
   paper.appendChild(title);
@@ -599,7 +623,7 @@ export function mountScene(host: HTMLElement, callbacks: SceneCallbacks = {}): S
   const onClick = (ev: MouseEvent) => {
     const id = nodeAt(ev.target);
     const action = (ev.target as HTMLElement).closest<HTMLButtonElement>('button[data-canvas-action]')?.dataset.canvasAction;
-    if (action && id && ['chat', 'roadmap', 'whiteboard', 'ownership', 'hire'].includes(action)) {
+    if (action && id && ['chat', 'roadmap', 'whiteboard', 'ownership', 'hire', 'notes'].includes(action)) {
       const node = nodesById.get(id); if (node) callbacks.onCanvasAction?.(action as CanvasNodeAction, node);
       ev.stopPropagation(); return;
     }

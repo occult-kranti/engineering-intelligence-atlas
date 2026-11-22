@@ -2,6 +2,8 @@
  * Network, identity validation, membership expiry and proposals remain with the host page. */
 import { mountStudio, type Studio } from './studio.js';
 import type { FreeflowFocus, FreeflowSnapshot, MemberRoleReference } from './model.js';
+import type { StickyNote, StickyColor } from '../improvement/model.js';
+import { STICKY_COLORS } from '../improvement/notes.js';
 
 type Row = Record<string, unknown>;
 const object = (v: unknown): v is Row => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -56,9 +58,17 @@ export function projectMemberSnapshot(input: unknown): FreeflowSnapshot {
     employeeId: roleIds.has(id(j.employeeId)) ? id(j.employeeId) : '',
     officeId: officeIds.has(id(j.officeId)) ? id(j.officeId) : undefined,
     departmentId: depts.has(id(j.departmentId)) ? id(j.departmentId) : null }));
+  const noteIds = new Set<string>();
+  const stickyNotes: StickyNote[] = rows(input.stickyNotes,200).filter(n=>{
+    if(typeof n.id!=='string'||!/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/.test(n.id)||noteIds.has(n.id)||n.companyId!==companyId||!officeIds.has(id(n.officeId))||n.departmentId!=null&&depts.get(id(n.departmentId))?.officeId!==n.officeId
+      ||!['comment','todo'].includes(String(n.kind))||!['open','done'].includes(String(n.status))||!Object.hasOwn(STICKY_COLORS,String(n.color))||unit(n.x)===null||unit(n.y)===null||!text(n.text,4000)||n.editable!==false)return false;
+    noteIds.add(n.id);return true;
+  }).map(n=>({id:n.id as string,revision:0,companyId,officeId:id(n.officeId),departmentId:id(n.departmentId)||null,kind:n.kind as 'comment'|'todo',color:n.color as StickyColor,text:text(n.text,4000),status:n.status as 'open'|'done',ownerEmployeeId:roleIds.has(id(n.ownerEmployeeId))?id(n.ownerEmployeeId):null,goalIds:links(n.goalIds),x:n.x as number,y:n.y as number,createdAt:text(n.createdAt,64),updatedAt:text(n.updatedAt,64)}));
+  const truncation=object(input.noteTruncation)?input.noteTruncation:null;
+  const memberNoteTruncation=truncation&&Number.isSafeInteger(truncation.matched)&&Number.isSafeInteger(truncation.returned)&&Number(truncation.matched)>=0&&Number(truncation.matched)<=2000&&Number(truncation.returned)>=0&&Number(truncation.returned)<=200?{matched:Number(truncation.matched),returned:Number(truncation.returned),truncated:truncation.truncated===true}:undefined;
   return {
     companies: [{ id: companyId, name: text(input.company.name), status: status(input.company.status) }],
-    offices, departments, employees, memberReferences, blueprints, jobs,
+    offices, departments, employees, memberReferences, blueprints, jobs,stickyNotes,memberNoteTruncation,
     access: { mode: 'member', role: input.membership.role as 'viewer' | 'contributor' | 'owner', restricted: true },
   };
 }

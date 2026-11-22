@@ -41,6 +41,18 @@ function fixture(overrides = {}) {
   return { calls, handler, office };
 }
 
+test('runtime activity exposes only bounded real-call metadata and separate improvement budget',async()=>{
+ const now=new Date().toISOString();const f=fixture({request:async(_method,route)=>route==='/v1/status'?{ok:true,execution:'headless',worker:{enabled:false,running:true,execution:{sampledAt:now,activeCalls:[{jobId:'sk-12345678',phase:'provider',startedAt:now,prompt:'PRIVATE CALL PROMPT'}]}},improvement:{started:true,running:true,activeSessionId:'session-a',blockedReason:null,nextPollAt:null},capabilities:{}}:{ok:true,snapshot:{...snapshot(),improvementBudget:{capUsd:20,carriedObservedUsd:4,carriedEstimatedUsd:1,observedUsd:2,estimatedUsd:0,reservedUsd:1,heldUsd:.2,committedUsd:8.2,remainingUsd:11.8,effectiveRemainingUsd:1.8,secret:'PRIVATE'}},stateHash:HASH}});
+ const status=await f.handler('runtime_status',{});assert.equal(status.worker.enabled,false);assert.deepEqual(status.worker.execution.activeCalls,[{jobId:'sk-12345678',phase:'provider',startedAt:now}]);assert.equal(status.improvement.activeSessionId,'session-a');assert.equal(JSON.stringify(status).includes('PRIVATE'),false);
+ const summary=await f.handler('office_summary',{});assert.equal(summary.summary.improvementBudget.heldUsd,.2);assert.equal(summary.summary.improvementBudget.carriedObservedUsd,4);assert.equal('secret' in summary.summary.improvementBudget,false);
+});
+
+test('improvement owner control retains outer CAS and stable request identity, without exposing worker tick',async()=>{
+ const f=fixture();const envelope={id:'outer-stable',expectedStateHash:HASH,command:{action:'control_improvement_session',requestId:'inner-stable',sessionId:'session-a',expectedRevision:3,operation:'pause'}};
+ await f.handler('office_command',envelope);assert.deepEqual(f.calls[0],{method:'POST',route:'/v1/commands',body:envelope});
+ await assert.rejects(f.handler('office_command',{...envelope,command:{action:'tick_improvements',sessionId:'session-a'}}));assert.equal(f.calls.length,1);
+});
+
 async function initialized(handler) {
   const process = createMessageProcessor({ handleTool: handler });
   const response = await process(JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'test', version: '1' } } }));

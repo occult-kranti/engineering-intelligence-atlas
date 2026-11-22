@@ -3,7 +3,7 @@
 import type { AtlasEnv } from './atlas-api.ts';
 import { insist, requireMembership, type CollabUser } from './collaboration-auth.ts';
 type Row = Record<string, any>;
-export const LIMITS = { offices: 50, departments: 200, roleCards: 200, blueprints: 50, rooms: 60, desks: 200, whiteboards: 100, jobs: 200, goals: 100, roadmap: 200, links: 25 } as const;
+export const LIMITS = { offices: 50, departments: 200, roleCards: 200, blueprints: 50, rooms: 60, desks: 200, whiteboards: 100, jobs: 200, goals: 100, roadmap: 200, stickyNotes: 200, links: 25 } as const;
 const obj = (v: unknown): v is Row => !!v && typeof v === 'object' && !Array.isArray(v);
 const list = (v: unknown): Row[] => (Array.isArray(v) ? v.filter(obj) : []);
 const str = (v: unknown, n = 300): string | null => (typeof v === 'string' && v.length > 0 ? v.slice(0, n) : null);
@@ -176,11 +176,37 @@ export function projectCompanyForMember(snapshot: unknown, companyId: string): R
   const deptsOut = departments.out.map((d) => ({ id: d.id, companyId, officeId: d.officeId, name: str(d.name, 200), status: str(d.status, 20),
     parentDepartmentId: retainedDepts.has(d.parentDepartmentId) && deptById.get(d.parentDepartmentId)?.officeId === d.officeId && d.parentDepartmentId !== d.id ? d.parentDepartmentId : null }));
   const roleOut = roleCards.out;
+  // Shared notes are filtered through the same company/office/department closure
+  // before bounding. Improvement allowances, objectives, quotes and receipts are
+  // owner-private and are never spread into the member projection.
+  const noteColors = new Set(['yellow', 'blue', 'green', 'pink', 'purple', 'gray']);
+  const noteIds = new Set<string>();
+  const notesAll = list(snapshot.stickyNotes).filter((note) => {
+    if (note.companyId !== companyId || !retainedOffices.has(note.officeId)
+      || typeof note.id !== 'string' || !/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,119}$/.test(note.id)
+      || noteIds.has(note.id) || !['comment', 'todo'].includes(note.kind)
+      || !['open', 'done'].includes(note.status) || !noteColors.has(note.color)
+      || unit(note.x) === null || unit(note.y) === null || !str(note.text, 4000)) return false;
+    if (note.departmentId != null && (!retainedDepts.has(note.departmentId)
+      || deptById.get(note.departmentId)?.officeId !== note.officeId)) return false;
+    noteIds.add(note.id); return true;
+  });
+  const notes = cap(notesAll, LIMITS.stickyNotes);
+  const stickyNotes = notes.out.map((note) => ({
+    id: note.id, sceneId: q(companyId, note.officeId, note.id), companyId, officeId: note.officeId,
+    departmentId: note.departmentId ?? null, kind: note.kind, color: note.color,
+    text: str(note.text, 4000), status: note.status, x: note.x, y: note.y,
+    ownerEmployeeId: retainedRoles.has(note.ownerEmployeeId) ? note.ownerEmployeeId : null,
+    goalIds: strs(note.goalIds, 100).filter((id) => retainedGoals.has(id)).slice(0, LIMITS.links),
+    createdAt: str(note.createdAt, 40), updatedAt: str(note.updatedAt, 40),
+    editable: false,
+  }));
   return {
     company: { id: company.id, name: str(company.name, 200), status: str(company.status, 20) },
-    offices: officesOut, departments: deptsOut, roleCards: roleOut, blueprints: sceneBps, jobs: jobsOut, goals: goalsOut, roadmap: roadOut,
+    offices: officesOut, departments: deptsOut, roleCards: roleOut, blueprints: sceneBps, jobs: jobsOut, goals: goalsOut, roadmap: roadOut, stickyNotes,
     truncation: { offices: meta(officesAll.length, offices.out.length), departments: meta(deptsAll.length, departments.out.length), parentCapOmitted: { blueprints: bpAll.length - bpAll.filter((b) => retainedOffices.has(b.officeId)).length, departments: deptsAll.length - deptsAll.filter((d) => retainedOffices.has(d.officeId)).length }, roleCards: roleCards.m, blueprints: blueprints.m, rooms: meta(roomTotals.matched, roomTotals.returned), desks: meta(deskTotals.matched, deskTotals.returned), whiteboards: meta(boardTotals.matched, boardTotals.returned), jobs: jobs.m, goals: goals.m, roadmap: road.m },
-    counts: { offices: officesOut.length, departments: deptsOut.length, roleCards: roleOut.length, jobs: jobsOut.length, goals: goalsOut.length, roadmap: roadOut.length },
+    noteTruncation: notes.m,
+    counts: { offices: officesOut.length, departments: deptsOut.length, roleCards: roleOut.length, jobs: jobsOut.length, goals: goalsOut.length, roadmap: roadOut.length, stickyNotes: stickyNotes.length },
   };
 }
 function canonicalize(v: unknown): unknown {

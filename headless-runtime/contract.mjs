@@ -30,6 +30,8 @@ export const OWNER_ACTIONS = Object.freeze([
   'start_panel_round', 'record_panel_decision', 'pause_panel', 'resume_panel',
   'grant_authority', 'promote_employee', 'revoke_authority',
   'set_authority_enforcement', 'rebuild_office_index', 'apply_employee_command',
+  'upsert_sticky_note', 'archive_sticky_note', 'register_improvement_allowance',
+  'create_improvement_session', 'control_improvement_session',
 ]);
 
 export function assertObject(value, name = 'Request') {

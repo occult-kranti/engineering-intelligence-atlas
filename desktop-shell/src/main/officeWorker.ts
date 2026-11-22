@@ -21,6 +21,8 @@ export interface OfficeWorkerOptions {
   artifactRoot: string;
   seedDir: string;
   intervalMs?: number;
+  /** A dedicated improvement worker may claim only this durable session's jobs. */
+  improvementSessionId?: string;
   prepareContext?: (job: OfficeJob, snapshot: OfficeSnapshot) => Promise<string>;
   /** Validate the exact route and assignment before cache/budget admission and again at dispatch. */
   validateJob?: (job: OfficeJob) => Promise<void>;
@@ -37,6 +39,15 @@ export interface OfficeWorkerScheduling {
   pollDelayMs: number | null;
   nextPollAt: number | null;
 }
+export type OfficeWorkerPhase = 'idle' | 'preparing' | 'generating' | 'settling';
+export interface OfficeWorkerActivity {
+  phase: OfficeWorkerPhase;
+  phaseChangedAt: number;
+  observedAt: number;
+  /** Only outstanding provider calls, never queued or merely claimed jobs. */
+  activeCallJobIds: string[];
+  execution: { sampledAt: string; activeCalls: Array<{ jobId: string; phase: 'provider' | 'model'; startedAt: string }> };
+}
 
 export type OfficeWorkerController = Pick<OfficeWorker, 'status' | 'setEnabled' | 'stop' | 'runOnce'>;
 
@@ -47,10 +58,14 @@ export class OfficeWorkerPool implements OfficeWorkerController {
     if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 4) throw new Error('Worker concurrency must be between one and four.');
     this.workers = Array.from({ length: concurrency }, () => new OfficeWorker(options));
   }
-  status(): OfficeWorkerStatus & { concurrency: number; activeJobIds: string[]; scheduling: OfficeWorkerScheduling[] } {
+  status(): OfficeWorkerStatus & OfficeWorkerActivity & { concurrency: number; activeJobIds: string[]; scheduling: OfficeWorkerScheduling[] } {
     const states = this.workers.map(worker => worker.status());
     const activeJobIds = states.flatMap(state => state.activeJobId ? [state.activeJobId] : []);
+    const phase = (['generating','settling','preparing','idle'] as const).find(value => states.some(state => state.phase === value))!;
     return { enabled: states.some(state => state.enabled), running: states.some(state => state.running), activeJobId: activeJobIds[0] ?? null, activeJobIds, concurrency: this.workers.length, lastError: states.find(state => state.lastError)?.lastError ?? null,
+      phase, phaseChangedAt: Math.min(...states.filter(state => state.phase === phase).map(state => state.phaseChangedAt)), observedAt: Date.now(),
+      activeCallJobIds: states.flatMap(state => state.activeCallJobIds),
+      execution: { sampledAt: new Date().toISOString(), activeCalls: states.flatMap(state => state.execution.activeCalls).slice(0, 4) },
       sourceReviews: states.flatMap(state => state.sourceReviews ?? []).slice(0, 4),
       scheduling: states.flatMap(state => state.scheduling) };
   }
@@ -98,15 +113,24 @@ export class OfficeWorker {
   private nextPollAt: number | null = null;
   private activeController: AbortController | null = null;
   private latestSourceReview: SourceReviewReport | null = null;
-  private readonly workerId = `desktop-${crypto.randomUUID()}`;
+  private readonly workerId: string;
+  private phase: OfficeWorkerPhase = 'idle';
+  private phaseChangedAt = Date.now();
+  private activeCall: OfficeWorkerActivity['execution']['activeCalls'][number] | null = null;
 
   constructor(private readonly options: OfficeWorkerOptions) {
+    if (options.improvementSessionId !== undefined && !/^[A-Za-z0-9_.:-]{1,160}$/.test(options.improvementSessionId)) {
+      throw new Error('A canonical improvement session identity is required.');
+    }
+    this.workerId = options.improvementSessionId ? `improvement:${options.improvementSessionId}` : `desktop-${crypto.randomUUID()}`;
     const requestedInterval = options.intervalMs ?? 15000;
     this.baseIntervalMs = Number.isFinite(requestedInterval)
       ? Math.min(this.maxIntervalMs, Math.max(5000, Math.trunc(requestedInterval))) : 15000;
     fs.mkdirSync(options.artifactRoot, { recursive: true, mode: 0o700 });
   }
-  status(): OfficeWorkerStatus & { scheduling: OfficeWorkerScheduling[] } { return { enabled: this.enabled, running: this.running, activeJobId: this.activeJobId, lastError: this.lastError,
+  status(): OfficeWorkerStatus & OfficeWorkerActivity & { scheduling: OfficeWorkerScheduling[] } { return { enabled: this.enabled, running: this.running, activeJobId: this.activeJobId, lastError: this.lastError,
+    phase: this.phase, phaseChangedAt: this.phaseChangedAt, observedAt: Date.now(), activeCallJobIds: this.phase === 'generating' && this.activeJobId ? [this.activeJobId] : [],
+    execution: { sampledAt: new Date().toISOString(), activeCalls: this.activeCall ? [{ ...this.activeCall }] : [] },
     sourceReviews: this.latestSourceReview ? [this.latestSourceReview] : [],
     scheduling: [{ baseIntervalMs: this.baseIntervalMs, maxIntervalMs: this.maxIntervalMs, lastOutcome: this.lastOutcome,
       idlePolls: this.idlePolls, errorPolls: this.errorPolls, pollDelayMs: this.pollDelayMs, nextPollAt: this.nextPollAt }] }; }
@@ -123,6 +147,8 @@ export class OfficeWorker {
     return this.status();
   }
   stop(): void { this.setEnabled(false); }
+
+  private setPhase(phase: OfficeWorkerPhase): void { this.phase = phase; this.phaseChangedAt = Date.now(); }
 
   private clearPoll(): void {
     if (this.timer) clearTimeout(this.timer);
@@ -398,6 +424,7 @@ export class OfficeWorker {
     this.clearPoll();
     if (resetBackoff) this.resetBackoff();
     this.running = true;
+    this.setPhase('preparing');
     this.lastError = null;
     // Install cancellation before the first await. A stop during a native claim
     // or source read must also stop this attempt before any provider dispatch.
@@ -412,24 +439,34 @@ export class OfficeWorker {
     let dispatched = false;
     let settled = false;
     let producedArtifact: string | undefined;
+    let deliverableSha256: string | undefined;
     let observedUsage: { inputTokens: number; outputTokens: number; costUsd: number } | undefined;
     let outcome: NonNullable<OfficeWorkerScheduling['lastOutcome']> = 'idle';
     let watch: NodeJS.Timeout | null = null;
     let deadline: NodeJS.Timeout | null = null;
     try {
-      unwrap(await this.options.command({ action: 'tick_schedules' }));
+      // Session materialization belongs to its dedicated coordinator. It must
+      // not tick unrelated schedules or goals when the ordinary pool is paused.
+      if (!this.options.improvementSessionId) {
+        unwrap(await this.options.command({ action: 'tick_schedules' }));
+        controller.signal.throwIfAborted();
+        unwrap(await this.options.command({ action: 'tick_goals' }));
+      }
       controller.signal.throwIfAborted();
-      // New cores materialize bounded goal iterations only after predecessor
-      // checkpoints pass. Old injected fixtures can safely ignore this action.
-      unwrap(await this.options.command({ action: 'tick_goals' }));
-      controller.signal.throwIfAborted();
-      const claimed = unwrap(await this.options.command({ action: 'claim_job', workerId: this.workerId, mode: 'provider' }));
+      const claimed = unwrap(await this.options.command({ action: 'claim_job', workerId: this.workerId, mode: 'provider',
+        ...(this.options.improvementSessionId ? { improvementSessionId: this.options.improvementSessionId } : {}) }));
       const id = claimed.lastAction?.jobId;
       if (typeof id !== 'string') return;
-      job = claimed.jobs.find(j => j.id === id);
-      if (!job || !job.leaseToken) throw new Error('Claimed job or lease missing');
+      const candidate = claimed.jobs.find(j => j.id === id);
+      if (!candidate || !candidate.leaseToken) throw new Error('Claimed job or lease missing');
+      if (((candidate as OfficeJob & { improvementSessionId?: string | null }).improvementSessionId ?? null) !== (this.options.improvementSessionId ?? null)) {
+        // A malformed adapter response cannot cause a foreign attempt to be
+        // billed or settled by this controller. Native lease recovery owns it.
+        throw new Error('The claimed job does not belong to this worker scope. No provider request was sent.');
+      }
+      job = candidate;
       this.activeJobId = job.id;
-      leaseToken = job.leaseToken;
+      leaseToken = candidate.leaseToken;
       // Capture a successful claim first so the catch path can settle it even
       // if cancellation arrived while the claim response was pending.
       controller.signal.throwIfAborted();
@@ -467,7 +504,10 @@ export class OfficeWorker {
         reservedUsd = (inputBound * rates.inputUsdPerMillion! + outputBound * rates.outputUsdPerMillion!) / 1e6;
       }
       const cacheKey = hash(`${contextHash}:${outputBound}`);
-      if (claimed.cache.enabled && job.allowedTools.length === 0 && job.pair?.phase !== 'review') {
+      // Historical cache metadata binds the full managed file, not the body.
+      // Improvement cycles need an independently settled body digest to detect
+      // unchanged deliverables despite new cycle/context bookkeeping headers.
+      if (claimed.cache.enabled && !job.improvementSessionId && job.allowedTools.length === 0 && job.pair?.phase !== 'review') {
         const cached = unwrap(await this.options.command({ action: 'get_cache', companyId: job.companyId, key: cacheKey }));
         controller.signal.throwIfAborted();
         const entry = cached.cache.entries.find(e => e.key === cacheKey && e.companyId === job!.companyId && Date.parse(e.expiresAt) > Date.now());
@@ -508,7 +548,15 @@ export class OfficeWorker {
         }).catch(() => controller.abort(new Error('Office state unavailable'))).finally(() => { checking = false; });
       }, 1000);
       dispatched = true;
-      const result = await this.options.generate({ provider: job.provider, model: job.model, system, prompt, maxOutputTokens: outputBound, abortSignal: controller.signal }, job);
+      this.setPhase('generating');
+      this.activeCall = { jobId: job.id, phase: job.provider === 'ollama' ? 'model' : 'provider', startedAt: new Date().toISOString() };
+      let result: Awaited<ReturnType<OfficeWorkerOptions['generate']>>;
+      try {
+        result = await this.options.generate({ provider: job.provider, model: job.model, system, prompt, maxOutputTokens: outputBound, abortSignal: controller.signal }, job);
+      } finally {
+        this.activeCall = null;
+        this.setPhase('settling');
+      }
       const usageObserved = result.usageObserved !== false && [result.inputTokens, result.outputTokens].every(n => Number.isSafeInteger(n) && n >= 0);
       const costUsd = !usageObserved ? reservedUsd : job.provider === 'ollama' ? 0 : (result.inputTokens * rates.inputUsdPerMillion! + result.outputTokens * rates.outputUsdPerMillion!) / 1e6;
       if (usageObserved) observedUsage = { inputTokens: result.inputTokens, outputTokens: result.outputTokens, costUsd };
@@ -520,6 +568,7 @@ export class OfficeWorker {
       fs.writeFileSync(artifact + '.tmp', header + body, { mode: 0o600 });
       fs.renameSync(artifact + '.tmp', artifact);
       producedArtifact = artifact;
+      deliverableSha256 = hash(body);
       // Preserve a late provider result and its observed usage, but do not
       // publish or mark it completed after the owner has stopped the attempt.
       controller.signal.throwIfAborted();
@@ -536,7 +585,7 @@ export class OfficeWorker {
       }
       const reviewSummary = sourceReview.status === 'flagged' ? 'Source Review → Donna: external directives or partial coverage flagged; report linked in artifact.\n' : '';
       const artifactSha256 = this.artifactHash(artifact);
-      const final = unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: usageObserved && body.trim() ? 'completed' : 'failed', inputTokens: usageObserved ? result.inputTokens : inputBound, outputTokens: usageObserved ? result.outputTokens : outputBound, costUsd, costStatus: usageObserved ? 'observed' : 'estimated', artifactUri: artifact, artifactSha256, summary: body.trim() ? (utf8Prefix(reviewSummary + toolSummary + body, 800) || 'Deliverable preserved in the private artifact.') : EMPTY_RESULT_SUMMARY, error: !usageObserved ? 'Provider usage is unavailable. Deliverable preserved; reservation retained for reconciliation.' : body.trim() ? undefined : 'Provider returned no text deliverable.' }));
+      const final = unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: usageObserved && body.trim() ? 'completed' : 'failed', inputTokens: usageObserved ? result.inputTokens : inputBound, outputTokens: usageObserved ? result.outputTokens : outputBound, costUsd, costStatus: usageObserved ? 'observed' : 'estimated', artifactUri: artifact, artifactSha256, deliverableSha256, summary: body.trim() ? (utf8Prefix(reviewSummary + toolSummary + body, 800) || 'Deliverable preserved in the private artifact.') : EMPTY_RESULT_SUMMARY, error: !usageObserved ? 'Provider usage is unavailable. Deliverable preserved; reservation retained for reconciliation.' : body.trim() ? undefined : 'Provider returned no text deliverable.' }));
       settled = true;
       outcome = final.jobs.find(j => j.id === job!.id)?.status === 'completed' ? 'work' : 'error';
       if (primaryReviewEvidence && outcome !== 'work') throw new ReviewStageError('recording-unconfirmed', 'Helper execution did not complete with settled usable output. Its usage and any artifact are retained.');
@@ -559,10 +608,11 @@ export class OfficeWorker {
       if (body.trim() && job.allowedTools.includes('github.read_repository') && final.jobs.find(j => j.id === job!.id)?.status === 'completed') {
         unwrap(await this.options.command({ action: 'add_knowledge', companyId: job.companyId, title: `Repository review proposal · ${new Date().toISOString().slice(0, 10)}`, summary: utf8Prefix(`Model-authored proposal from a commit-pinned repository read. This is not build or publication evidence.\n${body}`, 3900), artifactUri: artifact }));
       }
-      if (body.trim() && job.allowedTools.length === 0 && job.pair?.phase !== 'review' && final.jobs.find(j=>j.id===job!.id)?.status === 'completed' && final.cache.enabled) {
+      if (body.trim() && !job.improvementSessionId && job.allowedTools.length === 0 && job.pair?.phase !== 'review' && final.jobs.find(j=>j.id===job!.id)?.status === 'completed' && final.cache.enabled) {
         await this.options.command({ action: 'put_cache', companyId: job.companyId, key: cacheKey, artifactUri: artifact, bytes: Buffer.byteLength(header + body), contentSha256: hash(header + body) });
       }
     } catch (error) {
+      this.setPhase('settling');
       outcome = 'error';
       this.lastError = redact(error instanceof Error ? error.message : String(error)).slice(0, 500);
       if (job && leaseToken && !settled) {
@@ -574,7 +624,7 @@ export class OfficeWorker {
         } catch { /* The same lease/usage settlement below remains idempotent. */ }
         if (!settled) {
           try {
-            const result = unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: 'failed', inputTokens: observedUsage?.inputTokens ?? (dispatched ? reservedInputTokens : 0), outputTokens: observedUsage?.outputTokens ?? (dispatched ? reservedOutputTokens : 0), costUsd: observedUsage?.costUsd ?? (dispatched ? reservedUsd : 0), costStatus: observedUsage || !dispatched ? 'observed' : 'estimated', artifactUri: producedArtifact, artifactSha256: producedArtifact ? this.artifactHash(producedArtifact) : null, error: this.lastError, summary: producedArtifact ? 'Returned work was preserved. Inspect the action error before a deliberate retry.' : dispatched ? 'Provider call failed or was interrupted. Conservative reservation retained until billing is reconciled; no automatic retry.' : 'No provider call dispatched.' }));
+            const result = unwrap(await this.options.command({ action: 'finish_job', jobId: job.id, leaseToken, status: 'failed', inputTokens: observedUsage?.inputTokens ?? (dispatched ? reservedInputTokens : 0), outputTokens: observedUsage?.outputTokens ?? (dispatched ? reservedOutputTokens : 0), costUsd: observedUsage?.costUsd ?? (dispatched ? reservedUsd : 0), costStatus: observedUsage || !dispatched ? 'observed' : 'estimated', artifactUri: producedArtifact, artifactSha256: producedArtifact ? this.artifactHash(producedArtifact) : null, deliverableSha256, error: this.lastError, summary: producedArtifact ? 'Returned work was preserved. Inspect the action error before a deliberate retry.' : dispatched ? 'Provider call failed or was interrupted. Conservative reservation retained until billing is reconciled; no automatic retry.' : 'No provider call dispatched.' }));
             settled = result.jobs.some(row => row.id === job!.id && row.leaseToken === leaseToken && row.usageRecorded);
           } catch { /* Retain the visible error and unresolved native reservation. */ }
         }
@@ -598,8 +648,10 @@ export class OfficeWorker {
       if (watch) clearInterval(watch);
       if (deadline) clearTimeout(deadline);
       this.activeController = null;
+      this.activeCall = null;
       this.activeJobId = null;
       this.running = false;
+      this.setPhase('idle');
       // Disabled workers never re-arm, including late responses from a provider
       // that ignored AbortSignal. A later explicit enable starts a new loop.
       this.schedulePoll(outcome);

@@ -1,6 +1,6 @@
 {
   "limitUsd": 100,
-  "accountedUsd": 3.54997,
+  "accountedUsd": 4.4474376,
   "accounting": "Provider usage multiplied by the verified standard/global price card; not an invoice or account balance.",
   "calls": [
     {
@@ -413,9 +413,104 @@
       "retainedReservationUsd": 0,
       "executionContext": "External bounded development authorship using public interface requirements; not a native Donna employee run.",
       "contribution": "Sonnet supplied the initial planner and tests. Root and an independent integration helper repaired staffing assumptions, bounded diagnostics, input semantics and display edge cases. Final source is tested separately."
+    },
+    {
+      "requestId": "f8eac7ad-3148-4b5b-b1d8-3cae70673d8f",
+      "providerResponseId": "msg_011ChHUoecjygbaoJdo22Lqb",
+      "model": "claude-haiku-5-5",
+      "purpose": "independent-budget-review",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 5776,
+      "outputTokens": 1864,
+      "costUsd": 0.0015096,
+      "retainedReservationUsd": 0,
+      "taskSha256": "80d79f6bd6de7cbb5a9cd03eb3a4a8f4d5acb92e12c5daaee83adf3bd92937f5",
+      "outputSha256": "962beb5518cb0ddf6f3ab0cac19938ea8470879faa54cb289b8c08a1bb38b0dd",
+      "pricingSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "contribution": "Independent budget harness review; completion-status, observed-cost retention and overrun-halt repairs accepted and tested.",
+      "number": 31,
+      "workstream": "continuous-improvement-20261122",
+      "executionContext": "External development code/review request, independently reviewed; not a native Donna employee execution."
+    },
+    {
+      "requestId": "0f9ae650-ebc4-4849-9823-f7047a92fbd4",
+      "providerResponseId": "msg_011ChHV8VNtGFqmapWqafToB",
+      "model": "claude-sonnet-5-5",
+      "purpose": "cross-file-budget-counterreview",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 160597,
+      "outputTokens": 4530,
+      "costUsd": 0.366494,
+      "retainedReservationUsd": 0,
+      "taskSha256": "c0955c1ed927052b5d03d5f0f99ec04c151bc7515fe3bd877a68167f45ec214a",
+      "outputSha256": "2e2802caeb654c8d8026212d5026809cdbda53bb37e540217ad62249b194ef63",
+      "pricingSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "contribution": "Partial native cross-file review captured during implementation; schema2-only adapter finding accepted. Not a complete native audit.",
+      "number": 32,
+      "workstream": "continuous-improvement-20261122",
+      "executionContext": "External development code/review request, independently reviewed; not a native Donna employee execution."
+    },
+    {
+      "requestId": "02dabb49-c583-4f98-95bb-2e3e3162bcb0",
+      "providerResponseId": "msg_011ChHVPHB64G5SqADYZgVZ8",
+      "model": "claude-haiku-5-5",
+      "purpose": "website-activity-projection-code",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 870,
+      "outputTokens": 4337,
+      "costUsd": 0.0022555,
+      "retainedReservationUsd": 0,
+      "taskSha256": "bfdd43896fd8a5d2064fe56278ef496ce9adf894cc54be565bdcad96626ad923",
+      "outputSha256": "06856beb23e04bb90bc143eb75d2f324c0ba5e09287604c71e978637856db4a2",
+      "pricingSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "contribution": "Initial runtime-activity TypeScript implementation; coordinator corrected calendar validation, callback/native matching, projection and transport before tests.",
+      "number": 33,
+      "workstream": "continuous-improvement-20261122",
+      "executionContext": "External development code/review request, independently reviewed; not a native Donna employee execution."
+    },
+    {
+      "requestId": "eb0047d1-021b-4990-8508-61dc9c60cf30",
+      "providerResponseId": "msg_011ChHW7pvTqPbTX637yaLnE",
+      "model": "claude-sonnet-5-5",
+      "purpose": "native-cap-and-review-boundary-counterreview",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 205228,
+      "outputTokens": 4597,
+      "costUsd": 0.456426,
+      "retainedReservationUsd": 0,
+      "taskSha256": "267222ef6d2a08e0a130143848572dba52c67399568a667785da18398a04b2f2",
+      "outputSha256": "1f561da3a29cb1421e7aa09fe5ac30bdf0900fdf67bed76c0adc4850f69ea30e",
+      "pricingSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "contribution": "Native boundary counterreview. Cancellation attribution and unexpected-settlement diagnostics repaired; withdrawn and unsupported findings not applied.",
+      "number": 34,
+      "workstream": "continuous-improvement-20261122",
+      "executionContext": "External development code/review request, independently reviewed; not a native Donna employee execution."
+    },
+    {
+      "requestId": "72fec187-dfad-4397-ac1e-6dbc30c3feb0",
+      "providerResponseId": "msg_011ChHWRV7MgcwNYRhfm3ucs",
+      "model": "claude-haiku-5-5",
+      "purpose": "renderer-interaction-counterreview",
+      "state": "completed",
+      "stopReason": "end_turn",
+      "inputTokens": 132145,
+      "outputTokens": 1884,
+      "costUsd": 0.0707825,
+      "retainedReservationUsd": 0,
+      "taskSha256": "ec65087017c51483bf05602f9246a9c7ca7e44d64d7ef99463e88de6a04f39db",
+      "outputSha256": "ae6ad16aa585fd15672dcc698378a1ecadb3fedc5994b8c19f740d52b6cdebe1",
+      "pricingSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "contribution": "Read-only UI/graphics counterreview. Proposed context-loss guard removal independently rejected; review did not establish browser acceptance.",
+      "number": 35,
+      "workstream": "continuous-improvement-20261122",
+      "executionContext": "External development code/review request, independently reviewed; not a native Donna employee execution."
     }
   ],
-  "observedUsd": 2.780254,
+  "observedUsd": 3.6777216,
   "retainedReservationUsd": 0.769716,
   "cloud": {
     "allocationUsd": 5,
@@ -441,7 +536,7 @@
     },
     "allocationAccounting": "The native $5 hold contains cloud usage. Do not add it again to observed spend."
   },
-  "observedNativeUsd": 2.758114,
+  "observedNativeUsd": 3.6555816,
   "newWorkstreamCapUsd": 20,
   "observedNativeUsdScope": "Historical field for all non-hosted development requests, including external provider authorship. It does not imply execution by native Donna.",
   "laterFrontendDesign": {
@@ -619,5 +714,24 @@
     "testedSource": "2b8086fab5d564868f9d3b7d5650e56fe731960f",
     "acceptanceRun": "https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/44991164221",
     "acceptanceEvidence": "design/board-workflows/evidence/acceptance.json"
+  },
+  "continuousImprovementDevelopment": {
+    "runId": "improvement-mode-20261122",
+    "requestNumbers": [
+      31,
+      32,
+      33,
+      34,
+      35
+    ],
+    "observedUsd": 0.8974676,
+    "retainedReservationUsd": 0,
+    "sharedIncrementalCapUsd": 20,
+    "sharedIncrementalAccountedUsd": 1.1316496,
+    "sharedIncrementalRemainingUsd": 18.8683504,
+    "budgetInterpretation": "Continues the latest laptop-blueprint USD20 allowance without resetting prior spending. Full20 has not been spent. Immutable native improvement allowance is an explicit separate registration; no automatic ledger import or duplicate charge.",
+    "status": "source-implemented-acceptance-in-progress",
+    "validationEvidence": "design/continuous-improvement/VALIDATION.md",
+    "providerInvoiceVerified": false
   }
 }

@@ -55,6 +55,8 @@ impl Default for Policy {
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct BudgetSummary {
+    #[serde(default)]
+    pub held_usd: f64,
     pub observed_usd: f64,
     pub estimated_usd: f64,
     pub reserved_usd: f64,
@@ -196,6 +198,8 @@ pub struct Goal {
     pub request_sha256: Option<String>,
     #[serde(default)]
     pub source_message_id: Option<String>,
+    #[serde(default)]
+    pub improvement_session_id: Option<String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -285,7 +289,7 @@ fn shortened(value: String, limit: usize) -> String {
 }
 
 impl OfficeSnapshot {
-    fn summarize_budget(&self) -> BudgetSummary {
+    pub(super) fn summarize_budget(&self) -> BudgetSummary {
         let mut result = BudgetSummary::default();
         for (usage, status) in self
             .jobs
@@ -308,7 +312,9 @@ impl OfficeSnapshot {
                 .saturating_add(usage.input_tokens)
                 .saturating_add(usage.output_tokens);
         }
-        result.committed_usd = result.observed_usd + result.estimated_usd + result.reserved_usd;
+        result.held_usd = self.jobs.iter().map(|j| j.budget_hold_usd).sum();
+        result.committed_tokens = result.committed_tokens.saturating_add(self.jobs.iter().map(Self::improvement_held_tokens).sum::<u64>());
+        result.committed_usd = result.observed_usd + result.estimated_usd + result.reserved_usd + result.held_usd;
         result.remaining_usd = (self.policy.budget.hard_cap_usd - result.committed_usd).max(0.0);
         result.remaining_tokens = self
             .policy
@@ -327,9 +333,13 @@ impl OfficeSnapshot {
         result
     }
     pub(super) fn refresh_budget(&mut self) {
+        for job in &mut self.jobs {
+            if terminal(&job.status) && job.reservation.is_none() { job.budget_hold_usd = 0.0; }
+        }
         self.budget = self.summarize_budget();
+        self.improvement_budget = self.summarize_improvement_budget();
     }
-    fn can_reserve(&self, usd: f64, tokens: u64) -> bool {
+    pub(super) fn can_reserve(&self, usd: f64, tokens: u64) -> bool {
         let b = self.summarize_budget();
         !self.policy.dispatch_paused
             && b.committed_usd + usd <= self.policy.budget.hard_cap_usd + 1e-9
@@ -365,7 +375,7 @@ impl OfficeSnapshot {
         }
         self.portfolio_allows_dispatch(job)
             .map_err(|reason| fail("DISPATCH_PERMISSION_REVOKED", reason))?;
-        if self.can_reserve(usd, input + output) {
+        if self.can_reserve_improvement_job(job, usd, input + output) {
             return Ok(true);
         }
         let job = self.jobs.iter_mut().find(|j| j.id == job_id).unwrap();
@@ -399,7 +409,8 @@ impl OfficeSnapshot {
             .filter(|j| j.status == "waiting-budget" && j.reservation.is_none())
             .filter(|j| {
                 j.pending_reservation.as_ref().is_some_and(|r| {
-                    self.can_reserve(
+                    self.can_reserve_improvement_job(
+                        j,
                         r.cost_usd,
                         r.input_tokens.saturating_add(r.max_output_tokens),
                     )
@@ -423,7 +434,8 @@ impl OfficeSnapshot {
         if job.mode == "provider" {
             let b = self.summarize_budget();
             if (job.provider != "ollama" && b.remaining_usd <= 1e-9)
-                || b.remaining_tokens == Some(0)
+                && job.budget_hold_usd <= 1e-9 && job.reservation.is_none()
+                || (b.remaining_tokens == Some(0) && Self::improvement_held_tokens(job) == 0 && job.reservation.is_none())
             {
                 return Err(
                     "Global budget is at its cap; queued work and checkpoints are retained".into(),
@@ -1489,6 +1501,7 @@ impl OfficeSnapshot {
                     updated_at: stamp,
                     stop_reason: None,
                     source_request_id: None, request_sha256: None, source_message_id: None,
+                    improvement_session_id: None,
                 };
                 self.validate_run_settings(&goal)?;
                 self.last_action = Some(json!({"goalId":goal.id}));
@@ -1683,6 +1696,7 @@ impl OfficeSnapshot {
                     for i in 0..self.goals.len() {
                         let goal = &self.goals[i];
                         if goal.mode != "execute"
+                            || goal.improvement_session_id.is_some()
                             || goal.run_settings.mode != "provider"
                             || goal.status != "completed"
                             || goal.iteration == 0

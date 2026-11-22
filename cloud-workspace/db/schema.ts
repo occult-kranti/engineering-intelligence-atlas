@@ -3,6 +3,11 @@ export const workspace = sqliteTable('atlas_workspace', {
   id: text('id').primaryKey(), revision: integer('revision').notNull().default(0),
   snapshot: text('snapshot').notNull().default('{}'), sourceClientId: text('source_client_id'), updatedAt: text('updated_at').notNull(),
 });
+export const runtimeActivity = sqliteTable('atlas_runtime_activity', {
+  id: text('id').primaryKey(), clientId: text('client_id').notNull(),
+  execution: text('execution').notNull(), sampledAtMs: integer('sampled_at_ms').notNull(),
+  receivedAt: text('received_at').notNull(),
+});
 export const devices = sqliteTable('atlas_devices', {
   id: text('id').primaryKey(), tokenHash: text('token_hash').notNull().unique(), name: text('name').notNull(), kind: text('kind').notNull(), clientId: text('client_id'),
   createdAt: text('created_at').notNull(), expiresAt: text('expires_at').notNull(), revokedAt: text('revoked_at'),

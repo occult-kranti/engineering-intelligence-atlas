@@ -26,6 +26,7 @@ import { isTrustedLocalSender, UntrustedSenderError } from './senderGuard';
 import { CompanyService } from './company';
 import { OfficeService } from './office';
 import type { OfficeWorkerController } from './officeWorker';
+import { combineWorkerExecution, type ImprovementWorker } from './improvementWorker';
 import type { CloudSyncService } from './cloudSync';
 import { ModelPoolError, type ModelPoolService } from './modelPool';
 
@@ -39,6 +40,7 @@ export interface IpcContext {
   companyService: CompanyService;
   officeService: OfficeService;
   officeWorker: OfficeWorkerController;
+  improvementWorker?: ImprovementWorker;
   catalogPath: string;
   userDataPath: string;
   cloudSync?: CloudSyncService;
@@ -119,8 +121,8 @@ export function registerIpc(ctx: IpcContext): Map<string, (...args: unknown[]) =
   register(CHANNELS.updateCompanyTask, guard((_event, request) => companyService.updateCompanyTask(request)));
   register(CHANNELS.indexCompanyRepository, guard(() => companyService.indexCompanyRepository()));
   register(CHANNELS.officeSnapshot, guard(() => officeService.officeSnapshot()));
-  register(CHANNELS.officeCommand, guard((_event, request) => officeService.officeCommand(request)));
-  register(CHANNELS.officeWorkerStatus, guard(() => officeWorker.status()));
+  register(CHANNELS.officeCommand, guard(async (_event, request) => {const result=await officeService.officeCommand(request);if(result.ok)ctx.improvementWorker?.wake(request.command??request);return result;}));
+  register(CHANNELS.officeWorkerStatus, guard(() => combineWorkerExecution(officeWorker.status(),ctx.improvementWorker?.workerStatus()??null)));
   register(CHANNELS.setOfficeWorker, guard((_event, request: unknown) => {
     if (!request || typeof request !== 'object' || typeof (request as { enabled?: unknown }).enabled !== 'boolean') {
       throw new Error('Worker enabled must be a boolean');

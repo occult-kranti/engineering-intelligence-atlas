@@ -1,0 +1,34 @@
+[
+  {
+    "file": "desktop-shell/src/renderer/improvement/panel.ts",
+    "sha256": "b1fcf51b07d024c1f7c7813022bdfe1a96a0774257c3622d43e3f2e5519bbbc5"
+  },
+  {
+    "file": "desktop-shell/src/renderer/improvement/telemetry.ts",
+    "sha256": "0725078b2212bc441fa94315e0f438957996e79d063e782c9e2354f78349c1f3"
+  },
+  {
+    "file": "desktop-shell/src/renderer/improvement/model.ts",
+    "sha256": "978c872de6d9104d83b9069b5e42c61fd2629fe3ff8e1fcf806bdc61868a3abf"
+  },
+  {
+    "file": "desktop-shell/src/renderer/improvement/mutations.ts",
+    "sha256": "b87c01082940b8a7c617bca51a1e5475c30ed0888ccee221ad7793a66349f969"
+  },
+  {
+    "file": "desktop-shell/src/renderer/improvement/notes.ts",
+    "sha256": "6fb68ccbd8e75ffda08b490a7681caa9e5e9c7c6da2c13405686f01e12c9d98f"
+  },
+  {
+    "file": "desktop-shell/src/renderer/freeflow/relief3d.ts",
+    "sha256": "73d01d7321f712d9000cce672a168675d855eb1023b119d01cd099df51bbcd29"
+  },
+  {
+    "file": "desktop-shell/src/renderer/chrome.css",
+    "sha256": "6e596768ee1d47050e41a097bf27b5ad1af691f6e560783476b01898d5eccf07"
+  },
+  {
+    "file": "desktop-shell/src/renderer/freeflow.css",
+    "sha256": "f5495641246885a4ae1626430a0b91d1db80f060e65f43b5ad1108769075faac"
+  }
+]

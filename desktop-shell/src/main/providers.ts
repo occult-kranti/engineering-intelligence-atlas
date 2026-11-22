@@ -160,6 +160,9 @@ export async function listProviderModels(
  * dash-separated dated suffix only, so e.g. `claude-opus-5-50` never matches.
  */
 export function anthropicProviderOptions(model: string): Record<string, Record<string, unknown>> | undefined {
+  if (/^claude-haiku-5-5(?:-[A-Za-z0-9][A-Za-z0-9-]*)?$/.test(model)) {
+    return { anthropic: { thinking: { type: 'disabled' }, effort: 'medium' } };
+  }
   if (/^claude-sonnet-5-5(?:-[A-Za-z0-9][A-Za-z0-9-]*)?$/.test(model)) {
     return { anthropic: { thinking: { type: 'between_tools' }, effort: 'medium' } };
   }

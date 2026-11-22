@@ -1,0 +1,8 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm. See `npm help npmrc` for supported config options.
+
+> research-director-desktop-shell@0.8.0 build:native
+> node scripts/build-native-core.mjs
+
+   Compiling atlas-core v0.1.0 (/workspace/scratch/3cd2e045f9b8/daftar/native-core)
+    Finished `release` profile [optimized] target(s) in 1m 00s
+Native core ready: /workspace/scratch/3cd2e045f9b8/daftar/desktop-shell/native/atlas-core (linux/x64)
