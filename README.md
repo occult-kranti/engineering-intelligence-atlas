@@ -14,6 +14,14 @@ dependency graphs with queues, checkpoints, budgets and evidence.
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
 
+## Conference-table design prototype — source imported 2026-11-24
+
+[Open the private canvas preview](https://daftar-infinite-blueprint-studio.whatswrong-inc.chatgpt.site/) · [Prototype source and guide](design/conference-table-prototype/README.md)
+
+The `design/conference-table-prototype` branch preserves the self-contained HTML frontend from the reviewed design session: company office blueprints, departments, employees, Director, floating Donna, whiteboard, hierarchy and roadmap share one laptop canvas. Emerald, cobalt and ivory themes use local synthetic data and 2.5D presentation. Donna previews local task handoffs; this import adds no backend or desktop integration.
+
+The [QA record](design/conference-table-prototype/QA-REPORT.md), [Claude build brief](design/conference-table-prototype/CLAUDE-BUILD-BRIEF.md), [sanitized authorship receipt](design/conference-table-prototype/claude-build-provenance.json), reproducible tests and visual assets accompany the source. Production code and the separate `design/infinite-blueprint-canvas` branch are preserved; the release evidence below continues to describe its original source versions.
+
 ## Endless canvas — 0.8.0 released
 
 The desktop and private website now keep the workspace in one spatial world. Company seats stay at the conference table, with miniature sheets drawn from their saved office blueprints laid on the tabletop. Selecting a company reveals its full blueprint in the same world. Conversation, crew, goals, hiring, queue, ledger, models and settings are canvas elements that can be moved, resized, pinned, collapsed and reopened through **Find a surface**. Camera focus, keyboard controls, reduced motion and saved local layouts support the same workspace at different scales.

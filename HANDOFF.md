@@ -1,5 +1,15 @@
 # Daftar maintainer handoff
 
+## Conference-table prototype import — 2026-11-24
+
+Branch `design/conference-table-prototype` adds a standalone design reference at [design/conference-table-prototype/index.html](design/conference-table-prototype/index.html). Start with its [README](design/conference-table-prototype/README.md). The directory also contains the [QA report](design/conference-table-prototype/QA-REPORT.md), [Claude build brief](design/conference-table-prototype/CLAUDE-BUILD-BRIEF.md), [sanitized build provenance](design/conference-table-prototype/claude-build-provenance.json), [state and geometry runner](design/conference-table-prototype/tests/state-geometry.cjs), and screenshot/motion-study [assets](design/conference-table-prototype/assets/).
+
+This is a local synthetic prototype with 2.5D presentation and scripted Donna draft actions. It does not connect to native records, model execution, billing, permissions or desktop control. The source import preserves production code and the independently developed `design/infinite-blueprint-canvas` branch. Existing release and browser results remain tied to their recorded versions; use the prototype QA report to distinguish the original browser review from import-time checks.
+
+From the repository root, run `node design/conference-table-prototype/tests/state-geometry.cjs` for its targeted state and layout checks. Validate the inline script before changing the published prototype. A later integration should map useful presentation behavior onto canonical native records and existing authority boundaries rather than adopt the demo's local state as production storage.
+
+Keep authored prototype files outside `docs/`: `scripts/build-static.mjs` deletes and regenerates that directory. Any future GitHub Pages copy must come from an intentional source/build path. This design-only import does not itself rebuild Pages, release application packages, or establish new backend/desktop integration.
+
 ## Product contract
 
 Daftar is an owner-operated personal agent office. Donna is the single user-facing

@@ -4,6 +4,17 @@ This file distinguishes implemented behavior from deployment and validation work
 The detailed worker asks and returns are in [the shared ledger](project/WORKER_LEDGER.md),
 with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
+## Conference-table design reference — 2026-11-24 source import
+
+This additive work is on `design/conference-table-prototype`. It preserves the production application and the separate `design/infinite-blueprint-canvas` branch.
+
+| Outcome | State | Acceptance |
+| --- | --- | --- |
+| Standalone laptop canvas, three themes and floating Donna | Source imported with local synthetic data | [HTML and guide](design/conference-table-prototype/README.md); demo actions do not execute agents or change native records |
+| Reproducible review and visual record | Runner, prior browser observations, screenshots and concept motion study retained | [QA report](design/conference-table-prototype/QA-REPORT.md) distinguishes historical observations from import-time checks |
+| Claude authorship and integration handoff | Sanitized receipt and build brief included | [Provenance](design/conference-table-prototype/claude-build-provenance.json) and [build brief](design/conference-table-prototype/CLAUDE-BUILD-BRIEF.md); no credentials in the deliverable |
+| Native/web integration and larger-workspace acceptance | Separate future work for this prototype | Preserve canonical records and authority; verify real execution, accessibility and sustained performance on any integrated source |
+
 ## Endless company canvas — 0.8.0 released
 
 | Outcome | State | Acceptance |
