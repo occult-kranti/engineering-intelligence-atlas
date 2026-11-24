@@ -1,0 +1,12 @@
+{
+  "source_sha256": "e798c4a619faffd21c76a38ccd4ebb818324df176700f8f21a0e1e3bbc5274ec",
+  "source_bytes": 12776350,
+  "playback_sha256": "ccb8b5fa0aa847e72b03f76176f7826dce1a19bb60a06ec654ffe9a2fac7d13e",
+  "playback_bytes": 8610874,
+  "duration_seconds": 30,
+  "width": 1600,
+  "height": 900,
+  "fps": 30,
+  "transcode": "ffmpeg libx264 medium CRF23 yuv420p faststart; no audio in source",
+  "reason": "Original base64 exceeded connected GitHub request limit; original remains in preserved design source commit dfe1a2575fd60e8c397ea1a91afa851371a0eaae and original delivered artifact."
+}

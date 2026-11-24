@@ -44,7 +44,7 @@ node design/conference-table-prototype/tests/state-geometry.cjs
 
 ![Ivory Atelier theme preview](assets/Daftar-Ivory-Canvas.jpg)
 
-The [`30-second motion study`](assets/Daftar-Canvas-Motion-Study.mp4) uses animated concept stills; it is not a recording of the functioning frontend. Its [transcript](assets/Daftar-Canvas-Motion-Study.txt) describes the four chapters. The JPEGs are browser captures from the November 22 review. Minor seed-note text in the cobalt and ivory captures differs from the final published sample.
+The [`30-second motion study`](assets/Daftar-Canvas-Motion-Study.mp4) uses animated concept stills; it is not a recording of the functioning frontend. Its [transcript](assets/Daftar-Canvas-Motion-Study.txt) describes the four chapters. The GitHub video is an 8.6 MB playback transcode of the preserved 12.8 MB original, with the same 30-second duration, 1600 × 900 frame size and 30 fps; [encoding provenance](assets/motion-playback-provenance.json) records both hashes. The JPEGs are browser captures from the November 22 review. Minor seed-note text in the cobalt and ivory captures differs from the final published sample.
 
 ## Relationship to the product
 
