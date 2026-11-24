@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "protocol_sha256": "5c36a8e29ef2024635829321e5297e6b8fda8b35d6a2cc1f4b85323b7f138c5c",
+  "contexts": [
+    {
+      "slot": "a",
+      "variant": "baseline",
+      "repetition": 1,
+      "source_agent": "/root/skills_evaluation/office_briefs_a",
+      "raw_output": "raw-agent-output-a.json",
+      "raw_output_sha256": "f2b72d7e45e39716d0a7b64802bae125db939e33bc2d6eb62cb8961675c2c097",
+      "captured_at": "2026-11-24T23:02:44.820603+00:00",
+      "brief_mapping": {
+        "A": "dev-approved-publication",
+        "B": "dev-offline-budget",
+        "C": "dev-metadata-only-paper",
+        "D": "dev-standalone-package",
+        "E": "heldout-cancelled-scope",
+        "F": "heldout-stale-attempt",
+        "G": "heldout-shared-reservation",
+        "H": "heldout-contaminated-gain"
+      },
+      "skill_sha256_verified_after_run": "08f4c7621550ddd97f15cc996cc00b9c63b9220e89c0ce17f3896f43506fccdb"
+    },
+    {
+      "slot": "b",
+      "variant": "candidate",
+      "repetition": 1,
+      "source_agent": "/root/skills_evaluation/office_briefs_b",
+      "raw_output": "raw-agent-output-b.json",
+      "raw_output_sha256": "9bca709462f9c3f0e68d80cd5a6fd602765f87394089b8b730fa20916060aff7",
+      "captured_at": "2026-11-24T23:04:51.042251+00:00",
+      "brief_mapping": {
+        "A": "dev-approved-publication",
+        "B": "dev-offline-budget",
+        "C": "dev-metadata-only-paper",
+        "D": "dev-standalone-package",
+        "E": "heldout-cancelled-scope",
+        "F": "heldout-stale-attempt",
+        "G": "heldout-shared-reservation",
+        "H": "heldout-contaminated-gain"
+      },
+      "skill_sha256_verified_after_run": "9ebcb2b205bf5bc1a68c3909006a12046671fae7095a0552a258439677f34af8"
+    },
+    {
+      "slot": "c",
+      "variant": "candidate",
+      "repetition": 2,
+      "source_agent": "/root/skills_evaluation/office_briefs_c",
+      "raw_output": "raw-agent-output-c.json",
+      "raw_output_sha256": "b7f8922538fa3418aea313988b92589cb37691be43db756b42e6e1e1d1b3df9a",
+      "captured_at": "2026-11-24T23:06:33.361003+00:00",
+      "brief_mapping": {
+        "H": "heldout-contaminated-gain",
+        "G": "heldout-shared-reservation",
+        "F": "heldout-stale-attempt",
+        "E": "heldout-cancelled-scope",
+        "D": "dev-standalone-package",
+        "C": "dev-metadata-only-paper",
+        "B": "dev-offline-budget",
+        "A": "dev-approved-publication"
+      },
+      "skill_sha256_verified_after_run": "9ebcb2b205bf5bc1a68c3909006a12046671fae7095a0552a258439677f34af8"
+    },
+    {
+      "slot": "d",
+      "variant": "baseline",
+      "repetition": 2,
+      "source_agent": "/root/skills_evaluation/office_briefs_d",
+      "raw_output": "raw-agent-output-d.json",
+      "raw_output_sha256": "8475a4c5d16beba1b38cb5f68e33bab448849079bee12c862e326cc67dd6cb37",
+      "captured_at": "2026-11-24T23:09:27.492923+00:00",
+      "brief_mapping": {
+        "H": "heldout-contaminated-gain",
+        "G": "heldout-shared-reservation",
+        "F": "heldout-stale-attempt",
+        "E": "heldout-cancelled-scope",
+        "D": "dev-standalone-package",
+        "C": "dev-metadata-only-paper",
+        "B": "dev-offline-budget",
+        "A": "dev-approved-publication"
+      },
+      "skill_sha256_verified_after_run": "08f4c7621550ddd97f15cc996cc00b9c63b9220e89c0ce17f3896f43506fccdb"
+    }
+  ]
+}

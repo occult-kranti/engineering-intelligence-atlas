@@ -8,6 +8,8 @@
 
 ## Evaluation design
 
+For a concrete skill revision, use the [bounded evaluation protocol](evaluation_protocol.md) and its offline receipt gate. Freeze task splits and acceptance rules before evaluation; retain incomplete or contaminated results as inconclusive. Gate unit tests validate decision handling and do not measure agent competence.
+
 Compare the orchestrator against a single-agent and simplest adequate workflow. Report task quality, repeated-run reliability, latency, token/tool/monetary cost, human interventions, and failure taxonomy together. Use held-out tasks and multiple runs; do not claim improvement from a successful anecdote. Rotate contaminated/saturated benchmarks and document model/version/prompt/tool differences.
 
 Candidate evidence sources: AgentBench (ICLR 2024) https://arxiv.org/abs/2308.03688; SWE-bench (ICLR 2024) https://arxiv.org/abs/2310.06770; GAIA preprint https://arxiv.org/abs/2311.12983; τ-bench preprint https://arxiv.org/abs/2406.12045; AI Agents That Matter https://arxiv.org/abs/2407.01502; rigorous agentic-benchmark checklist https://arxiv.org/abs/2507.02825; MAST multi-agent failure analysis https://arxiv.org/abs/2503.13657.

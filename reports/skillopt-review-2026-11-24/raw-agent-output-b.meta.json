@@ -1,0 +1,13 @@
+{
+  "slot": "b",
+  "variant": "candidate",
+  "repetition": 1,
+  "captured_at": "2026-11-24T23:04:51.042251+00:00",
+  "source_agent": "/root/skills_evaluation/office_briefs_b",
+  "raw_output_sha256": "9bca709462f9c3f0e68d80cd5a6fd602765f87394089b8b730fa20916060aff7",
+  "context_bundled": true,
+  "fresh_context": true,
+  "environment_verified": false,
+  "external_provider_calls_requested": 0,
+  "platform_usage": null
+}

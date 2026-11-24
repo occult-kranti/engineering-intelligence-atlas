@@ -1,0 +1,22 @@
+{
+  "settings": {
+    "context": "fresh agent per variant/repetition; eight task briefs share each context",
+    "fork_turns": "none",
+    "model_override": null,
+    "repetition_case_order": {
+      "1": "A through H",
+      "2": "H through A"
+    },
+    "model_runtime_revision": "not exposed",
+    "temperature_and_sampling": "not exposed"
+  },
+  "tools": {
+    "allowed": "read assigned skill snapshot and supplied work briefs only",
+    "network_calls": false,
+    "external_provider_calls": false,
+    "writes": false,
+    "delegation": false,
+    "unrelated_workspace_files": false,
+    "actual_backend_tool_inventory": "not attested"
+  }
+}

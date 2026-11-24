@@ -8,7 +8,7 @@
 - Termination
 - Collaboration protocol
 
-The lifecycle and waiting rules for composed runs (run states, typed artifact handoffs, deadline/budget propagation, heartbeats and leases, no-busy-waiting, pause/resume, cancellation, idempotency, approval gates, conflict escalation, provenance, and termination ownership) are defined once in the shared contract `engineering-intelligence-atlas-repository/organization/skill_collaboration_protocol.md`; this file defines the per-task delegation schema and does not duplicate them.
+The lifecycle and waiting rules for composed runs (run states, typed artifact handoffs, deadline/budget propagation, heartbeats and leases, no-busy-waiting, pause/resume, cancellation, idempotency, approval gates, conflict escalation, provenance, and termination ownership) are defined once in the shared contract [collaboration_protocol.md](collaboration_protocol.md); this file defines the per-task delegation schema and does not duplicate them.
 
 ## Registry fields
 
@@ -54,7 +54,7 @@ provenance:
   log_reference: value
 ```
 
-Use explicit nonzero limits derived from the task. The schema is a design contract; enforce it in orchestration code rather than trusting a prompt.
+Use explicit finite, nonnegative resource ceilings derived from the task. Zero forbids consuming that resource; zero external-provider cost still permits authorized local work. Unknown cost is not zero. Choose usable positive turn/time limits for work that needs them; the zero values above are placeholders, not a runnable contract. Record existing authorization and ask only for missing or changed authority, or a platform-required fresh confirmation. The schema is a design contract; enforce it in orchestration code rather than trusting a prompt.
 
 ## Evidence and trust rules
 
@@ -68,4 +68,4 @@ Terminate on accepted completion, budget exhaustion, no-progress threshold, repe
 
 ## Collaboration protocol
 
-Multi-skill runs follow the shared collaboration/lifecycle contract in `engineering-intelligence-atlas-repository/organization/skill_collaboration_protocol.md`: the canonical run states (`pending`, `running`, `waiting`, `paused`, `awaiting_approval`, `succeeded`, `failed`, `cancelled`), typed artifact handoffs, deadline propagation as `min(parent remaining time, node limit)`, shared token/call/dollar budgets, heartbeat/lease and stale-agent handling, event-driven waiting with no busy waiting, pause/resume from durable events and artifacts, cancellation propagation, idempotency keys, deterministic no-progress and repeated-action detection, human approval gates, conflict escalation, and provenance with a single termination owner. That document also distinguishes implemented Director behavior from recommended future distributed-runtime behavior; this schema stays the per-task contract and neither duplicates it.
+Multi-skill runs follow the shared collaboration/lifecycle contract in [collaboration_protocol.md](collaboration_protocol.md): the canonical run states (`pending`, `running`, `waiting`, `paused`, `awaiting_approval`, `succeeded`, `failed`, `cancelled`), typed artifact handoffs, deadline propagation as `min(parent remaining time, node limit)`, shared token/call/dollar budgets, heartbeat/lease and stale-agent handling, event-driven waiting with no busy waiting, pause/resume from durable events and artifacts, cancellation propagation, idempotency keys, deterministic no-progress and repeated-action detection, human approval gates, conflict escalation, and provenance with a single termination owner. That document also distinguishes current director requirements from future distributed-runtime recommendations; this schema stays the per-task contract and neither duplicates it.

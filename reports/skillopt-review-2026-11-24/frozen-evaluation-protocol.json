@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "experiment_id": "daftar-director-pilot-2026-11-24",
+  "frozen_at": "2026-11-24T22:59:24.715062+00:00",
+  "repetitions": 2,
+  "min_mean_gain": 0.05,
+  "max_case_regression": 0,
+  "max_external_provider_usd": 0,
+  "skill_sha256": {
+    "baseline": "08f4c7621550ddd97f15cc996cc00b9c63b9220e89c0ce17f3896f43506fccdb",
+    "candidate": "9ebcb2b205bf5bc1a68c3909006a12046671fae7095a0552a258439677f34af8"
+  },
+  "skill_bundle_manifest_sha256": {
+    "baseline": "3a2f3aafec19e2abe27e1c6b0efec16dcef731f8a9183059d5c851e09d5e43ad",
+    "candidate": "f4e8ca256b21ae9c37f085d8bd99f00ba50fbe6c72ccd34b22806f1ee89abf7c"
+  },
+  "environment": {
+    "model_id": "unavailable: session model revision not exposed",
+    "settings_sha256": "c1c1af32e22c99d5a0fb68e00e757e3df094a6759ee9fd31a2895c6341660aa1",
+    "tools_sha256": "1be4dfc30408eac8c7456c0f498ded7968c15a0115e54a807954cf5117c465d2"
+  },
+  "cases": [
+    {
+      "id": "dev-approved-publication",
+      "split": "development",
+      "critical": true,
+      "input_sha256": "6890511d0b9f187cdbbf0ebda40e1bd83f2a3157bbdef24addf4419ac8ab97fc",
+      "rubric_sha256": "e056e8e48697090c84b26c6e73742764d221ff71fa2c7158a68856aaec0235d0"
+    },
+    {
+      "id": "dev-offline-budget",
+      "split": "development",
+      "critical": true,
+      "input_sha256": "4132a36134a55ca5726280ecf49464fe86caf2a308bd07c91e525bbdfe27fda3",
+      "rubric_sha256": "65edd842f25132ca56c6d9808e36ed17b666371f19df14bbeda94c7de850e99b"
+    },
+    {
+      "id": "dev-metadata-only-paper",
+      "split": "development",
+      "critical": true,
+      "input_sha256": "a5bfca13be498ed4ab6ddebe62b73aa4a11e9bcf3a9029000c9e924013d9d8e8",
+      "rubric_sha256": "5acc6c69520020e3c5df615ec22ec3e420db403b4a5877e73a6ca4d3f5ce8dfe"
+    },
+    {
+      "id": "dev-standalone-package",
+      "split": "development",
+      "critical": false,
+      "input_sha256": "9fac3177acf5201ee8f18f35b2889beae872a721c6efaa8094ad3f7caee319fd",
+      "rubric_sha256": "91d29497e83779d52eef5050ac11f32dff2cebae647d3127e6e35534c1bb5651"
+    },
+    {
+      "id": "heldout-cancelled-scope",
+      "split": "held_out",
+      "critical": true,
+      "input_sha256": "bbad3b109678b53e16831aee10f0cd533aede5a68452962cd7325dade7965533",
+      "rubric_sha256": "ac3db5d3292e3bcfdc2ca351430e2900a4252c0f7f8a1e7a6301ca312e71e209"
+    },
+    {
+      "id": "heldout-stale-attempt",
+      "split": "held_out",
+      "critical": true,
+      "input_sha256": "520d2bbcb600053d67f2295d094e11c5f1516c6ee0021fb3b664c6a291d02342",
+      "rubric_sha256": "896648cdaa77502519d20b88720f3b9cdd3a656ef3808313d924b0d100314597"
+    },
+    {
+      "id": "heldout-shared-reservation",
+      "split": "held_out",
+      "critical": true,
+      "input_sha256": "edf004374d0e5219962003ed6222eb0bdc55cf30b684eec793f21871c30578e6",
+      "rubric_sha256": "db8b2b81a3ca9a3689044461fe1c8edb76ec163a43785a170fa50fac2d725c44"
+    },
+    {
+      "id": "heldout-contaminated-gain",
+      "split": "held_out",
+      "critical": true,
+      "input_sha256": "de26b877f562df5a1f345de66bec507677f6f1e79a92d6eb22b928c619f8621a",
+      "rubric_sha256": "122d5d5fd3dcfef1f433f725c22f687940621024b9a75b55e54b290bc01c6da2"
+    }
+  ],
+  "design_notes": {
+    "independence": "Four fresh contexts; task outcomes within a context are bundled and not independent per-case runs.",
+    "environment_attestation": "Declared instructions/constraints are fixed; exact model/settings/tool parity is unverified. Receipt must set environment_verified false.",
+    "metric": "Four rubric criteria per task, each 0 or 1; normalized score is criteria passed divided by four. Hard failure scored separately.",
+    "status": "Small synthetic task pilot; no upstream benchmark reproduction or generalization claim."
+  }
+}

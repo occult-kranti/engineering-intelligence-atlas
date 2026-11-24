@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "frozen_date": "2026-11-24",
+  "purpose": "Manifest only; held-out prompts and rubrics remain sealed until the candidate is frozen. This is a synthetic pilot, not a benchmark reproduction.",
+  "private_bundle_sha256": "6431fd3b0669474a7a4c3893eb0c05940487dc6343853151bee90f45b57387a4",
+  "cases": [
+    {
+      "id": "dev-approved-publication",
+      "split": "development",
+      "critical": true,
+      "input_sha256": "6890511d0b9f187cdbbf0ebda40e1bd83f2a3157bbdef24addf4419ac8ab97fc",
+      "rubric_sha256": "e056e8e48697090c84b26c6e73742764d221ff71fa2c7158a68856aaec0235d0"
+    },
+    {
+      "id": "dev-offline-budget",
+      "split": "development",
+      "critical": true,
+      "input_sha256": "4132a36134a55ca5726280ecf49464fe86caf2a308bd07c91e525bbdfe27fda3",
+      "rubric_sha256": "65edd842f25132ca56c6d9808e36ed17b666371f19df14bbeda94c7de850e99b"
+    },
+    {
+      "id": "dev-metadata-only-paper",
+      "split": "development",
+      "critical": true,
+      "input_sha256": "a5bfca13be498ed4ab6ddebe62b73aa4a11e9bcf3a9029000c9e924013d9d8e8",
+      "rubric_sha256": "5acc6c69520020e3c5df615ec22ec3e420db403b4a5877e73a6ca4d3f5ce8dfe"
+    },
+    {
+      "id": "dev-standalone-package",
+      "split": "development",
+      "critical": false,
+      "input_sha256": "9fac3177acf5201ee8f18f35b2889beae872a721c6efaa8094ad3f7caee319fd",
+      "rubric_sha256": "91d29497e83779d52eef5050ac11f32dff2cebae647d3127e6e35534c1bb5651"
+    },
+    {
+      "id": "heldout-cancelled-scope",
+      "split": "held_out",
+      "critical": true,
+      "input_sha256": "bbad3b109678b53e16831aee10f0cd533aede5a68452962cd7325dade7965533",
+      "rubric_sha256": "ac3db5d3292e3bcfdc2ca351430e2900a4252c0f7f8a1e7a6301ca312e71e209"
+    },
+    {
+      "id": "heldout-stale-attempt",
+      "split": "held_out",
+      "critical": true,
+      "input_sha256": "520d2bbcb600053d67f2295d094e11c5f1516c6ee0021fb3b664c6a291d02342",
+      "rubric_sha256": "896648cdaa77502519d20b88720f3b9cdd3a656ef3808313d924b0d100314597"
+    },
+    {
+      "id": "heldout-shared-reservation",
+      "split": "held_out",
+      "critical": true,
+      "input_sha256": "edf004374d0e5219962003ed6222eb0bdc55cf30b684eec793f21871c30578e6",
+      "rubric_sha256": "db8b2b81a3ca9a3689044461fe1c8edb76ec163a43785a170fa50fac2d725c44"
+    },
+    {
+      "id": "heldout-contaminated-gain",
+      "split": "held_out",
+      "critical": true,
+      "input_sha256": "de26b877f562df5a1f345de66bec507677f6f1e79a92d6eb22b928c619f8621a",
+      "rubric_sha256": "122d5d5fd3dcfef1f433f725c22f687940621024b9a75b55e54b290bc01c6da2"
+    }
+  ]
+}
