@@ -1,0 +1,77 @@
+# Simulation data for the Atech `14port` board, read by `atech.sim`
+# (`atech sim-assets --board`). Frames and every field: src/atech/docs/sim_assets.md.
+# Asset frame: metres, origin at the centre of the bottom face, +z out of the top
+# (front) face. A port frame is where a module's connector frame goes: +z out of
+# the face, +y toward the module's outer face. Port ids and which are reserved come
+# from boards/14port.yaml.
+#
+# The box size is the bounds of Atech's production CAD (atechdotdev/atech-module-renders
+# v1.5, glb_plain/frame-2.glb, converted to +z up): 60 x 120 x 7 mm, the frame rim
+# 7 mm high, the PCB top at 2.5 mm, the sockets up to 4.9 mm.
+# Port frames follow the layout every Atech viewer uses (studio p2p/ui/boardplace.js):
+# portrait, three columns 19.5 mm apart (left 1-6, middle 7 .. USB-C, right 9-14,
+# Reset at port 12), six 20 mm cells along the 120 mm length, port 1 top-left (+y);
+# each module's outer face points away from the board's centre line (port 7 off the
+# top rim, USB-C off the bottom); modules seated 4 mm below the rim (z = 3 mm). That
+# layout is not an Atech datasheet, so `ports` stays a PLACEHOLDER. Mass, colours and
+# the rest are guesses, marked PLACEHOLDER.
+schema: 1
+
+size_m: [0.06, 0.12, 0.007]  # CAD: atech-module-renders v1.5 glb_plain/frame-2.glb bounds
+mass_kg: 0.06                  # PLACEHOLDER: replace with Atech board datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech board datasheet
+  body: [0.93, 0.93, 0.91, 1]
+  port: [0.2, 0.2, 0.22, 1]
+  connector: [0.75, 0.75, 0.78, 1]
+  accent: [0.95, 0.45, 0.1, 1]
+
+parts:                           # PLACEHOLDER: port plates (inside the rim, at the seat), USB-C, Reset
+  - {name: port_1_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [-0.0195, 0.05, 0.0032], color: port}
+  - {name: port_2_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [-0.0195, 0.03, 0.0032], color: port}
+  - {name: port_3_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [-0.0195, 0.01, 0.0032], color: port}
+  - {name: port_4_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [-0.0195, -0.01, 0.0032], color: port}
+  - {name: port_5_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [-0.0195, -0.03, 0.0032], color: port}
+  - {name: port_6_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [-0.0195, -0.05, 0.0032], color: port}
+  - {name: port_7_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [0, 0.05, 0.0032], color: port}
+  - {name: port_9_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [0.0195, 0.05, 0.0032], color: port}
+  - {name: port_10_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [0.0195, 0.03, 0.0032], color: port}
+  - {name: port_11_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [0.0195, 0.01, 0.0032], color: port}
+  - {name: port_13_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [0.0195, -0.03, 0.0032], color: port}
+  - {name: port_14_slot, size_m: [0.0195, 0.0195, 0.0004], pos_m: [0.0195, -0.05, 0.0032], color: port}
+  - {name: usb_c, size_m: [0.009, 0.0035, 0.0032], pos_m: [0, -0.05, 0.0046], color: connector}
+  - {name: reset_button, size_m: [0.006, 0.006, 0.002], pos_m: [0.0195, -0.01, 0.004], color: accent}
+
+connector:                       # PLACEHOLDER: replace with Atech board datasheet
+  # Where the board itself mounts (e.g. on a robot base): centre of the bottom face.
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech board datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+ports:                           # PLACEHOLDER: studio boardplace.js layout, not an Atech datasheet
+  port_1: {pos_m: [-0.0195, 0.05, 0.003], rpy_deg: [0, 0, 90]}
+  port_2: {pos_m: [-0.0195, 0.03, 0.003], rpy_deg: [0, 0, 90]}
+  port_3: {pos_m: [-0.0195, 0.01, 0.003], rpy_deg: [0, 0, 90]}
+  port_4: {pos_m: [-0.0195, -0.01, 0.003], rpy_deg: [0, 0, 90]}
+  port_5: {pos_m: [-0.0195, -0.03, 0.003], rpy_deg: [0, 0, 90]}
+  port_6: {pos_m: [-0.0195, -0.05, 0.003], rpy_deg: [0, 0, 90]}
+  port_7: {pos_m: [0, 0.05, 0.003], rpy_deg: [0, 0, 0]}
+  port_8: {pos_m: [0, -0.05, 0.003], rpy_deg: [0, 0, 180]}
+  port_9: {pos_m: [0.0195, 0.05, 0.003], rpy_deg: [0, 0, -90]}
+  port_10: {pos_m: [0.0195, 0.03, 0.003], rpy_deg: [0, 0, -90]}
+  port_11: {pos_m: [0.0195, 0.01, 0.003], rpy_deg: [0, 0, -90]}
+  port_12: {pos_m: [0.0195, -0.01, 0.003], rpy_deg: [0, 0, -90]}
+  port_13: {pos_m: [0.0195, -0.03, 0.003], rpy_deg: [0, 0, -90]}
+  port_14: {pos_m: [0.0195, -0.05, 0.003], rpy_deg: [0, 0, -90]}
+
+semantic:
+  # Wikidata Q-codes (SimReady SL.003), checked on wikidata.org.
+  wikidata_qcode: [Q4321, Q173350]   # motherboard, printed circuit board
+  class: [motherboard]
+
+# Fields above that are guesses, not Atech data (exported as atech:placeholders).
+placeholders: [mass_kg, colors, parts, connector, physics_material, ports]

@@ -1,0 +1,52 @@
+# Simulation data for an Atech product the SDK has no firmware for: `atech sim-assets`
+# exports it, `project.yaml` cannot place it (atech.sim.spec.Product). Frames and every
+# field: src/atech/docs/sim_assets.md. Asset frame: metres, origin at the centre of the
+# bottom face of the cell over its port, +z out of the top face, +y toward the outer face.
+#
+# Soil sensor: a two-prong galvanic probe with a CH32V003 co-processor on I2C at 0x37
+# (Atech's backend driver soil_moisture/soil_sensor.h; the SDK has no driver for it
+# yet). Drawn after Atech's renders (renders/optimized/modules/gallery/soil-sensor): a
+# one-cell head and two 50 mm prongs leaving its outer face (+y) at PCB level, each
+# with a tan sense pad. No Atech CAD of it: `atech sim-assets --meshes` draws a
+# derived model (the temperature sensor's shell).
+schema: 1
+
+product: {name: "Soil Sensor", category: sensor, size: 1, interface: i2c, i2c_address: 0x37}
+
+size_m: [0.0195, 0.0195, 0.01]    # PLACEHOLDER: replace with Atech module datasheet (one 19.5 mm port cell, as the CAD modules)
+mass_kg: 0.009                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  probe: [0.07, 0.07, 0.08, 1]
+  pad: [0.72, 0.64, 0.47, 1]
+  chip: [0.85, 0.85, 0.83, 1]
+  passive: [0.75, 0.75, 0.73, 1]
+
+# The probe is one PCB at the module PCB's height (2.54-4.14 mm), 16.8 mm wide: from
+# just inside the head's outer wall it splits into two 6.9 mm prongs, 3 mm apart, that
+# end 49 mm out in semicircles; a tan pad on each, 0.9 mm in from its edges, follows
+# the tip. Proportions measured off Atech's renders.
+parts:                           # PLACEHOLDER: replace with Atech module datasheet
+  - {name: probe_bridge, size_m: [0.0168, 0.0015, 0.0016], pos_m: [0, 0.00975, 0.00334], color: probe}
+  - {name: probe_left, shape: rounded_end, size_m: [0.0069, 0.04975, 0.0016], pos_m: [-0.00495, 0.033875, 0.00334], color: probe}
+  - {name: probe_right, shape: rounded_end, size_m: [0.0069, 0.04975, 0.0016], pos_m: [0.00495, 0.033875, 0.00334], color: probe}
+  - {name: pad_left, shape: rounded_end, size_m: [0.0051, 0.0476, 0.00005], pos_m: [-0.00495, 0.0341, 0.004165], color: pad}
+  - {name: pad_right, shape: rounded_end, size_m: [0.0051, 0.0476, 0.00005], pos_m: [0.00495, 0.0341, 0.004165], color: pad}
+  - {name: coprocessor, size_m: [0.003, 0.0025, 0.0009], pos_m: [-0.004, -0.0045, 0.00459], color: chip}
+  - {name: status_led, size_m: [0.0016, 0.0008, 0.0006], pos_m: [0.0055, -0.0055, 0.00444], color: chip}
+  - {name: passive_1, size_m: [0.001, 0.0005, 0.0004], pos_m: [-0.0005, -0.0055, 0.00434], color: passive}
+  - {name: passive_2, size_m: [0.001, 0.0005, 0.0004], pos_m: [-0.0005, -0.0035, 0.00434], color: passive}
+  - {name: passive_3, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.0025, -0.0045, 0.00434], color: passive}
+  - {name: passive_4, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.006, -0.002, 0.00434], color: passive}
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+placeholders: [size_m, mass_kg, colors, parts, connector, physics_material]

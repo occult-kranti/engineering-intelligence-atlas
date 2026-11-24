@@ -1,0 +1,181 @@
+# Atech 10-Port (small) motherboard — Node Small Motherboard V1.0
+#
+# 10 six-pin port connectors + 14 on-board WS2812 status LEDs, driven by an
+# ESP32-S3-WROOM-1. Port 10 is the USB-C connector (reserved). Per-port GPIO
+# assignments are extracted from the board schematic
+# (docs/hardware/schematics/SCH_Node_Small_Motherboard_V1_0.json): each port's
+# Line A / Line B map to the ESP32 pin its Data_<n>A / Data_<n>B net lands on.
+#
+# CONFIRMED from schematic: every port's Line A/B GPIO, and LED_Control = GPIO 42.
+# These were re-derived mechanically from the netlist on 2026-09-03 (the earlier
+# pass had 6 wrong GPIOs on ports 2, 6, 9 and 10 — now corrected). Port 4 uses
+# module pins 36/37 = RXD0/TXD0 = GPIO 44/43; port 10's GPIO 19/20 are the
+# ESP32-S3 native USB D-/D+ lines, consistent with it being the USB-C jack.
+# CONFIRMED from hardware: the board is 2-sided — ports 1-6 on the FRONT face,
+# ports 7-10 on the BACK face. Double-width modules span two ports on the SAME
+# face; there are no through-board (front-to-back) pairs.
+#
+# NOTE: the per-port `side:` field below is a *column* marker, not a face marker.
+# It drives the 180-degree pin swap for double-width modules in codegen.py
+# (`side == "left"` swaps which port supplies pin_a/pin_b). Its current
+# right/left values are inherited from the earlier tentative pass and have NOT
+# been reconciled with the front/back split — needs testing on hardware.
+
+id: 10port
+name: "Atech 10-Port Board"
+
+microcontroller:
+  type: esp32
+  variant: ESP32-S3
+  module: ESP32-S3-WROOM-1
+  flash_size_kb: 8192
+  ram_size_kb: 512
+
+# The ESP32-S3 native USB-JTAG bridge does not reliably survive the baud-rate
+# change esptool attempts at 460800 ("No serial data received"). 115200 works.
+upload_speed: 115200
+platformio_env: esp32-s3-devkitc-1
+platformio_framework: arduino
+
+# Port 10 is the USB-C jack — it cannot host a module.
+reserved:
+  - port_10
+
+# 2D physical layout. This board is 2-sided: row 1 is the FRONT face, row 2 is
+# the BACK face. Ports 1-6 are on the front; ports 7-10 are on the back.
+# (Row 2 is the underside — it is NOT a second column on the same plane.)
+layout:
+  - ["1", "2", "3", "4", "5", "6"]        # front face
+  - ["7", "8", "9", "USB-C"]              # back face (port 10 = USB-C)
+
+notes: |
+  Node Small Motherboard V1.0: 10 six-pin connectors on an ESP32-S3-WROOM-1,
+  physically a 2-sided board. Port 10 is the USB-C jack (reserved). Per-port
+  data-line GPIOs are taken straight from the schematic (verified against the
+  netlist, not transcribed by hand). The board also has 14
+  on-board WS2812 status LEDs on a single data line (GPIO 42, net LED_Control).
+
+  The 2-sided arrangement is confirmed: ports 1-6 sit on the front face and
+  ports 7-10 on the back face. Double-width modules span two adjacent ports on
+  the same face only — a module never bridges the front and back faces. The
+  GPIO assignments per port are authoritative (from the schematic).
+
+  OPEN: the per-port `side:` (column) values still drive the double-width pin
+  swap and have not been re-checked against the confirmed front/back split, so
+  double-width pin assignment on this board is unverified.
+
+ports:
+  - id: port_1
+    name: "Port 1"
+    type: universal
+    slot_number: 1
+    side: left
+    pins:
+      - {gpio: 41, function: signal}
+      - {gpio: 40, function: signal_b}
+    compatible_interfaces: [i2c, digital, gpio]
+
+  - id: port_2
+    name: "Port 2"
+    type: universal
+    slot_number: 2
+    side: left
+    pins:
+      - {gpio: 17, function: signal}
+      - {gpio: 18, function: signal_b}
+    compatible_interfaces: [i2c, digital, gpio, analog]
+
+  - id: port_3
+    name: "Port 3"
+    type: universal
+    slot_number: 3
+    side: right
+    pins:
+      - {gpio: 5, function: signal}
+      - {gpio: 4, function: signal_b}
+    compatible_interfaces: [i2c, digital, gpio, analog]
+
+  - id: port_4
+    name: "Port 4"
+    type: universal
+    slot_number: 4
+    side: right
+    pins:
+      - {gpio: 44, function: signal}
+      - {gpio: 43, function: signal_b}
+    # GPIO 44/43 are U0RXD/U0TXD (the programming/console UART).
+    compatible_interfaces: [i2c, digital, gpio, uart]
+
+  - id: port_5
+    name: "Port 5"
+    type: universal
+    slot_number: 5
+    side: right
+    pins:
+      - {gpio: 39, function: signal}
+      - {gpio: 38, function: signal_b}
+    compatible_interfaces: [i2c, digital, gpio]
+
+  - id: port_6
+    name: "Port 6"
+    type: universal
+    slot_number: 6
+    side: left
+    pins:
+      - {gpio: 7, function: signal}
+      - {gpio: 16, function: signal_b}
+    compatible_interfaces: [i2c, digital, gpio, analog]
+
+  - id: port_7
+    name: "Port 7"
+    type: universal
+    slot_number: 7
+    side: right
+    pins:
+      - {gpio: 2, function: signal}
+      - {gpio: 1, function: signal_b}
+    compatible_interfaces: [i2c, digital, gpio, analog]
+
+  - id: port_8
+    name: "Port 8"
+    type: universal
+    slot_number: 8
+    side: left
+    pins:
+      - {gpio: 35, function: signal}
+      - {gpio: 36, function: signal_b}
+    compatible_interfaces: [i2c, digital, gpio]
+
+  - id: port_9
+    name: "Port 9"
+    type: universal
+    slot_number: 9
+    side: left
+    pins:
+      - {gpio: 6, function: signal}
+      - {gpio: 15, function: signal_b}
+    compatible_interfaces: [i2c, digital, gpio, analog]
+
+  - id: port_10
+    name: "Port 10 (USB-C)"
+    type: usb
+    slot_number: 10
+    side: left
+    pins:
+      - {gpio: 19, function: signal}
+      - {gpio: 20, function: signal_b}
+    compatible_interfaces: []
+
+# Adjacency for double-width modules. Same-face pairs only: port_6 (front) and
+# port_7 (back) are NOT adjacent, so that pair is deliberately absent.
+# Every consecutive same-face pair. Ports 1-6 are the front face and 7-9 the
+# back face, so all neighbours within a row are adjacent; 6+7 is NOT a pair
+# because it would bridge the two faces.
+adjacent_port_pairs:
+  - ["port_1", "port_2"]
+  - ["port_2", "port_3"]
+  - ["port_3", "port_4"]
+  - ["port_4", "port_5"]
+  - ["port_5", "port_6"]
+  - ["port_7", "port_8"]
+  - ["port_8", "port_9"]

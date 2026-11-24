@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "kind": "declarative_company_plan",
+  "company": {
+    "name": "Daftar Hardware Studio",
+    "upstream_repository": "https://github.com/atechdotdev/python-sdk",
+    "source_package": "atech==1.0.0a12",
+    "project_path": "projects/atech-hardware-studio",
+    "status": "creation_queued_awaiting_desktop_sync",
+    "provisioning_verified": false
+  },
+  "office": {
+    "name": "Hardware blueprint studio",
+    "presentation": "Company blueprint on the endless conference table; tools open as in-place elements",
+    "status": "planned"
+  },
+  "departments": [
+    {
+      "name": "Product design",
+      "roles": ["Design lead", "Interaction designer", "Assembly documentation specialist"],
+      "owns": ["idea brief", "validation card", "blueprint interaction", "assembly explanations"],
+      "status": "planned"
+    },
+    {
+      "name": "SDK engineering",
+      "roles": ["Python SDK engineer", "Embedded systems engineer", "Build engineer"],
+      "owns": ["project validation", "module placement", "CLI contracts", "firmware generation"],
+      "status": "planned"
+    },
+    {
+      "name": "Independent verification",
+      "roles": ["QA reviewer", "Source and license reviewer"],
+      "owns": ["negative cases", "compatibility checks", "hardware evidence", "release claims"],
+      "status": "planned"
+    }
+  ],
+  "coordination": {
+    "director": "User / CEO",
+    "assistant": "Donna",
+    "department_assistants": "Scoped sub-Donnas, provisioned after department creation",
+    "authority": "Use recorded scoped authority; this plan grants no access and starts no jobs."
+  },
+  "work_status": {
+    "source_import": "complete",
+    "sdk_validation_patch": "complete",
+    "canvas_adapter": "planned",
+    "compiler_test": "not_run",
+    "physical_hardware_test": "not_run",
+    "hosted_atech_clone": "not_performed"
+  }
+}

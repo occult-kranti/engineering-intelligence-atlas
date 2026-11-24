@@ -1,0 +1,173 @@
+id: micro_sd_card
+name: "microSD Card (SPI)"
+display_name: "microSD Card"
+category: storage
+interface: gpio
+size: 2
+description: |
+  Removable microSD storage on an SPI bus: gigabytes of FAT16/FAT32 space for
+  logs, audio and images, readable on a computer afterwards. Spans TWO adjacent
+  ports. exFAT does not mount: a 64 GB or larger card usually comes as exFAT and
+  must be reformatted as FAT32. One card per project (the ESP32 core has one SD
+  object). The card needs one of the chip's two hardware SPI hosts; the
+  generated setup() reserves it, and a screen that finds none left runs
+  software SPI (slower, same drawing).
+  Pin map: CS on Line A1, SCLK on Line B1, MOSI on Line A2, MISO on Line B2.
+  begin() also tries the two ports the other way round, so the pair's order
+  does not matter.
+
+driver:
+  header: micro_sd_card.h
+  source: micro_sd_card.cpp
+  class_name: MicroSDCard
+
+# One global SD object in the ESP32 core: a second MicroSDCard refuses to mount.
+max_per_project: 1
+spi_host: true
+
+templates:
+  # Constructor is (cs, sclk, mosi, miso): physical port order, Line A1, B1, A2, B2.
+  globals: |
+    MicroSDCard {{ instance }}({{ pin_a }}, {{ pin_b }}, {{ pin_a2 }}, {{ pin_b2 }});
+  # begin() returns false with no card: not fatal, {{ instance }}_remount mounts one inserted later.
+  setup: |
+    {{ instance }}.begin();
+  loop: ""
+
+health_check: "{{ instance }}.isMounted()"
+
+events:
+  - key: "{{ instance }}_status"
+    type: state
+    value_type: json
+    description: 'Answer to {{ instance }}_info: {"mounted":true,"type":"SDHC","size":bytes,"used":bytes,"free":bytes}.'
+  - key: "{{ instance }}_files"
+    type: state
+    value_type: json
+    description: 'Answer to {{ instance }}_list: [{"name":"log.csv","size":8214},{"name":"img","dir":true}], at most 64 entries.'
+  - key: "{{ instance }}_file"
+    type: state
+    value_type: string
+    description: "Answer to {{ instance }}_read: the file's first 1024 bytes as text."
+
+actions:
+  - key: "{{ instance }}_info"
+    value_type: "null"
+    description: "Card type and space. Answers with the event {{ instance }}_status, sent before the acknowledgement. Works with no card (mounted:false)."
+    handler: |
+      bool _m = {{ instance }}.isMounted();
+      Serial.printf("{\"type\":\"event\",\"payload\":{\"event_type\":\"state\",\"key\":\"{{ instance }}_status\",\"value\":{\"mounted\":%s,\"type\":\"%s\",\"size\":%llu,\"used\":%llu,\"free\":%llu},\"source\":\"micro_sd_card\"}}\n",
+                    _m ? "true" : "false", {{ instance }}.cardType(),
+                    (unsigned long long)({{ instance }}.cardSizeBytes()),
+                    (unsigned long long)(_m ? {{ instance }}.usedBytes() : 0),
+                    (unsigned long long)(_m ? {{ instance }}.freeBytes() : 0));
+  - key: "{{ instance }}_list"
+    value_type: string
+    description: 'List a folder ("/" if no value is given). Answers with the event {{ instance }}_files. Fails with no card or no such folder.'
+    handler: |
+      String _dir = value.length() ? value : String("/");
+      if (!{{ instance }}.isMounted()) atechFail("no card mounted: insert a FAT32 card and send {{ instance }}_remount");
+      else if (_dir != "/" && !{{ instance }}.exists(_dir.c_str())) atechFail("no such folder");
+      else {
+        String _json = {{ instance }}.listDirJson(_dir.c_str(), 64);
+        Serial.print("{\"type\":\"event\",\"payload\":{\"event_type\":\"state\",\"key\":\"{{ instance }}_files\",\"value\":");
+        Serial.print(_json);
+        Serial.println(",\"source\":\"micro_sd_card\"}}");
+      }
+  - key: "{{ instance }}_read"
+    value_type: string
+    description: "Read a file (the value is its path, e.g. /log.csv). Answers with the event {{ instance }}_file: the first 1024 bytes. Fails with no card or no such file."
+    handler: |
+      if (!{{ instance }}.isMounted()) atechFail("no card mounted: insert a FAT32 card and send {{ instance }}_remount");
+      else if (!value.length() || !{{ instance }}.exists(value.c_str())) atechFail("no such file");
+      else {
+        static uint8_t _buf[1024];
+        size_t _n = {{ instance }}.readBytes(value.c_str(), 0, _buf, sizeof _buf);
+        Serial.print("{\"type\":\"event\",\"payload\":{\"event_type\":\"state\",\"key\":\"{{ instance }}_file\",\"value\":\"");
+        for (size_t _i = 0; _i < _n; _i++) {
+          char _c = (char)_buf[_i];
+          if (_c == '"' || _c == '\\') { Serial.print('\\'); Serial.print(_c); }
+          else if (_c == '\n') Serial.print("\\n");
+          else if (_c == '\r') Serial.print("\\r");
+          else if (_c == '\t') Serial.print("\\t");
+          else if ((uint8_t)_c < 0x20) Serial.printf("\\u%04x", (unsigned)(uint8_t)_c);
+          else Serial.print(_c);
+        }
+        Serial.println("\",\"source\":\"micro_sd_card\"}}");
+      }
+  - key: "{{ instance }}_write"
+    value_type: json
+    description: 'Write a file, replacing it: {"path":"/notes.txt","text":"hello"}. Folders are not created. Blocks for tens of ms.'
+    handler: |
+      String _path = atechJsonString(value, "path");
+      if (!{{ instance }}.isMounted()) atechFail("no card mounted: insert a FAT32 card and send {{ instance }}_remount");
+      else if (!_path.length()) atechFail("need a path");
+      else if (!{{ instance }}.writeFile(_path.c_str(), atechJsonString(value, "text"))) atechFail("write failed: does the folder exist?");
+  - key: "{{ instance }}_append"
+    value_type: json
+    description: 'Append one line to a file, creating it: {"path":"/log.csv","line":"12,34"}. Blocks for tens of ms.'
+    handler: |
+      String _path = atechJsonString(value, "path");
+      if (!{{ instance }}.isMounted()) atechFail("no card mounted: insert a FAT32 card and send {{ instance }}_remount");
+      else if (!_path.length()) atechFail("need a path");
+      else if (!{{ instance }}.appendLine(_path.c_str(), atechJsonString(value, "line").c_str())) atechFail("append failed: does the folder exist?");
+  - key: "{{ instance }}_delete"
+    value_type: string
+    description: "Delete a file (the value is its path)."
+    handler: |
+      if (!{{ instance }}.isMounted()) atechFail("no card mounted: insert a FAT32 card and send {{ instance }}_remount");
+      else if (!{{ instance }}.remove(value.c_str())) atechFail("no such file");
+  - key: "{{ instance }}_remount"
+    value_type: "null"
+    description: "Mount a card inserted after boot, or again after a swap. Fails if no FAT16/FAT32 card answers."
+    handler: |
+      if (!{{ instance }}.remount()) atechFail("no card: inserted? FAT32, not exFAT?");
+
+lib_deps: []
+
+usage: |
+  // Public API of MicroSDCard — the instance is `{{ instance }}`. Paths start with "/".
+  // begin() already ran in setup(). With no card it returned false: not fatal.
+  if (!{{ instance }}.isMounted()) { /* no card: {{ instance }}.remount() after one is inserted */ }
+
+  // --- WRITES BLOCK for tens of ms, sometimes far longer. Never on a periodic path. ---
+  // For anything recurring: beginLogger() once in setup, then logLine() in loop. It
+  // queues and returns at once; a background task on core 0 writes.
+  {{ instance }}.beginLogger("/log.csv");                 // in setup
+  {{ instance }}.logLine("12,34");                         // in loop, never blocks
+  {{ instance }}.logPrintf("%lu,%d", millis(), 42);
+  uint32_t lost = {{ instance }}.droppedLines();          // > 0: logging faster than the card writes
+  {{ instance }}.flushLog();                               // write what is queued now (blocks)
+
+  // --- one-off whole-file calls (blocking) ---
+  {{ instance }}.writeFile("/notes.txt", "hello");         // replace
+  {{ instance }}.appendLine("/notes.txt", "more");         // add a line
+  String text = {{ instance }}.readFile("/notes.txt");     // WHOLE file into RAM: small files only
+  uint8_t buf[256];
+  size_t n = {{ instance }}.readBytes("/big.bin", 0, buf, sizeof buf);  // a slice at an offset
+  String line = {{ instance }}.readLine("/log.csv", 3);    // line 3, 0-based, without loading the file
+  uint32_t lines = {{ instance }}.countLines("/log.csv");
+
+  // --- files and folders ---
+  bool there = {{ instance }}.exists("/notes.txt");
+  uint32_t bytes = {{ instance }}.fileSize("/notes.txt");
+  {{ instance }}.mkdir("/logs");                           // parents are not created
+  {{ instance }}.rename("/a.txt", "/logs/a.txt");
+  {{ instance }}.remove("/logs/a.txt");
+  {{ instance }}.rmdir("/logs");                           // empty folders only
+  String names[16]; int32_t sizes[16]; bool isDir[16];
+  int count = {{ instance }}.listDir("/", names, sizes, isDir, 16);   // sizes[i] = -1 for a folder
+  char path[64];
+  MicroSDCard::pathJoin("/logs", "a.csv", path, sizeof path);         // "/logs/a.csv"
+  MicroSDCard::pathUp(path);                                          // "/logs"
+
+  // --- search ---
+  String found[8];
+  int hits = {{ instance }}.find("/", "*.csv", found, nullptr, 8);    // glob, case-insensitive
+  bool has = {{ instance }}.fileContains("/log.csv", "ERROR");
+  String matches[4];
+  int m = {{ instance }}.grepFile("/log.csv", "ERROR", matches, 4);
+
+  // --- the card ---
+  const char* kind = {{ instance }}.cardType();            // "SDHC", "SD", "MMC", "NONE"...
+  uint64_t total = {{ instance }}.cardSizeBytes(), used = {{ instance }}.usedBytes(), free_ = {{ instance }}.freeBytes();

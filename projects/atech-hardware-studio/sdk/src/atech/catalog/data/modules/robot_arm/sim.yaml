@@ -1,0 +1,75 @@
+# Simulation data for the Atech `robot_arm` module, read by `atech.sim`
+# (`atech sim-assets`). Frames and every field: src/atech/docs/sim_assets.md.
+# Asset frame: metres, origin at the centre of the bottom (mounting) face,
+# +z out of the top face, +x along the long side.
+#
+# Atech has not published dimensions or masses for its modules. Every size, mass,
+# colour and position below is a plausible guess, marked PLACEHOLDER.
+#
+# Controller module for the SO-101 / SO-ARM100 arm (Feetech STS3215 servo bus).
+# This asset is the module only; the arm is a separate robot description.
+# CAUTION from the catalog: the module passes the board's high-voltage rail to the
+# servos unregulated; the supply must match the arm (12 V or 5 V).
+schema: 1
+
+# Sold as the Robot Arm Integrator (atech.dev); the catalog id stays robot_arm.
+asset_name: atech_robot_arm_integrator
+
+size_m: [0.0395, 0.0195, 0.01]    # PLACEHOLDER: replace with Atech module datasheet (one port, a housing two 19.5 mm cells long, as Atech's render)
+mass_kg: 0.009                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  connector: [0.88, 0.88, 0.86, 1]
+  capacitor: [0.08, 0.08, 0.09, 1]
+  pin: [0.83, 0.69, 0.22, 1]
+  passive: [0.75, 0.75, 0.73, 1]
+
+# Drawn after Atech's render of the module's PCB: a large capacitor on a square base
+# in the middle, the 3-pin servo connector at the +x end under the lid's opening.
+# The port's pins are under the -x cell. Heights fit under the lid (PCB top 4.14 mm,
+# glass 6.56 mm).
+parts:                           # PLACEHOLDER: replace with Atech module datasheet
+  - {name: capacitor_base, size_m: [0.0085, 0.0085, 0.0008], pos_m: [-0.002, 0, 0.00454], color: capacitor}
+  - {name: capacitor, shape: cylinder, size_m: [0.0078, 0.0078, 0.0015], pos_m: [-0.002, 0, 0.00569], color: capacitor}
+  - {name: servo_connector_base, size_m: [0.0055, 0.0095, 0.0012], pos_m: [0.0145, 0, 0.00474], color: connector}
+  - {name: servo_connector_back, size_m: [0.001, 0.0095, 0.0055], pos_m: [0.01675, 0, 0.00689], color: connector}
+  - {name: servo_connector_side_a, size_m: [0.0045, 0.0008, 0.0045], pos_m: [0.014, -0.00435, 0.00639], color: connector}
+  - {name: servo_connector_side_b, size_m: [0.0045, 0.0008, 0.0045], pos_m: [0.014, 0.00435, 0.00639], color: connector}
+  - {name: servo_pin_1, shape: cylinder, size_m: [0.0006, 0.0006, 0.004], pos_m: [0.0145, -0.0025, 0.00734], color: pin}
+  - {name: servo_pin_2, shape: cylinder, size_m: [0.0006, 0.0006, 0.004], pos_m: [0.0145, 0, 0.00734], color: pin}
+  - {name: servo_pin_3, shape: cylinder, size_m: [0.0006, 0.0006, 0.004], pos_m: [0.0145, 0.0025, 0.00734], color: pin}
+  - {name: passive_1, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.006, 0.004, 0.00434], color: passive}
+  - {name: passive_2, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.008, -0.004, 0.00434], color: passive}
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  # Mates with the board's port frame: centre of the bottom face of the -x cell.
+  pos_m: [-0.010, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+sensor:
+  type: servo_bus
+  chip: STS3215                   # catalog: Feetech STS3215 servos
+  frame:                          # the bus connector   # PLACEHOLDER: replace with Atech module datasheet
+    pos_m: [0.0145, 0, 0.00939]
+    rpy_deg: [0, 0, 0]
+  bus: uart_half_duplex           # catalog
+  baud: 1000000                   # catalog: 1 Mbps
+  servo_ids: [1, 2, 3, 4, 5, 6]   # catalog
+  position_ticks: 4096            # catalog: 0-4095 = one full turn (4096 steps per 360 deg)
+  center_tick: 2048               # catalog
+  tx_line: A                      # catalog: TX on Line A, RX on Line B (swap_lines swaps)
+
+semantic:
+  # Wikidata Q-codes (SimReady SL.003), checked on wikidata.org.
+  # The asset is the servo-bus controller module, not the arm itself.
+  wikidata_qcode: [Q131382027, Q173350]   # motor controller, printed circuit board
+  class: [robot_arm_controller, robotics]
+
+# Fields above that are guesses, not Atech data (exported as atech:placeholders).
+placeholders: [size_m, mass_kg, colors, parts, connector, physics_material, sensor.frame]
