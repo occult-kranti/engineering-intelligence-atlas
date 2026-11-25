@@ -1,0 +1,816 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-24",
+  "tools": [
+    {
+      "id": "concept-studio-osm",
+      "name": "Concept Studio OSM / Blender City Importer",
+      "kind": "blender_addon",
+      "platforms": [
+        "Blender 4.2+ (seller lists Windows/macOS)"
+      ],
+      "useCases": [
+        "Candidate city-context importer for manual evaluation"
+      ],
+      "inputData": [
+        "Seller-advertised OSM, SRTM, imagery and Google Photorealistic 3D paths"
+      ],
+      "licenseSummary": "Paid add-on; delivered software/source license not inspected. Provider rights remain separate.",
+      "exportGuidance": "Evaluate an expressly reusable data path first. An importer purchase or API key does not authorize redistributing Google meshes.",
+      "automationStatus": "unverified",
+      "limitations": [
+        "No purchased archive, source audit, installation or independent benchmark.",
+        "The current listing also advertises an unnamed no-key photo-mesh source; its provenance and reuse permission remain unverified."
+      ],
+      "sourceIds": [
+        "tools-concept-product",
+        "tools-concept-demo",
+        "tools-google-terms"
+      ]
+    },
+    {
+      "id": "blosm-base",
+      "name": "Blosm base (formerly Blender-OSM)",
+      "kind": "blender_addon",
+      "platforms": [
+        "Blender"
+      ],
+      "useCases": [
+        "OSM building massing and roads",
+        "Local OSM import",
+        "Reusable licensed 3D Tiles evaluation"
+      ],
+      "inputData": [
+        "OSM",
+        "Terrain",
+        "Google and other 3D Tiles providers"
+      ],
+      "licenseSummary": "Base download accepts zero payment; GPL source. Input datasets retain their own terms.",
+      "exportGuidance": "Prefer OSM and explicitly reusable terrain/municipal tiles for shipped assets; retain attribution and database obligations.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Base supports Google 3D Tiles too; it is not OSM-only.",
+        "OSM height/roof completeness varies; missing attributes do not become measured architecture.",
+        "Google availability, fees and restrictions still apply."
+      ],
+      "sourceIds": [
+        "tools-blosm-base",
+        "tools-blosm-repo",
+        "tools-blosm-docs",
+        "tools-osm-license",
+        "tools-google-eea"
+      ]
+    },
+    {
+      "id": "blosm-pro",
+      "name": "Blosm Pro / Premium",
+      "kind": "blender_addon",
+      "platforms": [
+        "Blender"
+      ],
+      "useCases": [
+        "Textured procedural OSM context",
+        "Vegetation and material preparation"
+      ],
+      "inputData": [
+        "OSM",
+        "Licensed facade materials",
+        "Licensed imagery/3D Tiles"
+      ],
+      "licenseSummary": "Paid GPL-source add-on; bundled/external asset and provider terms must be retained.",
+      "exportGuidance": "Bake only materials and geometry whose licenses permit that output and redistribution.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "OSM facade textures are generic, not photographs of each building.",
+        "Texture export is documented as experimental.",
+        "A texture-baking feature does not grant rights to restricted source tiles."
+      ],
+      "sourceIds": [
+        "tools-blosm-pro",
+        "tools-blosm-repo",
+        "tools-google-terms"
+      ]
+    },
+    {
+      "id": "blendergis",
+      "name": "BlenderGIS",
+      "kind": "blender_addon",
+      "platforms": [
+        "Blender"
+      ],
+      "useCases": [
+        "GIS-to-Blender terrain",
+        "Local projected building footprints",
+        "Georeferenced scene preparation"
+      ],
+      "inputData": [
+        "Shapefile",
+        "GeoTIFF DEM",
+        "Raster imagery",
+        "OSM XML"
+      ],
+      "licenseSummary": "GPL-3.0-or-later software; each imported dataset has separate rights.",
+      "exportGuidance": "Import reviewed local GIS files, preserve CRS/origin metadata, then export your prepared mesh with source credits.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Validate compatibility with the installed Blender version.",
+        "Online data providers have independent terms; OpenTopography needs an API key.",
+        "Georeferencing is not a survey-accuracy guarantee."
+      ],
+      "sourceIds": [
+        "tools-blendergis",
+        "tools-blendergis-license"
+      ]
+    },
+    {
+      "id": "qgis",
+      "name": "QGIS",
+      "kind": "gis_application",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "useCases": [
+        "Coordinate-system and geometry QA",
+        "Raster clipping and reprojection",
+        "Repeatable area-of-interest preprocessing"
+      ],
+      "inputData": [
+        "Vector GIS",
+        "Elevation rasters",
+        "Reviewed local imagery"
+      ],
+      "licenseSummary": "GPL software; dataset licenses remain independent.",
+      "exportGuidance": "Keep a GeoPackage/GeoTIFF source master plus CRS, vertical datum and transformation metadata; downstream mesh conversion is a separate step.",
+      "automationStatus": "supported",
+      "limitations": [
+        "qgis_process and processing APIs are documented upstream; no new Daftar adapter is implied.",
+        "Processing plugins and algorithm versions must be pinned.",
+        "Assigning a CRS is different from transforming coordinates."
+      ],
+      "sourceIds": [
+        "tools-qgis-cli",
+        "tools-qgis-license"
+      ]
+    },
+    {
+      "id": "gdal",
+      "name": "GDAL / OGR",
+      "kind": "gis_cli",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "useCases": [
+        "Bounded raster/vector preprocessing",
+        "Format conversion",
+        "Raster and vector metadata inspection"
+      ],
+      "inputData": [
+        "GeoTIFF",
+        "GeoPackage",
+        "Other supported geospatial formats"
+      ],
+      "licenseSummary": "Primarily MIT source; optional dependencies and binaries may have other licenses.",
+      "exportGuidance": "Convert only approved input files; retain acquisition, CRS, resolution and license metadata beside outputs.",
+      "automationStatus": "supported",
+      "limitations": [
+        "No Daftar integration or installation claimed.",
+        "Driver availability depends on build.",
+        "New unified CLI is version-sensitive; pin commands and versions before unattended use."
+      ],
+      "sourceIds": [
+        "tools-gdal-cli",
+        "tools-gdal-license"
+      ]
+    },
+    {
+      "id": "pdal",
+      "name": "PDAL",
+      "kind": "point_cloud_cli",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "useCases": [
+        "LiDAR crop/filter/reprojection",
+        "Point-cloud quality checks",
+        "Terrain preparation from permitted scans"
+      ],
+      "inputData": [
+        "LAS/LAZ",
+        "E57 and other supported point-cloud formats"
+      ],
+      "licenseSummary": "BSD software; scan licenses are separate.",
+      "exportGuidance": "Keep original point-cloud provenance and classification; document filtering and transformations before meshing.",
+      "automationStatus": "supported",
+      "limitations": [
+        "Documented pipelines are not an installed Daftar adapter.",
+        "Classification and scan accuracy require source review.",
+        "Point filtering alone does not create a textured game asset."
+      ],
+      "sourceIds": [
+        "tools-pdal",
+        "tools-pdal-license"
+      ]
+    },
+    {
+      "id": "bonsai",
+      "name": "Bonsai (formerly BlenderBIM)",
+      "kind": "bim_application",
+      "platforms": [
+        "Blender"
+      ],
+      "useCases": [
+        "Detailed semantic architectural models",
+        "Walls, spaces and building-element organization",
+        "IFC authoring/review"
+      ],
+      "inputData": [
+        "IFC",
+        "Authored dimensions and component definitions"
+      ],
+      "licenseSummary": "GPL-3.0-or-later add-on. The building/model author's rights remain separate.",
+      "exportGuidance": "Keep IFC as the semantic master; derive a render/game mesh separately and retain element-to-asset IDs.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "City photogrammetry does not automatically produce trustworthy IFC semantics.",
+        "Requires authoring and dimensional review.",
+        "BIM authoring capability does not certify a structural design."
+      ],
+      "sourceIds": [
+        "tools-bonsai",
+        "tools-ifcopenshell"
+      ]
+    },
+    {
+      "id": "ifcopenshell",
+      "name": "IfcOpenShell / IfcConvert",
+      "kind": "bim_sdk_cli",
+      "platforms": [
+        "Windows",
+        "macOS",
+        "Linux"
+      ],
+      "useCases": [
+        "IFC inspection and validation",
+        "Deterministic IFC-to-GLB/OBJ conversion",
+        "Semantic metadata extraction"
+      ],
+      "inputData": [
+        "IFC"
+      ],
+      "licenseSummary": "Core toolkit LGPL; Bonsai uses GPL. Check component and dependency licenses.",
+      "exportGuidance": "Export GLB for viewing while retaining IFC and IDs; explicitly record meter conversion and any coordinate offset.",
+      "automationStatus": "supported",
+      "limitations": [
+        "GLB geometry is not a full replacement for IFC semantics.",
+        "Supported schemas/geometry vary by version.",
+        "No installed or registered runtime adapter is claimed."
+      ],
+      "sourceIds": [
+        "tools-ifcopenshell",
+        "tools-ifcconvert"
+      ]
+    },
+    {
+      "id": "cesium-unreal",
+      "name": "Cesium for Unreal",
+      "kind": "engine_plugin",
+      "platforms": [
+        "Unreal Engine"
+      ],
+      "useCases": [
+        "Georeferenced streaming visualization",
+        "Architecture context and simulation",
+        "User-owned or licensed 3D Tiles"
+      ],
+      "inputData": [
+        "3D Tiles",
+        "Terrain",
+        "Licensed imagery"
+      ],
+      "licenseSummary": "Apache-2.0 plugin. Unreal, Cesium ion and every dataset have separate terms.",
+      "exportGuidance": "Use streaming with the source's attribution/access controls. Export or self-host only datasets with explicit permission.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Plugin license does not license Google's content.",
+        "Streaming level of detail and collision need scenario testing.",
+        "ion access is separate from an installed plugin; no account was configured."
+      ],
+      "sourceIds": [
+        "tools-cesium-code",
+        "tools-cesium-google",
+        "tools-cesium-quickstart",
+        "tools-3dtiles"
+      ]
+    },
+    {
+      "id": "google-photorealistic-3d",
+      "name": "Google Photorealistic 3D Tiles",
+      "kind": "licensed_data_service",
+      "platforms": [
+        "Compatible 3D Tiles renderers"
+      ],
+      "useCases": [
+        "Attributed online geographic visualization, subject to the applicable agreement"
+      ],
+      "inputData": [
+        "Google textured photogrammetric mesh"
+      ],
+      "licenseSummary": "Google Maps Platform agreement and Tile policies; paid usage/billing setup can apply.",
+      "exportGuidance": "Do not put downloaded Google mesh/texture files or baked derivatives in this reusable asset library without an express applicable license.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Personal or archviz intent is not a blanket exception.",
+        "Coverage, regional access, attribution and cache behavior require review.",
+        "API billing is separate from importer price; no key or account configured."
+      ],
+      "sourceIds": [
+        "tools-google-terms",
+        "tools-google-service-terms",
+        "tools-google-tile-policy",
+        "tools-google-3d",
+        "tools-google-eea",
+        "tools-google-pricing"
+      ]
+    },
+    {
+      "id": "openstreetmap",
+      "name": "OpenStreetMap data",
+      "kind": "open_data_source",
+      "platforms": [
+        "GIS",
+        "Blender",
+        "Game pipelines"
+      ],
+      "useCases": [
+        "Building footprints and mapped attributes",
+        "Road/context massing",
+        "Repeatable permitted regional extracts"
+      ],
+      "inputData": [
+        "OSM XML/PBF or licensed extracts"
+      ],
+      "licenseSummary": "ODbL: attribution and applicable database share-alike/access duties; output classification matters.",
+      "exportGuidance": "Track OSM-derived data separately, provide contributor/license credit, and review derived-database versus Produced Work obligations before publishing.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "No guarantee of complete heights, roofs, interiors or global uniformity.",
+        "Public map tile servers prohibit bulk/prefetch use; obtain proper data extracts.",
+        "ODbL does not automatically require the entire game source to use ODbL."
+      ],
+      "sourceIds": [
+        "tools-osm-license",
+        "tools-odbl",
+        "tools-osm-produced-work",
+        "tools-osm-tiles"
+      ]
+    },
+    {
+      "id": "copernicus-dem",
+      "name": "Copernicus DEM GLO-30 / GLO-90",
+      "kind": "elevation_data_source",
+      "platforms": [
+        "GIS",
+        "Terrain pipelines"
+      ],
+      "useCases": [
+        "Regional terrain context",
+        "Background landform mesh"
+      ],
+      "inputData": [
+        "30m/90m digital surface model"
+      ],
+      "licenseSummary": "Free-use dataset license with required source, modification and liability notices; EEA-10 has different access rights.",
+      "exportGuidance": "Use the license for the exact instance and carry its required notices into the derived terrain package.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "DSM includes surface objects; it is not a bare-earth DTM.",
+        "Sampling cannot resolve building ornament or survey-level site details.",
+        "Access methods may require registration; no access configured."
+      ],
+      "sourceIds": [
+        "tools-copernicus-dem",
+        "tools-copernicus-dem-license"
+      ]
+    },
+    {
+      "id": "usgs-3dep",
+      "name": "USGS 3DEP",
+      "kind": "elevation_data_source",
+      "platforms": [
+        "GIS",
+        "Point-cloud and terrain pipelines"
+      ],
+      "useCases": [
+        "U.S. site terrain",
+        "LiDAR-backed context with metadata"
+      ],
+      "inputData": [
+        "DEM",
+        "LiDAR point cloud where available"
+      ],
+      "licenseSummary": "USGS identifies 3DEP products as public domain; preserve source/metadata citations.",
+      "exportGuidance": "Prefer available project-quality terrain with verified datum/epoch; include original dataset identifiers in derived meshes.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Coverage, resolution and acquisition dates vary.",
+        "One-meter DEM availability is not universal.",
+        "DEM terrain does not provide facade/interior geometry."
+      ],
+      "sourceIds": [
+        "tools-usgs-3dep"
+      ]
+    },
+    {
+      "id": "srtm",
+      "name": "SRTM 1 Arc-Second Global",
+      "kind": "elevation_data_source",
+      "platforms": [
+        "GIS",
+        "Terrain pipelines"
+      ],
+      "useCases": [
+        "Broad regional terrain",
+        "Fallback elevation context"
+      ],
+      "inputData": [
+        "Elevation grid, approximately 30m sampling"
+      ],
+      "licenseSummary": "USGS-distributed open elevation product; retain NASA/USGS product citation and inspect delivery metadata.",
+      "exportGuidance": "Create regional terrain from the reviewed elevation grid; keep source resolution and EGM96 vertical datum recorded.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Near-global latitude coverage, not polar coverage; voids can remain.",
+        "Source acquisition was in 2000.",
+        "Thirty-meter sampling is unsuitable for fine architecture or current survey claims."
+      ],
+      "sourceIds": [
+        "tools-srtm"
+      ]
+    },
+    {
+      "id": "3dbag",
+      "name": "3DBAG",
+      "kind": "open_city_model",
+      "platforms": [
+        "GIS",
+        "Blender",
+        "3D Tiles viewers"
+      ],
+      "useCases": [
+        "Reusable Dutch city context",
+        "Roof-form and building-massing study"
+      ],
+      "inputData": [
+        "CityJSON",
+        "OBJ",
+        "GeoPackage",
+        "Other documented deliveries"
+      ],
+      "licenseSummary": "CC BY 4.0 data with specified creator credit, license link and modification notice.",
+      "exportGuidance": "Good candidate for permitted mesh conversion and game-context derivatives with retained attribution and change history.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Netherlands only.",
+        "LoD1.2/1.3/2.2 are city-model levels, not complete architectural interiors or ornaments.",
+        "Generated models and problematic-input fallbacks require local QA."
+      ],
+      "sourceIds": [
+        "tools-3dbag",
+        "tools-3dbag-license"
+      ]
+    },
+    {
+      "id": "smithsonian-3d",
+      "name": "Smithsonian Open Access 3D",
+      "kind": "heritage_asset_source",
+      "platforms": [
+        "Web",
+        "Blender",
+        "Game pipelines"
+      ],
+      "useCases": [
+        "Item-specific heritage reference",
+        "Reusable artifacts where marked CC0"
+      ],
+      "inputData": [
+        "GLB/glTF",
+        "OBJ",
+        "Item metadata"
+      ],
+      "licenseSummary": "Only assets explicitly designated CC0 receive the Open Access copyright waiver; other rights can remain.",
+      "exportGuidance": "Record the exact object's CC0 designation and source URL; keep scholarly credit even when not required.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "A museum collection label does not establish every file's license.",
+        "Trademark, privacy/publicity or cultural restrictions may require separate review.",
+        "No asset downloaded or represented as cleared in this catalog."
+      ],
+      "sourceIds": [
+        "tools-smithsonian"
+      ]
+    },
+    {
+      "id": "openheritage3d",
+      "name": "Open Heritage 3D",
+      "kind": "heritage_scan_source",
+      "platforms": [
+        "Point-cloud",
+        "Photogrammetry",
+        "Blender"
+      ],
+      "useCases": [
+        "Detailed heritage study",
+        "LiDAR/photogrammetry research with per-site permission"
+      ],
+      "inputData": [
+        "Site scans",
+        "Photogrammetry photographs",
+        "Dataset DOI and metadata"
+      ],
+      "licenseSummary": "Creative Commons terms differ per dataset; many prohibit commercial use.",
+      "exportGuidance": "Approve the exact dataset license before processing; exclude non-commercial-only scans from commercial game distributions unless separately licensed.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Open access is not a universal commercial reuse grant.",
+        "Large raw scans need meshing, cleanup and validation.",
+        "Published research references do not automatically license underlying photos or meshes."
+      ],
+      "sourceIds": [
+        "tools-openheritage"
+      ]
+    },
+    {
+      "id": "meshroom",
+      "name": "Meshroom / AliceVision",
+      "kind": "photogrammetry_application",
+      "platforms": [
+        "Compatible desktop or worker installation"
+      ],
+      "useCases": [
+        "Photogrammetry from authorized photographs",
+        "Ornament and facade reconstruction"
+      ],
+      "inputData": [
+        "Own or expressly licensed overlapping photographs",
+        "Scale/control measurements"
+      ],
+      "licenseSummary": "Meshroom MPL-2.0 software; plugins/dependencies and image/capture rights remain separate.",
+      "exportGuidance": "Generate a measured reconstruction, preserve capture/processing provenance, then retopologize and derive licensed game assets.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Release/plugin/hardware requirements must be reviewed before unattended use.",
+        "Unscaled reconstruction cannot establish real dimensions.",
+        "No reconstruction job or installation was performed."
+      ],
+      "sourceIds": [
+        "tools-meshroom"
+      ]
+    },
+    {
+      "id": "google-open-buildings",
+      "name": "Google Research Open Buildings",
+      "kind": "open_footprint_data",
+      "platforms": [
+        "GIS",
+        "Procedural building pipelines"
+      ],
+      "useCases": [
+        "Regional building-footprint context",
+        "Supplemental coverage with human QA"
+      ],
+      "inputData": [
+        "Detected building polygons and confidence metadata"
+      ],
+      "licenseSummary": "Choose CC BY 4.0 or ODbL under the published dual-license offer; record the selected license.",
+      "exportGuidance": "Use the separately licensed research dataset and its citation, not extracted Google Maps tiles.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Predicted footprints can contain omissions, false detections and shape errors.",
+        "Footprints are not measured heights, detailed facades or interiors.",
+        "Coverage and release must be checked for the target region."
+      ],
+      "sourceIds": [
+        "tools-open-buildings"
+      ]
+    },
+    {
+      "id": "eox-cloudless",
+      "name": "EOxCloudless imagery",
+      "kind": "imagery_data_service",
+      "platforms": [
+        "GIS",
+        "Map/terrain visualization"
+      ],
+      "useCases": [
+        "Regional background imagery under vintage-specific terms"
+      ],
+      "inputData": [
+        "Sentinel-derived image mosaics"
+      ],
+      "licenseSummary": "2016 vintage: CC BY 4.0; newer public mosaics: non-commercial/share-alike or separate commercial license.",
+      "exportGuidance": "Record exact vintage and delivery terms before draping/exporting; retain required visible credit on media.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Do not transfer the 2016 license to a newer mosaic.",
+        "Public endpoint availability does not authorize unrestricted bulk redistribution.",
+        "This imagery is context, not facade-level architectural evidence."
+      ],
+      "sourceIds": [
+        "tools-eox-license",
+        "tools-eox-faq"
+      ]
+    },
+    {
+      "id": "3d-tiles",
+      "name": "OGC 3D Tiles",
+      "kind": "data_standard",
+      "platforms": [
+        "Compatible GIS and engine renderers"
+      ],
+      "useCases": [
+        "Hierarchical streaming of licensed large 3D scenes"
+      ],
+      "inputData": [
+        "Geospatial 3D content with explicit rights"
+      ],
+      "licenseSummary": "Open technical standard; each tileset's content license is independent.",
+      "exportGuidance": "An open container is not permission to cache, extract, rehost or redistribute its payload.",
+      "automationStatus": "manual_review",
+      "limitations": [
+        "Renderer compatibility does not imply provider authorization.",
+        "Use self-owned or explicitly reusable tilesets for offline/export workflows."
+      ],
+      "sourceIds": [
+        "tools-3dtiles",
+        "tools-google-terms"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "concept-product-exists",
+      "claim": "Concept Studio OSM is a Blender city-import add-on.",
+      "verdict": "verified",
+      "assessment": "The Concept Studio seller page exists at the matching slug; its current title is Blender City Importer. This verifies the offering, not installed functionality.",
+      "sourceIds": [
+        "tools-concept-product"
+      ]
+    },
+    {
+      "id": "concept-map-import",
+      "claim": "Address/area selection imports Google 3D geometry, textures and streets.",
+      "verdict": "partly_supported",
+      "assessment": "The creator advertises mapped selection and 3D import. Google's product is a textured mesh; visible streets are not thereby editable road networks. OSM is a distinct vector-derived path.",
+      "sourceIds": [
+        "tools-concept-demo",
+        "tools-google-3d",
+        "tools-blosm-docs"
+      ]
+    },
+    {
+      "id": "concept-precision",
+      "claim": "The import is georeferenced and correctly scaled.",
+      "verdict": "partly_supported",
+      "assessment": "The creator describes precise coordinate handling. No independent control-point or dimensional test was performed; numeric placement precision does not establish source survey accuracy.",
+      "sourceIds": [
+        "tools-concept-demo"
+      ]
+    },
+    {
+      "id": "concept-lighting-zones",
+      "claim": "Automatic lighting and high/low-detail rings improve imports.",
+      "verdict": "partly_supported",
+      "assessment": "The creator advertises scene-light response and distance-based detail controls. Their quality, savings and reproducibility remain untested here.",
+      "sourceIds": [
+        "tools-concept-demo"
+      ]
+    },
+    {
+      "id": "concept-under-minute",
+      "claim": "A full city block imports in under one minute or 60 seconds.",
+      "verdict": "unverified",
+      "assessment": "No repeatable benchmark specifying area, detail, hardware, network and cold-cache state was established. A creator's real-time demonstration cannot guarantee arbitrary project latency.",
+      "sourceIds": [
+        "tools-concept-demo"
+      ]
+    },
+    {
+      "id": "google-terrain-versus-dem",
+      "claim": "Terrain comes from Google 3D Tiles rather than a DEM.",
+      "verdict": "partly_supported",
+      "assessment": "That describes the photogrammetric mesh route. The product also advertises a separate SRTM elevation route; the claim does not describe every import mode.",
+      "sourceIds": [
+        "tools-google-3d",
+        "tools-concept-product",
+        "tools-srtm"
+      ]
+    },
+    {
+      "id": "google-urban-rural-coverage",
+      "claim": "Major cities are covered and rural areas are only 2D.",
+      "verdict": "partly_supported",
+      "assessment": "Google describes photorealistic mesh coverage in many populated areas, not every city. The supplied urban/rural rule is too absolute; check the requested location and current product access.",
+      "sourceIds": [
+        "tools-google-3d",
+        "tools-google-coverage",
+        "tools-google-eea"
+      ]
+    },
+    {
+      "id": "google-personal-archviz-exception",
+      "claim": "Personal and archviz uses are usually fine; only commercial games need a terms check.",
+      "verdict": "misleading",
+      "assessment": "The reviewed Google agreement does not establish that blanket exemption. Extraction, storage, derived-content and redistribution conditions depend on the implementation and applicable license, not merely its personal/archviz label.",
+      "sourceIds": [
+        "tools-google-terms",
+        "tools-google-service-terms",
+        "tools-google-tile-policy"
+      ]
+    },
+    {
+      "id": "concept-discount",
+      "claim": "CONCEPT50 offers 50% off the paid add-on.",
+      "verdict": "verified",
+      "assessment": "The current official seller page advertises that code and displays $49. This verifies advertised pricing only; the Instagram-bio placement, checkout eligibility, tax and successful redemption were not verified.",
+      "sourceIds": [
+        "tools-concept-product"
+      ]
+    },
+    {
+      "id": "concept-other-apps",
+      "claim": "Related products exist for SketchUp, Unreal, Cinema 4D, Maya and 3ds Max.",
+      "verdict": "verified",
+      "assessment": "The creator storefront advertises those separate products. Feature parity, supported host versions and cross-product licensing were not tested.",
+      "sourceIds": [
+        "tools-concept-store"
+      ]
+    },
+    {
+      "id": "blosm-only-osm",
+      "claim": "Free Blosm uses OSM instead of Google and cannot import textured Google cities.",
+      "verdict": "misleading",
+      "assessment": "The current free/base listing explicitly supports Google and other providers' 3D Tiles as well as OSM. Its untextured OSM mode must not be confused with its separate photogrammetric mode.",
+      "sourceIds": [
+        "tools-blosm-base",
+        "tools-blosm-repo"
+      ]
+    },
+    {
+      "id": "blosm-free-everywhere",
+      "claim": "Blosm is free and works everywhere.",
+      "verdict": "partly_supported",
+      "assessment": "The base add-on can be obtained for zero payment. Data completeness, provider costs/terms, regional Google restrictions and terrain coverage still vary; free software is not universal free data.",
+      "sourceIds": [
+        "tools-blosm-base",
+        "tools-google-eea",
+        "tools-srtm",
+        "tools-osm-tiles"
+      ]
+    },
+    {
+      "id": "blosm-real-facades",
+      "claim": "Blosm Premium textures reproduce the actual appearance of each OSM building.",
+      "verdict": "misleading",
+      "assessment": "Pro documentation explicitly distinguishes its generic facade materials from actual per-building photographs.",
+      "sourceIds": [
+        "tools-blosm-pro"
+      ]
+    },
+    {
+      "id": "no-key-means-open",
+      "claim": "A no-key photo-mesh source is automatically open and reusable.",
+      "verdict": "unverified",
+      "assessment": "The current seller page advertises an additional no-key source without identifying its licensing in the reviewed text. No-key access alone establishes neither ownership nor export permission.",
+      "sourceIds": [
+        "tools-concept-product"
+      ]
+    },
+    {
+      "id": "open-format-open-content",
+      "claim": "3D Tiles, glTF, GPL software or an importer license makes downloaded content freely redistributable.",
+      "verdict": "misleading",
+      "assessment": "Format, software and dataset rights are separate. Evaluate the actual payload license and service agreement before creating a distributable asset.",
+      "sourceIds": [
+        "tools-3dtiles",
+        "tools-google-terms",
+        "tools-blosm-repo"
+      ]
+    },
+    {
+      "id": "open-heritage-commercial",
+      "claim": "All open heritage scans can be shipped in commercial games.",
+      "verdict": "misleading",
+      "assessment": "Open Heritage 3D licenses vary and many prohibit commercial use. Smithsonian's reuse offer applies to assets expressly marked CC0, with other rights still possible.",
+      "sourceIds": [
+        "tools-openheritage",
+        "tools-smithsonian"
+      ]
+    }
+  ]
+}

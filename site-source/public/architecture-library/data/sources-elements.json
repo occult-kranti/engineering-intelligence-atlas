@@ -1,0 +1,200 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "elements-english-heritage-stones",
+      "title": "The Stones of Stonehenge",
+      "url": "https://www.english-heritage.org.uk/visit/places/stonehenge/things-to-do/stone-circle/stones-of-stonehenge",
+      "publisher": "English Heritage",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "standing-stone",
+        "post-and-lintel"
+      ]
+    },
+    {
+      "id": "elements-smithsonian-pyramid",
+      "title": "The Egyptian Pyramid",
+      "url": "https://www.si.edu/spotlight/ancient-egypt/pyramid",
+      "publisher": "Smithsonian Institution",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "stepped-pyramid",
+        "smooth-pyramid"
+      ]
+    },
+    {
+      "id": "elements-inah-chichen",
+      "title": "Chichen Itza: architectural descriptions",
+      "url": "https://lugares.inah.gob.mx/es/node/4335",
+      "publisher": "Instituto Nacional de Antropologia e Historia (INAH)",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "terrace-platform",
+        "monumental-stair"
+      ]
+    },
+    {
+      "id": "elements-met-greek",
+      "title": "Architecture in Ancient Greece",
+      "url": "https://www.metmuseum.org/essays/architecture-in-ancient-greece",
+      "publisher": "The Metropolitan Museum of Art",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "column",
+        "capital",
+        "entablature"
+      ]
+    },
+    {
+      "id": "elements-illinois-glossary",
+      "title": "The Design of the Built Environment: Glossary",
+      "url": "https://iopn.library.illinois.edu/pressbooks/designbuiltenvironment/back-matter/glossary/",
+      "publisher": "Kevin J. Hinders / University of Illinois Library",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "post-and-lintel",
+        "true-arch",
+        "voussoir",
+        "barrel-vault",
+        "pier",
+        "oculus",
+        "truss"
+      ]
+    },
+    {
+      "id": "elements-english-heritage-jewel",
+      "title": "Description of the Jewel Tower",
+      "url": "https://www.english-heritage.org.uk/visit/places/jewel-tower/history/description/",
+      "publisher": "English Heritage",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "barrel-vault",
+        "rib-vault"
+      ]
+    },
+    {
+      "id": "elements-pantheon-ministry",
+      "title": "Pantheon",
+      "url": "https://direzionemuseiroma.cultura.gov.it/en/pantheon/",
+      "publisher": "Italian Ministry of Culture, Direzione Musei nazionali della citta di Roma",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "dome",
+        "shell"
+      ]
+    },
+    {
+      "id": "elements-vam-gothic",
+      "title": "The Gothic style: an introduction",
+      "url": "https://www.vam.ac.uk/articles/the-gothic-style-an-introduction",
+      "publisher": "Victoria and Albert Museum",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "pointed-arch",
+        "rib-vault",
+        "flying-buttress"
+      ]
+    },
+    {
+      "id": "elements-unesco-chola",
+      "title": "Great Living Chola Temples",
+      "url": "https://whc.unesco.org/en/list/250/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "vimana"
+      ]
+    },
+    {
+      "id": "elements-getty-corbel",
+      "title": "Art and Architecture Thesaurus: corbels, 300003610",
+      "url": "https://www.getty.edu/vow/AATFullDisplay?subjectid=300003610",
+      "publisher": "Getty Research Institute",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "corbel"
+      ]
+    },
+    {
+      "id": "elements-prince-gong-brackets",
+      "title": "Bracket sets",
+      "url": "https://en.pgm.org.cn/2024-04/18/c_1122470.htm",
+      "publisher": "Prince Kung's Palace Museum",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "timber-post-beam",
+        "bracket-set"
+      ]
+    },
+    {
+      "id": "elements-getty-purlin",
+      "title": "Art and Architecture Thesaurus: purlins, 300002399",
+      "url": "https://www.getty.edu/vow/AATFullDisplay?subjectid=300002399",
+      "publisher": "Getty Research Institute",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "purlin"
+      ]
+    },
+    {
+      "id": "elements-alhambra-court",
+      "title": "The court of the lions",
+      "url": "https://www.alhambra-patronato.es/en/edificios-lugares/the-court-of-the-lions",
+      "publisher": "Patronato de la Alhambra y Generalife",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "courtyard",
+        "arcade"
+      ]
+    },
+    {
+      "id": "elements-wsp-hearst",
+      "title": "Hearst Tower, New York",
+      "url": "https://www.wsp.com/en-us/projects/hearst-tower-new-york",
+      "publisher": "WSP, project structural engineer",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "diagrid"
+      ]
+    },
+    {
+      "id": "elements-istructe-gridshell",
+      "title": "The Savill Garden gridshell: design and construction (2008), public abstract",
+      "url": "https://www.istructe.org/journal/volumes/volume-86-(published-in-2008)/issue-17/the-savill-garden-gridshell-design-and-constructio/",
+      "publisher": "Richard Harris, Steve Haskins and Jonathan Roynon / Institution of Structural Engineers",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "gridshell",
+        "shell"
+      ]
+    },
+    {
+      "id": "elements-mero-spaceframe",
+      "title": "Spaceframe System",
+      "url": "https://www.mero.com.sg/fa%C3%A7ade-system/spaceframe-system/",
+      "publisher": "MERO, system designer and manufacturer",
+      "kind": "primary",
+      "accessed": "2026-11-24",
+      "supports": [
+        "space-frame",
+        "truss"
+      ]
+    }
+  ]
+}

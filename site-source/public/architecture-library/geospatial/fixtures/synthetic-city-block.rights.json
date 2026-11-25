@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "datasetId": "original-synthetic-city-block-v1",
+  "title": "Original synthetic city block; not a real mapped location",
+  "source": {
+    "kind": "original_synthetic",
+    "publisher": "Daftar architecture-library example",
+    "uri": "urn:daftar:synthetic:city-block-v1",
+    "acquired": "2026-11-25",
+    "description": "Invented coordinate rectangles, an L shape, a courtyard and two pavilions. Created from scratch for this example; not traced, extracted or imported from OpenStreetMap, Google, imagery, terrain or a real city."
+  },
+  "rights": {
+    "licenseId": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "attribution": "Original synthetic city-block fixture created for the Daftar architecture-library example (CC0-1.0).",
+    "reviewedBy": "Daftar example author",
+    "reviewedAt": "2026-11-25",
+    "allowDerivatives": true,
+    "allowRedistribution": true,
+    "allowCommercialUse": true,
+    "thirdPartyRestrictionsReviewed": true,
+    "databaseObligationsReviewed": true,
+    "reviewNote": "Original invented geometry and dimensions with no third-party map content. No external data source or inherited database rights are involved. This review record applies only to this exact hash-bound fixture."
+  },
+  "input": {
+    "sha256": "e8a6fe69a4d23bd7020d18eafeb607a19b20f7c79dc393887b2af43b4fe9224a",
+    "crs": "EPSG:4326",
+    "axisOrder": "longitude-latitude",
+    "heightUnit": "metre"
+  },
+  "projection": {
+    "method": "local-equirectangular",
+    "origin": [
+      0,
+      0
+    ]
+  },
+  "limitations": [
+    "Synthetic coordinates use an arbitrary reference origin and do not describe real buildings or a real city.",
+    "Heights, layouts and materials are illustrative inventions, not measurements.",
+    "No terrain elevation, roof shape, facade detail or structural behavior is inferred."
+  ]
+}

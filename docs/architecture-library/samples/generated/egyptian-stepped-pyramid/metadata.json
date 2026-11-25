@@ -1,0 +1,89 @@
+{
+  "objectCount": 7,
+  "vertexCount": 56,
+  "triangleCount": 84,
+  "dimensionsMeters": [
+    10.8,
+    10.8,
+    6.78
+  ],
+  "boundsMeters": {
+    "min": [
+      -5.4000001,
+      -5.4000001,
+      -0.18
+    ],
+    "max": [
+      5.4000001,
+      5.4000001,
+      6.6000004
+    ]
+  },
+  "geometrySha256": "8bd443cad6a731ce04b918a164ce806db6a9313e49edde736331d68ab78be034",
+  "schemaVersion": 1,
+  "id": "egyptian-stepped-pyramid",
+  "name": "Egyptian stepped-massing study",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "base": 10.0,
+    "height": 6.6,
+    "tiers": 6
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-smithsonian-pyramid"
+  ],
+  "elementIds": [
+    "stepped-pyramid"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "Invented proportions; not Djoser's complex or any measured archaeological monument.",
+    "Internal chambers, masonry bonding, surrounding funerary complex and construction history are omitted."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/egyptian-stepped-pyramid/sample.blend",
+      "bytes": 91058,
+      "sha256": "57a89352c7b1e263ba09e5ddb6228c154749e0a8da2a015a39ee4271976597ce"
+    },
+    "glb": {
+      "path": "samples/generated/egyptian-stepped-pyramid/sample.glb",
+      "bytes": 11972,
+      "sha256": "f7ee971a8f6f1321de422e209f48a4573cdb70f505b14542890931a1230ae79b"
+    },
+    "preview": {
+      "path": "samples/generated/egyptian-stepped-pyramid/preview.png",
+      "bytes": 111145,
+      "sha256": "067b38aecde57c78a321557e42157ae7b561c5914f077f16754d6ba20bd30b15"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.691,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

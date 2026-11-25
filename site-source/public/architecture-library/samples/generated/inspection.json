@@ -1,0 +1,251 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "sampleCount": 14,
+  "verifiedFileHashes": 56,
+  "boundsToleranceMeters": 0.0002,
+  "inspectionSeconds": 1.965,
+  "manifestSha256": "286ecdaa23f940a7983505e862a203cd1ed1de085698f4d823b9870d61050d99",
+  "inspectorSha256": "7f573283e58f6e0473290700050485a8599c2c1c700a9b705e9171218c64cbab",
+  "checks": [
+    "All manifest and metadata hashes match",
+    "All Blender sources reopened with scripts disabled",
+    "All sources use metres and contain no embedded text scripts or linked libraries",
+    "All GLBs parsed and reimported without external resources",
+    "Object and triangle counts match; bounds match within 0.2 mm",
+    "Finite, nondegenerate geometry",
+    "All PNGs decoded at 384 x 384 with nonblank image content"
+  ],
+  "samples": [
+    {
+      "id": "arch-barrel-vault",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 93,
+      "triangleCount": 1116,
+      "dimensionsMeters": [
+        5.81,
+        5.2,
+        4.268344
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "chinese-timber-bracket-bay",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 89,
+      "triangleCount": 1786,
+      "dimensionsMeters": [
+        7.2,
+        5.89,
+        4.28
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "classical-colonnade",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 33,
+      "triangleCount": 1420,
+      "dimensionsMeters": [
+        9.0,
+        5.6,
+        4.85
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "courtyard-arcade",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 126,
+      "triangleCount": 2088,
+      "dimensionsMeters": [
+        7.15,
+        7.15,
+        3.160001
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "dome-oculus",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 31,
+      "triangleCount": 2856,
+      "dimensionsMeters": [
+        7.380751,
+        7.310376,
+        5.311118
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "dravida-tower",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 47,
+      "triangleCount": 612,
+      "dimensionsMeters": [
+        5.75,
+        5.75,
+        6.96
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "egyptian-smooth-pyramid",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 2,
+      "triangleCount": 18,
+      "dimensionsMeters": [
+        10.8,
+        10.8,
+        7.18
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "egyptian-stepped-pyramid",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 7,
+      "triangleCount": 84,
+      "dimensionsMeters": [
+        10.8,
+        10.8,
+        6.78
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "gothic-rib-buttress",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 149,
+      "triangleCount": 1788,
+      "dimensionsMeters": [
+        8.96,
+        5.56,
+        6.056187
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "gridshell-canopy",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 153,
+      "triangleCount": 1836,
+      "dimensionsMeters": [
+        9.0,
+        7.0,
+        4.529687
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "megalithic-ring",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 25,
+      "triangleCount": 300,
+      "dimensionsMeters": [
+        9.9,
+        9.9,
+        3.41
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "mesoamerican-terrace-stair",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 36,
+      "triangleCount": 432,
+      "dimensionsMeters": [
+        12.8,
+        13.505999,
+        6.605
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "modern-diagrid",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 45,
+      "triangleCount": 540,
+      "dimensionsMeters": [
+        5.76,
+        5.76,
+        12.28
+      ],
+      "externalResources": 0
+    },
+    {
+      "id": "space-frame",
+      "status": "passed",
+      "blendReopened": true,
+      "glbReimported": true,
+      "previewDecoded": true,
+      "hashesMatch": true,
+      "objectCount": 102,
+      "triangleCount": 1424,
+      "dimensionsMeters": [
+        5.778885,
+        5.770128,
+        3.78
+      ],
+      "externalResources": 0
+    }
+  ],
+  "limitations": [
+    "No structural, construction, heritage accuracy, watertightness or manufacturing certification.",
+    "This checks saved geometry and interoperability; visual review is recorded separately in README.md."
+  ]
+}

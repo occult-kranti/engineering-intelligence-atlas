@@ -1,5 +1,16 @@
 # Daftar — personal agent office
 
+## Architecture and built heritage library — 2026-11-24
+
+The [interactive architecture library](https://occult-kranti.github.io/engineering-intelligence-atlas/architecture-library/index.html)
+adds a sourced chronology of **62 buildings and places**, **30 structural elements**,
+**14 original Blender/GLB studies**, and a **22-entry geospatial tool and data audit**.
+Its **150 primary sources** distinguish observed construction phases, uncertainty,
+source-data rights and conceptual geometry. The [project guide](projects/architecture-library/README.md)
+includes local/VPS serving, a bounded synthetic GeoJSON importer, source records,
+sample generation, real Blender inspection and existing Donna/graphics/MCP workflows.
+The models are original teaching studies; no Google tiles or third-party scans are bundled.
+
 ## Creative tools and VPS connection — 2026-11-24
 
 The [creative VPS pack](deploy/creative/README.md) adds a verified Blender installer,

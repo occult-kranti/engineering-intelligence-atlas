@@ -1,0 +1,92 @@
+{
+  "objectCount": 36,
+  "vertexCount": 288,
+  "triangleCount": 432,
+  "dimensionsMeters": [
+    12.8,
+    13.505999,
+    6.605
+  ],
+  "boundsMeters": {
+    "min": [
+      -6.4000001,
+      -7.1059999,
+      -0.18
+    ],
+    "max": [
+      6.4000001,
+      6.3999996,
+      6.4250002
+    ]
+  },
+  "geometrySha256": "c8bfc95e39a822fe7ba076ffd0fa2c651bf078a785c75808cf9cd96f29a43761",
+  "schemaVersion": 1,
+  "id": "mesoamerican-terrace-stair",
+  "name": "Maya terrace-and-stair study",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "base": 12.0,
+    "height": 4.8,
+    "tiers": 6,
+    "stairs": 24
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-inah-chichen"
+  ],
+  "elementIds": [
+    "terrace-platform",
+    "monumental-stair",
+    "post-and-lintel"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "An abstract study informed by INAH's Chichen Itza descriptions; not El Castillo or a universal Mesoamerican type.",
+    "No sacred iconography, calendrical alignment, authentic stair dimensions, site context or archaeological reconstruction is claimed."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/mesoamerican-terrace-stair/sample.blend",
+      "bytes": 100439,
+      "sha256": "e1ab26400c15c6b39fd2bd9c72e58fbfd3dac1f5824480c76050f3522285f51e"
+    },
+    "glb": {
+      "path": "samples/generated/mesoamerican-terrace-stair/sample.glb",
+      "bytes": 54392,
+      "sha256": "f86ed98e0348d05bd356fea69256a5bde039724322a1192d724ea6fd3a9f759f"
+    },
+    "preview": {
+      "path": "samples/generated/mesoamerican-terrace-stair/preview.png",
+      "bytes": 112379,
+      "sha256": "25269e09155a5160a474e6b0977b74442d5b1de1b321481646e780c48a7a5892"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.562,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

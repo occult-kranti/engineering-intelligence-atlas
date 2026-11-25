@@ -1,0 +1,186 @@
+{
+  "schemaVersion": 1,
+  "createdAt": "2026-11-25T03:01:00.159388+00:00",
+  "datasetId": "original-synthetic-city-block-v1",
+  "synthetic": true,
+  "purpose": "Offline reviewed GeoJSON building massing",
+  "blenderVersion": "4.5.17 LTS",
+  "inputs": {
+    "geojson": {
+      "name": "synthetic-city-block.geojson",
+      "bytes": 3842,
+      "sha256": "e8a6fe69a4d23bd7020d18eafeb607a19b20f7c79dc393887b2af43b4fe9224a"
+    },
+    "ledger": {
+      "name": "synthetic-city-block.rights.json",
+      "bytes": 1894,
+      "sha256": "4e1d457b9612317f25a78b6d7a458ae51b169258b0fbd539140f9b54f429fb76"
+    }
+  },
+  "generator": {
+    "footprints.py": "8cf12cf9420c1cb9ee1926652ab61b43050abae9fd54676527f608e113421cf5",
+    "import_blender.py": "2dc461876d27f1f487434681719218fdab6cfd418225ece58e2db218e97c9de9"
+  },
+  "source": {
+    "kind": "original_synthetic",
+    "publisher": "Daftar architecture-library example",
+    "uri": "urn:daftar:synthetic:city-block-v1",
+    "acquired": "2026-11-25",
+    "description": "Invented coordinate rectangles, an L shape, a courtyard and two pavilions. Created from scratch for this example; not traced, extracted or imported from OpenStreetMap, Google, imagery, terrain or a real city."
+  },
+  "rights": {
+    "licenseId": "CC0-1.0",
+    "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+    "attribution": "Original synthetic city-block fixture created for the Daftar architecture-library example (CC0-1.0).",
+    "reviewedBy": "Daftar example author",
+    "reviewedAt": "2026-11-25",
+    "allowDerivatives": true,
+    "allowRedistribution": true,
+    "allowCommercialUse": true,
+    "thirdPartyRestrictionsReviewed": true,
+    "databaseObligationsReviewed": true,
+    "reviewNote": "Original invented geometry and dimensions with no third-party map content. No external data source or inherited database rights are involved. This review record applies only to this exact hash-bound fixture."
+  },
+  "projection": {
+    "method": "local-equirectangular",
+    "sourceCrs": "EPSG:4326",
+    "inputAxisOrder": "longitude-latitude",
+    "originLongitudeLatitude": [
+      0.0,
+      0.0
+    ],
+    "sphereRadiusMeters": 6371008.8,
+    "blendAxes": {
+      "x": "east",
+      "y": "north",
+      "z": "up"
+    },
+    "glbAxes": {
+      "x": "east",
+      "y": "up",
+      "z": "south"
+    },
+    "heightDatum": "flat synthetic/local base at z=0; no geodetic vertical datum",
+    "maxExtentMeters": 1000.0,
+    "maxOriginDistanceMeters": 1000.0,
+    "limitations": "Small-area spherical approximation, not an EPSG projected CRS or survey transformation."
+  },
+  "counts": {
+    "features": 4,
+    "polygons": 5,
+    "holes": 1,
+    "vertices": 26,
+    "normalizedRingWindings": 0
+  },
+  "boundsMeters": {
+    "x": [
+      -61.1572941284431,
+      72.27680215179639
+    ],
+    "y": [
+      -38.91827808173652,
+      50.0377861050898
+    ]
+  },
+  "geometryChecks": [
+    {
+      "featureId": "workshop",
+      "meshVertices": 8,
+      "meshFaces": 8,
+      "closedManifold": true,
+      "expectedVolumeCubicMeters": 17804.65805012422,
+      "actualVolumeCubicMeters": 17804.658319607606,
+      "relativeVolumeError": 1.513555525065666e-08
+    },
+    {
+      "featureId": "courtyard",
+      "meshVertices": 16,
+      "meshFaces": 24,
+      "closedManifold": true,
+      "expectedVolumeCubicMeters": 15690.35490667197,
+      "actualVolumeCubicMeters": 15690.354862607684,
+      "relativeVolumeError": 2.808367657090497e-09
+    },
+    {
+      "featureId": "corner",
+      "meshVertices": 12,
+      "meshFaces": 14,
+      "closedManifold": true,
+      "expectedVolumeCubicMeters": 22322.590030343243,
+      "actualVolumeCubicMeters": 22322.591393864495,
+      "relativeVolumeError": 6.108257378686534e-08
+    },
+    {
+      "featureId": "pavilions",
+      "meshVertices": 16,
+      "meshFaces": 16,
+      "closedManifold": true,
+      "expectedVolumeCubicMeters": 10282.19002394674,
+      "actualVolumeCubicMeters": 10282.190191026135,
+      "relativeVolumeError": 1.624939774572981e-08
+    }
+  ],
+  "actualGeometry": {
+    "sceneObjects": 7,
+    "sceneMeshObjects": 5,
+    "buildingObjects": 4,
+    "buildingMeshVertices": 52,
+    "buildingMeshFaces": 62,
+    "buildingTriangles": 88,
+    "buildingBoundsMeters": {
+      "min": [
+        -61.15729522705078,
+        -38.918277740478516,
+        0.0
+      ],
+      "max": [
+        72.27680206298828,
+        50.037784576416016,
+        18.0
+      ]
+    },
+    "buildingDimensionsMeters": [
+      133.43409729003906,
+      88.95606231689453,
+      18.0
+    ],
+    "coincidentVertexWeldToleranceMeters": 0.0001
+  },
+  "glbCheck": {
+    "version": 2,
+    "meshCount": 4,
+    "buildingNodes": 4,
+    "triangles": 88,
+    "primitivePositionVertices": 116,
+    "externalResources": 0
+  },
+  "outputs": [
+    {
+      "path": "city-block.blend",
+      "bytes": 95582,
+      "sha256": "c2936f5012e87ae97a843d7f3ac22eae91502fe1ec97e8169991ac67a9df27bf",
+      "mediaType": "application/x-blender"
+    },
+    {
+      "path": "city-block.glb",
+      "bytes": 10568,
+      "sha256": "7e31eeccc0dc8a1ef52adb879f3b20e7be974a27bb69b66ea5f993e6b2db355b",
+      "mediaType": "model/gltf-binary"
+    },
+    {
+      "path": "preview.png",
+      "bytes": 81362,
+      "sha256": "0d6c4bb8e62256d1457fce52a1726eace8c08794e0aa030051b2ac656308f8bf",
+      "mediaType": "image/png"
+    }
+  ],
+  "limitations": [
+    "Synthetic coordinates use an arbitrary reference origin and do not describe real buildings or a real city.",
+    "Heights, layouts and materials are illustrative inventions, not measurements.",
+    "No terrain elevation, roof shape, facade detail or structural behavior is inferred.",
+    "Small-area spherical approximation, not an EPSG projected CRS or survey transformation.",
+    "Flat base only. No DEM, building roofs, interiors, facade reconstruction or survey accuracy is inferred.",
+    "The GLB includes buildings only; the blend also contains an original ground plane, camera and light.",
+    "Rights metadata completeness is checked; its truth and legal sufficiency require the data owner's review."
+  ]
+}

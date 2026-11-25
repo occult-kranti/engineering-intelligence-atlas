@@ -1,0 +1,91 @@
+{
+  "objectCount": 102,
+  "vertexCount": 916,
+  "triangleCount": 1424,
+  "dimensionsMeters": [
+    5.778885,
+    5.770128,
+    3.78
+  ],
+  "boundsMeters": {
+    "min": [
+      -2.8894427,
+      -2.8850639,
+      -0.18
+    ],
+    "max": [
+      2.8894427,
+      2.8850639,
+      3.5999999
+    ]
+  },
+  "geometrySha256": "bb3261f25e4bdc9c9c81279b64814983eebac2eaae4288fcd89de8e5a5f32687",
+  "schemaVersion": 1,
+  "id": "space-frame",
+  "name": "Double-layer space-frame study",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "grid": 4,
+    "spacing": 1.6,
+    "depth": 0.9,
+    "supportHeight": 2.6
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-mero-spaceframe"
+  ],
+  "elementIds": [
+    "space-frame",
+    "truss"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "Spheres and struts symbolize nodes and members; these are not a proprietary connection detail or fabrication model.",
+    "Support conditions, loads, buckling, tolerances and deflection are not checked."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/space-frame/sample.blend",
+      "bytes": 115431,
+      "sha256": "f0f63a484abbd99e2ee37be5e05c064a554e76b39b836d49755fd3a8923ed7e8"
+    },
+    "glb": {
+      "path": "samples/generated/space-frame/sample.glb",
+      "bytes": 196848,
+      "sha256": "bdf438a536c4fe7748ffb18d02f0723bd92106201ad256b647fec00205525d14"
+    },
+    "preview": {
+      "path": "samples/generated/space-frame/preview.png",
+      "bytes": 132190,
+      "sha256": "580df85ecdc6fc01db58439f520ab095535037cfba302a685f3febaa731befb2"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 3.065,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

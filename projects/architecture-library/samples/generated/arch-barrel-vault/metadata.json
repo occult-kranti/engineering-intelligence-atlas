@@ -1,0 +1,95 @@
+{
+  "objectCount": 93,
+  "vertexCount": 744,
+  "triangleCount": 1116,
+  "dimensionsMeters": [
+    5.81,
+    5.2,
+    4.268344
+  ],
+  "boundsMeters": {
+    "min": [
+      -2.9050002,
+      -2.5999999,
+      -0.18
+    ],
+    "max": [
+      2.9050002,
+      2.5999999,
+      4.0883436
+    ]
+  },
+  "geometrySha256": "8a4198b3aa9ac085447d7b29664e225a094f696a00f9d51c3a38b93cd22f8570",
+  "schemaVersion": 1,
+  "id": "arch-barrel-vault",
+  "name": "Voussoir arch and barrel vault",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "radius": 2.0,
+    "springHeight": 1.8,
+    "length": 4.4,
+    "rings": 6,
+    "voussoirs": 15
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-illinois-glossary",
+    "elements-english-heritage-jewel"
+  ],
+  "elementIds": [
+    "true-arch",
+    "voussoir",
+    "barrel-vault",
+    "pier"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "Voussoir gaps are exaggerated for legibility; contact mechanics and centering are not simulated.",
+    "Abutment size and wall thickness are illustrative and have no verified load capacity."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/arch-barrel-vault/sample.blend",
+      "bytes": 111478,
+      "sha256": "26f48ea134eb5947de77393c2fbae286309b415a753752013f4fa2d3e25d8e80"
+    },
+    "glb": {
+      "path": "samples/generated/arch-barrel-vault/sample.glb",
+      "bytes": 113472,
+      "sha256": "7bfa2a729612a284ae1414cf13d81543a322eb487c002c3aaf69ba84d5f3c20f"
+    },
+    "preview": {
+      "path": "samples/generated/arch-barrel-vault/preview.png",
+      "bytes": 119540,
+      "sha256": "8dc51f895ea7564d5f0fdea48d6868dd40ce0d6a70cec2a04cbdda392f6a9b82"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.941,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

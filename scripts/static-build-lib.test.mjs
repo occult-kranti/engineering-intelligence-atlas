@@ -5,6 +5,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { sourceDigest } from './static-build-lib.mjs';
 import { copyCompanyStudio } from './company-studio-assets.mjs';
+import { copyArchitectureLibrary } from './architecture-library-assets.mjs';
 
 function fixture(t) {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-static-inputs-'));
@@ -20,7 +21,9 @@ function fixture(t) {
     write(`site-source/${filename}`, '{}');
   }
   for (const filename of ['build-static.mjs', 'build-desktop-preview.mjs', 'static-build-lib.mjs',
-    'sync-company.mjs', 'company-studio-assets.mjs', 'renderer-assets.mjs']) write(`scripts/${filename}`, '// fixture');
+    'sync-company.mjs', 'company-studio-assets.mjs', 'architecture-library-assets.mjs', 'renderer-assets.mjs']) write(`scripts/${filename}`, '// fixture');
+  write('projects/architecture-library/static-assets.json', JSON.stringify({ schemaVersion: 1, files: ['index.html'] }));
+  write('projects/architecture-library/index.html', '<!doctype html><title>Architecture fixture</title>');
   write('projects/threejs-game-studio/static-assets.json', JSON.stringify({ schema_version: 1, files: ['index.html', 'README.md'] }));
   write('projects/threejs-game-studio/index.html', '<!doctype html><title>Fixture</title>');
   write('projects/threejs-game-studio/README.md', 'Original public studio instructions.\n');
@@ -62,4 +65,18 @@ test('the studio allowlist and asset-building code are covered without reading u
   const withoutReadme = sourceDigest(root);
   write('projects/threejs-game-studio/README.md', 'No longer projected');
   assert.equal(sourceDigest(root), withoutReadme);
+});
+
+test('an architecture source change invalidates identity while its derived copy does not feed back', t => {
+  const { root, write } = fixture(t);
+  const destination = path.join(root, 'site-source/public/architecture-library');
+  copyArchitectureLibrary(root, destination);
+  const original = sourceDigest(root);
+  write('projects/architecture-library/index.html', '<!doctype html><title>New observed phase</title>');
+  const changed = sourceDigest(root);
+  assert.notEqual(changed, original);
+  copyArchitectureLibrary(root, destination);
+  assert.equal(sourceDigest(root), changed);
+  write('projects/architecture-library/private-notes.json', 'Unprojected synthetic fixture');
+  assert.equal(sourceDigest(root), changed);
 });

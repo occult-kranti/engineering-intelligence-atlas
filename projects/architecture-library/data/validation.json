@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "status": "passed",
+  "asOf": "2026-11-24",
+  "monuments": 62,
+  "elements": 30,
+  "samples": 14,
+  "tools": 22,
+  "claims": 16,
+  "primarySources": 150,
+  "regions": [
+    "Africa",
+    "East Asia",
+    "Europe",
+    "Middle East",
+    "North America",
+    "Oceania",
+    "South America",
+    "South Asia",
+    "Southeast Asia"
+  ],
+  "firstYear": -9600,
+  "latestPhaseYear": 2026,
+  "sampleBinaryBytes": 4918406,
+  "sampleTriangles": 16300,
+  "checks": [
+    "required fields and unique IDs",
+    "resolved primary-source references",
+    "signed historical intervals without year zero",
+    "sample element, skill and provenance links",
+    "generator/preset identity",
+    "artifact SHA256 and byte counts",
+    "embedded glTF buffers and image policy",
+    "384px PNG signatures and bounds",
+    "8 MiB sample budget"
+  ],
+  "limitations": [
+    "No live network requests made by this validator.",
+    "Catalog validation does not establish historical completeness or engineering fitness."
+  ]
+}

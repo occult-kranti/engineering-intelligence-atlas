@@ -1,0 +1,299 @@
+{
+  "schemaVersion": 1,
+  "status": "generated",
+  "sourceKind": "original-procedural-schematic",
+  "seed": 20261124,
+  "blenderVersion": "4.5.17 LTS",
+  "sampleCount": 14,
+  "generationSeconds": 40.223,
+  "externalAssets": [],
+  "files": [
+    {
+      "path": "samples/generated/arch-barrel-vault/metadata.json",
+      "bytes": 2879,
+      "sha256": "3516cc32083f8b7e38ec174e77f814128dd66807c008cd5092995dce6d30df3b"
+    },
+    {
+      "path": "samples/generated/arch-barrel-vault/preview.png",
+      "bytes": 119540,
+      "sha256": "8dc51f895ea7564d5f0fdea48d6868dd40ce0d6a70cec2a04cbdda392f6a9b82"
+    },
+    {
+      "path": "samples/generated/arch-barrel-vault/sample.blend",
+      "bytes": 111478,
+      "sha256": "26f48ea134eb5947de77393c2fbae286309b415a753752013f4fa2d3e25d8e80"
+    },
+    {
+      "path": "samples/generated/arch-barrel-vault/sample.glb",
+      "bytes": 113472,
+      "sha256": "7bfa2a729612a284ae1414cf13d81543a322eb487c002c3aaf69ba84d5f3c20f"
+    },
+    {
+      "path": "samples/generated/chinese-timber-bracket-bay/metadata.json",
+      "bytes": 3062,
+      "sha256": "d5c612929b480a6d1fb15c0abdff869c4ba8c21b9a8d4504bf5042f59fcb0a60"
+    },
+    {
+      "path": "samples/generated/chinese-timber-bracket-bay/preview.png",
+      "bytes": 124795,
+      "sha256": "8d799aee38d13d627951e1210775909addd741cc734ac204d9462c636d114c48"
+    },
+    {
+      "path": "samples/generated/chinese-timber-bracket-bay/sample.blend",
+      "bytes": 114995,
+      "sha256": "839caf081d6313f4f3c76dde0a9fb13355d9ba1fdeda1eab2082378fa7204182"
+    },
+    {
+      "path": "samples/generated/chinese-timber-bracket-bay/sample.glb",
+      "bytes": 173996,
+      "sha256": "305ca2ef447452ed6d363eb7a42f2a382150b24af24521975f21823f0d945df0"
+    },
+    {
+      "path": "samples/generated/classical-colonnade/metadata.json",
+      "bytes": 2781,
+      "sha256": "e64e1a6131c0af3b97508a74b3a815beb5396880075079432b71b74ceab112b6"
+    },
+    {
+      "path": "samples/generated/classical-colonnade/preview.png",
+      "bytes": 121080,
+      "sha256": "b169c7f9a9482e00513ab946a5850be8a0dd3319133e0f240da0eae0126fc92f"
+    },
+    {
+      "path": "samples/generated/classical-colonnade/sample.blend",
+      "bytes": 101271,
+      "sha256": "47fd0c6062a0e1941faf85ee216287284003b88db0c6318ffd81b4fdfdc7e90f"
+    },
+    {
+      "path": "samples/generated/classical-colonnade/sample.glb",
+      "bytes": 103344,
+      "sha256": "8cbeeb775ba77b7eb12ef893fa53c09e6a677c447dc4ff2bf76283fd2bd4daf0"
+    },
+    {
+      "path": "samples/generated/courtyard-arcade/metadata.json",
+      "bytes": 2840,
+      "sha256": "90c856c6311b572a238792197c6be5039d431038f3084bff9e5bb485fe76f210"
+    },
+    {
+      "path": "samples/generated/courtyard-arcade/preview.png",
+      "bytes": 131102,
+      "sha256": "135a484ccada0817a5f29d210cdeb2e539f8e0cd224c1e0fac85c5795066fb1d"
+    },
+    {
+      "path": "samples/generated/courtyard-arcade/sample.blend",
+      "bytes": 123140,
+      "sha256": "99e63b49d48bda6444d79c0f93a1934c91bb08cf08789771389aebd999e24f55"
+    },
+    {
+      "path": "samples/generated/courtyard-arcade/sample.glb",
+      "bytes": 189284,
+      "sha256": "3da51782a9145e6cdc3eec7d76e4094043dc6d33baeb98147871ddcfc0f4df35"
+    },
+    {
+      "path": "samples/generated/dome-oculus/metadata.json",
+      "bytes": 2826,
+      "sha256": "86b9363e5f097c4f4b49bbf14bf9c19df686992cb8d73d5f8a54764aa99915ab"
+    },
+    {
+      "path": "samples/generated/dome-oculus/preview.png",
+      "bytes": 107696,
+      "sha256": "d173b877b2ef4ace63fce3aece092be397b7b0b4457a426d7887dbfd128f50b5"
+    },
+    {
+      "path": "samples/generated/dome-oculus/sample.blend",
+      "bytes": 131555,
+      "sha256": "43183cd3c5146ea8b6917d22aded3b2a83890d3d24b5b8b65d60e4d2de5eee38"
+    },
+    {
+      "path": "samples/generated/dome-oculus/sample.glb",
+      "bytes": 182416,
+      "sha256": "298fa96e7cbad3d7cd8b7e1d147602f8e11aba163b85bca25a4bc0edaed958d8"
+    },
+    {
+      "path": "samples/generated/dravida-tower/metadata.json",
+      "bytes": 2832,
+      "sha256": "30c8e6acca0fdfca718e9287adb8be5738fced65d242acab34dcbdec5000bb39"
+    },
+    {
+      "path": "samples/generated/dravida-tower/preview.png",
+      "bytes": 120469,
+      "sha256": "22cb0f16809a580fcca39ff0fd9cc9a933d95d059500e900e7b3c314b6f0b301"
+    },
+    {
+      "path": "samples/generated/dravida-tower/sample.blend",
+      "bytes": 105882,
+      "sha256": "1cc0eb0f549b829365af92c78a08b2d3fe2ffd0147d3436770585498999cb31a"
+    },
+    {
+      "path": "samples/generated/dravida-tower/sample.glb",
+      "bytes": 76624,
+      "sha256": "eb95e470d8abd134235361dff22479985bae857f81c59915ae964cef370e054e"
+    },
+    {
+      "path": "samples/generated/egyptian-smooth-pyramid/metadata.json",
+      "bytes": 2731,
+      "sha256": "bc00db53332a74e59cdc0535b4e525a0f115b0f989428f09f3a58e34df50b5fd"
+    },
+    {
+      "path": "samples/generated/egyptian-smooth-pyramid/preview.png",
+      "bytes": 97061,
+      "sha256": "87a25952985c6656c1fccfd276fe6df13a86750f64c9c16141e3d583ddccdc96"
+    },
+    {
+      "path": "samples/generated/egyptian-smooth-pyramid/sample.blend",
+      "bytes": 89690,
+      "sha256": "b62bf556e8150d619102e074c48bf910ac5305dc4182966e68c376f7cf766c72"
+    },
+    {
+      "path": "samples/generated/egyptian-smooth-pyramid/sample.glb",
+      "bytes": 3976,
+      "sha256": "683d8c69d42439e60a048c0cced707afb0af40f4563471f605f86a566822878f"
+    },
+    {
+      "path": "samples/generated/egyptian-stepped-pyramid/metadata.json",
+      "bytes": 2776,
+      "sha256": "ebaa3125312319fe0646b9bc301e5f41e3cf436470303194a5f558dbcb2b3744"
+    },
+    {
+      "path": "samples/generated/egyptian-stepped-pyramid/preview.png",
+      "bytes": 111145,
+      "sha256": "067b38aecde57c78a321557e42157ae7b561c5914f077f16754d6ba20bd30b15"
+    },
+    {
+      "path": "samples/generated/egyptian-stepped-pyramid/sample.blend",
+      "bytes": 91058,
+      "sha256": "57a89352c7b1e263ba09e5ddb6228c154749e0a8da2a015a39ee4271976597ce"
+    },
+    {
+      "path": "samples/generated/egyptian-stepped-pyramid/sample.glb",
+      "bytes": 11972,
+      "sha256": "f7ee971a8f6f1321de422e209f48a4573cdb70f505b14542890931a1230ae79b"
+    },
+    {
+      "path": "samples/generated/gothic-rib-buttress/metadata.json",
+      "bytes": 2877,
+      "sha256": "b0c5a3e55c6bc562d6a275a676168be7d236e2cfe845d95af8a8885d17311d14"
+    },
+    {
+      "path": "samples/generated/gothic-rib-buttress/preview.png",
+      "bytes": 121357,
+      "sha256": "683354f2db43e9f0ef08a3eeb24b5d8853b0060818807544cdb7bf8654c74c53"
+    },
+    {
+      "path": "samples/generated/gothic-rib-buttress/sample.blend",
+      "bytes": 127086,
+      "sha256": "e394820de0afe766ed72195aac9dc60c7ff6546bbf49e387d70140d51dd68599"
+    },
+    {
+      "path": "samples/generated/gothic-rib-buttress/sample.glb",
+      "bytes": 243884,
+      "sha256": "624683c13cdb5c55f1136253bc083c81cc5fa85eade835f3eb51862ad22111cd"
+    },
+    {
+      "path": "samples/generated/gridshell-canopy/metadata.json",
+      "bytes": 2758,
+      "sha256": "53300d1698ebe8ae619777e3399bc7bad53f658ae58905fc50aa338651543c0e"
+    },
+    {
+      "path": "samples/generated/gridshell-canopy/preview.png",
+      "bytes": 126086,
+      "sha256": "37f57a4f09af3dc76af4c6a0d633fff86bb9897dfc4fb994fc36e05cb33ff441"
+    },
+    {
+      "path": "samples/generated/gridshell-canopy/sample.blend",
+      "bytes": 126695,
+      "sha256": "516f97fcfc81a17e5bd7ff3d06d20fe96623fe58f298640004c1470b3171334b"
+    },
+    {
+      "path": "samples/generated/gridshell-canopy/sample.glb",
+      "bytes": 248852,
+      "sha256": "b14bf1918f742e453c1b78e4aa3443d2147fc527845a06b56e6b2081a138dfc1"
+    },
+    {
+      "path": "samples/generated/megalithic-ring/metadata.json",
+      "bytes": 2795,
+      "sha256": "003382c840b32b490ce777a17d7c735f510faa84050674e57d91c80e62578649"
+    },
+    {
+      "path": "samples/generated/megalithic-ring/preview.png",
+      "bytes": 114370,
+      "sha256": "b8004709ff3149438b8451f0e901913e712743591b70087e48e54737cc8001be"
+    },
+    {
+      "path": "samples/generated/megalithic-ring/sample.blend",
+      "bytes": 95130,
+      "sha256": "145e016d6c9d5aa94c6a348c4c171325eb5cd16e1b35bd2185b70a6289a417cc"
+    },
+    {
+      "path": "samples/generated/megalithic-ring/sample.glb",
+      "bytes": 42292,
+      "sha256": "5cc099070b54c6f69034c317ad7527416b3d3f716165c6d642a1547c156b7934"
+    },
+    {
+      "path": "samples/generated/mesoamerican-terrace-stair/metadata.json",
+      "bytes": 2910,
+      "sha256": "787a3920825e6c9abbd96ebf5c6b623a75cef5ee1f4fe32acf15634e57d3a96a"
+    },
+    {
+      "path": "samples/generated/mesoamerican-terrace-stair/preview.png",
+      "bytes": 112379,
+      "sha256": "25269e09155a5160a474e6b0977b74442d5b1de1b321481646e780c48a7a5892"
+    },
+    {
+      "path": "samples/generated/mesoamerican-terrace-stair/sample.blend",
+      "bytes": 100439,
+      "sha256": "e1ab26400c15c6b39fd2bd9c72e58fbfd3dac1f5824480c76050f3522285f51e"
+    },
+    {
+      "path": "samples/generated/mesoamerican-terrace-stair/sample.glb",
+      "bytes": 54392,
+      "sha256": "f86ed98e0348d05bd356fea69256a5bde039724322a1192d724ea6fd3a9f759f"
+    },
+    {
+      "path": "samples/generated/modern-diagrid/metadata.json",
+      "bytes": 2757,
+      "sha256": "5bd131a6e2412edd94d5a7b9801659a9afba4a7ad72bd3b7b429642dad0ca3e9"
+    },
+    {
+      "path": "samples/generated/modern-diagrid/preview.png",
+      "bytes": 127847,
+      "sha256": "2aa2101f1a84849896566af5a6f97f091df6ab1a62ee792a25d1e9a1b96cfd9c"
+    },
+    {
+      "path": "samples/generated/modern-diagrid/sample.blend",
+      "bytes": 102127,
+      "sha256": "2f76f61b831dcf046bd31396e0ab3d92fd71d10874f3a984817224c6649c92fc"
+    },
+    {
+      "path": "samples/generated/modern-diagrid/sample.glb",
+      "bytes": 73960,
+      "sha256": "4ed05523903e001ea11e6e0bedc006039a5d57f3c658b9c1945b8bbd782fe1bf"
+    },
+    {
+      "path": "samples/generated/space-frame/metadata.json",
+      "bytes": 2779,
+      "sha256": "5ffea5278800ed55614190a080cf8dbb6c96e852d0ecc44009149d1b84c6b199"
+    },
+    {
+      "path": "samples/generated/space-frame/preview.png",
+      "bytes": 132190,
+      "sha256": "580df85ecdc6fc01db58439f520ab095535037cfba302a685f3febaa731befb2"
+    },
+    {
+      "path": "samples/generated/space-frame/sample.blend",
+      "bytes": 115431,
+      "sha256": "f0f63a484abbd99e2ee37be5e05c064a554e76b39b836d49755fd3a8923ed7e8"
+    },
+    {
+      "path": "samples/generated/space-frame/sample.glb",
+      "bytes": 196848,
+      "sha256": "bdf438a536c4fe7748ffb18d02f0723bd92106201ad256b647fec00205525d14"
+    }
+  ],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included."
+  ],
+  "validation": "Generated and checked in memory; run verify_samples.py to reopen every blend and GLB.",
+  "totalArtifactBytes": 4958009
+}

@@ -30,11 +30,26 @@ jobs:
           npm test
       - name: Build the public renderer for release verification
         run: node scripts/build-static.mjs
+      - name: Verify architecture sources, model hashes and bounded importers
+        run: |
+          node projects/architecture-library/validate.mjs
+          node --test projects/architecture-library/tests/*.test.mjs scripts/architecture-library-assets.test.mjs scripts/static-build-lib.test.mjs
+          python3 -m unittest discover -s projects/architecture-library/samples -p 'test_*.py' -v
+          python3 -m unittest discover -s projects/architecture-library/geospatial/tests -p 'test_*.py' -v
       - name: Install browser for the release gate
         working-directory: site-source
         run: npx playwright install --with-deps chromium
       - name: Verify all workspace panels before publishing a release
         run: node scripts/smoke-static.mjs
+      - name: Verify architecture library on desktop and mobile
+        run: node scripts/smoke-architecture-library.mjs
+      - name: Retain architecture library browser evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: architecture-library-ui
+          path: site-source/.work/architecture-ui
+          if-no-files-found: warn
       - name: Retain release browser evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -124,6 +139,7 @@ jobs:
           npm test
           npm run test:renderer
           node ../scripts/smoke-office.mjs
+          node ../scripts/smoke-architecture-dom.mjs
           node --test ../tools/atlas-mcp.test.mjs
           node --test ../scripts/test-company-kits.mjs ../scripts/reconcile-company-hierarchy.test.mjs
       - name: Package Linux desktop

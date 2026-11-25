@@ -52,7 +52,7 @@ export default defineConfig(({ command, mode }) => ({
       },
       workbox: {
         // Precache static assets only — HTML is never precached.
-        globPatterns: ['**/*.{js,css,svg,png,woff,woff2}', 'desktop-preview/preview-state.*.json'],
+        globPatterns: ['**/*.{js,css,svg,png,woff,woff2}', 'desktop-preview/preview-state.*.json', 'architecture-library/**/*.{mjs,json}'],
         navigateFallback: null,
         runtimeCaching: [
           {

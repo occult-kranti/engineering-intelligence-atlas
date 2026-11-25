@@ -1,0 +1,649 @@
+{
+  "schemaVersion": 1,
+  "elements": [
+    {
+      "id": "standing-stone",
+      "name": "Standing stone",
+      "family": "megalithic",
+      "definition": "A large stone set upright, singly or as one part of a larger monument.",
+      "loadPath": "Its weight passes to the buried or supported base; stability also depends on embedment and the ground.",
+      "materials": [
+        "stone"
+      ],
+      "uses": [
+        "Monumental markers",
+        "Stone settings"
+      ],
+      "limitations": [
+        "Function and meaning require site-specific archaeological evidence."
+      ],
+      "sourceIds": [
+        "elements-english-heritage-stones"
+      ]
+    },
+    {
+      "id": "post-and-lintel",
+      "name": "Post and lintel",
+      "family": "trabeated",
+      "definition": "Vertical supports carry a horizontal spanning member.",
+      "loadPath": "The lintel bends between supports; reactions pass through the posts to the ground.",
+      "materials": [
+        "stone",
+        "timber",
+        "steel"
+      ],
+      "uses": [
+        "Openings",
+        "Colonnades",
+        "Lintelled rings"
+      ],
+      "limitations": [
+        "A visual span does not establish material strength or joint stability."
+      ],
+      "sourceIds": [
+        "elements-english-heritage-stones",
+        "elements-illinois-glossary"
+      ]
+    },
+    {
+      "id": "stepped-pyramid",
+      "name": "Stepped pyramid",
+      "family": "massing",
+      "definition": "A pyramid-like mass formed by successively smaller raised stages.",
+      "loadPath": "In a solid massing idealization, upper stages bear on lower stages and the foundation.",
+      "materials": [
+        "stone masonry"
+      ],
+      "uses": [
+        "Egyptian funerary architecture"
+      ],
+      "limitations": [
+        "Egyptian chronology and function must not be transferred to superficially similar monuments elsewhere."
+      ],
+      "sourceIds": [
+        "elements-smithsonian-pyramid"
+      ]
+    },
+    {
+      "id": "smooth-pyramid",
+      "name": "Smooth-sided pyramid",
+      "family": "massing",
+      "definition": "A pyramidal exterior whose faces form continuous inclined planes.",
+      "loadPath": "The mass bears downward through its internal construction; visible faces alone do not reveal that construction.",
+      "materials": [
+        "stone masonry",
+        "stone casing"
+      ],
+      "uses": [
+        "Egyptian funerary complexes"
+      ],
+      "limitations": [
+        "Internal chambers and masonry arrangement require separate archaeological evidence."
+      ],
+      "sourceIds": [
+        "elements-smithsonian-pyramid"
+      ]
+    },
+    {
+      "id": "terrace-platform",
+      "name": "Terraced platform",
+      "family": "massing",
+      "definition": "Raised stages create successive horizontal surfaces and setbacks.",
+      "loadPath": "Upper masses bear through supporting construction; retained fills and edge walls introduce separate stability questions.",
+      "materials": [
+        "stone masonry",
+        "earth fill"
+      ],
+      "uses": [
+        "Raised temple settings",
+        "Level changes"
+      ],
+      "limitations": [
+        "Material composition and construction sequence vary by site."
+      ],
+      "sourceIds": [
+        "elements-inah-chichen"
+      ]
+    },
+    {
+      "id": "monumental-stair",
+      "name": "Monumental stair",
+      "family": "circulation",
+      "definition": "A conspicuous sequence of treads and risers organizes ascent through a monumental setting.",
+      "loadPath": "Each step transfers use and self-weight to its support or underlying mass.",
+      "materials": [
+        "stone",
+        "masonry"
+      ],
+      "uses": [
+        "Ceremonial ascent",
+        "Access between terraces"
+      ],
+      "limitations": [
+        "Historic ceremonial dimensions do not imply safe modern public access."
+      ],
+      "sourceIds": [
+        "elements-inah-chichen"
+      ]
+    },
+    {
+      "id": "column",
+      "name": "Column",
+      "family": "vertical-support",
+      "definition": "A relatively slender upright member, often articulated as base, shaft and capital.",
+      "loadPath": "Compression and possible bending pass through the shaft to its base.",
+      "materials": [
+        "stone",
+        "timber",
+        "steel",
+        "concrete"
+      ],
+      "uses": [
+        "Colonnades",
+        "Frames",
+        "Arcades"
+      ],
+      "limitations": [
+        "Slenderness, eccentricity and joints influence stability."
+      ],
+      "sourceIds": [
+        "elements-met-greek"
+      ]
+    },
+    {
+      "id": "capital",
+      "name": "Capital",
+      "family": "trabeated",
+      "definition": "The shaped head of a column mediates between its shaft and supported construction.",
+      "loadPath": "Bearing spreads or redirects through the capital into the column below.",
+      "materials": [
+        "stone",
+        "timber"
+      ],
+      "uses": [
+        "Classical orders",
+        "Arcades"
+      ],
+      "limitations": [
+        "The three Greek orders have distinct histories and details; one generic capital cannot represent all of them."
+      ],
+      "sourceIds": [
+        "elements-met-greek"
+      ]
+    },
+    {
+      "id": "entablature",
+      "name": "Entablature",
+      "family": "trabeated",
+      "definition": "The horizontal assembly above classical columns, commonly organized into architrave, frieze and cornice.",
+      "loadPath": "Spanning and supported parts transfer their loads to the columns; ornament need not perform the same structural role.",
+      "materials": [
+        "stone",
+        "timber"
+      ],
+      "uses": [
+        "Classical temple elevations",
+        "Later classical compositions"
+      ],
+      "limitations": [
+        "Its composition and proportions vary across periods and orders."
+      ],
+      "sourceIds": [
+        "elements-met-greek"
+      ]
+    },
+    {
+      "id": "true-arch",
+      "name": "True arch",
+      "family": "masonry",
+      "definition": "A curved span whose pieces work together through compression rather than successive horizontal overhangs.",
+      "loadPath": "Compression follows the arch toward its supports, producing vertical reactions and outward thrust.",
+      "materials": [
+        "stone voussoirs",
+        "brick"
+      ],
+      "uses": [
+        "Doorways",
+        "Bridges",
+        "Vault boundaries"
+      ],
+      "limitations": [
+        "Support restraint, contact and geometry must be analysed; an arch outline is not proof of stability."
+      ],
+      "sourceIds": [
+        "elements-illinois-glossary"
+      ]
+    },
+    {
+      "id": "voussoir",
+      "name": "Voussoir",
+      "family": "masonry",
+      "definition": "A wedge-shaped unit in an arch, vault or dome.",
+      "loadPath": "Contact forces transfer between adjacent units and toward the supports.",
+      "materials": [
+        "cut stone",
+        "brick"
+      ],
+      "uses": [
+        "Arch rings",
+        "Masonry vaults"
+      ],
+      "limitations": [
+        "A modelled wedge does not specify mortar, joint friction or fabrication tolerances."
+      ],
+      "sourceIds": [
+        "elements-illinois-glossary"
+      ]
+    },
+    {
+      "id": "barrel-vault",
+      "name": "Barrel vault",
+      "family": "masonry",
+      "definition": "An arch-like cross-section extended along a direction to cover a longitudinal space.",
+      "loadPath": "Compression carries roof loading to the side supports, which must also resist lateral thrust.",
+      "materials": [
+        "stone masonry",
+        "brick",
+        "concrete"
+      ],
+      "uses": [
+        "Passages",
+        "Roofed halls"
+      ],
+      "limitations": [
+        "Openings and changes of section alter the load path."
+      ],
+      "sourceIds": [
+        "elements-illinois-glossary",
+        "elements-english-heritage-jewel"
+      ]
+    },
+    {
+      "id": "dome",
+      "name": "Dome",
+      "family": "shell",
+      "definition": "A curved covering over a plan, often represented schematically by part of a sphere.",
+      "loadPath": "Forces travel through the curved surface to its supporting ring, walls or piers; the pattern depends on shape and loading.",
+      "materials": [
+        "masonry",
+        "concrete",
+        "metal"
+      ],
+      "uses": [
+        "Centralized halls",
+        "Roof coverings"
+      ],
+      "limitations": [
+        "A hemispherical diagram does not describe every dome or establish membrane-only behaviour."
+      ],
+      "sourceIds": [
+        "elements-pantheon-ministry"
+      ]
+    },
+    {
+      "id": "oculus",
+      "name": "Oculus",
+      "family": "opening",
+      "definition": "A circular opening; in dome studies, the opening at or near the crown.",
+      "loadPath": "An opening interrupts the surface, so forces must pass around its boundary.",
+      "materials": [
+        "masonry edge",
+        "concrete edge",
+        "glazed assemblies"
+      ],
+      "uses": [
+        "Daylight",
+        "View of sky"
+      ],
+      "limitations": [
+        "Daylight, weather, drainage and ring behaviour require their own design."
+      ],
+      "sourceIds": [
+        "elements-illinois-glossary"
+      ]
+    },
+    {
+      "id": "pier",
+      "name": "Pier",
+      "family": "vertical-support",
+      "definition": "A substantial upright support receiving an arch, vault, beam or other supported construction.",
+      "loadPath": "Vertical force and any thrust or bending continue to the foundation through the pier.",
+      "materials": [
+        "masonry",
+        "concrete"
+      ],
+      "uses": [
+        "Arcades",
+        "Vaulted bays",
+        "Bridges"
+      ],
+      "limitations": [
+        "A pier is not automatically adequate against lateral thrust or settlement."
+      ],
+      "sourceIds": [
+        "elements-illinois-glossary"
+      ]
+    },
+    {
+      "id": "pointed-arch",
+      "name": "Pointed arch",
+      "family": "masonry",
+      "definition": "An arch profile whose two sides meet at an apex rather than a continuously rounded crown.",
+      "loadPath": "Compression still requires suitable supports; the thrust depends on rise, span, thickness and load.",
+      "materials": [
+        "stone masonry",
+        "brick"
+      ],
+      "uses": [
+        "Gothic openings",
+        "Arcades",
+        "Vault ribs"
+      ],
+      "limitations": [
+        "Pointed shape alone does not guarantee higher capacity or lower thrust."
+      ],
+      "sourceIds": [
+        "elements-vam-gothic"
+      ]
+    },
+    {
+      "id": "rib-vault",
+      "name": "Rib vault",
+      "family": "masonry",
+      "definition": "A vaulted covering organized by projecting ribs with web surfaces between them.",
+      "loadPath": "Ribs, webs and adjoining fabric interact to transfer forces toward springing supports.",
+      "materials": [
+        "stone masonry",
+        "brick"
+      ],
+      "uses": [
+        "Gothic bays",
+        "Roofed halls"
+      ],
+      "limitations": [
+        "A rib-only diagram omits web action and is not a complete structural model."
+      ],
+      "sourceIds": [
+        "elements-vam-gothic",
+        "elements-english-heritage-jewel"
+      ]
+    },
+    {
+      "id": "flying-buttress",
+      "name": "Flying buttress",
+      "family": "masonry",
+      "definition": "An external arched support bridges from upper building fabric toward a detached or outer buttress.",
+      "loadPath": "It conveys lateral thrust toward a resisting outer mass and its foundation.",
+      "materials": [
+        "stone masonry"
+      ],
+      "uses": [
+        "High vaulted churches"
+      ],
+      "limitations": [
+        "Its working geometry depends on the building, construction phases and continuing movement."
+      ],
+      "sourceIds": [
+        "elements-vam-gothic"
+      ]
+    },
+    {
+      "id": "vimana",
+      "name": "Vimana in the Chola context",
+      "family": "south-indian-temple",
+      "definition": "The sanctum tower of the southern Indian temple examples described here, often articulated in diminishing tiers.",
+      "loadPath": "The masonry mass transfers weight through its underlying shrine construction and supports.",
+      "materials": [
+        "stone masonry",
+        "brick"
+      ],
+      "uses": [
+        "Chola temple sanctum towers"
+      ],
+      "limitations": [
+        "Terminology has broader textual uses; this entry is scoped to UNESCO's Tamil Chola examples, not gopuram gateways or all Indian temples."
+      ],
+      "sourceIds": [
+        "elements-unesco-chola"
+      ]
+    },
+    {
+      "id": "corbel",
+      "name": "Corbel",
+      "family": "projecting-support",
+      "definition": "A projecting masonry block supports a feature or participates in successive projecting courses.",
+      "loadPath": "The projection transfers bearing and bending effects into the supported wall or backing.",
+      "materials": [
+        "stone",
+        "brick"
+      ],
+      "uses": [
+        "Cornice support",
+        "Projecting masonry features"
+      ],
+      "limitations": [
+        "A corbelled opening has a different construction principle from a voussoir arch."
+      ],
+      "sourceIds": [
+        "elements-getty-corbel"
+      ]
+    },
+    {
+      "id": "timber-post-beam",
+      "name": "Timber post-and-beam frame",
+      "family": "timber",
+      "definition": "Timber uprights and horizontal members form the main supporting framework.",
+      "loadPath": "Roof loads pass through beams and connections into posts; lateral resistance depends on the complete assembly.",
+      "materials": [
+        "timber"
+      ],
+      "uses": [
+        "Chinese timber bays",
+        "Other regionally specific timber frames"
+      ],
+      "limitations": [
+        "Joinery, member grading and regional practice must be established separately."
+      ],
+      "sourceIds": [
+        "elements-prince-gong-brackets",
+        "elements-illinois-glossary"
+      ]
+    },
+    {
+      "id": "bracket-set",
+      "name": "Dougong bracket set",
+      "family": "timber",
+      "definition": "An assembly of bearing blocks and arms mediates between roof construction and supports in Chinese timber architecture.",
+      "loadPath": "Its pieces transmit roof forces toward columns or walls through their contacts and connections.",
+      "materials": [
+        "timber",
+        "masonry imitations"
+      ],
+      "uses": [
+        "Chinese timber roof supports",
+        "Eave transitions"
+      ],
+      "limitations": [
+        "Historical bracket types, proportions and mechanical behaviour vary; decorative imitation is not equivalent to a working assembly."
+      ],
+      "sourceIds": [
+        "elements-prince-gong-brackets"
+      ]
+    },
+    {
+      "id": "purlin",
+      "name": "Purlin",
+      "family": "timber-and-roof",
+      "definition": "A longitudinal roof member supports roof decking or intermediate roofing elements.",
+      "loadPath": "It spans between roof supports and transfers their distributed loading into the main frame.",
+      "materials": [
+        "timber",
+        "steel"
+      ],
+      "uses": [
+        "Pitched roofs",
+        "Roof decks"
+      ],
+      "limitations": [
+        "Its position and supported elements depend on the roof system."
+      ],
+      "sourceIds": [
+        "elements-getty-purlin"
+      ]
+    },
+    {
+      "id": "courtyard",
+      "name": "Courtyard",
+      "family": "spatial-organization",
+      "definition": "An open space enclosed or framed by surrounding building parts.",
+      "loadPath": "A courtyard is a spatial arrangement, not itself a structural member; adjacent fabric has separate load paths.",
+      "materials": [
+        "varied enclosing construction"
+      ],
+      "uses": [
+        "Light and air",
+        "Circulation",
+        "Social space"
+      ],
+      "limitations": [
+        "Climate performance and social meaning are context-specific."
+      ],
+      "sourceIds": [
+        "elements-alhambra-court"
+      ]
+    },
+    {
+      "id": "arcade",
+      "name": "Arcade",
+      "family": "spatial-organization",
+      "definition": "A sequence of arches carried by columns or piers, often forming an edge or passage.",
+      "loadPath": "Each arch transfers forces to its supports; adjacent bays may share supports and thrust.",
+      "materials": [
+        "masonry",
+        "stone columns"
+      ],
+      "uses": [
+        "Courtyard edges",
+        "Covered circulation"
+      ],
+      "limitations": [
+        "Changing or removing a bay can change the behaviour of neighbouring supports."
+      ],
+      "sourceIds": [
+        "elements-alhambra-court",
+        "elements-illinois-glossary"
+      ]
+    },
+    {
+      "id": "diagrid",
+      "name": "Diagrid",
+      "family": "modern-lattice",
+      "definition": "A structural network of diagonal members forms a triangulated building frame or envelope.",
+      "loadPath": "Diagonal members and ties work with the rest of the building to carry gravity and lateral effects.",
+      "materials": [
+        "steel",
+        "concrete",
+        "timber"
+      ],
+      "uses": [
+        "Tall-building perimeter frames",
+        "Expressed structural facades"
+      ],
+      "limitations": [
+        "Connections, core interaction, fire protection and drift cannot be inferred from a facade pattern."
+      ],
+      "sourceIds": [
+        "elements-wsp-hearst"
+      ]
+    },
+    {
+      "id": "gridshell",
+      "name": "Gridshell",
+      "family": "modern-lattice",
+      "definition": "A curved grid of slender members acts collectively as a shell-like roof structure when adequately stabilized.",
+      "loadPath": "The interconnected grid and boundary system distribute forces toward supports; bending and bracing remain relevant.",
+      "materials": [
+        "timber laths",
+        "steel"
+      ],
+      "uses": [
+        "Curved roofs",
+        "Large interior spans"
+      ],
+      "limitations": [
+        "A curved quadrilateral lattice without a resolved bracing and connection design is only geometry."
+      ],
+      "sourceIds": [
+        "elements-istructe-gridshell"
+      ]
+    },
+    {
+      "id": "space-frame",
+      "name": "Space frame",
+      "family": "modern-lattice",
+      "definition": "Members and nodes form a three-dimensional structural network, often with more than one chord layer.",
+      "loadPath": "Forces pass through the connected members and nodes toward supports in several directions.",
+      "materials": [
+        "steel",
+        "aluminium"
+      ],
+      "uses": [
+        "Wide-span roofs",
+        "Canopies"
+      ],
+      "limitations": [
+        "Member ends, node eccentricity, buckling and support conditions require engineered details."
+      ],
+      "sourceIds": [
+        "elements-mero-spaceframe"
+      ]
+    },
+    {
+      "id": "truss",
+      "name": "Truss",
+      "family": "framed-structure",
+      "definition": "A framework arranged to carry loading through connected chords and web members, commonly using triangles.",
+      "loadPath": "An ideal pin-jointed model carries axial member forces; real joints can introduce bending and eccentricity.",
+      "materials": [
+        "timber",
+        "steel"
+      ],
+      "uses": [
+        "Roof spans",
+        "Bridge spans",
+        "Space-frame components"
+      ],
+      "limitations": [
+        "The axial-force idealization requires appropriate joints, load positions and stability assumptions."
+      ],
+      "sourceIds": [
+        "elements-mero-spaceframe",
+        "elements-illinois-glossary"
+      ]
+    },
+    {
+      "id": "shell",
+      "name": "Shell",
+      "family": "surface-structure",
+      "definition": "A thin curved load-carrying surface, or a stabilized lattice idealized as such.",
+      "loadPath": "Surface forces and bending transfer loading to edges and supports according to geometry and restraints.",
+      "materials": [
+        "concrete",
+        "masonry",
+        "steel",
+        "timber lattice"
+      ],
+      "uses": [
+        "Domes",
+        "Curved roofs"
+      ],
+      "limitations": [
+        "A smooth shape or visually thin skin does not establish structural shell action."
+      ],
+      "sourceIds": [
+        "elements-pantheon-ministry",
+        "elements-istructe-gridshell"
+      ]
+    }
+  ]
+}
