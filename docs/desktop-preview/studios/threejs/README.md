@@ -134,3 +134,7 @@ The optional `tests/browser-check.mjs` uses an existing Playwright installation 
 `upstream/files.json` records imported file URLs, byte counts and SHA-256 hashes. This project recreates a studio workflow with original code; it does not claim to clone an entire CCORE application, reproduce model training, or reuse a third-party Hugging Face Space's unverified application license. No proprietary game assets, trademarks, binaries, ROMs or reconstruction targets are used.
 
 `company-plan.json` is a declarative company/department plan. The Daftar native runtime remains the authority for actual saved companies, employee identities, provider budgets and job dispatch.
+
+## Retained upstream documentation
+
+The retained upstream model README refers to `images/roma3.png`, which was not included in the imported source. The original reference is preserved; the missing illustration is not required by the allowlisted studio build.

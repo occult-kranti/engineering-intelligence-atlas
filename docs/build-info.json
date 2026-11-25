@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "buildMode": "static",
-  "sourceSha256": "56a8e1c1b94480dbba272fba28f0df1c2c57a22f8c9719ca95ca34196d782f2d",
+  "sourceSha256": "61772358dc86cea0c0f3f16937f08a3a56ec2ee9aabbaf70fef80188a7b4be0e",
   "files": {
     ".nojekyll": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "assets/DirectorShell-BwsvZMQ0.js": "36d81a51388f576f976fbf0a03ae2e15f79fd147c910a6156162141fb5a20c51",
@@ -105,8 +105,8 @@
     "desktop-preview/canvas-craft.21ca631a204894c1.css": "21ca631a204894c19668e19ac14b3abc180ce73faf01a86ef531893622753fb2",
     "desktop-preview/chrome.0f034e6cc32430ad.css": "0f034e6cc32430ada5f158d228fa1d24a3bc9801cc71b29dde40c4b7248a7f6c",
     "desktop-preview/chrome.35b5726fbb7bd570.js": "35b5726fbb7bd570a5087e8774a7893a2e8a2e8aa4100191f759a17ea28d7ed2",
-    "desktop-preview/chrome.html": "884f4e964390237666c92cd9da0d39d9e0b2d891451f5d3ed74ce11cd243f0a2",
-    "desktop-preview/freeflow.f44e819ce3f73c78.css": "f44e819ce3f73c7870bab394240906dbb860482683922d8b746b40d1f0fc5bca",
+    "desktop-preview/chrome.html": "c1c37b8a0cd42179d3608dce5f7774904d3db490deb1c0ea873fea5bfc12d73a",
+    "desktop-preview/freeflow.3affe7e55a668f1e.css": "3affe7e55a668f1e2158553ce6e8c5ffcbbab5c5985ab34eec3c8abe41e6b2ae",
     "desktop-preview/freeflow/a11y-list.c972998eb8ad6bc6.js": "c972998eb8ad6bc624a3929e223952034bcc05afaf5395830da49d3e793511d6",
     "desktop-preview/freeflow/camera.457a3ca4fd1e3c65.js": "457a3ca4fd1e3c65e57406a86ccff357f513841c178611f1f2181cf41d0393c5",
     "desktop-preview/freeflow/canvas-workspace.2d7c83e126316c7d.js": "2d7c83e126316c7d184ca6446d28cb5648a9d5c6e4f145d0255230683a6b7f40",
@@ -132,7 +132,7 @@
     "desktop-preview/resource-library/panel.374737e3d10df121.js": "374737e3d10df12171fba8dcd384de1f8eedf586193aa5df510e81e9ac65ca49",
     "desktop-preview/studio-tokens.3e77c7081bbd8beb.css": "3e77c7081bbd8beb32ac2865cd7f7531ffada087a3984e972109eb9a842a4c53",
     "desktop-preview/studios/threejs/LICENSE": "1eecc25d65f33ca80475bd7182af56a1fa43ef590427cf55a6e78f325a6d3143",
-    "desktop-preview/studios/threejs/README.md": "7b60cf77618fd41dda61aa615ce42794c9cb72482d144d967b9419026f4e71e6",
+    "desktop-preview/studios/threejs/README.md": "c15c7214d60f93caf7b1718c138ac3e5b5f3cd5b1f75a62db4d26de29a293685",
     "desktop-preview/studios/threejs/VALIDATION.md": "c98bc989e07136aa64e1c216f6a5c5ff653660e2875cf4ab08c7784d133cf7e3",
     "desktop-preview/studios/threejs/assets/reference-observatory.html": "d199396f5a4e5dbcab2118fd6d4e02ca73d09cd6c7d9ca651238135a7acaa895",
     "desktop-preview/studios/threejs/core.mjs": "0b6aa1dd81f64700c323ccb1b1a0c9515048ee7ed7faa15522b3ea63b0be4e28",
@@ -220,7 +220,7 @@
     "research/sota_multimodal_media_models.md": "8b6763168b2a4426a227d3411a3363842ff00d31cc706c878f56379136524b0c",
     "research/sota_open_model_landscape.md": "952f46c03cd69b3177870e5f98a632c0ff7f887d44bc2a3683c5ee74c6dee888",
     "research/sota_scientific_models.md": "18c8695ad1487ccad36e48b91708ca3bc6bee0049a041a0f9abed81d99559e76",
-    "sw.js": "1d66b8719c821d6144c542f34785a5a85b14c04c2d4a273080e3d86021bee429",
+    "sw.js": "9bd34a1b61cad4b2037a05b90f1a031d5463ba1d51441ada5a772a13353c10e2",
     "workbox-051dea9f.js": "954497c1756c293988d7e65d0f9a74b9d965bbbbdeed268b4e567b66febc149a"
   }
 }

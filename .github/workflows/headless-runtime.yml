@@ -37,7 +37,7 @@ jobs:
           node scripts/smoke-runtime-mcp.mjs
       - name: Verify resource routing, packaged skills and shared assets
         run: |
-          node --test scripts/resource-router.test.mjs scripts/renderer-assets.test.mjs desktop-shell/tests/resource-library.test.mjs
+          node --test scripts/resource-router.test.mjs scripts/renderer-assets.test.mjs scripts/static-build-lib.test.mjs desktop-shell/tests/resource-library.test.mjs
           python3 scripts/sync-resource-projections.py
           node scripts/resource-router.mjs --check-atlas
           python3 scripts/sync-skills.py

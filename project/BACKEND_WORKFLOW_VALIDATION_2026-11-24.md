@@ -145,6 +145,26 @@ gate and retains its JSON receipt. A separate Node 24 step covers `.mjs` resourc
 tests that the desktop's TypeScript-only Vitest glob previously omitted, plus
 catalog, skill and hosted studio drift checks.
 
+The first remote CI run also caught two integration defects that the initial
+local suites had not exposed. A passive canvas layout notice overlapped the
+surface finder and intercepted normal clicks in the packaged desktop, web and
+cloud smoke tests. The shared stylesheet now places that notice beneath the
+finder and makes it transparent to pointer input while retaining its live-region
+feedback. A stylesheet-backed mounted DOM regression covers both locked-surface
+and storage-failure notices; the targeted suite passed 23 tests. The normal
+browser clicks remain in the CI gates.
+
+The new resource gate also caught a studio README mirror that had not been
+regenerated after its upstream provenance note changed. Its derived copies were
+resynchronized, and static-build source identity now includes the studio's
+explicitly allowed source inputs so this drift is detectable before publication.
+An isolated archive of the published commit reproduced the failure; applying
+the targeted fix passed all 34 resource tests, the 303-record catalog check,
+15 skill packages and seven mirrors, and all ten hosted studio assets without
+relying on ignored local build output. The final static rebuild again verified
+all 219 client files.
+Remote CI receipts must be read against the final commit, not the initial run.
+
 ```sh
 cargo test --locked --manifest-path native-core/Cargo.toml
 npm --prefix desktop-shell run build:native
