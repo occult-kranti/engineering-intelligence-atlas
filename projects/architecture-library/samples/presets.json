@@ -1,0 +1,348 @@
+{
+  "schemaVersion": 1,
+  "seed": 20261124,
+  "units": "metres",
+  "coordinates": "Blender right-handed Z-up; glTF export right-handed Y-up",
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2
+  },
+  "presets": [
+    {
+      "id": "megalithic-ring",
+      "name": "Lintelled stone-ring study",
+      "summary": "A circular arrangement of uprights and connecting lintels makes the post-and-lintel principle visible.",
+      "studyType": "prehistoric-massing",
+      "elementIds": [
+        "standing-stone",
+        "post-and-lintel"
+      ],
+      "sourceIds": [
+        "elements-english-heritage-stones"
+      ],
+      "parameters": {
+        "radius": 4.2,
+        "posts": 12,
+        "postHeight": 2.6
+      },
+      "limitations": [
+        "An invented ring of twelve posts; not a Stonehenge survey, reconstruction, calendar, or account of its full landscape.",
+        "Stone textures, construction sequence, interlocking joints, soil and foundations are omitted."
+      ]
+    },
+    {
+      "id": "egyptian-stepped-pyramid",
+      "name": "Egyptian stepped-massing study",
+      "summary": "Six diminishing square tiers isolate the massing idea of a stepped pyramid.",
+      "studyType": "egyptian-massing",
+      "elementIds": [
+        "stepped-pyramid"
+      ],
+      "sourceIds": [
+        "elements-smithsonian-pyramid"
+      ],
+      "parameters": {
+        "base": 10.0,
+        "height": 6.6,
+        "tiers": 6
+      },
+      "limitations": [
+        "Invented proportions; not Djoser's complex or any measured archaeological monument.",
+        "Internal chambers, masonry bonding, surrounding funerary complex and construction history are omitted."
+      ]
+    },
+    {
+      "id": "egyptian-smooth-pyramid",
+      "name": "Egyptian smooth-pyramid study",
+      "summary": "Four planar faces and a square base contrast smooth-sided massing with the stepped study.",
+      "studyType": "egyptian-massing",
+      "elementIds": [
+        "smooth-pyramid"
+      ],
+      "sourceIds": [
+        "elements-smithsonian-pyramid"
+      ],
+      "parameters": {
+        "base": 10.0,
+        "height": 7.0
+      },
+      "limitations": [
+        "Invented slope and size; not a reconstruction of a Giza pyramid.",
+        "A single closed surface represents external massing only; no chamber, casing-joint or construction claims."
+      ]
+    },
+    {
+      "id": "mesoamerican-terrace-stair",
+      "name": "Maya terrace-and-stair study",
+      "summary": "Diminishing platforms, a prominent stair and a small summit canopy demonstrate a different spatial sequence from Egyptian pyramid massing.",
+      "studyType": "mesoamerican-massing",
+      "elementIds": [
+        "terrace-platform",
+        "monumental-stair",
+        "post-and-lintel"
+      ],
+      "sourceIds": [
+        "elements-inah-chichen"
+      ],
+      "parameters": {
+        "base": 12.0,
+        "height": 4.8,
+        "tiers": 6,
+        "stairs": 24
+      },
+      "limitations": [
+        "An abstract study informed by INAH's Chichen Itza descriptions; not El Castillo or a universal Mesoamerican type.",
+        "No sacred iconography, calendrical alignment, authentic stair dimensions, site context or archaeological reconstruction is claimed."
+      ]
+    },
+    {
+      "id": "classical-colonnade",
+      "name": "Classical colonnade study",
+      "summary": "Two rows of tapered columns support simplified capitals and a layered entablature.",
+      "studyType": "classical-elements",
+      "elementIds": [
+        "column",
+        "capital",
+        "entablature",
+        "post-and-lintel"
+      ],
+      "sourceIds": [
+        "elements-met-greek"
+      ],
+      "parameters": {
+        "columnsPerRow": 4,
+        "spacing": 2.1,
+        "columnHeight": 3.3
+      },
+      "limitations": [
+        "A comparative structural diagram, not a complete Doric, Ionic or Corinthian order.",
+        "Fluting, entasis, polychromy, joints and historically specific proportions are omitted."
+      ]
+    },
+    {
+      "id": "arch-barrel-vault",
+      "name": "Voussoir arch and barrel vault",
+      "summary": "Repeated wedge-shaped arch rings extend into a short tunnel on two side supports.",
+      "studyType": "masonry-structure",
+      "elementIds": [
+        "true-arch",
+        "voussoir",
+        "barrel-vault",
+        "pier"
+      ],
+      "sourceIds": [
+        "elements-illinois-glossary",
+        "elements-english-heritage-jewel"
+      ],
+      "parameters": {
+        "radius": 2.0,
+        "springHeight": 1.8,
+        "length": 4.4,
+        "rings": 6,
+        "voussoirs": 15
+      },
+      "limitations": [
+        "Voussoir gaps are exaggerated for legibility; contact mechanics and centering are not simulated.",
+        "Abutment size and wall thickness are illustrative and have no verified load capacity."
+      ]
+    },
+    {
+      "id": "dome-oculus",
+      "name": "Dome with open oculus",
+      "summary": "A thick spherical shell and open crown sit on a partial drum, revealing interior and exterior form.",
+      "studyType": "masonry-structure",
+      "elementIds": [
+        "dome",
+        "oculus",
+        "shell"
+      ],
+      "sourceIds": [
+        "elements-pantheon-ministry",
+        "elements-illinois-glossary"
+      ],
+      "parameters": {
+        "radius": 3.0,
+        "springHeight": 2.0,
+        "oculusRadius": 0.7,
+        "thickness": 0.22
+      },
+      "limitations": [
+        "The drum has a deliberate display opening; this is not a structurally complete building.",
+        "Uniform shell thickness, material colours and proportions are invented; the model is not the Pantheon."
+      ]
+    },
+    {
+      "id": "gothic-rib-buttress",
+      "name": "Gothic rib-and-buttress bay",
+      "summary": "Pointed edge arches and diagonal ribs meet above four piers, with exterior flyers drawn as a teaching skeleton.",
+      "studyType": "gothic-elements",
+      "elementIds": [
+        "pointed-arch",
+        "rib-vault",
+        "flying-buttress",
+        "pier"
+      ],
+      "sourceIds": [
+        "elements-vam-gothic",
+        "elements-illinois-glossary"
+      ],
+      "parameters": {
+        "bay": 4.0,
+        "springHeight": 3.3,
+        "rise": 2.5,
+        "ribSegments": 16
+      },
+      "limitations": [
+        "Vault webs and most walls are deliberately omitted; this is a rib skeleton, not a complete vault.",
+        "The flyers, joints and foundations are schematic; no structural analysis or site reconstruction is provided."
+      ]
+    },
+    {
+      "id": "dravida-tower",
+      "name": "Dravida-inspired vimana study",
+      "summary": "A square base, diminishing tiers and an abstract crown explore a southern Indian sanctum-tower silhouette.",
+      "studyType": "south-indian-massing",
+      "elementIds": [
+        "vimana",
+        "corbel",
+        "terrace-platform"
+      ],
+      "sourceIds": [
+        "elements-unesco-chola",
+        "elements-getty-corbel"
+      ],
+      "parameters": {
+        "base": 4.8,
+        "tiers": 7,
+        "tierHeight": 0.55
+      },
+      "limitations": [
+        "Inspired by the Tamil Chola context described by UNESCO; not a universal Indian temple or a measured Chola monument.",
+        "A vimana study, not a gopuram gateway; sacred images, ritual layout, inscriptions and authentic proportional rules are omitted."
+      ]
+    },
+    {
+      "id": "chinese-timber-bracket-bay",
+      "name": "Chinese timber-and-bracket bay",
+      "summary": "A timber frame with a deliberate roof cutaway exposes stacked bracket arms, bearing blocks, beams and purlins.",
+      "studyType": "timber-elements",
+      "elementIds": [
+        "timber-post-beam",
+        "bracket-set",
+        "purlin"
+      ],
+      "sourceIds": [
+        "elements-prince-gong-brackets",
+        "elements-getty-purlin"
+      ],
+      "parameters": {
+        "width": 5.0,
+        "depth": 3.2,
+        "postHeight": 2.6,
+        "bracketLevels": 3
+      },
+      "limitations": [
+        "A generic Chinese timber/bracket principle study; not a dynasty-specific bay or a proxy for all East Asian building traditions.",
+        "Interlocking joinery, graded timber sections, detailed dougong typology, roof tiles and seismic behaviour are not represented.",
+        "The near roof covering is omitted for visibility; the covering and supporting assembly are incomplete."
+      ]
+    },
+    {
+      "id": "courtyard-arcade",
+      "name": "Courtyard and arcade study",
+      "summary": "Four repeated arcades define an open central court and a shaded edge zone.",
+      "studyType": "spatial-organization",
+      "elementIds": [
+        "courtyard",
+        "arcade",
+        "true-arch",
+        "column"
+      ],
+      "sourceIds": [
+        "elements-alhambra-court",
+        "elements-illinois-glossary"
+      ],
+      "parameters": {
+        "baysPerSide": 3,
+        "span": 2.0,
+        "springHeight": 1.6
+      },
+      "limitations": [
+        "Invented round-arch courtyard; not an Alhambra reconstruction or a universal Islamic courtyard type.",
+        "Ornament, adjoining rooms, environmental performance, water systems and site-specific social uses are omitted."
+      ]
+    },
+    {
+      "id": "modern-diagrid",
+      "name": "Modern diagrid study",
+      "summary": "Repeated diagonal members, perimeter ties and thin floor plates explain a triangulated tower envelope.",
+      "studyType": "modern-structure",
+      "elementIds": [
+        "diagrid",
+        "truss"
+      ],
+      "sourceIds": [
+        "elements-wsp-hearst"
+      ],
+      "parameters": {
+        "width": 4.8,
+        "height": 12.0,
+        "modules": 3,
+        "floors": 6
+      },
+      "limitations": [
+        "An invented square tower; no dimensions or fabrication details are copied from Hearst Tower.",
+        "Joints, core interaction, fire protection, lateral drift, buckling and member capacity are unanalysed."
+      ]
+    },
+    {
+      "id": "gridshell-canopy",
+      "name": "Gridshell surface study",
+      "summary": "Crossing laths trace a shallow doubly curved canopy with a continuous perimeter edge.",
+      "studyType": "modern-structure",
+      "elementIds": [
+        "gridshell",
+        "shell"
+      ],
+      "sourceIds": [
+        "elements-istructe-gridshell"
+      ],
+      "parameters": {
+        "width": 8.0,
+        "depth": 6.0,
+        "rise": 1.8,
+        "grid": 9
+      },
+      "limitations": [
+        "A geometry study only; the quadrilateral lattice lacks a resolved bracing and connection design.",
+        "No forming simulation, timber bending limits, shell analysis or claim to reproduce the Savill Building."
+      ]
+    },
+    {
+      "id": "space-frame",
+      "name": "Double-layer space-frame study",
+      "summary": "Offset upper and lower grids connect through diagonals, making the depth of a three-dimensional truss visible.",
+      "studyType": "modern-structure",
+      "elementIds": [
+        "space-frame",
+        "truss"
+      ],
+      "sourceIds": [
+        "elements-mero-spaceframe"
+      ],
+      "parameters": {
+        "grid": 4,
+        "spacing": 1.6,
+        "depth": 0.9,
+        "supportHeight": 2.6
+      },
+      "limitations": [
+        "Spheres and struts symbolize nodes and members; these are not a proprietary connection detail or fabrication model.",
+        "Support conditions, loads, buckling, tolerances and deflection are not checked."
+      ]
+    }
+  ]
+}

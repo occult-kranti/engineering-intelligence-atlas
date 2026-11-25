@@ -1,0 +1,88 @@
+{
+  "objectCount": 2,
+  "vertexCount": 13,
+  "triangleCount": 18,
+  "dimensionsMeters": [
+    10.8,
+    10.8,
+    7.18
+  ],
+  "boundsMeters": {
+    "min": [
+      -5.4000001,
+      -5.4000001,
+      -0.18
+    ],
+    "max": [
+      5.4000001,
+      5.4000001,
+      7.0
+    ]
+  },
+  "geometrySha256": "b60588ed4a337dc64b8f556cacf62d10c1840f01c0f2d58b413c8c15807ae285",
+  "schemaVersion": 1,
+  "id": "egyptian-smooth-pyramid",
+  "name": "Egyptian smooth-pyramid study",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "base": 10.0,
+    "height": 7.0
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-smithsonian-pyramid"
+  ],
+  "elementIds": [
+    "smooth-pyramid"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "Invented slope and size; not a reconstruction of a Giza pyramid.",
+    "A single closed surface represents external massing only; no chamber, casing-joint or construction claims."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/egyptian-smooth-pyramid/sample.blend",
+      "bytes": 89690,
+      "sha256": "b62bf556e8150d619102e074c48bf910ac5305dc4182966e68c376f7cf766c72"
+    },
+    "glb": {
+      "path": "samples/generated/egyptian-smooth-pyramid/sample.glb",
+      "bytes": 3976,
+      "sha256": "683d8c69d42439e60a048c0cced707afb0af40f4563471f605f86a566822878f"
+    },
+    "preview": {
+      "path": "samples/generated/egyptian-smooth-pyramid/preview.png",
+      "bytes": 97061,
+      "sha256": "87a25952985c6656c1fccfd276fe6df13a86750f64c9c16141e3d583ddccdc96"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.509,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

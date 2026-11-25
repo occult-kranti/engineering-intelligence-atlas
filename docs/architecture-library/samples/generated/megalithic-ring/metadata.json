@@ -1,0 +1,90 @@
+{
+  "objectCount": 25,
+  "vertexCount": 200,
+  "triangleCount": 300,
+  "dimensionsMeters": [
+    9.9,
+    9.9,
+    3.41
+  ],
+  "boundsMeters": {
+    "min": [
+      -4.9499998,
+      -4.9499998,
+      -0.18
+    ],
+    "max": [
+      4.9499998,
+      4.9499998,
+      3.2300003
+    ]
+  },
+  "geometrySha256": "11673ccb78f33d3ef2b6eed8323d066c36ea018e948537f1c418efaebe87f5bd",
+  "schemaVersion": 1,
+  "id": "megalithic-ring",
+  "name": "Lintelled stone-ring study",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "radius": 4.2,
+    "posts": 12,
+    "postHeight": 2.6
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-english-heritage-stones"
+  ],
+  "elementIds": [
+    "standing-stone",
+    "post-and-lintel"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "An invented ring of twelve posts; not a Stonehenge survey, reconstruction, calendar, or account of its full landscape.",
+    "Stone textures, construction sequence, interlocking joints, soil and foundations are omitted."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/megalithic-ring/sample.blend",
+      "bytes": 95130,
+      "sha256": "145e016d6c9d5aa94c6a348c4c171325eb5cd16e1b35bd2185b70a6289a417cc"
+    },
+    "glb": {
+      "path": "samples/generated/megalithic-ring/sample.glb",
+      "bytes": 42292,
+      "sha256": "5cc099070b54c6f69034c317ad7527416b3d3f716165c6d642a1547c156b7934"
+    },
+    "preview": {
+      "path": "samples/generated/megalithic-ring/preview.png",
+      "bytes": 114370,
+      "sha256": "b8004709ff3149438b8451f0e901913e712743591b70087e48e54737cc8001be"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 3.123,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

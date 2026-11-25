@@ -1,0 +1,205 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "id": "workshop",
+      "properties": {
+        "name": "Synthetic workshop",
+        "height": 12,
+        "heightBasis": "synthetic"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.00055,
+              -0.00035
+            ],
+            [
+              -0.00015,
+              -0.00035
+            ],
+            [
+              -0.00015,
+              -5e-05
+            ],
+            [
+              -0.00055,
+              -5e-05
+            ],
+            [
+              -0.00055,
+              -0.00035
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "courtyard",
+      "properties": {
+        "name": "Synthetic courtyard building",
+        "height": 9,
+        "heightBasis": "synthetic"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              0.0001,
+              -0.00035
+            ],
+            [
+              0.00065,
+              -0.00035
+            ],
+            [
+              0.00065,
+              -5e-05
+            ],
+            [
+              0.0001,
+              -5e-05
+            ],
+            [
+              0.0001,
+              -0.00035
+            ]
+          ],
+          [
+            [
+              0.00025,
+              -0.00025
+            ],
+            [
+              0.00025,
+              -0.00015
+            ],
+            [
+              0.00049,
+              -0.00015
+            ],
+            [
+              0.00049,
+              -0.00025
+            ],
+            [
+              0.00025,
+              -0.00025
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "corner",
+      "properties": {
+        "name": "Synthetic L-shaped building",
+        "height": 18,
+        "heightBasis": "synthetic"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              -0.00055,
+              0.0001
+            ],
+            [
+              -0.0001,
+              0.0001
+            ],
+            [
+              -0.0001,
+              0.00023
+            ],
+            [
+              -0.00036,
+              0.00023
+            ],
+            [
+              -0.00036,
+              0.00045
+            ],
+            [
+              -0.00055,
+              0.00045
+            ],
+            [
+              -0.00055,
+              0.0001
+            ]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "pavilions",
+      "properties": {
+        "name": "Synthetic separate pavilions",
+        "height": 6,
+        "heightBasis": "synthetic"
+      },
+      "geometry": {
+        "type": "MultiPolygon",
+        "coordinates": [
+          [
+            [
+              [
+                0.0001,
+                0.0001
+              ],
+              [
+                0.0003,
+                0.0001
+              ],
+              [
+                0.0003,
+                0.00043
+              ],
+              [
+                0.0001,
+                0.00043
+              ],
+              [
+                0.0001,
+                0.0001
+              ]
+            ]
+          ],
+          [
+            [
+              [
+                0.00043,
+                0.0001
+              ],
+              [
+                0.00065,
+                0.0001
+              ],
+              [
+                0.00065,
+                0.00043
+              ],
+              [
+                0.00043,
+                0.00043
+              ],
+              [
+                0.00043,
+                0.0001
+              ]
+            ]
+          ]
+        ]
+      }
+    }
+  ]
+}

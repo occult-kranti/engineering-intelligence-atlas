@@ -1,0 +1,93 @@
+{
+  "objectCount": 31,
+  "vertexCount": 1488,
+  "triangleCount": 2856,
+  "dimensionsMeters": [
+    7.380751,
+    7.310376,
+    5.311118
+  ],
+  "boundsMeters": {
+    "min": [
+      -3.6903756,
+      -3.6200001,
+      -0.18
+    ],
+    "max": [
+      3.6903756,
+      3.6903756,
+      5.1311178
+    ]
+  },
+  "geometrySha256": "01181df6095c082eafd34ee6f21dcf9b1f93a2be8871a0a915ccc127b72dc8ec",
+  "schemaVersion": 1,
+  "id": "dome-oculus",
+  "name": "Dome with open oculus",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "radius": 3.0,
+    "springHeight": 2.0,
+    "oculusRadius": 0.7,
+    "thickness": 0.22
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-pantheon-ministry",
+    "elements-illinois-glossary"
+  ],
+  "elementIds": [
+    "dome",
+    "oculus",
+    "shell"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "The drum has a deliberate display opening; this is not a structurally complete building.",
+    "Uniform shell thickness, material colours and proportions are invented; the model is not the Pantheon."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/dome-oculus/sample.blend",
+      "bytes": 131555,
+      "sha256": "43183cd3c5146ea8b6917d22aded3b2a83890d3d24b5b8b65d60e4d2de5eee38"
+    },
+    "glb": {
+      "path": "samples/generated/dome-oculus/sample.glb",
+      "bytes": 182416,
+      "sha256": "298fa96e7cbad3d7cd8b7e1d147602f8e11aba163b85bca25a4bc0edaed958d8"
+    },
+    "preview": {
+      "path": "samples/generated/dome-oculus/preview.png",
+      "bytes": 107696,
+      "sha256": "d173b877b2ef4ace63fce3aece092be397b7b0b4457a426d7887dbfd128f50b5"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.838,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

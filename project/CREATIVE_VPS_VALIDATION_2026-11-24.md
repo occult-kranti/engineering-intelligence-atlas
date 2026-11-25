@@ -96,6 +96,17 @@ The client made 120 same-envelope retries. Attempt latency was p50 **28.41 ms**,
 
 ## GitHub CI and deployment boundary
 
+[PR #7](https://github.com/occult-kranti/engineering-intelligence-atlas/pull/7)
+was merged as `b3c9e9b64bb7b2272eccfacf362a2248477613c7` after **all 12
+validation jobs passed** for head `22bc9d9130552179eb0d18cc98b5f986c3814e5b`
+in [run 45534152676](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/45534152676).
+This includes the installed VSIX, Linux and Windows packaged applications,
+cloud/public browser flows, Android build, MySQL connectors, base/creative
+containers and installer checks. A Windows packaging dependency download hit a
+`socket hang up`; the failed job was retried successfully without changing source.
+The cloud sign-in smoke now waits for its completed session error state while
+retaining the exact two-session/no-private-record assertion.
+
 The pull request's exact-commit checks provide the publication evidence. The creative installer job is a required dependency of the main CI/release workflow. The container job builds the base and creative images, validates dependency versions/imports and runs the private runtime/MCP acceptance. The editor job packages the extension and runs its installed 11-command, seven-check-group smoke. Docker and local `vsce` were unavailable in the implementation environment, so those are GitHub CI gates rather than claimed local successes.
 
 Existing published **0.8.0** release assets and tags retain their original source identity. This source update does not claim that old installers include the new creative features. Use the matching CI artifact or a build from this source.

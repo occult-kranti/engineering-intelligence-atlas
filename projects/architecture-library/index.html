@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A sourced chronology of built heritage, structural elements and original Blender studies, from early monumental evidence to contemporary engineering.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>Architecture Library · Daftar</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23274c43'/%3E%3Cpath d='M7 25L16 6L25 25M11 18H21' fill='none' stroke='%23fffcf5' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./library.css">
+  <script type="module" src="./library.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to library</a>
+  <header class="topbar">
+    <a class="brand" href="#timeline"><span class="brand-mark" aria-hidden="true">A</span><span>DAFTAR <span class="brand-sub">/ FIELD LIBRARY 01</span></span></a>
+    <nav aria-label="Project links"><a href="https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/architecture-library">Source &amp; downloads ↗</a><a href="./README.md">Reading guide</a></nav>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="title">
+      <div><p class="eyebrow">BUILT HERITAGE / STRUCTURE / DIGITAL CRAFT</p><h1 id="title">An architecture<br>of human ingenuity.</h1><p class="intro">Follow the evidence from early monumental places to contemporary engineering. Study the load paths, explore the traditions, and open the geometry.</p><p class="edition">RESEARCH EDITION · 24 NOVEMBER 2026</p></div>
+      <div class="hero-study"><svg viewBox="0 0 480 300" role="img" aria-label="Original diagram comparing a post and lintel, arch, dome and diagrid">
+        <g class="diagram-grid"><path d="M20 260H460M20 220H460M20 180H460M20 140H460M20 100H460M20 60H460M60 30V280M140 30V280M220 30V280M300 30V280M380 30V280M460 30V280"/></g>
+        <g class="diagram-structure"><path d="M40 235V151H60V235M120 235V151H140V235M34 130H146V151H34ZM174 235V168A54 54 0 0 1 282 168V235H265V168A37 37 0 0 0 191 168V235ZM315 235V145H453V235M311 145A73 73 0 0 1 457 145ZM317 230 380 154 447 230M320 150 384 230 449 150"/></g>
+        <g class="diagram-dimension"><path d="M34 252H146M174 252H282M311 252H457M34 247V257M146 247V257M174 247V257M282 247V257M311 247V257M457 247V257"/></g>
+        <g class="diagram-label"><text x="37" y="278">SPAN</text><text x="200" y="278">THRUST</text><text x="340" y="278">SHELL / FRAME</text></g>
+      </svg><p>Original analytical diagram · not to scale</p><div id="stats" class="stats" aria-label="Library counts"><span>Loading the collection…</span></div></div>
+    </section>
+    <div class="scope-note"><strong>A living selection, with a clear boundary.</strong> This is a representative global collection, not an inventory of every monument. Early dates describe surviving archaeological evidence; “the first monument” has no single agreed answer. Model studies are original teaching geometry.</div>
+    <nav class="sections" aria-label="Library sections">
+      <a href="#timeline" data-view="timeline" aria-current="page">01 <span>Timeline</span></a>
+      <a href="#buildings" data-view="buildings">02 <span>Buildings</span></a>
+      <a href="#elements" data-view="elements">03 <span>Elements</span></a>
+      <a href="#samples" data-view="samples">04 <span>Model studies</span></a>
+      <a href="#tools" data-view="tools">05 <span>Tools &amp; data</span></a>
+    </nav>
+    <section id="catalog-filters" class="filters" aria-label="Building filters">
+      <label class="search-label">Search the collection<input id="search" type="search" placeholder="Try Gothic, pyramid, timber, India…" autocomplete="off" maxlength="160"></label>
+      <label>Region<select id="region"><option value="">All regions</option></select></label>
+      <label>Building type<select id="category"><option value="">All types</option></select></label>
+      <label>Period<select id="era"></select></label>
+      <button id="reset" type="button" class="quiet">Reset</button>
+    </section>
+    <div id="result-summary" class="result-summary" role="status" aria-live="polite"></div>
+    <section id="content" tabindex="-1" aria-label="Library content"><p class="loading">Loading local reference data…</p></section>
+    <noscript><p class="scope-note">Enable JavaScript for filters, or read <a href="./docs/HISTORY.md">the history guide</a>, <a href="./docs/ELEMENTS.md">element notes</a>, and <a href="./data/monuments.json">the complete catalog JSON</a>.</p></noscript>
+  </main>
+  <footer><p>DAFTAR / ARCHITECTURE LIBRARY</p><div><a href="./docs/METHODOLOGY.md">Evidence &amp; dating</a><a href="./docs/WORKFLOWS.md">Blender → Unreal / VPS</a><a href="./docs/GEOSPATIAL_TOOLS.md">Map-data rights</a><a href="./docs/HISTORY.md">Historical reading guide</a></div><p>Sources retain their own rights. Original samples contain no map tiles, scan data or vendor assets. A source citation does not grant a model or image license.</p></footer>
+  <dialog id="record-dialog" aria-labelledby="record-title"><div class="dialog-top"><span class="eyebrow">COLLECTION RECORD</span><button type="button" id="close-dialog" aria-label="Close building record">Close ×</button></div><div id="record-content"></div></dialog>
+</body>
+</html>

@@ -4,6 +4,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve, sep } from 'node:path';
 import { digest, filesUnder, outputDigests, repoRoot, sourceDigest } from './static-build-lib.mjs';
 import { scanImports } from './renderer-assets.mjs';
+import { architectureLibraryInputs, assertArchitectureProjection } from './architecture-library-assets.mjs';
 
 const directory = join(repoRoot, 'docs');
 const read = (file) => readFileSync(join(directory, file), 'utf8');
@@ -12,6 +13,11 @@ assert.equal(manifest.schemaVersion, 1, 'Unknown build manifest format');
 assert.equal(manifest.buildMode, 'static');
 assert.equal(manifest.sourceSha256, sourceDigest(), 'docs/ is stale; run node scripts/build-static.mjs');
 assert.deepEqual(manifest.files, outputDigests(directory), 'Static files differ from build-info.json');
+const architecture = architectureLibraryInputs(repoRoot);
+assertArchitectureProjection(join(directory, 'architecture-library'), architecture.assets);
+for (const asset of architecture.assets) {
+  assert.equal(digest(readFileSync(join(directory, 'architecture-library', asset.relative))), digest(readFileSync(asset.from)), `Architecture asset differs from source: ${asset.relative}`);
+}
 
 function verifyReference(fromFile, reference) {
   if (/^(?:data:|https?:|#)/i.test(reference)) return;
@@ -28,6 +34,9 @@ assert.match(index, /<div id="root">/);
 const entries = [...index.matchAll(/(?:src|href)=["']([^"']+)["']/g)];
 assert(entries.some((match) => /\.js(?:$|\?)/.test(match[1])), 'No JavaScript entry found');
 for (const [, reference] of entries) verifyReference(join(directory, 'index.html'), reference);
+for (const [, reference] of read('architecture-library/index.html').matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
+  verifyReference(join(directory, 'architecture-library/index.html'), reference);
+}
 
 // A fresh document must never reuse an older unversioned preview asset. The
 // bridge's seed belongs to the same immutable release and must work offline.

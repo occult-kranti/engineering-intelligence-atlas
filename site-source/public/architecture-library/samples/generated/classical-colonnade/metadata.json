@@ -1,0 +1,92 @@
+{
+  "objectCount": 33,
+  "vertexCount": 776,
+  "triangleCount": 1420,
+  "dimensionsMeters": [
+    9.0,
+    5.6,
+    4.85
+  ],
+  "boundsMeters": {
+    "min": [
+      -4.5,
+      -2.8000002,
+      -0.18
+    ],
+    "max": [
+      4.5,
+      2.8000002,
+      4.6700001
+    ]
+  },
+  "geometrySha256": "0eed3b18f7a44156a23d71f090403d77e46161a63075a2c87977f0f8dc440ca0",
+  "schemaVersion": 1,
+  "id": "classical-colonnade",
+  "name": "Classical colonnade study",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "columnsPerRow": 4,
+    "spacing": 2.1,
+    "columnHeight": 3.3
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-met-greek"
+  ],
+  "elementIds": [
+    "column",
+    "capital",
+    "entablature",
+    "post-and-lintel"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "A comparative structural diagram, not a complete Doric, Ionic or Corinthian order.",
+    "Fluting, entasis, polychromy, joints and historically specific proportions are omitted."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/classical-colonnade/sample.blend",
+      "bytes": 101271,
+      "sha256": "47fd0c6062a0e1941faf85ee216287284003b88db0c6318ffd81b4fdfdc7e90f"
+    },
+    "glb": {
+      "path": "samples/generated/classical-colonnade/sample.glb",
+      "bytes": 103344,
+      "sha256": "8cbeeb775ba77b7eb12ef893fa53c09e6a677c447dc4ff2bf76283fd2bd4daf0"
+    },
+    "preview": {
+      "path": "samples/generated/classical-colonnade/preview.png",
+      "bytes": 121080,
+      "sha256": "b169c7f9a9482e00513ab946a5850be8a0dd3319133e0f240da0eae0126fc92f"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.634,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

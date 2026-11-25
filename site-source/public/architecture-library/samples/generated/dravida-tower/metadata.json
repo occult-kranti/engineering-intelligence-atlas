@@ -1,0 +1,92 @@
+{
+  "objectCount": 47,
+  "vertexCount": 400,
+  "triangleCount": 612,
+  "dimensionsMeters": [
+    5.75,
+    5.75,
+    6.96
+  ],
+  "boundsMeters": {
+    "min": [
+      -2.875,
+      -2.875,
+      -0.18
+    ],
+    "max": [
+      2.875,
+      2.875,
+      6.7799997
+    ]
+  },
+  "geometrySha256": "e71b537446ca6077eed598a3c205342c736f041172e1829790a83c6acb80f3c5",
+  "schemaVersion": 1,
+  "id": "dravida-tower",
+  "name": "Dravida-inspired vimana study",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "base": 4.8,
+    "tiers": 7,
+    "tierHeight": 0.55
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-unesco-chola",
+    "elements-getty-corbel"
+  ],
+  "elementIds": [
+    "vimana",
+    "corbel",
+    "terrace-platform"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "Inspired by the Tamil Chola context described by UNESCO; not a universal Indian temple or a measured Chola monument.",
+    "A vimana study, not a gopuram gateway; sacred images, ritual layout, inscriptions and authentic proportional rules are omitted."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/dravida-tower/sample.blend",
+      "bytes": 105882,
+      "sha256": "1cc0eb0f549b829365af92c78a08b2d3fe2ffd0147d3436770585498999cb31a"
+    },
+    "glb": {
+      "path": "samples/generated/dravida-tower/sample.glb",
+      "bytes": 76624,
+      "sha256": "eb95e470d8abd134235361dff22479985bae857f81c59915ae964cef370e054e"
+    },
+    "preview": {
+      "path": "samples/generated/dravida-tower/preview.png",
+      "bytes": 120469,
+      "sha256": "22cb0f16809a580fcca39ff0fd9cc9a933d95d059500e900e7b3c314b6f0b301"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.939,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

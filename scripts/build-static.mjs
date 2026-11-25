@@ -3,6 +3,7 @@ import { spawnSync } from 'node:child_process';
 import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { outputDigests, repoRoot, sourceDigest, webRoot } from './static-build-lib.mjs';
+import { copyArchitectureLibrary } from './architecture-library-assets.mjs';
 
 const vite = join(webRoot, 'node_modules/vite/bin/vite.js');
 if (!existsSync(vite)) throw new Error('Install web dependencies first: npm --prefix site-source ci');
@@ -10,6 +11,7 @@ for (const script of ['sync-company.mjs', 'build-desktop-preview.mjs']) {
   const prepare = spawnSync(process.execPath, [join(repoRoot, 'scripts', script)], { cwd: repoRoot, stdio: 'inherit', env: process.env });
   if (prepare.status !== 0) process.exit(prepare.status ?? 1);
 }
+copyArchitectureLibrary(repoRoot, join(webRoot, 'public/architecture-library'));
 const build = spawnSync(process.execPath, [vite, 'build', '--mode', 'static'], {
   cwd: webRoot, stdio: 'inherit', env: process.env,
 });

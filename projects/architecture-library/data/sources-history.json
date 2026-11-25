@@ -1,0 +1,985 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "history-abu-simbel-egypt",
+      "title": "Abu Simbel",
+      "url": "https://egymonuments.gov.eg/en/archaeological-sites/abu-simbel/",
+      "publisher": "Egyptian Ministry of Tourism and Antiquities",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "abu-simbel: approximate 1264 BCE attribution, rock-cut temples, colossal figures and relocation completed in 1968."
+      ]
+    },
+    {
+      "id": "history-ahwar-unesco",
+      "title": "The Ahwar of Southern Iraq",
+      "url": "https://whc.unesco.org/en/list/1481/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "ur-ziggurat: Ur within the Sumerian urban and archaeological landscape; not a detailed reconstruction of the lost summit."
+      ]
+    },
+    {
+      "id": "history-alhambra-unesco",
+      "title": "Alhambra, Generalife and Albayzín, Granada",
+      "url": "https://whc.unesco.org/en/list/314/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "alhambra-generalife: Nasrid palace/garden context, irrigation infrastructure and later architectural layers."
+      ]
+    },
+    {
+      "id": "history-angkor-apsara",
+      "title": "Angkor Wat",
+      "url": "https://apsaraauthority.gov.kh/2021/06/14/angkor-wat/",
+      "publisher": "APSARA National Authority",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "angkor-wat: first-half-twelfth-century construction, Suryavarman II, major architectural organization and later Buddhist pilgrimage."
+      ]
+    },
+    {
+      "id": "history-angkor-unesco",
+      "title": "Angkor",
+      "url": "https://whc.unesco.org/en/list/668/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "angkor-wat: setting within Khmer urban, religious and hydraulic systems; distinct dates across the larger property."
+      ]
+    },
+    {
+      "id": "history-barragan-unesco",
+      "title": "Luis Barragán House and Studio",
+      "url": "https://whc.unesco.org/en/list/1136/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "barragan-house: 1948 construction, concrete fabric, light/color/spatial organization and lifetime modifications."
+      ]
+    },
+    {
+      "id": "history-borobudur-unesco",
+      "title": "Borobudur Temple Compounds",
+      "url": "https://whc.unesco.org/en/list/592/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "borobudur: eighth–ninth-century construction, terraces around a hill, stupas, religious interpretation and restoration."
+      ]
+    },
+    {
+      "id": "history-brasilia-archive",
+      "title": "Catedral de Brasília: archival construction records",
+      "url": "https://atom.arquivopublico.df.gov.br/index.php/informationobject/browse?onlyMedia=1&showAdvanced=1&sort=referenceCode&sortDir=asc&subjects=5705&topLod=0",
+      "publisher": "Arquivo Público do Distrito Federal",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "brasilia-cathedral: foundation/construction milestones, Niemeyer and Cardozo, concrete supports and later glazing."
+      ]
+    },
+    {
+      "id": "history-brasilia-guide",
+      "title": "Guia Turístico da Cidade de Brasília",
+      "url": "https://www.comunicacao.df.gov.br/wp-conteudo/uploads/2017/10/Guia-Roteiros-Brasilia-Portugues-d.pdf",
+      "publisher": "Government of the Federal District, Brazil",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "brasilia-cathedral: 1970 inauguration, sixteen structural members, circular nave and entrance sequence."
+      ]
+    },
+    {
+      "id": "history-burj-som",
+      "title": "Burj Khalifa",
+      "url": "https://www.som.com/projects/burj-khalifa/",
+      "publisher": "Skidmore, Owings & Merrill",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "burj-khalifa: completed 2010 status, reinforced-concrete structure, central core and integrated services."
+      ]
+    },
+    {
+      "id": "history-burj-som-structure",
+      "title": "Five SOM Projects Win AIA Middle East 2014 Design Awards",
+      "url": "https://www.som.com/news/five-som-projects-win-aia-middle-east-2014-design-awards/",
+      "publisher": "Skidmore, Owings & Merrill",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "burj-khalifa: three reinforced-concrete wings buttressing one another around a central hub."
+      ]
+    },
+    {
+      "id": "history-cahokia-unesco",
+      "title": "Cahokia Mounds State Historic Site",
+      "url": "https://whc.unesco.org/en/list/198/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "cahokia: Mississippian chronology, staged Monks Mound construction, public/residential areas and reconstructed palisade."
+      ]
+    },
+    {
+      "id": "history-caral-unesco",
+      "title": "Sacred City of Caral-Supe",
+      "url": "https://whc.unesco.org/en/list/1269/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "caral-supe: radiocarbon-based 3000–1800 BCE interval, platform mounds, sunken circular courts and urban context."
+      ]
+    },
+    {
+      "id": "history-cctv-arup",
+      "title": "Arup's innovation legacy: CCTV Headquarters",
+      "url": "https://www.arup.com/globalassets/downloads/insights/a/arups-innovation-legacy/arup-innovation-legacy.pdf",
+      "publisher": "Arup",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "cctv-headquarters: completed 2012 project, continuous loop and irregular external bracing system."
+      ]
+    },
+    {
+      "id": "history-cctv-arup-construction",
+      "title": "CCTV Headquarters, Beijing, China: Building the structure",
+      "url": "https://www.arup.com/globalassets/downloads/arup-journal/the-arup-journal-2008-issue-2.pdf",
+      "publisher": "Arup project engineering team / The Arup Journal",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "cctv-headquarters: construction sequencing, leaning towers, overhang and distinction from neighboring TVCC."
+      ]
+    },
+    {
+      "id": "history-chartres-unesco",
+      "title": "Chartres Cathedral",
+      "url": "https://whc.unesco.org/en/list/81/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "chartres-cathedral: post-1194 nave/choir rebuilding, earlier western elements, sculpture and glazing phases."
+      ]
+    },
+    {
+      "id": "history-chichen-itza-unesco",
+      "title": "Pre-Hispanic City of Chichen-Itza",
+      "url": "https://whc.unesco.org/en/list/483/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "chichen-itza: major monumental groups and broad phases; older migration narratives are treated cautiously."
+      ]
+    },
+    {
+      "id": "history-chola-unesco",
+      "title": "Great Living Chola Temples",
+      "url": "https://whc.unesco.org/en/list/250/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "brihadisvara-thanjavur: regnal chronology, tiered vimana, enclosure, later additions and living religious practice."
+      ]
+    },
+    {
+      "id": "history-colosseum-art-of-making",
+      "title": "Source Image PR203_01_01: Colosseum",
+      "url": "https://artofmaking.ac.uk/explore/sources/411/",
+      "publisher": "Art of Making in Antiquity research project",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "colosseum: c. 70–80 CE chronology, travertine fabric and surviving evidence of metal clamps."
+      ]
+    },
+    {
+      "id": "history-colosseum-conservation",
+      "title": "Colosseum: restoration and conservation",
+      "url": "https://colosseo.it/en/restauri/colosseum/",
+      "publisher": "Parco archeologico del Colosseo",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "colosseum: material fabric, later structural phases and current conservation documentation."
+      ]
+    },
+    {
+      "id": "history-djenne-atlas",
+      "title": "Urban Heritage Atlas: Old Towns of Djenné",
+      "url": "https://whc.unesco.org/en/urban-heritage-atlas/djenne/",
+      "publisher": "UNESCO World Heritage Centre / Cultural Mission of Djenné",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "djenne-great-mosque: earthen bricks, mud plaster, local materials and living construction knowledge."
+      ]
+    },
+    {
+      "id": "history-djenne-unesco",
+      "title": "Old Towns of Djenné",
+      "url": "https://whc.unesco.org/en/list/116/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "djenne-great-mosque: present mosque's 1906–1907 reconstruction and distinction from the town's earlier settlement."
+      ]
+    },
+    {
+      "id": "history-djoser-egypt",
+      "title": "The Step Pyramid Complex of Djoser",
+      "url": "https://egymonuments.gov.eg/en/monuments/the-step-pyramid-complex-of-djoser",
+      "publisher": "Egyptian Ministry of Tourism and Antiquities",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "djoser-step-pyramid: regnal date interval, six steps, mastaba development and ritual complex."
+      ]
+    },
+    {
+      "id": "history-eiffel-history",
+      "title": "Eiffel Tower history, architecture, design and construction",
+      "url": "https://www.toureiffel.paris/en/the-monument/history",
+      "publisher": "Société d'Exploitation de la Tour Eiffel",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "eiffel-tower: 1887–1889 chronology, workshop preparation, riveting, erection and foundations."
+      ]
+    },
+    {
+      "id": "history-eiffel-iron",
+      "title": "The Tower… made of iron and rivets",
+      "url": "https://www.toureiffel.paris/themes/custom/tour_eiffel/assets/Fiches/EN/en_05_du_fer_et_des_rivets.pdf",
+      "publisher": "Société d'Exploitation de la Tour Eiffel",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "eiffel-tower: puddled iron material and industrial detailing/assembly; the tower is not a generic steel frame."
+      ]
+    },
+    {
+      "id": "history-ellora-asi",
+      "title": "Ellora Caves",
+      "url": "https://asi.nic.in/pages/WorldHeritageElloraCaves",
+      "publisher": "Archaeological Survey of India",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "kailasa-ellora: basalt geology, monolithic excavation and distinction among the wider complex's building phases."
+      ]
+    },
+    {
+      "id": "history-fallingwater-timeline",
+      "title": "Fallingwater timeline",
+      "url": "https://fallingwater.org/history/timeline/",
+      "publisher": "Western Pennsylvania Conservancy / Fallingwater",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "fallingwater: 1936 foundations and cantilever work, main-house completion in 1937 and later history."
+      ]
+    },
+    {
+      "id": "history-florence-opera",
+      "title": "Brunelleschi's Dome",
+      "url": "https://duomo.firenze.it/en/40/dome",
+      "publisher": "Opera di Santa Maria del Fiore",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "florence-dome: 1420–1436, linked masonry shells, ribs and herringbone brickwork."
+      ]
+    },
+    {
+      "id": "history-forbidden-city-unesco",
+      "title": "Imperial Palaces of the Ming and Qing Dynasties in Beijing and Shenyang",
+      "url": "https://whc.unesco.org/en/list/439/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "forbidden-city: 1406–1420 founding campaign, hierarchical axial planning and distinct later palace phases."
+      ]
+    },
+    {
+      "id": "history-gem-architect",
+      "title": "The Grand Egyptian Museum | Giza, Egypt",
+      "url": "https://www.hparc.com/work/the-grand-egyptian-museum",
+      "publisher": "heneghan peng architects",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "grand-egyptian-museum: plateau-edge concept, gallery organization, roof folds, service walls and complete project status."
+      ]
+    },
+    {
+      "id": "history-gem-engineers",
+      "title": "The Grand Egyptian Museum showcases astounding design and creativity",
+      "url": "https://www.asce.org/publications-and-news/civil-engineering-source/civil-engineering-magazine/issues/magazine-issue/article/2025/11/the-grand-egyptian-museum-showcases-astounding-design-and-creativity",
+      "publisher": "Francis Archer and Charlotte Briggs, Arup / ASCE",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "grand-egyptian-museum: first-person project-engineer account of retaining works, phased contracts and steel roof construction."
+      ]
+    },
+    {
+      "id": "history-gem-presidency",
+      "title": "The Inauguration of the Grand Egyptian Museum",
+      "url": "https://www.presidency.eg/en/%D8%A7%D9%84%D9%85%D8%B4%D8%A7%D8%B1%D9%8A%D8%B9-%D8%A7%D9%84%D9%82%D9%88%D9%85%D9%8A%D8%A9/project1112025/",
+      "publisher": "Presidency of the Arab Republic of Egypt",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "grand-egyptian-museum: May 2005 site works, building program and official inauguration."
+      ]
+    },
+    {
+      "id": "history-gem-story",
+      "title": "Museum Story",
+      "url": "https://gem.eg/en/about/museum-story",
+      "publisher": "Grand Egyptian Museum",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "grand-egyptian-museum: distinction between partial openings and museum-wide opening on 1 November 2025."
+      ]
+    },
+    {
+      "id": "history-ggantija-heritage-malta",
+      "title": "Ġgantija Archaeological Park",
+      "url": "https://heritagemalta.mt/explore/ggantija-archaeological-park/",
+      "publisher": "Heritage Malta",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "ggantija: broad Late Neolithic dating, two structures, local limestone selection, apses and surviving plaster evidence."
+      ]
+    },
+    {
+      "id": "history-gobekli-tepe-unesco",
+      "title": "Göbekli Tepe",
+      "url": "https://whc.unesco.org/en/list/1572/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "gobekli-tepe: 9600–8200 BCE chronology, limestone pillars, enclosure forms and cautious interpretation of ritual functions."
+      ]
+    },
+    {
+      "id": "history-great-zimbabwe-unesco",
+      "title": "Great Zimbabwe National Monument",
+      "url": "https://whc.unesco.org/en/list/364/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "great-zimbabwe: 1100–1450 frame, Shona authorship, granite enclosures and earthen internal buildings."
+      ]
+    },
+    {
+      "id": "history-himeji-unesco",
+      "title": "Himeji-jo",
+      "url": "https://whc.unesco.org/en/list/661/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "himeji-castle: early-seventeenth-century surviving complex, timber construction, white plaster, defense and continuing repair."
+      ]
+    },
+    {
+      "id": "history-horyu-ji-unesco",
+      "title": "Buddhist Monuments in the Horyu-ji Area",
+      "url": "https://whc.unesco.org/en/list/660/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "horyu-ji: surviving late-seventh/early-eighth-century timber, 670 fire, bracketed bay construction and conservation."
+      ]
+    },
+    {
+      "id": "history-istanbul-unesco",
+      "title": "Historic Areas of Istanbul",
+      "url": "https://whc.unesco.org/en/list/356/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "hagia-sophia: 532–537 campaign and architectural influence.",
+        "suleymaniye: Sinan's 1550–1557 mosque and associated institutions."
+      ]
+    },
+    {
+      "id": "history-jericho-unesco",
+      "title": "Ancient Jericho/Tell es-Sultan",
+      "url": "https://whc.unesco.org/en/list/1687/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "jericho-neolithic-tower: separation of early settlement deposits from the ninth–eighth-millennium BCE monumental wall, ditch and tower."
+      ]
+    },
+    {
+      "id": "history-kairouan-unesco",
+      "title": "Kairouan",
+      "url": "https://whc.unesco.org/en/list/499/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "kairouan-great-mosque: ninth-century rebuilding, hypostyle hall, marble/porphyry columns, courtyard and minaret."
+      ]
+    },
+    {
+      "id": "history-khajuraho-unesco",
+      "title": "Khajuraho Group of Monuments",
+      "url": "https://whc.unesco.org/en/list/240/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "khajuraho: Chandella period, Hindu/Jain distinction, sandstone and Nagara spatial hierarchy."
+      ]
+    },
+    {
+      "id": "history-khufu-egypt",
+      "title": "The Great Pyramid",
+      "url": "https://egymonuments.gov.eg/monuments/the-great-pyramid/",
+      "publisher": "Egyptian Ministry of Tourism and Antiquities",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "khufu-great-pyramid: Khufu's regnal chronology, limestone supply, interior chambers and corbelled Grand Gallery."
+      ]
+    },
+    {
+      "id": "history-lalibela-unesco",
+      "title": "Rock-Hewn Churches, Lalibela",
+      "url": "https://whc.unesco.org/en/list/18/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "lalibela-churches: conventional medieval attribution, monolithic excavation, trenches, drainage and uncertainty about some original functions."
+      ]
+    },
+    {
+      "id": "history-louvre-pyramid",
+      "title": "A pyramid for a symbol",
+      "url": "https://www.louvre.fr/en/explore/the-palace/a-pyramid-for-a-symbol",
+      "publisher": "Musée du Louvre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "louvre-pyramid: four-year work interval, 29 March 1989 inauguration, metal framework and specially developed clear glazing."
+      ]
+    },
+    {
+      "id": "history-machu-picchu-unesco",
+      "title": "Historic Sanctuary of Machu Picchu",
+      "url": "https://whc.unesco.org/en/list/274/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "machu-picchu: fifteenth-century Inca construction, terraces, buildings, paths and irrigation in a mountain landscape."
+      ]
+    },
+    {
+      "id": "history-malta-temples-unesco",
+      "title": "Megalithic Temples of Malta",
+      "url": "https://whc.unesco.org/en/list/132/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "ggantija: megalithic wall construction, orthostats, horizontal blocks and uncertainty about lost roofs in the Maltese temple tradition."
+      ]
+    },
+    {
+      "id": "history-meroe-unesco",
+      "title": "Archaeological Sites of the Island of Meroe",
+      "url": "https://whc.unesco.org/en/list/1336/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "meroe-pyramids: royal burials from the third century BCE, Kushite context, reconstruction and damage to pyramid fabric."
+      ]
+    },
+    {
+      "id": "history-mjostarnet-moelven",
+      "title": "Mjøstårnet",
+      "url": "https://www.moelven.com/mjostarnet/",
+      "publisher": "Moelven",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "mjostarnet: 2017–2019 sequence, glulam/CLT components, assembly stages and supplier/engineer responsibilities."
+      ]
+    },
+    {
+      "id": "history-mjostarnet-technical",
+      "title": "Mjøstårnet: Construction of an 81 m tall timber building",
+      "url": "https://www.moelven.com/globalassets/moelven-limtre/mjostarnet/mjostarnet---construction-of-an-81-m-tall-timber-building.pdf",
+      "publisher": "Rune Abrahamsen / Moelven Limtre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "mjostarnet: project-engineer account of structural timber, hybrid floor materials, connections and fire-design strategy; early title height is not the final height."
+      ]
+    },
+    {
+      "id": "history-mohenjo-kenoyer",
+      "title": "Indus Urbanism: New Perspectives on Its Origin and Character",
+      "url": "https://www.harappa.com/sites/default/files/pdf/Kenoyer2008%20Indus%20Cities%20Sackler%20Colloquiumfinalrevised.pdf",
+      "publisher": "Jonathan Mark Kenoyer / Harappa Archaeological Research Project",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "mohenjo-daro: Table 3 distinguishes the principal 2600–1900 BCE occupation from earlier and later levels."
+      ]
+    },
+    {
+      "id": "history-mohenjo-unesco",
+      "title": "Archaeological Ruins at Moenjodaro",
+      "url": "https://whc.unesco.org/en/list/138/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "mohenjo-daro: brick fabric, planned streets, sanitation and conservation; the detailed assessment corrects the oversimplified introductory material description."
+      ]
+    },
+    {
+      "id": "history-nan-madol-unesco",
+      "title": "Nan Madol: Ceremonial Centre of Eastern Micronesia",
+      "url": "https://whc.unesco.org/en/list/1503/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "nan-madol: 1200–1500 ceremonial phase, artificial islets, basalt wall courses and Pohnpeian cultural continuity."
+      ]
+    },
+    {
+      "id": "history-newgrange-education",
+      "title": "Brú na Bóinne: Art History Leaving Certificate education pack",
+      "url": "https://heritageireland.ie/assets/uploads/2021/08/Art-History-Leaving-Certificate-1-1.pdf",
+      "publisher": "Office of Public Works / Heritage Ireland",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "newgrange: corbel-vaulted chamber, mound, entrance and interpretation of the archaeological monument."
+      ]
+    },
+    {
+      "id": "history-newgrange-opw",
+      "title": "Brú na Bóinne Visitor Centre: Newgrange, Knowth and Dowth",
+      "url": "https://heritageireland.ie/places-to-visit/bru-na-boinne-visitor-centre-newgrange-knowth-and-dowth/",
+      "publisher": "Office of Public Works / Heritage Ireland",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "newgrange: passage-tomb identity, approximate 3200 BCE date and wider archaeological landscape."
+      ]
+    },
+    {
+      "id": "history-newgrange-reconstruction",
+      "title": "Heritage Ireland, issue eight: Newgrange reconstruction and solstice alignment",
+      "url": "https://heritageireland.ie/assets/uploads/2018/06/heritage-ireland-issue-eight-25072018.pdf",
+      "publisher": "Office of Public Works / Heritage Ireland",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "newgrange: debated reconstructed quartz frontage distinguished from the documented roof-box alignment."
+      ]
+    },
+    {
+      "id": "history-pantheon-history",
+      "title": "Pantheon: Historical background",
+      "url": "https://direzionemuseiroma.cultura.gov.it/en/pantheon/historical-background/",
+      "publisher": "Italian Ministry of Culture, Directorate of National Museums of Rome",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "pantheon: portico columns, oculus, coffers, drainage and the later church conversion."
+      ]
+    },
+    {
+      "id": "history-pantheon-ministry",
+      "title": "Pantheon",
+      "url": "https://direzionemuseiroma.cultura.gov.it/en/pantheon/",
+      "publisher": "Italian Ministry of Culture, Directorate of National Museums of Rome",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "pantheon: present building's 118–125 CE chronology, thick rotunda support and domed interior."
+      ]
+    },
+    {
+      "id": "history-parthenon-ysma",
+      "title": "Parthenon",
+      "url": "https://www.ysma.gr/en/monuments/parthenon/",
+      "publisher": "Acropolis Restoration Service (YSMA)",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "parthenon: 447–438 BCE construction, sculptural completion by 432 BCE and Doric/Ionic organization."
+      ]
+    },
+    {
+      "id": "history-pattadakal-asi",
+      "title": "Group of Monuments at Pattadakal",
+      "url": "https://asi.nic.in/pages/WorldHeritagePattadakal",
+      "publisher": "Archaeological Survey of India",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "kailasa-ellora: Krishna I attribution and architectural relationship between Kailasa and constructed southern Indian temples."
+      ]
+    },
+    {
+      "id": "history-persepolis-unesco",
+      "title": "Persepolis",
+      "url": "https://whc.unesco.org/en/list/114/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "persepolis: principal royal campaigns, terrace planning, stone columns, timber lintels and lighter roofs."
+      ]
+    },
+    {
+      "id": "history-petra-unesco",
+      "title": "Petra",
+      "url": "https://whc.unesco.org/en/list/326/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "petra: Nabataean rock-cut monuments, sandstone setting, hydraulic systems and selected first-century BCE/CE phase."
+      ]
+    },
+    {
+      "id": "history-pompidou-structure",
+      "title": "Structure et modules",
+      "url": "https://www.centrepompidou.fr/en/offre-aux-professionnels/enseignants/dossiers-ressources-sur-lart/larchitecture-du-centre-pompidou/structure-et-modules",
+      "publisher": "Centre Pompidou",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "centre-pompidou: 1972 excavation, 1977 opening, steel frame, gerberettes, bracing and tension members."
+      ]
+    },
+    {
+      "id": "history-pont-du-gard-authority",
+      "title": "L'eau canalisée: l'aqueduc de Nîmes et le pont du Gard",
+      "url": "https://pontdugard.fr/sites/default/files/2023-05/parcoursbd.pdf",
+      "publisher": "Pont du Gard site educational service",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "pont-du-gard: site-authority dating around 50 CE, limestone construction and gravity-fed aqueduct context."
+      ]
+    },
+    {
+      "id": "history-pont-du-gard-unesco",
+      "title": "Pont du Gard (Roman Aqueduct)",
+      "url": "https://whc.unesco.org/en/list/344/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "pont-du-gard: three-tier crossing and larger aqueduct; older introductory dating is not adopted over the site authority."
+      ]
+    },
+    {
+      "id": "history-prambanan-unesco",
+      "title": "Prambanan Temple Compounds",
+      "url": "https://whc.unesco.org/en/list/642/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "prambanan: Loro Jonggrang's ninth-century phase, Hindu shrines, wider Buddhist components and reconstruction context."
+      ]
+    },
+    {
+      "id": "history-rapa-nui-unesco",
+      "title": "Rapa Nui National Park",
+      "url": "https://whc.unesco.org/en/list/715/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "rapa-nui-ahu: broad monumental chronology, Rapa Nui authorship, platform construction, volcanic tuff and quarries."
+      ]
+    },
+    {
+      "id": "history-sagrada-history",
+      "title": "History of the Temple",
+      "url": "https://sagradafamilia.org/en/history-of-the-temple?pubDate=20260826",
+      "publisher": "Junta Constructora del Temple Expiatori de la Sagrada Família",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "sagrada-familia: long construction history and the 2026 tower milestone; dated milestones take precedence over old predictions."
+      ]
+    },
+    {
+      "id": "history-sagrada-panels",
+      "title": "Cross lands in sky above Barcelona",
+      "url": "https://sagradafamilia.org/en/detalle/-/asset_publisher/7JWibz9G2KUY/content/una-creu-que-arriba-al-cel-de-barcelona",
+      "publisher": "Junta Constructora del Temple Expiatori de la Sagrada Família",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "sagrada-familia: tensioned stone-and-steel panel system, off-site fabrication and the observed February 2026 tower-exterior milestone."
+      ]
+    },
+    {
+      "id": "history-sagrada-tower-2026",
+      "title": "This is how the cross on the tower of Jesus was built",
+      "url": "https://blog.sagradafamilia.org/en/phases-construction-jesus-tower/",
+      "publisher": "Junta Constructora del Temple Expiatori de la Sagrada Família",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "sagrada-familia: February 2026 exterior completion, fabrication and continuing interior work in 2027–2028."
+      ]
+    },
+    {
+      "id": "history-sanchi-unesco",
+      "title": "Buddhist Monuments at Sanchi",
+      "url": "https://whc.unesco.org/en/list/524/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "sanchi-great-stupa: Mauryan foundation, later enlargement, stone veneer, gateways and circumambulatory organization."
+      ]
+    },
+    {
+      "id": "history-shanghai-facade-paper",
+      "title": "Shanghai Tower: Facade Design Process",
+      "url": "https://www.gensler.com/uploads/document/242/file/Shanghai_Tower_Facade_Design_Process_11_10_2011.pdf",
+      "publisher": "Gensler design team",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "shanghai-tower: parametric profile, taper and twist studies coordinated with wind investigations."
+      ]
+    },
+    {
+      "id": "history-shanghai-gensler",
+      "title": "Shanghai Tower",
+      "url": "https://www.gensler.com/projects/shanghai-tower",
+      "publisher": "Gensler",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "shanghai-tower: mixed-use program, spiral form, double-skin facade and designer-described wind/energy strategies."
+      ]
+    },
+    {
+      "id": "history-shanghai-gensler-date",
+      "title": "Legacy of Leadership",
+      "url": "https://www.gensler.com/legacy-of-leadership",
+      "publisher": "Gensler",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "shanghai-tower: retrospective confirmation of completion among Gensler's 2015 projects."
+      ]
+    },
+    {
+      "id": "history-stonehenge-building",
+      "title": "Building Stonehenge",
+      "url": "https://www.english-heritage.org.uk/visit/places/stonehenge/history-and-stories/building-stonehenge/?lang=en",
+      "publisher": "English Heritage",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "stonehenge: handling and setting stones, different materials, organized labor and limits of reconstructed building methods."
+      ]
+    },
+    {
+      "id": "history-stonehenge-timeline",
+      "title": "A timeline of Stonehenge",
+      "url": "https://www.english-heritage.org.uk/visit/places/stonehenge/history-and-stories/timeline/",
+      "publisher": "English Heritage",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "stonehenge: separation of early earthwork, large-stone settings and later prehistoric activity."
+      ]
+    },
+    {
+      "id": "history-sydney-sphere",
+      "title": "The spherical solution",
+      "url": "https://www.sydneyoperahouse.com/our-story/the-spherical-solution",
+      "publisher": "Sydney Opera House",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "sydney-opera-house: evolution from early profiles to spherical geometry and the fabrication/engineering problem."
+      ]
+    },
+    {
+      "id": "history-sydney-story",
+      "title": "Our story",
+      "url": "https://www.sydneyoperahouse.com/our-story",
+      "publisher": "Sydney Opera House",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "sydney-opera-house: 1959 construction start, 1973 opening and distinct roles of Utzon and Hall."
+      ]
+    },
+    {
+      "id": "history-taj-mahal-unesco",
+      "title": "Taj Mahal",
+      "url": "https://whc.unesco.org/en/list/252/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "taj-mahal: separate mausoleum/complex completion dates, Mughal patronage, garden and material craft."
+      ]
+    },
+    {
+      "id": "history-taputapuatea-unesco",
+      "title": "Taputapuātea",
+      "url": "https://whc.unesco.org/en/list/1529/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "taputapuatea: fourteenth–eighteenth-century marae, maritime connections, restoration and Mā'ohi living associations."
+      ]
+    },
+    {
+      "id": "history-teotihuacan-unesco",
+      "title": "Pre-Hispanic City of Teotihuacan",
+      "url": "https://whc.unesco.org/en/list/414/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "teotihuacan: first–seventh-century urban sequence, principal monuments, talud-tablero and river/avenue planning."
+      ]
+    },
+    {
+      "id": "history-tikal-unesco",
+      "title": "Tikal National Park",
+      "url": "https://whc.unesco.org/en/list/64/",
+      "publisher": "UNESCO World Heritage Centre",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "tikal: broad Preclassic–Classic sequence, ceremonial and residential architecture, roads, terraces and reservoirs."
+      ]
+    },
+    {
+      "id": "history-ur-penn-brick",
+      "title": "Brick B16527 from the Ziggurat at Ur",
+      "url": "https://collections.penn.museum/collections/object.php?irn=134635",
+      "publisher": "Penn Museum",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "ur-ziggurat: excavated clay brick, Ur III date and Ur-Nammu inscription provenance."
+      ]
+    },
+    {
+      "id": "history-ur-penn-visit",
+      "title": "Cultural Heritage Project in Iraq – Part One",
+      "url": "https://collections.penn.museum/collections/videos/video/1090",
+      "publisher": "Penn Museum",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "ur-ziggurat: Ur-Nammu attribution, approximate 2100 BCE date and distinction between ancient evidence and modern interpretation."
+      ]
+    },
+    {
+      "id": "history-yingxian-tentative",
+      "title": "Wooden Structures of Liao Dynasty: Wooden Pagoda of Yingxian and Fengguo Monastery",
+      "url": "https://whc.unesco.org/en/tentativelists/5803/",
+      "publisher": "National Commission of China for UNESCO (Tentative List submission)",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "yingxian-wooden-pagoda: 1056 attribution, octagonal plan, column rings, hidden levels and timber joinery; not an inscription decision."
+      ]
+    },
+    {
+      "id": "history-zayed-foster",
+      "title": "Zayed National Museum",
+      "url": "https://www.fosterandpartners.com/projects/zayed-national-museum/?trk=public_profile_project-title",
+      "publisher": "Foster + Partners",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "zayed-national-museum: completed status, steel wings, ventilation concept, gallery pods and controlled daylight; design claims, not an operational audit."
+      ]
+    },
+    {
+      "id": "history-zayed-opening",
+      "title": "Zayed National Museum opens to the public in Saadiyat Cultural District",
+      "url": "https://www.mediaoffice.abudhabi/en/arts-culture/zayed-national-museum-opens-to-the-public-in-saadiyat-cultural-district/",
+      "publisher": "Abu Dhabi Media Office",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "zayed-national-museum: verified public opening on 3 December 2025 and museum program."
+      ]
+    },
+    {
+      "id": "history-zeitz-architect-statement",
+      "title": "Zeitz MOCAA | Cape Town, South Africa | 2017",
+      "url": "https://www.chi-athenaeum.org/the-2018-ia-awards/2018/08/22/zeitz-mocaa-cape-town-south-africa-2017/",
+      "publisher": "Heatherwick Studio project statement / The Chicago Athenaeum",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "zeitz-mocaa: project-team description of reinforcing sleeves, selective removal and converted gallery spaces."
+      ]
+    },
+    {
+      "id": "history-zeitz-heatherwick",
+      "title": "Zeitz MOCAA",
+      "url": "https://heatherwick.com/project/zeitz-mocaa/",
+      "publisher": "Heatherwick Studio",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "zeitz-mocaa: completed 2017 conversion, retained concrete tubes, carved atrium and laminated roof glazing."
+      ]
+    }
+  ]
+}

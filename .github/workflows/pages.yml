@@ -7,6 +7,7 @@ on:
       - 'site-source/**'
       - 'desktop-shell/src/renderer/**'
       - 'company/**'
+      - 'projects/architecture-library/**'
       - 'scripts/**'
       - 'docs/**'
       - '.github/workflows/pages.yml'
@@ -40,6 +41,7 @@ jobs:
         run: |
           npm --prefix site-source run check
           npm --prefix site-source run check:migrations
+          node projects/architecture-library/validate.mjs
       - name: Build portable static atlas from source
         run: node scripts/build-static.mjs
       - name: Install browser for Pages smoke test
@@ -47,12 +49,16 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Verify Pages subpath and offline reload
         run: node scripts/smoke-static.mjs
+      - name: Verify architecture library and model downloads
+        run: node scripts/smoke-architecture-library.mjs
       - name: Save every web and desktop workspace screen
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ui-screenshots
-          path: site-source/.work/ui-screenshots
+          path: |
+            site-source/.work/ui-screenshots
+            site-source/.work/architecture-ui
           if-no-files-found: warn
       - uses: actions/configure-pages@v5
       - name: Upload verified client files only

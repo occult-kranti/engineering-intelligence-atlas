@@ -1,0 +1,2737 @@
+{
+  "schemaVersion": 1,
+  "asOf": "2026-11-24",
+  "coverageNote": "A representative, source-linked global teaching catalog of 62 sites and buildings, from early surviving monumental evidence to verified recent projects. It is not a universal history or a claim to identify the first architecture. Dates identify selected construction phases; BCE years are negative, no year zero is asserted. Engineering notes are qualitative interpretations, not surveyed specifications or structural calculations. Sources were retrieved on 2026-11-25 for an as-of cutoff of 2026-11-24; ongoing work is distinguished from completion.",
+  "records": [
+    {
+      "id": "gobekli-tepe",
+      "name": "Göbekli Tepe",
+      "region": "Middle East",
+      "country": "Türkiye",
+      "period": "Pre-Pottery Neolithic",
+      "categories": [
+        "ceremonial",
+        "megalithic"
+      ],
+      "startYear": -9600,
+      "endYear": -8200,
+      "dateLabel": "c. 9600–8200 BCE",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "megalithic-enclosure",
+        "post-and-lintel"
+      ],
+      "materials": [
+        "limestone"
+      ],
+      "elements": [
+        "t-shaped-pillar",
+        "enclosure",
+        "relief",
+        "bench"
+      ],
+      "description": "Monumental enclosures on the limestone plateau near Şanlıurfa contain carved T-shaped pillars and animal imagery. The complex belongs to communities conventionally described as hunter-gatherers during the transition toward settled life.",
+      "engineering": "Local limestone was shaped into large monoliths and organized within circular, oval and rectangular enclosures. The surviving stones document quarrying, handling and collective construction; they do not establish one complete lifting method.",
+      "significance": "An early, well-supported example of communal monument building, useful for studying the relationship between gathering, settlement and social organization.",
+      "uncertainties": [
+        "Ritual or funerary functions are interpretations, not a proven single use.",
+        "The dates describe a long archaeological sequence, not one construction event.",
+        "This is not a claim to the first building or first temple ever."
+      ],
+      "sourceIds": [
+        "history-gobekli-tepe-unesco"
+      ]
+    },
+    {
+      "id": "jericho-neolithic-tower",
+      "name": "Tell es-Sultan: Neolithic wall and tower",
+      "region": "Middle East",
+      "country": "State of Palestine",
+      "period": "Pre-Pottery Neolithic",
+      "categories": [
+        "settlement",
+        "tower",
+        "earthwork"
+      ],
+      "startYear": -9000,
+      "endYear": -7000,
+      "dateLabel": "9th–8th millennia BCE; monumental Neolithic phase",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "mass-masonry",
+        "earthwork"
+      ],
+      "materials": [
+        "stone",
+        "earth"
+      ],
+      "elements": [
+        "tower",
+        "wall",
+        "ditch"
+      ],
+      "description": "At ancient Jericho, a substantial wall, ditch and tower belong to the Neolithic settlement sequence. They are distinct from the site's much earlier occupation deposits and from later Bronze Age urban defenses.",
+      "engineering": "The tower and enclosure show coordinated stone construction and excavation at settlement scale. Reading their relationship requires archaeological sections and phased plans, rather than treating all visible remains as contemporary.",
+      "significance": "The site places monumental communal works within the history of permanent settlement in the southern Levant.",
+      "uncertainties": [
+        "The purpose of the early wall and tower cannot be reduced confidently to military defense.",
+        "Activity around 10,500 BCE is not the construction date of the surviving tower."
+      ],
+      "sourceIds": [
+        "history-jericho-unesco"
+      ]
+    },
+    {
+      "id": "ggantija",
+      "name": "Ġgantija temple complex",
+      "region": "Europe",
+      "country": "Malta",
+      "period": "Late Neolithic Malta",
+      "categories": [
+        "temple",
+        "megalithic"
+      ],
+      "startYear": -3800,
+      "endYear": -2000,
+      "dateLabel": "c. 3800–2000 BCE; broad site-authority interval",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "megalithic-wall",
+        "post-and-lintel",
+        "corbel"
+      ],
+      "materials": [
+        "coralline-limestone",
+        "globigerina-limestone",
+        "rubble",
+        "plaster"
+      ],
+      "elements": [
+        "apse",
+        "orthostat",
+        "lintel",
+        "courtyard"
+      ],
+      "description": "Two adjoining prehistoric structures on Gozo have separate entrances and apsidal rooms inside a shared megalithic boundary. Surviving plaster with ochre indicates that today's exposed stone was not the only original surface.",
+      "engineering": "Builders differentiated harder coralline limestone from softer globigerina limestone for different components. Orthostats, horizontal blocks and thick walls provided a monumental enclosure; complete original roofs are not preserved.",
+      "significance": "The complex documents a distinctive Maltese building tradition and the deliberate selection of local materials.",
+      "uncertainties": [
+        "The interval follows Heritage Malta's broad dating and is not a precise building schedule.",
+        "Roof forms and aspects of ritual use remain interpretive."
+      ],
+      "sourceIds": [
+        "history-ggantija-heritage-malta",
+        "history-malta-temples-unesco"
+      ]
+    },
+    {
+      "id": "newgrange",
+      "name": "Newgrange passage tomb",
+      "region": "Europe",
+      "country": "Ireland",
+      "period": "Irish Neolithic",
+      "categories": [
+        "tomb",
+        "megalithic",
+        "earthwork"
+      ],
+      "startYear": -3200,
+      "endYear": -3200,
+      "dateLabel": "c. 3200 BCE",
+      "datePrecision": "approximate",
+      "status": "reconstructed",
+      "structuralSystems": [
+        "corbelled-vault",
+        "mound",
+        "retaining-wall"
+      ],
+      "materials": [
+        "stone",
+        "earth",
+        "quartz"
+      ],
+      "elements": [
+        "passage",
+        "chamber",
+        "corbel",
+        "kerbstone",
+        "roof-box"
+      ],
+      "description": "A passage and burial chamber lie within the mound at Newgrange, one of the principal monuments of Brú na Bóinne. Its entrance alignment admits winter-solstice sunlight under suitable conditions.",
+      "engineering": "Overlapping stone courses form the corbelled chamber roof. The passage, mound and perimeter stones must be considered together as a construction system, including drainage and the support of the covering mass.",
+      "significance": "Newgrange connects funerary architecture, carved megaliths and a carefully organized landscape in Neolithic Ireland.",
+      "uncertainties": [
+        "The visible entrance frontage includes modern reconstruction; it is not an untouched Neolithic elevation.",
+        "The approximate construction date does not date every carving or later use."
+      ],
+      "sourceIds": [
+        "history-newgrange-opw",
+        "history-newgrange-education",
+        "history-newgrange-reconstruction"
+      ]
+    },
+    {
+      "id": "caral-supe",
+      "name": "Sacred City of Caral-Supe",
+      "region": "South America",
+      "country": "Peru",
+      "period": "Late Archaic Andes",
+      "categories": [
+        "city",
+        "pyramid",
+        "ceremonial"
+      ],
+      "startYear": -3000,
+      "endYear": -1800,
+      "dateLabel": "c. 3000–1800 BCE",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "platform-mound",
+        "retaining-wall"
+      ],
+      "materials": [
+        "stone",
+        "earth"
+      ],
+      "elements": [
+        "platform",
+        "sunken-court",
+        "stair",
+        "plaza"
+      ],
+      "description": "Caral's monumental precinct combines large platform mounds with sunken circular courts and residential areas in the Supe Valley. Radiocarbon evidence places its main development in the Late Archaic period.",
+      "engineering": "Stone and earthen construction created raised ceremonial volumes and carefully arranged open spaces. The relation between platforms, stairs and courts is a useful way to study collective movement and staged building.",
+      "significance": "Caral provides an early Andean urban and ceremonial tradition independent of the Old World examples in this catalog.",
+      "uncertainties": [
+        "Dates summarize a settlement sequence, not a date for every platform.",
+        "A schematic model must not imply that lost upper buildings are archaeologically certain."
+      ],
+      "sourceIds": [
+        "history-caral-unesco"
+      ]
+    },
+    {
+      "id": "stonehenge",
+      "name": "Stonehenge",
+      "region": "Europe",
+      "country": "United Kingdom",
+      "period": "Neolithic and Bronze Age Britain",
+      "categories": [
+        "ceremonial",
+        "megalithic",
+        "earthwork"
+      ],
+      "startYear": -3000,
+      "endYear": -1500,
+      "dateLabel": "c. 3000–1500 BCE; successive major phases",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "post-and-lintel",
+        "earthwork"
+      ],
+      "materials": [
+        "sarsen",
+        "bluestone",
+        "chalk"
+      ],
+      "elements": [
+        "trilithon",
+        "lintel",
+        "stone-circle",
+        "bank",
+        "ditch"
+      ],
+      "description": "An early circular earthwork was followed by monumental stone settings around 2500 BCE and further rearrangement. Stonehenge belongs to a wider landscape of burial and gathering places.",
+      "engineering": "Transport, dressing and erecting large stones required coordinated labor. Uprights and lintels create a distinctive stone post-and-lintel system; solar alignments connect geometry to the monument's ceremonial setting.",
+      "significance": "The phased site demonstrates that a celebrated prehistoric monument can be the outcome of repeated construction rather than a single finished design.",
+      "uncertainties": [
+        "Some transport and erection methods remain debated.",
+        "Surviving positions include conservation work and re-erection.",
+        "Earlier Mesolithic activity nearby is not the date of the stone circle."
+      ],
+      "sourceIds": [
+        "history-stonehenge-timeline",
+        "history-stonehenge-building"
+      ]
+    },
+    {
+      "id": "djoser-step-pyramid",
+      "name": "Djoser's Step Pyramid complex",
+      "region": "Africa",
+      "country": "Egypt",
+      "period": "Old Kingdom, Third Dynasty",
+      "categories": [
+        "pyramid",
+        "tomb",
+        "temple"
+      ],
+      "startYear": -2667,
+      "endYear": -2648,
+      "dateLabel": "c. 2667–2648 BCE; reign-based chronology",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "stepped-mass-masonry",
+        "subterranean-chamber"
+      ],
+      "materials": [
+        "limestone"
+      ],
+      "elements": [
+        "step-pyramid",
+        "court",
+        "enclosure",
+        "mastaba",
+        "colonnade"
+      ],
+      "description": "Djoser's funerary complex at Saqqara monumentalized royal burial in stone. The stepped pyramid rises above underground spaces and is accompanied by courts and buildings associated with royal ritual.",
+      "engineering": "The pyramid's six stepped masses developed from the mastaba form. Stone also translated architectural forms associated with less durable materials into enduring ceremonial fabric.",
+      "significance": "The complex marks a major transition in Egyptian royal funerary construction and the scale of organized stone building.",
+      "uncertainties": [
+        "Egyptian regnal chronologies vary; the interval follows the Ministry's monument page.",
+        "Some surrounding buildings served symbolic roles rather than ordinary habitation.",
+        "Conservation has stabilized and renewed parts of the complex."
+      ],
+      "sourceIds": [
+        "history-djoser-egypt"
+      ]
+    },
+    {
+      "id": "mohenjo-daro",
+      "name": "Mohenjo-daro: urban fabric and Great Bath",
+      "region": "South Asia",
+      "country": "Pakistan",
+      "period": "Mature Harappan / Indus urban tradition",
+      "categories": [
+        "city",
+        "water-infrastructure",
+        "public-building"
+      ],
+      "startYear": -2600,
+      "endYear": -1900,
+      "dateLabel": "c. 2600–1900 BCE; principal urban occupation",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "brick-bearing-wall",
+        "urban-drainage"
+      ],
+      "materials": [
+        "fired-brick",
+        "unfired-brick",
+        "mortar"
+      ],
+      "elements": [
+        "bath",
+        "drain",
+        "well",
+        "street-grid",
+        "courtyard"
+      ],
+      "description": "Mohenjo-daro preserves planned streets, houses, wells, drains and prominent public structures, including the Great Bath. The surviving evidence emphasizes urban services as well as monumental form.",
+      "engineering": "Brick construction and coordinated drainage linked individual buildings to the larger settlement. Distinguishing fired from unfired fabric matters: the UNESCO summary and its fuller assessment are not consistent on this point.",
+      "significance": "The city broadens architectural history beyond royal tombs and temples to sanitation, repeated building components and everyday urban organization.",
+      "uncertainties": [
+        "The interval follows Kenoyer's chronology of the principal occupation levels.",
+        "Conventional labels such as 'college of priests' or 'granary' are interpretations and are not adopted as proven functions here.",
+        "Later and earlier deposits occur at the site."
+      ],
+      "sourceIds": [
+        "history-mohenjo-unesco",
+        "history-mohenjo-kenoyer"
+      ]
+    },
+    {
+      "id": "khufu-great-pyramid",
+      "name": "Great Pyramid of Khufu",
+      "region": "Africa",
+      "country": "Egypt",
+      "period": "Old Kingdom, Fourth Dynasty",
+      "categories": [
+        "pyramid",
+        "tomb"
+      ],
+      "startYear": -2589,
+      "endYear": -2566,
+      "dateLabel": "c. 2589–2566 BCE; reign-based chronology",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "mass-masonry",
+        "corbelled-gallery"
+      ],
+      "materials": [
+        "limestone",
+        "granite"
+      ],
+      "elements": [
+        "pyramid",
+        "chamber",
+        "grand-gallery",
+        "causeway"
+      ],
+      "description": "The Great Pyramid formed the central royal tomb in a larger funerary landscape at Giza. Its surviving core once had a much more complete fine-limestone casing.",
+      "engineering": "Local limestone made up most of the mass, with transported fine limestone for the exterior and specialized stonework inside. The Grand Gallery demonstrates corbelled construction within an exceptionally large masonry body.",
+      "significance": "It is a major case study in surveying, stone supply, labor organization and the coordination of a building with its supporting landscape.",
+      "uncertainties": [
+        "The catalog uses a reign interval, not a proven start-and-finish schedule.",
+        "No single complete construction or lifting sequence is established by the cited source.",
+        "Today's stepped surface does not represent the finished ancient exterior."
+      ],
+      "sourceIds": [
+        "history-khufu-egypt"
+      ]
+    },
+    {
+      "id": "ur-ziggurat",
+      "name": "Ziggurat of Ur",
+      "region": "Middle East",
+      "country": "Iraq",
+      "period": "Ur III / Neo-Sumerian",
+      "categories": [
+        "temple",
+        "ziggurat"
+      ],
+      "startYear": -2100,
+      "endYear": -2100,
+      "dateLabel": "c. 2100 BCE; Ur-Nammu phase",
+      "datePrecision": "approximate",
+      "status": "reconstructed",
+      "structuralSystems": [
+        "stepped-platform",
+        "brick-masonry"
+      ],
+      "materials": [
+        "brick",
+        "earth"
+      ],
+      "elements": [
+        "terrace",
+        "stair",
+        "platform",
+        "buttress"
+      ],
+      "description": "Ur's monumental temple platform was constructed under Ur-Nammu and formed part of a larger sacred precinct. Excavated inscribed bricks provide direct material evidence for the royal building program.",
+      "engineering": "The surviving stepped mass and monumental stair arrangement are useful for studying access and raised sacred space. Construction in brick required a different material supply and maintenance regime from the Egyptian stone pyramids.",
+      "significance": "The ziggurat illustrates a Mesopotamian temple-platform tradition, whose function should not be confused with a royal pyramid tomb.",
+      "uncertainties": [
+        "The present appearance incorporates major later rebuilding and modern restoration.",
+        "The lost summit and exact upper profile should be marked conjectural in reconstructions.",
+        "Similar stepped silhouettes do not prove identical purpose or cultural origin."
+      ],
+      "sourceIds": [
+        "history-ur-penn-visit",
+        "history-ur-penn-brick",
+        "history-ahwar-unesco"
+      ]
+    },
+    {
+      "id": "abu-simbel",
+      "name": "Abu Simbel temples",
+      "region": "Africa",
+      "country": "Egypt",
+      "period": "New Kingdom, Nineteenth Dynasty",
+      "categories": [
+        "temple",
+        "rock-cut"
+      ],
+      "startYear": -1264,
+      "endYear": -1264,
+      "dateLabel": "c. 1264 BCE; later relocated in 1968",
+      "datePrecision": "approximate",
+      "status": "reconstructed",
+      "structuralSystems": [
+        "rock-cut",
+        "monolithic-excavation"
+      ],
+      "materials": [
+        "sandstone"
+      ],
+      "elements": [
+        "facade",
+        "colossus",
+        "pillared-hall",
+        "sanctuary"
+      ],
+      "description": "Ramesses II's temples were cut into the rock in Nubia. The larger temple is marked by colossal seated figures; the smaller is associated with Hathor and Nefertari.",
+      "engineering": "Removing rock created halls, pillars and sanctuaries within a continuous stone mass. The twentieth-century rescue cut and reassembled the temples above the future reservoir level, making relocation a separate engineering episode.",
+      "significance": "The site joins ancient monumental excavation with a major international heritage-rescue project.",
+      "uncertainties": [
+        "The date is approximate and does not date each component.",
+        "The buildings now occupy a relocated setting rather than their untouched ancient position.",
+        "Solar-illumination observations do not by themselves prove every modern symbolic interpretation."
+      ],
+      "sourceIds": [
+        "history-abu-simbel-egypt"
+      ]
+    },
+    {
+      "id": "tikal",
+      "name": "Tikal monumental center",
+      "region": "North America",
+      "country": "Guatemala",
+      "period": "Preclassic and Classic Maya",
+      "categories": [
+        "city",
+        "temple",
+        "pyramid"
+      ],
+      "startYear": -600,
+      "endYear": 900,
+      "dateLabel": "c. 600 BCE–900 CE; archaeological sequence",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "stepped-platform",
+        "stone-masonry",
+        "corbelled-vault"
+      ],
+      "materials": [
+        "limestone",
+        "lime-plaster",
+        "earth"
+      ],
+      "elements": [
+        "temple-pyramid",
+        "plaza",
+        "roof-comb",
+        "causeway",
+        "reservoir"
+      ],
+      "description": "Tikal's monumental core includes temples, palaces, ceremonial platforms, courts and causeways within a larger settlement landscape. Its inscriptions also document relationships with other Maya centers.",
+      "engineering": "Raised temple platforms, stone-built rooms and linked public spaces organized an expanding city. Reservoirs and the surrounding agricultural landscape belong to the same architectural history as the monumental skyline.",
+      "significance": "Tikal shows the relationship between dynastic institutions, urban planning and environmental infrastructure in a Maya city.",
+      "uncertainties": [
+        "The interval covers the site's major sequence; individual temples belong to more specific campaigns.",
+        "Lost timber roofs and upper elements require separate evidence.",
+        "Current forest cover is not a reconstruction of the ancient urban environment."
+      ],
+      "sourceIds": [
+        "history-tikal-unesco"
+      ]
+    },
+    {
+      "id": "persepolis",
+      "name": "Persepolis palace terrace",
+      "region": "Middle East",
+      "country": "Iran",
+      "period": "Achaemenid Persian Empire",
+      "categories": [
+        "palace",
+        "ceremonial"
+      ],
+      "startYear": -518,
+      "endYear": -424,
+      "dateLabel": "c. 518–424 BCE; principal Achaemenid building campaigns",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "terrace",
+        "post-and-beam",
+        "stone-column"
+      ],
+      "materials": [
+        "stone",
+        "timber"
+      ],
+      "elements": [
+        "column",
+        "capital",
+        "stair",
+        "terrace",
+        "hypostyle-hall"
+      ],
+      "description": "Successive Achaemenid kings built ceremonial and reception buildings on a partly natural, partly artificial terrace. Monumental stairs and reliefs staged the approach to the imperial halls.",
+      "engineering": "Slender stone columns carried comparatively light timber roofs and wooden lintels. Double-animal capitals provided seats for crossing beams, coupling sculptural form to the roof-support arrangement.",
+      "significance": "Persepolis demonstrates a court architecture assembled through imperial resources and multiple regional building traditions.",
+      "uncertainties": [
+        "The interval follows the principal named royal campaigns, not the total life of the site.",
+        "Most roofs are lost; complete roof reconstructions need additional evidence."
+      ],
+      "sourceIds": [
+        "history-persepolis-unesco"
+      ]
+    },
+    {
+      "id": "parthenon",
+      "name": "Parthenon",
+      "region": "Europe",
+      "country": "Greece",
+      "period": "Classical Athens",
+      "categories": [
+        "temple"
+      ],
+      "startYear": -447,
+      "endYear": -432,
+      "dateLabel": "447–438 BCE building; sculpture completed by 432 BCE",
+      "datePrecision": "range",
+      "status": "ruin",
+      "structuralSystems": [
+        "post-and-lintel",
+        "stone-column"
+      ],
+      "materials": [
+        "pentelic-marble"
+      ],
+      "elements": [
+        "doric-column",
+        "ionic-frieze",
+        "pediment",
+        "cella",
+        "entablature"
+      ],
+      "description": "The temple dedicated to Athena combined a Doric exterior with Ionic features. Its main construction and sculptural completion were related but separately dated parts of the Periclean program.",
+      "engineering": "Marble columns, lintels and roof members required precise setting-out and jointing. The surviving structure supports study of proportional adjustments and the coordination of architecture with sculpture.",
+      "significance": "The Parthenon is a key example of Classical Greek temple design and of the modern problems of conserving heavily altered masonry monuments.",
+      "uncertainties": [
+        "The building has experienced conversion, destruction and restoration.",
+        "Modern marble supplements and replacement sculptures must be distinguished from ancient fabric.",
+        "Renaissance order rules are not a complete specification for this ancient temple."
+      ],
+      "sourceIds": [
+        "history-parthenon-ysma"
+      ]
+    },
+    {
+      "id": "meroe-pyramids",
+      "name": "Meroë royal pyramid cemeteries",
+      "region": "Africa",
+      "country": "Sudan",
+      "period": "Kushite / Meroitic",
+      "categories": [
+        "pyramid",
+        "tomb"
+      ],
+      "startYear": -300,
+      "endYear": 400,
+      "dateLabel": "c. 3rd century BCE–4th century CE; royal cemetery period",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "pyramid-masonry",
+        "subterranean-tomb"
+      ],
+      "materials": [
+        "stone",
+        "brick"
+      ],
+      "elements": [
+        "pyramid",
+        "chapel",
+        "burial-chamber"
+      ],
+      "description": "From the third century BCE, Meroë became the location of most Kushite royal burials. The pyramid cemeteries belonged to a larger landscape of royal, religious and productive settlements.",
+      "engineering": "Compact, steep-sided superstructures and associated chapels organize a funerary landscape distinct from the much earlier pyramids at Giza. The monuments should be studied alongside the city's buildings and water-management works.",
+      "significance": "They demonstrate the long and varied history of pyramid building in the Nile region, with Kushite patrons and traditions in their own right.",
+      "uncertainties": [
+        "The interval is a cemetery-level frame; individual tombs need separate dating.",
+        "Some pyramids were damaged by treasure hunting and later partly reconstructed.",
+        "This entry describes archaeological fabric, not present travel or conservation-security conditions."
+      ],
+      "sourceIds": [
+        "history-meroe-unesco"
+      ]
+    },
+    {
+      "id": "sanchi-great-stupa",
+      "name": "Great Stupa at Sanchi",
+      "region": "South Asia",
+      "country": "India",
+      "period": "Mauryan, Sunga and Satavahana phases",
+      "categories": [
+        "stupa",
+        "buddhist"
+      ],
+      "startYear": -250,
+      "endYear": 100,
+      "dateLabel": "c. 3rd century BCE–1st century CE; principal stupa and gateway phases",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "masonry-mound",
+        "stone-veneer"
+      ],
+      "materials": [
+        "brick",
+        "stone"
+      ],
+      "elements": [
+        "anda",
+        "harmika",
+        "torana",
+        "railing",
+        "circumambulatory-path"
+      ],
+      "description": "An early brick stupa attributed to Aśoka was enlarged and given stone facing, paths and railings. The sculptured gateways belong to subsequent development of the sanctuary.",
+      "engineering": "The solid hemispherical mound, elevated path and enclosing railings structure circumambulation. Stone gateways and railings retain forms that illuminate the transition from timber-based architectural vocabularies.",
+      "significance": "Sanchi records centuries of Buddhist patronage and the relation between reliquary form, movement and narrative sculpture.",
+      "uncertainties": [
+        "The selected interval omits later Gupta shrines and subsequent use.",
+        "The date of the first foundation does not date the entire visible structure.",
+        "Religious meanings are documented cultural interpretations, not structural calculations."
+      ],
+      "sourceIds": [
+        "history-sanchi-unesco"
+      ]
+    },
+    {
+      "id": "petra",
+      "name": "Petra: tomb facades and water systems",
+      "region": "Middle East",
+      "country": "Jordan",
+      "period": "Nabataean and early Roman",
+      "categories": [
+        "city",
+        "tomb",
+        "water-infrastructure"
+      ],
+      "startYear": -100,
+      "endYear": 100,
+      "dateLabel": "c. 1st century BCE–1st century CE; selected monumental phase",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "rock-cut",
+        "stone-masonry",
+        "hydraulic-network"
+      ],
+      "materials": [
+        "sandstone"
+      ],
+      "elements": [
+        "rock-cut-facade",
+        "cistern",
+        "channel",
+        "aqueduct",
+        "dam"
+      ],
+      "description": "Petra combines carved tomb fronts and free-standing structures in a landscape of sandstone gorges. Its monumental Nabataean phase is later than the area's earliest occupation.",
+      "engineering": "Water diversion, distribution and storage made settlement and access possible in an environment vulnerable to flash flooding. Rock-cut facades and chambers exploit the same geological setting but pose distinct conservation problems.",
+      "significance": "The site demonstrates that infrastructure and monumental display were interdependent parts of a caravan city.",
+      "uncertainties": [
+        "Dates vary between monuments; the chosen range highlights the principal tomb and hydraulic phase.",
+        "Popular names such as 'Treasury' are not proof of original function.",
+        "Sandstone erosion and later interventions complicate reconstruction."
+      ],
+      "sourceIds": [
+        "history-petra-unesco"
+      ]
+    },
+    {
+      "id": "teotihuacan",
+      "name": "Teotihuacan monumental axis",
+      "region": "North America",
+      "country": "Mexico",
+      "period": "Classic-period Teotihuacan",
+      "categories": [
+        "city",
+        "pyramid",
+        "temple"
+      ],
+      "startYear": 1,
+      "endYear": 700,
+      "dateLabel": "1st–7th centuries CE; principal urban development",
+      "datePrecision": "range",
+      "status": "ruin",
+      "structuralSystems": [
+        "stepped-platform",
+        "talud-tablero",
+        "mass-masonry"
+      ],
+      "materials": [
+        "stone",
+        "earth",
+        "lime-plaster"
+      ],
+      "elements": [
+        "pyramid",
+        "avenue",
+        "talud-tablero",
+        "plaza",
+        "courtyard"
+      ],
+      "description": "The Avenue of the Dead links major ceremonial groups, including the pyramids of the Sun and Moon and the Temple of the Feathered Serpent. Extensive residential compounds belong to the same city.",
+      "engineering": "Geometric planning connected platforms, avenues and the modified river course. Sloping and vertical wall profiles, conventionally called talud-tablero, organized facades without making all monuments structurally identical.",
+      "significance": "The site is a major example of large-scale Mesoamerican urban planning and the relationship between ceremony and residential life.",
+      "uncertainties": [
+        "The range is for the city; individual pyramids have multiple construction stages.",
+        "Later names do not identify the original builders' language or every deity.",
+        "Visible forms include archaeological reconstruction."
+      ],
+      "sourceIds": [
+        "history-teotihuacan-unesco"
+      ]
+    },
+    {
+      "id": "pont-du-gard",
+      "name": "Pont du Gard aqueduct bridge",
+      "region": "Europe",
+      "country": "France",
+      "period": "Roman Gaul",
+      "categories": [
+        "bridge",
+        "aqueduct",
+        "infrastructure"
+      ],
+      "startYear": 50,
+      "endYear": 50,
+      "dateLabel": "c. 50 CE",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "masonry-arch",
+        "gravity-aqueduct"
+      ],
+      "materials": [
+        "limestone"
+      ],
+      "elements": [
+        "arch",
+        "pier",
+        "water-channel",
+        "arcade"
+      ],
+      "description": "The three-tiered bridge carried part of the aqueduct supplying Nîmes across the Gardon valley. It was one component of a much longer water route.",
+      "engineering": "Repeated masonry arches provide height and a crossing while a carefully controlled channel gradient carries water by gravity. The engineering problem combines terrain, water levels, stone supply and construction access.",
+      "significance": "It gives the chronology a substantial infrastructure case alongside sacred and royal buildings.",
+      "uncertainties": [
+        "The site authority dates construction around 50 CE; older summaries have used different dates.",
+        "The surviving bridge has undergone repairs and changes of use.",
+        "A classroom arch model does not validate the historic foundation or flood behavior."
+      ],
+      "sourceIds": [
+        "history-pont-du-gard-authority",
+        "history-pont-du-gard-unesco"
+      ]
+    },
+    {
+      "id": "colosseum",
+      "name": "Colosseum / Flavian Amphitheatre",
+      "region": "Europe",
+      "country": "Italy",
+      "period": "Flavian Rome",
+      "categories": [
+        "amphitheatre",
+        "civic"
+      ],
+      "startYear": 70,
+      "endYear": 80,
+      "dateLabel": "c. 70–80 CE; principal construction",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "arcade",
+        "vault",
+        "radial-wall"
+      ],
+      "materials": [
+        "travertine",
+        "tuff",
+        "brick",
+        "concrete",
+        "iron"
+      ],
+      "elements": [
+        "arch",
+        "vault",
+        "pier",
+        "ambulatory",
+        "arena"
+      ],
+      "description": "The amphitheater organized a large audience around an elliptical arena through successive rings and radial circulation. Its surviving fabric is only part of the original enclosure.",
+      "engineering": "Stone pillars, brick and tuff walls, and vaulted corridors formed a repeated support-and-access system. Surviving clamp sockets also reveal how metal once connected stone blocks.",
+      "significance": "The building connects structural repetition with circulation, spectacle and the social organization of Roman public life.",
+      "uncertainties": [
+        "Later underground and service works are not all part of the initial campaign.",
+        "Stone and metal removal, collapse and restoration have changed the fabric.",
+        "Capacity figures vary and are deliberately omitted."
+      ],
+      "sourceIds": [
+        "history-colosseum-art-of-making",
+        "history-colosseum-conservation"
+      ]
+    },
+    {
+      "id": "pantheon",
+      "name": "Pantheon",
+      "region": "Europe",
+      "country": "Italy",
+      "period": "Hadrianic Rome; later Christian use",
+      "categories": [
+        "temple",
+        "church",
+        "dome"
+      ],
+      "startYear": 118,
+      "endYear": 125,
+      "dateLabel": "c. 118–125 CE; present main structure",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "unreinforced-concrete-dome",
+        "mass-wall",
+        "post-and-lintel"
+      ],
+      "materials": [
+        "concrete",
+        "brick",
+        "granite",
+        "marble",
+        "bronze"
+      ],
+      "elements": [
+        "dome",
+        "oculus",
+        "coffer",
+        "rotunda",
+        "portico"
+      ],
+      "description": "The present rotunda and portico replaced earlier buildings on the site. Conversion to the church of Santa Maria ad Martyres in 609 is a separate phase in its long life.",
+      "engineering": "A thick cylindrical support encloses the domed hall. Coffers and the central oculus articulate the roof; granite columns carry the portico, while floor openings manage rain entering through the oculus.",
+      "significance": "The building allows comparison of a large continuous domed interior with the framed and trabeated spaces of other ancient monuments.",
+      "uncertainties": [
+        "The interval follows the Italian museum authority; aspects of the precise construction chronology remain studied.",
+        "The Agrippa inscription is not a date for all surviving fabric.",
+        "Later finishes and replacements are part of the present monument."
+      ],
+      "sourceIds": [
+        "history-pantheon-ministry",
+        "history-pantheon-history"
+      ]
+    },
+    {
+      "id": "hagia-sophia",
+      "name": "Hagia Sophia",
+      "region": "Europe",
+      "country": "Türkiye",
+      "period": "Early Byzantine; later Ottoman and modern phases",
+      "categories": [
+        "church",
+        "mosque",
+        "dome"
+      ],
+      "startYear": 532,
+      "endYear": 537,
+      "dateLabel": "532–537 CE; Justinianic campaign",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "pendentive-dome",
+        "semi-dome",
+        "masonry-pier"
+      ],
+      "materials": [
+        "brick",
+        "stone",
+        "mortar",
+        "marble"
+      ],
+      "elements": [
+        "dome",
+        "pendentive",
+        "semi-dome",
+        "pier",
+        "gallery"
+      ],
+      "description": "The Justinianic building created a large domed interior in Constantinople. Repairs and changes of religious use contributed to its present form.",
+      "engineering": "The central dome, piers and adjoining semi-domes form a connected masonry system.",
+      "significance": "It influenced Byzantine churches and Ottoman mosques.",
+      "uncertainties": [
+        "The date is for the original campaign, not every surviving dome or buttress.",
+        "This is a layered monument, not an unchanged sixth-century structure."
+      ],
+      "sourceIds": [
+        "history-istanbul-unesco"
+      ]
+    },
+    {
+      "id": "horyu-ji",
+      "name": "Hōryū-ji: surviving early timber buildings",
+      "region": "East Asia",
+      "country": "Japan",
+      "period": "Asuka and early Nara periods",
+      "categories": [
+        "buddhist",
+        "temple",
+        "pagoda"
+      ],
+      "startYear": 670,
+      "endYear": 800,
+      "dateLabel": "Late 7th–early 8th centuries; rebuilding after 670",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "timber-post-and-beam",
+        "bracket-system"
+      ],
+      "materials": [
+        "timber",
+        "roof-tile",
+        "plaster"
+      ],
+      "elements": [
+        "column",
+        "bracket",
+        "bay",
+        "pagoda",
+        "hall"
+      ],
+      "description": "The surviving early buildings belong to a Buddhist temple complex shaped by exchanges through China and the Korean peninsula. The original Hōryū-ji buildings were destroyed by fire in 670.",
+      "engineering": "A modular bay structure and intricate brackets transfer roof weight to substantial timber columns. This makes joints and roof support as important to analysis as the familiar pagoda silhouette.",
+      "significance": "The complex records the adaptation of continental Buddhist architecture within Japan and a long history of timber conservation.",
+      "uncertainties": [
+        "The original foundation date is not the date of all surviving woodwork.",
+        "Repair, replacement and careful dismantling have been part of the buildings' continuing life."
+      ],
+      "sourceIds": [
+        "history-horyu-ji-unesco"
+      ]
+    },
+    {
+      "id": "borobudur",
+      "name": "Borobudur",
+      "region": "Southeast Asia",
+      "country": "Indonesia",
+      "period": "Central Javanese Syailendra period",
+      "categories": [
+        "buddhist",
+        "stupa",
+        "temple"
+      ],
+      "startYear": 700,
+      "endYear": 900,
+      "dateLabel": "8th–9th centuries CE",
+      "datePrecision": "approximate",
+      "status": "reconstructed",
+      "structuralSystems": [
+        "terraced-masonry",
+        "hill-supported-platform"
+      ],
+      "materials": [
+        "volcanic-stone"
+      ],
+      "elements": [
+        "terrace",
+        "gallery",
+        "stupa",
+        "balustrade",
+        "relief"
+      ],
+      "description": "Borobudur's square terraces and upper circular platforms organize a monumental Buddhist pilgrimage sequence around a natural hill. Relief panels and openwork stupas form part of its spatial program.",
+      "engineering": "The building combines a supporting hill with stone-built terraces, passages and superstructures. Its conservation history makes drainage and the interfaces between stone and supporting material especially relevant teaching topics.",
+      "significance": "It demonstrates a specifically Javanese synthesis of terraced mountain forms and Buddhist religious concepts.",
+      "uncertainties": [
+        "The date covers a broad building period, not a precise schedule.",
+        "The monument has undergone major restoration and partial dismantling.",
+        "Cosmological interpretation should be identified as religious meaning, not a physical force acting on the structure."
+      ],
+      "sourceIds": [
+        "history-borobudur-unesco"
+      ]
+    },
+    {
+      "id": "kailasa-ellora",
+      "name": "Kailasa temple at Ellora",
+      "region": "South Asia",
+      "country": "India",
+      "period": "Rashtrakuta-period Deccan",
+      "categories": [
+        "hindu",
+        "temple",
+        "rock-cut"
+      ],
+      "startYear": 750,
+      "endYear": 800,
+      "dateLabel": "c. second half of the 8th century CE; principal attribution",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "rock-cut",
+        "monolithic-excavation"
+      ],
+      "materials": [
+        "basalt"
+      ],
+      "elements": [
+        "vimana",
+        "mandapa",
+        "court",
+        "pillar",
+        "relief"
+      ],
+      "description": "The Kailasa temple, Cave 16 at Ellora, translates forms of constructed temple architecture into an excavated rock mass. It belongs within a larger complex with Buddhist, Hindu and Jain phases.",
+      "engineering": "Carving the Deccan basalt created courts, free-standing-looking temple volumes and detailed architectural members. The sequence of material removal is fundamentally different from assembling masonry courses.",
+      "significance": "The monument provides a particularly clear comparison between additive construction and subtractive rock architecture.",
+      "uncertainties": [
+        "The principal attribution to Krishna I does not establish that every carving was completed in one reign.",
+        "The wider Ellora complex spans several centuries and religious communities.",
+        "Popular claims about exact excavation duration or removed tonnage are not adopted."
+      ],
+      "sourceIds": [
+        "history-ellora-asi",
+        "history-pattadakal-asi"
+      ]
+    },
+    {
+      "id": "kairouan-great-mosque",
+      "name": "Great Mosque of Kairouan",
+      "region": "Africa",
+      "country": "Tunisia",
+      "period": "Aghlabid-period Ifriqiya",
+      "categories": [
+        "mosque"
+      ],
+      "startYear": 800,
+      "endYear": 900,
+      "dateLabel": "9th century CE; principal surviving rebuilding",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "hypostyle",
+        "arcade",
+        "masonry-wall"
+      ],
+      "materials": [
+        "stone",
+        "marble",
+        "porphyry",
+        "brick",
+        "timber"
+      ],
+      "elements": [
+        "prayer-hall",
+        "courtyard",
+        "minaret",
+        "column",
+        "portico"
+      ],
+      "description": "The Great Mosque's principal surviving form belongs to a ninth-century rebuilding within a city founded in 670. A broad courtyard and hypostyle prayer hall organize the enclosure.",
+      "engineering": "Repeated supports divide the prayer hall into naves, while a square, staged minaret marks the courtyard edge. Reused stone columns introduce material and dimensional variation within an ordered plan.",
+      "significance": "The mosque was an important reference for religious architecture across the Maghreb.",
+      "uncertainties": [
+        "The foundation of Kairouan in 670 does not date every visible mosque component.",
+        "Smaller alterations and conservation campaigns continued after the main rebuilding."
+      ],
+      "sourceIds": [
+        "history-kairouan-unesco"
+      ]
+    },
+    {
+      "id": "prambanan",
+      "name": "Prambanan / Loro Jonggrang",
+      "region": "Southeast Asia",
+      "country": "Indonesia",
+      "period": "Central Javanese Hindu kingdoms",
+      "categories": [
+        "hindu",
+        "temple"
+      ],
+      "startYear": 800,
+      "endYear": 900,
+      "dateLabel": "9th century CE; Loro Jonggrang phase",
+      "datePrecision": "approximate",
+      "status": "reconstructed",
+      "structuralSystems": [
+        "stone-masonry",
+        "stepped-sanctuary"
+      ],
+      "materials": [
+        "stone"
+      ],
+      "elements": [
+        "sanctuary-tower",
+        "enclosure",
+        "stair",
+        "relief",
+        "subsidiary-shrine"
+      ],
+      "description": "The Loro Jonggrang group contains major shrines associated with Shiva, Vishnu and Brahma within ordered enclosures. It sits in an archaeological park that also includes distinct Buddhist complexes.",
+      "engineering": "Stepped bases, tall sanctuaries and closely coordinated stone details create a hierarchy of principal and subsidiary buildings. Earthquake damage and reassembly are essential parts of the surviving monument's history.",
+      "significance": "The site illustrates the richness of Central Javanese religious building and its regional transformation of temple forms.",
+      "uncertainties": [
+        "The UNESCO serial property's buildings have different dates; the range here refers to Loro Jonggrang.",
+        "The source's introductory and detailed dating are not identical.",
+        "Reconstructed towers must not be represented as wholly untouched ninth-century fabric."
+      ],
+      "sourceIds": [
+        "history-prambanan-unesco"
+      ]
+    },
+    {
+      "id": "cahokia",
+      "name": "Cahokia mounds and Monks Mound",
+      "region": "North America",
+      "country": "United States",
+      "period": "Mississippian",
+      "categories": [
+        "city",
+        "earthwork",
+        "ceremonial"
+      ],
+      "startYear": 800,
+      "endYear": 1350,
+      "dateLabel": "c. 800–1350 CE; Mississippian occupation",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "earthen-platform",
+        "staged-fill"
+      ],
+      "materials": [
+        "earth",
+        "timber"
+      ],
+      "elements": [
+        "platform-mound",
+        "plaza",
+        "palisade",
+        "post-circle"
+      ],
+      "description": "The central mounds, plazas and residential areas formed a major Mississippian settlement. Monks Mound accumulated through repeated building stages rather than one continuous lift of earth.",
+      "engineering": "Large quantities of placed earth formed elevated platforms for buildings and ceremonial activity. Mound stability, drainage and the relationship between terraces are central questions for understanding the surviving works.",
+      "significance": "Cahokia demonstrates monumental construction and urban organization in Indigenous North America.",
+      "uncertainties": [
+        "The occupation interval is broader than the peak population period.",
+        "Timber buildings are largely lost; standing palisade sections include reconstruction.",
+        "Present grass-covered mounds are not a complete image of the inhabited city."
+      ],
+      "sourceIds": [
+        "history-cahokia-unesco"
+      ]
+    },
+    {
+      "id": "chichen-itza",
+      "name": "Chichén Itzá: El Castillo and monumental core",
+      "region": "North America",
+      "country": "Mexico",
+      "period": "Terminal Classic and Postclassic Maya",
+      "categories": [
+        "temple",
+        "pyramid",
+        "city"
+      ],
+      "startYear": 900,
+      "endYear": 1200,
+      "dateLabel": "c. 900–1200 CE; selected major monumental phase",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "stepped-platform",
+        "stone-masonry",
+        "column-hall"
+      ],
+      "materials": [
+        "limestone",
+        "lime-plaster"
+      ],
+      "elements": [
+        "temple-pyramid",
+        "stair",
+        "colonnade",
+        "ball-court"
+      ],
+      "description": "El Castillo stands among major monumental groups that include columned halls, temples and a great ball court. The city also preserves earlier buildings and a long history of use.",
+      "engineering": "Raised platforms, repeated stairs and column-supported spaces create several distinct building systems. The relationships among structures and cenotes matter more than a single isolated pyramid model.",
+      "significance": "The site records interaction between northern Maya traditions and wider Mesoamerican architectural practices.",
+      "uncertainties": [
+        "The interval is a broad phase, not a precise date for every surviving building.",
+        "Narratives of migration or conquest in older summaries should not be treated as settled explanations of all stylistic changes.",
+        "Calendar symbolism requires evidence beyond visual numerical coincidences."
+      ],
+      "sourceIds": [
+        "history-chichen-itza-unesco"
+      ]
+    },
+    {
+      "id": "khajuraho",
+      "name": "Khajuraho temple groups",
+      "region": "South Asia",
+      "country": "India",
+      "period": "Chandella dynasty",
+      "categories": [
+        "hindu",
+        "jain",
+        "temple"
+      ],
+      "startYear": 950,
+      "endYear": 1050,
+      "dateLabel": "c. 950–1050 CE; principal temple-building period",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "stone-masonry",
+        "corbelled-roof",
+        "nagara-shikhara"
+      ],
+      "materials": [
+        "sandstone"
+      ],
+      "elements": [
+        "jagati",
+        "mandapa",
+        "antarala",
+        "garbhagriha",
+        "shikhara"
+      ],
+      "description": "The surviving Hindu and Jain temples occupy several groups within the Chandella capital landscape. Their elevated platforms, linked halls and clustered towers create a strong sequence from approach to sanctum.",
+      "engineering": "Sandstone supports both the load-bearing construction and dense sculpture. Axially linked interior spaces and subsidiary spires organize the transition from lower halls to the main sanctuary tower.",
+      "significance": "The group exemplifies a developed northern Indian Nagara tradition, which should be distinguished from southern Dravida temple systems.",
+      "uncertainties": [
+        "The date summarizes the main group, not every individual temple.",
+        "Religious identity, patronage and later use differ between buildings.",
+        "Surface sculpture does not by itself explain the complete structural assembly."
+      ],
+      "sourceIds": [
+        "history-khajuraho-unesco"
+      ]
+    },
+    {
+      "id": "rapa-nui-ahu",
+      "name": "Rapa Nui: ahu and moai landscape",
+      "region": "Oceania",
+      "country": "Chile",
+      "period": "Ancestral Rapa Nui / eastern Polynesia",
+      "categories": [
+        "ceremonial",
+        "megalithic",
+        "platform"
+      ],
+      "startYear": 1000,
+      "endYear": 1700,
+      "dateLabel": "c. 11th–17th centuries CE; broad monumental sequence",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "stone-platform",
+        "rubble-fill",
+        "monolithic-sculpture"
+      ],
+      "materials": [
+        "volcanic-tuff",
+        "basalt",
+        "stone-rubble"
+      ],
+      "elements": [
+        "ahu",
+        "moai",
+        "ramp",
+        "platform",
+        "quarry"
+      ],
+      "description": "Ancestral Rapa Nui communities created ceremonial platforms and monumental figures within a larger inhabited and cultivated island landscape. Quarries preserve evidence of unfinished work as well as finished monuments.",
+      "engineering": "Worked perimeter stones and rubble fill formed raised platforms, while moai required quarrying, shaping and transport. These are related but different technical problems.",
+      "significance": "The landscape belongs within Polynesian architectural history and the living heritage of Rapa Nui people.",
+      "uncertainties": [
+        "Settlement and monument chronologies continue to be refined; the broad range follows the UNESCO assessment.",
+        "Some visible groups have been re-erected or restored.",
+        "Competing transport experiments are not direct proof that a single method was universal."
+      ],
+      "sourceIds": [
+        "history-rapa-nui-unesco"
+      ]
+    },
+    {
+      "id": "brihadisvara-thanjavur",
+      "name": "Brihadisvara temple, Thanjavur",
+      "region": "South Asia",
+      "country": "India",
+      "period": "Imperial Chola, Rajaraja I",
+      "categories": [
+        "hindu",
+        "temple"
+      ],
+      "startYear": 1003,
+      "endYear": 1010,
+      "dateLabel": "c. 1003/1004–1009/1010 CE",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "stone-masonry",
+        "tiered-vimana"
+      ],
+      "materials": [
+        "stone",
+        "granite"
+      ],
+      "elements": [
+        "vimana",
+        "garbhagriha",
+        "gopura",
+        "prakara",
+        "mandapa"
+      ],
+      "description": "The temple was initiated and consecrated during the reign of Rajaraja I. Its sanctuary tower rises within a large enclosed court and a continuing religious institution.",
+      "engineering": "Tiered stone construction concentrates the principal vertical mass over the sanctum. The enclosure, entrances, circumambulatory spaces and main tower have different roles in circulation and support.",
+      "significance": "The temple is a major work of Chola architecture and Tamil religious culture, with living ritual traditions extending across a millennium.",
+      "uncertainties": [
+        "The source describes the start as possible in a regnal year; the calendar interval is therefore approximate.",
+        "Later shrines and surrounding fortifications do not belong to the initial campaign.",
+        "This is a living place of worship, not simply an abandoned artifact."
+      ],
+      "sourceIds": [
+        "history-chola-unesco"
+      ]
+    },
+    {
+      "id": "yingxian-wooden-pagoda",
+      "name": "Sakyamuni Pagoda of Fogong Temple, Yingxian",
+      "region": "East Asia",
+      "country": "China",
+      "period": "Liao dynasty",
+      "categories": [
+        "buddhist",
+        "pagoda",
+        "timber"
+      ],
+      "startYear": 1056,
+      "endYear": 1056,
+      "dateLabel": "1056 CE; documented completion tradition",
+      "datePrecision": "year",
+      "status": "extant",
+      "structuralSystems": [
+        "timber-frame",
+        "double-ring-columns",
+        "mortise-and-tenon"
+      ],
+      "materials": [
+        "timber",
+        "roof-tile",
+        "masonry"
+      ],
+      "elements": [
+        "octagonal-plan",
+        "column-ring",
+        "bracket",
+        "eave",
+        "hidden-story"
+      ],
+      "description": "The Liao-period pagoda organizes a Buddhist interior vertically within an octagonal timber structure. Its five visible stories are interleaved with concealed structural levels.",
+      "engineering": "Two rings of columns, jointed timber and intermediate layers create a complex spatial frame. The building is a useful counterexample to treating Chinese architecture as a roof silhouette alone.",
+      "significance": "It preserves evidence of advanced multi-level timber construction within the Liao cultural world.",
+      "uncertainties": [
+        "The cited UNESCO page is China's Tentative List submission, not proof of World Heritage inscription.",
+        "The historic completion year does not date every repaired member.",
+        "Long survival is not a modern seismic safety certification."
+      ],
+      "sourceIds": [
+        "history-yingxian-tentative"
+      ]
+    },
+    {
+      "id": "angkor-wat",
+      "name": "Angkor Wat",
+      "region": "Southeast Asia",
+      "country": "Cambodia",
+      "period": "Khmer Empire, Suryavarman II",
+      "categories": [
+        "hindu",
+        "buddhist",
+        "temple"
+      ],
+      "startYear": 1100,
+      "endYear": 1150,
+      "dateLabel": "First half of the 12th century CE; principal construction",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "stone-masonry",
+        "corbelled-vault",
+        "terraced-platform"
+      ],
+      "materials": [
+        "sandstone",
+        "laterite"
+      ],
+      "elements": [
+        "gallery",
+        "moat",
+        "causeway",
+        "sanctuary-tower",
+        "terrace"
+      ],
+      "description": "Angkor Wat was built under Suryavarman II as a Vishnu temple and later became an important Buddhist pilgrimage place. Galleries and a central tower group stand within extensive enclosures and a moat.",
+      "engineering": "Stepped platforms, corbelled galleries and carefully cut stone form a large interconnected complex. The moat and the wider Angkor hydraulic landscape place the building within environmental and urban systems.",
+      "significance": "It is a major Khmer interpretation of temple architecture and a continuing cultural and religious landmark.",
+      "uncertainties": [
+        "The interval is an approximate main campaign; alterations continued later.",
+        "A royal funerary interpretation does not establish every original ritual use.",
+        "The present temple should not be equated with all of Angkor's many centuries of construction."
+      ],
+      "sourceIds": [
+        "history-angkor-apsara",
+        "history-angkor-unesco"
+      ]
+    },
+    {
+      "id": "lalibela-churches",
+      "name": "Rock-hewn churches of Lalibela",
+      "region": "Africa",
+      "country": "Ethiopia",
+      "period": "Medieval Ethiopian / Zagwe tradition",
+      "categories": [
+        "church",
+        "rock-cut"
+      ],
+      "startYear": 1100,
+      "endYear": 1300,
+      "dateLabel": "c. 12th–13th centuries CE; conventional attribution",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "rock-cut",
+        "monolithic-excavation"
+      ],
+      "materials": [
+        "volcanic-rock"
+      ],
+      "elements": [
+        "church",
+        "trench",
+        "pillar",
+        "passage",
+        "drain"
+      ],
+      "description": "Eleven churches and their connecting passages were excavated from the living rock. They continue to function within Ethiopian Christian religious life and pilgrimage.",
+      "engineering": "Excavation produced walls, columns and roofs from a continuous stone mass. Trenches and drainage ditches are integral to the complex, linking access, ceremony and the management of rainwater.",
+      "significance": "Lalibela demonstrates a distinct African Christian monumental tradition and the technical possibilities of subtractive construction.",
+      "uncertainties": [
+        "Attribution to King Lalibela is a historical tradition; individual building sequences and earlier uses remain studied.",
+        "Some structures may have had functions before becoming churches.",
+        "Modern protective works should be distinguished from original fabric."
+      ],
+      "sourceIds": [
+        "history-lalibela-unesco"
+      ]
+    },
+    {
+      "id": "great-zimbabwe",
+      "name": "Great Zimbabwe",
+      "region": "Africa",
+      "country": "Zimbabwe",
+      "period": "Medieval Shona societies",
+      "categories": [
+        "city",
+        "palace",
+        "enclosure"
+      ],
+      "startYear": 1100,
+      "endYear": 1450,
+      "dateLabel": "c. 1100–1450 CE",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "dry-stone-wall",
+        "earthen-building"
+      ],
+      "materials": [
+        "granite",
+        "earth",
+        "clay"
+      ],
+      "elements": [
+        "enclosure",
+        "conical-tower",
+        "passage",
+        "terrace",
+        "hut-platform"
+      ],
+      "description": "Great Zimbabwe combines hill and valley settlements with monumental stone enclosures. The Great Enclosure is a later major phase within the site's long occupation.",
+      "engineering": "Carefully coursed granite walls use mass, geometry and skilled fitting rather than mortar. Earthen houses and other internal features show that the stone boundaries were parts of inhabited compounds.",
+      "significance": "The site is an architectural achievement of African builders and a major center in regional trade and political history.",
+      "uncertainties": [
+        "Functions assigned to individual enclosures are sometimes interpretive.",
+        "The overall interval does not date every surviving wall.",
+        "Colonial myths assigning the monument to non-African builders contradict the archaeological evidence."
+      ],
+      "sourceIds": [
+        "history-great-zimbabwe-unesco"
+      ]
+    },
+    {
+      "id": "chartres-cathedral",
+      "name": "Chartres Cathedral",
+      "region": "Europe",
+      "country": "France",
+      "period": "French Gothic",
+      "categories": [
+        "church",
+        "cathedral"
+      ],
+      "startYear": 1194,
+      "endYear": 1220,
+      "dateLabel": "1194–c. 1220; principal rebuilding after the fire",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "rib-vault",
+        "flying-buttress",
+        "masonry-pier"
+      ],
+      "materials": [
+        "limestone",
+        "timber",
+        "glass",
+        "lead"
+      ],
+      "elements": [
+        "pointed-arch",
+        "rib-vault",
+        "buttress",
+        "clerestory",
+        "portal"
+      ],
+      "description": "The nave and choir were rebuilt after the 1194 fire while important earlier western elements survived. Sculptural portals and stained glass belong to several related campaigns.",
+      "engineering": "Ribs, piers and external buttressing organize the support of masonry vaults and permit large glazed openings. The roof, vault and exterior supports should be read as a combined system.",
+      "significance": "The cathedral is a major example of Gothic spatial organization and the coordination of architecture, sculpture and glazing.",
+      "uncertainties": [
+        "The selected interval does not date all towers, glass or sculpture.",
+        "Later repair and restoration affect how the interior is experienced.",
+        "A schematic vault diagram is an explanation of form, not a verified force analysis."
+      ],
+      "sourceIds": [
+        "history-chartres-unesco"
+      ]
+    },
+    {
+      "id": "alhambra-generalife",
+      "name": "Alhambra and Generalife",
+      "region": "Europe",
+      "country": "Spain",
+      "period": "Nasrid Granada; later additions",
+      "categories": [
+        "palace",
+        "garden",
+        "fortification"
+      ],
+      "startYear": 1200,
+      "endYear": 1400,
+      "dateLabel": "13th–14th centuries CE; principal Nasrid phases",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "masonry-wall",
+        "timber-roof",
+        "arcade"
+      ],
+      "materials": [
+        "stone",
+        "brick",
+        "plaster",
+        "timber",
+        "ceramic"
+      ],
+      "elements": [
+        "courtyard",
+        "pool",
+        "muqarnas",
+        "arcade",
+        "water-channel"
+      ],
+      "description": "The palace city and adjacent Generalife bring buildings, courtyards, gardens and water into a tightly coordinated landscape. Surviving fabric also includes later Christian-period changes.",
+      "engineering": "Irrigation engineering supplied ornamental and productive spaces. Load-bearing masonry and timber construction support surfaces whose plaster and ceramic detail should not be confused with the underlying structural system.",
+      "significance": "The complex illustrates Nasrid court life and the integration of architecture, landscape and hydraulic infrastructure.",
+      "uncertainties": [
+        "The interval isolates principal Nasrid work, not every building in the World Heritage property.",
+        "Decorative geometry alone does not establish a universal design formula.",
+        "Later additions and restorations need phase labels in a reconstruction."
+      ],
+      "sourceIds": [
+        "history-alhambra-unesco"
+      ]
+    },
+    {
+      "id": "nan-madol",
+      "name": "Nan Madol ceremonial center",
+      "region": "Oceania",
+      "country": "Federated States of Micronesia",
+      "period": "Saudeleur-period Pohnpei",
+      "categories": [
+        "ceremonial",
+        "palace",
+        "artificial-island"
+      ],
+      "startYear": 1200,
+      "endYear": 1500,
+      "dateLabel": "c. 1200–1500 CE; principal monumental phase",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "megalithic-wall",
+        "artificial-island"
+      ],
+      "materials": [
+        "columnar-basalt",
+        "coral-rubble"
+      ],
+      "elements": [
+        "islet",
+        "canal",
+        "enclosure",
+        "tomb",
+        "header-stretcher-wall"
+      ],
+      "description": "Stone compounds occupy artificial islets off Pohnpei. Palaces, mortuary places, temples and residential domains formed a ceremonial center with continuing associations for Pohnpeian communities.",
+      "engineering": "Large basalt columns were transported from other parts of the island and laid in distinctive crossing wall courses. Islet fill and waterways make the marine setting part of the construction problem.",
+      "significance": "The site records an ambitious Pacific tradition of monumental building and chiefly organization.",
+      "uncertainties": [
+        "The dates summarize the major ceremonial phase rather than the first activity on the site.",
+        "The precise logistics of transporting all stones should not be asserted from appearance alone.",
+        "Waterway silting and vegetation affect conservation."
+      ],
+      "sourceIds": [
+        "history-nan-madol-unesco"
+      ]
+    },
+    {
+      "id": "taputapuatea",
+      "name": "Taputapuātea marae landscape",
+      "region": "Oceania",
+      "country": "France (French Polynesia)",
+      "period": "Mā'ohi / Society Islands",
+      "categories": [
+        "marae",
+        "temple",
+        "ceremonial"
+      ],
+      "startYear": 1300,
+      "endYear": 1800,
+      "dateLabel": "14th–18th centuries CE; marae construction sequence",
+      "datePrecision": "approximate",
+      "status": "reconstructed",
+      "structuralSystems": [
+        "stone-platform",
+        "paved-court"
+      ],
+      "materials": [
+        "stone",
+        "coral"
+      ],
+      "elements": [
+        "marae",
+        "ahu",
+        "court",
+        "upright-stone",
+        "shoreline"
+      ],
+      "description": "The marae complex at Raiatea connects a coastal ceremonial center with valleys, cultivation and seafaring networks. It remains meaningful to communities across Polynesia.",
+      "engineering": "Stone platforms, paved courts and upright stones organize social and ceremonial space. Their relationship to shore access and the surrounding landscape is essential to interpreting the architecture.",
+      "significance": "Taputapuātea documents maritime connections and a Polynesian sacred landscape whose significance extends beyond isolated built objects.",
+      "uncertainties": [
+        "The range refers to marae development, not the first human settlement of Raiatea.",
+        "Some marae were restored; the source states that much original layout and material survive.",
+        "Community knowledge and oral traditions are evidence to be credited, not decorative additions."
+      ],
+      "sourceIds": [
+        "history-taputapuatea-unesco"
+      ]
+    },
+    {
+      "id": "machu-picchu",
+      "name": "Machu Picchu",
+      "region": "South America",
+      "country": "Peru",
+      "period": "Inca Empire",
+      "categories": [
+        "settlement",
+        "ceremonial",
+        "terrace",
+        "water-infrastructure"
+      ],
+      "startYear": 1400,
+      "endYear": 1500,
+      "dateLabel": "15th century CE; main Inca construction",
+      "datePrecision": "approximate",
+      "status": "ruin",
+      "structuralSystems": [
+        "stone-masonry",
+        "retaining-terrace",
+        "drainage-network"
+      ],
+      "materials": [
+        "granite",
+        "stone",
+        "earth",
+        "timber"
+      ],
+      "elements": [
+        "terrace",
+        "stair",
+        "water-channel",
+        "court",
+        "wall"
+      ],
+      "description": "Buildings and agricultural terraces occupy a steep ridge between Andean and Amazonian environments. The site is part of a wider network of paths, subsidiary centers and managed landscapes.",
+      "engineering": "Retaining works, water management and carefully set stone buildings adapt construction to dramatic terrain. Their interaction is more informative than describing only the fitted stone joints.",
+      "significance": "Machu Picchu is a major example of Inca architecture as the organized transformation of a mountain landscape.",
+      "uncertainties": [
+        "The century label is a broad construction frame; precise onset and functions remain researched.",
+        "Local knowledge preceded the site's twentieth-century international publicity.",
+        "Roofed reconstructions require evidence beyond the surviving wall remains."
+      ],
+      "sourceIds": [
+        "history-machu-picchu-unesco"
+      ]
+    },
+    {
+      "id": "forbidden-city",
+      "name": "Forbidden City, Beijing",
+      "region": "East Asia",
+      "country": "China",
+      "period": "Ming foundation; Qing and later phases",
+      "categories": [
+        "palace",
+        "timber",
+        "urban-planning"
+      ],
+      "startYear": 1406,
+      "endYear": 1420,
+      "dateLabel": "1406–1420 CE; founding Ming campaign",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "timber-frame",
+        "bracket-system",
+        "masonry-platform"
+      ],
+      "materials": [
+        "timber",
+        "stone",
+        "brick",
+        "glazed-tile"
+      ],
+      "elements": [
+        "hall",
+        "courtyard",
+        "axis",
+        "gate",
+        "bracket",
+        "terrace"
+      ],
+      "description": "The imperial palace organizes halls, gates, courts and residential areas along a hierarchical plan. The founding campaign under the Yongle emperor was followed by centuries of replacement and adaptation.",
+      "engineering": "Timber-framed halls sit on substantial platforms and use repeated bays and roof-support assemblies. Architectural hierarchy is expressed through layout, scale, access and construction detail.",
+      "significance": "The palace is an important record of Ming and Qing court institutions and the interaction of planning rules with material craft.",
+      "uncertainties": [
+        "The original completion date does not date every present hall or timber.",
+        "The UNESCO property also includes Shenyang, which has a separate chronology.",
+        "The palace is not a template for all Chinese regions, classes or periods."
+      ],
+      "sourceIds": [
+        "history-forbidden-city-unesco"
+      ]
+    },
+    {
+      "id": "florence-dome",
+      "name": "Brunelleschi's dome, Florence Cathedral",
+      "region": "Europe",
+      "country": "Italy",
+      "period": "Early Italian Renaissance",
+      "categories": [
+        "church",
+        "dome"
+      ],
+      "startYear": 1420,
+      "endYear": 1436,
+      "dateLabel": "1420–1436 CE; dome construction",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "double-shell-masonry-dome",
+        "ribbed-vault"
+      ],
+      "materials": [
+        "brick",
+        "stone",
+        "marble",
+        "terracotta"
+      ],
+      "elements": [
+        "dome",
+        "rib",
+        "herringbone-brickwork",
+        "lantern",
+        "shell"
+      ],
+      "description": "The octagonal dome completed a major stage of the cathedral's long construction history. Brunelleschi developed a method suitable for a span that made conventional full timber centering problematic.",
+      "engineering": "Inner and outer masonry shells are linked by ribs, with herringbone brickwork contributing to the construction arrangement. Building sequence and temporary support are central to understanding the work.",
+      "significance": "The dome is a major example of the connection between geometry, craft knowledge and construction logistics.",
+      "uncertainties": [
+        "The date is for the dome, not the entire cathedral or completed lantern.",
+        "Explanations of exact construction mechanics remain subjects of technical study.",
+        "The educational model should expose shell relationships without claiming a certified historical simulation."
+      ],
+      "sourceIds": [
+        "history-florence-opera"
+      ]
+    },
+    {
+      "id": "suleymaniye",
+      "name": "Süleymaniye Mosque complex",
+      "region": "Europe",
+      "country": "Türkiye",
+      "period": "Ottoman, Süleyman I and Sinan",
+      "categories": [
+        "mosque",
+        "civic",
+        "religious-complex"
+      ],
+      "startYear": 1550,
+      "endYear": 1557,
+      "dateLabel": "1550–1557 CE; principal campaign",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "masonry-dome",
+        "semi-dome",
+        "arcade"
+      ],
+      "materials": [
+        "stone",
+        "brick",
+        "mortar",
+        "marble"
+      ],
+      "elements": [
+        "dome",
+        "courtyard",
+        "minaret",
+        "madrasa",
+        "hospice"
+      ],
+      "description": "Sinan's mosque anchors an Ottoman complex of educational, charitable and service buildings.",
+      "engineering": "Domes, arcades and courts form a coordinated masonry ensemble with an important urban setting.",
+      "significance": "It demonstrates the architectural and social scope of an Ottoman imperial foundation.",
+      "uncertainties": [
+        "The interval refers to the principal campaign, not every later repair.",
+        "Shared dome forms do not make Byzantine and Ottoman programs interchangeable."
+      ],
+      "sourceIds": [
+        "history-istanbul-unesco"
+      ]
+    },
+    {
+      "id": "himeji-castle",
+      "name": "Himeji Castle",
+      "region": "East Asia",
+      "country": "Japan",
+      "period": "Early Edo-period castle building",
+      "categories": [
+        "castle",
+        "timber",
+        "fortification"
+      ],
+      "startYear": 1600,
+      "endYear": 1630,
+      "dateLabel": "Early 17th century CE; principal surviving complex",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "timber-frame",
+        "stone-base",
+        "earthen-wall"
+      ],
+      "materials": [
+        "timber",
+        "stone",
+        "earth",
+        "plaster",
+        "roof-tile"
+      ],
+      "elements": [
+        "keep",
+        "gate",
+        "moat",
+        "roof-tier",
+        "defensive-wall"
+      ],
+      "description": "Himeji's keep group, gates and enclosure systems preserve a major early-modern Japanese castle complex. White plastered walls unify buildings with different defensive and administrative roles.",
+      "engineering": "Timber construction rises above substantial stone bases. Layered routes, gates, walls and roof forms coordinate access and defense rather than serving as decoration alone.",
+      "significance": "The castle illustrates the relationship between skilled carpentry, fortified terrain and the institutions of an early Edo domain.",
+      "uncertainties": [
+        "The date is deliberately a broad frame for the surviving complex; parts have earlier histories.",
+        "Some associated buildings have been lost or replaced.",
+        "Regular repair is part of the authenticity and survival of timber architecture."
+      ],
+      "sourceIds": [
+        "history-himeji-unesco"
+      ]
+    },
+    {
+      "id": "taj-mahal",
+      "name": "Taj Mahal complex",
+      "region": "South Asia",
+      "country": "India",
+      "period": "Mughal, Shah Jahan",
+      "categories": [
+        "tomb",
+        "mosque",
+        "garden"
+      ],
+      "startYear": 1632,
+      "endYear": 1653,
+      "dateLabel": "1632–1648 mausoleum; complex additions completed by 1653",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "masonry-dome",
+        "vault",
+        "raised-platform"
+      ],
+      "materials": [
+        "marble",
+        "sandstone",
+        "brick",
+        "inlay-stone"
+      ],
+      "elements": [
+        "dome",
+        "minaret",
+        "iwan",
+        "garden",
+        "platform"
+      ],
+      "description": "The mausoleum for Mumtaz Mahal sits at one end of a formal garden, with a mosque, guest house, gateways and supporting spaces. Its construction involved craftspeople from multiple regions.",
+      "engineering": "A raised platform, domed tomb and flanking buildings create both a structural and a carefully staged visual composition. Marble cladding, inlay and carved detail should be distinguished from the full load-bearing assembly.",
+      "significance": "The ensemble is a major work of Mughal court architecture, landscape design and coordinated material craft.",
+      "uncertainties": [
+        "The mausoleum and surrounding complex have different completion dates.",
+        "A symmetric plan does not imply all materials, foundations or rooms are identical.",
+        "The catalog does not infer hidden numerical codes from proportions."
+      ],
+      "sourceIds": [
+        "history-taj-mahal-unesco"
+      ]
+    },
+    {
+      "id": "sagrada-familia",
+      "name": "Sagrada Família",
+      "region": "Europe",
+      "country": "Spain",
+      "period": "Catalan Modernisme and continuing construction",
+      "categories": [
+        "church",
+        "basilica",
+        "advanced-geometry"
+      ],
+      "startYear": 1882,
+      "endYear": 2026,
+      "dateLabel": "1882–ongoing; observed construction milestone in 2026",
+      "datePrecision": "range",
+      "status": "under_construction",
+      "structuralSystems": [
+        "branching-column",
+        "ruled-surface",
+        "tensioned-stone-panel"
+      ],
+      "materials": [
+        "stone",
+        "steel",
+        "concrete",
+        "ceramic",
+        "glass"
+      ],
+      "elements": [
+        "branching-column",
+        "vault",
+        "tower",
+        "hyperboloid",
+        "prefabricated-panel"
+      ],
+      "description": "The basilica has developed through successive teams from its nineteenth-century beginnings and Gaudí's designs. The central tower's exterior reached its final height in February 2026.",
+      "engineering": "The latest central tower uses off-site stone panels combined with tensioned steel. Its construction shows how geometrical design, fabrication and assembly can connect a long-running masonry project to contemporary engineering.",
+      "significance": "It links historical design intent, reconstruction of design information, digital fabrication and an active building site.",
+      "uncertainties": [
+        "endYear 2026 is an observed-phase cutoff, not a whole-building completion claim.",
+        "The official tower account says interior works continue in 2027–2028.",
+        "Historic and later design decisions must be separated in any reconstruction."
+      ],
+      "sourceIds": [
+        "history-sagrada-history",
+        "history-sagrada-tower-2026",
+        "history-sagrada-panels"
+      ]
+    },
+    {
+      "id": "eiffel-tower",
+      "name": "Eiffel Tower",
+      "region": "Europe",
+      "country": "France",
+      "period": "Late nineteenth-century iron engineering",
+      "categories": [
+        "tower",
+        "exhibition",
+        "infrastructure"
+      ],
+      "startYear": 1887,
+      "endYear": 1889,
+      "dateLabel": "1887–1889 CE",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "riveted-lattice",
+        "braced-frame"
+      ],
+      "materials": [
+        "puddled-iron",
+        "concrete"
+      ],
+      "elements": [
+        "lattice",
+        "riveted-joint",
+        "pier",
+        "platform",
+        "elevator"
+      ],
+      "description": "Built for the 1889 Paris exposition, the tower drew on experience with large metal bridges and industrial prefabrication. Its assembly was coordinated between workshop and site.",
+      "engineering": "Individually detailed iron components were preassembled and joined with rivets. The tapered lattice system and foundations address the combined problems of self-weight, wind and erection.",
+      "significance": "The tower is a useful transition from monumental masonry to highly documented industrial metal construction.",
+      "uncertainties": [
+        "Its primary metal is puddled iron, not a generic modern steel frame.",
+        "Later antennas, equipment and maintenance are separate phases.",
+        "The current height should not be confused with the original completed structure."
+      ],
+      "sourceIds": [
+        "history-eiffel-history",
+        "history-eiffel-iron"
+      ]
+    },
+    {
+      "id": "djenne-great-mosque",
+      "name": "Great Mosque of Djenné",
+      "region": "Africa",
+      "country": "Mali",
+      "period": "Sudano-Sahelian; early twentieth-century rebuilding",
+      "categories": [
+        "mosque",
+        "earthen"
+      ],
+      "startYear": 1906,
+      "endYear": 1907,
+      "dateLabel": "1906–1907 CE; present mosque reconstruction",
+      "datePrecision": "range",
+      "status": "reconstructed",
+      "structuralSystems": [
+        "earthen-bearing-wall",
+        "buttress",
+        "timber-roof"
+      ],
+      "materials": [
+        "earthen-brick",
+        "mud-plaster",
+        "timber"
+      ],
+      "elements": [
+        "buttress",
+        "tower",
+        "toron",
+        "roof",
+        "courtyard"
+      ],
+      "description": "The present monumental mosque was rebuilt in the early twentieth century within a much older urban and religious tradition. Its earthen surfaces are maintained through recurring community work.",
+      "engineering": "Sun-dried earth construction, buttressing and protective plaster form a material system that depends on upkeep. Repairs and periodic resurfacing are essential aspects of its architectural life.",
+      "significance": "The mosque highlights African earthen engineering and conservation through living craft and community practice.",
+      "uncertainties": [
+        "The current building must not be dated to the town's ancient settlement or an earlier mosque.",
+        "Repeated plastering changes the visible surface without making the monument inauthentic.",
+        "The entry is not a current site-security or visitor-access assessment."
+      ],
+      "sourceIds": [
+        "history-djenne-unesco",
+        "history-djenne-atlas"
+      ]
+    },
+    {
+      "id": "fallingwater",
+      "name": "Fallingwater",
+      "region": "North America",
+      "country": "United States",
+      "period": "American organic modernism",
+      "categories": [
+        "house",
+        "cantilever"
+      ],
+      "startYear": 1936,
+      "endYear": 1937,
+      "dateLabel": "1936–1937 CE; main house construction",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "reinforced-concrete-cantilever",
+        "stone-masonry"
+      ],
+      "materials": [
+        "reinforced-concrete",
+        "stone",
+        "steel",
+        "glass"
+      ],
+      "elements": [
+        "cantilever",
+        "terrace",
+        "hearth",
+        "window",
+        "stream"
+      ],
+      "description": "Frank Lloyd Wright's main house for the Kaufmann family places projecting terraces over a waterfall. The main house campaign is distinct from later guest accommodation and alterations.",
+      "engineering": "Reinforced-concrete cantilevers work with masonry masses and a carefully considered site relationship. Understanding the house requires tracing support and span, not simply copying horizontal slabs.",
+      "significance": "The building is an influential example of architecture organized around landscape, domestic life and the expressive use of structure.",
+      "uncertainties": [
+        "The date is for the main house; other elements were added later.",
+        "Long-term conservation and structural intervention belong to its history.",
+        "A visual cantilever model is not evidence of safe reinforcement or load capacity."
+      ],
+      "sourceIds": [
+        "history-fallingwater-timeline"
+      ]
+    },
+    {
+      "id": "barragan-house",
+      "name": "Luis Barragán House and Studio",
+      "region": "North America",
+      "country": "Mexico",
+      "period": "Mexican modern architecture",
+      "categories": [
+        "house",
+        "studio",
+        "garden"
+      ],
+      "startYear": 1948,
+      "endYear": 1948,
+      "dateLabel": "1948 CE; original house and studio",
+      "datePrecision": "year",
+      "status": "extant",
+      "structuralSystems": [
+        "concrete-and-masonry",
+        "enclosed-courtyard"
+      ],
+      "materials": [
+        "concrete",
+        "plaster",
+        "timber",
+        "stone"
+      ],
+      "elements": [
+        "wall",
+        "stair",
+        "courtyard",
+        "garden",
+        "window"
+      ],
+      "description": "The architect's house and studio integrate modern spatial planning with Mexican building traditions. Color, light, enclosed rooms and the garden shape the experience at domestic scale.",
+      "engineering": "The main teaching opportunity is the coordination of solid walls, openings, circulation and daylight. The building's technical character is not reducible to a famous paint palette or a single photograph.",
+      "significance": "It broadens the modern section beyond towers and engineering records to habitation and carefully controlled sensory experience.",
+      "uncertainties": [
+        "The house changed under Barragán's supervision during his lifetime.",
+        "Photographs vary greatly with light and cannot establish exact original colors.",
+        "The date labels the initial building, not a permanently frozen interior."
+      ],
+      "sourceIds": [
+        "history-barragan-unesco"
+      ]
+    },
+    {
+      "id": "brasilia-cathedral",
+      "name": "Metropolitan Cathedral of Brasília",
+      "region": "South America",
+      "country": "Brazil",
+      "period": "Brazilian modernism",
+      "categories": [
+        "church",
+        "cathedral",
+        "concrete"
+      ],
+      "startYear": 1958,
+      "endYear": 1970,
+      "dateLabel": "1958 foundation–1970 inauguration; later glazing phases",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "radial-reinforced-concrete-frame",
+        "ring-support"
+      ],
+      "materials": [
+        "reinforced-concrete",
+        "glass"
+      ],
+      "elements": [
+        "curved-column",
+        "ring",
+        "glazing",
+        "subterranean-entry"
+      ],
+      "description": "Oscar Niemeyer's cathedral, structurally engineered by Joaquim Cardozo, is organized around a circular nave and a ring of dramatic concrete supports. Its construction extended beyond the new capital's initial inauguration.",
+      "engineering": "Sixteen curved structural members define the perimeter and support the enclosing system. The below-grade approach and extensive glazing make circulation and light central parts of the design.",
+      "significance": "The cathedral brings a modern structural vocabulary into religious architecture within Brasília's planned urban setting.",
+      "uncertainties": [
+        "The foundation ceremony, concrete completion, inauguration and later stained glass are different milestones.",
+        "The numerical interval must not imply uninterrupted work.",
+        "Current glazing is not all original to the first structural campaign."
+      ],
+      "sourceIds": [
+        "history-brasilia-archive",
+        "history-brasilia-guide"
+      ]
+    },
+    {
+      "id": "sydney-opera-house",
+      "name": "Sydney Opera House",
+      "region": "Oceania",
+      "country": "Australia",
+      "period": "Twentieth-century expressive modernism",
+      "categories": [
+        "performing-arts",
+        "shell-roof"
+      ],
+      "startYear": 1959,
+      "endYear": 1973,
+      "dateLabel": "1959–1973 CE",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "ribbed-precast-concrete",
+        "spherical-roof-geometry"
+      ],
+      "materials": [
+        "reinforced-concrete",
+        "precast-concrete",
+        "ceramic-tile",
+        "glass"
+      ],
+      "elements": [
+        "roof-rib",
+        "spherical-segment",
+        "podium",
+        "auditorium"
+      ],
+      "description": "Jørn Utzon's competition concept developed through a long design and construction process; Peter Hall's team completed the interiors after Utzon's departure. The building opened in 1973.",
+      "engineering": "Deriving roof segments from a common sphere made a diverse set of shapes more amenable to repeated fabrication. Collaboration with Arup linked mathematical geometry, structural design and construction methods.",
+      "significance": "The project is a major case study in geometric rationalization and in the institutional challenges of ambitious public construction.",
+      "uncertainties": [
+        "The early competition silhouettes are not identical to the built roof geometry.",
+        "The roof is a ribbed construction, not merely a set of thin unsupported shells.",
+        "Design authorship and construction history include multiple teams."
+      ],
+      "sourceIds": [
+        "history-sydney-story",
+        "history-sydney-sphere"
+      ]
+    },
+    {
+      "id": "centre-pompidou",
+      "name": "Centre Pompidou, Paris",
+      "region": "Europe",
+      "country": "France",
+      "period": "High-tech architecture",
+      "categories": [
+        "museum",
+        "civic",
+        "exposed-structure"
+      ],
+      "startYear": 1972,
+      "endYear": 1977,
+      "dateLabel": "1972 excavation–1977 opening",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "steel-frame",
+        "gerberette",
+        "tension-rod",
+        "cross-bracing"
+      ],
+      "materials": [
+        "steel",
+        "concrete",
+        "glass"
+      ],
+      "elements": [
+        "gerberette",
+        "truss",
+        "column",
+        "tie-rod",
+        "external-services"
+      ],
+      "description": "The cultural center by Renzo Piano and Richard Rogers makes major structural and service systems visible. Large internal floors support changing cultural programs.",
+      "engineering": "Cast-steel gerberettes connect columns with long-spanning beams and balanced tension members. Repeated frames and bracing make the external elevation a legible record of load transfer.",
+      "significance": "The building links the engineering of large spans to a program of flexible public and exhibition space.",
+      "uncertainties": [
+        "The dates identify excavation and opening rather than every design stage.",
+        "Visible members have different structural roles and should not all be labeled beams.",
+        "Extant describes the building's existence, not current opening hours during renovation."
+      ],
+      "sourceIds": [
+        "history-pompidou-structure"
+      ]
+    },
+    {
+      "id": "louvre-pyramid",
+      "name": "Louvre Pyramid",
+      "region": "Europe",
+      "country": "France",
+      "period": "Late twentieth-century museum transformation",
+      "categories": [
+        "museum",
+        "pyramid",
+        "glass-structure"
+      ],
+      "startYear": 1985,
+      "endYear": 1989,
+      "dateLabel": "c. 1985–1989 CE; inaugurated 29 March 1989",
+      "datePrecision": "approximate",
+      "status": "extant",
+      "structuralSystems": [
+        "metal-space-frame",
+        "tension-supported-glazing"
+      ],
+      "materials": [
+        "steel",
+        "aluminium",
+        "glass"
+      ],
+      "elements": [
+        "pyramid",
+        "node",
+        "glazing",
+        "underground-concourse"
+      ],
+      "description": "I. M. Pei's pyramid introduced a new entrance and circulation center within the Louvre's historic courtyard. Its form participates in a larger museum transformation.",
+      "engineering": "A metal framework and carefully developed transparent glazing make a lightweight enclosure over the entrance. Fabrication and assembly had to coordinate structural nodes with the visual requirement for transparency.",
+      "significance": "It provides a useful comparison with ancient pyramids: similar geometry can serve very different materials, spaces and functions.",
+      "uncertainties": [
+        "The construction start is inferred from the Louvre's statement of four years' work before the 1989 inauguration.",
+        "The main pyramid is distinct from the smaller and inverted pyramids.",
+        "Geometric resemblance is not evidence of a direct structural lineage from Egyptian tombs."
+      ],
+      "sourceIds": [
+        "history-louvre-pyramid"
+      ]
+    },
+    {
+      "id": "grand-egyptian-museum",
+      "name": "Grand Egyptian Museum",
+      "region": "Africa",
+      "country": "Egypt",
+      "period": "Contemporary museum and conservation infrastructure",
+      "categories": [
+        "museum",
+        "advanced-structure",
+        "cultural-infrastructure"
+      ],
+      "startYear": 2005,
+      "endYear": 2025,
+      "dateLabel": "2005 site works–museum-wide opening on 1 November 2025",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "retaining-structure",
+        "folded-roof",
+        "long-span-steel"
+      ],
+      "materials": [
+        "reinforced-concrete",
+        "steel",
+        "glass",
+        "stone"
+      ],
+      "elements": [
+        "roof-fold",
+        "retaining-wall",
+        "grand-stair",
+        "gallery",
+        "conservation-center"
+      ],
+      "description": "The museum by heneghan peng architects occupies the transition between the Nile Valley and the desert plateau near Giza. Its program joins galleries, conservation, education and landscape.",
+      "engineering": "Large retaining works manage the site levels, while roof folds, service walls and long spans organize flexible exhibition spaces. Arup's project account distinguishes early infrastructure from the main building contract.",
+      "significance": "The museum connects contemporary large-building engineering with the care and interpretation of ancient material culture.",
+      "uncertainties": [
+        "Partial gallery openings preceded the museum-wide 2025 opening.",
+        "The range starts with site preparation, not a single uninterrupted structural contract.",
+        "Design accounts may retain future-tense text after completion; the opening status is verified separately."
+      ],
+      "sourceIds": [
+        "history-gem-presidency",
+        "history-gem-story",
+        "history-gem-architect",
+        "history-gem-engineers"
+      ]
+    },
+    {
+      "id": "burj-khalifa",
+      "name": "Burj Khalifa",
+      "region": "Middle East",
+      "country": "United Arab Emirates",
+      "period": "Contemporary supertall engineering",
+      "categories": [
+        "tower",
+        "mixed-use",
+        "advanced-structure"
+      ],
+      "startYear": 2010,
+      "endYear": 2010,
+      "dateLabel": "Completed 2010 CE",
+      "datePrecision": "year",
+      "status": "extant",
+      "structuralSystems": [
+        "buttressed-core",
+        "reinforced-concrete-wall"
+      ],
+      "materials": [
+        "reinforced-concrete",
+        "steel",
+        "glass"
+      ],
+      "elements": [
+        "core",
+        "wing",
+        "setback",
+        "spire",
+        "curtain-wall"
+      ],
+      "description": "SOM's mixed-use tower combines a tall reinforced-concrete structure with a sequence of setbacks and an integrated building-services strategy. The date records completion, not the whole development period.",
+      "engineering": "Three wings buttress one another around a central hub. Form, lateral stability, vertical transportation and the delivery of services become interdependent at this scale.",
+      "significance": "The tower is a major example of an engineered structural system shaping a contemporary high-rise form.",
+      "uncertainties": [
+        "This entry uses the architect-engineer's completion year rather than an independently reconstructed construction schedule.",
+        "Height records change and are not the basis of the entry.",
+        "Design performance descriptions are not an independent operational-energy audit."
+      ],
+      "sourceIds": [
+        "history-burj-som",
+        "history-burj-som-structure"
+      ]
+    },
+    {
+      "id": "cctv-headquarters",
+      "name": "CCTV Headquarters",
+      "region": "East Asia",
+      "country": "China",
+      "period": "Contemporary connected high-rise",
+      "categories": [
+        "office",
+        "media",
+        "advanced-structure"
+      ],
+      "startYear": 2012,
+      "endYear": 2012,
+      "dateLabel": "Completed 2012 CE",
+      "datePrecision": "year",
+      "status": "extant",
+      "structuralSystems": [
+        "braced-tube",
+        "diagrid",
+        "cantilevered-overhang"
+      ],
+      "materials": [
+        "steel",
+        "reinforced-concrete",
+        "glass"
+      ],
+      "elements": [
+        "diagrid",
+        "overhang",
+        "leaning-tower",
+        "loop",
+        "node"
+      ],
+      "description": "OMA's headquarters joins two leaning towers with a base and elevated overhang to create a continuous loop of media-production and administrative spaces. Arup developed the structural solution.",
+      "engineering": "An irregular external bracing pattern expresses different force demands across the tube. Construction sequencing and joining the overhang were integral to making the final connected form possible.",
+      "significance": "The project challenges the isolated vertical tower through a structurally connected, three-dimensional organization.",
+      "uncertainties": [
+        "The year is the completed project date in Arup's retrospective.",
+        "A visually similar loop does not reproduce its engineered connections or seismic design.",
+        "The neighboring TVCC building is a separate project and should not be conflated with this record."
+      ],
+      "sourceIds": [
+        "history-cctv-arup",
+        "history-cctv-arup-construction"
+      ]
+    },
+    {
+      "id": "shanghai-tower",
+      "name": "Shanghai Tower",
+      "region": "East Asia",
+      "country": "China",
+      "period": "Contemporary supertall engineering",
+      "categories": [
+        "tower",
+        "mixed-use",
+        "advanced-envelope"
+      ],
+      "startYear": 2015,
+      "endYear": 2015,
+      "dateLabel": "Completed 2015 CE; later occupancy phases",
+      "datePrecision": "year",
+      "status": "extant",
+      "structuralSystems": [
+        "high-rise-core-and-frame",
+        "double-skin-envelope"
+      ],
+      "materials": [
+        "reinforced-concrete",
+        "steel",
+        "glass"
+      ],
+      "elements": [
+        "twisting-envelope",
+        "double-skin",
+        "atrium",
+        "sky-garden"
+      ],
+      "description": "Gensler's tower combines offices, hotel and public uses within a tall mixed-use structure. Its curved outer envelope and stacked shared spaces form a distinctive approach to vertical urbanism.",
+      "engineering": "The spiral form was developed in relation to wind loads, while the double-skin facade creates buffered zones. Parametric studies linked the profile, taper and twist to architectural and engineering constraints.",
+      "significance": "The project is a useful case for studying how facade geometry, structure, climate control and mixed-use planning interact.",
+      "uncertainties": [
+        "Completion and opening of individual functions are different milestones.",
+        "Claims of energy efficiency on the architect's page are design descriptions, not this catalog's independent measured verification.",
+        "A geometric sample does not replicate the tower's structural core."
+      ],
+      "sourceIds": [
+        "history-shanghai-gensler",
+        "history-shanghai-gensler-date",
+        "history-shanghai-facade-paper"
+      ]
+    },
+    {
+      "id": "zeitz-mocaa",
+      "name": "Zeitz Museum of Contemporary Art Africa",
+      "region": "Africa",
+      "country": "South Africa",
+      "period": "Contemporary adaptive reuse",
+      "categories": [
+        "museum",
+        "adaptive-reuse",
+        "concrete"
+      ],
+      "startYear": 2017,
+      "endYear": 2017,
+      "dateLabel": "Completed 2017 CE; conversion of an older grain silo",
+      "datePrecision": "year",
+      "status": "extant",
+      "structuralSystems": [
+        "reused-concrete-tubes",
+        "reinforced-concrete-sleeve"
+      ],
+      "materials": [
+        "reinforced-concrete",
+        "steel",
+        "laminated-glass"
+      ],
+      "elements": [
+        "silo",
+        "atrium",
+        "gallery",
+        "cut-surface",
+        "rooflight"
+      ],
+      "description": "Heatherwick Studio transformed a disused grain-silo complex in Cape Town into a museum devoted to contemporary African art. The project retained and reworked a dense industrial concrete fabric.",
+      "engineering": "Carving a central volume from closely packed tubes required new support and carefully sequenced removal. Laminated roof glazing brings light into the resulting space while serving the upper sculpture area.",
+      "significance": "The project demonstrates adaptation through selective removal and reinforcement, with an industrial structure becoming a cultural building.",
+      "uncertainties": [
+        "The date is for the museum conversion, not the original silo.",
+        "Carved appearance alone does not explain the reinforcing sleeves and temporary works.",
+        "The museum's mission and collection history should not be confused with the construction history."
+      ],
+      "sourceIds": [
+        "history-zeitz-heatherwick",
+        "history-zeitz-architect-statement"
+      ]
+    },
+    {
+      "id": "mjostarnet",
+      "name": "Mjøstårnet",
+      "region": "Europe",
+      "country": "Norway",
+      "period": "Contemporary engineered timber",
+      "categories": [
+        "tower",
+        "mixed-use",
+        "timber"
+      ],
+      "startYear": 2017,
+      "endYear": 2019,
+      "dateLabel": "2017–2019 CE; completed March 2019",
+      "datePrecision": "range",
+      "status": "extant",
+      "structuralSystems": [
+        "glulam-frame",
+        "timber-diagonal-bracing",
+        "hybrid-floor"
+      ],
+      "materials": [
+        "glulam",
+        "cross-laminated-timber",
+        "steel",
+        "concrete"
+      ],
+      "elements": [
+        "column",
+        "beam",
+        "diagonal",
+        "floor-panel",
+        "connection"
+      ],
+      "description": "The mixed-use tower at Brumunddal used factory-produced timber components assembled in stages. Moelven supplied and erected key timber elements, with Sweco responsible for their structural design.",
+      "engineering": "Glulam columns, beams and diagonals form the primary system, with CLT in selected shafts and stairwells. Different floor materials and steel connections make the actual building more specific than the label 'wooden tower'.",
+      "significance": "It provides a documented case of tall engineered-timber construction and coordinated prefabrication.",
+      "uncertainties": [
+        "The record does not assert a current world-height record.",
+        "Timber is not automatically a complete lifecycle-carbon assessment.",
+        "Fire, moisture, connection and vibration design cannot be inferred from a simplified model."
+      ],
+      "sourceIds": [
+        "history-mjostarnet-moelven",
+        "history-mjostarnet-technical"
+      ]
+    },
+    {
+      "id": "zayed-national-museum",
+      "name": "Zayed National Museum",
+      "region": "Middle East",
+      "country": "United Arab Emirates",
+      "period": "Contemporary museum and environmental design",
+      "categories": [
+        "museum",
+        "advanced-envelope",
+        "climate-design"
+      ],
+      "startYear": 2025,
+      "endYear": 2025,
+      "dateLabel": "Opened to the public on 3 December 2025",
+      "datePrecision": "year",
+      "status": "extant",
+      "structuralSystems": [
+        "steel-wing-structure",
+        "suspended-gallery",
+        "earth-sheltered-volume"
+      ],
+      "materials": [
+        "steel",
+        "concrete",
+        "glass",
+        "stone"
+      ],
+      "elements": [
+        "ventilation-wing",
+        "atrium",
+        "gallery-pod",
+        "rooflight",
+        "earth-mound"
+      ],
+      "description": "Foster + Partners' museum opened in Abu Dhabi's Saadiyat Cultural District in December 2025. Galleries and a public atrium occupy a mound beneath five distinctive wing-shaped structures.",
+      "engineering": "The architect describes the lightweight steel wings as part of a ventilation and daylighting system, with buried air paths and carefully controlled gallery environments. Structure and environmental design are therefore linked to the visible form.",
+      "significance": "It represents a recent completed project combining museum conservation requirements with a response to a hot desert setting.",
+      "uncertainties": [
+        "The single year records the verified opening, not the full design-and-construction interval.",
+        "Environmental strategies are the designer's account; actual operating performance is not independently measured here.",
+        "An older project subpage still says under construction; the newer project page and government opening notice take precedence."
+      ],
+      "sourceIds": [
+        "history-zayed-opening",
+        "history-zayed-foster"
+      ]
+    }
+  ]
+}

@@ -47,6 +47,12 @@ function ChapterList({
           </li>
         );
       })}
+      <li>
+        <a href="./architecture-library/index.html" onClick={onNavigate}
+          className="atlas-nav-link flex min-h-[44px] items-center gap-3 border-l-2 border-transparent px-4 py-2 text-sm font-medium text-[hsl(var(--ink-soft))] hover:text-[hsl(var(--ink))]">
+          <Building2 size={17} aria-hidden="true" /><span>Architecture library</span>
+        </a>
+      </li>
     </ul>
   );
 }

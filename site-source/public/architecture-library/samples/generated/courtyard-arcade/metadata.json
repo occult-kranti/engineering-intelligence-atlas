@@ -1,0 +1,93 @@
+{
+  "objectCount": 126,
+  "vertexCount": 1296,
+  "triangleCount": 2088,
+  "dimensionsMeters": [
+    7.15,
+    7.15,
+    3.160001
+  ],
+  "boundsMeters": {
+    "min": [
+      -3.575,
+      -3.575,
+      -0.18
+    ],
+    "max": [
+      3.575,
+      3.575,
+      2.9800005
+    ]
+  },
+  "geometrySha256": "a3d172857115092b36f16cfeadfb80db9f468717ada2333cf55ebd4f0583b8ff",
+  "schemaVersion": 1,
+  "id": "courtyard-arcade",
+  "name": "Courtyard and arcade study",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "baysPerSide": 3,
+    "span": 2.0,
+    "springHeight": 1.6
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-alhambra-court",
+    "elements-illinois-glossary"
+  ],
+  "elementIds": [
+    "courtyard",
+    "arcade",
+    "true-arch",
+    "column"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "Invented round-arch courtyard; not an Alhambra reconstruction or a universal Islamic courtyard type.",
+    "Ornament, adjoining rooms, environmental performance, water systems and site-specific social uses are omitted."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/courtyard-arcade/sample.blend",
+      "bytes": 123140,
+      "sha256": "99e63b49d48bda6444d79c0f93a1934c91bb08cf08789771389aebd999e24f55"
+    },
+    "glb": {
+      "path": "samples/generated/courtyard-arcade/sample.glb",
+      "bytes": 189284,
+      "sha256": "3da51782a9145e6cdc3eec7d76e4094043dc6d33baeb98147871ddcfc0f4df35"
+    },
+    "preview": {
+      "path": "samples/generated/courtyard-arcade/preview.png",
+      "bytes": 131102,
+      "sha256": "135a484ccada0817a5f29d210cdeb2e539f8e0cd224c1e0fac85c5795066fb1d"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.867,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

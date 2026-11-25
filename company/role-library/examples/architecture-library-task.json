@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "example": true,
+  "roleKey": "design-architecture",
+  "taskId": "demo-architecture-library-001",
+  "scope": {
+    "companyId": "demo-company",
+    "sourceRepositoryId": "demo-repository",
+    "classification": "synthetic"
+  },
+  "goal": "Review the original arch/barrel-vault study and prepare an evidence-based handoff to the existing graphics and game-engineering employees.",
+  "inputs": [
+    {
+      "ref": "artifact:demo-architecture-library-input",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "classification": "synthetic"
+    }
+  ],
+  "limits": {
+    "maxTokens": 6000,
+    "maxUsd": 0,
+    "maxMinutes": 20,
+    "maxIterations": 1
+  },
+  "allowedCapabilities": [],
+  "acceptance": [
+    "Cite the selected element and primary-source IDs and distinguish qualitative interpretation from measured evidence.",
+    "Use projects/architecture-library/samples/generated/arch-barrel-vault/sample.blend and its metadata as an original schematic input, not a historic reconstruction.",
+    "Retain units, axis convention, counts, hashes and limitations in the handoff.",
+    "Report actual checks separately from proposed Blender/MCP/Unreal operations; this synthetic packet starts no job or provider call."
+  ],
+  "returnSchema": "company/role-library/result.schema.json",
+  "prompt": "Read the architecture-library workflow and the architecture/spatial skill instructions. Review the original arch/barrel-vault sample and its element references. Return the existing role result envelope with source mapping, model limitations, verification evidence and a concrete next owner. Bind real workspace IDs and current authority before any later execution; this example has no executable capabilities."
+}

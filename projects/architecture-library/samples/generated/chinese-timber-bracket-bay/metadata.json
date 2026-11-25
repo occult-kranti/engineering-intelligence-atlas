@@ -1,0 +1,94 @@
+{
+  "objectCount": 89,
+  "vertexCount": 1076,
+  "triangleCount": 1786,
+  "dimensionsMeters": [
+    7.2,
+    5.89,
+    4.28
+  ],
+  "boundsMeters": {
+    "min": [
+      -3.5999999,
+      -2.9450002,
+      -0.18
+    ],
+    "max": [
+      3.5999999,
+      2.9450002,
+      4.0999999
+    ]
+  },
+  "geometrySha256": "31e055115a4882e5e0c47b8fba1adfda5797f6e6ae839d99cc0ccb77fad638cb",
+  "schemaVersion": 1,
+  "id": "chinese-timber-bracket-bay",
+  "name": "Chinese timber-and-bracket bay",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "width": 5.0,
+    "depth": 3.2,
+    "postHeight": 2.6,
+    "bracketLevels": 3
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-prince-gong-brackets",
+    "elements-getty-purlin"
+  ],
+  "elementIds": [
+    "timber-post-beam",
+    "bracket-set",
+    "purlin"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "A generic Chinese timber/bracket principle study; not a dynasty-specific bay or a proxy for all East Asian building traditions.",
+    "Interlocking joinery, graded timber sections, detailed dougong typology, roof tiles and seismic behaviour are not represented.",
+    "The near roof covering is omitted for visibility; the covering and supporting assembly are incomplete."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/chinese-timber-bracket-bay/sample.blend",
+      "bytes": 114995,
+      "sha256": "839caf081d6313f4f3c76dde0a9fb13355d9ba1fdeda1eab2082378fa7204182"
+    },
+    "glb": {
+      "path": "samples/generated/chinese-timber-bracket-bay/sample.glb",
+      "bytes": 173996,
+      "sha256": "305ca2ef447452ed6d363eb7a42f2a382150b24af24521975f21823f0d945df0"
+    },
+    "preview": {
+      "path": "samples/generated/chinese-timber-bracket-bay/preview.png",
+      "bytes": 124795,
+      "sha256": "8d799aee38d13d627951e1210775909addd741cc734ac204d9462c636d114c48"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.875,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

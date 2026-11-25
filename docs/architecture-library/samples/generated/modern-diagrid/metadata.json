@@ -1,0 +1,91 @@
+{
+  "objectCount": 45,
+  "vertexCount": 360,
+  "triangleCount": 540,
+  "dimensionsMeters": [
+    5.76,
+    5.76,
+    12.28
+  ],
+  "boundsMeters": {
+    "min": [
+      -2.8800001,
+      -2.8800001,
+      -0.18
+    ],
+    "max": [
+      2.8800001,
+      2.8800001,
+      12.1000004
+    ]
+  },
+  "geometrySha256": "b1be2a62cfdea5ea8d8dbcf84db7c1ae1da2ed883e01953a4b960d667638ec7f",
+  "schemaVersion": 1,
+  "id": "modern-diagrid",
+  "name": "Modern diagrid study",
+  "sourceKind": "original-procedural-schematic",
+  "isSiteReconstruction": false,
+  "isConstructionDesign": false,
+  "units": "metres",
+  "blenderCoordinates": "right-handed Z-up",
+  "glbCoordinates": "right-handed Y-up (Blender glTF axis conversion)",
+  "dimensionsIncludeDisplayPlinth": true,
+  "seed": 20261124,
+  "parameters": {
+    "width": 4.8,
+    "height": 12.0,
+    "modules": 3,
+    "floors": 6
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "generatorSha256": "776097d35029c3dcdbc686c45f1c26c1c419824160ee755b30292afbe9591f06",
+  "presetsSha256": "f4029f303f988a5160052273c0a5f5511b388ea6f8f6978ecee63cc33082278c",
+  "sourceIds": [
+    "elements-wsp-hearst"
+  ],
+  "elementIds": [
+    "diagrid",
+    "truss"
+  ],
+  "externalAssets": [],
+  "limitations": [
+    "Original schematic teaching study; not a measured site reconstruction or construction design.",
+    "Geometry and materials illustrate relationships only. No structural, code, conservation or fabrication approval.",
+    "No external textures, scans, terrain, photogrammetry, copyrighted asset packs or Google tiles are included.",
+    "An invented square tower; no dimensions or fabrication details are copied from Hearst Tower.",
+    "Joints, core interaction, fire protection, lateral drift, buckling and member capacity are unanalysed."
+  ],
+  "files": {
+    "blend": {
+      "path": "samples/generated/modern-diagrid/sample.blend",
+      "bytes": 102127,
+      "sha256": "2f76f61b831dcf046bd31396e0ab3d92fd71d10874f3a984817224c6649c92fc"
+    },
+    "glb": {
+      "path": "samples/generated/modern-diagrid/sample.glb",
+      "bytes": 73960,
+      "sha256": "4ed05523903e001ea11e6e0bedc006039a5d57f3c658b9c1945b8bbd782fe1bf"
+    },
+    "preview": {
+      "path": "samples/generated/modern-diagrid/preview.png",
+      "bytes": 127847,
+      "sha256": "2aa2101f1a84849896566af5a6f97f091df6ab1a62ee792a25d1e9a1b96cfd9c"
+    }
+  },
+  "render": {
+    "width": 384,
+    "height": 384,
+    "engine": "CYCLES",
+    "samples": 12,
+    "threads": 2,
+    "device": "CPU"
+  },
+  "generationSeconds": 2.656,
+  "validation": {
+    "finiteCoordinates": true,
+    "nondegenerateTriangles": true,
+    "budgetPassed": true,
+    "fileReopenStatus": "See inspection.json for independent reopen results"
+  }
+}

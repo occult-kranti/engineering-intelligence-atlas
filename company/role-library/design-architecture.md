@@ -97,7 +97,33 @@ for a bounded paper/local review. Its values and identities are synthetic; its
 zero-dollar ceiling and empty capability list do not authorize provider calls,
 network access, a code edit or a deployment.
 
-## Handoff
+## Architecture library procedure
+
+Use the [architecture and built heritage library](../../projects/architecture-library/README.md)
+for dated monument records, structural-element explanations, original Blender
+studies and the current geospatial-tool audit. Compose the existing
+`architecture-and-built-heritage-research`, `spatial-3d-production-engineering`
+and applicable `game-reconstruction-engineering` skills. This is a procedure for
+the existing role, not another employee or an executable capability grant.
+
+1. Select a specific site and construction phase, or an explicitly original
+   teaching study. Keep source IDs, uncertainty, cultural context and data rights
+   with the task. Similar shapes do not prove a common origin.
+2. Give Graphics the units, origin, model kind, intended engine, geometry budget
+   and permitted inputs. The included studies have invented proportions and
+   documented omissions; they are not surveyed reconstructions.
+3. For actual Blender jobs, use the configured creative project, assigned tool
+   and current native `creative.execute` grant. Inventory and saved role labels
+   do not prove that a licensed service is connected.
+4. Give Game Engineering the GLB and its metadata; give QA the source/model hashes,
+   saved-file inspection and actual target-engine checks. Keep an untested Unreal
+   import or a future completion milestone visibly unverified.
+
+Use the [architecture-library task example](examples/architecture-library-task.json)
+to draft the handoff and the [production workflow](../../projects/architecture-library/docs/WORKFLOWS.md)
+for exact sample paths and MCP payload shapes. Preserve the common result envelope.
+
+## Handoff to implementation
 
 Give frontend the component/state specification, math-geometry the explicit geometric constraint, and QA the interaction checks.
 

@@ -1,0 +1,500 @@
+{
+  "schemaVersion": 1,
+  "sources": [
+    {
+      "id": "tools-concept-product",
+      "title": "Blender City Importer (formerly Concept Studio OSM)",
+      "url": "https://conceptstudio3d.gumroad.com/l/concept-studio-osm",
+      "publisher": "Concept Studio",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Current seller identity, Blender requirement, advertised data paths, price and discount; seller claims are not independent benchmarks."
+      ]
+    },
+    {
+      "id": "tools-concept-store",
+      "title": "Concept Studio storefront",
+      "url": "https://conceptstudio3d.gumroad.com/",
+      "publisher": "Concept Studio",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Advertised product family for Blender, SketchUp, Unreal, Cinema 4D, Maya, 3ds Max, Unity, Rhino and Houdini."
+      ]
+    },
+    {
+      "id": "tools-concept-demo",
+      "title": "Import Google 3D Cities Into Blender With Quality Zones",
+      "url": "https://www.youtube.com/watch?v=dJkt79153fg",
+      "publisher": "Concept Studios 3D",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Creator description of map selection, quality rings, lighting/material conversion and coordinate handling; demonstration evidence only."
+      ]
+    },
+    {
+      "id": "tools-google-terms",
+      "title": "Google Maps Platform Terms of Service",
+      "url": "https://cloud.google.com/maps-platform/terms",
+      "publisher": "Google",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Sections 3.2.2 and 3.2.3: attribution, outside-service extraction, caching, derived content and model-training restrictions."
+      ]
+    },
+    {
+      "id": "tools-google-service-terms",
+      "title": "Google Maps Platform Service Specific Terms",
+      "url": "https://cloud.google.com/maps-platform/terms/maps-service-terms",
+      "publisher": "Google",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Applicable service-specific exceptions and attribution; distinguishes non-EEA and EEA agreements."
+      ]
+    },
+    {
+      "id": "tools-google-tile-policy",
+      "title": "Map Tiles API Policies",
+      "url": "https://developers.google.com/maps/documentation/tile/policies",
+      "publisher": "Google",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Map-visualization scope, storage and offline restrictions, HTTP cache directives, visible Google and tile-provider attribution."
+      ]
+    },
+    {
+      "id": "tools-google-3d",
+      "title": "Photorealistic 3D Tiles",
+      "url": "https://developers.google.com/maps/documentation/tile/3d-tiles",
+      "publisher": "Google",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Textured 3D mesh, populated-area coverage, billing/API setup and compatible attributed renderers."
+      ]
+    },
+    {
+      "id": "tools-google-coverage",
+      "title": "Map Tiles product overview",
+      "url": "https://mapsplatform.google.com/maps-products/map-tiles/",
+      "publisher": "Google",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "3D imagery coverage is distinct from 2D tile coverage; provider describes textured meshes."
+      ]
+    },
+    {
+      "id": "tools-google-eea",
+      "title": "Map Tiles API adjustments for EEA customers",
+      "url": "https://developers.google.com/maps/comms/eea/map-tiles",
+      "publisher": "Google",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Photorealistic 3D and satellite 2D unavailability for affected EEA-linked projects; effective date and unmodified-state qualification."
+      ]
+    },
+    {
+      "id": "tools-google-pricing",
+      "title": "Google Maps Platform core services pricing list",
+      "url": "https://developers.google.com/maps/billing-and-pricing/pricing",
+      "publisher": "Google",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Current Photorealistic 3D Tiles free usage cap and volume pricing; separate from add-on purchase."
+      ]
+    },
+    {
+      "id": "tools-blosm-repo",
+      "title": "Blosm official repository",
+      "url": "https://github.com/vvoovv/blosm",
+      "publisher": "Prochitecture / vvoovv",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Base and Pro distinction; GPL source; OSM reconstruction, terrain and Google 3D import."
+      ]
+    },
+    {
+      "id": "tools-blosm-base",
+      "title": "Blosm for Blender base product",
+      "url": "https://prochitecture.gumroad.com/l/blender-osm",
+      "publisher": "Prochitecture",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Zero-price base download and imports of Google/other 3D Tiles, OSM, terrain and roads."
+      ]
+    },
+    {
+      "id": "tools-blosm-docs",
+      "title": "Blosm documentation",
+      "url": "https://github.com/vvoovv/blosm/wiki/Documentation",
+      "publisher": "Prochitecture / vvoovv",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Local OSM-file workflow, 3D Tiles providers, terrain placement and source-specific setup."
+      ]
+    },
+    {
+      "id": "tools-blosm-pro",
+      "title": "Blosm Pro documentation",
+      "url": "https://github.com/vvoovv/blosm/wiki/Premium-Version",
+      "publisher": "Prochitecture / vvoovv",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Generic OSM materials, UVs, trees and baking; does not provide each building's actual facade photograph; texture export caveat."
+      ]
+    },
+    {
+      "id": "tools-blendergis",
+      "title": "BlenderGIS official README",
+      "url": "https://raw.githubusercontent.com/domlysz/BlenderGIS/master/README.md",
+      "publisher": "domlysz / BlenderGIS contributors",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "GIS file imports, georeferencing, terrain generation and OpenTopography API-key dependency."
+      ]
+    },
+    {
+      "id": "tools-blendergis-license",
+      "title": "BlenderGIS source license header",
+      "url": "https://github.com/domlysz/BlenderGIS/blob/master/__init__.py",
+      "publisher": "domlysz / BlenderGIS contributors",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "GPL-3.0-or-later software license."
+      ]
+    },
+    {
+      "id": "tools-qgis-cli",
+      "title": "QGIS Processing Executor",
+      "url": "https://docs.qgis.org/3.44/en/docs/user_manual/processing/standalone.html",
+      "publisher": "QGIS Project",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Headless qgis_process, JSON parameters/results and supported processing providers."
+      ]
+    },
+    {
+      "id": "tools-qgis-license",
+      "title": "QGIS License",
+      "url": "https://qgis.org/license/",
+      "publisher": "QGIS Project",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "GPL software terms; does not license imported datasets."
+      ]
+    },
+    {
+      "id": "tools-gdal-cli",
+      "title": "GDAL programs",
+      "url": "https://gdal.org/en/stable/programs/index.html",
+      "publisher": "GDAL / OSGeo",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Raster/vector processing utilities and version-sensitive CLI interfaces."
+      ]
+    },
+    {
+      "id": "tools-gdal-license",
+      "title": "GDAL license",
+      "url": "https://gdal.org/en/stable/license.html",
+      "publisher": "GDAL / OSGeo",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Primarily MIT source, exceptions and dependency-specific binary licensing."
+      ]
+    },
+    {
+      "id": "tools-pdal",
+      "title": "PDAL documentation",
+      "url": "https://pdal.io/en/stable/about.html",
+      "publisher": "PDAL contributors",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Point-cloud readers, writers, filters and pipeline interfaces."
+      ]
+    },
+    {
+      "id": "tools-pdal-license",
+      "title": "PDAL license",
+      "url": "https://github.com/PDAL/PDAL/blob/master/LICENSE.txt",
+      "publisher": "Hobu / PDAL contributors",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "BSD software license."
+      ]
+    },
+    {
+      "id": "tools-bonsai",
+      "title": "Bonsai official Blender extension",
+      "url": "https://extensions.blender.org/add-ons/bonsai/",
+      "publisher": "IfcOpenShell / Blender Extensions",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Native IFC authoring, former BlenderBIM name and GPL-3.0-or-later license."
+      ]
+    },
+    {
+      "id": "tools-ifcopenshell",
+      "title": "IfcOpenShell official package",
+      "url": "https://pypi.org/project/ifcopenshell/",
+      "publisher": "IfcOpenShell contributors",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "C++/Python interfaces, IFC tools and LGPL/Bonsai GPL license distinction."
+      ]
+    },
+    {
+      "id": "tools-ifcconvert",
+      "title": "IfcConvert usage",
+      "url": "https://docs.ifcopenshell.org/ifcconvert/usage.html",
+      "publisher": "IfcOpenShell contributors",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "IFC conversion to GLB/OBJ and explicit unit/coordinate-offset controls."
+      ]
+    },
+    {
+      "id": "tools-cesium-code",
+      "title": "Cesium for Unreal official repository",
+      "url": "https://github.com/CesiumGS/cesium-unreal",
+      "publisher": "Cesium",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Apache-2.0 plugin; software and content are separate."
+      ]
+    },
+    {
+      "id": "tools-cesium-google",
+      "title": "Photorealistic 3D Tiles in Cesium for Unreal",
+      "url": "https://cesium.com/learn/unreal/unreal-photorealistic-3d-tiles/",
+      "publisher": "Cesium",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Documented streaming integration and georeferenced scenes."
+      ]
+    },
+    {
+      "id": "tools-cesium-quickstart",
+      "title": "Cesium for Unreal Quickstart",
+      "url": "https://cesium.com/learn/unreal/unreal-quickstart/",
+      "publisher": "Cesium",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Terrain/building streaming, CesiumGeoreference and CesiumSunSky workflow."
+      ]
+    },
+    {
+      "id": "tools-3dtiles",
+      "title": "OGC 3D Tiles standard",
+      "url": "https://www.ogc.org/standards/3dtiles/",
+      "publisher": "Open Geospatial Consortium",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Open format for streaming geospatial 3D content, independent of dataset permission."
+      ]
+    },
+    {
+      "id": "tools-osm-license",
+      "title": "OpenStreetMap Copyright and License",
+      "url": "https://www.openstreetmap.org/copyright",
+      "publisher": "OpenStreetMap Foundation",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "ODbL data and attribution; source permission requirements."
+      ]
+    },
+    {
+      "id": "tools-odbl",
+      "title": "Open Database License 1.0",
+      "url": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "publisher": "Open Data Commons",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Database/Produced Work distinction, attribution, share-alike and access duties."
+      ]
+    },
+    {
+      "id": "tools-osm-produced-work",
+      "title": "OSMF Produced Work guideline",
+      "url": "https://osmfoundation.org/wiki/Licence/Community_Guidelines/Produced_Work_-_Guideline",
+      "publisher": "OpenStreetMap Foundation",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Produced Work versus extractable database distinction; no blanket whole-game license conclusion."
+      ]
+    },
+    {
+      "id": "tools-osm-tiles",
+      "title": "OSMF Tile Usage Policy",
+      "url": "https://operations.osmfoundation.org/policies/tiles/",
+      "publisher": "OpenStreetMap Foundation",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Public tile server is limited; no bulk/prefetch use; data freedom is separate from endpoint capacity."
+      ]
+    },
+    {
+      "id": "tools-copernicus-dem",
+      "title": "Copernicus DEM collection",
+      "url": "https://dataspace.copernicus.eu/explore-data/data-collections/copernicus-contributing-missions/collections-description/COP-DEM",
+      "publisher": "Copernicus Data Space Ecosystem / ESA",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "GLO-30/90 DSM, EEA-10 restrictions, access and required source/modified-data notices."
+      ]
+    },
+    {
+      "id": "tools-copernicus-dem-license",
+      "title": "Copernicus WorldDEM-30 license",
+      "url": "https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/Data/DEM/resources/license/License-COPDEM-30.pdf",
+      "publisher": "European Union / ESA",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "GLO-30 license, redistribution and notice conditions; excludes higher-resolution EEA-10 grant."
+      ]
+    },
+    {
+      "id": "tools-usgs-3dep",
+      "title": "USGS 3DEP downloadable DEM collection",
+      "url": "https://data.usgs.gov/datacatalog/data/USGS%3A3a81321b-c153-416f-98b7-cc8e5f0e17c3",
+      "publisher": "U.S. Geological Survey",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Public-domain 3DEP products, LiDAR-derived one-meter DEMs and varying coverage."
+      ]
+    },
+    {
+      "id": "tools-srtm",
+      "title": "SRTM 1 Arc-Second Global",
+      "url": "https://www.usgs.gov/centers/eros/science/usgs-eros-archive-digital-elevation-shuttle-radar-topography-mission-srtm-1",
+      "publisher": "U.S. Geological Survey / NASA",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Approximately 30m sampling, near-global latitude range, mission epoch, EGM96 datum and coverage gaps."
+      ]
+    },
+    {
+      "id": "tools-3dbag",
+      "title": "3DBAG overview",
+      "url": "https://docs.3dbag.nl/en/",
+      "publisher": "TU Delft 3D geoinformation group / 3DGI",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Dutch building reconstruction from BAG/AHN; LoD1.2, LoD1.3 and LoD2.2; available data formats."
+      ]
+    },
+    {
+      "id": "tools-3dbag-license",
+      "title": "3DBAG Copyright and License",
+      "url": "https://docs.3dbag.nl/en/copyright/",
+      "publisher": "TU Delft 3D geoinformation group / 3DGI",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "CC BY 4.0 data with credit, license link and change notice; software licensed separately."
+      ]
+    },
+    {
+      "id": "tools-smithsonian",
+      "title": "Smithsonian Open Access FAQ",
+      "url": "https://www.si.edu/openaccess/faq",
+      "publisher": "Smithsonian Institution",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "CC0-marked 3D assets, GLB/glTF/OBJ formats, commercial reuse and remaining third-party rights."
+      ]
+    },
+    {
+      "id": "tools-openheritage",
+      "title": "Open Heritage 3D FAQ",
+      "url": "https://openheritage3d.org/faq",
+      "publisher": "Open Heritage 3D",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Per-dataset Creative Commons licenses; many non-commercial; DOI citations and scan processing."
+      ]
+    },
+    {
+      "id": "tools-meshroom",
+      "title": "Meshroom official repository",
+      "url": "https://github.com/alicevision/Meshroom",
+      "publisher": "AliceVision",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Open photogrammetry/pipeline framework and MPL-2.0 software licensing; component requirements vary."
+      ]
+    },
+    {
+      "id": "tools-open-buildings",
+      "title": "Google Research Open Buildings",
+      "url": "https://sites.research.google/gr/open-buildings/",
+      "publisher": "Google Research",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Footprint dataset with choice of CC BY 4.0 or ODbL; confidence/error limitations; distinct from Maps Tiles."
+      ]
+    },
+    {
+      "id": "tools-eox-license",
+      "title": "EOxCloudless licensing",
+      "url": "https://cloudless.eox.at/license-non-commercial",
+      "publisher": "EOX IT Services GmbH",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "2016 CC BY 4.0 versus newer non-commercial/share-alike mosaics and commercial licensing."
+      ]
+    },
+    {
+      "id": "tools-eox-faq",
+      "title": "EOxCloudless FAQ",
+      "url": "https://cloudless.eox.at/documentation/faq",
+      "publisher": "EOX IT Services GmbH",
+      "kind": "primary",
+      "accessed": "2026-11-25",
+      "supports": [
+        "Vintage-specific endpoint, attribution, commercial and distribution conditions."
+      ]
+    }
+  ]
+}
