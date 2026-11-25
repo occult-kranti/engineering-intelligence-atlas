@@ -79,3 +79,9 @@ For heritage assets, use the [captured-places library](../../projects/architectu
 ## Game-art learning and production references
 
 Use the [game-development research plan](../../projects/game-development-research/README.md) to choose a bounded drawing, Blender asset, procedural geometry, animation, engine-import or rendering task. The [art guide](../../projects/game-development-research/ART_FUNDAMENTALS.md) and [pipeline matrix](../../projects/game-development-research/PIPELINE_AND_RENDERING.md) record verified creator links, access conditions and corrected claims. Hand off an original artifact with source rights, exact versions, import settings and measured acceptance; a tutorial link is not a completed lesson, installed tool or performance result.
+
+## Company skill routing
+
+Use [agent-reach-ops](../../skills/agent-reach-ops/SKILL.md) for platform-integration diagnostics. Review the pinned source and installed action contracts; preserve deadlines, terminal errors and content-completeness receipts. Skill assignment does not install tools or grant access to a browser session.
+
+See the [runtime skill and source map](research-skill-map.json) for exact public revisions and availability limits. These assignments describe work; they do not grant executable capabilities.

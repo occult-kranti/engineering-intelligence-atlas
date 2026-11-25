@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "adapterName": "olympus-project-archive",
+  "adapterKind": "daftar-repository-runtime-summary",
+  "reviewedAt": "2026-11-25",
+  "personalSkillInstallation": "not-performed-by-this-adapter",
+  "sourceState": "public-pinned-content; feature-branch sources remain distinct from default-branch integration",
+  "sources": [
+    {
+      "repository": "occult-kranti/india-corporate-intelligence",
+      "branch": "research/olympus-archive-2026-11-25",
+      "commit": "b77ac58c2ad288acbd4db89c710239b0536e1a3b",
+      "path": ".agents/skills/olympus-project-archive/SKILL.md",
+      "url": "https://github.com/occult-kranti/india-corporate-intelligence/blob/b77ac58c2ad288acbd4db89c710239b0536e1a3b/.agents/skills/olympus-project-archive/SKILL.md",
+      "readingDepth": "workflow source read; no complete chat export claimed"
+    }
+  ],
+  "limits": [
+    "This package is a short runtime adapter, not a byte-identical copy of the source skill.",
+    "No CLI, provider, browser session, employee or capability is installed or activated by this package.",
+    "Source reading is not live execution, completed research or deployment verification."
+  ]
+}

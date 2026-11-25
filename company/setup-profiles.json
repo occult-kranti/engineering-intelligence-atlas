@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "revision": "2026-11-25",
+  "classification": "public-generic-preset",
+  "assistantSkillPaths": [
+    "skills/graph-memory-research/SKILL.md",
+    "skills/project-research-consolidation/SKILL.md"
+  ],
+  "assignmentSkills": {
+    "subdirector": [
+      "skills/graph-memory-research/SKILL.md",
+      "skills/round-based-skill-evolution/SKILL.md"
+    ],
+    "knowledge-curator": [
+      "skills/graph-memory-research/SKILL.md",
+      "skills/project-research-consolidation/SKILL.md",
+      "skills/agent-reach-ops/SKILL.md"
+    ],
+    "qa-lead": [
+      "skills/round-based-skill-evolution/SKILL.md",
+      "skills/defensive-reverse-engineering/SKILL.md"
+    ],
+    "github-steward": [
+      "skills/project-research-consolidation/SKILL.md",
+      "skills/agent-reach-ops/SKILL.md"
+    ],
+    "code-engineer": [
+      "skills/engineering-organization-architect/SKILL.md",
+      "skills/local-model-runtime-engineering/SKILL.md"
+    ],
+    "blueprint-steward": [
+      "skills/spatial-3d-production-engineering/SKILL.md",
+      "skills/architecture-and-built-heritage-research/SKILL.md"
+    ],
+    "newton": [
+      "skills/physics-research/SKILL.md",
+      "skills/mathematics-research/SKILL.md",
+      "skills/science-history-research/SKILL.md"
+    ],
+    "tesla": [
+      "skills/physics-research/SKILL.md",
+      "skills/computational-geometry-engineering/SKILL.md",
+      "skills/science-history-research/SKILL.md"
+    ],
+    "research-skeptic": [
+      "skills/round-based-skill-evolution/SKILL.md",
+      "skills/physics-research/SKILL.md",
+      "skills/science-history-research/SKILL.md"
+    ],
+    "resonance-advisor": [
+      "skills/physics-research/SKILL.md",
+      "skills/mathematics-research/SKILL.md",
+      "skills/science-history-research/SKILL.md"
+    ],
+    "paired-research": [
+      "skills/physics-research/SKILL.md",
+      "skills/mathematics-research/SKILL.md",
+      "skills/round-based-skill-evolution/SKILL.md"
+    ],
+    "figma-design-systems": [
+      "skills/engineering-organization-architect/SKILL.md",
+      "skills/spatial-3d-production-engineering/SKILL.md"
+    ],
+    "directory-steward": [
+      "skills/graph-memory-research/SKILL.md",
+      "skills/agent-reach-ops/SKILL.md",
+      "skills/project-research-consolidation/SKILL.md"
+    ],
+    "shared:hackathon": [
+      "skills/round-based-skill-evolution/SKILL.md",
+      "skills/game-reconstruction-engineering/SKILL.md"
+    ],
+    "shared:music-arts": [
+      "skills/physics-research/SKILL.md",
+      "skills/spatial-3d-production-engineering/SKILL.md"
+    ]
+  },
+  "groupSkills": {
+    "app-control-platform": [
+      "skills/engineering-organization-architect/SKILL.md",
+      "skills/local-model-runtime-engineering/SKILL.md",
+      "skills/graph-memory-research/SKILL.md",
+      "skills/agent-reach-ops/SKILL.md"
+    ],
+    "app-civic-intelligence": [
+      "skills/olympus-evidence-rounds/SKILL.md",
+      "skills/olympus-project-archive/SKILL.md",
+      "skills/agent-reach-ops/SKILL.md"
+    ],
+    "app-learning-games": [
+      "skills/game-reconstruction-engineering/SKILL.md",
+      "skills/spatial-3d-production-engineering/SKILL.md",
+      "skills/architecture-and-built-heritage-research/SKILL.md"
+    ],
+    "app-evidence-archives": [
+      "skills/project-research-consolidation/SKILL.md",
+      "skills/agent-reach-ops/SKILL.md",
+      "skills/graph-memory-research/SKILL.md"
+    ],
+    "app-scientific-labs": [
+      "skills/physics-research/SKILL.md",
+      "skills/mathematics-research/SKILL.md",
+      "skills/science-history-research/SKILL.md"
+    ],
+    "app-audio-resonance": [
+      "skills/physics-research/SKILL.md",
+      "skills/mathematics-research/SKILL.md",
+      "skills/computational-geometry-engineering/SKILL.md"
+    ],
+    "app-pattern-symbolic": [
+      "skills/science-history-research/SKILL.md",
+      "skills/mathematics-research/SKILL.md",
+      "skills/computational-geometry-engineering/SKILL.md"
+    ],
+    "app-personal-tools": [
+      "skills/engineering-organization-architect/SKILL.md",
+      "skills/defensive-reverse-engineering/SKILL.md"
+    ],
+    "app-growth-and-ventures": [
+      "skills/engineering-organization-architect/SKILL.md",
+      "skills/project-research-consolidation/SKILL.md",
+      "skills/round-based-skill-evolution/SKILL.md"
+    ],
+    "growth-and-ventures": [
+      "skills/engineering-organization-architect/SKILL.md",
+      "skills/project-research-consolidation/SKILL.md",
+      "skills/round-based-skill-evolution/SKILL.md"
+    ]
+  }
+}

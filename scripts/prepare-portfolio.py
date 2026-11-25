@@ -22,7 +22,7 @@ DEFAULT_PRESETS = ROOT / "company" / "portfolio-presets.json"
 IDENTITY_FIELDS = ("name", "repoUrl", "source", "importedAt", "visibility", "defaultBranch")
 REPOSITORY_URL = re.compile(r"https://github\.com/([A-Za-z0-9][A-Za-z0-9-]{0,38})/([A-Za-z0-9_.-]{1,100})\Z")
 MAX_INPUT_BYTES = 50_000_000
-PUBLIC_GROUP_KEYS = ("control-platform", "civic-intelligence", "learning-games", "evidence-archives", "scientific-labs", "audio-resonance", "pattern-symbolic", "personal-tools")
+PUBLIC_GROUP_KEYS = ("control-platform", "civic-intelligence", "learning-games", "evidence-archives", "scientific-labs", "audio-resonance", "pattern-symbolic", "personal-tools", "growth-and-ventures")
 
 
 class PlanError(ValueError):

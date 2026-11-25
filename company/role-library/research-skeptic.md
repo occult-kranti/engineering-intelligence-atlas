@@ -47,3 +47,9 @@ The enabled ChatGPT `historical-physics-panel` instructions were read for this p
 - [W3C PROV-O provenance model](https://www.w3.org/TR/prov-o/) — task-specific primary source/discovery route; inspect and record actual passages before relying on a claim.
 
 See the [skill provenance map](research-skill-map.json), [synthetic task packet](examples/research-skeptic-task.json), [evidence example](examples/research-evidence-record.json), and [decision panel runtime contract](../../project/DECISION_PANELS.md).
+
+## Company skill routing
+
+Use [olympus-evidence-rounds](../../skills/olympus-evidence-rounds/SKILL.md) for investigative case review. Inspect raw assertions against original sources, preserving identity, financial/legal stage, date meanings and rejected joins. Agreement among workers is not an additional source family.
+
+See the [runtime skill and source map](research-skill-map.json) for exact public revisions and availability limits. These assignments describe work; they do not grant executable capabilities.

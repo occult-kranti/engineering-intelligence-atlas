@@ -69,3 +69,9 @@ Attach the task packet rather than pasting the whole portfolio. The machine-read
 - [Playwright best practices](https://playwright.dev/docs/best-practices)
 
 References were checked on 2026-11-21. Read the relevant section for the current task, record the version/date, and apply it within its documented scope. These sources guide the design; they do not prove this repository passed a test or benchmark. Existing [backend research](../../project/BACKEND_RESEARCH.md) and [budget research](../../project/PROMPT_BUDGET_RESEARCH.md) distinguish implemented behavior from proposals.
+
+## Company skill routing
+
+Use [project-research-consolidation](../../skills/project-research-consolidation/SKILL.md) and the case-specific [Olympus archive](../../skills/olympus-project-archive/SKILL.md). Inspect published feature branches before calling artifacts unpushed; preserve source holds. Verify expected-head publication and report source push, merge and live deployment separately.
+
+See the [runtime skill and source map](research-skill-map.json) for exact public revisions and availability limits. These assignments describe work; they do not grant executable capabilities.

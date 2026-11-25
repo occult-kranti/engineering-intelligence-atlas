@@ -16,3 +16,14 @@ test('ambiguous scoped identities are rejected instead of silently selecting a r
 test('stable evidence has no request clock or cache telemetry in the model context',()=>{const s=fixture();s.knowledge.push(note('a','quasarbattery'));assert.deepEqual(brainEvidence(s,'alpha','quasarbattery',before),brainEvidence(s,'alpha','quasarbattery',after));});
 test('a saved setup draft is company-bound, manual, bounded and zero provider dollars',()=>{const draft=makeDonnaSetupDraft(fixture(),'alpha');assert.equal(draft.action,'create_goal');assert.deepEqual(draft.scope,{kind:'company',id:'alpha'});assert.equal(draft.mode,'plan');assert.equal(draft.maxIterations,1);assert.equal(draft.runSettings.mode,'manual');assert.equal(draft.runSettings.maxUsd,0);assert.equal(draft.runSettings.authorized,false);assert.deepEqual(draft.runSettings.allowedTools,[]);assert.ok(!draft.description.includes('PRIVATE_BETA'));});
 test('changed source records change context identity while preserving original snapshot',()=>{const s=fixture();s.knowledge.push(note('a','quasarbattery old'));const original=JSON.stringify(s),a=brainEvidence(s,'alpha','quasarbattery',after);assert.equal(JSON.stringify(s),original);s.knowledge[0].summary=makeBrainNote({type:'fact',body:'quasarbattery corrected'});assert.notEqual(brainEvidence(s,'alpha','quasarbattery',after).revision,a.revision);});
+test('all twenty native skill assignments retain graph nodes and edges, and overflow is visible',()=>{
+ const s=fixture(),paths=Array.from({length:20},(_,i)=>`skills/assigned-skill-${String(i+1).padStart(2,'0')}/SKILL.md`);
+ s.employees.push({id:'skilled-employee',companyId:'alpha',officeId:null,departmentId:null,name:'Skill owner',role:'Synthetic assigned specialist',kind:'specialist',status:'active',skillPaths:paths,createdAt:before,updatedAt:before});
+ const brain=buildDonnaBrain(s,'alpha'),skills=brain.graph.nodes.filter(node=>node.type==='skill');
+ assert.equal(skills.length,20);assert.equal(brain.graph.edges.filter(edge=>edge.source==='employee:skilled-employee'&&edge.type==='uses').length,20);
+ const last=skills.find(node=>node.skillPath===paths[19]);assert.ok(last);assert.equal(brain.counts.omitted,0);
+ assert.ok(brainEvidence(s,'alpha','assigned-skill-20',after).results.some(result=>result.id===last.id));
+ s.employees[0].skillPaths.push('skills/overflow-skill/SKILL.md');
+ const capped=buildDonnaBrain(s,'alpha');assert.equal(capped.graph.nodes.filter(node=>node.type==='skill').length,20);
+ assert.equal(capped.counts.omitted,1);assert.ok(capped.gaps.some(gap=>gap.id==='coverage'));
+});

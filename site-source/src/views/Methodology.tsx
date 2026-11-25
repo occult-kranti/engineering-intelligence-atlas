@@ -169,7 +169,7 @@ export default function Methodology() {
 
       <div className="rule my-10" />
 
-      <SubHead>The fifteen skill packages</SubHead>
+      <SubHead>The {SKILL_PACKAGES.length} runtime skill packages</SubHead>
       <div className="grid gap-4 md:grid-cols-2">
         {SKILL_PACKAGES.map((s) => (
           <article key={s.id} className="border border-[hsl(var(--line))] bg-[hsl(var(--paper-raised))] p-5">

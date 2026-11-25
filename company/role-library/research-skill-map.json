@@ -55,5 +55,120 @@
     "Historical people are research lenses, not participants.",
     "Provider/model identity and actual executed evidence are recorded separately.",
     "Prompt limits bound runtime admission; no measured reasoning-quality improvement is claimed."
-  ]
+  ],
+  "runtimeUpdatedAt": "2026-11-25",
+  "runtimeSkillRoutes": [
+    {
+      "skillName": "agent-reach-ops",
+      "repositoryPath": "skills/agent-reach-ops/SKILL.md",
+      "roleKeys": [
+        "research-knowledge",
+        "engineering",
+        "security"
+      ],
+      "selection": "Task-specific platform retrieval after connector and public-web completeness checks.",
+      "sourcePins": "skills/agent-reach-ops/references/source-pins.json",
+      "runtimeState": "repository-runtime-adapter",
+      "personalSkillState": "not-asserted",
+      "authority": "descriptive; no capability grant"
+    },
+    {
+      "skillName": "project-research-consolidation",
+      "repositoryPath": "skills/project-research-consolidation/SKILL.md",
+      "roleKeys": [
+        "donna",
+        "knowledge",
+        "research-knowledge",
+        "directory-steward",
+        "github-release"
+      ],
+      "selection": "Repository and artifact reconciliation before company setup or release.",
+      "sourcePins": "skills/project-research-consolidation/references/source-pins.json",
+      "runtimeState": "repository-runtime-adapter",
+      "personalSkillState": "not-asserted",
+      "authority": "descriptive; no capability grant"
+    },
+    {
+      "skillName": "round-based-skill-evolution",
+      "repositoryPath": "skills/round-based-skill-evolution/SKILL.md",
+      "roleKeys": [
+        "subdirector",
+        "qa",
+        "donna"
+      ],
+      "selection": "Bounded procedural corrections and independent review after an observed failure.",
+      "sourcePins": "skills/round-based-skill-evolution/references/source-pins.json",
+      "runtimeState": "repository-runtime-adapter",
+      "personalSkillState": "not-asserted",
+      "authority": "descriptive; no capability grant"
+    },
+    {
+      "skillName": "olympus-evidence-rounds",
+      "repositoryPath": "skills/olympus-evidence-rounds/SKILL.md",
+      "roleKeys": [
+        "research-knowledge",
+        "research-skeptic",
+        "subdirector"
+      ],
+      "selection": "Olympus case work only; preserve source and graph-admission holds.",
+      "sourcePins": "skills/olympus-evidence-rounds/references/source-pins.json",
+      "runtimeState": "repository-runtime-adapter",
+      "personalSkillState": "not-asserted",
+      "authority": "descriptive; no capability grant"
+    },
+    {
+      "skillName": "olympus-project-archive",
+      "repositoryPath": "skills/olympus-project-archive/SKILL.md",
+      "roleKeys": [
+        "knowledge",
+        "github-release",
+        "research-knowledge"
+      ],
+      "selection": "Olympus archive and handoff work only; preserve held records and coverage limits.",
+      "sourcePins": "skills/olympus-project-archive/references/source-pins.json",
+      "runtimeState": "repository-runtime-adapter",
+      "personalSkillState": "not-asserted",
+      "authority": "descriptive; no capability grant"
+    },
+    {
+      "skillName": "graph-memory-research",
+      "repositoryPath": "skills/graph-memory-research/SKILL.md",
+      "roleKeys": [
+        "donna",
+        "knowledge",
+        "research-knowledge",
+        "database-cache"
+      ],
+      "selection": "Native scoped operating memory and setup-gap analysis; retain existing company command authority.",
+      "sources": [
+        {
+          "repository": "occult-kranti/engineering-intelligence-atlas",
+          "branch": "main",
+          "commit": "cb0f9fedbfab7169f55b2b9fb74edc8ff6e58d77",
+          "path": "skills/graph-memory-research/SKILL.md",
+          "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/cb0f9fedbfab7169f55b2b9fb74edc8ff6e58d77/skills/graph-memory-research/SKILL.md",
+          "readingDepth": "existing native operating-brain workflow inspected"
+        }
+      ],
+      "runtimeState": "existing-repository-skill",
+      "personalSkillState": "not-asserted",
+      "authority": "descriptive; no capability grant"
+    }
+  ],
+  "runtimeReview": {
+    "reviewedAt": "2026-11-25",
+    "publicSourceCount": 6,
+    "newRuntimeAdapters": 5,
+    "method": "Read pinned public Agent Reach and Olympus workflow source plus existing published Daftar contracts. Author short repository adapters without importing private or untracked personal-skill contents.",
+    "sourceBranches": {
+      "Agent-Reach": "audit/agent-reach-ops-20261125",
+      "india-corporate-intelligence": "research/olympus-archive-2026-11-25"
+    },
+    "unverified": [
+      "Automatic tool installation",
+      "Personal skill synchronization",
+      "Execution of every routed skill on a live task",
+      "Merge or deployment of external feature branches"
+    ]
+  }
 }

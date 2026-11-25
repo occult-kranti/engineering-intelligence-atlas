@@ -107,7 +107,20 @@ export class OfficeWorker {
       const value = JSON.parse(fs.readFileSync(briefFile, 'utf8')) as unknown;
       if (Array.isArray(value)) briefs = value.filter(b => b && typeof b.path === 'string' && typeof b.body === 'string' && typeof b.sha256 === 'string');
     }
-    const selected = briefs.filter(b => employee.skillPaths.includes(b.path) && hash(b.body) === b.sha256).slice(0, 2);
+    // The employee's saved order is the intentional prompt priority. Catalog
+    // filename order must not silently starve newly assigned skills. Ambiguous
+    // paths and mismatched content are never promoted to instruction context.
+    const byPath = new Map<string, typeof briefs[number]>();
+    const ambiguous = new Set<string>();
+    for (const brief of briefs) {
+      if (!/^skills\/[a-z][a-z0-9-]{0,79}\/SKILL\.md$/.test(brief.path) || brief.body.length > 16000 || hash(brief.body) !== brief.sha256) continue;
+      if (byPath.has(brief.path)) ambiguous.add(brief.path);
+      else byPath.set(brief.path, brief);
+    }
+    const assigned = [...new Set(employee.skillPaths)].slice(0, 20)
+      .filter(skill => !ambiguous.has(skill)).map(skill => byPath.get(skill))
+      .filter((brief): brief is typeof briefs[number] => brief !== undefined);
+    const selected = assigned.slice(0, 2);
     const assistantFile = employee.id === 'donna' ? 'donna.md' : employee.kind === 'assistant' ? 'shared-assistant.md' : null;
     const assistantPath = assistantFile ? path.join(this.options.seedDir, 'prompts', assistantFile) : null;
     const assistantBrief = assistantPath && fs.existsSync(assistantPath) && fs.statSync(assistantPath).size < 16000 ? fs.readFileSync(assistantPath, 'utf8') : '';
@@ -117,7 +130,9 @@ export class OfficeWorker {
     const roleKey = employee.id === 'donna' ? 'donna' : assignment ? aliases[assignment] ?? assignment : null;
     const roleReference = loadRoleReference(this.options.seedDir, roleKey);
     const resourceReferences = loadResourceReferences(this.options.seedDir, {
-      skills: selected.map(b => b.path), ...(roleKey ? { roleKey } : {}), query: job.goal.slice(0, 4000),
+      // Reference metadata has its own six-record/8 KiB cap. Route all valid
+      // assignments even though only two instruction bodies enter the prompt.
+      skills: assigned.map(b => b.path), ...(roleKey ? { roleKey } : {}), query: job.goal.slice(0, 4000),
     });
     const resourceContext = JSON.stringify(resourceReferences);
     const memoryAsOf = new Date().toISOString();

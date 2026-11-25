@@ -2,20 +2,20 @@
 export const WORKSPACE = {
   "company": {
     "id": "engineering-intelligence-atlas",
-    "name": "Engineering Intelligence Atlas",
+    "name": "Daftar",
     "repoUrl": "https://github.com/occult-kranti/engineering-intelligence-atlas",
     "owner": "occult-kranti",
     "repo": "engineering-intelligence-atlas",
-    "defaultBranch": null,
-    "description": null,
+    "defaultBranch": "main",
+    "description": "Daftar company, employee, research and delivery workspace.",
     "registeredAt": null,
-    "lastCheckedAt": null,
-    "githubStatus": "unchecked",
+    "lastCheckedAt": "2026-11-25T22:54:01Z",
+    "githubStatus": "verified",
     "githubError": null,
     "stars": null,
     "openIssues": null,
     "pushedAt": null,
-    "headSha": null
+    "headSha": "cb0f9fedbfab7169f55b2b9fb74edc8ff6e58d77"
   },
   "employees": [
     {

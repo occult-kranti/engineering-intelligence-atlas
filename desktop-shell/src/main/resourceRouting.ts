@@ -3,7 +3,7 @@
  * No network/filesystem/model calls, no permissions and no source-content reads.
  * recordSha256 identifies the original source metadata; catalogSha256 also covers
  * review annotations, routing and the full catalog revision. */
-export const RESOURCE_LIMITS = Object.freeze({ catalogBytes: 1024 * 1024, records: 800, routes: 64, references: 6, packetBytes: 8192 });
+export const RESOURCE_LIMITS = Object.freeze({ catalogBytes: 1024 * 1024, records: 800, routes: 64, assignedSkills: 20, references: 6, packetBytes: 8192 });
 export const RESOURCE_LEGACY_FIELDS = ['domain', 'name', 'type', 'level', 'url', 'purpose', 'prereqs', 'access', 'license', 'caveat', 'verified'] as const;
 type LegacyField = typeof RESOURCE_LEGACY_FIELDS[number];
 export type LegacyResource = Record<LegacyField, string>;
@@ -85,7 +85,7 @@ function skillName(v: string): string | null {
 }
 export function validResourceQuery(q: unknown): q is ResourceQuery {
   if (!object(q) || Object.keys(q).some(k => !['skills', 'roleKey', 'query', 'maxReferences', 'maxBytes'].includes(k))) return false;
-  return (q.skills === undefined || strings(q.skills, 16, s => skillName(s) !== null))
+  return (q.skills === undefined || strings(q.skills, RESOURCE_LIMITS.assignedSkills, s => skillName(s) !== null))
     && (q.roleKey === undefined || typeof q.roleKey === 'string' && KEY.test(q.roleKey))
     && (q.query === undefined || typeof q.query === 'string' && q.query.length <= 4000)
     && (q.maxReferences === undefined || Number.isInteger(q.maxReferences) && Number(q.maxReferences) >= 0 && Number(q.maxReferences) <= RESOURCE_LIMITS.references)

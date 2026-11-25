@@ -31,6 +31,12 @@ const SKILL_POS: Record<string, { x: number; y: number }> = {
   'biology-research': { x: 660, y: 724 },
   'science-history-research': { x: 850, y: 724 },
   'graph-memory-research': { x: 480, y: 610 },
+  // Company operations band; keep every public skill represented in the graph.
+  'agent-reach-ops': { x: 150, y: 850 },
+  'project-research-consolidation': { x: 480, y: 850 },
+  'round-based-skill-evolution': { x: 810, y: 850 },
+  'olympus-evidence-rounds': { x: 300, y: 990 },
+  'olympus-project-archive': { x: 660, y: 990 },
 };
 
 const DOMAINS: { id: string; label: string; x: number; y: number; skills: string[] }[] = [
@@ -51,6 +57,10 @@ const DOMAINS: { id: string; label: string; x: number; y: number; skills: string
   { id: 'd-phys', label: 'Physical sciences', x: 390, y: 660, skills: ['physics-research', 'chemistry-research'] },
   { id: 'd-life', label: 'Life sciences', x: 660, y: 660, skills: ['biology-research'] },
   { id: 'd-history', label: 'History of science', x: 850, y: 660, skills: ['science-history-research'] },
+  { id: 'd-source', label: 'Source operations', x: 290, y: 786, skills: ['agent-reach-ops', 'project-research-consolidation'] },
+  { id: 'd-evolution', label: 'Skill review rounds', x: 760, y: 786, skills: ['round-based-skill-evolution', 'agent-research-director'] },
+  { id: 'd-archive', label: 'Company archives', x: 480, y: 928, skills: ['project-research-consolidation', 'olympus-project-archive'] },
+  { id: 'd-olympus', label: 'Investigative evidence', x: 480, y: 1010, skills: ['olympus-evidence-rounds', 'olympus-project-archive'] },
 ];
 
 const DOMAIN_FILTERS = [{ id: 'all', label: 'All domains' }, ...DOMAINS.map((d) => ({ id: d.id, label: d.label }))];
@@ -167,7 +177,7 @@ export default function Overview() {
       <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <div className="panel-dark overflow-hidden p-2 md:p-4">
           <svg
-            viewBox="0 0 960 800"
+            viewBox="0 0 960 1090"
             role="group"
             aria-label={`Network of ${SKILL_PACKAGES.length} skill packages and their domains`}
             className="h-auto w-full"

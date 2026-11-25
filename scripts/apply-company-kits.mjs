@@ -135,6 +135,16 @@ function contractEntity(s, c, service, officeId, departmentId) {
   return s.portfolio.contracts.find(x => x.serviceId === service.id && x.recipientCompanyId === c.id && (x.recipientOfficeId ?? null) === officeId && (x.recipientDepartmentId ?? null) === departmentId);
 }
 
+/** A kit may add references, never remove or reorder the owner's saved skills. */
+function mergedEmployeeSkills(employee, specification) {
+  const current = employee?.skillPaths ?? [];
+  rows(current, 'saved employee skillPaths', 20); unique(current, 'saved employee skill paths');
+  for (const skill of current) if (typeof skill !== 'string' || Buffer.byteLength(skill) > 300 || !/^skills\/(?:[A-Za-z0-9_.-]+\/)+SKILL\.md$/.test(skill) || skill.split('/').some(x => x === '.' || x === '..')) fail('A saved employee has an invalid skill reference; reconcile it before importing.');
+  const merged = [...current, ...specification.skillPaths.filter(skill => !current.includes(skill))];
+  if (merged.length > 20) fail('The additive skill update exceeds the native 20-skill limit; review the employee references before importing.');
+  return merged;
+}
+
 /** Read-only preview is intentionally a count projection, never a private data dump. */
 export function planCompanyKits(plan, snapshot) {
   validateCompanyKits(plan);
@@ -143,6 +153,7 @@ export function planCompanyKits(plan, snapshot) {
   const projected = { companies: 0, offices: 0, departments: 0, employeeDefinitions: 0, contracts: 0, roadmapItems: 0, sourceKnowledge: 0 };
   const reused = { companies: 0, offices: 0, departments: 0, employeeDefinitions: 0, contracts: 0, roadmapItems: 0, sourceKnowledge: 0 };
   let missingBindings = 0;
+  const updates = { employeeDefinitions: 0, skillReferencesAdded: 0 };
   for (const c of plan.companies) {
     const existing = snapshot.companies.find(x => x.id === c.id);
     const companyBinding = binding(snapshot, c, 'company', c.key);
@@ -166,6 +177,10 @@ export function planCompanyKits(plan, snapshot) {
       if (existing && e.reuseAssignmentKey && !entity) fail('A requested bootstrap identity is missing; initialize or reconcile the office before importing.');
       if (entity && (!office || (e.departmentKey && !departments.get(e.departmentKey)))) fail('A bound employee has a missing office or department binding.');
       if (entity?.status === 'fired') fail('A kit employee was fired. Import will not silently rehire or replace that identity.');
+      if (entity) {
+        const added = mergedEmployeeSkills(entity, e).length - entity.skillPaths.length;
+        if (added) { updates.employeeDefinitions++; updates.skillReferencesAdded += added; }
+      }
       employeeRecords.set(e.key, entity);
       if (entity) reused.employeeDefinitions++; else if (!e.reuseAssignmentKey) addedSpecialists++;
     }
@@ -222,7 +237,7 @@ export function planCompanyKits(plan, snapshot) {
   const extraKnowledge = projected.sourceKnowledge + missingBindings;
   const newGroups = new Set(plan.companies.map(c => c.group?.id).filter(id => id && !snapshot.portfolio.groups.some(g => g.id === id)));
   if (snapshot.companies.length + projected.companies > 2000 || snapshot.offices.length + projected.offices > 5000 || snapshot.departments.length + projected.departments > 16000 || snapshot.employees.length + projected.employeeDefinitions > 30000 || snapshot.knowledge.length + extraKnowledge > 5000 || snapshot.portfolio.contracts.length + projected.contracts > 12000 || snapshot.portfolio.roadmap.length + projected.roadmapItems > 20000 || snapshot.portfolio.groups.length + newGroups.size > 100 || snapshot.blueprints.length + projected.offices > 5000) fail('The projected import exceeds native registry capacity.');
-  return { schemaVersion: 1, mode: 'preview', valid: true, kitCount: plan.companies.length, projected: { ...projected, identityBindings: missingBindings, knowledgeRecords: extraKnowledge }, reused, providerRequests: 0, externalWrites: 0, caution: 'Projected employee definitions include native assistants/directors plus the requested new specialists. Apply only with one workspace writer. Existing names, progress, authority, paused states and board edits are retained.' };
+  return { schemaVersion: 1, mode: 'preview', valid: true, kitCount: plan.companies.length, projected: { ...projected, identityBindings: missingBindings, knowledgeRecords: extraKnowledge }, reused, updates, providerRequests: 0, externalWrites: 0, caution: 'Projected employee definitions include native assistants/directors plus the requested new specialists. Apply only with one workspace writer. Missing kit skills are appended; existing skill order, names, progress, authority, paused states and board edits are retained.' };
 }
 
 /** command(action,payload) must return the complete committed native snapshot. */
@@ -230,6 +245,7 @@ export async function applyCompanyKits(plan, { snapshot, command }) {
   const preview = planCompanyKits(plan, snapshot);
   if (typeof command !== 'function') fail('A native command adapter is required.');
   let state = snapshot, mutations = 0;
+  const updated = { employeeDefinitions: 0, skillReferencesAdded: 0 };
   const originalCompany = snapshot.activeCompanyId;
   const before = { companies: snapshot.companies.length, offices: snapshot.offices.length, departments: snapshot.departments.length, employeeDefinitions: snapshot.employees.length, contracts: snapshot.portfolio.contracts.length, roadmapItems: snapshot.portfolio.roadmap.length, knowledgeRecords: snapshot.knowledge.length };
   const send = async (action, payload) => { const next = await command(action, payload); if (!next?.companies || !next.portfolio) fail('Native command did not return a complete snapshot; reconcile state before retrying.'); state = next; mutations++; return next.lastAction; };
@@ -259,6 +275,13 @@ export async function applyCompanyKits(plan, { snapshot, command }) {
       if (!entity && e.reuseAssignmentKey) fail('The expected bootstrap employee is missing; reconcile rather than creating a duplicate.');
       if (!entity) { const result = await send('hire_employee', { companyId: c.id, officeId: office.id, departmentId, name: e.name, role: e.role, skillPaths: e.skillPaths }); entity = state.employees.find(x => x.id === result.employeeId); }
       if (entity.status === 'fired') fail('A bound employee is fired; this importer will not recreate it.');
+      const skillPaths = mergedEmployeeSkills(entity, e);
+      if (skillPaths.length !== entity.skillPaths.length) {
+        const added = skillPaths.length - entity.skillPaths.length;
+        await send('update_employee', { employeeId: entity.id, skillPaths });
+        entity = state.employees.find(x => x.id === entity.id);
+        updated.employeeDefinitions++; updated.skillReferencesAdded += added;
+      }
       employees.set(e.key, entity); await bind(c, 'employee', e.key, entity.id);
     }
     const contracts = new Map();
@@ -318,7 +341,7 @@ export async function applyCompanyKits(plan, { snapshot, command }) {
   }
   if (originalCompany && state.activeCompanyId !== originalCompany) await send('select_company', { companyId: originalCompany });
   const after = { companies: state.companies.length, offices: state.offices.length, departments: state.departments.length, employeeDefinitions: state.employees.length, contracts: state.portfolio.contracts.length, roadmapItems: state.portfolio.roadmap.length, knowledgeRecords: state.knowledge.length };
-  return { snapshot: state, receipt: { schemaVersion: 1, mode: 'applied', appliedAt: new Date().toISOString(), planSha256: crypto.createHash('sha256').update(JSON.stringify(plan)).digest('hex'), mutations, created: Object.fromEntries(Object.keys(before).map(key => [key, after[key] - before[key]])), reused: preview.reused, companies: results, providerRequests: 0, externalWrites: 0, workerProcessesStarted: 0 } };
+  return { snapshot: state, receipt: { schemaVersion: 1, mode: 'applied', appliedAt: new Date().toISOString(), planSha256: crypto.createHash('sha256').update(JSON.stringify(plan)).digest('hex'), mutations, created: Object.fromEntries(Object.keys(before).map(key => [key, after[key] - before[key]])), reused: preview.reused, updated, companies: results, providerRequests: 0, externalWrites: 0, workerProcessesStarted: 0 } };
 }
 
 function readRegular(file, limit) {

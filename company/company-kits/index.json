@@ -54,7 +54,9 @@
           "name": "Company director",
           "role": "Scoped company director",
           "skillPaths": [
-            "skills/agent-research-director/SKILL.md"
+            "skills/agent-research-director/SKILL.md",
+            "skills/graph-memory-research/SKILL.md",
+            "skills/round-based-skill-evolution/SKILL.md"
           ],
           "reuseAssignmentKey": "subdirector"
         },
@@ -63,7 +65,10 @@
           "name": "Knowledge curator",
           "role": "Knowledge and delivery curator",
           "skillPaths": [
-            "skills/agent-research-director/SKILL.md"
+            "skills/agent-research-director/SKILL.md",
+            "skills/graph-memory-research/SKILL.md",
+            "skills/project-research-consolidation/SKILL.md",
+            "skills/agent-reach-ops/SKILL.md"
           ],
           "reuseAssignmentKey": "knowledge-curator"
         },
@@ -72,7 +77,9 @@
           "name": "Quality reviewer",
           "role": "Independent acceptance reviewer",
           "skillPaths": [
-            "skills/agent-research-director/SKILL.md"
+            "skills/agent-research-director/SKILL.md",
+            "skills/round-based-skill-evolution/SKILL.md",
+            "skills/defensive-reverse-engineering/SKILL.md"
           ],
           "reuseAssignmentKey": "qa-lead"
         },
@@ -81,7 +88,9 @@
           "name": "Office steward",
           "role": "Blueprint and ownership steward",
           "skillPaths": [
-            "skills/agent-research-director/SKILL.md"
+            "skills/agent-research-director/SKILL.md",
+            "skills/spatial-3d-production-engineering/SKILL.md",
+            "skills/architecture-and-built-heritage-research/SKILL.md"
           ],
           "reuseAssignmentKey": "blueprint-steward"
         },
@@ -281,7 +290,7 @@
         },
         {
           "key": "first-demo",
-          "title": "First proposed build \u2014 synthetic invoice/payment reconciliation",
+          "title": "First proposed build — synthetic invoice/payment reconciliation",
           "summary": "Proposed internal demo; not implemented or submitted to an event. Use synthetic integer-minor-unit records for invoices,payments,refunds and manual allocation. Cover duplicate events/transactions,conflicting IDs,missing/partial matches,refund ordering,excess refund,currency mismatch and revision-checked corrections. Acceptance: repeatable totals,transparent exception queue,recorded evidence and no real accounts. Brief and known-answer fixture: https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/first-demo-brief.md",
           "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/fintech-hackathon/first-demo-brief.md"
         }
@@ -335,7 +344,9 @@
           "name": "Company director",
           "role": "Scoped company director",
           "skillPaths": [
-            "skills/agent-research-director/SKILL.md"
+            "skills/agent-research-director/SKILL.md",
+            "skills/graph-memory-research/SKILL.md",
+            "skills/round-based-skill-evolution/SKILL.md"
           ],
           "reuseAssignmentKey": "subdirector"
         },
@@ -344,7 +355,10 @@
           "name": "Knowledge curator",
           "role": "Knowledge and delivery curator",
           "skillPaths": [
-            "skills/agent-research-director/SKILL.md"
+            "skills/agent-research-director/SKILL.md",
+            "skills/graph-memory-research/SKILL.md",
+            "skills/project-research-consolidation/SKILL.md",
+            "skills/agent-reach-ops/SKILL.md"
           ],
           "reuseAssignmentKey": "knowledge-curator"
         },
@@ -353,7 +367,9 @@
           "name": "Quality reviewer",
           "role": "Independent acceptance reviewer",
           "skillPaths": [
-            "skills/agent-research-director/SKILL.md"
+            "skills/agent-research-director/SKILL.md",
+            "skills/round-based-skill-evolution/SKILL.md",
+            "skills/defensive-reverse-engineering/SKILL.md"
           ],
           "reuseAssignmentKey": "qa-lead"
         },
@@ -362,7 +378,9 @@
           "name": "Office steward",
           "role": "Blueprint and ownership steward",
           "skillPaths": [
-            "skills/agent-research-director/SKILL.md"
+            "skills/agent-research-director/SKILL.md",
+            "skills/spatial-3d-production-engineering/SKILL.md",
+            "skills/architecture-and-built-heritage-research/SKILL.md"
           ],
           "reuseAssignmentKey": "blueprint-steward"
         },
@@ -582,6 +600,473 @@
           "title": "Growth and measurement analyst task contract",
           "summary": "Check metric provenance, reporting windows, units and completeness. Separate paid/organic, attention, qualified demand and realized outcomes. Return reproducible findings with attribution limits and one measurable next experiment. Unknown is not zero; correlation alone is not lift. Input packet: company scope, source references, accepted prerequisite, deliverable, success checks and bounded budget. Return a concise artifact summary, evidence, limitations and next decision. Persistent identity does not imply an active background worker.",
           "artifactUri": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/company/company-kits/social-presence/roles.md"
+        }
+      ]
+    },
+    {
+      "key": "hardware-studio",
+      "id": "daftar-hardware-studio",
+      "name": "Daftar Hardware Studio",
+      "office": {
+        "key": "main",
+        "name": "Main office"
+      },
+      "departments": [
+        {
+          "key": "engineering",
+          "name": "Engineering"
+        },
+        {
+          "key": "research",
+          "name": "Research"
+        },
+        {
+          "key": "product",
+          "name": "Product design"
+        },
+        {
+          "key": "embedded",
+          "name": "SDK engineering"
+        },
+        {
+          "key": "verification",
+          "name": "Independent verification"
+        }
+      ],
+      "employees": [
+        {
+          "key": "director",
+          "name": "Company director",
+          "role": "Scoped studio director",
+          "reuseAssignmentKey": "subdirector",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md",
+            "skills/graph-memory-research/SKILL.md",
+            "skills/round-based-skill-evolution/SKILL.md"
+          ]
+        },
+        {
+          "key": "knowledge",
+          "name": "Knowledge curator",
+          "role": "Studio source and evidence curator",
+          "reuseAssignmentKey": "knowledge-curator",
+          "skillPaths": [
+            "skills/graph-memory-research/SKILL.md",
+            "skills/project-research-consolidation/SKILL.md",
+            "skills/agent-reach-ops/SKILL.md"
+          ]
+        },
+        {
+          "key": "qa",
+          "name": "Quality reviewer",
+          "role": "Independent studio acceptance reviewer",
+          "reuseAssignmentKey": "qa-lead",
+          "skillPaths": [
+            "skills/round-based-skill-evolution/SKILL.md",
+            "skills/defensive-reverse-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "blueprint",
+          "name": "Office steward",
+          "role": "Studio blueprint and ownership steward",
+          "reuseAssignmentKey": "blueprint-steward",
+          "skillPaths": [
+            "skills/engineering-organization-architect/SKILL.md",
+            "skills/spatial-3d-production-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "product",
+          "name": "Hardware product designer",
+          "role": "Hardware brief and assembly design specialist",
+          "departmentKey": "product",
+          "skillPaths": [
+            "skills/engineering-organization-architect/SKILL.md",
+            "skills/spatial-3d-production-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "sdk",
+          "name": "Embedded SDK engineer",
+          "role": "Python SDK and embedded build engineer",
+          "departmentKey": "embedded",
+          "skillPaths": [
+            "skills/engineering-organization-architect/SKILL.md",
+            "skills/local-model-runtime-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "verification",
+          "name": "Hardware verification reviewer",
+          "role": "Independent firmware and measurement reviewer",
+          "departmentKey": "verification",
+          "skillPaths": [
+            "skills/round-based-skill-evolution/SKILL.md",
+            "skills/physics-research/SKILL.md",
+            "skills/defensive-reverse-engineering/SKILL.md"
+          ]
+        }
+      ],
+      "services": [
+        {
+          "key": "engineering"
+        },
+        {
+          "key": "design-architecture"
+        },
+        {
+          "key": "research-knowledge"
+        },
+        {
+          "key": "security"
+        }
+      ],
+      "group": {
+        "id": "growth-and-ventures",
+        "name": "Growth & Ventures",
+        "description": "Product studios, bounded experiments and evidence-led delivery with shared specialist services."
+      },
+      "board": {
+        "title": "Hardware brief, build and verification"
+      },
+      "roadmap": [
+        {
+          "key": "source",
+          "title": "Verify SDK source and supported module inventory",
+          "description": "Record the pinned upstream SDK, reviewed local patch, module compatibility and license. Acceptance: source SHA/package version and a reproducible validation command are in the evidence record.",
+          "ownerKey": "knowledge",
+          "departmentKey": "research",
+          "dependsOn": []
+        },
+        {
+          "key": "brief",
+          "title": "Define the first hardware product",
+          "description": "Use the Blueprint light example to define the desired behavior, board, ports, power assumptions and assembly instructions. Acceptance: a validated recipe and explicitly declared hardware inventory.",
+          "ownerKey": "product",
+          "departmentKey": "product",
+          "dependsOn": [
+            "source"
+          ]
+        },
+        {
+          "key": "generate",
+          "title": "Regenerate and compare the firmware source",
+          "description": "Run the existing generator twice against the accepted recipe. Acceptance: deterministic source digests and negative validation cases; generation is recorded separately from compilation.",
+          "ownerKey": "sdk",
+          "departmentKey": "embedded",
+          "dependsOn": [
+            "brief"
+          ]
+        },
+        {
+          "key": "compile",
+          "title": "Verify the target compiler build",
+          "description": "Compile with a recorded toolchain and board target. Acceptance: real compiler log and binary hash; retain a blocked result if the target environment is absent.",
+          "ownerKey": "sdk",
+          "departmentKey": "embedded",
+          "dependsOn": [
+            "generate"
+          ]
+        },
+        {
+          "key": "hardware",
+          "title": "Measure the behavior on available hardware",
+          "description": "Only after confirmed equipment and scoped authorization, perform a bounded physical check with measured voltage/current and observable behavior. Acceptance: actual measurement receipt; absent hardware remains an explicit limitation.",
+          "ownerKey": "verification",
+          "departmentKey": "verification",
+          "dependsOn": [
+            "compile"
+          ]
+        },
+        {
+          "key": "review",
+          "title": "Review and archive the product handoff",
+          "description": "Independent review compares expected behavior with build and measurement evidence, records open limitations and links the accepted artifacts in Donna Brain.",
+          "ownerKey": "qa",
+          "departmentKey": "verification",
+          "dependsOn": [
+            "hardware"
+          ]
+        }
+      ],
+      "knowledge": [
+        {
+          "key": "source",
+          "title": "Atech SDK provenance",
+          "summary": "Use the reviewed project source and ledger. Local source generation exists; compilation and physical hardware validation require separate receipts.",
+          "artifactUri": "projects/atech-hardware-studio/README.md"
+        },
+        {
+          "key": "plan",
+          "title": "Hardware studio source plan",
+          "summary": "This kit makes the planned company structure installable. Its application receipt is separate from the earlier queued hosted command and from running workers.",
+          "artifactUri": "projects/atech-hardware-studio/company-plan.json"
+        },
+        {
+          "key": "example",
+          "title": "Blueprint light reference",
+          "summary": "Example recipe with button and neopixel; preserve declared inventory and deterministic generation evidence.",
+          "artifactUri": "projects/atech-hardware-studio/examples/blueprint-light/verification.json"
+        },
+        {
+          "key": "prompt-product",
+          "title": "Product design task contract",
+          "summary": "Own the brief, UI labels and assembly explanation. Return a bounded requirements record and a validated recipe; do not report physical performance from simulated behavior.",
+          "artifactUri": "company/company-kits/hardware-studio/README.md"
+        },
+        {
+          "key": "prompt-sdk",
+          "title": "SDK engineer task contract",
+          "summary": "Own validation, module placement, deterministic generation and compiler evidence. Distinguish tool installation, source generation, compilation and hardware execution.",
+          "artifactUri": "company/company-kits/hardware-studio/README.md"
+        },
+        {
+          "key": "prompt-verification",
+          "title": "Independent verification task contract",
+          "summary": "Review negative cases, source/license provenance and measured hardware evidence independently of implementation. Record missing equipment and failed checks explicitly.",
+          "artifactUri": "company/company-kits/hardware-studio/README.md"
+        }
+      ]
+    },
+    {
+      "key": "threejs-game-studio",
+      "id": "daftar-threejs-game-studio",
+      "name": "Daftar 3D Game Studio",
+      "office": {
+        "key": "main",
+        "name": "Main office"
+      },
+      "departments": [
+        {
+          "key": "engineering",
+          "name": "Engineering"
+        },
+        {
+          "key": "research",
+          "name": "Research"
+        },
+        {
+          "key": "world",
+          "name": "World design"
+        },
+        {
+          "key": "model",
+          "name": "Local model engineering"
+        },
+        {
+          "key": "verification",
+          "name": "Independent scene review"
+        }
+      ],
+      "employees": [
+        {
+          "key": "director",
+          "name": "Company director",
+          "role": "Scoped studio director",
+          "reuseAssignmentKey": "subdirector",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md",
+            "skills/graph-memory-research/SKILL.md",
+            "skills/round-based-skill-evolution/SKILL.md"
+          ]
+        },
+        {
+          "key": "knowledge",
+          "name": "Knowledge curator",
+          "role": "Studio source and evidence curator",
+          "reuseAssignmentKey": "knowledge-curator",
+          "skillPaths": [
+            "skills/graph-memory-research/SKILL.md",
+            "skills/project-research-consolidation/SKILL.md",
+            "skills/agent-reach-ops/SKILL.md"
+          ]
+        },
+        {
+          "key": "qa",
+          "name": "Quality reviewer",
+          "role": "Independent studio acceptance reviewer",
+          "reuseAssignmentKey": "qa-lead",
+          "skillPaths": [
+            "skills/round-based-skill-evolution/SKILL.md",
+            "skills/defensive-reverse-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "blueprint",
+          "name": "Office steward",
+          "role": "Studio blueprint and ownership steward",
+          "reuseAssignmentKey": "blueprint-steward",
+          "skillPaths": [
+            "skills/engineering-organization-architect/SKILL.md",
+            "skills/spatial-3d-production-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "world",
+          "name": "World designer and technical artist",
+          "role": "Procedural scene, game art and heritage geometry specialist",
+          "departmentKey": "world",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md",
+            "skills/spatial-3d-production-engineering/SKILL.md",
+            "skills/architecture-and-built-heritage-research/SKILL.md",
+            "skills/computational-geometry-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "model",
+          "name": "Local model tools engineer",
+          "role": "Bounded local inference and engine integration engineer",
+          "departmentKey": "model",
+          "skillPaths": [
+            "skills/local-model-runtime-engineering/SKILL.md",
+            "skills/ai-open-model-research/SKILL.md",
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "verification",
+          "name": "Scene acceptance reviewer",
+          "role": "Independent interaction, geometry and performance reviewer",
+          "departmentKey": "verification",
+          "skillPaths": [
+            "skills/round-based-skill-evolution/SKILL.md",
+            "skills/game-reconstruction-engineering/SKILL.md",
+            "skills/architecture-and-built-heritage-research/SKILL.md"
+          ]
+        }
+      ],
+      "services": [
+        {
+          "key": "engineering"
+        },
+        {
+          "key": "design-architecture"
+        },
+        {
+          "key": "research-knowledge"
+        },
+        {
+          "key": "music-arts"
+        }
+      ],
+      "group": {
+        "id": "growth-and-ventures",
+        "name": "Growth & Ventures",
+        "description": "Product studios, bounded experiments and evidence-led delivery with shared specialist services."
+      },
+      "board": {
+        "title": "Scene brief, playable artifact and acceptance"
+      },
+      "roadmap": [
+        {
+          "key": "source",
+          "title": "Pin the studio resources and engine sources",
+          "description": "Record the Three.js studio, reviewed model metadata, OpenCodeGameStudios module revision and engine/resource licenses. Acceptance: exact source refs and availability states.",
+          "ownerKey": "knowledge",
+          "departmentKey": "research",
+          "dependsOn": []
+        },
+        {
+          "key": "brief",
+          "title": "Define one playable scene and acceptance target",
+          "description": "Specify first-person/player controls, geometry scale, source fidelity and observable interactions. Use measured or sourced heritage geometry only where the evidence supports the precision claimed.",
+          "ownerKey": "world",
+          "departmentKey": "world",
+          "dependsOn": [
+            "source"
+          ]
+        },
+        {
+          "key": "build",
+          "title": "Build the original playable scene",
+          "description": "Use the current scene workbench and relevant game/art modules. Acceptance: an executable artifact and controls demonstrated with real input. Keep source/model outputs distinguishable.",
+          "ownerKey": "world",
+          "departmentKey": "world",
+          "dependsOn": [
+            "brief"
+          ]
+        },
+        {
+          "key": "model",
+          "title": "Evaluate optional local model assistance",
+          "description": "Run bounded unseen prompts only when the actual model and device are available. Acceptance: model revision, measured latency, original outputs and failure cases; mock adapter tests do not count as inference.",
+          "ownerKey": "model",
+          "departmentKey": "model",
+          "dependsOn": [
+            "source"
+          ]
+        },
+        {
+          "key": "review",
+          "title": "Verify geometry, input and performance",
+          "description": "Independently test keyboard/pointer input, reset behavior, frame timings and geometry provenance. Acceptance: raw observations and failed cases tied to the exact artifact.",
+          "ownerKey": "verification",
+          "departmentKey": "verification",
+          "dependsOn": [
+            "build"
+          ]
+        },
+        {
+          "key": "archive",
+          "title": "Archive the accepted scene and next improvement",
+          "description": "Link source refs, original assets, build and review receipts in Donna Brain; select one evidence-backed next round. Acceptance: retrievable artifacts and explicit unresolved limits.",
+          "ownerKey": "qa",
+          "departmentKey": "verification",
+          "dependsOn": [
+            "review"
+          ]
+        }
+      ],
+      "knowledge": [
+        {
+          "key": "studio",
+          "title": "Procedural 3D studio",
+          "summary": "Original Daftar source and local deterministic helper; model weights/inference are separate unverified capabilities unless real receipts exist.",
+          "artifactUri": "projects/threejs-game-studio/README.md"
+        },
+        {
+          "key": "game-art",
+          "title": "Game development art pipeline",
+          "summary": "Use verified art fundamentals, procedural Three.js, Blender assets and engine import research by the assigned stage.",
+          "artifactUri": "projects/game-development-research/README.md"
+        },
+        {
+          "key": "opencode",
+          "title": "OpenCodeGameStudios resource integration",
+          "summary": "Read only the relevant pinned module; resource definitions do not create employees or grant tools.",
+          "artifactUri": "integrations/opencode-game-studios/README.md"
+        },
+        {
+          "key": "heritage",
+          "title": "Built heritage geometry and viewer",
+          "summary": "Preserve scale, source capture, provenance, unknown dimensions and independent checks. Interactive detail is not proof of survey accuracy.",
+          "artifactUri": "projects/architecture-library/site-models/README.md"
+        },
+        {
+          "key": "backgrounds",
+          "title": "Design background library",
+          "summary": "Choose among reviewed background styles with motion/readability/performance acceptance; keep text contrast and reduced-motion behavior.",
+          "artifactUri": "projects/design-backgrounds/README.md"
+        },
+        {
+          "key": "prompt-world",
+          "title": "World design task contract",
+          "summary": "Own composition, interaction, original scene code and source fidelity. Give the reviewer the executable artifact, controls and source scale/evidence.",
+          "artifactUri": "company/company-kits/threejs-game-studio/README.md"
+        },
+        {
+          "key": "prompt-model",
+          "title": "Local model engineering task contract",
+          "summary": "Own model provenance, dependency profile, adapter bounds and original output retention. Report actual device/memory/inference receipts separately from metadata and mocks.",
+          "artifactUri": "company/company-kits/threejs-game-studio/README.md"
+        },
+        {
+          "key": "prompt-verification",
+          "title": "Scene review task contract",
+          "summary": "Own unseen evaluation prompts, input/reset checks, frame-time evidence and geometry-source review. Preserve failures and do not infer performance from screenshots.",
+          "artifactUri": "company/company-kits/threejs-game-studio/README.md"
         }
       ]
     }

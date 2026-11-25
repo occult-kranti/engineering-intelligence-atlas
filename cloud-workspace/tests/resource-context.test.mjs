@@ -34,12 +34,12 @@ test('hosted and native references share one canonical catalog identity and pack
 test('Donna fallback returns curated references for a continuation without exact skill names',()=>{
  const result=hostedResourceContext('Continue');
  assert.equal(result.status,'ready');
- assert.equal(result.matchedSkillCount,2);
+ assert.equal(result.matchedSkillCount,RESOURCE_CATALOG.routes.filter(route=>route.roleKeys.includes('donna')).length);
  assert.ok(result.references.some(ref=>ref.reasons.includes('mapped:agent-research-director')));
  assert.deepEqual(result,native.routeResources(RESOURCE_CATALOG,{query:'Continue',skills:[],roleKey:'donna',maxReferences:6,maxBytes:8192}));
 });
 
-test('all 16 exact skill names select their intended route without director references crowding it out',()=>{
+test('all bundled exact skill names select their intended route without director references crowding it out',()=>{
  for(const route of RESOURCE_CATALOG.routes){
   const result=hostedResourceContext(`Use ${route.skill}.`);
   assert.equal(result.status,'ready',route.skill);
@@ -50,12 +50,19 @@ test('all 16 exact skill names select their intended route without director refe
  }
 });
 
+test('hosted references preserve supplied employee skill priority through the native twenty-skill ceiling',()=>{
+ const skills=RESOURCE_CATALOG.routes.map(route=>route.skill).reverse().slice(0,20);
+ const query={query:'Continue',skills,maxReferences:6,maxBytes:8192};
+ assert.deepEqual(hostedResourceContext(query.query,skills),native.routeResources(RESOURCE_CATALOG,query));
+ assert.equal(hostedResourceContext(query.query,skills).matchedSkillCount,skills.length);
+});
+
 test('only known complete IDs or skill paths count, and duplicate supplied IDs are harmless',()=>{
  const exact=hostedResourceContext('Continue',['physics-research']);
  const duplicate=hostedResourceContext('Continue',['physics-research','physics-research','skills/physics-research/SKILL.md']);
  assert.deepEqual(duplicate,exact);
  const suffix=hostedResourceContext('Use not-physics-research and physics-research-extra', ['../private','unregistered-skill']);
- assert.equal(suffix.matchedSkillCount,2);
+ assert.equal(suffix.matchedSkillCount,RESOURCE_CATALOG.routes.filter(route=>route.roleKeys.includes('donna')).length);
  assert.ok(suffix.references.some(ref=>ref.reasons.includes('mapped:agent-research-director')));
  assert.ok(!suffix.references.some(ref=>ref.reasons.includes('mapped:physics-research')));
  const late=hostedResourceContext('x'.repeat(2500)+' Use physics-research.');

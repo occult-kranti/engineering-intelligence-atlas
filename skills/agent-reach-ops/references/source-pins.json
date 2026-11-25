@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "adapterName": "agent-reach-ops",
+  "adapterKind": "daftar-repository-runtime-summary",
+  "reviewedAt": "2026-11-25",
+  "personalSkillInstallation": "not-performed-by-this-adapter",
+  "sourceState": "public-pinned-content; feature-branch sources remain distinct from default-branch integration",
+  "sources": [
+    {
+      "repository": "occult-kranti/Agent-Reach",
+      "branch": "audit/agent-reach-ops-20261125",
+      "commit": "328c834cf0c99144966608ebbd8b60bb3d99889d",
+      "path": "skills/agent-reach-ops/SKILL.md",
+      "url": "https://github.com/occult-kranti/Agent-Reach/blob/328c834cf0c99144966608ebbd8b60bb3d99889d/skills/agent-reach-ops/SKILL.md",
+      "readingDepth": "workflow source read; executable and live channels not run"
+    }
+  ],
+  "limits": [
+    "This package is a short runtime adapter, not a byte-identical copy of the source skill.",
+    "No CLI, provider, browser session, employee or capability is installed or activated by this package.",
+    "Source reading is not live execution, completed research or deployment verification."
+  ]
+}

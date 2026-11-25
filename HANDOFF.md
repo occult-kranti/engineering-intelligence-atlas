@@ -1,5 +1,13 @@
 # Daftar maintainer handoff
 
+## Company setup refresh — 2026-11-25
+
+Start with [COMPANY_SETUP_REFRESH.md](project/COMPANY_SETUP_REFRESH.md), the [public audit](project/repository-audit-2026-11-25.json), [setup profiles](company/setup-profiles.json) and [skill-source map](company/role-library/research-skill-map.json). The checked inventory is 37 accessible repositories (31 public, six private), 21 bundled runtime skill summaries, 350 public resource records and four company kits. Feature-branch source pins remain distinct from merges and deployment; private repository identities and owner-state records do not belong in this public handoff.
+
+`scripts/refresh-company-setup.mjs` adds missing skills to existing staff through guarded native transactions. Preserve custom skill order, paused/fired state, ownership, permissions, budgets and recorded work. Preview against the intended initialized profile, keep plans outside Git, and re-plan after a conflict or interrupted response. The guide contains exact arguments and focused verification commands. The operation creates no jobs or paid work.
+
+**Live owner-workspace application is pending paired-desktop sync.** A restored workspace, passing fixture, source push or website deployment does not prove live employee changes. Apply/synchronize through the intended paired desktop and retain its receipt before closing the live setup requirement. Do not repeat pending company-creation commands or present existing 0.8.0 installers as newly built packages.
+
 ## Heritage and game-art continuation — 2026-11-25
 
 Read `reports/heritage-panel-2026-11-24/README.md` for the exact review and validation
@@ -66,7 +74,7 @@ Start with `project/resource-office-2026-11-24/VALIDATION.md` and `company/role-
 
 Build the desktop renderer, sync its content-addressed graph into `cloud-workspace`, and use `scripts/sync-company-studios.py` for the allowlisted static 3D workbench. Rebuild the retained Sites checkout from these reviewed sources before publication. Public metadata is not company knowledge, an installed package or permission to execute. The independent graph Director continues to use explicitly configured resource URLs.
 
-The current continuation has a shared $20 allowance and an honest retained uncertainty reservation. Hosted company/policy commands require native Sync now before application. Do not repeat queued company creation or infer activation from a request receipt. Platform automatic approval settings cannot be changed by this project.
+The earlier resource-office continuation retains its recorded $20 allowance and uncertainty reservation; this deterministic setup refresh launches no paid work. Hosted company/policy commands require native Sync now before application. Do not repeat queued company creation or infer activation from a request receipt. Platform automatic approval settings cannot be changed by this project.
 
 
 ## Conference-table prototype import — 2026-11-24

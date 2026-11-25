@@ -296,7 +296,9 @@ function buildDonnaBrain(snapshot, companyId) {
   for (const e of employees) {
     const paths = e.skillPaths ?? [];
     const n = add("employee", e.id, e.name, e.role + "; " + e.kind + " definition. Skills: " + paths.join(", "), e.status, e.updatedAt);
-    for (const skill of [...new Set(paths)].slice(0, 16)) {
+    const assigned = [...new Set(paths)];
+    omitted += Math.max(0, assigned.length - 20);
+    for (const skill of assigned.slice(0, 20)) {
       const id = "skill:" + fingerprint(skill);
       if (!index.has(id)) add("skill", fingerprint(skill), skill.split("/").filter(Boolean).at(-2) ?? skill, "Assigned skill reference: " + text(skill, 500) + ". The projection does not execute skill instructions.", "assigned-reference", void 0, { skillPath: skill });
       link(n.id, id, "uses", "Employee is assigned this skill reference");

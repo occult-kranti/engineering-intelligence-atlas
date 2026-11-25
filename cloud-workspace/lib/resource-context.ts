@@ -1,5 +1,5 @@
 import {RESOURCE_CATALOG, RESOURCE_CATALOG_SHA256} from './resource-catalog.ts';
-import {selectResourceReferences, type ResourceCatalog, type ResourcePacket} from './resource-routing.ts';
+import {RESOURCE_LIMITS, selectResourceReferences, type ResourceCatalog, type ResourcePacket} from './resource-routing.ts';
 
 const knownSkills = new Set(RESOURCE_CATALOG.routes.map(route => route.skill));
 const skillTokens = [...knownSkills].sort().map(skill => ({ skill,
@@ -21,7 +21,7 @@ export function hostedResourceContext(task: string, skills: string[] = []): Reso
   const boundedTask = typeof task === 'string' ? task.slice(0, 10000) : '';
   const supplied = (Array.isArray(skills) ? skills.slice(0, 32) : []).map(canonicalSkill).filter((skill): skill is string => skill !== null);
   const named = skillTokens.filter(({pattern}) => pattern.test(boundedTask.toLowerCase())).map(({skill}) => skill);
-  const selected = [...new Set([...supplied, ...named])].sort().slice(0, 16);
+  const selected = [...new Set([...supplied, ...named])].slice(0, RESOURCE_LIMITS.assignedSkills);
   return selectResourceReferences(RESOURCE_CATALOG as unknown as ResourceCatalog, RESOURCE_CATALOG_SHA256, {
     query: boundedTask.slice(0, 2000), skills: selected,
     ...(selected.length ? {} : {roleKey: 'donna'}), maxReferences: 6, maxBytes: 8192,

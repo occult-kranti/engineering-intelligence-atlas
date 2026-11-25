@@ -1,22 +1,76 @@
 import type { SkillPackage } from './types';
 
 /**
- * The sixteen agent skill packages developed alongside this atlas: the
- * original eight engineering packages plus the seven science/model-library
- * packages plus graph-memory research (game reconstruction, mathematics, physics, chemistry, biology,
- * science history, AI open-model research). Descriptions are distilled from
- * each package's SKILL.md.
+ * Public presentation metadata for the 21 repository runtime skill summaries.
+ * Descriptions follow each package's SKILL.md. The five company adapters retain
+ * pinned public workflow sources; listing a package does not install its tools,
+ * assign a running employee, or establish personal-skill synchronization.
  */
 export const SKILL_PACKAGES: SkillPackage[] = [
+  {
+    id: 'agent-reach-ops',
+    name: 'Agent Reach Operations',
+    shortName: 'Source Reach',
+    accent: 'cornflower',
+    tagline: 'Bounded platform research with explicit content coverage',
+    description: 'Routes authorized platform research through reviewed Agent Reach contracts when a suitable connector or public search cannot supply the requested material. Records source revision, channel, backend, content scope and missing pages. This company adapter does not install the CLI or import a browser session.',
+    domains: ['Source acquisition', 'Platform contracts', 'Integration review'],
+    outputs: ['Scoped retrieval receipts', 'Versioned platform diagnostics', 'Explicit content-completeness limits'],
+    gates: ['Verify source and installed action contracts', 'Preserve site/account scope and terminal errors', 'A snippet or mock test is not complete live content'],
+  },
+  {
+    id: 'project-research-consolidation',
+    name: 'Project Research Consolidation',
+    shortName: 'Consolidation',
+    accent: 'sage',
+    tagline: 'Reconcile published sources, artifacts and company setup',
+    description: 'Compares current default and relevant feature branches with recoverable project evidence, preserves exact-byte and summary distinctions, and prepares a source-linked company index and reviewable release packet. Keeps private holdings, setup drafts, assignments and deployment receipts separate.',
+    domains: ['Company setup', 'Artifact provenance', 'Repository reconciliation'],
+    outputs: ['Canonical artifact index', 'Company setup gap queue', 'Reviewed publication handoff'],
+    gates: ['Published feature work is already pushed even when unmerged', 'Retain source rights and private-company scope', 'A saved plan is not executed setup'],
+  },
+  {
+    id: 'round-based-skill-evolution',
+    name: 'Round-Based Skill Evolution',
+    shortName: 'Skill Evolution',
+    accent: 'mustard',
+    tagline: 'Improve procedures through evidence and independent evaluation',
+    description: 'Turns an observed workflow failure into a bounded diagnosis, prospective instruction change and independent raw-task evaluation. Pins versions and acceptance criteria, preserves failed or inconclusive outcomes, and separates structural repairs from measured agent-performance claims.',
+    domains: ['Skill evaluation', 'Independent QA', 'Bounded research rounds'],
+    outputs: ['Source-bound revision records', 'Raw task evaluation receipts', 'Accepted, limited or blocked decisions'],
+    gates: ['Freeze tasks and criteria before comparison', 'Keep intended answers outside acting-worker inputs', 'Synthetic checks do not establish general performance gains'],
+  },
+  {
+    id: 'olympus-evidence-rounds',
+    name: 'Olympus Evidence Rounds',
+    shortName: 'Evidence Rounds',
+    accent: 'cornflower',
+    tagline: 'Scoped investigative questions with source-first review',
+    description: 'Coordinates existing source, advisor, skeptical-review and code roles around bounded Olympus case questions. Preserves identity, temporal and financial-stage distinctions, counterevidence, actual worker provenance and factual-graph eligibility holds.',
+    domains: ['Investigative evidence', 'Temporal records', 'Skeptical review'],
+    outputs: ['Pinned case checkpoints', 'Accepted and rejected claim records', 'Next decisive source requests'],
+    gates: ['Graph proximity is not evidence of payment or influence', 'Separate planned and completed rounds', 'Retain privacy, provenance and synthetic-data holds'],
+  },
+  {
+    id: 'olympus-project-archive',
+    name: 'Olympus Project Archive',
+    shortName: 'Case Archive',
+    accent: 'sage',
+    tagline: 'Preserve case artifacts with coverage and publication receipts',
+    description: 'Reconciles Olympus repository branches and recoverable case artifacts into a bounded archive. Records hashes, coverage, redaction classes, missing records and publication state without admitting archived claims to the factual graph or asserting complete chat recovery.',
+    domains: ['Case archives', 'Coverage accounting', 'Release provenance'],
+    outputs: ['Case artifact register', 'Missing and held-source queue', 'Exact publication receipts'],
+    gates: ['Separate bytes, redacted exports, summaries and memory leads', 'Prior public presence does not remove source holds', 'Archive publication is separate from deployment and factual admission'],
+  },
   {
     id: 'graph-memory-research',
     name: 'Graph Memory Research',
     shortName: 'Graph Memory',
     accent: 'sage',
     tagline: 'Source-linked knowledge, bounded retrieval and correct cache reuse',
-    description: 'Builds typed concept and formula graphs, records provenance and time, retrieves evidence with explicit scope, audits cache invalidation, and exports linked portable notes. Connects mathematical foundations to carefully qualified current research.',
+    description: 'Connects Donna’s native operating brain to company records, typed concept and formula graphs, source revisions and setup drafts. Retrieves scoped evidence, preserves corrections and freshness, and audits cache reuse while keeping graph relationships separate from factual proof.',
     domains: ['Knowledge graphs', 'Memory and caching', 'Evidence research'],
-    outputs: ['Typed graph and formula notebook', 'Scoped retrieval and invalidation evidence', 'portable note backup and portable graph exports'],
+    outputs: ['Typed company memory and formula notebook', 'Scoped retrieval and invalidation evidence', 'Source-linked setup drafts and portable graph exports'],
     gates: ['Authority is checked before retrieval', 'Scores and graph connections are not proof', 'Provider cache telemetry is separate from local cache hits'],
   },
 

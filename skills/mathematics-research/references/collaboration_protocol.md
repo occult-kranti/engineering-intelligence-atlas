@@ -1,6 +1,6 @@
 # Skill Collaboration Protocol
 
-**Status:** shared contract for the 16 repository skills and the 109 role charters. **Date:** 2026-11-25.
+**Status:** shared contract for the bundled repository skills and role charters. **Date:** 2026-11-25.
 **Scope:** this document is the single collaboration/lifecycle contract used whenever any repository skill or role is composed as a specialist node under the `agent-research-director`. Standalone use of a skill does not require the director, but the waiting, budget, and untrusted-content rules below are still recommended hygiene.
 **Companion documents:** the per-task delegation schema lives in `agent-research-director/references/registry_and_contracts.md`; the server-side runtime design lives in `reports/research_director_runtime_specification.md`. Neither is duplicated here.
 

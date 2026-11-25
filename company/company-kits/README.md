@@ -1,6 +1,6 @@
 # Daftar company kits
 
-The public catalog installs two reusable organizational templates: **Fintech & Hackathon Studio** and **Social & Digital Presence**. It contains generic departments, specialist definitions, roadmap dependencies, shared-service contracts and reference documents. Client identities, private source registers, account connections and campaign evidence belong in an owner-private copy of the plan.
+The public catalog defines four reusable organizational templates: **Fintech & Hackathon Studio**, **Social & Digital Presence**, **Daftar Hardware Studio** and **Daftar 3D Game Studio**. It contains generic departments, specialist definitions, roadmap dependencies, shared-service contracts and reference documents. Client identities, private source registers, account connections and campaign evidence belong in an owner-private copy of the plan.
 
 Creating a company does not start an agent process, make a model request, connect a social account, publish a post, enroll in an event or spend a campaign budget. The native worker, credential vault, explicit service contracts and existing authorization controls remain responsible for execution.
 
@@ -35,7 +35,7 @@ The executable example is [index.json](index.json). The top-level object accepts
 | Company | `key`, `id`, `name`, `office`, `departments`, `employees`, `services`, `roadmap`, `knowledge`, `board` | `group` adds membership without replacing existing members, names or status. |
 | Office | `key`, `name` | Use `Main office` to reuse native creation. A kit currently targets one office. |
 | Department | `key`, `name` | `Engineering` and `Research` reuse the initial native departments. |
-| Employee | `key`, `name`, `role`, `skillPaths` | `departmentKey`; or `reuseAssignmentKey` to reuse a native office-level specialist. Reuse retains the existing name, role, skills and status. |
+| Employee | `key`, `name`, `role`, `skillPaths` | `departmentKey`; or `reuseAssignmentKey` to reuse a native office-level specialist. Reuse retains the existing name, role, skill priority and status; missing template skill references are appended after full-plan validation. |
 | Service | `key` | `departmentKey` narrows the recipient scope. Contracts always include the selected office; a company-wide contract is a different scope. |
 | Roadmap item | `key`, `title`, `description`, `dependsOn` | `ownerKey` or `serviceKey`; `departmentKey`. With neither owner field Donna owns the item. |
 | Knowledge | `key`, `title`, `summary`, `artifactUri` | Stable key binds future runs to the original record. Use a new key for a distinct source revision. |
@@ -70,4 +70,10 @@ The initial office map lays out the selected departments. Subsequent imports pre
 node --test scripts/test-company-kits.mjs
 ```
 
-The suite runs against the actual packaged Rust core in temporary synthetic workspaces. It covers the two-company catalog, dependency ownership, shared-service reuse, no worker dispatch, restart idempotence, owner edits, interrupted responses, private receipt filtering, conflicting bindings and a CLI preview that leaves state bytes unchanged. No private source data or model calls are used by the suite.
+The suite runs against the actual packaged Rust core in temporary synthetic workspaces. It covers the four-company catalog, dependency ownership, shared-service reuse, no worker dispatch, restart idempotence, owner edits, interrupted responses, private receipt filtering, conflicting bindings and a CLI preview that leaves state bytes unchanged. No private source data or model calls are used by the suite.
+
+## November company refresh
+
+The [company setup refresh](../../project/COMPANY_SETUP_REFRESH.md) documents the current 21 runtime summaries, 350 source records and exact public source pins. The separate refresh CLI updates saved staff skill references; importing a missing kit creates organizational records. Neither operation starts paid jobs or changes an existing runtime permission. A local receipt is separate from the paired desktop sync needed to update the live website.
+
+The added [Hardware Studio](hardware-studio/README.md) and [3D Game Studio](threejs-game-studio/README.md) retain source, validation and production limits. Existing company names, skills, pauses, grants, room placement, roadmap progress and evidence remain owner-controlled. Repeated imports append missing skills once while preserving existing priority; a fired bound employee or overflowing skill set fails preflight instead of being silently recreated.

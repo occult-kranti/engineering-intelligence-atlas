@@ -68,3 +68,9 @@ Attach the task packet rather than pasting the whole portfolio. The machine-read
 - [Anthropic context engineering](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents)
 
 References were checked on 2026-11-21. Read the relevant section for the current task, record the version/date, and apply it within its documented scope. These sources guide the design; they do not prove this repository passed a test or benchmark. Existing [backend research](../../project/BACKEND_RESEARCH.md) and [budget research](../../project/PROMPT_BUDGET_RESEARCH.md) distinguish implemented behavior from proposals.
+
+## Company skill routing
+
+Use [agent-reach-ops](../../skills/agent-reach-ops/SKILL.md) for bounded source acquisition after checking connector and public-search completeness. Preserve source scope, session authority, terminal errors and retrieval receipts. Use [project-research-consolidation](../../skills/project-research-consolidation/SKILL.md) for recovery; use [Olympus evidence rounds](../../skills/olympus-evidence-rounds/SKILL.md) and [archive](../../skills/olympus-project-archive/SKILL.md) only for the relevant case.
+
+See the [runtime skill and source map](research-skill-map.json) for exact public revisions and availability limits. These assignments describe work; they do not grant executable capabilities.

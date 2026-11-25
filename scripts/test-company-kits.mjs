@@ -49,10 +49,15 @@ test('public catalog and private source ceilings are validated in full before co
 
 test('real native catalog installs company topology, scoped shared work, boards and no running jobs', async t => {
   const f = await fixture(t), before = structuredClone(f.snapshot), preview = planCompanyKits(catalog, f.snapshot);
-  assert.equal(preview.projected.companies, 2);
-  assert.equal(preview.projected.employeeDefinitions, 41, 'Include the native assistants/directors without double-counting reused bootstrap bindings.');
+  assert.equal(preview.projected.companies, catalog.companies.length);
+  const legacy = { ...catalog, companies: catalog.companies.filter(c => ['fintech-hackathon', 'social-presence'].includes(c.key)) };
+  assert.equal(legacy.companies.length, 2, 'The existing company kits remain available.');
+  assert.equal(planCompanyKits(legacy, f.snapshot).projected.employeeDefinitions, 41, 'Include native assistants/directors without double-counting bootstrap bindings.');
   const { snapshot, receipt } = await applyCompanyKits(catalog, { snapshot: f.snapshot, command: f.command });
-  assert.equal(receipt.created.companies, 2); assert.equal(receipt.created.contracts, 10); assert.equal(receipt.created.roadmapItems, 18);
+  assert.equal(receipt.created.companies, catalog.companies.length);
+  assert.equal(receipt.created.employeeDefinitions, preview.projected.employeeDefinitions);
+  assert.equal(receipt.created.contracts, catalog.companies.reduce((n, c) => n + c.services.length, 0));
+  assert.equal(receipt.created.roadmapItems, catalog.companies.reduce((n, c) => n + c.roadmap.length, 0));
   assert.equal(snapshot.jobs.length, before.jobs.length); assert.equal(snapshot.schedules.length, before.schedules.length);
   assert.deepEqual(snapshot.policy, before.policy); assert.deepEqual(snapshot.authority.grants, before.authority.grants);
   assert.deepEqual(snapshot.portfolio.services, before.portfolio.services); assert.equal(snapshot.activeCompanyId, before.activeCompanyId);
@@ -103,6 +108,56 @@ test('a native hire committed before interrupted response is recovered without a
   assert.equal(result.snapshot.employees.filter(x => x.name === 'Delivery specialist').length, 1);
   assert.equal(result.receipt.created.employeeDefinitions, 0);
   const again = await applyCompanyKits(plan, { snapshot: await f.restart(), command: f.command }); assert.equal(again.receipt.mutations, 0);
+});
+
+test('upgraded kits append missing skills once and preserve custom priority, paused state and owner edits', async t => {
+  const f = await fixture(t), plan = smallPlan();
+  const installed = await applyCompanyKits(plan, { snapshot: f.snapshot, command: f.command });
+  const employeeId = installed.receipt.companies[0].employeeIds[1];
+  const originalSkills = ['skills/owner-custom/SKILL.md', 'skills/agent-research-director/SKILL.md'];
+  await f.command('update_employee', { employeeId, name: 'Owner specialist', role: 'Owner delivery scope', skillPaths: originalSkills });
+  await f.command('pause_employee', { employeeId });
+  const before = structuredClone(f.snapshot), upgraded = structuredClone(plan);
+  upgraded.companies[0].employees[1].skillPaths.push('skills/graph-memory-research/SKILL.md', 'skills/physics-research/SKILL.md');
+  assert.deepEqual(planCompanyKits(upgraded, f.snapshot).updates, { employeeDefinitions: 1, skillReferencesAdded: 2 });
+  const result = await applyCompanyKits(upgraded, { snapshot: await f.restart(), command: f.command });
+  assert.deepEqual(result.receipt.updated, { employeeDefinitions: 1, skillReferencesAdded: 2 });
+  assert.ok(Object.values(result.receipt.created).every(value => value === 0));
+  const employee = result.snapshot.employees.find(e => e.id === employeeId), old = before.employees.find(e => e.id === employeeId);
+  assert.deepEqual(employee.skillPaths, [...originalSkills, 'skills/graph-memory-research/SKILL.md', 'skills/physics-research/SKILL.md']);
+  for (const key of ['id', 'name', 'role', 'status', 'kind', 'companyId', 'officeId', 'departmentId', 'assignmentKey', 'createdAt']) assert.deepEqual(employee[key], old[key], key);
+  for (const key of ['jobs', 'schedules', 'policy', 'portfolio', 'blueprints']) assert.deepEqual(result.snapshot[key], before[key], key);
+  assert.deepEqual(result.snapshot.authority.grants, before.authority.grants);
+  assert.deepEqual(result.snapshot.authority.managedEmployeeIds, before.authority.managedEmployeeIds);
+  assert.deepEqual(result.snapshot.authority.ledger.slice(0, before.authority.ledger.length), before.authority.ledger);
+  assert.equal(result.snapshot.authority.ledger.at(-1).action, 'update_employee');
+  const again = await applyCompanyKits(upgraded, { snapshot: await f.restart(), command: f.command });
+  assert.equal(again.receipt.mutations, 0); assert.deepEqual(again.receipt.updated, { employeeDefinitions: 0, skillReferencesAdded: 0 });
+});
+
+test('skill capacity and fired kit employees fail complete preflight before any writes', async t => {
+  const f = await fixture(t), plan = smallPlan();
+  const installed = await applyCompanyKits(plan, { snapshot: f.snapshot, command: f.command });
+  const employeeId = installed.receipt.companies[0].employeeIds[1], full = structuredClone(f.snapshot);
+  full.employees.find(e => e.id === employeeId).skillPaths = Array.from({ length: 20 }, (_, i) => `skills/owner-${i}/SKILL.md`);
+  let writes = 0; const command = async () => { writes++; throw new Error('Unexpected write'); };
+  await assert.rejects(applyCompanyKits(plan, { snapshot: full, command }), /20-skill limit/); assert.equal(writes, 0);
+  await f.command('fire_employee', { employeeId });
+  await assert.rejects(applyCompanyKits(plan, { snapshot: await f.restart(), command }), /fired/); assert.equal(writes, 0);
+});
+
+test('a committed skill update survives a lost response without another mutation', async t => {
+  const f = await fixture(t), plan = smallPlan();
+  await applyCompanyKits(plan, { snapshot: f.snapshot, command: f.command });
+  const upgraded = structuredClone(plan); upgraded.companies[0].employees[1].skillPaths.push('skills/graph-memory-research/SKILL.md');
+  let interrupted = false;
+  await assert.rejects(applyCompanyKits(upgraded, { snapshot: f.snapshot, command: async (action, payload) => {
+    const state = await f.command(action, payload);
+    if (action === 'update_employee' && !interrupted) { interrupted = true; throw new Error('Synthetic response loss after skill commit'); }
+    return state;
+  } }), /response loss/);
+  const resumed = await applyCompanyKits(upgraded, { snapshot: await f.restart(), command: f.command });
+  assert.equal(resumed.receipt.mutations, 0); assert.deepEqual(resumed.receipt.updated, { employeeDefinitions: 0, skillReferencesAdded: 0 });
 });
 
 test('full-plan validation and conflicting persisted scope fail before an attempted write', async t => {

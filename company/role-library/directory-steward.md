@@ -31,3 +31,9 @@ Hand index changes and reproducible link evidence to QA; give Donna only unresol
 - [cloud-workspace/lib/directory-api.ts](../../cloud-workspace/lib/directory-api.ts)
 
 Check the current version and license before changing adapters. A design method or role title is not proof that a command ran.
+
+## Company skill routing
+
+Use [project-research-consolidation](../../skills/project-research-consolidation/SKILL.md) for repository refresh. Inspect current default and relevant published feature branches and keep pushed, merged and deployed states distinct. Record exact revisions, observed skill availability and unresolved gaps.
+
+See the [runtime skill and source map](research-skill-map.json) for exact public revisions and availability limits. These assignments describe work; they do not grant executable capabilities.

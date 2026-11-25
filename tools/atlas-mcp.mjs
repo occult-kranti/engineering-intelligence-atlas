@@ -565,7 +565,8 @@ export function createToolHandler({ nativeCall, fetchImpl = globalThis.fetch } =
           if(!item||item.private!==false||typeof item.name!=='string'||typeof item.owner?.login!=='string'||item.owner.login.toLowerCase()!==a.owner.toLowerCase()) throw new ToolError('Repository identity mismatch','github_bad_shape');
           const parsed=parseRepository(`${item.owner.login}/${item.name}`);
           if(item.html_url!==parsed.repoUrl) throw new ToolError('Repository URL mismatch','github_bad_shape');
-          if(!seen.has(parsed.repoUrl.toLowerCase())) { repositories.push({name:item.name,repoUrl:parsed.repoUrl,source:'github-public-api',importedAt:new Date().toISOString()}); seen.add(parsed.repoUrl.toLowerCase()); }
+          if(typeof item.default_branch!=='string'||!item.default_branch.trim()||Buffer.byteLength(item.default_branch)>250||/[\u0000-\u001f\u007f]/.test(item.default_branch)) throw new ToolError('GitHub metadata has invalid default_branch','github_bad_shape');
+          if(!seen.has(parsed.repoUrl.toLowerCase())) { repositories.push({name:item.name,repoUrl:parsed.repoUrl,defaultBranch:item.default_branch,source:'github-public-api',importedAt:new Date().toISOString()}); seen.add(parsed.repoUrl.toLowerCase()); }
         }
         if(data.length<100) {complete=true;break;}
       }

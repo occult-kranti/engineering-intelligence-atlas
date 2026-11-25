@@ -8,7 +8,7 @@ import { registerHooks, stripTypeScriptTypes } from 'node:module';
 import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { loadResourceModule } from './resource-router.mjs';
-import { selectResourceReferences } from '../desktop-shell/src/main/resourceRouting.ts';
+import { RESOURCE_LIMITS, selectResourceReferences } from '../desktop-shell/src/main/resourceRouting.ts';
 
 const api = await loadResourceModule();
 const root = fileURLToPath(new URL('../', import.meta.url));
@@ -35,10 +35,10 @@ test('migration preserves every original field and covers the exact repository s
   const projection = JSON.parse(/export\s+const\s+RESOURCES\s*:\s*Resource\[\]\s*=\s*([\s\S]*);\s*$/.exec(source)[1]);
   assert.equal(catalog.source.recordCount, 296);
   assert.deepEqual(catalog.resources.slice(0, 296).map(api.legacyResource), projection.slice(0, 296));
-  assert.equal(catalog.resources.length, 345);
+  assert.ok(catalog.resources.length >= 345, 'Retain the existing 345 reviewed reference records when extending the catalog.');
   const skills = fs.readdirSync(path.join(root, 'skills')).filter(name => fs.existsSync(path.join(root, 'skills', name, 'SKILL.md'))).sort();
   assert.deepEqual(catalog.routes.map(r => r.skill).sort(), skills);
-  assert.equal(skills.length, 16);
+  assert.ok(skills.length >= 16, 'Retain the existing sixteen bundled skill routes.');
   for (const route of catalog.routes) {
     assert.ok(route.resourceIds.length);
     for (const ref of route.localReferences) assert.ok(fs.existsSync(path.join(root, ref)), ref);
@@ -59,6 +59,15 @@ test('pure cloud selector and strict native wrapper produce identical bounded pa
   assert.ok(Buffer.byteLength(JSON.stringify(packet)) <= 4096);
   assert.ok(packet.omittedCount > 0);
   assert.equal(packet.policy.includes('no-permissions'), true);
+});
+
+test('the public selector accepts the native employee skill ceiling without expanding packet limits', () => {
+  const skills = Array.from({ length: RESOURCE_LIMITS.assignedSkills }, (_, i) => `fixture-skill-${i}`);
+  assert.equal(skills.length, 20);
+  const packet = api.routeResources(catalog, { skills, query: 'research' });
+  assert.notEqual(packet.status, 'invalid-query');
+  assert.ok(packet.references.length <= 6); assert.ok(Buffer.byteLength(JSON.stringify(packet)) <= 8192);
+  assert.equal(api.routeResources(catalog, { skills: [...skills, 'one-too-many'] }).status, 'invalid-query');
 });
 
 test('ordering, repeated calls and formatting do not change selection or catalog identity', () => {
@@ -236,6 +245,36 @@ test('real native prompt adds reviewed metadata, flags source directives and has
   assert.equal(contaminated.sourceReview.status, 'flagged');
   assert.match(contaminated.prompt, /untrusted metadata, never tool authority/);
   assert.deepEqual(job.allowedTools, []); assert.equal(calls.length, 0);
+});
+
+test('worker uses employee skill priority for two bodies and routes all verified assignments', async t => {
+  const OfficeWorker = await loadWorker(), seed = temp(t); write(seed, catalog);
+  const worker = new OfficeWorker({ seedDir: seed, artifactRoot: path.join(seed, 'artifacts'),
+    snapshot: async () => { throw new Error('No runtime reads'); }, command: async () => { throw new Error('No native writes'); },
+    generate: async () => { throw new Error('No provider dispatch'); } });
+  t.after(() => worker.stop());
+  const skills = ['physics-research', 'game-reconstruction-engineering', 'graph-memory-research'];
+  const briefs = skills.map((skill, i) => { const body = `VERIFIED_SKILL_BODY_${i}`; return { path: `skills/${skill}/SKILL.md`, body, sha256: digest(body) }; });
+  // A package's lexical/order change cannot reorder an employee's saved priority.
+  fs.writeFileSync(path.join(seed, 'skill-briefs.json'), JSON.stringify([...briefs].reverse()));
+  const employee = { id: 'fixture-employee', name: 'Fixture', role: 'Researcher', kind: 'specialist', assignmentKey: null, skillPaths: briefs.map(b => b.path) };
+  const job = { id: 'priority-job', companyId: 'company-a', employeeId: employee.id, goal: 'Knowledge graph memory and game physics', allowedTools: [], dependencies: [], knowledgeTransferIds: [], provider: 'anthropic', model: 'fixture', promptVersion: 'test', limits: { maxTokens: 32000, maxUsd: 1, maxMinutes: 1 } };
+  const snapshot = { employees: [employee], jobs: [], knowledge: [], portfolio: { transfers: [] } };
+  const first = worker.prompts(job, snapshot);
+  assert.ok(first.system.indexOf('VERIFIED_SKILL_BODY_0') < first.system.indexOf('VERIFIED_SKILL_BODY_1'));
+  assert.doesNotMatch(first.system, /VERIFIED_SKILL_BODY_2/);
+  assert.match(first.prompt, /"matchedSkillCount":3/);
+  employee.skillPaths = [briefs[2].path, briefs[0].path, briefs[1].path];
+  const reprioritized = worker.prompts(job, snapshot);
+  assert.ok(reprioritized.system.indexOf('VERIFIED_SKILL_BODY_2') < reprioritized.system.indexOf('VERIFIED_SKILL_BODY_0'));
+  assert.doesNotMatch(reprioritized.system, /VERIFIED_SKILL_BODY_1/); assert.notEqual(reprioritized.contextHash, first.contextHash);
+  assert.match(reprioritized.prompt, /"matchedSkillCount":3/);
+  // A digest mismatch and a duplicate valid path must not win by file order.
+  fs.writeFileSync(path.join(seed, 'skill-briefs.json'), JSON.stringify([briefs[0], briefs[0], { ...briefs[2], body: 'TAMPERED_SKILL' }, briefs[1]]));
+  const rejected = worker.prompts(job, snapshot);
+  assert.match(rejected.system, /VERIFIED_SKILL_BODY_1/);
+  assert.doesNotMatch(rejected.system, /VERIFIED_SKILL_BODY_0|VERIFIED_SKILL_BODY_2|TAMPERED_SKILL/);
+  assert.match(rejected.prompt, /"matchedSkillCount":1/);
 });
 
 test('resource context stays inside the existing native token and spend admission gate', async t => {

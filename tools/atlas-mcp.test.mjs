@@ -92,8 +92,22 @@ test('department parent command preserves explicit null and query metadata retai
   const company=(await h.handler('office_query',{collection:'companies'})).items.find(r=>r.id===snapshot.companies[0].id);
   assert.equal(company.parentCompanyId,'company-b');
 });
-test('GitHub account import requires matching public metadata before state writes',async()=>{
-  const f=fixture(async()=>json([{name:'atlas',owner:{login:'occult-kranti'},private:false,html_url:'https://github.com/occult-kranti/atlas'}]));const r=await f.handler('github_import_account',{owner:'occult-kranti'});assert.equal(r.imported,1);assert.equal(f.calls.at(-1).payload.action,'import_repositories');
+test('GitHub account import preserves verified public repository default branches',async()=>{
+  const branches=['main','master','release/2026.11'];
+  const repositories=branches.map((default_branch,i)=>({name:`atlas-${i}`,owner:{login:'occult-kranti'},private:false,html_url:`https://github.com/occult-kranti/atlas-${i}`,default_branch}));
+  const f=fixture(async()=>json(repositories));
+  const r=await f.handler('github_import_account',{owner:'occult-kranti'});
+  assert.equal(r.imported,3);
+  assert.equal(f.calls.at(-1).payload.action,'import_repositories');
+  assert.deepEqual(f.calls.at(-1).payload.repositories.map(({name,repoUrl,defaultBranch,source})=>({name,repoUrl,defaultBranch,source})),repositories.map(row=>({name:row.name,repoUrl:row.html_url,defaultBranch:row.default_branch,source:'github-public-api'})));
+});
+test('GitHub account import rejects unknown or invalid default branches before native calls',async()=>{
+  const repository={name:'atlas',owner:{login:'occult-kranti'},private:false,html_url:'https://github.com/occult-kranti/atlas',default_branch:'master'};
+  for(const default_branch of [undefined,null,1,'',' ','bad\nbranch','bad\u0000branch','x'.repeat(251),'é'.repeat(126)]) {
+    const f=fixture(async()=>json([repository,{...repository,name:'second',html_url:'https://github.com/occult-kranti/second',default_branch}]));
+    await assert.rejects(f.handler('github_import_account',{owner:'occult-kranti'}),error=>error.code==='github_bad_shape'&&/default_branch/.test(error.message));
+    assert.equal(f.calls.length,0);
+  }
 });
 test('account discovery failure cannot partially import',async()=>{
   const f=fixture(async()=>json([{name:'atlas',owner:{login:'other'},private:false,html_url:'https://github.com/other/atlas'}]));await assert.rejects(f.handler('github_import_account',{owner:'occult-kranti'}));assert.equal(f.calls.length,0);

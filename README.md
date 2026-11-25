@@ -1,5 +1,11 @@
 # Daftar — personal agent office
 
+## Company setup refresh — 2026-11-25
+
+The [repository audit](project/repository-audit-2026-11-25.json) checks **37 accessible repositories**: 31 public and six private, with private identities omitted from the public record. Daftar now bundles **21 runtime skill summaries**, routes **350 public resource records**, and provides **four company kits**, including Hardware Studio and 3D Game Studio. New source-acquisition, consolidation, skill-evolution and Olympus adapters retain exact public source pins and feature-branch status.
+
+The [refresh guide](project/COMPANY_SETUP_REFRESH.md) explains the additive staff-skill CLI, shared-role routing and preservation checks. It creates no jobs, paid model calls or permission changes. **Live owner-workspace application still requires paired-desktop sync**; source integration and local verification do not establish that the live office applied the update.
+
 ## Donna Brain, research atlas and design backgrounds
 
 The built-in **Brain** surface connects company records, repositories, people, skills, decisions, questions and setup drafts. [Implementation and study guide](projects/research-memory-atlas/README.md) · [177 formula cards](projects/research-memory-atlas/FORMULA_NOTEBOOK.md) · [AI mathematics audit](projects/research-memory-atlas/AI_MATHEMATICS.md) · [15 design backgrounds](projects/design-backgrounds/README.md) · [Delivery evidence](project/RESEARCH_MEMORY_DELIVERY.md).
@@ -18,7 +24,7 @@ scale and complete fine-detail coverage remain unverified. See the
 The [game-art research plan](projects/game-development-research/README.md) adds
 **29 audited reference records** covering drawing practice, Blender modeling,
 procedural art, animation, engine interchange and rendering. The shared catalog
-now has **333 records**; three existing skill packages and the game/graphics/QA
+contains those audited references; three existing skill packages and the game/graphics/QA
 roles route to the new procedures. The [art guide](projects/game-development-research/ART_FUNDAMENTALS.md)
 and [pipeline guide](projects/game-development-research/PIPELINE_AND_RENDERING.md)
 retain corrections to unverified repository, tutorial, licensing and format claims.
@@ -80,9 +86,9 @@ dependency graphs with queues, checkpoints, budgets and evidence.
 
 ## Reference room and company studios — 2026-11-24 continuation
 
-The shared desktop and website renderer adds a searchable **Reference room** with 333 public sources: books, papers, repositories, software and documentation. Source details retain access, license, version, reading depth and evidence limitations. Pins store only public IDs; **Draft with Donna** appends bounded context without sending it. Native OfficeWorker and hosted Donna select up to six relevant public references using the same canonical catalog and pure routing core. All 15 packaged skills include a self-contained resource-use procedure.
+The shared desktop and website renderer adds a searchable **Reference room** with 350 public source records: books, papers, repositories, software and documentation. Source details retain access, license, version, reading depth and evidence limitations. Pins store only public IDs; **Draft with Donna** appends bounded context without sending it. Native OfficeWorker and hosted Donna select up to six relevant public references using the same canonical catalog and pure routing core. All 21 packaged runtime summaries have matching resource routes.
 
-The **3D studio** opens as a movable element of the same office canvas. Its original Three.js reference, source editor, review record and optional bounded local Ollama adapter are in [the game company project](projects/threejs-game-studio/README.md). The [hardware company project](projects/atech-hardware-studio/README.md) retains the imported Atech SDK and adds a deterministic button/NeoPixel example. Both company creation requests are queued for native sync; a website surface is not evidence that employees or model jobs are running.
+The **3D studio** opens as a movable element of the same office canvas. Its original Three.js reference, source editor, review record and optional bounded local Ollama adapter are in [the game company project](projects/threejs-game-studio/README.md). The [hardware company project](projects/atech-hardware-studio/README.md) retains the imported Atech SDK and adds a deterministic button/NeoPixel example. Both studios now have reusable [company kits](company/company-kits/README.md); live creation and application still require the paired native sync receipt. A website surface is not evidence that employees or model jobs are running.
 
 The additional $20 allowance is shared across this continuation. [Claude/Donna contributions](project/resource-office-2026-11-24/CLAUDE-DONNA-HANDOFF.md), [usage](project/resource-office-2026-11-24/usage-receipt.json), [independent review](project/resource-office-2026-11-24/resource-review.md), and [validation](project/resource-office-2026-11-24/VALIDATION.md) distinguish source, runtime and publication evidence. No new desktop binary release or completed Qwen inference is claimed by these source changes.
 
@@ -204,7 +210,7 @@ A research-backed reference organization, agent-skill library, public-careers ev
 
 ## Repository map
 
-- `skills/` — fifteen installable agent-skill packages and their editable source folders.
+- `skills/` — 21 repository runtime skill packages and their editable source folders; five are bounded company adapters with public source pins.
 - `roles/` — 109 role folders with mission, accountable outputs, core skills, senior scope, interfaces, and public reference.
 - `organization/` — team topology, leveling, hiring, governance, and role-charter references.
 - `reports/` — long-form research and product/architecture documents.

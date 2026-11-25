@@ -16,7 +16,7 @@
   "scope": "public-only",
   "sourceSha256": "265029374ee837a7766e61a58b4bc98967f41f48c3f44b8f74d7ca3cdd8effb5",
   "inputHashes": {
-    "desktop-shell/src/shared/donnaBrain.ts": "4eebbc8d8676cb8ad3e4b55f23630b925556e4558d54cd41c8b63c756470ada8",
+    "desktop-shell/src/shared/donnaBrain.ts": "d2eb790c965d17062e30ecb4757d744a6a106a292f71d56eafda992c396770c6",
     "desktop-shell/src/shared/graphMemory.ts": "e5709abeb26ccfe7174dd4f73e3a870978a50fcc212ba1d0d641c96807cd6f01",
     "desktop-shell/src/shared/office.ts": "1f5b63c47a4aad80fe75c0acc4677fe6d33ea3c2ccde289eb60fc5c05dd4451a",
     "projects/research-memory-atlas/AI_MATHEMATICS.md": "2f503f42dfe844c7d8523219e8e157a0838d1a670f9430ebf1273677f654aebe",

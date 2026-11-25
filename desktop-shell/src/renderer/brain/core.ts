@@ -92,7 +92,10 @@ export function buildDonnaBrain(snapshot:OfficeSnapshot,companyId:string):DonnaB
   for(const o of offices)add('office',o.id,o.name,'Office definition; saved assistants are not running processes.',o.status,o.createdAt);
   for(const d of departments)add('department',d.id,d.name,'Department definition in the current company.',d.status,d.createdAt);
   for(const e of employees){const paths=e.skillPaths??[];const n=add('employee',e.id,e.name,e.role+'; '+e.kind+' definition. Skills: '+paths.join(', '),e.status,e.updatedAt);
-    for(const skill of [...new Set(paths)].slice(0,16)){const id='skill:'+fingerprint(skill);if(!index.has(id))add('skill',fingerprint(skill),skill.split('/').filter(Boolean).at(-2)??skill,'Assigned skill reference: '+text(skill,500)+'. The projection does not execute skill instructions.','assigned-reference',undefined,{skillPath:skill});link(n.id,id,'uses','Employee is assigned this skill reference');}}
+    // Match native staff and resource routing's twenty-skill ceiling. Preserve
+    // saved priority and report overflow if an invalid/legacy snapshot exceeds it.
+    const assigned=[...new Set(paths)];omitted+=Math.max(0,assigned.length-20);
+    for(const skill of assigned.slice(0,20)){const id='skill:'+fingerprint(skill);if(!index.has(id))add('skill',fingerprint(skill),skill.split('/').filter(Boolean).at(-2)??skill,'Assigned skill reference: '+text(skill,500)+'. The projection does not execute skill instructions.','assigned-reference',undefined,{skillPath:skill});link(n.id,id,'uses','Employee is assigned this skill reference');}}
   for(const o of offices)link('office:'+o.id,root.id,'part_of','Office in company');
   for(const d of departments){link('department:'+d.id,'office:'+d.officeId,'part_of','Department in office');if(d.parentDepartmentId)link('department:'+d.id,'department:'+d.parentDepartmentId,'part_of','Nested department');}
   for(const e of employees)link('employee:'+e.id,e.departmentId?'department:'+e.departmentId:e.officeId?'office:'+e.officeId:root.id,'part_of','Saved assignment');

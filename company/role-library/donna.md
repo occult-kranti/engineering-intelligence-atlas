@@ -70,3 +70,9 @@ Attach the task packet rather than pasting the whole portfolio. The machine-read
 - [OpenAI per-run spending controller](https://developers.openai.com/cookbook/articles/per_run_spending_controller_responses_api)
 
 References were checked on 2026-11-21. Read the relevant section for the current task, record the version/date, and apply it within its documented scope. These sources guide the design; they do not prove this repository passed a test or benchmark. Existing [backend research](../../project/BACKEND_RESEARCH.md) and [budget research](../../project/PROMPT_BUDGET_RESEARCH.md) distinguish implemented behavior from proposals.
+
+## Company skill routing
+
+Use [project-research-consolidation](../../skills/project-research-consolidation/SKILL.md) to reconcile current repository and artifact state before changing company setup. Use [round-based-skill-evolution](../../skills/round-based-skill-evolution/SKILL.md) for observed procedural defects. Retain [native graph memory](../../skills/graph-memory-research/SKILL.md), reuse existing workers, and distinguish a saved setup draft from executed assignments, tool availability and deployment.
+
+See the [runtime skill and source map](research-skill-map.json) for exact public revisions and availability limits. These assignments describe work; they do not grant executable capabilities.

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026-11-25-research-memory-design",
+  "catalogVersion": "2026-11-25-company-skill-integration",
   "source": {
     "path": "site-source/src/data/resources.ts",
     "fileSha256": "e1c4307f56b2374dfd23826bce554f1b8faa27e6482cfaf8563d071ee48a86a1",
@@ -56,6 +56,13 @@
       "compiledAt": "2026-11-25",
       "coverage": "15 original CSS/SVG styles with selectable previews, exact CSS export, static defaults and six optional gentle-motion treatments.",
       "evidenceNote": "All examples are illustrative approximations. DOM checks and primary-doc guidance are recorded separately from browser/device measurements; no fifteen-second or performance guarantee is claimed."
+    },
+    {
+      "name": "Company skill integration and pinned public sources",
+      "path": "company/role-library/research-skill-map.json",
+      "compiledAt": "2026-11-25",
+      "coverage": "Five runtime adapters for platform acquisition, project consolidation, skill evolution and Olympus evidence/archive work; existing native graph-memory routing retained.",
+      "evidenceNote": "Public source pins distinguish feature branches from default integration. Runtime templates are not personal-skill installation, tool availability, live execution or deployment receipts."
     }
   ],
   "resources": [
@@ -12021,6 +12028,179 @@
         ],
         "capabilityHints": []
       }
+    },
+    {
+      "domain": "Company research operations",
+      "name": "Agent Reach operations: published review workflow",
+      "type": "Pinned runtime workflow reference",
+      "level": "Practical",
+      "url": "https://github.com/occult-kranti/Agent-Reach/blob/328c834cf0c99144966608ebbd8b60bb3d99889d/skills/agent-reach-ops/SKILL.md",
+      "purpose": "Select platform actions with source provenance, bounded execution and truthful content-completeness receipts.",
+      "prereqs": "A scoped company task and current source and capability records",
+      "access": "Public repository source",
+      "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+      "caveat": "Source is on an audit branch. Installing a runtime adapter does not install Agent Reach or authorize browser-session import.",
+      "verified": "2026-11-25",
+      "id": "resource-c6808127ffa19f8c",
+      "kind": "documentation",
+      "skillIds": [
+        "agent-reach-ops"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "workflow source read; executable and live channels not run. Repository adapters summarize the workflow; they do not assert installation, live execution, merge or deployment."
+      },
+      "provenance": {
+        "version": "328c834cf0c99144966608ebbd8b60bb3d99889d",
+        "sourcePath": "company/role-library/research-skill-map.json",
+        "sourceRecordSha256": "8bde48011f6788e958c9d4b64c93ed11fcc588f3bbe1410e9e2a91712b04c833"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Company research operations",
+      "name": "Olympus evidence rounds: published operating contract",
+      "type": "Pinned runtime workflow reference",
+      "level": "Practical",
+      "url": "https://github.com/occult-kranti/india-corporate-intelligence/blob/b77ac58c2ad288acbd4db89c710239b0536e1a3b/.agents/skills/olympus-evidence-rounds/SKILL.md",
+      "purpose": "Run bounded case questions and independent source review while retaining actual worker, source and result provenance.",
+      "prereqs": "A scoped company task and current source and capability records",
+      "access": "Public repository source",
+      "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+      "caveat": "Source is on an archive feature branch. A round plan or source hash does not establish a completed investigation or factual-graph admission.",
+      "verified": "2026-11-25",
+      "id": "resource-1acc7c6ba53c9bae",
+      "kind": "documentation",
+      "skillIds": [
+        "olympus-evidence-rounds",
+        "round-based-skill-evolution"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "workflow source read; no investigative claims revalidated. Repository adapters summarize the workflow; they do not assert installation, live execution, merge or deployment."
+      },
+      "provenance": {
+        "version": "b77ac58c2ad288acbd4db89c710239b0536e1a3b",
+        "sourcePath": "company/role-library/research-skill-map.json",
+        "sourceRecordSha256": "2548dba0de16a182c5b14d8e2bdad4179ba2e41ff1d80249825a55fbcbd4c51d"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Company research operations",
+      "name": "Olympus project archive: published recovery contract",
+      "type": "Pinned runtime workflow reference",
+      "level": "Practical",
+      "url": "https://github.com/occult-kranti/india-corporate-intelligence/blob/b77ac58c2ad288acbd4db89c710239b0536e1a3b/.agents/skills/olympus-project-archive/SKILL.md",
+      "purpose": "Reconcile published branches and recovered artifacts with explicit coverage, redaction, privacy and release receipts.",
+      "prereqs": "A scoped company task and current source and capability records",
+      "access": "Public repository source",
+      "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+      "caveat": "A published unmerged branch is already pushed. Public source presence does not remove privacy, rights or factual-graph holds.",
+      "verified": "2026-11-25",
+      "id": "resource-06c91e64b848e575",
+      "kind": "documentation",
+      "skillIds": [
+        "olympus-project-archive",
+        "project-research-consolidation"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "workflow source read; no complete chat export claimed. Repository adapters summarize the workflow; they do not assert installation, live execution, merge or deployment."
+      },
+      "provenance": {
+        "version": "b77ac58c2ad288acbd4db89c710239b0536e1a3b",
+        "sourcePath": "company/role-library/research-skill-map.json",
+        "sourceRecordSha256": "97b8813a1911d0605cae05ab5aa70b0fa70eafc7fb9053aa8f48c58b0fa27029"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Company research operations",
+      "name": "Daftar skill revision evaluation protocol",
+      "type": "Pinned runtime workflow reference",
+      "level": "Practical",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/cb0f9fedbfab7169f55b2b9fb74edc8ff6e58d77/skills/agent-research-director/references/evaluation_protocol.md",
+      "purpose": "Freeze baseline and candidate tasks, evaluate raw outcomes independently and preserve inconclusive or rejected revisions.",
+      "prereqs": "A scoped company task and current source and capability records",
+      "access": "Public repository source",
+      "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+      "caveat": "Static validation and synthetic fixtures do not establish improved agent performance; the receipt gate never automatically promotes skills.",
+      "verified": "2026-11-25",
+      "id": "resource-3534bfede4f52a34",
+      "kind": "documentation",
+      "skillIds": [
+        "round-based-skill-evolution"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "existing published protocol inspected; no new agent-performance trial. Repository adapters summarize the workflow; they do not assert installation, live execution, merge or deployment."
+      },
+      "provenance": {
+        "version": "cb0f9fedbfab7169f55b2b9fb74edc8ff6e58d77",
+        "sourcePath": "company/role-library/research-skill-map.json",
+        "sourceRecordSha256": "eb0bc3af29e2b726b11c4dc193f49c9bff6c42165282c78ddfeb423157ee80f3"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Company research operations",
+      "name": "Daftar GitHub release role contract",
+      "type": "Pinned runtime workflow reference",
+      "level": "Practical",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/cb0f9fedbfab7169f55b2b9fb74edc8ff6e58d77/company/role-library/github-release.md",
+      "purpose": "Publish reviewed company artifacts against an expected repository head and verify source and deployment receipts separately.",
+      "prereqs": "A scoped company task and current source and capability records",
+      "access": "Public repository source",
+      "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+      "caveat": "This role contract grants no executable capability. Exact publication and live deployment require their own observed receipts.",
+      "verified": "2026-11-25",
+      "id": "resource-082a5e6c4cdf3b1a",
+      "kind": "documentation",
+      "skillIds": [
+        "project-research-consolidation",
+        "olympus-project-archive"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "existing published release contract read. Repository adapters summarize the workflow; they do not assert installation, live execution, merge or deployment."
+      },
+      "provenance": {
+        "version": "cb0f9fedbfab7169f55b2b9fb74edc8ff6e58d77",
+        "sourcePath": "company/role-library/research-skill-map.json",
+        "sourceRecordSha256": "6d38b4b81bd2eed2ccc02ef6dcebedbd0df5dc9ae987a55fbfe554db2dda224f"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [],
+        "capabilityHints": []
+      }
     }
   ],
   "routes": [
@@ -12352,7 +12532,7 @@
         "paired-research",
         "resonance-advisor"
       ],
-      "purpose": "Retrieve bounded public evidence, explain graph-memory mathematics, and preserve provenance through scoped cache and Obsidian workflows.",
+      "purpose": "Retrieve scoped public evidence and company operating memory for Donna; preserve source revisions, freshness, corrections and bounded native-brain setup workflows.",
       "resourceIds": [
         "resource-af2495a5610cf01f",
         "resource-fcd4f4d3620c3cb5",
@@ -12366,6 +12546,96 @@
         "projects/research-memory-atlas/README.md",
         "projects/research-memory-atlas/IMPLEMENTATION.md",
         "skills/graph-memory-research/SKILL.md"
+      ]
+    },
+    {
+      "skill": "agent-reach-ops",
+      "roleKeys": [
+        "research-knowledge",
+        "engineering",
+        "security"
+      ],
+      "purpose": "Task-specific platform retrieval after connector and public-web completeness checks.",
+      "resourceIds": [
+        "resource-c6808127ffa19f8c"
+      ],
+      "localReferences": [
+        "skills/agent-reach-ops/SKILL.md",
+        "skills/agent-reach-ops/references/source-pins.json",
+        "company/role-library/research-skill-map.json"
+      ]
+    },
+    {
+      "skill": "project-research-consolidation",
+      "roleKeys": [
+        "donna",
+        "knowledge",
+        "research-knowledge",
+        "directory-steward",
+        "github-release"
+      ],
+      "purpose": "Repository and artifact reconciliation before company setup or release.",
+      "resourceIds": [
+        "resource-06c91e64b848e575",
+        "resource-082a5e6c4cdf3b1a"
+      ],
+      "localReferences": [
+        "skills/project-research-consolidation/SKILL.md",
+        "skills/project-research-consolidation/references/source-pins.json",
+        "company/role-library/research-skill-map.json"
+      ]
+    },
+    {
+      "skill": "round-based-skill-evolution",
+      "roleKeys": [
+        "subdirector",
+        "qa",
+        "donna"
+      ],
+      "purpose": "Bounded procedural corrections and independent review after an observed failure.",
+      "resourceIds": [
+        "resource-1acc7c6ba53c9bae",
+        "resource-3534bfede4f52a34"
+      ],
+      "localReferences": [
+        "skills/round-based-skill-evolution/SKILL.md",
+        "skills/round-based-skill-evolution/references/source-pins.json",
+        "company/role-library/research-skill-map.json"
+      ]
+    },
+    {
+      "skill": "olympus-evidence-rounds",
+      "roleKeys": [
+        "research-knowledge",
+        "research-skeptic",
+        "subdirector"
+      ],
+      "purpose": "Olympus case work only; preserve source and graph-admission holds.",
+      "resourceIds": [
+        "resource-1acc7c6ba53c9bae"
+      ],
+      "localReferences": [
+        "skills/olympus-evidence-rounds/SKILL.md",
+        "skills/olympus-evidence-rounds/references/source-pins.json",
+        "company/role-library/research-skill-map.json"
+      ]
+    },
+    {
+      "skill": "olympus-project-archive",
+      "roleKeys": [
+        "knowledge",
+        "github-release",
+        "research-knowledge"
+      ],
+      "purpose": "Olympus archive and handoff work only; preserve held records and coverage limits.",
+      "resourceIds": [
+        "resource-06c91e64b848e575",
+        "resource-082a5e6c4cdf3b1a"
+      ],
+      "localReferences": [
+        "skills/olympus-project-archive/SKILL.md",
+        "skills/olympus-project-archive/references/source-pins.json",
+        "company/role-library/research-skill-map.json"
       ]
     }
   ]
