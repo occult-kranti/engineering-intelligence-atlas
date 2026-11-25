@@ -1,0 +1,88 @@
+{
+  "ok": true,
+  "suite": "backend-native-http-contention",
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-25T00:44:08.052Z",
+  "durationMs": 17450,
+  "nativeBinarySha256": "82589da9b59035d5c57b07ba2f75d6523b9ba43dc0c6a4f52e6eabfe2ca92239",
+  "runtime": {
+    "node": "v24.22.3",
+    "platform": "linux",
+    "architecture": "x64"
+  },
+  "load": {
+    "fullDaemonInstances": 1,
+    "independentNativeControllers": 2,
+    "maxConcurrentHttpPerController": 8,
+    "duplicateDeliveries": 64,
+    "employeesAdded": 256,
+    "totalEmployees": 284,
+    "httpRequests": 564,
+    "responseCounts": {
+      "200": 414,
+      "400": 2,
+      "401": 1,
+      "409": 24,
+      "429": 123
+    },
+    "sameEnvelopeRetries": 131,
+    "httpAttemptLatencyMs": {
+      "p50": 33.67,
+      "p95": 371.34,
+      "max": 583.09
+    }
+  },
+  "checks": [
+    {
+      "name": "A second full daemon cannot acquire the shared model registry",
+      "passed": true
+    },
+    {
+      "name": "The daemon and independent native client start paused and reject unauthenticated mutations",
+      "passed": true
+    },
+    {
+      "name": "Concurrent duplicate delivery commits one company across two independent native clients",
+      "passed": true,
+      "deliveries": 64
+    },
+    {
+      "name": "Competing department edits admit one current revision and reject fifteen stale revisions",
+      "passed": true
+    },
+    {
+      "name": "Persistent hires and role-definition edits preserve employee identity and placement",
+      "passed": true,
+      "addedEmployees": 256,
+      "hiringMs": 8386,
+      "hiresPerSecond": 30.53
+    },
+    {
+      "name": "Mismatched receipt replay and Donna removal preserve committed state",
+      "passed": true
+    },
+    {
+      "name": "Pause, edit, resume and retire preserve history and permanent coordinator ownership",
+      "passed": true
+    },
+    {
+      "name": "Concurrent reads of populated state return one consistent projection",
+      "passed": true,
+      "reads": 64,
+      "elapsedMs": 4130,
+      "readsPerSecond": 15.5
+    },
+    {
+      "name": "Restart retains native receipts, employee history, ownership and paused workers",
+      "passed": true
+    },
+    {
+      "name": "All runtime controllers close and disposable state is removed before publishing success",
+      "passed": true
+    }
+  ],
+  "providerCalls": 0,
+  "privateWorkspaceUsed": false,
+  "infrastructureProvisioned": false,
+  "scope": "Synthetic bounded functional load on this host; not a production capacity or multi-hour soak certification."
+}

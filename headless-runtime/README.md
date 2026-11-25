@@ -22,14 +22,40 @@ From the repository root, with Node 22 or newer and Rust 1.89 or newer:
 npm --prefix desktop-shell ci --ignore-scripts
 cargo build --release --locked --manifest-path native-core/Cargo.toml
 node desktop-shell/node_modules/typescript/bin/tsc -p headless-runtime/tsconfig.json
-node --test headless-runtime/test/*.test.mjs
+DAFTAR_REQUIRE_NATIVE_TESTS=1 node --test headless-runtime/test/*.test.mjs
+node scripts/backend-stress.mjs --employees=128 --requests=64
 ```
 
 The portable TypeScript build writes to `desktop-shell/dist`, where its existing
 provider dependencies resolve. Electron's installation scripts are skipped, and
 the runtime does not import Electron. The native integration test uses a temporary
 synthetic workspace and makes no provider calls. It is skipped explicitly if the
-native executable or compiled portable modules are missing.
+native executable or compiled portable modules are missing in optional local unit
+runs. `DAFTAR_REQUIRE_NATIVE_TESTS=1` makes a missing build an explicit failure;
+the required CI runtime job uses this setting.
+
+The stress runner creates a disposable workspace, one full daemon and a second
+independent native-backed HTTP command client. It verifies concurrent receipt
+replay, revision conflicts, bounded HTTP backpressure, permanent-assistant
+ownership, employee lifecycle and restart.
+`--employees=1..1024` and `--requests=16..256` select a bounded load;
+`--output=path` also saves the JSON receipt. Timings describe only that host and
+load. CI retains its receipt as `backend-stress-evidence`. The runner cannot skip
+missing builds and does not read existing workspaces or call model providers.
+
+Employee definitions can be changed through `update_employee`; office and
+department names through `rename_office` and `rename_department`. These owner
+commands retain the normal expected-state hash and persistent command receipt.
+They do not transfer employee scope or coordinator ownership. Paused employees
+can be edited; retired employees remain historical records.
+
+HTTP saturation (`BUSY`, 429) and native lock contention (`STATE_BUSY`, 409)
+include `Retry-After: 1`. Retry the **same** command id, expected state hash and
+body. A subsequent `CONFLICT` requires reading current state and reviewing the
+intended change; a mismatched receipt must never be silently recreated. Missing
+native executables and lock/read/write failures return 503 with conservative outcome
+guidance instead of appearing to be invalid user requests. Invalid HTTP startup
+configuration is rejected before background observers or cloud sync start.
 
 ## Configuration
 

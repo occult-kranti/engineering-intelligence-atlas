@@ -163,7 +163,7 @@ export interface OfficeSnapshot {
   authority?: OfficeAuthority;
 }
 export type OfficeAction = 'create_company' | 'select_company' | 'import_repositories' | 'import_github_account'
-  | 'create_office' | 'create_department' | 'set_department_parent' | 'hire_employee' | 'pause_employee' | 'resume_employee' | 'fire_employee'
+  | 'create_office' | 'rename_office' | 'rename_department' | 'update_employee' | 'create_department' | 'set_department_parent' | 'hire_employee' | 'pause_employee' | 'resume_employee' | 'fire_employee'
   | 'pause_company' | 'resume_company' | 'pause_office' | 'resume_office' | 'pause_department' | 'resume_department'
   | 'enqueue_job' | 'claim_job' | 'reserve_job' | 'finish_job' | 'complete_job' | 'heartbeat_job' | 'cancel_job' | 'pause_job' | 'resume_job'
   | 'create_schedule' | 'pause_schedule' | 'resume_schedule' | 'tick_schedules'

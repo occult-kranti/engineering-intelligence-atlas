@@ -1,0 +1,49 @@
+# Simulation data for the Atech `icm40608` module, read by `atech.sim`
+# (`atech sim-assets`). Frames and every field: src/atech/docs/sim_assets.md.
+# Asset frame: metres, origin at the centre of the bottom (mounting) face,
+# +z out of the top face, +x along the long side.
+#
+# Box sizes are the bounds of Atech's production CAD (atechdotdev/atech-module-renders
+# v1.5, glb_plain/orientation-sensor.glb, converted to +z up). The CAD footprint is centred
+# 0.15 mm toward -x; the boxes ignore that. `atech sim-assets --meshes/--fetch`
+# uses that CAD for the visuals. Atech has not published masses: the mass, colours,
+# connector, physics material and device frames are guesses, marked PLACEHOLDER.
+#
+# Sensor: TDK ICM-40608 (or ST LSM6DSOX) 6-axis IMU.
+schema: 1
+
+size_m: [0.0195, 0.0195, 0.00954]  # CAD: atech-module-renders v1.5 glb_plain/orientation-sensor.glb bounds
+mass_kg: 0.007                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  chip: [0.18, 0.18, 0.18, 1]
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  # Mates with the board's port frame: centre of the bottom face.
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+sensor:
+  type: imu
+  chip: ICM-40608                 # catalog: or LSM6DSOX at 0x6A, auto-detected by the driver
+  frame:                          # chip centre; axes = module axes   # PLACEHOLDER: replace with Atech module datasheet
+    pos_m: [0, 0, 0.00477]
+    rpy_deg: [0, 0, 0]
+  accel_range_g: 2                # catalog: +-2 g
+  gyro_range_dps: 250             # catalog: +-250 deg/s
+  rate_hz: 100                    # catalog: the driver polls at 100 Hz
+  shake_threshold_g: 1.8          # catalog: wasShaken() spike threshold (default)
+
+semantic:
+  # Wikidata Q-codes (SimReady SL.003), checked on wikidata.org.
+  wikidata_qcode: [Q941680, Q192940, Q483400, Q167676]   # inertial measurement unit, accelerometer, gyroscope, sensor
+  class: [imu, sensor]
+
+# Fields above that are guesses, not Atech data (exported as atech:placeholders).
+placeholders: [mass_kg, colors, connector, physics_material, sensor.frame]

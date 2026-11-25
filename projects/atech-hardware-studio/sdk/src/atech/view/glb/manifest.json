@@ -1,0 +1,206 @@
+{
+ "distance-sensor": {
+  "size_mm": [
+   19.5,
+   9.54,
+   19.5
+  ],
+  "faces": 9080,
+  "raw_kb": 294,
+  "kb": 58,
+  "plain_kb": 177,
+  "nodes": 6
+ },
+ "button": {
+  "size_mm": [
+   19.5,
+   10.04,
+   19.5
+  ],
+  "faces": 9540,
+  "raw_kb": 333,
+  "kb": 65,
+  "plain_kb": 203,
+  "nodes": 7
+ },
+ "knob": {
+  "size_mm": [
+   39.5,
+   38.14,
+   39.5
+  ],
+  "faces": 146528,
+  "raw_kb": 4665,
+  "kb": 644,
+  "plain_kb": 2906,
+  "nodes": 21
+ },
+ "screen": {
+  "size_mm": [
+   39.5,
+   9.64,
+   19.5
+  ],
+  "faces": 11040,
+  "raw_kb": 451,
+  "kb": 194,
+  "plain_kb": 370,
+  "nodes": 18
+ },
+ "led-grid": {
+  "size_mm": [
+   19.5,
+   9.54,
+   19.5
+  ],
+  "faces": 25898,
+  "raw_kb": 942,
+  "kb": 155,
+  "plain_kb": 570,
+  "nodes": 15
+ },
+ "speaker": {
+  "size_mm": [
+   40.0,
+   20.2,
+   40.0
+  ],
+  "faces": 43176,
+  "raw_kb": 1325,
+  "kb": 232,
+  "plain_kb": 788,
+  "nodes": 4
+ },
+ "microphone": {
+  "size_mm": [
+   39.5,
+   10.84,
+   19.5
+  ],
+  "faces": 30714,
+  "raw_kb": 912,
+  "kb": 151,
+  "plain_kb": 524,
+  "nodes": 4
+ },
+ "temp-sensor": {
+  "size_mm": [
+   19.5,
+   9.54,
+   19.5
+  ],
+  "faces": 10132,
+  "raw_kb": 348,
+  "kb": 65,
+  "plain_kb": 210,
+  "nodes": 7
+ },
+ "orientation-sensor": {
+  "size_mm": [
+   19.5,
+   9.54,
+   19.5
+  ],
+  "faces": 7824,
+  "raw_kb": 270,
+  "kb": 51,
+  "plain_kb": 163,
+  "nodes": 6
+ },
+ "usb-c": {
+  "size_mm": [
+   19.5,
+   10.19,
+   19.75
+  ],
+  "faces": 8174,
+  "raw_kb": 293,
+  "kb": 57,
+  "plain_kb": 178,
+  "nodes": 7
+ },
+ "dc-motor": {
+  "size_mm": [
+   19.5,
+   19.14,
+   48.3
+  ],
+  "faces": 34704,
+  "raw_kb": 1025,
+  "kb": 138,
+  "plain_kb": 593,
+  "nodes": 5
+ },
+ "frame-2": {
+  "size_mm": [
+   59.98,
+   7.0,
+   119.97
+  ],
+  "faces": 208512,
+  "raw_kb": 9751,
+  "kb": 778,
+  "plain_kb": 4579,
+  "nodes": 6
+ },
+ "big-screen": {
+  "size_mm": [
+   39.5,
+   9.5,
+   59.72
+  ],
+  "faces": 2828,
+  "raw_kb": 168,
+  "kb": 94,
+  "plain_kb": 149,
+  "nodes": 20
+ },
+ "camera": {
+  "size_mm": [
+   39.5,
+   14.35,
+   19.72
+  ],
+  "faces": 3784,
+  "raw_kb": 151,
+  "kb": 30,
+  "plain_kb": 92,
+  "nodes": 6
+ },
+ "micro-sd": {
+  "size_mm": [
+   39.5,
+   9.52,
+   19.72
+  ],
+  "faces": 100152,
+  "raw_kb": 3261,
+  "kb": 471,
+  "plain_kb": 1904,
+  "nodes": 7
+ },
+ "motherboard-10port": {
+  "size_mm": [
+   40.0,
+   7.11,
+   60.0
+  ],
+  "faces": 272244,
+  "raw_kb": 10774,
+  "kb": 1009,
+  "plain_kb": 6500,
+  "nodes": 4
+ },
+ "co2-sensor": {
+  "size_mm": [
+   19.5,
+   10.44,
+   19.72
+  ],
+  "faces": 21416,
+  "raw_kb": 762,
+  "kb": 124,
+  "plain_kb": 467,
+  "nodes": 7
+ }
+}

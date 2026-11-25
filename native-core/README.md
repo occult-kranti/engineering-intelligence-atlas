@@ -70,11 +70,29 @@ GitHub account discovery runs in the application or MCP adapter. Public metadata
 
 The initial worker is bounded to one concurrent provider job. It runs while the desktop is open and the owner enables it, or when the owner explicitly runs the queue. Scheduled records survive restart; they are not an operating-system background service. A schedule tick enqueues at most 100 due schedules, enqueues one missed occurrence per schedule, and advances recurring schedules from the current time. Invalid schedules are disabled with an event while other due schedules continue.
 
+## Staff definitions and scope ownership
+
+Saved employees are persistent definitions. They do not start a provider process when created, edited, paused or resumed. Donna remains the single global assistant; each company, office and department retains its own same-scope permanent assistant. Snapshot validation rejects a fired/scoped Donna, a specialist substituted as an assistant, and assistants assigned to another scope. A paused assistant remains the owner of its saved scope.
+
+| Action | Input and resulting behavior |
+| --- | --- |
+| `update_employee` | `employeeId` and at least one of `name` (150 UTF-8 bytes), `role` (200 bytes), `skillPaths` (up to 20 distinct `skills/.../SKILL.md` references). Active and paused definitions can be edited. |
+| `rename_office` | `officeId`, `name` (150 bytes). Keeps the office ID, staff, assistant, parent company, layouts, jobs and grants. |
+| `rename_department` | `departmentId`, `name` (150 bytes). Keeps the department ID, parent, staff, assistant, layouts, jobs and grants. |
+| `pause_employee` / `resume_employee` | Retains the definition, grants, history and artifacts; resuming the employee does not implicitly resume its paused jobs. |
+| `fire_employee` | Specialists only. Preserves the definition as terminal history and cancels queued, budget-waiting, running and paused jobs while retaining reserved/observed cost for settlement. Permanent assistants must be paused instead. |
+
+Definition edits reject identity, scope, lifecycle, assignment-key and other unknown fields. A role title or skill reference never grants tool access. Fired definitions remain immutable; rehire creates a new definition. The native authority boundary requires current scoped `team.manage` for delegated edits and renames, and records them in the existing control ledger. Remote versions use the existing receipt and expected-state-hash protocol, so identical retries are no-ops and reused IDs with different payloads fail.
+
+Department removal is a retained lifecycle pause rather than destructive deletion: use `pause_department` and `resume_department`. Reparenting remains an explicit `set_department_parent` command and does not move employees or extend permissions. Renaming does not silently change user-authored room or assistant labels.
+
 ## Shared application budget
 
 The default application policy is review mode, a $10 cumulative hard cap, an 80% warning threshold and no global token cap. This is application usage accounting, separate from any development-session spending allowance. The owner may configure a USD cap up to $1,000,000, an optional global token cap, warning percentage and dispatch pause. Historical observed/estimated usage is never erased when a policy changes. Existing local-project runs from before shared admission was installed are not retroactively inserted into this ledger.
 
 `snapshot.budget` derives observed, estimated and currently reserved USD and committed tokens from the same durable job and external-attempt ledger. Warnings do not stop work. A hard cap blocks new requests before dispatch. A lower cap or dispatch pause does not cancel an already reserved call; that call can finish, save its artifact and settle its usage. Unknown usage retains a conservative estimate. Per-attempt transport deadlines and explicit owner cancellation are separate controls.
+
+Live `check_worker_authority` checks distinguish admission from continuing a valid running reservation. An already reserved, unsettled call does not reapply its own committed spend to global admission, including when that reservation exactly fills the cap. Current grants, employee/scope lifecycle, service contracts, selected knowledge grants and the worker lease remain enforced. An unreserved claim cannot use this exception.
 
 Managed calls outside the office queue use the worker-only actions below. This includes legacy project runs and provider-backed chat if the adapter supports it. An office request already covered by `reserve_job` must not also receive an external reservation.
 

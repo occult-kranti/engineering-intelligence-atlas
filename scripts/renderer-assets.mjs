@@ -181,7 +181,7 @@ export function rewriteHtml(html, names, roots) {
   return html;
 }
 
-// Write assets and prune only previously generated freeflow subtree + legacy root files.
+// Write assets and prune only owned generated module subtrees + legacy root files.
 export function writeAssets(destDir, files, { prune = () => false } = {}) {
   mkdirSync(destDir, { recursive: true });
   const prior = [];
@@ -189,7 +189,7 @@ export function writeAssets(destDir, files, { prune = () => false } = {}) {
     for (const e of readdirSync(dir, { withFileTypes: true })) {
       const full = join(dir, e.name);
       const rel = posix(relative(destDir, full));
-      if (e.isDirectory()) { if (rel === 'freeflow') rmSync(full, { recursive: true, force: true }); continue; }
+      if (e.isDirectory()) { if (rel === 'freeflow' || rel === 'resource-library') rmSync(full, { recursive: true, force: true }); continue; }
       if (prune(rel)) prior.push(full);
     }
   };

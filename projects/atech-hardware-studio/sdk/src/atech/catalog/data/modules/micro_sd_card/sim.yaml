@@ -1,0 +1,29 @@
+# Simulation data for the Atech `micro_sd_card` module, read by `atech.sim`
+# (`atech sim-assets`). Frames and every field: src/atech/docs/sim_assets.md. Asset
+# frame: metres, origin at the centre of the bottom face of the cell over its port, +z
+# out of the top face, +y toward the outer face.
+#
+# microSD card on SPI, two adjacent ports (atech_docs micro_sd_card.md). Visual: Atech's CAD.
+schema: 1
+
+size_m: [0.0395, 0.0197, 0.00952]  # CAD: atech-module-renders v1.7 glb_plain/micro-sd.glb bounds
+mass_kg: 0.009                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+semantic:
+  # Wikidata Q-codes (SimReady SL.003), checked on wikidata.org (2026-11-01).
+  wikidata_qcode: [Q114878317, Q466977]   # SD card slot, SD card
+  class: [storage]
+
+placeholders: [mass_kg, colors, connector, physics_material]

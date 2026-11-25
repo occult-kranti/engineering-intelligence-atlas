@@ -1,3 +1,4 @@
+// Generated from company/role-library/resource-catalog.json by scripts/resource-router.mjs --export-atlas.
 import type { Resource } from './types';
 
 export const RESOURCES: Resource[] = [
@@ -3848,5 +3849,96 @@ export const RESOURCES: Resource[] = [
     "license": "Commercial book",
     "caveat": "Use with domain-specific methodology and source-verification practice.",
     "verified": "2026-11-20"
+  },
+  {
+    "domain": "AI instruction optimization",
+    "name": "SkillOpt — pinned source",
+    "type": "Repository/tool",
+    "level": "Advanced/reference",
+    "url": "https://github.com/microsoft/SkillOpt",
+    "purpose": "Evaluate bounded instruction edits using separated trajectory analysis and a frozen evaluation gate.",
+    "prereqs": "Task-specific review of requirements and access",
+    "access": "Public reference; execution costs vary",
+    "license": "MIT in reviewed upstream source; provider usage is separate",
+    "caveat": "Do not equate structural tests or a selected prompt change with reproduced benchmark gains.",
+    "verified": "2026-11-24"
+  },
+  {
+    "domain": "AI instruction optimization",
+    "name": "SkillOpt — arXiv paper v2",
+    "type": "Paper",
+    "level": "Advanced/reference",
+    "url": "https://arxiv.org/abs/2605.23904v2",
+    "purpose": "Review the authors’ instruction-optimization method and evaluate its applicability to an agent task.",
+    "prereqs": "Task-specific review of requirements and access",
+    "access": "Public reference; execution costs vary",
+    "license": "Read via arXiv; no redistribution right inferred",
+    "caveat": "Performance comparisons are author-reported; this review does not reproduce them.",
+    "verified": "2026-11-24"
+  },
+  {
+    "domain": "Hardware prototyping",
+    "name": "Atech SDK 1.0.0a12",
+    "type": "SDK package",
+    "level": "Advanced/reference",
+    "url": "https://pypi.org/project/atech/1.0.0a12/",
+    "purpose": "Validate Atech project manifests and prepare ESP32 module firmware source in an isolated local project.",
+    "prereqs": "Task-specific review of requirements and access",
+    "access": "Public reference; execution costs vary",
+    "license": "MIT declared in package metadata; top-level LICENSE absent from reviewed source distribution",
+    "caveat": "SDK source and offline generation are reviewed; firmware compilation, flashing and hardware behavior remain untested.",
+    "verified": "2026-11-24"
+  },
+  {
+    "domain": "3D scene generation",
+    "name": "Qwen3.5-4B-3D-Coder — model card",
+    "type": "Model card",
+    "level": "Advanced/reference",
+    "url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+    "purpose": "Assess a specialized local model that emits Three.js scene code, with source and runtime constraints retained.",
+    "prereqs": "Task-specific review of requirements and access",
+    "access": "Public reference; execution costs vary",
+    "license": "Model repository declares Apache-2.0; dataset license is separate",
+    "caveat": "Early scene-generation model; no local inference was performed. Author development examples are not a uniform independent benchmark.",
+    "verified": "2026-11-24"
+  },
+  {
+    "domain": "3D scene generation",
+    "name": "Qwen3.5-4B-3D-Coder — technical report",
+    "type": "Paper",
+    "level": "Advanced/reference",
+    "url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder/resolve/4b9f05f3a0382725b679c5e32a338b88acaf0064/Qwen3.5-4B-3D-Coder_Technical_Report.pdf",
+    "purpose": "Read the exploratory synthetic-data specialization study and its scene-selection limitations.",
+    "prereqs": "Task-specific review of requirements and access",
+    "access": "Public reference; execution costs vary",
+    "license": "No separate report license identified in inspected text; model license must not be assumed to license this paper",
+    "caveat": "Eight development prompts used unequal stopping rules: 8/8 accepted after 18 calls, 2/8 first-attempt unedited; no independent benchmark.",
+    "verified": "2026-11-24"
+  },
+  {
+    "domain": "Real-time 3D",
+    "name": "Three.js Manual",
+    "type": "Official documentation",
+    "level": "Advanced/reference",
+    "url": "https://threejs.org/manual/",
+    "purpose": "Plan a browser scene with cameras, materials, input, rendering and performance controls.",
+    "prereqs": "Task-specific review of requirements and access",
+    "access": "Public reference; execution costs vary",
+    "license": "Consult the versioned Three.js documentation and repository license",
+    "caveat": "Documentation reference only; validate the exact installed Three.js version and target laptop.",
+    "verified": "2026-11-24"
+  },
+  {
+    "domain": "LLM serving",
+    "name": "Ollama — importing a model",
+    "type": "Official documentation",
+    "level": "Advanced/reference",
+    "url": "https://docs.ollama.com/import",
+    "purpose": "Check the documented import route and format requirements before proposing a local model installation.",
+    "prereqs": "Task-specific review of requirements and access",
+    "access": "Public reference; execution costs vary",
+    "license": "Documentation access does not grant model-weight rights",
+    "caveat": "A referenced model is not automatically compatible, installed, or safe to run; verify format and model-specific license.",
+    "verified": "2026-11-24"
   }
 ];

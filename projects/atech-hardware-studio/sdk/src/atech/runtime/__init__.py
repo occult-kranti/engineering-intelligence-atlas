@@ -1,0 +1,47 @@
+"""Runtime serial client for a flashed Atech board.
+
+Talks the line-delimited JSON envelope that the firmware's ``AtechSerial``
+class produces. Use :class:`Board.connect` to auto-discover a USB-attached
+board and stream events / send actions.
+"""
+
+from atech.runtime.board import (
+    ActionError,
+    ActionRejected,
+    Board,
+    NoAcknowledgement,
+    NoBoardFoundError,
+)
+from atech.runtime.models import Action, BoardInfo, Event, PortInfo
+from atech.runtime.transport import (
+    MockTransport,
+    PortUnavailableError,
+    SerialPortInfo,
+    SerialTransport,
+    Transport,
+    all_ports,
+    discover_ports,
+    decode_event,
+    encode_action,
+)
+
+__all__ = [
+    "Action",
+    "ActionError",
+    "ActionRejected",
+    "Board",
+    "BoardInfo",
+    "Event",
+    "MockTransport",
+    "NoAcknowledgement",
+    "NoBoardFoundError",
+    "PortInfo",
+    "PortUnavailableError",
+    "SerialPortInfo",
+    "SerialTransport",
+    "Transport",
+    "all_ports",
+    "decode_event",
+    "discover_ports",
+    "encode_action",
+]

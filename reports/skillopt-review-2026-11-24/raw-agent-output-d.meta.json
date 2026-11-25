@@ -1,0 +1,13 @@
+{
+  "slot": "d",
+  "variant": "baseline",
+  "repetition": 2,
+  "captured_at": "2026-11-24T23:09:27.492923+00:00",
+  "source_agent": "/root/skills_evaluation/office_briefs_d",
+  "raw_output_sha256": "8475a4c5d16beba1b38cb5f68e33bab448849079bee12c862e326cc67dd6cb37",
+  "context_bundled": true,
+  "fresh_context": true,
+  "environment_verified": false,
+  "external_provider_calls_requested": 0,
+  "platform_usage": null
+}

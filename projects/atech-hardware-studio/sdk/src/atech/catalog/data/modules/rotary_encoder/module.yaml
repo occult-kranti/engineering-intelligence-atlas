@@ -1,0 +1,93 @@
+id: rotary_encoder
+name: "Rotary Encoder Knob"
+display_name: "Knob"
+category: input
+interface: gpio
+size: 2
+description: |
+  18-step quadrature rotary encoder with a push-button switch and a 12-LED
+  NeoPixel indicator ring. Spans TWO adjacent ports — placement requires an
+  adjacent pair like [1, 2] or [3, 4] on the 8-port board. Uses interrupts
+  for missed-step-free decoding at any speed, plus a background FreeRTOS
+  task that renders the ring indicator in ~1ms regardless of loop timing.
+
+driver:
+  header: rotary_encoder.h
+  source: rotary_encoder.cpp
+  class_name: RotaryEncoder
+
+templates:
+  # Primary port supplies CLK + DT; secondary port supplies SW + ring data.
+  globals: |
+    RotaryEncoder {{ instance }}({{ pin_a }}, {{ pin_b }}, {{ pin_a2 }}, {{ pin_b2 }});
+  setup: |
+    {{ instance }}.begin();
+  loop: |
+    {{ instance }}.update();
+    // Events are derived from getPosition()/isPressed(), never from wasRotatedCW()/
+    // wasRotatedCCW()/wasPressed(): those consume the edge and belong to the user's code.
+    static long {{ instance }}_evPos = 0;
+    if ((long){{ instance }}.getPosition() != {{ instance }}_evPos) {
+      {{ instance }}_evPos = (long){{ instance }}.getPosition();
+      Serial.printf("{\"type\":\"event\",\"payload\":{\"event_type\":\"sensor\",\"key\":\"{{ instance }}\",\"value\":%ld,\"source\":\"rotary_encoder\"}}\n", {{ instance }}_evPos);
+    }
+    static bool {{ instance }}_evDown = false;
+    static unsigned long {{ instance }}_evAt = 0;
+    if ({{ instance }}.isPressed() != {{ instance }}_evDown && millis() - {{ instance }}_evAt >= 20) {
+      {{ instance }}_evDown = !{{ instance }}_evDown;
+      {{ instance }}_evAt = millis();
+      if ({{ instance }}_evDown) {
+        Serial.println("{\"type\":\"event\",\"payload\":{\"event_type\":\"button\",\"key\":\"{{ instance }}_btn\",\"value\":1,\"source\":\"rotary_encoder\"}}");
+      }
+    }
+
+events:
+  - key: "{{ instance }}"
+    type: sensor
+    value_type: int
+    description: "Cumulative knob position (acceleration applied). Emitted on every detent of rotation."
+  - key: "{{ instance }}_btn"
+    type: button
+    value_type: int
+    description: "Emitted with value=1 each time the knob's push-button is pressed."
+
+actions: []
+
+# Pinned: a new library release changes the firmware with no change here (Adafruit
+# ST7735 1.12.0 + GFX 1.13.0, Oct 2026: the TFT drew nothing on esp32sim). Bump on purpose,
+# after `ATECH_COMPILE_TEST=1 pytest -m integration` and a real board.
+lib_deps:
+  - "adafruit/Adafruit NeoPixel@1.15.5"
+  - "madhephaestus/ESP32Encoder@0.11.7"   # hardware pulse counter: at most 4 knobs
+
+usage: |
+  // Public API of RotaryEncoder — the instance is `{{ instance }}`.
+  // Position decoding is interrupt-driven and missed-step-free; call update()
+  // each loop only for button edge detection.
+  {{ instance }}.update();
+
+  if ({{ instance }}.wasRotatedCW())  { /* CW edge since last call */ }
+  if ({{ instance }}.wasRotatedCCW()) { /* CCW edge since last call */ }
+  int32_t pos = {{ instance }}.getPosition();        // accelerated counter
+  {{ instance }}.resetPosition();                    // zero it
+  {{ instance }}.setAcceleration(true, 5);           // off, or multiplier 1..N
+
+  if ({{ instance }}.wasPressed()) { /* button down edge */ }
+  if ({{ instance }}.isPressed())  { /* polled level */ }
+
+  // Taps on the knob's push: call getGesture() every loop, in one place. Each
+  // gesture once, else GESTURE_NONE. A single TAP arrives 400 ms after release.
+  AtechGesture g = {{ instance }}.getGesture();
+  if (g == GESTURE_DOUBLE_TAP) { /* two quick pushes */ }
+  // also GESTURE_TAP, GESTURE_TRIPLE_TAP, GESTURE_LONG_PRESS (700 ms, while held)
+  {{ instance }}.setGestureTiming(400, 700);         // multi-tap window, long-press time (ms)
+
+  // Optional indicator ring (12 NeoPixels). Position auto-follows the knob.
+  {{ instance }}.setRingColor(255, 0, 0);            // ring colour
+  {{ instance }}.setRingBrightness(80);              // 0..255 (Adafruit scale)
+  {{ instance }}.enableRing(false);                  // turn ring off entirely
+  {{ instance }}.setRingPosition(3.5);               // override knob coupling
+
+feedback:
+  - {label: "{{ instance }}", value: "{{ instance }}.getPosition()", kind: level, range: [0, 24], person: true}
+  - {label: "{{ instance }} btn", value: "{{ instance }}.isPressed()", kind: press, person: true}

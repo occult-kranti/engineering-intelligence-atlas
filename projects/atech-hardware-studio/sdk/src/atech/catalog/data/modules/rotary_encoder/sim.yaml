@@ -1,0 +1,59 @@
+# Simulation data for the Atech `rotary_encoder` module, read by `atech.sim`
+# (`atech sim-assets`). Frames and every field: src/atech/docs/sim_assets.md.
+# Asset frame: metres, origin at the centre of the bottom (mounting) face,
+# +z out of the top face, +x along the long side.
+#
+# Box sizes are the bounds of Atech's production CAD (atechdotdev/atech-module-renders
+# v1.5, glb_plain/knob.glb, converted to +z up). The CAD footprint is centred
+# 0.15 mm toward -x; the boxes ignore that. `atech sim-assets --meshes/--fetch`
+# uses that CAD for the visuals. Atech has not published masses: the mass, colours,
+# connector, physics material and device frames are guesses, marked PLACEHOLDER.
+#
+# Input: 18-step rotary encoder with push switch and a 12-LED ring. Spans two ports.
+schema: 1
+
+size_m: [0.0395, 0.0195, 0.01]  # CAD: atech-module-renders v1.5 glb_plain/knob.glb bounds
+mass_kg: 0.02                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  black: [0.03, 0.03, 0.03, 1]
+  white: [0.92, 0.92, 0.9, 1]
+
+parts:  # CAD: atech-module-renders v1.5 bounds, one box per region
+  # CAD: the base runs on past the footprint toward +y (the outer face); the knob sits on it.
+  - {name: base_overhang, size_m: [0.0395, 0.0201, 0.010], pos_m: [0, 0.0198, 0.005], color: body}
+  - {name: knob, size_m: [0.012, 0.012, 0.02814], pos_m: [-0.00015, 0.0101, 0.02407], color: black}
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  # Mates with the board's port frame: centre of the bottom face.
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+sensor:
+  type: rotary_encoder
+  frame:                          # knob axis = +z   # PLACEHOLDER: replace with Atech module datasheet
+    pos_m: [-0.00015, 0.0101, 0.03814]
+    rpy_deg: [0, 0, 0]
+  steps_per_rev: 18               # catalog: 18-step quadrature encoder
+  has_push_switch: true           # catalog
+
+actuator:
+  type: led_ring
+  frame:   # PLACEHOLDER: replace with Atech module datasheet
+    pos_m: [-0.00015, 0.01005, 0.00498]
+    rpy_deg: [0, 0, 0]
+  led_count: 12                   # catalog: 12-LED NeoPixel ring
+
+semantic:
+  # Wikidata Q-codes (SimReady SL.003), checked on wikidata.org.
+  wikidata_qcode: [Q53699]   # rotary encoder
+  class: [rotary_encoder, input]
+
+# Fields above that are guesses, not Atech data (exported as atech:placeholders).
+placeholders: [mass_kg, colors, connector, physics_material, sensor.frame, actuator.frame]

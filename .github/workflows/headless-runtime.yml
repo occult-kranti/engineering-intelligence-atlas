@@ -13,6 +13,7 @@ jobs:
     timeout-minutes: 15
     env:
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      DAFTAR_REQUIRE_NATIVE_TESTS: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -34,6 +35,22 @@ jobs:
         run: |
           node --test headless-runtime/test/*.test.mjs tools/daftar-runtime-mcp.test.mjs
           node scripts/smoke-runtime-mcp.mjs
+      - name: Verify resource routing, packaged skills and shared assets
+        run: |
+          node --test scripts/resource-router.test.mjs scripts/renderer-assets.test.mjs scripts/static-build-lib.test.mjs desktop-shell/tests/resource-library.test.mjs
+          python3 scripts/sync-resource-projections.py
+          node scripts/resource-router.mjs --check-atlas
+          python3 scripts/sync-skills.py
+          python3 scripts/sync-company-studios.py --check --target hosted
+      - name: Stress native receipts, revision conflicts and employee ownership
+        run: node scripts/backend-stress.mjs --employees=128 --requests=64 --output=artifacts/backend-stress.json
+      - name: Retain measured backend stress evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-stress-evidence
+          path: artifacts/backend-stress.json
+          if-no-files-found: warn
 
   container:
     runs-on: ubuntu-latest

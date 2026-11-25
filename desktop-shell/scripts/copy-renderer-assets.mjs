@@ -2,16 +2,18 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { copyCompanyStudio } from '../../scripts/company-studio-assets.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const src = path.join(here, '..', 'src', 'renderer');
 const dest = path.join(here, '..', 'dist', 'renderer');
 
 fs.mkdirSync(dest, { recursive: true });
-for (const name of ['chrome.html', 'chrome.css', 'studio-tokens.css', 'freeflow.css']) {
+for (const name of ['chrome.html', 'chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'hardware-workbench.css']) {
   const from = path.join(src, name);
   // freeflow.css is optional so the build works before it is added.
   if (name === 'freeflow.css' && !fs.existsSync(from)) continue;
   fs.copyFileSync(from, path.join(dest, name));
 }
+copyCompanyStudio(path.resolve(here, '../..'), path.join(dest, 'studios/threejs'));
 console.log(`Copied renderer assets to ${dest}`);

@@ -45,6 +45,17 @@ test('roadmap changes use only the native state command',async()=>{
 test('office command cannot override the action or choose paths/commands',async()=>{
   const f=fixture();await assert.rejects(f.handler('office_command',{action:'hire_employee',payload:{action:'evil'}}));await assert.rejects(f.handler('office_command',{action:'shell',payload:{}}));await f.handler('office_command',{action:'pause_employee',payload:{employeeId:'e'}});assert.equal(f.calls[0].payload.action,'pause_employee');
 });
+test('employee definition and organization rename commands cross MCP without losing native validation',async()=>{
+  const definition=TOOL_DEFINITIONS.find(tool=>tool.name==='office_command');
+  const commands=[{action:'update_employee',payload:{employeeId:'employee-a',role:'Backend reviewer',skillPaths:[]}},
+    {action:'rename_department',payload:{departmentId:'department-a',name:'Backend engineering'}},
+    {action:'rename_office',payload:{officeId:'office-a',name:'Engineering'}}];
+  const f=fixture();
+  for(const command of commands){assert.ok(definition.inputSchema.properties.action.enum.includes(command.action));await f.handler('office_command',command);}
+  assert.deepEqual(f.calls.map(row=>row.payload),commands.map(({action,payload})=>({...payload,action})));
+  const rejected=createToolHandler({nativeCall:async()=>({ok:false,code:'AUTHORITY_DENIED',error:'Employee lacks team.manage in this scope'})});
+  await assert.rejects(rejected('office_command',commands[0]),error=>error.code==='AUTHORITY_DENIED');
+});
 test('set_company_parent is advertised and forwarded unchanged; null and missing stay distinct',async()=>{
   const def=TOOL_DEFINITIONS.find(t=>t.name==='office_command');
   assert.ok(def.inputSchema.properties.action.enum.includes('set_company_parent'));

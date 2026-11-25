@@ -1,5 +1,7 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { installDom, type FreeflowDom } from './fixtures/freeflow-dom.js';
 import { DEFAULT_CAMERA, worldToScreen, type Camera } from '../src/renderer/freeflow/camera.js';
 import { CANVAS_LAYOUT_KEY, mountCanvasWorkspace, type CanvasWorkspace, type CanvasWorkspacePanel } from '../src/renderer/freeflow/canvas-workspace.js';
@@ -75,6 +77,35 @@ describe('one live DOM canvas workspace', () => {
     expect(m.host.querySelector('.canvas-search-empty')!.textContent).toContain('No surfaces match');
     expect(m.host.querySelector('img')).toBeNull();
     dom.key(search, 'Escape'); expect((m.host.querySelector('.canvas-palette') as HTMLElement).hidden).toBe(true);
+  });
+
+  it('keeps lock and storage notices passive beneath the surface finder without discarding live feedback', () => {
+    const style = document.createElement('style');
+    style.textContent = ['freeflow.css', 'canvas-craft.css'].map(name => readFileSync(path.resolve(__dirname, '../src/renderer', name), 'utf8')).join('\n');
+    document.head.append(style); document.documentElement.dataset.theme = 'blueprint'; document.body.classList.add('endless-canvas');
+    const blocked = { getItem() { return null; }, setItem() { throw Error('quota'); } } as unknown as Storage;
+    for (const storage of [null, blocked]) {
+      const m = mount({ storage });
+      if (!storage) {
+        m.control('donna', '.canvas-panel-pin').click();
+        dom.key(m.control('donna', '.canvas-panel-grip'), 'ArrowRight');
+      } else m.workspace.open('models', { frame: false });
+      const status = m.host.querySelector('.canvas-layout-status') as HTMLElement;
+      const feedback = status.textContent;
+      expect(feedback).toContain(storage ? 'this session' : 'Unlock this surface');
+      (m.host.querySelector('.canvas-find') as HTMLButtonElement).click();
+      const palette = m.host.querySelector('.canvas-palette') as HTMLElement;
+      const statusStyle = dom.window.getComputedStyle(status), paletteStyle = dom.window.getComputedStyle(palette);
+      expect(palette.hidden).toBe(false);
+      expect(statusStyle.pointerEvents).toBe('none');
+      expect(Number(paletteStyle.zIndex)).toBeGreaterThan(Number(statusStyle.zIndex));
+      expect(status.getAttribute('role')).toBe('status'); expect(status.getAttribute('aria-live')).toBe('polite');
+      expect(status.textContent).toBe(feedback);
+      const search = palette.querySelector('input')!; search.value = 'models'; search.dispatchEvent(new Event('input'));
+      (palette.querySelector('[data-canvas-open="models"]') as HTMLButtonElement).click();
+      expect(m.workspace.isOpen('models')).toBe(true); expect(palette.hidden).toBe(true);
+      m.workspace.destroy();
+    }
   });
 
   it('positions a new panel near the camera only once and preserves later parking', () => {

@@ -10,6 +10,7 @@ import { createServer, startServer, configurationFromEnv } from '../server.mjs';
 import { RuntimeController, createRuntime } from '../runtime.mjs';
 import { validateCommandEnvelope, OWNER_ACTIONS, BODY_LIMIT, OUTPUT_LIMIT, RuntimeError } from '../contract.mjs';
 import { readSecretFile } from '../secrets.mjs';
+import { requireBuild } from './build-required.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const token = 'test_control_credential_012345678901234567890123456789';
@@ -42,6 +43,9 @@ function fakeRuntime(overrides = {}) {
 
 test('owner contract rejects settlement, nested dangerous keys and stale envelope shapes', () => {
   assert.deepEqual(validateCommandEnvelope(envelope), envelope);
+  for (const action of ['update_employee', 'rename_department', 'rename_office']) {
+    assert.equal(validateCommandEnvelope({ ...envelope, command: { action } }).command.action, action);
+  }
   for (const action of ['claim_job', 'reserve_job', 'finish_job', 'heartbeat_job', 'reserve_external', 'settle_external', 'import_cloud_message', 'apply_remote_command', 'shell']) {
     assert.equal(OWNER_ACTIONS.includes(action), false);
     assert.throws(() => validateCommandEnvelope({ ...envelope, command: { action } }), /owner control/);
@@ -83,7 +87,7 @@ test('shared model endpoints require owner authentication and reject unrecognize
 
 test('real model service: HTTP pull receipt, poll, assignment, cancellation and scope errors are owner bounded', async t => {
   const compiled = path.join(repoRoot, 'desktop-shell/dist/main/modelPool.js');
-  if (!fs.existsSync(compiled)) { t.skip('Build portable modules first.'); return; }
+  if (!requireBuild(t, [compiled])) return;
   const { ModelPoolService } = createRequire(import.meta.url)(compiled);
   const stateDir = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-http-models-'));
   const companyId = 'company-a', employeeId = 'employee-a', model = 'llama3.2:1b'; let installed = false; let pulls = 0;
@@ -145,7 +149,9 @@ test('bounded HTTP capacity rejects excess requests without running them', async
   } }), { maxConcurrent: 1 });
   const pending = request('/v1/office');
   await arrival;
-  assert.equal((await request('/v1/status')).status, 429);
+  const busy = await request('/v1/status');
+  assert.equal(busy.status, 429);
+  assert.equal(busy.headers.get('retry-after'), '1');
   release();
   assert.equal((await pending).status, 200);
 });
@@ -207,6 +213,20 @@ test('worker status exposes no raw provider error and one-shot refuses overlap',
   await runtime.close();
 });
 
+test('cloud cleanup failure still stops observer and worker and releases the model registry once', async () => {
+  const calls = [];
+  const runtime = new RuntimeController({
+    office: { stopObserving: () => calls.push('observer') },
+    worker: { status: () => ({ running: false }), stop: () => calls.push('worker') },
+    cloudSync: { close: async () => { calls.push('cloud'); throw new Error('Synthetic cloud close failure'); } },
+    modelPool: { close: async () => { calls.push('models'); } },
+  });
+  const closing = runtime.close();
+  assert.equal(runtime.close(), closing);
+  await assert.rejects(closing, /Synthetic cloud close failure/);
+  assert.deepEqual(calls, ['observer', 'worker', 'cloud', 'models']);
+});
+
 test('secret files must be regular and private; configuration does not contain key values', t => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-secret-test-'));
   t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
@@ -229,12 +249,76 @@ test('public binds require an explicit container setting', async () => {
   await assert.rejects(startServer({ host: '192.0.2.3', token, allowContainerBind: true, runtime: fakeRuntime() }), /container-bind/);
 });
 
+test('invalid HTTP configuration is rejected before accessing or starting the runtime', async () => {
+  let touched = 0;
+  const config = { host: '127.0.0.1', port: 0, token: 'short',
+    get runtime() { touched++; throw new Error('Runtime must not start'); } };
+  await assert.rejects(startServer(config), /control token/);
+  const invalidCapacity = { host: '127.0.0.1', port: 0, token, maxConcurrent: 0,
+    get runtime() { touched++; throw new Error('Runtime must not start'); } };
+  await assert.rejects(startServer(invalidCapacity), /concurrency limit/);
+  assert.equal(touched, 0);
+});
+
+test('startup construction failure closes runtime and repeated shutdown closes it only once', async () => {
+  let closes = 0;
+  const runtime = fakeRuntime({ close: async () => { closes++; } });
+  await assert.rejects(startServer({ host: '127.0.0.1', port: 0, token, runtime, allowedHosts: 3 }), TypeError);
+  assert.equal(closes, 1);
+  const service = await startServer({ host: '127.0.0.1', port: 0, token, runtime });
+  const closing = service.close();
+  assert.equal(service.close(), closing);
+  await closing;
+  assert.equal(closes, 2);
+});
+
+test('HTTP sockets close even when runtime cleanup rejects', { timeout: 5000 }, async () => {
+  let entered;
+  const started = new Promise(resolve => { entered = resolve; });
+  let snapshots = 0;
+  const service = await startServer({ host: '127.0.0.1', port: 0, token,
+    runtime: fakeRuntime({
+      snapshot: async () => {
+        if (snapshots++ === 0) return { ok: true, snapshot: {} };
+        entered();
+        return new Promise(() => {});
+      },
+      close: async () => { throw new Error('Synthetic cleanup failure'); },
+    }) });
+  const waiting = fetch(`http://127.0.0.1:${service.server.address().port}/v1/office`, {
+    headers: { Authorization: `Bearer ${token}` }, signal: AbortSignal.timeout(3000),
+  }).then(() => 'unexpected response', error => error);
+  await started;
+  await assert.rejects(service.close(), /Synthetic cleanup failure/);
+  assert.equal(service.server.listening, false);
+  const error = await waiting;
+  assert.equal(error.name, 'TypeError');
+});
+
+test('native outage is retryable and lock contention preserves command identity guidance', async t => {
+  let code = 'CORE_UNAVAILABLE';
+  const runtime = new RuntimeController({
+    office: { officeCommand: async () => ({ ok: false, code }) },
+    worker: { status: () => ({ enabled: false, running: false }) },
+  });
+  const { request } = await withServer(t, runtime);
+  for (const unavailable of ['CORE_UNAVAILABLE', 'STATE_LOCK_ERROR', 'STATE_READ_ERROR', 'STATE_WRITE_ERROR']) {
+    code = unavailable;
+    const response = await request('/v1/commands', envelope);
+    assert.equal(response.status, 503);
+    assert.match((await response.json()).error, /same command id and body/);
+  }
+  code = 'STATE_BUSY';
+  const busy = await request('/v1/commands', envelope);
+  assert.equal(busy.status, 409);
+  assert.equal(busy.headers.get('retry-after'), '1');
+  assert.match((await busy.json()).error, /Retry the same command id and body/);
+});
+
 test('real Rust: concurrent replay, stale state, restart and internal-field redaction', async t => {
   const binaryPath = path.join(repoRoot, 'native-core/target/release/atlas-core');
   const dist = path.join(repoRoot, 'desktop-shell/dist/main/cloudSync.js');
-  if (!fs.existsSync(binaryPath) || !fs.existsSync(dist)) {
-    t.skip('Build the native core and portable modules to run this integration test.'); return;
-  }
+  if (!requireBuild(t, [binaryPath, dist])) return;
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-runtime-test-'));
   const runtimes = [];
   t.after(async () => { for (const service of runtimes) await service.close(); fs.rmSync(dataDir, { recursive: true, force: true }); });
@@ -270,9 +354,7 @@ test('real Rust: concurrent replay, stale state, restart and internal-field reda
 
 test('real worker: mock provider continues after HTTP control completes and saves artifact plus budget', async t => {
   const binaryPath = path.join(repoRoot, 'native-core/target/release/atlas-core');
-  if (!fs.existsSync(binaryPath) || !fs.existsSync(path.join(repoRoot, 'desktop-shell/dist/main/officeWorker.js'))) {
-    t.skip('Build the native core and portable modules to run this integration test.'); return;
-  }
+  if (!requireBuild(t, [binaryPath, path.join(repoRoot, 'desktop-shell/dist/main/officeWorker.js')])) return;
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-worker-test-'));
   let release, entered, calls = 0;
   const started = new Promise(resolve => { entered = resolve; });

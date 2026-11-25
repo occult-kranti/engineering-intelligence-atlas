@@ -1,0 +1,19 @@
+{
+  "reports/skillopt-review-2026-11-24/EVALUATION.md": "fa82c9aa70f55edb8061a63f9d25cb13c5d6459b74cd3372446345f3a92b39a3",
+  "reports/skillopt-review-2026-11-24/PANEL-REVIEW.md": "2c0e70cdb17c7acafe71e30a8af67dc65cff0dcc3663d8a4f7ad531fbeaab939",
+  "reports/skillopt-review-2026-11-24/declared-evaluation-environment.json": "72478837215cad980d934ff0c5d81b854aee215a769d754b3b9d58676cdb9124",
+  "reports/skillopt-review-2026-11-24/disclosed-case-bundle.json": "6431fd3b0669474a7a4c3893eb0c05940487dc6343853151bee90f45b57387a4",
+  "reports/skillopt-review-2026-11-24/evaluation-decision.json": "a564c9296ce20e136edf7b2c79ed3b38dd5d8eee086a40e54109ab0dcaf2ae5b",
+  "reports/skillopt-review-2026-11-24/evaluation-receipt.json": "693f51c0fc5c43d1b1ea943885bade5e11aefcff9f26b3883f02a2731a53047a",
+  "reports/skillopt-review-2026-11-24/execution-record.json": "287a42f5fec8cf02ec7305a923d24c7dbac4358975329996913f5da0d6e01935",
+  "reports/skillopt-review-2026-11-24/frozen-evaluation-protocol.json": "a10552c99b546a24e5389a5f09361a61f92b5aa681a67fc101465272c95efc32",
+  "reports/skillopt-review-2026-11-24/raw-agent-output-a.json": "f2b72d7e45e39716d0a7b64802bae125db939e33bc2d6eb62cb8961675c2c097",
+  "reports/skillopt-review-2026-11-24/raw-agent-output-a.meta.json": "8cf03c81c62b9dc6d26bcb4f4621a06ae9ef23f2ef6314620f7cb9fc9ac6a738",
+  "reports/skillopt-review-2026-11-24/raw-agent-output-b.json": "9bca709462f9c3f0e68d80cd5a6fd602765f87394089b8b730fa20916060aff7",
+  "reports/skillopt-review-2026-11-24/raw-agent-output-b.meta.json": "c73b9f27845536b7ba8671f0113b3ee96310acc07fd1e3be7f3f42419204eca4",
+  "reports/skillopt-review-2026-11-24/raw-agent-output-c.json": "b7f8922538fa3418aea313988b92589cb37691be43db756b42e6e1e1d1b3df9a",
+  "reports/skillopt-review-2026-11-24/raw-agent-output-c.meta.json": "7350f9e64b6d3f78293f7b742265ca6128b74a654dd2846ce729e9e8e8338fdf",
+  "reports/skillopt-review-2026-11-24/raw-agent-output-d.json": "8475a4c5d16beba1b38cb5f68e33bab448849079bee12c862e326cc67dd6cb37",
+  "reports/skillopt-review-2026-11-24/raw-agent-output-d.meta.json": "2915b04fb89a4dd7a16fa0ecc3f14682f2ad694e25eb0e75a3f7e4eb83e34e2f",
+  "reports/skillopt-review-2026-11-24/rubric-assessments.json": "8a1d605fa8a9d090b2a1ebfeda1596277d2184787ff1d12fe0182729b7344634"
+}

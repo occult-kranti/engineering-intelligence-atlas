@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "files": [
+    "index.html",
+    "studio.css",
+    "studio.mjs",
+    "core.mjs",
+    "assets/reference-observatory.html",
+    "vendor/three.module.min.js",
+    "vendor/THREE-LICENSE",
+    "README.md",
+    "LICENSE",
+    "VALIDATION.md"
+  ]
+}

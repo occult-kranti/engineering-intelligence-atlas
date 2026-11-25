@@ -1,0 +1,54 @@
+# Simulation data for the Atech `dc_motor` module, read by `atech.sim`
+# (`atech sim-assets`). Frames and every field: src/atech/docs/sim_assets.md.
+# Asset frame: metres, origin at the centre of the bottom (mounting) face,
+# +z out of the top face, +x along the long side.
+#
+# Box sizes are the bounds of Atech's production CAD (atechdotdev/atech-module-renders
+# v1.5, glb_plain/dc-motor.glb, converted to +z up). The CAD footprint is centred
+# 0.15 mm toward -x; the boxes ignore that. `atech sim-assets --meshes/--fetch`
+# uses that CAD for the visuals. Atech has not published masses: the mass, colours,
+# connector, physics material and device frames are guesses, marked PLACEHOLDER.
+#
+# Output: H-bridge DC motor driver. The motor's housing is in the geometry (the CAD
+# includes it); the motor is not simulated (motor_modelled: false).
+schema: 1
+
+size_m: [0.0195, 0.0195, 0.01914]  # CAD: atech-module-renders v1.5 glb_plain/dc-motor.glb bounds
+mass_kg: 0.008                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  chip: [0.18, 0.18, 0.18, 1]
+  connector: [0.85, 0.85, 0.8, 1]
+
+parts:  # CAD: atech-module-renders v1.5 bounds, one box per region
+  # CAD: the motor housing runs on past the footprint toward +y (the outer face), shaft along +y.
+  - {name: motor_housing, size_m: [0.0195, 0.0201, 0.01914], pos_m: [0, 0.0198, 0.00957], color: body}
+  - {name: motor_shaft, size_m: [0.003, 0.0088, 0.003], pos_m: [-0.00015, 0.03425, 0.01014], color: connector}
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  # Mates with the board's port frame: centre of the bottom face.
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+actuator:
+  type: dc_motor_driver
+  frame:   # PLACEHOLDER: replace with Atech module datasheet
+    pos_m: [0, 0, 0.00957]
+    rpy_deg: [0, 0, 0]
+  command_range: [-255, 255]      # catalog: speed action, negative reverses
+  motor_modelled: false           # no motor joint or torque model in this asset
+
+semantic:
+  # Wikidata Q-codes (SimReady SL.003), checked on wikidata.org.
+  # The asset is the driver module; its motor is geometry only (motor_modelled: false).
+  wikidata_qcode: [Q131382027, Q173350]   # motor controller, printed circuit board
+  class: [motor_driver, actuator]
+
+# Fields above that are guesses, not Atech data (exported as atech:placeholders).
+placeholders: [mass_kg, colors, connector, physics_material, actuator.frame]

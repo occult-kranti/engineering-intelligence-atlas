@@ -1,0 +1,100 @@
+id: icm40608
+name: "6-Axis IMU (ICM-40608 / LSM6DSOX)"
+display_name: "Orientation Sensor"
+category: sensor
+interface: i2c
+size: 1
+i2c_address: 0x68
+description: |
+  6-axis inertial measurement unit: 3-axis accelerometer (±2g), 3-axis
+  gyroscope (±250°/s), and on-die temperature. The driver auto-detects which
+  chip is present at boot (ICM-40608 at 0x68 or LSM6DSOX at 0x6A) — your code
+  is identical either way. A background FreeRTOS task polls at 100 Hz and
+  caches readings, so every getter returns instantly. Single port: SDA on
+  Line A, SCL on Line B.
+
+driver:
+  header: icm40608.h
+  source: icm40608.cpp
+  class_name: ICM40608
+  shared: [i2c_software.h]
+
+templates:
+  # Its own bit-banged I2C bus on the port's two lines (SDA = Line A, SCL = Line B),
+  # as studio generates it: every I2C module has a bus of its own, so modules on
+  # different ports never share a controller.
+  globals: |
+    SoftwareI2C {{ instance }}_bus({{ pin_a }}, {{ pin_b }});
+    ICM40608 {{ instance }}(&{{ instance }}_bus);
+  setup: |
+    {{ instance }}_bus.begin(100000);   // bit-banged: ~100 kHz is its ceiling
+    {{ instance }}.begin();
+  # Built-in: stream a shake edge immediately, plus tilt + orientation every 1 s.
+  loop: |
+    // Shake from the cached acceleration, not wasShaken(): wasShaken() consumes the
+    // shake and belongs to the user's code. Same test as the driver's default:
+    // total acceleration more than 0.8 g away from 1 g. One event per 300 ms at most.
+    static unsigned long {{ instance }}_shakeAt = 0;
+    float {{ instance }}_ax = {{ instance }}.readAccelX(), {{ instance }}_ay = {{ instance }}.readAccelY(), {{ instance }}_az = {{ instance }}.readAccelZ();
+    float {{ instance }}_g = sqrtf({{ instance }}_ax * {{ instance }}_ax + {{ instance }}_ay * {{ instance }}_ay + {{ instance }}_az * {{ instance }}_az);
+    if (fabsf({{ instance }}_g - 1.0f) > 0.8f && millis() - {{ instance }}_shakeAt >= 300) {
+      {{ instance }}_shakeAt = millis();
+      Serial.println("{\"type\":\"event\",\"payload\":{\"event_type\":\"sensor\",\"key\":\"{{ instance }}_shake\",\"value\":1,\"source\":\"icm40608\"}}");
+    }
+    static unsigned long {{ instance }}_last = 0;
+    if (millis() - {{ instance }}_last >= 1000) {
+      {{ instance }}_last = millis();
+      Serial.print("{\"type\":\"event\",\"payload\":{\"event_type\":\"sensor\",\"key\":\"{{ instance }}_tilt\",\"value\":");
+      Serial.print({{ instance }}.getTiltAngle(), 1);
+      Serial.println(",\"unit\":\"deg\",\"source\":\"icm40608\"}}");
+      Serial.print("{\"type\":\"event\",\"payload\":{\"event_type\":\"sensor\",\"key\":\"{{ instance }}_orientation\",\"value\":\"");
+      Serial.print({{ instance }}.getOrientationName());
+      Serial.println("\",\"source\":\"icm40608\"}}");
+    }
+
+events:
+  - key: "{{ instance }}_shake"
+    type: sensor
+    value_type: int
+    description: "Emitted (value 1) on a shake/tap spike: total acceleration more than 0.8 g from 1 g, at most every 300 ms. setShakeThreshold() does not change it."
+  - key: "{{ instance }}_tilt"
+    type: sensor
+    value_type: float
+    unit: deg
+    description: "Total tilt from upright (0 = flat face-up, 180 = face-down). Emitted every 1 s."
+  - key: "{{ instance }}_orientation"
+    type: sensor
+    value_type: string
+    description: >
+      Coarse 6-way pose: face_up / face_down / edge_right / edge_left /
+      edge_front / edge_back / unknown. Emitted every 1 s.
+
+actions: []
+lib_deps: []
+
+# Real hardware read-back: the IMU ACKs on the I2C bus only if wired + powered.
+health_check: "{{ instance }}.isConnected()"
+
+usage: |
+  // Public API of ICM40608 — the instance is `{{ instance }}`.
+  // begin() ran in setup() and started a 100 Hz background task, so every getter
+  // below returns the latest cached value instantly (never blocks). If you leave
+  // loop empty, the module already streams shake + tilt + orientation events.
+
+  // --- DERIVED HELPERS (prefer these — users want tilt/shake/"which way up") ---
+  float tilt  = {{ instance }}.getTiltAngle();     // 0 = flat face-up .. 180 = face-down
+  float pitch = {{ instance }}.getPitch();         // -90..+90 (nose up positive)
+  float roll  = {{ instance }}.getRoll();          // -180..+180 (left/right)
+  const char* pose = {{ instance }}.getOrientationName();  // "face_up", "edge_left", ...
+  if ({{ instance }}.wasShaken()) { /* fires once per shake; reading clears it */ }
+  {{ instance }}.setShakeThreshold(1.4f);          // lower = more sensitive (default 1.8g)
+
+  // --- RAW AXES (only when explicitly needed: custom fusion / logging) ---
+  float ax = {{ instance }}.readAccelX();          // g, ±2g   (Z ≈ +1.0 at rest, flat)
+  float gz = {{ instance }}.readGyroZ();           // deg/s, ±250°/s
+  // If you read raw gyro, call once in setup() with the board still:
+  //   {{ instance }}.calibrateGyro();             // averages 100 samples, subtracts bias
+  if ({{ instance }}.isConnected()) { /* sensor is responding on the bus */ }
+
+feedback:
+  - {label: "{{ instance }} tilt", value: "{{ instance }}.getTiltAngle()", kind: level, range: [0, 90], unit: "deg"}

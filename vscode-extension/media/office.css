@@ -10,3 +10,5 @@ body:is(.vscode-dark,.vscode-light) .room{border-top:2px solid var(--studio-gold
 .studio-links>p{margin:0 0 10px;font-size:12px}
 .studio-links>div{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .studio-links button{font-size:12px;min-height:38px}
+
+.team-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.team-actions button{flex:1;min-width:130px}

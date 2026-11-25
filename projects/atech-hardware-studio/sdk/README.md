@@ -1,0 +1,186 @@
+# atech
+
+> Daftar development copy of Atech `1.0.0a12`: see [DAFTAR_CHANGES.md](DAFTAR_CHANGES.md) for validation improvements, local test results and source provenance. The upstream overview follows.
+
+**Firmware for [Atech](https://atech.dev) boards from one small file, built so a
+coding agent can drive it.**
+
+An Atech board is an ESP32-S3 with numbered ports; modules slide into the ports.
+You (or Claude Code, Cursor, any agent that can run a shell) describe the build in
+`project.yaml`. The SDK picks the pins, assembles the drivers, generates the
+firmware, compiles it, flashes it, and then lets you talk to the board from your
+computer. No cloud account. Nothing in this package phones home.
+
+```
+You:   "make the light go red when I press the button"
+Agent: atech list-modules → atech info button → writes project.yaml
+       atech validate → atech build → atech upload → atech check
+```
+
+## Install
+
+```bash
+pip install atech
+```
+
+Python 3.10+. PlatformIO comes with it. **The first `atech build` downloads the
+ESP32 compiler, about 2.4 GB on disk, once.** After that, builds work offline and
+take seconds. A module that needs a library (the light grid, for one) fetches it the
+first time a project uses it.
+
+## Sixty seconds
+
+```bash
+atech new blink --board 14port     # project.yaml + AGENTS.md / CLAUDE.md for your agent
+cd blink
+```
+
+Edit `project.yaml`:
+
+```yaml
+name: blink
+board: 14port
+modules:
+  - {id: button,   instance: btn, port: 1}
+  - {id: neopixel, instance: led, port: 2}
+code:
+  loop: |
+    if (btn.wasPressed()) { led.setAll(255, 0, 0); led.show(); }
+```
+
+```bash
+atech describe .     # what is placed, each module's API, its events and actions
+atech view .         # the board and its modules in 3D, in the browser
+atech validate .
+atech build .
+atech upload .       # board on USB, data cable
+atech check          # which modules answered after boot
+```
+
+Then, from the computer:
+
+```bash
+atech monitor                                   # [button] btn = 1
+atech send led_fill r=0 g=0 b=255               # ok: the board carried out led_fill
+```
+
+## For coding agents
+
+```bash
+atech guide            # the guide: workflow, rules, what will bite you
+atech guide protocol   # the wire format: events, actions, acknowledgements
+```
+
+`atech new` writes the guide into the project as `AGENTS.md` and `CLAUDE.md`, so an
+agent started in that folder reads it without being told.
+
+## Commands
+
+```text
+atech guide [protocol]                 the docs above
+atech list-boards [--json]             boards, their module ports and UART ports
+atech list-modules [--category X] [--json]
+atech info <module> [--json]           description, cautions, C++ API, events, actions
+atech new <name> --board <id>
+atech describe [dir]                   a project's modules, API, events and actions
+atech view [dir] [--no-open]           the board in 3D in the browser, live as project.yaml changes
+atech validate [dir]
+atech build    [dir]
+atech upload   [dir] [--port X]
+atech check                            reboot the board; which modules answered, and why not
+atech monitor  [--key K,K] [--type T,T] [--json]
+atech send <key> [value]               exit 0 only if the board confirmed it (value: r=0 g=255, a number, or JSON)
+atech ports                            USB ports that look like a board
+atech free-port                        release a port another process holds
+```
+
+Every command prints `error: …` on stderr and exits non-zero when it fails.
+
+## Python
+
+```python
+import atech
+
+atech.list_boards(); atech.list_modules(category="sensor")
+atech.get_module("button").usage            # the C++ API of a module
+
+p = (
+    atech.Project(board="14port", name="blink")
+        .add("button",   port=1, instance="btn")
+        .add("neopixel", port=2, instance="led")
+        .set_loop('if (btn.wasPressed()) { led.setAll(255, 0, 0); led.show(); }')
+)
+print(p.describe())                         # modules, API, events, actions, cautions
+p.validate()                                # -> list of placement issues
+p.build()                                   # -> BuildResult
+p.upload()                                  # -> UploadResult
+atech.Project.load("blink")                 # a folder or a project.yaml
+
+with atech.Board.connect() as board:        # NoBoardFoundError if no board is on USB
+    board.call("led_fill", {"r": 0, "g": 0, "b": 255})   # raises unless the board confirms
+    for ev in board.events(keys=["btn"]):
+        print(ev.key, ev.value)
+```
+
+`board.call()` waits for the board's acknowledgement, and `board.query(action,
+reply=event_key)` returns the value the board answers with. `board.send()` only
+writes to the port and tells you nothing. One program holds a board's port at a
+time: stop `atech monitor` before `atech send` or `atech upload`.
+
+## Robot arm: check the power supply and the arm first
+
+The Robot Arm module passes the board's **high-voltage rail** (labelled 12 V)
+straight to the servos. That rail is fed by a power module (the **power jack module**,
+or the USB-C PD power module) and carries whatever that module is given. Nothing
+regulates it, and the standard USB-C module does not feed it.
+
+- SO-101 arms come in a **12 V** and a **5 V** version.
+- **The supply must match the arm:** a 12 V supply for the 12 V arm, a 5 V supply
+  for the 5 V arm.
+- **A 12 V supply on a 5 V arm damages the servos.**
+- Never plug more than 12 V into the jack.
+- Check the voltage printed on the supply, and which arm you have, before you
+  connect anything.
+- Both versions have been run this way: power jack module and Robot Arm module,
+  nothing outside the Atech stack.
+
+`atech validate`, `atech build` and `atech upload` print this as a `CAUTION`
+whenever a project contains `robot_arm`.
+
+## Bringing your own module
+
+```
+my_project/
+├── project.yaml          # add:  modules_path: ./my_modules
+└── my_modules/
+    └── lidar_v2/
+        ├── module.yaml   # id, templates, usage, events, actions, lib_deps
+        ├── lidar_v2.h
+        └── lidar_v2.cpp
+```
+
+Same shape as the bundled modules, which sit in the installed package under
+`atech/catalog/data/modules/`. A module with the same id as a bundled one
+replaces it. Declare only events the `loop` template really prints, and give
+every action a `handler:`.
+
+## How it is put together
+
+```
+atech.Project          the spec: board, modules on ports, your code
+atech.placement        checks ports: reserved, overlap, adjacency, interface
+atech.catalog          bundled and user modules
+atech.codegen          templates → main.cpp + platformio.ini (no LLM in this path)
+atech.build / upload   PlatformIO
+atech.runtime.Board    serial client for the flashed board
+```
+
+## Status
+
+Alpha. `atech list-boards` and `atech list-modules` show what this version
+contains. Not in the SDK: WiFi or Bluetooth transports, over-the-air updates.
+Your firmware can still use WiFi and BLE itself; `atech guide` says how.
+
+## License
+
+MIT.

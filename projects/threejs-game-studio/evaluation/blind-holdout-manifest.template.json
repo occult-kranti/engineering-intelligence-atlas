@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "kind": "private_holdout_manifest_template",
+  "status": "unpopulated_not_evaluated",
+  "split_owner": null,
+  "optimizer_has_seen_prompts": null,
+  "sampling_rule": "An independent reviewer authors prompts outside the public cases and optimizer context, records hashes before running, checks for known training/example overlap, and keeps prompt files outside this repository.",
+  "promotion_rule": "Use identical runtime, decoding parameters and attempt/repair/time budgets for baseline and candidate. Promote only after held-out evaluation improves the predeclared primary metric without regressing hard source, execution or interaction gates. Report uncertainty for small samples.",
+  "primary_metric": "fraction_of_cases_accepted_on_first_attempt_without_repair",
+  "secondary_metrics": ["complete_html_rate","syntax_rate","render_rate","interaction_rate","visual_adherence","latency","peak_memory_if_measured"],
+  "cases": [
+    {"id":"holdout-001","prompt_sha256":null,"private_prompt_ref":null,"scene_family":null},
+    {"id":"holdout-002","prompt_sha256":null,"private_prompt_ref":null,"scene_family":null},
+    {"id":"holdout-003","prompt_sha256":null,"private_prompt_ref":null,"scene_family":null},
+    {"id":"holdout-004","prompt_sha256":null,"private_prompt_ref":null,"scene_family":null}
+  ],
+  "invalidating_conditions": ["prompts or expected outputs leaked to optimizer","unequal retry budgets","discarded failures","repairs counted as original successes","missing output hashes","unverified comparison runtimes","unpopulated prompt hashes"]
+}

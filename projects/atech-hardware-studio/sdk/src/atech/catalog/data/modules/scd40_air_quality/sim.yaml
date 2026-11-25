@@ -1,0 +1,57 @@
+# Simulation data for the Atech `scd40_air_quality` module, read by `atech.sim`
+# (`atech sim-assets`). Frames and every field: src/atech/docs/sim_assets.md.
+# Asset frame: metres, origin at the centre of the bottom (mounting) face,
+# +z out of the top face, +x along the long side.
+#
+# Atech has not published dimensions or masses for its modules. Every size, mass,
+# colour and position below is a plausible guess, marked PLACEHOLDER.
+#
+# Sensor: Sensirion SCD40 NDIR CO2 sensor (plus temperature / humidity).
+schema: 1
+
+size_m: [0.0195, 0.0195, 0.01]    # PLACEHOLDER: replace with Atech module datasheet (one 19.5 mm port cell, as the CAD modules)
+mass_kg: 0.008                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  sensor_base: [0.78, 0.79, 0.8, 1]
+  white: [0.93, 0.93, 0.92, 1]
+  passive: [0.75, 0.75, 0.73, 1]
+
+# Drawn after Atech's renders of the module: the SCD40 (a grey base plate and a white
+# rounded cap, 6.5 mm tall in all, per its datasheet) on the PCB (top 4.14 mm),
+# standing up through the lid's opening; small passives beside it.
+parts:                           # PLACEHOLDER: replace with Atech module datasheet
+  - {name: sensor_base, shape: rounded_box, size_m: [0.0101, 0.0101, 0.0008], pos_m: [0, 0, 0.00454], color: sensor_base}
+  - {name: sensor_can, shape: rounded_box, size_m: [0.0078, 0.0078, 0.0057], pos_m: [0, 0, 0.00779], color: white}
+  - {name: passive_1, size_m: [0.001, 0.0005, 0.0004], pos_m: [-0.0068, 0.0025, 0.00434], color: passive}
+  - {name: passive_2, size_m: [0.001, 0.0005, 0.0004], pos_m: [-0.0068, 0.001, 0.00434], color: passive}
+  - {name: passive_3, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.0068, -0.0015, 0.00434], color: passive}
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  # Mates with the board's port frame: centre of the bottom face.
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+sensor:
+  type: co2
+  chip: SCD40
+  frame:                          # top of the sensor   # PLACEHOLDER: replace with Atech module datasheet
+    pos_m: [0, 0, 0.01064]
+    rpy_deg: [0, 0, 0]
+  co2_range_ppm: [400, 2000]      # catalog: typical range
+  period_s: 5.0                   # catalog: native 5 s measurement cadence
+  first_reading_s: 5.0            # catalog: first valid reading ~5 s after boot
+
+semantic:
+  # Wikidata Q-codes (SimReady SL.003), checked on wikidata.org.
+  wikidata_qcode: [Q5037960, Q646, Q183173]   # carbon dioxide sensor, thermometer, hygrometer
+  class: [co2_sensor, sensor]
+
+# Fields above that are guesses, not Atech data (exported as atech:placeholders).
+placeholders: [size_m, mass_kg, colors, parts, connector, physics_material, sensor.frame]

@@ -1,0 +1,96 @@
+{
+  "skillRoutesAndPackagesChecked": 15,
+  "frozenEvaluationFilesUnchanged": 17,
+  "checks": [
+    {
+      "skill": "agent-research-director",
+      "references": 6,
+      "packetBytes": 6183,
+      "bodyUtf16": 8638
+    },
+    {
+      "skill": "ai-open-model-research",
+      "references": 6,
+      "packetBytes": 6759,
+      "bodyUtf16": 9515
+    },
+    {
+      "skill": "architecture-and-built-heritage-research",
+      "references": 6,
+      "packetBytes": 5899,
+      "bodyUtf16": 7141
+    },
+    {
+      "skill": "biology-research",
+      "references": 6,
+      "packetBytes": 5723,
+      "bodyUtf16": 7487
+    },
+    {
+      "skill": "chemistry-research",
+      "references": 6,
+      "packetBytes": 5809,
+      "bodyUtf16": 8476
+    },
+    {
+      "skill": "computational-geometry-engineering",
+      "references": 6,
+      "packetBytes": 5725,
+      "bodyUtf16": 6485
+    },
+    {
+      "skill": "defensive-reverse-engineering",
+      "references": 6,
+      "packetBytes": 5744,
+      "bodyUtf16": 8199
+    },
+    {
+      "skill": "engineering-job-market-intelligence",
+      "references": 6,
+      "packetBytes": 5787,
+      "bodyUtf16": 7327
+    },
+    {
+      "skill": "engineering-organization-architect",
+      "references": 6,
+      "packetBytes": 6109,
+      "bodyUtf16": 7346
+    },
+    {
+      "skill": "game-reconstruction-engineering",
+      "references": 6,
+      "packetBytes": 6859,
+      "bodyUtf16": 14000
+    },
+    {
+      "skill": "local-model-runtime-engineering",
+      "references": 6,
+      "packetBytes": 5873,
+      "bodyUtf16": 13509
+    },
+    {
+      "skill": "mathematics-research",
+      "references": 6,
+      "packetBytes": 5833,
+      "bodyUtf16": 6757
+    },
+    {
+      "skill": "physics-research",
+      "references": 6,
+      "packetBytes": 5668,
+      "bodyUtf16": 8374
+    },
+    {
+      "skill": "science-history-research",
+      "references": 6,
+      "packetBytes": 5841,
+      "bodyUtf16": 7532
+    },
+    {
+      "skill": "spatial-3d-production-engineering",
+      "references": 6,
+      "packetBytes": 5935,
+      "bodyUtf16": 7309
+    }
+  ]
+}
