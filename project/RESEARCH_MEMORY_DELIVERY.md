@@ -260,3 +260,21 @@ Authenticated GitHub Git-object publication is available even though ordinary
 shell HTTPS Git lacks a username credential. Publication must compare every new
 blob and the full remote tree to the reviewed local commit, parent the actual
 remote head, use a non-forced ref update and verify the result independently.
+
+## Pages publication follow-up
+
+The feature was merged in PR #9 at `855c89ebcbc394fea7063dbd67f3114200ff0d33`.
+All 12 PR verification jobs passed in run `45583593466`; all 13 merged-main jobs
+passed in run `45585032201`. The release job preserved the existing v0.8.0 assets.
+
+Pages run `45585031999` passed every build and browser gate but failed during
+artifact discovery. Its first deployment lookup did not see the newly uploaded
+site artifact. A retry then found two artifacts with the same `github-pages`
+name and correctly refused the ambiguity. Neither attempt created a deployment.
+
+The workflow follow-up separates the verified build from deployment, carries the
+build's exact artifact name and ID across jobs, and validates that identity before
+deployment. A deploy-only retry reuses the successful build's outputs. The REST
+readiness check and the deployment action's internal discovery are different
+observations; a positive REST result is not presented as proof of deployment.
+No application, research or design source content changes in this follow-up.

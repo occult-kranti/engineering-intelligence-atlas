@@ -94,6 +94,8 @@ jobs:
           node-version: '22'
       - name: Verify release checksum rules with disposable temp files
         run: node scripts/release-checksums.test.mjs
+      - name: Verify Pages artifact discovery and retry identity
+        run: node --test scripts/pages-artifact-ready.test.mjs
 
   headless:
     uses: ./.github/workflows/headless-runtime.yml
