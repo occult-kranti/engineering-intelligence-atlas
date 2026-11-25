@@ -137,8 +137,8 @@ function assistants(snapshot) {
 
 try {
   const first = await boot();
-  await assert.rejects(boot(), error => error.code === 'MODEL_REGISTRY_BUSY');
-  record('A second full daemon cannot acquire the shared model registry');
+  await assert.rejects(boot(), error => ['CREATIVE_STATE_BUSY', 'MODEL_REGISTRY_BUSY'].includes(error.code));
+  record('A second full daemon cannot acquire the exclusive creative/model controllers');
   const second = await boot({ secondary: true });
   const initial = await read(first);
   assert.equal(first.runtime.status().worker.enabled, false);

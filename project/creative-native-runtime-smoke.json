@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "suite": "real-native-stdio-http-blender",
+  "ok": true,
+  "checkedAt": "2026-11-25T02:24:01.170Z",
+  "checks": [
+    "The setup helper created real native specialists, departments, scoped owner authority and persistent tool assignments without starting a job.",
+    "A real stdio MCP client discovered the native employee assignment and verified Blender through the authenticated HTTP runtime.",
+    "The real native grant admitted a bounded Blender CPU render through stdio MCP and HTTP, producing a hash-verified 64 by 64 PNG and durable receipt.",
+    "The same MCP command replayed before and after complete daemon/client restart without a second creative job.",
+    "Revoking the actual native grant rejected a fresh MCP render while preserving the original receipt; no provider job or call was created.",
+    "All MCP clients, runtime controllers and disposable native/project state were closed and removed before publishing success."
+  ],
+  "providerCalls": 0,
+  "privateWorkspaceUsed": false,
+  "nativeScopeFixture": false,
+  "disposableNativeWorkspace": true,
+  "vpsProvisioned": false,
+  "gpuTested": false,
+  "blenderVersion": "4.5.17",
+  "job": {
+    "id": "native-backed-render",
+    "companyId": "native-creative-fixture",
+    "employeeId": "employee-0d4dcc64-2ce1-4818-8952-8cf7bad58e44",
+    "projectId": "creative-b61a3ff772f79cf0-graphics",
+    "operation": "blender.render",
+    "status": "succeeded",
+    "outputs": [
+      {
+        "path": "render.png",
+        "bytes": 3737,
+        "sha256": "2cd5fb6a13778ea04505eb237fe9e1ae49b17d0597fc3a9d5e1663567fbc841f",
+        "mediaType": "image/png"
+      }
+    ],
+    "evidenceUri": "creative://jobs/native-backed-render",
+    "createdAt": "2026-11-25T02:24:02.343Z",
+    "startedAt": "2026-11-25T02:24:02.344Z",
+    "finishedAt": "2026-11-25T02:24:03.128Z",
+    "result": {
+      "frame": 1,
+      "width": 64,
+      "height": 64,
+      "samples": 2,
+      "format": "png",
+      "engine": "CYCLES",
+      "device": "CPU"
+    }
+  }
+}

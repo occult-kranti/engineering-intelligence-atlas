@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "tools": {
+    "adobe-photoshop": {
+      "enabled": true,
+      "allowPaidRequests": true,
+      "clientIdFile": "/etc/daftar/secrets/adobe-client-id",
+      "clientSecretFile": "/etc/daftar/secrets/adobe-client-secret",
+      "assetStorageFile": "/etc/daftar/secrets/adobe-asset-storage.json"
+    }
+  },
+  "projects": [
+    {
+      "id": "licensed-adobe-studio",
+      "companyId": "replace-with-existing-company-id",
+      "root": "/var/lib/daftar-creative/projects/licensed-adobe",
+      "trusted": true,
+      "allowExternalUpload": true,
+      "allowedOperations": ["adobe.manifest", "adobe.render"]
+    }
+  ]
+}

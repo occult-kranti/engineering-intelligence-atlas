@@ -1,0 +1,13 @@
+# Optional additional overlay for an existing NVIDIA host and Container Toolkit.
+# No port, privilege escalation, device purchase or machine start is requested.
+services:
+  runtime:
+    environment:
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility,graphics
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

@@ -1,0 +1,109 @@
+{
+  "schemaVersion": 1,
+  "suite": "real-blender-creative-service",
+  "ok": true,
+  "checkedAt": "2026-11-25T02:12:14.282Z",
+  "checks": [
+    "The configured Blender executable passed its actual bounded version probe.",
+    "Assignment persists and the same request replays without another change.",
+    "blender.inspect executed through the service, produced a format-checked hashed artifact, and replayed its original receipt.",
+    "blender.render executed through the service, produced a format-checked hashed artifact, and replayed its original receipt.",
+    "blender.export_glb executed through the service, produced a format-checked hashed artifact, and replayed its original receipt.",
+    "Native authority callbacks were rechecked and client receipts omit private runtime paths.",
+    "The controller closed and disposable state was removed before publishing success."
+  ],
+  "jobs": [
+    {
+      "id": "blender-inspect",
+      "companyId": "fixture-company",
+      "employeeId": "fixture-artist",
+      "projectId": "fixture-project",
+      "operation": "blender.inspect",
+      "status": "succeeded",
+      "createdAt": "2026-11-25T02:12:14.945Z",
+      "startedAt": "2026-11-25T02:12:14.946Z",
+      "finishedAt": "2026-11-25T02:12:15.611Z",
+      "evidenceUri": "creative://jobs/blender-inspect",
+      "outputs": [
+        {
+          "path": "inspection.json",
+          "bytes": 149,
+          "sha256": "9f762947b2db149ba2b48bc8f5ab86d842b6b41c9672dedad54871cd24c8d083",
+          "mediaType": "application/json"
+        }
+      ],
+      "result": {
+        "objects": 3,
+        "meshes": 1,
+        "materials": 1,
+        "scenes": 1,
+        "cameras": 1,
+        "lights": 1,
+        "frameStart": 1,
+        "frameEnd": 250,
+        "format": "blend",
+        "blenderVersion": "4.5.17 LTS"
+      }
+    },
+    {
+      "id": "blender-render",
+      "companyId": "fixture-company",
+      "employeeId": "fixture-artist",
+      "projectId": "fixture-project",
+      "operation": "blender.render",
+      "status": "succeeded",
+      "createdAt": "2026-11-25T02:12:15.627Z",
+      "startedAt": "2026-11-25T02:12:15.628Z",
+      "finishedAt": "2026-11-25T02:12:16.131Z",
+      "evidenceUri": "creative://jobs/blender-render",
+      "outputs": [
+        {
+          "path": "render.png",
+          "bytes": 3733,
+          "sha256": "41c33f564d6403f91b245b05ca42a920c88e92dff2fded7e7494f91da8a190b5",
+          "mediaType": "image/png"
+        }
+      ],
+      "result": {
+        "frame": 1,
+        "width": 64,
+        "height": 64,
+        "samples": 2,
+        "format": "png",
+        "engine": "CYCLES",
+        "device": "CPU"
+      }
+    },
+    {
+      "id": "blender-export_glb",
+      "companyId": "fixture-company",
+      "employeeId": "fixture-artist",
+      "projectId": "fixture-project",
+      "operation": "blender.export_glb",
+      "status": "succeeded",
+      "createdAt": "2026-11-25T02:12:16.133Z",
+      "startedAt": "2026-11-25T02:12:16.133Z",
+      "finishedAt": "2026-11-25T02:12:16.692Z",
+      "evidenceUri": "creative://jobs/blender-export_glb",
+      "outputs": [
+        {
+          "path": "scene.glb",
+          "bytes": 1936,
+          "sha256": "d6d61e731d1936825b450a527474864bd3df086ef4e8a3379907386f7d52c3ea",
+          "mediaType": "model/gltf-binary"
+        }
+      ],
+      "result": {
+        "objects": 3,
+        "format": "glb"
+      }
+    }
+  ],
+  "authorityChecks": 18,
+  "providerCalls": 0,
+  "privateWorkspaceUsed": false,
+  "nativeScopeFixture": true,
+  "vpsProvisioned": false,
+  "gpuTested": false,
+  "blenderVersion": "4.5.17"
+}

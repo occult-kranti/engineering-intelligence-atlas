@@ -1,5 +1,17 @@
 # Daftar — personal agent office
 
+## Creative tools and VPS connection — 2026-11-24
+
+The [creative VPS pack](deploy/creative/README.md) adds a verified Blender installer,
+licensed Unreal import, local graphics packages and an optional official Photoshop
+API v2 adapter. [Company setup](integrations/creative-tools/README.md) connects a
+reviewed game repository to persistent graphics, game engineering and QA staff.
+Fixed tool jobs use current scoped authority, bounded resources and durable receipts.
+VS Code can connect directly to the private runtime, discover tools, manage
+assignments and run or inspect jobs; MCP exposes the same controls.
+[Validation and remaining host acceptance](project/CREATIVE_VPS_VALIDATION_2026-11-24.md)
+distinguish real Blender execution from mocked Adobe tests and pending VPS setup.
+
 ## Backend and workflow update — 2026-11-24
 
 The current integration adds editable employee role/skill definitions, office and
@@ -63,7 +75,7 @@ Company seats now form an interactive conference table with pan, zoom, perspecti
 
 The private website adds **People & access**, **Visiting office**, and invitation review. Visitor canvases use restricted server projections; membership expiry, revocation, concurrent edits and owner deactivation are enforced at the mutation boundary. Parent companies do not inherit access to their children.
 
-The [headless runtime](headless-runtime/README.md), [VPS deployment pack](deploy/README.md), [encrypted cloud-device sync](deploy/CLOUD_DEVICE_SYNC.md) and [nine-tool MCP adapter](tools/DAFTAR_RUNTIME_MCP.md) let a configured Linux host run the native office independently of a laptop. The [shared model pool](deploy/MODEL_POOL.md) reuses reviewed local model downloads across scoped employee assignments. A deterministic permanent observer checks native index/ledger health with zero model calls.
+The [headless runtime](headless-runtime/README.md), [VPS deployment pack](deploy/README.md), [encrypted cloud-device sync](deploy/CLOUD_DEVICE_SYNC.md) and [fourteen-tool MCP adapter](tools/DAFTAR_RUNTIME_MCP.md) let a configured Linux host run the native office independently of a laptop. The [shared model pool](deploy/MODEL_POOL.md) reuses reviewed local model downloads across scoped employee assignments. A deterministic permanent observer checks native index/ledger health with zero model calls.
 
 [0.7.0 validation and acceptance boundaries](project/FREEFLOW_VALIDATION.md) · [Vast/VPS and ChatGPT architecture](project/CLOUD_RUNTIME_PLAN.md). Deployment recipes do not provision a paid host or create a ChatGPT tunnel automatically.
 

@@ -8,7 +8,9 @@ The service supports the current application's workspace operations, bounded
 provider jobs, saved artifacts, job/schedule/goal controls and managed GitHub
 operations. It preserves the existing native budget, lease, authority and
 shared-service contract checks. It does not execute arbitrary code or shell
-commands. The optional paired-device cloud adapter now reuses the existing website
+commands supplied by a client. Optional creative adapters invoke fixed tools
+against reviewed project roots; trusted Unreal plugins remain executable code.
+The optional paired-device cloud adapter now reuses the existing website
 snapshot/queue protocol, with explicit opt-in and encrypted pairing storage. No live
 workspace has been migrated automatically. Desktop remote-client mode and a public
 ChatGPT OAuth/MCP gateway remain separate integration work. See the repository's
@@ -28,11 +30,11 @@ node scripts/backend-stress.mjs --employees=128 --requests=64
 
 The portable TypeScript build writes to `desktop-shell/dist`, where its existing
 provider dependencies resolve. Electron's installation scripts are skipped, and
-the runtime does not import Electron. The native integration test uses a temporary
-synthetic workspace and makes no provider calls. It is skipped explicitly if the
-native executable or compiled portable modules are missing in optional local unit
-runs. `DAFTAR_REQUIRE_NATIVE_TESTS=1` makes a missing build an explicit failure;
-the required CI runtime job uses this setting.
+the runtime does not import Electron. Full-suite native integration and company
+setup tests use temporary synthetic workspaces and make no provider calls. Build
+the prerequisites before running the complete suite; focused pure contract tests
+can be run separately. `DAFTAR_REQUIRE_NATIVE_TESTS=1` also turns older optional
+native gates into explicit failures when builds are absent; CI uses this setting.
 
 The stress runner creates a disposable workspace, one full daemon and a second
 independent native-backed HTTP command client. It verifies concurrent receipt
@@ -74,6 +76,7 @@ a persistent service.
 | `DAFTAR_ALLOW_CONTAINER_BIND` | Set to `1` only when binding `0.0.0.0` inside an isolated container network |
 | `DAFTAR_ALLOWED_HOSTS` | Optional comma-separated exact Host headers for an internal proxy, such as `runtime:8788` |
 | `DAFTAR_CONCURRENCY` | `2`; accepts 1–4 workers |
+| `DAFTAR_CREATIVE_CONFIG_FILE` | Optional absolute private creative tools/project configuration; absent means no configured creative adapters |
 | `OPENAI_API_KEY_FILE` | Optional private OpenAI credential file |
 | `ANTHROPIC_API_KEY_FILE` | Optional private Anthropic credential file |
 | `GITHUB_TOKEN_FILE` | Optional private GitHub credential file |
@@ -105,6 +108,15 @@ with their own private atomic registry and a single-controller lock. Include thi
 directory in stopped-state backups. Model progress does not change the native office
 state hash. An interrupted download requires deliberate review/new request after restart.
 
+Creative assignments, durable job identities and artifacts live under
+`DAFTAR_DATA_DIR/creative-tools/`, with a separate exclusive controller lock.
+Include the complete directory in stopped-state backups. Queued/running jobs
+recovered after restart become interrupted and are never silently re-executed.
+The [creative VPS pack](../deploy/creative/README.md),
+[employee/repository setup](../integrations/creative-tools/README.md) and
+[runtime contract](../integrations/creative-tools/RUNTIME_CONTRACT.md) document
+installation, scoped grants, fixed operations and external-service limits.
+
 Optional website pairing is encrypted in `DAFTAR_DATA_DIR/cloud/` with an explicit
 AES-GCM file-key backend. Its key and source pairing remain in a separate protected
 secret directory. The runtime reports only cloud configured/connected flags, revision
@@ -131,6 +143,11 @@ does not supply those missing client flows.
 | `POST /v1/models/pull` | `{companyId,employeeId,model,idempotencyKey,maxBytes?}` requests a deduplicated model download |
 | `POST /v1/models/cancel` | `{companyId,employeeId,requestId}` cancels this subscriber; never deletes model bytes |
 | `POST /v1/models/select` | `{companyId,employeeId,model}` assigns a verified installed digest to the scope |
+| `GET /v1/creative?companyId=...&employeeId=...` | Scoped local-tool readiness, reviewed projects, assignments and job receipts; employee optional |
+| `POST /v1/creative/assign` | `{id,companyId,employeeId,projectId,toolIds}` assigns tools; an empty tool list removes the assignment |
+| `POST /v1/creative/run` | `{id,companyId,employeeId,projectId,operation,input}` admits one fixed job and returns 202; admission is not completion |
+| `GET /v1/creative/jobs?companyId=...&jobId=...` | Retrieves the original durable creative job and safe output metadata |
+| `POST /v1/creative/cancel` | `{id,companyId,jobId}` stops local execution/waiting; remote Adobe completion may remain uncertain |
 
 Enabling workers or a one-shot pass can make provider calls for already-authorized
 jobs. The same native budgets and contracts remain in effect. Disabling a worker

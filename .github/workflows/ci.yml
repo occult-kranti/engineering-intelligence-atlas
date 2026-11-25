@@ -56,6 +56,9 @@ jobs:
   headless:
     uses: ./.github/workflows/headless-runtime.yml
 
+  creative-tools:
+    uses: ./.github/workflows/creative-tools.yml
+
   mysql-connectors:
     runs-on: ubuntu-latest
     services:
@@ -350,7 +353,7 @@ jobs:
           if-no-files-found: error
 
   release:
-    needs: [web, release-checksums, headless, mysql-connectors, desktop, desktop-windows, android, cloud, editor, design-tools]
+    needs: [web, release-checksums, headless, creative-tools, mysql-connectors, desktop, desktop-windows, android, cloud, editor, design-tools]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:

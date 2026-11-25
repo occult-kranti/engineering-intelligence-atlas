@@ -41,6 +41,9 @@ COPY desktop-shell/package.json desktop-shell/package-lock.json /app/desktop-she
 COPY company /app/company
 COPY headless-runtime/*.mjs /app/headless-runtime/
 COPY tools/atlas-mcp.mjs tools/daftar-runtime-mcp.mjs /app/tools/
+COPY integrations /app/integrations
+COPY scripts/apply-company-kits.mjs /app/scripts/apply-company-kits.mjs
+COPY skills /app/skills
 COPY deploy/healthcheck.mjs /app/deploy/healthcheck.mjs
 COPY deploy/runtime-request.mjs /app/deploy/runtime-request.mjs
 USER 10001:10001

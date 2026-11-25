@@ -1,0 +1,41 @@
+# Overlay on compose.yaml. Uses an existing host; never provisions a VPS/GPU.
+# First build the base image with: docker compose -f deploy/compose.yaml build
+services:
+  runtime:
+    image: daftar-runtime-creative:local
+    build:
+      context: ..
+      dockerfile: deploy/creative/Dockerfile
+      args:
+        BASE_RUNTIME_IMAGE: ${DAFTAR_CREATIVE_BASE_IMAGE:-daftar-runtime:local}
+    mem_limit: ${DAFTAR_CREATIVE_MEMORY_LIMIT:-16g}
+    cpus: ${DAFTAR_CREATIVE_CPUS:-4}
+    pids_limit: 512
+    stop_grace_period: 45s
+    environment:
+      DAFTAR_CREATIVE_CONFIG_FILE: /run/daftar/creative-tools.json
+      XDG_CACHE_HOME: /var/lib/daftar-creative/cache
+      XDG_CONFIG_HOME: /var/lib/daftar-creative/config
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      - type: bind
+        source: ${DAFTAR_CREATIVE_TOOLS_PREFIX:-/opt/daftar-tools}
+        target: /opt/daftar-tools
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${DAFTAR_CREATIVE_WORKSPACE:-/var/lib/daftar-creative}
+        target: /var/lib/daftar-creative
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${DAFTAR_CREATIVE_CONFIG_HOST_FILE:-/etc/daftar/creative-tools.json}
+        target: /run/daftar/creative-tools.json
+        read_only: true
+        bind:
+          create_host_path: false
+    # tmpfs sequences concatenate under ordinary Compose merging. Require
+    # Compose 2.24.4+ so the base 64 MiB /tmp is replaced, not duplicated.
+    tmpfs: !override
+      - /tmp:rw,noexec,nosuid,nodev,size=1073741824,mode=1777

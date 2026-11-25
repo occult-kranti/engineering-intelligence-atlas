@@ -16,10 +16,10 @@ function webview(saved={}) {
     requestSubmit(){this.onsubmit?.({preventDefault(){}});}
   }
   const get=id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);};
-  const document={getElementById:get,createElement:tag=>new Element(tag),querySelectorAll:selector=>selector.includes('form button')?[get('send'),get('panel'),get('manage-team')]:[]};
+  const document={getElementById:get,createElement:tag=>new Element(tag),querySelectorAll:selector=>selector.includes('form button')?[get('send'),get('panel'),get('manage-team'),get('creative-tools')]:[]};
   const filename=path.resolve(__dirname,'../media/office.js');
   vm.runInNewContext(fs.readFileSync(filename,'utf8'),{document,window:{addEventListener:(_event,fn)=>{listener=fn;}},acquireVsCodeApi:()=>({postMessage:message=>messages.push(message),getState:()=>saved,setState:value=>stored.push(JSON.parse(JSON.stringify(value)))})},{filename});
-  const state=(company='a',url='https://atlas.example')=>listener({data:{type:'state',connected:true,connection:{kind:'cloud',url},snapshot:{companies:[{id:'a',name:'A'},{id:'b',name:'B'}],employees:[],offices:[],departments:[],jobs:[]},selectedCompany:company,ownership:[]}});
+  const state=(company='a',url='https://atlas.example',kind='cloud')=>listener({data:{type:'state',connected:true,connection:{kind,url},snapshot:{companies:[{id:'a',name:'A'},{id:'b',name:'B'}],employees:[],offices:[],departments:[],jobs:[]},selectedCompany:company,ownership:[]}});
   return {get,messages,stored,state,receive:data=>listener({data})};
 }
 test('unsent drafts survive refresh and switch independently by company and connected origin',()=>{
@@ -47,4 +47,14 @@ test('old-company responses and failures cannot replace another company draft or
   w.receive({type:'error',message:'Disconnected'});assert.equal(w.get('brief').value,'B work');
   w.receive({type:'state',connected:false,connection:null});assert.equal(w.get('brief').value,'');
   w.state('b');assert.equal(w.get('brief').value,'B work');
+});
+test('runtime creative summary reports real readiness, ignores other company results and respects busy state',()=>{
+  const w=webview();w.state('a','http://127.0.0.1:8788','runtime');
+  assert.match(w.get('connection').textContent,/Headless runtime/);assert.equal(w.get('send').textContent,'Save runtime brief');
+  w.receive({type:'creativeState',companyId:'a',inventory:{tools:[{id:'blender',configured:true,available:false},{id:'adobe-photoshop',configured:true,available:true,remoteAuthVerified:false}],projects:[{id:'p'}],jobs:[{status:'queued'}]}});
+  assert.match(w.get('creative-state').textContent,/Blender: unavailable/);assert.match(w.get('creative-state').textContent,/Adobe Photoshop: configured — authentication unverified/);assert.match(w.get('creative-state').textContent,/1 queued or running/);
+  const current=w.get('creative-state').textContent;w.receive({type:'creativeState',companyId:'b',inventory:{tools:[],projects:[]}});assert.equal(w.get('creative-state').textContent,current);
+  w.get('creative-tools').onclick();assert.equal(w.messages.at(-1).type,'creativeTools');assert.equal(w.messages.at(-1).companyId,'a');assert.equal(w.get('creative-tools').disabled,true);
+  const count=w.messages.length;w.get('creative-tools').onclick();assert.equal(w.messages.length,count);
+  w.receive({type:'busy',value:false});assert.equal(w.get('creative-tools').disabled,false);
 });

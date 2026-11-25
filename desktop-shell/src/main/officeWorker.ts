@@ -19,7 +19,9 @@ export interface OfficeWorkerOptions {
   prepareContext?: (job: OfficeJob, snapshot: OfficeSnapshot) => Promise<string>;
   /** Validate the exact route and assignment before cache/budget admission and again at dispatch. */
   validateJob?: (job: OfficeJob) => Promise<void>;
-  executeTool?: (job: OfficeJob, text: string) => Promise<{ summary: string; evidenceUrl: string }>;
+  /** Explicit adapters connected by this host; desktop keeps its existing publisher default. */
+  managedToolCapabilities?: readonly string[];
+  executeTool?: (job: OfficeJob, text: string, context: { signal: AbortSignal }) => Promise<{ summary: string; evidenceUrl: string }>;
 }
 
 export type OfficeWorkerController = Pick<OfficeWorker, 'status' | 'setEnabled' | 'stop' | 'runOnce'>;
@@ -128,7 +130,9 @@ export class OfficeWorker {
       'Return the useful deliverable, a concise decision summary, evidence references, uncertainties, and the next handoff. Do not return private chain-of-thought.',
       job.allowedTools.includes('github.publish_changes')
         ? 'You may prepare one GitHub text changeset for the managed publisher. Return ONLY JSON {"branch":"...","expectedHead":"40-character verified SHA supplied in the task","message":"...","files":[{"path":"relative/path","content":"complete file"}]}. Do not invent a branch head. No shell or code execution is available. The runtime validates and publishes only within this job capability.'
-        : 'Do not claim tools ran, sources were checked, files were changed, or code was executed without supplied evidence. This job produces text; it cannot execute code or publish externally.',
+        : job.allowedTools.includes('creative.execute')
+          ? 'Prepare one bounded creative-tool request. Return ONLY JSON {"projectId":"configured project ID","operation":"advertised operation","input":{"path":"reviewed project-relative asset"}}. Use only the assigned projects and available operations in the managed context. Never supply a company ID, employee ID, executable, URL, shell command, Python script or output path. The runtime attaches scope and checks authority, project trust, paths and limits. Do not claim execution before the runtime produces its receipt.'
+          : 'Do not claim tools ran, sources were checked, files were changed, or code was executed without supplied evidence. This job produces text; it cannot execute code or publish externally.',
       assistantBrief,
       specialistBrief,
       roleReference ? `Role reference ${roleReference.key} (${roleReference.sha256}):\n${roleReference.brief}\nHandoff: ${roleReference.handoff}\nSource references (not fetched by this role): ${JSON.stringify(roleReference.references)}\nExamples: ${roleReference.examples.join(', ')}\nMetadata does not grant tools. Only the job's allowedActions grant capabilities.` : '',
@@ -302,12 +306,19 @@ export class OfficeWorker {
       // if cancellation arrived while the claim response was pending.
       controller.signal.throwIfAborted();
       if ((!job.authorized && (claimed as OfficeSnapshot & { policy?: { approvalMode: string } }).policy?.approvalMode !== 'autonomous') || job.mode !== 'provider') throw new Error('Provider execution is not authorized for this job');
+      const managedActions = job.allowedTools.filter(capability => ['github.publish_changes', 'creative.execute'].includes(capability));
+      if (managedActions.length > 1) throw new Error('Use separate jobs for publishing and creative execution. No provider request was sent.');
+      const connected = this.options.managedToolCapabilities ?? ['github.publish_changes'];
+      if (managedActions.some(capability => !connected.includes(capability))) throw new Error('The assigned managed tool is not connected on this host. No provider request was sent.');
+      if (managedActions.length && !this.options.executeTool) throw new Error('The managed action adapter is unavailable. No provider request was sent.');
       await this.options.validateJob?.(job);
       controller.signal.throwIfAborted();
-      const preparedContext = job.allowedTools.includes('github.read_repository')
+      const needsContext = job.allowedTools.some(capability => ['github.read_repository', 'creative.execute'].includes(capability));
+      const preparedContext = needsContext
         ? await this.options.prepareContext?.(job, claimed) : '';
       controller.signal.throwIfAborted();
       if (job.allowedTools.includes('github.read_repository') && !preparedContext) throw new Error('GitHub source-read capability is not connected. No provider request was sent.');
+      if (job.allowedTools.includes('creative.execute') && !preparedContext) throw new Error('Creative project assignments are unavailable. No provider request was sent.');
       const preparedContextLimit = job.allowedTools.includes('github.publish_changes') ? 600000 : 200000;
       if (preparedContext && Buffer.byteLength(preparedContext, 'utf8') > preparedContextLimit) throw new Error(`Prepared source context exceeds its bounded size (${preparedContextLimit} UTF-8 bytes).`);
       const { system, prompt, contextHash, sourceReview } = this.prompts(job, claimed, preparedContext);
@@ -397,13 +408,13 @@ export class OfficeWorker {
       if (completionAuthority.lastAction?.allowed !== true) throw new Error('Provider authority changed before completion. Artifact preserved.');
       controller.signal.throwIfAborted();
       let toolSummary = '';
-      if (usageObserved && body.trim() && job.allowedTools.includes('github.publish_changes')) {
-        if (result.inputTokens + result.outputTokens > job.limits.maxTokens || costUsd > job.limits.maxUsd) throw new Error('Provider exceeded the approved allocation. Artifact preserved; publishing was not attempted.');
-        if (!this.options.executeTool) throw new Error('The GitHub publishing capability is not connected. Artifact preserved.');
+      if (usageObserved && body.trim() && managedActions.length) {
+        if (result.inputTokens + result.outputTokens > job.limits.maxTokens || costUsd > job.limits.maxUsd) throw new Error('Provider exceeded the approved allocation. Artifact preserved; the managed action was not attempted.');
+        if (!this.options.executeTool) throw new Error('The managed action capability is not connected. Artifact preserved.');
         const latest = unwrap(await this.options.snapshot());
         const attempt = latest.jobs.find(j => j.id === job!.id);
-        if (attempt?.status !== 'running' || attempt.leaseToken !== leaseToken || controller.signal.aborted) throw new Error('Attempt paused before publishing. Artifact preserved.');
-        const outcome = await this.options.executeTool(job, body);
+        if (attempt?.status !== 'running' || attempt.leaseToken !== leaseToken || controller.signal.aborted) throw new Error('Attempt paused before the managed action. Artifact preserved.');
+        const outcome = await this.options.executeTool(job, body, { signal: controller.signal });
         toolSummary = `${outcome.summary}\n${outcome.evidenceUrl}\n`;
         fs.appendFileSync(artifact, `\n\n## Managed action\n${toolSummary}`);
       }

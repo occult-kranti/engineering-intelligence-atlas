@@ -1,11 +1,13 @@
 'use strict';
+const crypto = require('node:crypto');
+const {validateCreativeRequest,creativeSnapshot,creativeJob} = require('./creative');
 const MAX_RESPONSE = 8 * 1024 * 1024 + 65536;
 const MAX_MESSAGE = 12000;
 function origin(raw, localOnly = false) {
   if (typeof raw !== 'string' || raw.length > 2048) throw new Error('Enter a valid workspace URL.');
   const url = new URL(raw);
   const local = ['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname);
-  if (url.username || url.password || url.search || !localOnly && url.hash || (localOnly ? url.protocol !== 'http:' || !local : url.protocol !== 'https:' && !(local && url.protocol === 'http:'))) throw new Error('Use HTTPS for cloud or HTTP loopback for the installed desktop.');
+  if (url.username || url.password || url.search || !localOnly && url.hash || (localOnly ? url.protocol !== 'http:' || !local : url.protocol !== 'https:' && !(local && url.protocol === 'http:'))) throw new Error('Use HTTPS or HTTP loopback for the connected workspace.');
   if (!['', '/'].includes(url.pathname)) throw new Error('Use the workspace origin without a path.');
   return url.origin;
 }
@@ -18,24 +20,28 @@ function pairing(raw) {
   return { deviceToken: result.deviceToken, ...(result.siteAccessToken ? { siteAccessToken: result.siteAccessToken } : {}), ...(result.baseUrl ? { baseUrl: origin(result.baseUrl) } : {}) };
 }
 function validateConnection(value) {
-  if (!value || typeof value !== 'object' || Array.isArray(value) || !['desktop','cloud'].includes(value.kind)) throw new Error('Pair this editor to a desktop or website connection.');
+  if (!value || typeof value !== 'object' || Array.isArray(value) || !['desktop','cloud','runtime'].includes(value.kind)) throw new Error('Connect this editor to a desktop, website or headless runtime.');
   const url=origin(value.url,value.kind==='desktop');
   if(value.url!==url)throw new Error('Stored workspace connection is invalid. Pair it again.');
   if(value.kind==='desktop') {
     if(typeof value.cookie!=='string'||!/^atlas_session=[a-f0-9]{64}$/.test(value.cookie))throw new Error('Stored desktop session is invalid. Pair it again.');
     return {kind:'desktop',url,cookie:value.cookie};
   }
+  if(value.kind==='runtime') {
+    if(typeof value.controlToken!=='string'||! /^[A-Za-z0-9_-]{32,256}$/.test(value.controlToken))throw new Error('Stored runtime credential is invalid. Connect it again.');
+    return {kind:'runtime',url,controlToken:value.controlToken};
+  }
   const parsed=pairing(JSON.stringify({deviceToken:value.deviceToken,siteAccessToken:value.siteAccessToken}));
   return {kind:'cloud',url,...parsed};
 }
 class AtlasClient {
-  constructor(connection, fetcher = fetch) { this.connection = validateConnection(connection); this.fetcher = fetcher; this.revision=null; }
+  constructor(connection, fetcher = fetch) { this.connection = validateConnection(connection); this.fetcher = fetcher; this.revision=null;this.stateHash=null; }
   async request(route, method = 'GET', body) {
     const c = this.connection;
     if (!c) throw new Error('Connect this editor to your desktop or signed-in website first.');
     const headers = { Accept: 'application/json' };
     if (c.kind === 'desktop') { headers.Origin = c.url; headers.Cookie = c.cookie; }
-    else { headers.Authorization = `Bearer ${c.deviceToken}`; if (c.siteAccessToken) headers['OAI-Sites-Authorization'] = `Bearer ${c.siteAccessToken}`; }
+    else { headers.Authorization = `Bearer ${c.kind==='runtime'?c.controlToken:c.deviceToken}`; if (c.siteAccessToken) headers['OAI-Sites-Authorization'] = `Bearer ${c.siteAccessToken}`; }
     if (body !== undefined) headers['Content-Type'] = 'application/json';
     // A deliberately submitted cloud chat can outlast ordinary snapshot reads.
     // Leave room for the server's bounded 180-second provider request and its
@@ -43,10 +49,10 @@ class AtlasClient {
     const timeoutMs = c.kind === 'cloud' && route === '/api/chat' && method === 'POST' ? 210000 : 45000;
     let response;
     try { response = await this.fetcher(c.url + route, { method, headers, ...(body !== undefined ? { body: JSON.stringify(body) } : {}), redirect: 'error', signal: AbortSignal.timeout(timeoutMs) }); }
-    catch { throw new Error('Workspace unavailable. Keep the desktop open or check the website connection. Your saved work is preserved.'); }
-    if ([401,403].includes(response.status)) throw new Error('This editor connection expired or was revoked. Pair it again.');
+    catch { throw new Error('Workspace unavailable. Check the connected desktop, website or runtime. The action may already be saved; refresh before retrying.'); }
+    if (response.status === 401 || response.status===403&&c.kind!=='runtime') throw new Error('This editor connection expired or was revoked. Pair it again.');
     if (response.status === 409) throw new Error('The request conflicts with newer workspace state. Refresh before retrying.');
-    if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('The site returned its sign-in page. Use the complete device pairing JSON.');
+    if (!response.headers.get('content-type')?.includes('application/json')) throw new Error(c.kind==='runtime'?'Runtime did not return JSON. Verify its configured origin.':'The site returned its sign-in page. Use the complete device pairing JSON.');
     const declared=Number(response.headers.get('content-length'));
     if(Number.isFinite(declared)&&declared>MAX_RESPONSE){try{await response.body?.cancel();}catch{}throw new Error('Workspace response exceeds its limit.');}
     const reader = response.body?.getReader();
@@ -58,7 +64,7 @@ class AtlasClient {
       if(error?.message==='Workspace response exceeds its limit.')throw error;
       throw new Error('Workspace response was interrupted. The action may already be saved; refresh before retrying.');
     } finally { reader.releaseLock(); }
-    let data;try{data=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new Error('Workspace returned invalid data.');}
+    let data;try{let raw=Buffer.concat(chunks).toString('utf8');for(const secret of [c.controlToken,c.deviceToken,c.siteAccessToken,c.cookie])if(secret)raw=raw.split(secret).join('[credential omitted]');data=JSON.parse(raw);}catch{throw new Error('Workspace returned invalid data.');}
     if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Workspace returned invalid data.');
     if(!response.ok)throw new Error(typeof data.error==='string'?data.error.slice(0,500):`Workspace request failed (${response.status}). Refresh before retrying a paid request.`);
     if(data.ok===false || data.error && !data.snapshot)throw new Error(String(data.error || 'Workspace operation rejected.').slice(0,500));
@@ -66,6 +72,12 @@ class AtlasClient {
   }
   async call(method, args = []) { const data = await this.request('/api/call','POST',{method,args}); return data.result; }
   async snapshot() {
+    if(this.connection.kind==='runtime') {
+      const result=await this.request('/v1/office');
+      if(result.ok!==true||!result.snapshot||typeof result.snapshot!=='object'||Array.isArray(result.snapshot)||!/^[a-f0-9]{64}$/.test(result.stateHash||''))throw new Error('Runtime office snapshot is invalid.');
+      this.stateHash=result.stateHash;
+      return {...result,revision:null,updatedAt:null};
+    }
     if (this.connection.kind === 'cloud') {
       const result=await this.request('/api/workspace');
       if(!Number.isSafeInteger(result.revision)||result.revision<0)throw new Error('Cloud workspace revision is invalid.');
@@ -84,6 +96,16 @@ class AtlasClient {
       const result=await this.request('/api/commands','POST',{expectedRevision:this.revision,command:{action,payload}});
       return {...result,queued:true};
     }
+    if(this.connection.kind==='runtime') {
+      if(this.stateHash===null)await this.snapshot();
+      const id=crypto.randomUUID();
+      try {
+        const result=await this.request('/v1/commands','POST',{id,expectedStateHash:this.stateHash,command});
+        if(result.ok!==true||result.id!==id)throw new Error('Runtime command receipt is invalid.');
+        if(/^[a-f0-9]{64}$/.test(result.stateHash||''))this.stateHash=result.stateHash;
+        return {...result,queued:false};
+      }catch(error){throw new Error(`${String(error.message).slice(0,300)} No retry was sent. Retain command id ${id} and inspect current state.`);}
+    }
     const result=await this.call('officeCommand',[command]);
     if(!result?.ok)throw new Error(result?.error || 'Desktop command was rejected.');
     return result;
@@ -97,6 +119,26 @@ class AtlasClient {
   async chatHistory(companyId) {
     if(this.connection.kind==='cloud')return this.request(`/api/chat?scopeKind=company&scopeId=${encodeURIComponent(companyId)}`);
     return {messages:[]};
+  }
+  async creative(operation,input) {
+    if(this.connection.kind!=='runtime')throw new Error('Connect to a headless runtime to control creative tools.');
+    validateCreativeRequest(operation,input);
+    const read=['snapshot','job'].includes(operation);
+    const route=operation==='snapshot'?`/v1/creative?${new URLSearchParams(input)}`:operation==='job'?`/v1/creative/jobs?${new URLSearchParams(input)}`:`/v1/creative/${operation}`;
+    try {
+      const result=await this.request(route,read?'GET':'POST',read?undefined:input);
+      if(result.ok!==true)throw new Error('Runtime creative receipt is invalid.');
+      if(!read&&result.snapshotOmitted===true&&result.id===input.id)return {ok:true,id:input.id,receiptOnly:true,replayed:result.replayed===true};
+      if(operation==='snapshot')return creativeSnapshot(result,input.companyId);
+      if(operation==='assign') {
+        const assignment=result.assignment;
+        if(!assignment||assignment.companyId!==input.companyId||assignment.employeeId!==input.employeeId||assignment.projectId!==input.projectId||!Array.isArray(assignment.toolIds)||assignment.toolIds.length!==input.toolIds.length||new Set(assignment.toolIds).size!==assignment.toolIds.length||assignment.toolIds.some(id=>!input.toolIds.includes(id)))throw new Error('Creative assignment response does not match the requested company, employee, project and tools.');
+        return {ok:true,replayed:result.replayed===true,assignment:{companyId:input.companyId,employeeId:input.employeeId,projectId:input.projectId,toolIds:[...assignment.toolIds]}};
+      }
+      const job=creativeJob(result.job,input.companyId,input.jobId);
+      if(operation==='run'&&(result.accepted!==true||job.id!==input.id||job.employeeId!==input.employeeId||job.projectId!==input.projectId||job.operation!==input.operation))throw new Error('Creative task receipt does not match the requested operation.');
+      return {ok:true,...(operation==='run'?{accepted:true}:{}),replayed:result.replayed===true,job};
+    }catch(error){throw new Error(`${String(error.message).slice(0,300)}${read?'':` No retry was sent. Retain creative request id ${input.id}; inspect creative tasks before submitting another.`}`);}
   }
   static async connectDesktop(raw, fetcher = fetch) {
     const url = new URL(raw); const base = origin(raw,true);
@@ -116,6 +158,16 @@ class AtlasClient {
     const connection={kind:'cloud',url,...parsed}; delete connection.baseUrl;
     const session=await new AtlasClient(connection,fetcher).request('/api/session');
     if(session.signedIn!==true)throw new Error('Sign in on the website and create a device pairing credential.');
+    return connection;
+  }
+  static async connectRuntime(base,controlToken,fetcher=fetch) {
+    const url=origin(base);
+    if(base.replace(/\/$/,'')!==url)throw new Error('Use the canonical runtime origin without aliases or path components.');
+    const connection=validateConnection({kind:'runtime',url,controlToken});
+    const client=new AtlasClient(connection,fetcher);
+    const result=await client.request('/v1/status');
+    if(result.ok!==true||result.execution!=='headless')throw new Error('This endpoint is not a Daftar headless runtime.');
+    await client.snapshot();
     return connection;
   }
 }

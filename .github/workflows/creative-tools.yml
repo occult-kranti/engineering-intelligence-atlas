@@ -1,0 +1,61 @@
+name: Verify creative tool installation
+
+on:
+  workflow_call:
+    inputs:
+      blender_smoke:
+        type: boolean
+        default: false
+  workflow_dispatch:
+    inputs:
+      blender_smoke:
+        description: Download the pinned official Blender archive and run a bounded CPU render/export
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  installer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify archive integrity, traversal rejection, atomic install and recovery
+        run: python3 -m unittest discover -s deploy/creative/tests -v
+      - name: Verify read-only host preflight and compose resource overlays
+        run: |
+          python3 deploy/creative/install.py --plan --tool blender --prefix "$RUNNER_TEMP/daftar-tools"
+          test ! -e "$RUNNER_TEMP/daftar-tools"
+          docker compose -f deploy/compose.yaml -f deploy/compose.creative.yaml config --format json > "$RUNNER_TEMP/creative-compose.json"
+          python3 deploy/creative/verify_compose.py "$RUNNER_TEMP/creative-compose.json"
+          docker compose -f deploy/compose.yaml -f deploy/compose.creative.yaml -f deploy/creative/compose.gpu.yaml config --format json > "$RUNNER_TEMP/creative-compose-gpu.json"
+          python3 deploy/creative/verify_compose.py "$RUNNER_TEMP/creative-compose-gpu.json" --gpu
+      - name: Install signed distro dependencies for the optional official engine smoke
+        if: inputs.blender_smoke == true
+        run: sudo python3 deploy/creative/install.py --install --tool graphics --profile blender-runtime --prefix "/var/lib/daftar-creative-ci-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+      - name: Verify official pinned download, reuse and CPU rendering
+        if: inputs.blender_smoke == true
+        run: |
+          python3 deploy/creative/install.py --install --tool blender --prefix "$RUNNER_TEMP/daftar-tools"
+          python3 deploy/creative/install.py --check --tool blender --prefix "$RUNNER_TEMP/daftar-tools"
+          python3 deploy/creative/install.py --install --tool blender --prefix "$RUNNER_TEMP/daftar-tools"
+          "$RUNNER_TEMP/daftar-tools/blender/4.5.17/blender" --background --factory-startup --disable-autoexec --threads 2 --python-exit-code 1 --python deploy/creative/smoke_blender.py -- "$RUNNER_TEMP/creative-smoke"
+          node integrations/creative-tools/smoke-service.mjs --blender "$RUNNER_TEMP/daftar-tools/blender/4.5.17/blender" --scene "$RUNNER_TEMP/creative-smoke/scene.blend" --output "$RUNNER_TEMP/creative-service-smoke"
+          python3 deploy/creative/install.py --check --tool blender --prefix "$RUNNER_TEMP/daftar-tools"
+      - name: Retain the optional real-engine smoke receipt
+        if: inputs.blender_smoke == true && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: creative-blender-cpu-smoke
+          path: |
+            ${{ runner.temp }}/creative-smoke/
+            ${{ runner.temp }}/creative-service-smoke/
+          if-no-files-found: error

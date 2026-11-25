@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "classification": "public-generic-preset",
+  "companies": [{
+    "key": "creative-vps-team",
+    "id": "existing-company-id",
+    "name": "Existing company",
+    "office": {"key": "main", "name": "Main office"},
+    "departments": [
+      {"key": "graphics", "name": "Graphics production"},
+      {"key": "game-engineering", "name": "Game engineering"},
+      {"key": "creative-qa", "name": "Creative QA"}
+    ],
+    "employees": [
+      {"key": "graphics-lead", "name": "Graphics production lead", "role": "Graphics pipeline and production lead", "departmentKey": "graphics", "skillPaths": ["skills/spatial-3d-production-engineering/SKILL.md"]},
+      {"key": "blender-artist", "name": "Blender technical artist", "role": "Blender scene, render and asset export engineer", "departmentKey": "graphics", "skillPaths": ["skills/spatial-3d-production-engineering/SKILL.md"]},
+      {"key": "unreal-engineer", "name": "Unreal gameplay engineer", "role": "Unreal project and gameplay tools engineer", "departmentKey": "game-engineering", "skillPaths": ["skills/game-reconstruction-engineering/SKILL.md", "skills/spatial-3d-production-engineering/SKILL.md"]},
+      {"key": "asset-interoperability", "name": "Asset interoperability engineer", "role": "Authorized graphics format interoperability engineer", "departmentKey": "graphics", "skillPaths": ["skills/defensive-reverse-engineering/SKILL.md", "skills/spatial-3d-production-engineering/SKILL.md"]},
+      {"key": "creative-qa", "name": "Creative QA engineer", "role": "Game asset and graphics validation engineer", "departmentKey": "creative-qa", "skillPaths": ["skills/game-reconstruction-engineering/SKILL.md"]}
+    ],
+    "services": [],
+    "roadmap": [
+      {"key": "review-project", "title": "Review the trusted game repository", "description": "Confirm ownership, asset rights, project root and supported tool versions before execution.", "ownerKey": "graphics-lead", "departmentKey": "graphics", "dependsOn": []},
+      {"key": "graphics-acceptance", "title": "Render and export a bounded Blender asset", "description": "Use an approved creative job, inspect its output and retain the job receipt and file hashes.", "ownerKey": "blender-artist", "departmentKey": "graphics", "dependsOn": ["review-project"]},
+      {"key": "engine-acceptance", "title": "Validate the licensed Unreal project", "description": "After importing an owner-provided Linux engine, run project inspection and DataValidation on reviewed plugins and content.", "ownerKey": "unreal-engineer", "departmentKey": "game-engineering", "dependsOn": ["review-project"]},
+      {"key": "delivery-review", "title": "Review graphics delivery evidence", "description": "Verify output format, engine compatibility and current permissions. Claim only adapters that passed real execution.", "ownerKey": "creative-qa", "departmentKey": "creative-qa", "dependsOn": ["graphics-acceptance", "engine-acceptance"]}
+    ],
+    "knowledge": [{"key": "creative-vps-guide", "title": "Creative VPS execution contract", "summary": "Fixed Blender, Unreal, Inkscape, ffprobe and licensed Photoshop API operations use reviewed project roots, scoped expiring authority and durable receipts. Local cancellation does not prove a remote Adobe job stopped. Interoperability work must use authorized assets and tools.", "artifactUri": "integrations/creative-tools/RUNTIME_CONTRACT.md"}],
+    "board": {"title": "Creative VPS production and validation"}
+  }]
+}
