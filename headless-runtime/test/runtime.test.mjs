@@ -352,6 +352,60 @@ test('real Rust: concurrent replay, stale state, restart and internal-field reda
   assert.doesNotMatch(JSON.stringify(projected), /private-lease|private-worker|\/private\/artifact|private-receipt/);
 });
 
+test('invalid programmatic adapter fails before creating state or registry leases', () => {
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-invalid-adapter-'));
+  const dataDir = path.join(root, 'not-created');
+  try {
+    assert.throws(() => createRuntime({ repoRoot, dataDir, generate: 'invalid' }), error => error.code === 'INVALID_CONFIG');
+    assert.equal(fs.existsSync(dataDir), false);
+  } finally { fs.rmSync(root, { recursive: true, force: true }); }
+});
+
+test('failed cloud/model startup releases creative ownership before an immediate server retry', async t => {
+  const binaryPath = path.join(repoRoot, 'native-core/target/release/atlas-core');
+  if (!requireBuild(t, [binaryPath, path.join(repoRoot, 'desktop-shell/dist/main/modelPool.js')])) return;
+  const root = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-startup-recovery-'));
+  t.after(() => fs.rmSync(root, { recursive: true, force: true }));
+  for (const [name, broken, expected] of [
+    ['cloud', { cloudSyncEnabled: true, cloudUrl: 'https://invalid.example/unexpected-path' }, /Cloud sync requires/],
+    ['model', { ollamaBaseUrl: 'https://127.0.0.1:11434' }, /loopback only/],
+  ]) {
+    const dataDir = path.join(root, name);
+    await assert.rejects(startServer({ repoRoot, binaryPath, dataDir, token, port: 0, ...broken }), expected);
+    for (const registry of ['creative-tools', 'model-pool']) assert.equal(fs.existsSync(path.join(dataDir, registry, 'owner.lock')), false);
+    const restored = await startServer({ repoRoot, binaryPath, dataDir, token, port: 0 });
+    try {
+      assert.equal(restored.runtime.status().worker.enabled, false);
+      assert.equal((await restored.runtime.snapshot()).ok, true);
+    } finally { await restored.close(); }
+  }
+});
+
+test('late startup failure stops a started observer and releases both acquired registries', async t => {
+  const compiled = path.join(repoRoot, 'desktop-shell/dist/main/office.js');
+  if (!requireBuild(t, [compiled, path.join(repoRoot, 'desktop-shell/dist/main/modelPool.js')])) return;
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-startup-observer-'));
+  const { OfficeService } = createRequire(import.meta.url)(compiled);
+  const original = new Error('Synthetic observer startup failure');
+  let office, interval;
+  t.after(() => { clearInterval(interval); fs.rmSync(dataDir, { recursive: true, force: true }); });
+  t.mock.method(OfficeService.prototype, 'startObserving', function () {
+    office = this;
+    interval = this.observerTimer = setInterval(() => {}, 1000);
+    interval.unref();
+    throw original;
+  });
+  let caught;
+  try { createRuntime({ repoRoot, dataDir }); } catch (error) { caught = error; }
+  assert.equal(caught, original);
+  assert.equal(Object.keys(caught).includes('cleanupPromise'), false);
+  assert.ok(caught.cleanupPromise instanceof Promise);
+  const results = await caught.cleanupPromise;
+  assert.equal(results.filter(result => result.status === 'rejected').length, 0);
+  assert.equal(office.observerTimer, null);
+  for (const registry of ['creative-tools', 'model-pool']) assert.equal(fs.existsSync(path.join(dataDir, registry, 'owner.lock')), false);
+});
+
 test('real worker: mock provider continues after HTTP control completes and saves artifact plus budget', async t => {
   const binaryPath = path.join(repoRoot, 'native-core/target/release/atlas-core');
   if (!requireBuild(t, [binaryPath, path.join(repoRoot, 'desktop-shell/dist/main/officeWorker.js')])) return;

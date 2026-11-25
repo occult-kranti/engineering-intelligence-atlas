@@ -68,7 +68,7 @@ try {
   const receipt = JSON.parse(await fs.readFile(receiptPath, 'utf8'));
   assert.equal(receipt.status, 'passed');
   assert.equal(receipt.vsixSha256, vsixSha256);
-  console.log(JSON.stringify({ status: receipt.status, vscodeVersion: receipt.vscodeVersion, extensionVersion: receipt.extensionVersion, checks: receipt.checks.length, networkRequests: receipt.networkRequests, receipt: receiptPath }));
+  console.log(JSON.stringify({ status: receipt.status, vscodeVersion: receipt.vscodeVersion, extensionVersion: receipt.extensionVersion, checks: receipt.checks.length, commands: receipt.commands.length, networkRequests: receipt.networkRequests, receipt: receiptPath }));
 } catch (error) {
   try { await fs.access(receiptPath); }
   catch { await fs.writeFile(receiptPath, JSON.stringify({ status: 'failed-before-test-host', requestedVscodeVersion: version, extensionVersion: manifest.version, vsixSha256, error: error instanceof Error ? error.message : 'Unknown installed smoke failure' }, null, 2) + '\n'); }

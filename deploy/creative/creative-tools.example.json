@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "limits": {"maxMemoryBytes": 8589934592},
+  "tools": {
+    "blender": {"executable": "/opt/daftar-tools/blender/4.5.17/blender"},
+    "inkscape": {"executable": "/usr/bin/inkscape"},
+    "ffmpeg": {"executable": "/usr/bin/ffprobe"}
+  },
+  "projects": [
+    {
+      "id": "creative-studio-demo",
+      "companyId": "replace-with-existing-company-id",
+      "departmentId": "replace-with-existing-department-id",
+      "root": "/var/lib/daftar-creative/projects/studio-demo",
+      "trusted": true,
+      "allowedOperations": ["blender.inspect", "blender.render", "blender.export_glb", "inkscape.export_png", "ffmpeg.probe"]
+    }
+  ]
+}

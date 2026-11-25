@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "blenderVersion": "4.5.17 LTS",
+  "engine": "CYCLES",
+  "device": "CPU",
+  "threads": 2,
+  "samples": 4,
+  "width": 96,
+  "height": 96,
+  "elapsedSeconds": 0.28,
+  "artifacts": [
+    {
+      "name": "render.png",
+      "bytes": 6975,
+      "sha256": "68bf4f253fd317c88b2cd31b484feb2d487d267062825479217a7e20376786ac"
+    },
+    {
+      "name": "scene.blend",
+      "bytes": 435303,
+      "sha256": "dd6e871601e4e4e83fe34cfcfc2c1c1a5792514a8d359f51f91b0825849a0731"
+    },
+    {
+      "name": "scene.glb",
+      "bytes": 1936,
+      "sha256": "d6d61e731d1936825b450a527474864bd3df086ef4e8a3379907386f7d52c3ea"
+    }
+  ],
+  "gpuTested": false,
+  "vpsProvisioned": false
+}

@@ -72,9 +72,21 @@ exports.run = async function run() {
 
     const commands = await vscode.commands.getCommands(true);
     const expectedCommands = extension.packageJSON.contributes.commands.map(command => command.command);
+    assert.equal(expectedCommands.length, 11, 'The installed package must expose the eleven reviewed commands');
+    assert.ok(expectedCommands.includes('atlas.connectRuntime'));
+    assert.ok(expectedCommands.includes('atlas.creativeTools'));
     for (const command of expectedCommands) assert.ok(commands.includes(command), `Registered command missing: ${command}`);
     receipt.commands = expectedCommands;
     receipt.checks.push('All contributed Atlas commands registered');
+
+    const creative = require(path.join(installedRoot, 'src', 'creative.js'));
+    assert.ok(hashes['src/creative.js'], 'The installed package must contain the creative client contract');
+    assert.equal(creative.readiness({id:'adobe-photoshop',configured:true,available:true,remoteAuthVerified:false}), 'Configured — Adobe authentication unverified');
+    assert.throws(() => creative.validateCreativeInput('blender.render', {path:'../outside.blend'}));
+    assert.throws(() => creative.validateCreativeInput('blender.render', {path:'scene.blend',samples:65}));
+    assert.equal(creative.validateCreativeInput('blender.render', {path:'scene.blend',frame:0,width:16,height:2048,samples:64}).frame, 0);
+    assert.throws(() => creative.creativeSnapshot({companyId:'other'}, 'selected'));
+    receipt.checks.push('Installed creative contract enforces scope, bounded inputs and honest Adobe readiness');
 
     // Exercise the installed extension's actual commands. The separate browser
     // and desktop UI gates cover rendered layout; this gate proves installed

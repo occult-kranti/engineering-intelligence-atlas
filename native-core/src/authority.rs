@@ -16,6 +16,7 @@ pub const AUTHORITY_CAPABILITIES: &[&str] = &[
     "provider.run",
     "github.read_repository",
     "github.publish_changes",
+    "creative.execute",
 ];
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -74,6 +75,53 @@ mod tests {
             .as_str()
             .unwrap()
             .into()
+    }
+    #[test]
+    fn creative_authority_is_explicit_scoped_and_tracks_donna_parent_revocation() {
+        let mut s = state();
+        let employee = hire(&mut s);
+        let scope = Scope { kind: "company".into(), id: "atlas".into() };
+        let clock = OffsetDateTime::now_utc();
+        assert!(!s.authority_has(&employee, &scope, "creative.execute", clock, None).unwrap());
+        let parent = grant(&mut s, "donna", json!({"kind":"company","id":"atlas"}),
+            json!(["authority.manage", "creative.execute"]), "owner", clock + Duration::hours(2));
+        let delegated = grant(&mut s, &employee, json!({"kind":"company","id":"atlas"}),
+            json!(["creative.execute"]), "donna", clock + Duration::hours(1));
+        assert!(s.authority_has(&employee, &scope, "creative.execute", OffsetDateTime::now_utc(), None).unwrap());
+        s.apply(&json!({"action":"create_company","name":"Other","id":"other-creative"})).unwrap();
+        assert!(!s.authority_has(&employee, &Scope { kind: "company".into(), id: "other-creative".into() },
+            "creative.execute", OffsetDateTime::now_utc(), None).unwrap());
+        let restored: OfficeSnapshot = serde_json::from_str(&serde_json::to_string(&s).unwrap()).unwrap();
+        restored.validate().unwrap();
+        assert!(restored.authority.grants.iter().any(|row| row.id == delegated && row.capabilities == ["creative.execute"]));
+        s.apply(&json!({"action":"revoke_authority","grantId":parent,"reason":"Stop delegated creative tools"})).unwrap();
+        assert!(!s.authority_has(&employee, &scope, "creative.execute", OffsetDateTime::now_utc(), None).unwrap());
+    }
+    #[test]
+    fn creative_worker_capability_requires_assignment_and_current_grant_after_reservation() {
+        let mut s = state();
+        let clock = OffsetDateTime::now_utc();
+        grant(&mut s, "donna", json!({"kind":"company","id":"atlas"}), json!(["provider.run"]),
+            "owner", clock + Duration::hours(1));
+        let creative = grant(&mut s, "donna", json!({"kind":"company","id":"atlas"}), json!(["creative.execute"]),
+            "owner", clock + Duration::hours(1));
+        s.apply(&json!({"action":"enqueue_job","companyId":"atlas","officeId":s.offices[0].id,"employeeId":"donna",
+            "goal":"Bounded creative worker test","mode":"provider","provider":"anthropic","model":"fixture-model",
+            "authorized":true,"maxTokens":100,"maxUsd":1,"maxMinutes":5,"allowedTools":["creative.execute"],
+            "priceRates":{"inputUsdPerMillion":1,"outputUsdPerMillion":1},"idempotencyKey":"creative-worker-fixture"})).unwrap();
+        let job_id = s.last_action.as_ref().unwrap()["jobId"].as_str().unwrap().to_owned();
+        s.apply(&json!({"action":"claim_job","workerId":"creative-fixture","mode":"provider"})).unwrap();
+        let lease = s.last_action.as_ref().unwrap()["leaseToken"].as_str().unwrap().to_owned();
+        s.apply(&json!({"action":"reserve_job","jobId":job_id,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.1})).unwrap();
+        let check = json!({"action":"check_worker_authority","jobId":job_id,"leaseToken":lease,"capability":"creative.execute"});
+        s.apply(&check).unwrap();
+        let mut unassigned = s.clone(); unassigned.jobs.iter_mut().find(|job| job.id == job_id).unwrap().allowed_tools.clear();
+        assert_eq!(unassigned.apply(&check).unwrap_err().code, "AUTHORITY_DENIED");
+        let mut expired = s.clone(); expired.authority.grants.iter_mut().find(|row| row.id == creative).unwrap().expires_at = at(clock - Duration::seconds(1));
+        assert_eq!(expired.apply(&check).unwrap_err().code, "AUTHORITY_DENIED");
+        s.apply(&json!({"action":"revoke_authority","grantId":creative,"reason":"Stop current creative side effects"})).unwrap();
+        assert_eq!(s.apply(&check).unwrap_err().code, "AUTHORITY_DENIED");
+        assert!(s.jobs.iter().find(|job| job.id == job_id).unwrap().reservation.is_some());
     }
     fn two_companies() -> (OfficeSnapshot, String) {
         let mut s = state();

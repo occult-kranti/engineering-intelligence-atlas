@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "supportedAptDistributions": {"debian": ["12", "13"], "ubuntu": ["22.04", "24.04", "26.04"]},
+  "packagePolicy": "Use the administrator-configured signed distribution repositories. Do not add PPAs, disable signature verification, or freeze security updates. Record resolved dpkg versions after installation.",
+  "blender-runtime": ["python3", "git", "ca-certificates", "libx11-6", "libxxf86vm1", "libxi6", "libxfixes3", "libxrender1", "libxkbcommon0", "libsm6", "libice6", "libgl1", "libegl1", "libdbus-1-3", "libfontconfig1", "libgomp1", "libglib2.0-0"],
+  "packageReplacements": {"debian:13": {"libglib2.0-0": "libglib2.0-0t64"}, "ubuntu:24.04": {"libglib2.0-0": "libglib2.0-0t64"}, "ubuntu:26.04": {"libglib2.0-0": "libglib2.0-0t64"}},
+  "open-graphics": ["inkscape", "krita", "gimp", "ffmpeg", "fonts-dejavu-core"],
+  "executables": {"inkscape": "/usr/bin/inkscape", "krita": "/usr/bin/krita", "gimp": "/usr/bin/gimp", "ffmpeg": "/usr/bin/ffmpeg", "ffprobe": "/usr/bin/ffprobe"}
+}

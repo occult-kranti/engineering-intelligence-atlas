@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "tools": {
+    "blender": {"executable": "/opt/daftar-tools/blender/4.5.17/blender"},
+    "unreal": {"executable": "/opt/daftar-tools/unreal/OWNER_VERSION/Engine/Binaries/Linux/UnrealEditor"},
+    "inkscape": {"executable": "/usr/bin/inkscape"},
+    "ffmpeg": {"executable": "/usr/bin/ffprobe"}
+  },
+  "projects": [],
+  "limits": {
+    "maxConcurrentJobs": 1,
+    "maxQueuedJobs": 8,
+    "maxDurationMs": 120000,
+    "maxMemoryBytes": 4294967296,
+    "maxOutputBytes": 262144,
+    "maxInputBytes": 536870912,
+    "maxArtifactBytes": 33554432
+  }
+}

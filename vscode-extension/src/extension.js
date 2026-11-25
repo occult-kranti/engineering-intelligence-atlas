@@ -3,6 +3,7 @@ const vscode = require('vscode');
 const crypto = require('node:crypto');
 const { AtlasClient, origin, studioUrl } = require('./client');
 const { OPERATIONS, scopeRecords, managementCommand, ownershipSummary } = require('./management');
+const {askCreativeAction,inventoryText} = require('./creative');
 const SECRET_KEY = 'atlas.office.connection.v1';
 const GUIDE = 'https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/project/EDITOR_AND_CLOUD.md';
 
@@ -20,7 +21,7 @@ function activate(context) {
   status.command = 'atlas.openOffice'; status.text = '$(organization) Daftar'; status.tooltip = 'Open Daftar Office'; status.show();
   context.subscriptions.push(status);
   const post = message => { if (view) void view.webview.postMessage(message); };
-  const client = () => { if (!connection) throw new Error('Connect to the installed desktop or signed-in website first.'); return new AtlasClient(connection); };
+  const client = () => { if (!connection) throw new Error('Connect to a desktop, signed-in website or headless runtime first.'); return new AtlasClient(connection); };
   const requireTrust = () => { if (!vscode.workspace.isTrusted) throw new Error('Trust this VS Code workspace before controlling Daftar.'); };
 
   async function refresh() {
@@ -37,7 +38,8 @@ function activate(context) {
         }
         if (!connection) { post({type:'state',connected:false,connection:null}); return; }
         requireTrust();
-        const result = await client().snapshot();
+        const c=client();
+        const result = await c.snapshot();
         if (version !== epoch || requestedCompany !== selectedCompany) { refreshAgain = true; return; }
         current = result.snapshot;
         if (!current?.companies || !Array.isArray(current.companies)) throw new Error('This workspace has not received a desktop snapshot yet. Sync the desktop first.');
@@ -47,6 +49,11 @@ function activate(context) {
           const historyCompany=selectedCompany;
           try { const history=await client().chatHistory(historyCompany); if(version===epoch && historyCompany===selectedCompany)post({type:'chatHistory',companyId:historyCompany,messages:history.messages || []}); }
           catch { if(version===epoch)post({type:'notice',message:'Workspace loaded. Chat history is temporarily unavailable.'}); }
+        }
+        if(connection.kind==='runtime'&&selectedCompany) {
+          const creativeCompany=selectedCompany;
+          try {const inventory=await c.creative('snapshot',{companyId:creativeCompany});if(version===epoch&&creativeCompany===selectedCompany)post({type:'creativeState',companyId:creativeCompany,inventory});}
+          catch(error){if(version===epoch&&creativeCompany===selectedCompany)post({type:'creativeState',companyId:creativeCompany,error:safeMessage(error)});}
         }
         status.text='$(organization) Daftar'; status.tooltip=`Daftar ${connection.kind}: ${connection.url}`;
       } catch (error) { if(version===epoch){post({type:'error',message:safeMessage(error)}); status.text='$(warning) Daftar offline';} }
@@ -75,6 +82,19 @@ function activate(context) {
     await saveConnection(await AtlasClient.connectCloud(url,token));
     await vscode.workspace.getConfiguration('atlas').update('websiteUrl',url,vscode.ConfigurationTarget.Global);
     void vscode.window.showInformationMessage('Daftar website paired. Office commands wait for explicit desktop sync.');
+  }
+  async function connectRuntime() {
+    requireTrust();
+    const version=epoch;
+    const raw=await vscode.window.showInputBox({title:'Connect Daftar runtime',prompt:'HTTPS origin of your configured runtime, or a local SSH forward. This replaces the current editor connection.',value:'http://127.0.0.1:8788',ignoreFocusOut:true});
+    if(!raw)return;
+    const token=await vscode.window.showInputBox({title:'Runtime owner credential',prompt:'Paste this runtime’s owner control token. It is stored only in VS Code SecretStorage.',password:true,ignoreFocusOut:true});
+    if(!token)return;
+    if(version!==epoch)throw new Error('The editor connection changed. Connect the runtime again from the current workspace.');
+    const next=await AtlasClient.connectRuntime(raw,token);
+    if(version!==epoch)throw new Error('The editor connection changed. Connect the runtime again from the current workspace.');
+    await saveConnection(next);
+    void vscode.window.showInformationMessage('Daftar runtime connected. Creative tool readiness is discovered for the selected company.');
   }
   async function disconnect() {
     epoch++; restoreStoredConnection=false;connection=null;current=null;await context.secrets.delete(SECRET_KEY);
@@ -106,7 +126,7 @@ function activate(context) {
     if(version!==epoch || companyId!==selectedCompany)throw new Error('The selected workspace changed. Review the action in its company again.');
     const result=await c.command(action);
     if(version!==epoch || companyId!==selectedCompany)return;
-    post({type:'notice',message:result.queued?'Waiting for desktop: command saved. Use Sync now in the installed app.':'Saved in the desktop workspace.'});
+    post({type:'notice',message:result.queued?'Waiting for desktop: command saved. Use Sync now in the installed app.':connection.kind==='runtime'?'Applied in the connected runtime.':'Saved in the desktop workspace.'});
     await refresh();
   }
   async function onMessage(message) {
@@ -115,6 +135,7 @@ function activate(context) {
       if(message.type==='ready'||message.type==='refresh')return refresh();
       if(message.type==='connectDesktop')return await connectDesktop();
       if(message.type==='connectCloud')return await connectCloud();
+      if(message.type==='connectRuntime')return await connectRuntime();
       if(message.type==='disconnect')return await disconnect();
       if(message.type==='openWebsite')return await openWebsite();
       if(message.type==='openStudio') {
@@ -128,11 +149,12 @@ function activate(context) {
         epoch++;selectedCompany=message.id;await context.globalState.update('atlas.company',selectedCompany);return refresh();
       }
       if(message.type==='reviewOwnership')return await reviewOwnership();
-      if(['chat','employee','job','panel','manageTeam'].includes(message.type)) {
+      if(['chat','employee','job','panel','manageTeam','creativeTools'].includes(message.type)) {
         if(activeAction)throw new Error('Wait for the current action to finish before sending another.');
         if(message.companyId!==undefined && message.companyId!==selectedCompany)throw new Error('The selected company changed. Review the action in its company again.');
         activeAction=true;post({type:'busy',value:true});
         try {
+          if(message.type==='creativeTools')return await creativeTools();
           if(message.type!=='chat')return await command(message);
           requireTrust();
           const companyId=selectedCompany,version=epoch;
@@ -140,7 +162,7 @@ function activate(context) {
           const result=await client().chat(companyId,message.content,crypto.randomUUID());
           if(version!==epoch || companyId!==selectedCompany)return;
           post({type:'chatSent',companyId,content:message.content,reply:result.reply ?? result.message?.content ?? null,usage:result.usage,budget:result.budget,saved:result.saved});
-          if(result.saved)post({type:'notice',message:'Brief saved locally. Open Donna in the desktop to create and authorize a bounded provider goal.'});
+          if(result.saved)post({type:'notice',message:connection.kind==='runtime'?'Brief saved in the runtime. This saved message does not start provider work.':'Brief saved locally. Open Donna in the desktop to create and authorize a bounded provider goal.'});
           return await refresh();
         } finally { activeAction=false;post({type:'busy',value:false}); }
       }
@@ -157,6 +179,38 @@ function activate(context) {
     const document=await vscode.workspace.openTextDocument({content:lines.join('\n'),language:'plaintext'});
     await vscode.window.showTextDocument(document,{preview:true});
   }
+  async function creativeTools() {
+    requireTrust();
+    if(connection?.kind!=='runtime') {
+      const choice=await vscode.window.showInformationMessage('Creative execution is available through a configured headless runtime. Connecting replaces this editor’s active backend.','Connect runtime');
+      if(choice==='Connect runtime')await connectRuntime();
+      return;
+    }
+    const c=client(),companyId=selectedCompany,version=epoch;
+    const assertCurrent=()=>{requireTrust();if(version!==epoch||companyId!==selectedCompany)throw new Error('The selected workspace changed. Review the creative action in its company again.');};
+    const snapshot=(await c.snapshot()).snapshot;assertCurrent();
+    const company=snapshot.companies?.find(row=>row.id===companyId);if(!company)throw new Error('Choose an existing company.');
+    const inventory=await c.creative('snapshot',{companyId});assertCurrent();
+    post({type:'creativeState',companyId,inventory});
+    const action=await askCreativeAction(vscode.window,inventory,company.name,assertCurrent);assertCurrent();if(!action)return;
+    if(action.kind==='report') {
+      const document=await vscode.workspace.openTextDocument({language:'plaintext',content:inventoryText(inventory)});assertCurrent();
+      await vscode.window.showTextDocument(document,{preview:true});return;
+    }
+    const {kind,...fields}=action;
+    const input={companyId,...fields,...(kind==='job'?{}:{id:crypto.randomUUID()})};
+    const result=await c.creative(kind,input);if(version!==epoch||companyId!==selectedCompany)return;
+    if(result.receiptOnly){post({type:'notice',message:`Creative request ${result.id} was saved. Read creative tasks for its current result; do not start it again with a new id.`});await refresh();return;}
+    if(kind==='assign')post({type:'notice',message:'Creative assignment saved. Native authority is checked when a task starts.'});
+    else {
+      const job=result.job;
+      const remotePending=job.operation.startsWith('adobe.')&&(kind==='cancel'||job.result?.cleanup==='pending'||job.result?.state==='outcome_unconfirmed');
+      post({type:'notice',message:`Creative task ${job.id}: ${job.status}. ${kind==='run'?'Acceptance is not completion; use Creative tools to check the result.':kind==='cancel'?'Cancellation status reflects the runtime response.':''}${remotePending?' Local state does not confirm Adobe stopped or uploaded assets were removed; inspect remote outcome and cleanup before another request.':''}`});
+      const document=await vscode.workspace.openTextDocument({language:'json',content:JSON.stringify(job,null,2)});assertCurrent();
+      await vscode.window.showTextDocument(document,{preview:true});
+    }
+    await refresh();
+  }
   async function openWebsite() {
     if(connection?.kind==='cloud')await vscode.env.openExternal(vscode.Uri.parse(origin(connection.url)));
     else await vscode.env.openExternal(vscode.Uri.parse('https://occult-kranti.github.io/engineering-intelligence-atlas/'));
@@ -170,8 +224,8 @@ function activate(context) {
   context.subscriptions.push(vscode.window.registerWebviewViewProvider('atlas.office',provider));
   for(const [id,fn] of Object.entries({
     'atlas.openOffice':()=>vscode.commands.executeCommand('atlas.office.focus'),
-    'atlas.connectDesktop':connectDesktop,'atlas.connectCloud':connectCloud,'atlas.disconnect':disconnect,
-    'atlas.refresh':refresh,'atlas.manageTeam':()=>onMessage({type:'manageTeam'}),'atlas.reviewOwnership':reviewOwnership,'atlas.openWebsite':openWebsite,'atlas.openMcpGuide':()=>vscode.env.openExternal(vscode.Uri.parse(GUID))
+    'atlas.connectDesktop':connectDesktop,'atlas.connectCloud':connectCloud,'atlas.connectRuntime':connectRuntime,'atlas.disconnect':disconnect,
+    'atlas.refresh':refresh,'atlas.manageTeam':()=>onMessage({type:'manageTeam'}),'atlas.reviewOwnership':reviewOwnership,'atlas.creativeTools':()=>onMessage({type:'creativeTools'}),'atlas.openWebsite':openWebsite,'atlas.openMcpGuide':()=>vscode.env.openExternal(vscode.Uri.parse(GUID))
   }))context.subscriptions.push(vscode.commands.registerCommand(id,async()=>{try{await fn();}catch(error){void vscode.window.showErrorMessage(safeMessage(error));}}));
   const timer=setInterval(()=>{if(view?.visible&&connection)void refresh();},30000);
   context.subscriptions.push({dispose(){clearInterval(timer);connection=null;}});
@@ -215,7 +269,7 @@ async function askManagement(snapshot, companyId) {
   return {action,departmentId:department.id};
 }
 function safeMessage(error) {
-  const raw=error instanceof Error?error.message:'Daftar operation failed. Local saved work is preserved.';
+  const raw=error&&typeof error.message==='string'?error.message:'Daftar operation failed. Local saved work is preserved.';
   return raw.replace(/(?:sk-ant-|sk-proj-|sk-|github_pat_|gh[pousr]_)[A-Za-z0-9_-]+/g,'[credential removed]').replace(/Bearer\s+[A-Za-z0-9._~-]+/gi,'Bearer [credential removed]').replace(/atlas_session=[a-f0-9]+/gi,'atlas_session=[credential removed]').slice(0,500);
 }
 function html(webview,root) {
@@ -225,10 +279,11 @@ function html(webview,root) {
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource}; script-src 'nonce-${nonce}'; img-src ${webview.cspSource}; connect-src 'none'; form-action 'none'; base-uri 'none';"><link rel="stylesheet" href="${css}"><title>Daftar Office</title></head><body>
   <header><div class="brand">DAFTAR <span>Command Studio</span></div><button id="refresh" title="Refresh workspace">Refresh</button></header>
   <p id="connection" class="muted">Pair your workspace to begin.</p>
-  <section id="connect"><h1>Your office, beside your code.</h1><p>One Donna conversation, permanent teams, and a roadmap tied to their work.</p><button id="connect-desktop" class="primary">Connect desktop</button><button id="connect-cloud">Connect signed-in website</button><p class="muted">Desktop execution stays in Daftar. API keys stay in its vault or on the website server.</p></section>
+  <section id="connect"><h1>Your office, beside your code.</h1><p>One Donna conversation, permanent teams, and a roadmap tied to their work.</p><button id="connect-runtime" class="primary">Connect runtime</button><button id="connect-desktop">Connect desktop</button><button id="connect-cloud">Connect signed-in website</button><p class="muted">Choose one active backend. Execution and provider keys stay in the connected runtime, desktop or website.</p></section>
   <div id="notice" role="status" aria-live="polite"></div>
   <main id="workspace" hidden><label for="company">Company</label><select id="company"></select>
   <div id="budget" class="budget"></div>
+  <section aria-labelledby="creative-heading"><h2 id="creative-heading">Creative tools</h2><p id="creative-state" class="muted">Connect a headless runtime to discover tools and approved projects.</p><button id="creative-tools">Creative tools · assignments and tasks</button></section>
   <div id="studio-links" class="studio-links" hidden><p class="muted">Open this company in the connected studio</p><div><button data-studio="blueprint">Blueprint</button><button data-studio="softboard">Ownership</button><button data-studio="timeline">Roadmap</button><button data-studio="whiteboard">Whiteboard</button></div></div>
   <nav aria-label="Workspace views"><button data-tab="chat" aria-pressed="true">Donna</button><button data-tab="team" aria-pressed="false">Team</button><button data-tab="roadmap" aria-pressed="false">Roadmap</button></nav>
   <section id="tab-chat"><h2>Donna's desk</h2><p id="chat-mode" class="muted"></p><div id="messages" aria-live="polite"></div><form id="chat-form"><label for="brief">What should we work on?</label><textarea id="brief" rows="4" maxlength="12000" placeholder="Describe a decision, goal, or improvement…" required></textarea><button type="submit" class="primary" id="send">Send brief</button></form><details><summary>Convene a decision panel</summary><p>Donna reuses experts or fills missing roles. This creates a draft; execution is reviewed in Daftar.</p><label for="panel-focus">Expertise</label><select id="panel-focus"><option value="software">Software and architecture</option><option value="design">Design and experience</option><option value="research">Research · Newton · Tesla · skeptic</option><option value="data">Data and caching</option></select><button id="panel">Use current brief for a panel</button><p class="muted">One round · $2 panel ceiling · 60,000 token allowance per request. The allowance includes context and is not a consumption target.</p></details><div id="panels"></div></section>

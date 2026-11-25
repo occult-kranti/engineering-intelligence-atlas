@@ -7,8 +7,14 @@
 !deploy/ollama.Dockerfile
 !deploy/healthcheck.mjs
 !deploy/runtime-request.mjs
+!deploy/creative/Dockerfile
+!deploy/creative/install.py
+!deploy/creative/profiles.json
+!deploy/creative/tools.lock.json
 !headless-runtime/cloud-sync.mjs
 !headless-runtime/contract.mjs
+!headless-runtime/creative-tools.mjs
+!headless-runtime/creative-worker.mjs
 !headless-runtime/runtime.mjs
 !headless-runtime/secrets.mjs
 !headless-runtime/server.mjs
@@ -23,6 +29,10 @@
 !company/**
 !tools/atlas-mcp.mjs
 !tools/daftar-runtime-mcp.mjs
+!integrations/creative-tools/**
+!integrations/adobe/**
+!scripts/apply-company-kits.mjs
+!skills/**
 
 # These exclusions apply even if an allowed directory later contains a secret.
 **/.env

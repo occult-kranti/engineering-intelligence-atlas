@@ -1,0 +1,89 @@
+{
+  "checkedAt": "2026-11-25T02:16:22.160Z",
+  "tools": [
+    {
+      "id": "inkscape",
+      "operations": [
+        "inkscape.export_png"
+      ],
+      "configured": true,
+      "available": true,
+      "readiness": "verified",
+      "version": "1.4"
+    },
+    {
+      "id": "ffmpeg",
+      "operations": [
+        "ffmpeg.probe"
+      ],
+      "configured": true,
+      "available": true,
+      "readiness": "verified",
+      "version": "7.1.5-0+deb13u1"
+    }
+  ],
+  "jobs": [
+    {
+      "id": "inkscape-export_png",
+      "companyId": "fixture-company",
+      "employeeId": "fixture-artist",
+      "projectId": "fixture-project",
+      "operation": "inkscape.export_png",
+      "status": "succeeded",
+      "createdAt": "2026-11-25T02:16:22.545Z",
+      "startedAt": "2026-11-25T02:16:22.546Z",
+      "finishedAt": "2026-11-25T02:16:23.251Z",
+      "evidenceUri": "creative://jobs/inkscape-export_png",
+      "outputs": [
+        {
+          "path": "render.png",
+          "bytes": 977,
+          "sha256": "2db340326e00f74025d29210f3d4b0de3d843c190823b712668ed9a8fe061bc5",
+          "mediaType": "image/png"
+        }
+      ],
+      "result": {
+        "width": 64,
+        "height": 64,
+        "format": "png"
+      }
+    },
+    {
+      "id": "ffmpeg-probe",
+      "companyId": "fixture-company",
+      "employeeId": "fixture-artist",
+      "projectId": "fixture-project",
+      "operation": "ffmpeg.probe",
+      "status": "succeeded",
+      "createdAt": "2026-11-25T02:16:23.273Z",
+      "startedAt": "2026-11-25T02:16:23.273Z",
+      "finishedAt": "2026-11-25T02:16:23.372Z",
+      "evidenceUri": "creative://jobs/ffmpeg-probe",
+      "outputs": [
+        {
+          "path": "media.json",
+          "bytes": 128,
+          "sha256": "2b716a64ef39ff480017cc245a7601f445c3ca93802d9fe1e29a4d5d41e2cfb0",
+          "mediaType": "application/json"
+        }
+      ],
+      "result": {
+        "durationSeconds": 0.1,
+        "format": "wav",
+        "streams": [
+          {
+            "codecType": "audio",
+            "codecName": "pcm_s16le",
+            "sampleRate": 48000,
+            "channels": 1
+          }
+        ]
+      }
+    }
+  ],
+  "providerCalls": 0,
+  "privateWorkspaceUsed": false,
+  "nativeScopeFixture": true,
+  "ok": true,
+  "disposableStateRemoved": true
+}

@@ -47,6 +47,18 @@ async function readJson(req) {
   }
 }
 
+function creativeQuery(url, job = false) {
+  const query = new URL(url, 'http://127.0.0.1').searchParams;
+  const required = job ? ['companyId', 'jobId'] : ['companyId'];
+  const allowed = job ? required : ['companyId', 'employeeId'];
+  if (required.some(key => query.getAll(key).length !== 1)
+      || [...query.entries()].some(([key, value]) => !allowed.includes(key)
+        || query.getAll(key).length !== 1 || !/^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/.test(value))) {
+    throw new RuntimeError('INVALID_REQUEST', job ? 'Provide only companyId and jobId.' : 'Provide companyId and an optional employeeId.');
+  }
+  return Object.fromEntries(query);
+}
+
 function validateServerConfiguration({ token, maxConcurrent = 32 }) {
   if (!TOKEN_PATTERN.test(token ?? '')) throw new RuntimeError('INVALID_CONFIG', 'A valid control token is required.', 503);
   if (!Number.isInteger(maxConcurrent) || maxConcurrent < 1 || maxConcurrent > 256) {
@@ -95,6 +107,16 @@ export function createServer({ runtime, token, allowedHosts = [], allowedOrigins
         if (['/v1/models/pull', '/v1/models/cancel', '/v1/models/select'].includes(req.url) && req.method === 'POST') {
           return writeJson(res, 200, await runtime.modelOperation(req.url.endsWith('/pull') ? 'request' : req.url.split('/').at(-1), await readJson(req)));
         }
+        if ((req.url === '/v1/creative' || req.url.startsWith('/v1/creative?')) && req.method === 'GET') {
+          return writeJson(res, 200, await runtime.creativeOperation('snapshot', creativeQuery(req.url)));
+        }
+        if ((req.url === '/v1/creative/jobs' || req.url.startsWith('/v1/creative/jobs?')) && req.method === 'GET') {
+          return writeJson(res, 200, await runtime.creativeOperation('job', creativeQuery(req.url, true)));
+        }
+        if (['/v1/creative/assign', '/v1/creative/run', '/v1/creative/cancel'].includes(req.url) && req.method === 'POST') {
+          const operation = req.url.split('/').at(-1);
+          return writeJson(res, operation === 'run' ? 202 : 200, await runtime.creativeOperation(operation, await readJson(req)));
+        }
         if (req.url === '/v1/commands' && req.method === 'POST') return writeJson(res, 200, await runtime.command(await readJson(req)));
         if (req.url === '/v1/workers' && req.method === 'POST') {
           const body = await readJson(req);
@@ -112,7 +134,7 @@ export function createServer({ runtime, token, allowedHosts = [], allowedOrigins
     })().catch(error => {
       if (res.headersSent || res.destroyed) return;
       const known = error instanceof RuntimeError;
-      if (known && ['BUSY', 'STATE_BUSY'].includes(error.code)) res.setHeader('Retry-After', '1');
+      if (known && ['BUSY', 'STATE_BUSY', 'CREATIVE_BUSY', 'CREATIVE_STATE_BUSY'].includes(error.code)) res.setHeader('Retry-After', '1');
       writeJson(res, known ? error.status : 500, { ok: false,
         code: known ? error.code : 'RUNTIME_ERROR',
         error: known ? error.message : 'Runtime request could not be completed. Inspect state before retrying a mutation.' });
@@ -135,7 +157,9 @@ export async function startServer(config = {}) {
   const token = config.token ?? readSecretFile(config.tokenFile, { controlToken: true });
   // Validate before createRuntime starts observers or cloud synchronization.
   validateServerConfiguration({ token, maxConcurrent: config.maxConcurrent });
-  const runtime = config.runtime ?? createRuntime(config);
+  let runtime;
+  try { runtime = config.runtime ?? createRuntime(config); }
+  catch (error) { await error?.cleanupPromise; throw error; }
   // Fail startup rather than advertising readiness with a missing native binary.
   try { await runtime.snapshot(); } catch (error) { await runtime.close(); throw error; }
   let server;
@@ -165,6 +189,7 @@ export function configurationFromEnv(env = process.env) {
     port: Number(env.DAFTAR_PORT || 8788), concurrency: Number(env.DAFTAR_CONCURRENCY || 2),
     allowContainerBind: env.DAFTAR_ALLOW_CONTAINER_BIND === '1',
     tokenFile: env.DAFTAR_CONTROL_TOKEN_FILE,
+    creativeConfigFile: env.DAFTAR_CREATIVE_CONFIG_FILE || undefined,
     allowedHosts: (env.DAFTAR_ALLOWED_HOSTS || '').split(',').map(s => s.trim()).filter(Boolean),
     secretFiles: providerSecretFiles(env), ollamaBaseUrl: env.DAFTAR_OLLAMA_BASE_URL || undefined,
     ollamaLocalOnly: env.DAFTAR_OLLAMA_LOCAL_ONLY === '1',

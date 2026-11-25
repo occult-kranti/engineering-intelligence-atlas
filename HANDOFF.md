@@ -1,5 +1,28 @@
 # Daftar maintainer handoff
 
+## Creative VPS continuation — 2026-11-24
+
+Start with `project/CREATIVE_VPS_VALIDATION_2026-11-24.md`,
+`deploy/creative/README.md` and `integrations/creative-tools/README.md`.
+Creative execution is a fixed-adapter capability, separate from tool assignment.
+Current native authority, project/department scope, reviewed paths, process limits
+and stable request receipts must all hold. AI output selects only a currently
+assigned project/operation; the host supplies identity and native scope.
+Never replay an uncertain Adobe request under a new identity automatically.
+
+Offline setup adds three departments and five specialist definitions to an
+existing company, with scoped expiring grants. Repeated setup preserves owner
+edits, pauses, fired staff, revoked grants and removed assignments. Stop the
+runtime before applying it; include creative registry/artifacts in private
+backups. VS Code's direct runtime connection uses SecretStorage and one active
+backend. New source needs its matching CI-built extension; previously published
+0.8.0 binaries retain their original source identity.
+
+Real Blender CPU inspection/render/export passed in a disposable workspace.
+Unreal execution, Adobe entitlement/API calls, GPU rendering and the user's active
+VPS remain host-specific acceptance. This change provisions no paid server and
+does not mutate production employee records.
+
 ## Backend and workflow continuation — 2026-11-24
 
 Read `project/BACKEND_WORKFLOW_VALIDATION_2026-11-24.md` first. Native employee

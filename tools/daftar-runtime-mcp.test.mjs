@@ -72,7 +72,7 @@ test('control credential is read only from a bounded private regular file, never
 test('the adapter advertises only owner-facing tools and accurate worker side effects', async () => {
   const f = fixture(); const process = await initialized(f.handler);
   const response = await process(JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' }));
-  assert.deepEqual(response.result.tools.map(t => t.name), ['runtime_status', 'office_summary', 'office_query', 'office_command', 'worker_set_enabled', 'model_pool_status', 'model_pool_request', 'model_pool_cancel', 'model_pool_select']);
+  assert.deepEqual(response.result.tools.map(t => t.name), ['runtime_status', 'office_summary', 'office_query', 'office_command', 'worker_set_enabled', 'model_pool_status', 'model_pool_request', 'model_pool_cancel', 'model_pool_select', 'creative_inventory', 'creative_assign', 'creative_run', 'creative_job', 'creative_cancel']);
   assert.equal(f.calls.length, 0);
   const owner = TOOL_DEFINITIONS.find(t => t.name === 'office_command');
   assert.equal(owner.annotations.openWorldHint, true);
@@ -119,6 +119,77 @@ test('model inventory route accepts only exact bounded scope query fields', asyn
   await client('GET', '/v1/models?companyId=company-a&employeeId=employee-0');
   for (const route of ['/v1/models?companyId=company-a&companyId=company-b', '/v1/models?companyId=company-a&url=http://evil', '/v1/models?employeeId=employee-0', '/v1/models?companyId=../x']) await assert.rejects(client('GET', route));
   assert.equal(calls.length, 1);
+});
+
+test('creative tools reject arbitrary execution, path escapes and unbounded render inputs before transport', async () => {
+  const f = fixture();
+  const valid = { id: 'creative-1', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'blender.render', input: { path: 'scene.blend' } };
+  for (const input of [{ path: '/tmp/scene.blend' }, { path: '../scene.blend' }, { path: 'a/../scene.blend' }, { path: 'https://example.test/scene.blend' }, { path: 'C:\\scene.blend' }, { path: 'a%2fscene.blend' }, { path: 'scene.blend', shell: 'whoami' }, { path: 'scene.blend', frame: -1 }, { path: 'scene.blend', width: 2049 }, { path: 'scene.blend', samples: 65 }]) await assert.rejects(f.handler('creative_run', { ...valid, input }));
+  for (const change of [{ operation: 'shell' }, { operation: '__proto__' }, { binary: '/bin/sh' }, { id: '' }, { companyId: '../foreign' }]) await assert.rejects(f.handler('creative_run', { ...valid, ...change }));
+  await assert.rejects(f.handler('creative_assign', { id: 'assign', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', toolIds: ['blender', 'blender'] }));
+  await assert.rejects(f.handler('creative_job', { companyId: 'company-a', jobId: 'job', employeeId: 'foreign' }));
+  assert.equal(f.calls.length, 0);
+});
+
+test('creative inventory projects only scoped readiness and metadata, including unverified Adobe configuration', async () => {
+  const job = { id: 'creative-1', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'blender.inspect', status: 'succeeded', outputs: [{ path: 'inspection.json', bytes: 24, sha256: HASH, mediaType: 'application/json', hostPath: '/workspace/PRIVATE' }], result: { objects: 2, meshes: 1, rawConsole: 'PRIVATE', apiKey: TOKEN } };
+  const f = fixture({ request: async () => ({ ok: true, companyId: 'company-a', configured: true, root: '/workspace/PRIVATE', tools: [{ id: 'blender', available: true, configured: true, operations: ['blender.inspect', 'shell'], executable: '/PRIVATE/blender' }, { id: 'adobe-photoshop', available: true, configured: true, operations: ['adobe.render'], readiness: 'configured_unverified', remoteAuthVerified: false, clientSecret: TOKEN }], projects: [{ id: 'project-a', companyId: 'company-a', allowedOperations: ['blender.inspect'], root: '/workspace/PRIVATE' }, { id: 'foreign', companyId: 'company-b', allowedOperations: [] }], eligibleEmployees: [{ id: 'employee-0', name: 'Engineer', role: 'Artist', status: 'active', token: TOKEN }], assignments: [{ companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', toolIds: ['blender'] }, { companyId: 'company-b', employeeId: 'foreign', projectId: 'foreign', toolIds: ['blender'] }], jobs: [job, { ...job, companyId: 'company-b' }], limits: { maxConcurrentJobs: 2, path: '/workspace/PRIVATE' } }) });
+  const result = await f.handler('creative_inventory', { companyId: 'company-a' });
+  assert.equal(result.projects.length, 1);assert.equal(result.jobs.length, 1);assert.equal(result.assignments.length, 1);
+  assert.deepEqual(result.jobs[0].result, { objects: 2, meshes: 1 });
+  assert.equal(result.tools[1].readiness, 'configured_unverified');assert.equal(result.tools[1].remoteAuthVerified, false);
+  assert.deepEqual(result.tools[0].operations, ['blender.inspect']);
+  for (const hidden of ['PRIVATE', TOKEN, 'company-b', 'executable', 'clientSecret', 'rawConsole']) assert.equal(JSON.stringify(result).includes(hidden), false);
+  assert.equal(f.calls[0].route, '/v1/creative?companyId=company-a');
+});
+
+test('creative starts, reads, assignment removal and cancellation preserve exact receipts and company', async () => {
+  const job = { id: 'receipt-1', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'blender.render', status: 'queued', outputs: [] };
+  const f = fixture({ request: async (_method, route, body) => route.endsWith('/assign') ? { ok: true, replayed: true, assignment: body } : { ok: true, accepted: true, replayed: true, job } });
+  const run = { id: 'receipt-1', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'blender.render', input: { path: 'scene.blend', frame: 0, width: 16, height: 2048, samples: 64 } };
+  const result = await f.handler('creative_run', run);assert.equal(result.accepted, true);assert.equal(result.job.status, 'queued');assert.equal(result.replayed, true);
+  assert.deepEqual(f.calls[0], { method: 'POST', route: '/v1/creative/run', body: run });
+  await f.handler('creative_assign', { id: 'remove-1', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', toolIds: [] });
+  await f.handler('creative_job', { companyId: 'company-a', jobId: 'receipt-1' });
+  await f.handler('creative_cancel', { id: 'cancel-1', companyId: 'company-a', jobId: 'receipt-1' });
+  assert.deepEqual(f.calls.map(row => row.route), ['/v1/creative/run', '/v1/creative/assign', '/v1/creative/jobs?companyId=company-a&jobId=receipt-1', '/v1/creative/cancel']);
+  await assert.rejects(f.handler('creative_job', { companyId: 'company-b', jobId: 'receipt-1' }), /outside the requested scope/);
+  await assert.rejects(f.handler('creative_job', { companyId: 'company-a', jobId: 'different-job' }), /outside the requested scope/);
+});
+
+test('creative transport admits only exact scoped query routes and never repeats an uncertain task', async () => {
+  let calls = 0;
+  const client = createRuntimeClient(config, { fetchImpl: async () => { calls++;return json({ ok: true }); } });
+  await client('GET', '/v1/creative?companyId=a');await client('GET', '/v1/creative/jobs?companyId=a&jobId=j');
+  for (const route of ['/v1/creative?companyId=a&companyId=b', '/v1/creative?companyId=a&path=x', '/v1/creative?employeeId=e', '/v1/creative/jobs?companyId=a', '/v1/creative/jobs?companyId=a&jobId=j#bad', '/v1/creative/jobs?companyId=a&jobId=j&jobId=k']) await assert.rejects(client('GET', route));
+  assert.equal(calls, 2);
+  let attempts = 0;
+  const unavailable = createRuntimeClient(config, { fetchImpl: async () => { attempts++;throw new Error(TOKEN); } });
+  await assert.rejects(unavailable('POST', '/v1/creative/run', { id: 'stable' }), error => /No retry was sent/.test(error.message) && /creative_inventory or creative_job/.test(error.message) && !error.message.includes(TOKEN));
+  assert.equal(attempts, 1);
+});
+test('creative omitted projections remain saved receipts and authority denials are useful without leaking server text', async () => {
+  const f = fixture({ request: async (_method, _route, body) => ({ ok: true, id: body.id, snapshotOmitted: true, replayed: false }) });
+  const args = { id: 'saved-creative', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'blender.inspect', input: { path: 'scene.blend' } };
+  const receipt = await f.handler('creative_run', args);assert.equal(receipt.ok, true);assert.equal(receipt.operationSucceeded, true);assert.equal(receipt.id, args.id);assert.equal(receipt.receiptOnly, true);
+  const client = createRuntimeClient(config, { fetchImpl: async () => json({ ok: false, code: 'CREATIVE_AUTHORITY_DENIED', error: 'PRIVATE ' + TOKEN }, 403) });
+  await assert.rejects(client('POST', '/v1/creative/run', args), error => error.code === 'CREATIVE_AUTHORITY_DENIED' && /creative.execute/.test(error.message) && !/PRIVATE/.test(error.message) && !error.message.includes(TOKEN));
+});
+test('same-company older jobs and changed assignment tool sets cannot masquerade as current creative receipts', async () => {
+  const run = { id: 'new-request', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'blender.inspect', input: { path: 'scene.blend' } };
+  const f = fixture({ request: async () => ({ ok: true, accepted: true, job: { ...run, id: 'older-request', status: 'succeeded', outputs: [] } }) });
+  await assert.rejects(f.handler('creative_run', run), /outside the requested scope/);
+  const assignment = { id: 'assign', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', toolIds: ['blender'] };
+  for (const toolIds of [[], ['blender', 'unreal'], ['blender', 'blender'], ['unreal']]) {
+    const bad = fixture({ request: async () => ({ ok: true, assignment: { ...assignment, toolIds } }) });
+    await assert.rejects(bad.handler('creative_assign', assignment), /outside the requested scope/);
+  }
+});
+test('Adobe cancellation retains remote outcome and cleanup evidence without promising remote termination', async () => {
+  const adobeJobId = 'urn:adobe:' + 'a'.repeat(220);
+  const f = fixture({ request: async () => ({ ok: true, job: { id: 'adobe-task', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'adobe.render', status: 'cancelled', evidenceUri: 'creative://jobs/adobe-task', outputs: [], result: { provider: 'adobe-photoshop-v2', adobeJobId, inputSha256: HASH, cleanup: 'pending', state: 'outcome_unconfirmed', signedUrl: 'https://PRIVATE/?token=secret' } } }) });
+  const result = await f.handler('creative_cancel', { id: 'cancel-1', companyId: 'company-a', jobId: 'adobe-task' });
+  assert.equal(result.job.result.adobeJobId, adobeJobId);assert.equal(result.job.result.cleanup, 'pending');assert.equal(result.job.result.state, 'outcome_unconfirmed');assert.equal(result.job.evidenceUri, 'creative://jobs/adobe-task');assert.match(result.guidance, /does not confirm that Adobe stopped/);assert.equal(JSON.stringify(result).includes('PRIVATE'), false);
 });
 
 test('status and summary use allowlisted metadata and never expose a worker lease, error, or prompt', async () => {

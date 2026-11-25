@@ -90,8 +90,8 @@ try {
   await initialize(client);
   const listed = await client.call('tools/list', {});
   assert.deepEqual(listed.result.tools.map(t => t.name).sort(),
-    ['model_pool_cancel', 'model_pool_request', 'model_pool_select', 'model_pool_status', 'office_command', 'office_query', 'office_summary', 'runtime_status', 'worker_set_enabled']);
-  record('MCP initializes and advertises the nine bounded runtime tools');
+    ['creative_assign', 'creative_cancel', 'creative_inventory', 'creative_job', 'creative_run', 'model_pool_cancel', 'model_pool_request', 'model_pool_select', 'model_pool_status', 'office_command', 'office_query', 'office_summary', 'runtime_status', 'worker_set_enabled']);
+  record('MCP initializes and advertises the fourteen bounded runtime tools');
 
   const status = await tool(client, 'runtime_status');
   assert.equal(status.worker.enabled, false);
@@ -108,6 +108,14 @@ try {
   assert.equal(applied.snapshot, undefined);
   assert.equal(applied.summary.counts.companies, initial.summary.counts.companies + 1);
   record('stdio command crosses HTTP and commits through the real native core');
+
+  const creative = await tool(client, 'creative_inventory', { companyId: 'mcp-integration-company' });
+  assert.equal(creative.configured, false);
+  assert.equal(creative.tools.length, 5);
+  assert.ok(creative.tools.every(adapter => adapter.available === false));
+  assert.deepEqual(creative.jobs, []);
+  assert.doesNotMatch(JSON.stringify(creative), /control-token|executable|stateDir/);
+  record('creative discovery crosses stdio and HTTP while unconfigured adapters remain unavailable');
 
   const replayed = await tool(client, 'office_command', command);
   assert.equal(replayed.replayed, true);

@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "reviewDate": "2026-11-24",
+  "reviewTimezone": "America/New_York",
+  "evidenceRecordedAt": "2026-11-25T02:17:38.591043+00:00",
+  "ok": true,
+  "blender": {
+    "version": "4.5.17",
+    "archive": "blender-4.5.17-linux-x64.tar.xz",
+    "url": "https://download.blender.org/release/Blender4.5/blender-4.5.17-linux-x64.tar.xz",
+    "checksumUrl": "https://download.blender.org/release/Blender4.5/blender-4.5.17.sha256",
+    "sha256": "b7d09d1aa7c346fed1e56390e815dbf1589d47324734fbad9e2007fe75ca0b8d",
+    "sizeBytes": 377826816
+  },
+  "archiveEvidence": {
+    "expandedBytes": 1165711107,
+    "entries": 6485,
+    "installedFileAndSymlinkCount": 5609,
+    "relativeLibrarySymlinks": 71,
+    "binarySha256": "ea081285213e5e608131885fb35d2c5dbf986e7b1ed51c463f466639045a1355",
+    "postRenderIntegrityVerified": true,
+    "existingInstallReuseVerified": true
+  },
+  "installerTests": {
+    "command": "python3 -m unittest discover -s deploy/creative/tests -v",
+    "passed": 41,
+    "failed": 0,
+    "skipped": 0,
+    "installerSourceSha256": "3e1b90a5732ba6497f23f9e016977975472c0d4bc92f76172407e87e6fee5310"
+  },
+  "runtimeStartupTests": {
+    "command": "DAFTAR_REQUIRE_NATIVE_TESTS=1 node --test headless-runtime/test/runtime.test.mjs",
+    "passed": 23,
+    "failed": 0,
+    "skipped": 0,
+    "newStartupRecoveryRegressions": 3
+  },
+  "directCpuSmoke": {
+    "ok": true,
+    "blenderVersion": "4.5.17 LTS",
+    "engine": "CYCLES",
+    "device": "CPU",
+    "threads": 2,
+    "samples": 4,
+    "width": 96,
+    "height": 96,
+    "elapsedSeconds": 0.28,
+    "artifacts": [
+      {
+        "name": "render.png",
+        "bytes": 6975,
+        "sha256": "68bf4f253fd317c88b2cd31b484feb2d487d267062825479217a7e20376786ac"
+      },
+      {
+        "name": "scene.blend",
+        "bytes": 435303,
+        "sha256": "dd6e871601e4e4e83fe34cfcfc2c1c1a5792514a8d359f51f91b0825849a0731"
+      },
+      {
+        "name": "scene.glb",
+        "bytes": 1936,
+        "sha256": "d6d61e731d1936825b450a527474864bd3df086ef4e8a3379907386f7d52c3ea"
+      }
+    ],
+    "gpuTested": false,
+    "vpsProvisioned": false,
+    "fullProcessWallSeconds": 1.168
+  },
+  "serviceCpuSmoke": {
+    "checkedAt": "2026-11-25T02:15:22.105Z",
+    "ok": true,
+    "checksPassed": 7,
+    "authorityCallbacks": 17,
+    "syntheticNativeScopeFixture": true,
+    "jobs": [
+      {
+        "operation": "blender.inspect",
+        "status": "succeeded",
+        "elapsedSeconds": 0.53,
+        "outputs": [
+          {
+            "path": "inspection.json",
+            "bytes": 149,
+            "sha256": "9f762947b2db149ba2b48bc8f5ab86d842b6b41c9672dedad54871cd24c8d083",
+            "mediaType": "application/json"
+          }
+        ]
+      },
+      {
+        "operation": "blender.render",
+        "status": "succeeded",
+        "elapsedSeconds": 0.562,
+        "outputs": [
+          {
+            "path": "render.png",
+            "bytes": 3733,
+            "sha256": "dab771cc0a5cd8d6d0414fd93dbb247c08bc81b58e5a9e3096065e796b4248ab",
+            "mediaType": "image/png"
+          }
+        ]
+      },
+      {
+        "operation": "blender.export_glb",
+        "status": "succeeded",
+        "elapsedSeconds": 0.481,
+        "outputs": [
+          {
+            "path": "scene.glb",
+            "bytes": 1936,
+            "sha256": "d6d61e731d1936825b450a527474864bd3df086ef4e8a3379907386f7d52c3ea",
+            "mediaType": "model/gltf-binary"
+          }
+        ]
+      }
+    ],
+    "cleanupConfirmed": true
+  },
+  "notPerformed": [
+    "Docker/Compose execution in scratch (Docker unavailable; required CI builds and probes the creative image)",
+    "GPU rendering or Vulkan/editor readiness",
+    "Live Unreal engine import/execution or Epic account/license verification",
+    "Adobe/S3 live paid requests or entitlement verification",
+    "VPS provisioning, rental or activation"
+  ],
+  "providerCalls": 0,
+  "vpsProvisioned": false
+}

@@ -107,3 +107,55 @@ test('primitive JSON responses and oversized declared bodies are rejected',async
   for(const body of [null,3,[],true])await assert.rejects(new AtlasClient(cloud,async()=>json(body)).request('/api/session'),/invalid data/);
   await assert.rejects(new AtlasClient(cloud,async()=>json({},200,{'content-length':String(10*1024*1024)})).request('/api/session'),/exceeds/);
 });
+const runtime={kind:'runtime',url:'http://127.0.0.1:8788',controlToken:'synthetic-runtime-token-012345678901234567890'};
+const hash='a'.repeat(64);
+test('runtime connection verifies service and native snapshot while retaining owner token only in headers',async()=>{
+  const calls=[];
+  const connection=await AtlasClient.connectRuntime(runtime.url,runtime.controlToken,async(url,init)=>{
+    calls.push({url,init});assert.equal(init.headers.Authorization,'Bearer '+runtime.controlToken);assert.equal(init.headers.Cookie,undefined);assert.equal(init.headers.Origin,undefined);assert.equal(init.redirect,'error');
+    return url.endsWith('/status')?json({ok:true,execution:'headless'}):json({ok:true,stateHash:hash,snapshot:{companies:[]}});
+  });
+  assert.deepEqual(connection,runtime);assert.deepEqual(calls.map(row=>row.url),[runtime.url+'/v1/status',runtime.url+'/v1/office']);
+  assert.equal(calls.some(row=>row.url.includes(runtime.controlToken)),false);
+  let attempted=0;for(const url of ['http://outside.example','http://127.1:8788','http://127.0.0.1:8788/../','https://user:pass@runtime.example'])await assert.rejects(AtlasClient.connectRuntime(url,runtime.controlToken,async()=>{attempted++;return json({ok:true});}));
+  assert.equal(attempted,0);
+});
+test('runtime commands preserve fresh state hash, stable receipt identity and applied status',async()=>{
+  const calls=[];
+  const c=new AtlasClient(runtime,async(url,init)=>{calls.push({url,init});return url.endsWith('/office')?json({ok:true,stateHash:hash,snapshot:{companies:[]}}):json({ok:true,id:JSON.parse(init.body).id,replayed:false,stateHash:'b'.repeat(64)});});
+  const result=await c.command({action:'rename_office',officeId:'office-a',name:'Creative'});
+  assert.equal(result.queued,false);assert.equal(calls.length,2);
+  const sent=JSON.parse(calls[1].init.body);assert.equal(sent.expectedStateHash,hash);assert.equal(sent.id,result.id);assert.match(sent.id,/^[a-f0-9-]{36}$/);assert.equal(c.stateHash,'b'.repeat(64));
+});
+test('creative inventory and job result enforce company identity and omit arbitrary server content',async()=>{
+  const c=new AtlasClient(runtime,async(url)=>url.includes('/jobs?')?json({ok:true,job:{id:'j',companyId:'a',employeeId:'e',projectId:'p',operation:'blender.inspect',status:'succeeded',result:{objects:3,rawConsole:'PRIVATE',token:runtime.controlToken},outputs:[{path:'inspection.json',bytes:32,sha256:hash,mediaType:'application/json',hostPath:'/PRIVATE'}]}}):json({ok:true,companyId:'a',configured:true,tools:[{id:'blender',configured:true,available:true,operations:['blender.inspect']}],projects:[{id:'p',companyId:'a',allowedOperations:['blender.inspect']},{id:'foreign',companyId:'b'}],jobs:[],secret:runtime.controlToken}));
+  const inventory=await c.creative('snapshot',{companyId:'a'});assert.equal(inventory.projects.length,1);assert.equal(JSON.stringify(inventory).includes(runtime.controlToken),false);
+  const result=await c.creative('job',{companyId:'a',jobId:'j'});assert.deepEqual(result.job.result,{objects:3});assert.equal(JSON.stringify(result).includes('PRIVATE'),false);
+  await assert.rejects(c.creative('snapshot',{companyId:'b'}),/different company/);
+  await assert.rejects(c.creative('job',{companyId:'b',jobId:'j'}),/different scope/);
+});
+test('creative request guards reject arbitrary parameters and preserve request id after an ambiguous start',async()=>{
+  let calls=0;const c=new AtlasClient(runtime,async()=>{calls++;throw new Error(runtime.controlToken);});
+  const input={id:'stable-creative',companyId:'a',employeeId:'e',projectId:'p',operation:'blender.inspect',input:{path:'scene.blend'}};
+  for(const change of [{input:{path:'../scene.blend'}},{input:{path:'scene.blend',shell:'uname'}},{operation:'__proto__'},{executable:'/bin/sh'}])await assert.rejects(c.creative('run',{...input,...change}));
+  assert.equal(calls,0);
+  await assert.rejects(c.creative('run',input),error=>/Retain creative request id stable-creative/.test(error.message)&&/No retry was sent/.test(error.message)&&!error.message.includes(runtime.controlToken));
+  assert.equal(calls,1);
+  await assert.rejects(new AtlasClient(cloud,async()=>assert.fail('Must not queue creative work to cloud')).creative('run',input),/headless runtime/);
+});
+test('runtime authority denials stay actionable and cannot echo the control credential',async()=>{
+  const c=new AtlasClient(runtime,async()=>json({ok:false,code:'CREATIVE_AUTHORITY_DENIED',error:`Current creative.execute authority is missing. ${runtime.controlToken}`},403));
+  await assert.rejects(c.creative('run',{id:'run-1',companyId:'a',employeeId:'e',projectId:'p',operation:'blender.inspect',input:{path:'scene.blend'}}),error=>/creative.execute/.test(error.message)&&!error.message.includes(runtime.controlToken)&&!/expired or was revoked/.test(error.message));
+});
+test('a saved creative receipt with omitted job projection stays successful and is not retried',async()=>{
+  let calls=0;const c=new AtlasClient(runtime,async(_url,init)=>{calls++;return json({ok:true,id:JSON.parse(init.body).id,snapshotOmitted:true,replayed:false});});
+  const receipt=await c.creative('run',{id:'saved-1',companyId:'a',employeeId:'e',projectId:'p',operation:'blender.inspect',input:{path:'scene.blend'}});
+  assert.deepEqual(receipt,{ok:true,id:'saved-1',receiptOnly:true,replayed:false});assert.equal(calls,1);
+});
+test('creative receipts bind exact request identity and tool set even within the same company',async()=>{
+  const run={id:'new-request',companyId:'a',employeeId:'e',projectId:'p',operation:'blender.inspect',input:{path:'scene.blend'}};
+  const c=new AtlasClient(runtime,async()=>json({ok:true,accepted:true,job:{...run,id:'older-request',status:'succeeded',outputs:[]}}));
+  await assert.rejects(c.creative('run',run),/does not match the requested operation.*Retain creative request id new-request/);
+  const input={id:'assign',companyId:'a',employeeId:'e',projectId:'p',toolIds:['blender']};
+  for(const toolIds of [[],['blender','unreal'],['blender','blender'],['unreal']])await assert.rejects(new AtlasClient(runtime,async()=>json({ok:true,assignment:{...input,toolIds}})).creative('assign',input),/does not match/);
+});

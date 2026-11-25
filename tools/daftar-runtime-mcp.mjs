@@ -29,9 +29,15 @@ const ID_PATTERN = /^[A-Za-z0-9_.:-]{1,160}$/;
 const EMPTY_SCHEMA = { type: 'object', properties: {}, additionalProperties: false };
 const READ_ANNOTATIONS = { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false };
 const OFFICE_QUERY_SCHEMA = LOCAL_TOOL_DEFINITIONS.find(tool => tool.name === 'office_query').inputSchema;
-const ROUTES = new Set(['GET /v1/status', 'GET /v1/office', 'POST /v1/commands', 'POST /v1/workers', 'POST /v1/models/pull', 'POST /v1/models/cancel', 'POST /v1/models/select']);
+const ROUTES = new Set(['GET /v1/status', 'GET /v1/office', 'POST /v1/commands', 'POST /v1/workers', 'POST /v1/models/pull', 'POST /v1/models/cancel', 'POST /v1/models/select', 'POST /v1/creative/assign', 'POST /v1/creative/run', 'POST /v1/creative/cancel']);
 const MODEL_SCOPE_SCHEMA = { companyId: { type: 'string', pattern: ID_PATTERN.source }, employeeId: { type: 'string', pattern: ID_PATTERN.source } };
 const MODEL_REF_SCHEMA = { type: 'string', enum: ['llama3.2:1b', 'qwen3:4b', 'qwen3:8b'] };
+const CREATIVE_TOOLS = ['blender', 'unreal', 'inkscape', 'ffmpeg', 'adobe-photoshop'];
+const CREATIVE_OPERATIONS = ['blender.inspect', 'blender.render', 'blender.export_glb', 'unreal.inspect', 'unreal.validate', 'inkscape.export_png', 'ffmpeg.probe', 'adobe.manifest', 'adobe.render'];
+const creativeToolFor = operation => operation.startsWith('adobe.') ? 'adobe-photoshop' : operation.split('.')[0];
+const CREATIVE_ID_PATTERN = /^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$/;
+const CREATIVE_ID_SCHEMA = { type: 'string', pattern: CREATIVE_ID_PATTERN.source };
+const CREATIVE_MUTATION_SCHEMA = { id: CREATIVE_ID_SCHEMA, companyId: CREATIVE_ID_SCHEMA };
 
 export const TOOL_DEFINITIONS = Object.freeze([
   {
@@ -92,6 +98,34 @@ export const TOOL_DEFINITIONS = Object.freeze([
     description: 'Select a verified installed catalog model and pin its digest for an employee’s company scope. A future self-hosted job must explicitly request this exact model; existing jobs and paid routes are not rewritten. Does not start workers or create a job.',
     inputSchema: { type: 'object', properties: { ...MODEL_SCOPE_SCHEMA, model: MODEL_REF_SCHEMA }, required: ['companyId', 'employeeId', 'model'], additionalProperties: false },
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: 'creative_inventory', title: 'Discover configured creative tools',
+    description: 'Read real tool readiness, approved projects, eligible employees, assignments and jobs for one company. Discovery probes configured local executables; it does not install software or launch a creative job. Adobe configured_unverified means its licensed remote authentication has not been checked; inventory performs no Adobe request. Eligibility does not grant native authority.',
+    inputSchema: { type: 'object', properties: { companyId: CREATIVE_ID_SCHEMA, employeeId: CREATIVE_ID_SCHEMA }, required: ['companyId'], additionalProperties: false }, annotations: READ_ANNOTATIONS,
+  },
+  {
+    name: 'creative_assign', title: 'Assign approved creative tools to an employee',
+    description: 'Save an employee’s tool assignment for an approved company project. This metadata does not grant native capability or start work. Use an id once and retain it for receipt replay; a different body with the same id is rejected. An empty toolIds list removes this assignment’s tool access.',
+    inputSchema: { type: 'object', properties: { ...CREATIVE_MUTATION_SCHEMA, employeeId: CREATIVE_ID_SCHEMA, projectId: CREATIVE_ID_SCHEMA, toolIds: { type: 'array', items: { type: 'string', enum: CREATIVE_TOOLS }, maxItems: 5, uniqueItems: true } }, required: ['id', 'companyId', 'employeeId', 'projectId', 'toolIds'], additionalProperties: false },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  },
+  {
+    name: 'creative_run', title: 'Start a bounded creative task',
+    description: 'Start one reviewed operation advertised by creative_inventory for an assigned employee and approved project. path is relative to the server-configured project; shell commands, binary paths, URLs and arbitrary arguments are unavailable. Run checks current native authority and server resource limits. Adobe manifest accepts .psd; Adobe render accepts .psd/.png/.jpg/.jpeg. Adobe operations upload the approved asset to licensed services and may incur charges; the project and private runtime must explicitly allow that. Accepted or queued is not completed. Keep id stable after uncertain delivery and inspect inventory/job before another start.',
+    inputSchema: { type: 'object', properties: { ...CREATIVE_MUTATION_SCHEMA, employeeId: CREATIVE_ID_SCHEMA, projectId: CREATIVE_ID_SCHEMA, operation: { type: 'string', enum: CREATIVE_OPERATIONS }, input: { type: 'object', properties: { path: { type: 'string', minLength: 1, maxLength: 512 }, frame: { type: 'integer', minimum: 0, maximum: 100000 }, width: { type: 'integer', minimum: 16, maximum: 2048 }, height: { type: 'integer', minimum: 16, maximum: 2048 }, samples: { type: 'integer', minimum: 1, maximum: 64 }, format: { type: 'string', enum: ['png', 'jpeg'] } }, required: ['path'], additionalProperties: false } }, required: ['id', 'companyId', 'employeeId', 'projectId', 'operation', 'input'], additionalProperties: false },
+    annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: true },
+  },
+  {
+    name: 'creative_job', title: 'Read a creative task result',
+    description: 'Read one job in its company, including bounded result metadata and relative output names, sizes and SHA-256 digests. Does not open files, download outputs or restart the task. Terminal failed/cancelled/interrupted jobs are not success.',
+    inputSchema: { type: 'object', properties: { companyId: CREATIVE_ID_SCHEMA, jobId: CREATIVE_ID_SCHEMA }, required: ['companyId', 'jobId'], additionalProperties: false }, annotations: READ_ANNOTATIONS,
+  },
+  {
+    name: 'creative_cancel', title: 'Cancel a scoped creative task',
+    description: 'Request cancellation of a job in its company using a stable receipt id. Inspect the returned status; a task can finish before cancellation arrives. Local cancellation does not confirm a remote Adobe job stopped, and usage already sent may remain billable. Inspect retained outcome and cleanup metadata. Never retries automatically.',
+    inputSchema: { type: 'object', properties: { ...CREATIVE_MUTATION_SCHEMA, jobId: CREATIVE_ID_SCHEMA }, required: ['id', 'companyId', 'jobId'], additionalProperties: false },
+    annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: true },
   },
 ]);
 
@@ -188,6 +222,134 @@ function modelResult(result) {
   return { ok: true, snapshot, ...(safeId(result.requestId) ? { requestId: safeId(result.requestId) } : {}), ...(typeof result.replayed === 'boolean' ? { replayed: result.replayed } : {}), ...(typeof result.reused === 'boolean' ? { reused: result.reused } : {}) };
 }
 
+function creativePath(value) {
+  return typeof value === 'string' && value.length > 0 && value.length <= 512
+    && !/[\\:\u0000-\u001f\u007f%?#]/.test(value)
+    && value.split('/').every(part => part !== '' && part !== '.' && part !== '..');
+}
+
+function creativeArgs(args, kind) {
+  const keys = kind === 'inventory' ? ['companyId', 'employeeId'] : kind === 'assign' ? ['id', 'companyId', 'employeeId', 'projectId', 'toolIds']
+    : kind === 'run' ? ['id', 'companyId', 'employeeId', 'projectId', 'operation', 'input'] : kind === 'job' ? ['companyId', 'jobId'] : ['id', 'companyId', 'jobId'];
+  exactArgs(args, keys);
+  for (const key of keys.filter(key => /Id$/.test(key) || key === 'id')) {
+    if (kind === 'inventory' && key === 'employeeId' && args[key] === undefined) continue;
+    if (typeof args[key] !== 'string' || !CREATIVE_ID_PATTERN.test(args[key])) throw new InvalidParams(`A valid ${key} is required (up to 100 characters; letters, digits, dot, underscore or hyphen; start with a letter or digit).`);
+  }
+  if (kind === 'assign' && (!Array.isArray(args.toolIds) || args.toolIds.length > CREATIVE_TOOLS.length
+      || new Set(args.toolIds).size !== args.toolIds.length || args.toolIds.some(id => !CREATIVE_TOOLS.includes(id)))) {
+    throw new InvalidParams('toolIds must be unique reviewed tool IDs from creative_inventory.');
+  }
+  if (kind === 'run') {
+    if (!CREATIVE_OPERATIONS.includes(args.operation)) throw new InvalidParams('Choose a reviewed operation from creative_inventory.');
+    const allowed = args.operation === 'blender.render' ? ['path', 'frame', 'width', 'height', 'samples']
+      : args.operation === 'inkscape.export_png' ? ['path', 'width', 'height'] : args.operation === 'adobe.render' ? ['path', 'format', 'width', 'height'] : ['path'];
+    exactArgs(args.input, allowed);
+    if (!creativePath(args.input.path)) throw new InvalidParams('path must be a canonical project-relative file path, without URL, traversal, or host path.');
+    if (args.operation.startsWith('adobe.')) {
+      const extensions = args.operation === 'adobe.manifest' ? ['.psd'] : ['.psd', '.png', '.jpg', '.jpeg'];
+      if (!extensions.some(extension => args.input.path.toLowerCase().endsWith(extension))) throw new InvalidParams(`This Adobe operation accepts ${extensions.join(', ')} files.`);
+    }
+    for (const [key, [minimum, maximum]] of Object.entries({ frame: [0, 100000], width: [16, 2048], height: [16, 2048], samples: [1, 64] })) if (args.input[key] !== undefined
+      && (!Number.isSafeInteger(args.input[key]) || args.input[key] < minimum || args.input[key] > maximum)) throw new InvalidParams(`${key} must be an integer from ${minimum} to ${maximum}.`);
+    if (args.input.format !== undefined && !['png', 'jpeg'].includes(args.input.format)) throw new InvalidParams('Choose png or jpeg format.');
+  }
+  return args;
+}
+
+function creativeMetadata(value) {
+  if (!isObject(value)) return undefined;
+  const result = {};
+  for (const key of ['objects', 'meshes', 'materials', 'scenes', 'cameras', 'lights', 'frameStart', 'frameEnd', 'frame', 'width', 'height', 'samples', 'fileVersion', 'modules', 'plugins', 'durationSeconds', 'layers']) {
+    if (Number.isFinite(value[key]) && Math.abs(value[key]) <= Number.MAX_SAFE_INTEGER) result[key] = value[key];
+  }
+  for (const key of ['format', 'blenderVersion', 'engineAssociation', 'engine', 'device', 'provider', 'operation']) {
+    if (typeof value[key] === 'string' && /^[A-Za-z0-9_.:, -]{1,100}$/.test(value[key])) result[key] = safeText(value[key], 100);
+  }
+  for (const key of ['engineExecuted', 'validationPassed', 'remoteAuthVerified']) if (typeof value[key] === 'boolean') result[key] = value[key];
+  if (HASH_PATTERN.test(value.inputSha256 ?? '')) result.inputSha256 = value.inputSha256;
+  if (['complete', 'pending'].includes(value.cleanup)) result.cleanup = value.cleanup;
+  if (typeof value.adobeJobId === 'string' && /^[A-Za-z0-9:_-]{1,240}$/.test(value.adobeJobId)) result.adobeJobId = value.adobeJobId;
+  if (['submitted', 'running', 'succeeded', 'failed', 'outcome_unconfirmed', 'cancelled'].includes(value.state)) result.state = value.state;
+  if (Array.isArray(value.streams)) result.streams = value.streams.slice(0, 64).filter(isObject).map(stream => {
+    const row = {};
+    for (const key of ['codecType', 'codecName']) if (typeof stream[key] === 'string' && /^[A-Za-z0-9_.-]{1,80}$/.test(stream[key])) row[key] = stream[key];
+    for (const key of ['width', 'height', 'sampleRate', 'channels']) if (Number.isFinite(stream[key]) && stream[key] >= 0) row[key] = stream[key];
+    return row;
+  });
+  return result;
+}
+
+function creativeResult(result, input, kind) {
+  if (kind !== 'inventory' && kind !== 'job' && result.snapshotOmitted === true && result.id === input.id) {
+    return { ok: true, operationSucceeded: true, id: input.id, replayed: result.replayed === true, receiptOnly: true,
+      guidance: 'This creative request was saved. Do not repeat it with a new id. Read creative_inventory or creative_job for its current result.' };
+  }
+  const failure = () => new ToolError('Runtime returned creative metadata outside the requested scope. Inspect creative_inventory before repeating a mutation; retain its original id.', 'runtime_bad_response');
+  const assignment = row => {
+    if (!isObject(row) || row.companyId !== input.companyId || !safeId(row.employeeId) || !safeId(row.projectId)
+      || input.employeeId && row.employeeId !== input.employeeId) return undefined;
+    return { companyId: input.companyId, employeeId: row.employeeId, projectId: row.projectId,
+      toolIds: Array.isArray(row.toolIds) ? [...new Set(row.toolIds.filter(id => CREATIVE_TOOLS.includes(id)))] : [],
+      ...(typeof row.updatedAt === 'string' ? { updatedAt: safeText(row.updatedAt, 40) } : {}) };
+  };
+  const job = row => {
+    if (!isObject(row) || row.companyId !== input.companyId || !safeId(row.id) || !safeId(row.employeeId) || !safeId(row.projectId)
+      || input.employeeId && row.employeeId !== input.employeeId || input.jobId && row.id !== input.jobId
+      || !CREATIVE_OPERATIONS.includes(row.operation) || !['queued', 'running', 'succeeded', 'failed', 'cancelled', 'interrupted'].includes(row.status)) return undefined;
+    const out = { id: row.id, companyId: row.companyId, employeeId: row.employeeId, projectId: row.projectId, operation: row.operation, status: row.status, outputs: [] };
+    if (row.evidenceUri === `creative://jobs/${row.id}`) out.evidenceUri = row.evidenceUri;
+    for (const key of ['createdAt', 'startedAt', 'finishedAt']) if (typeof row[key] === 'string') out[key] = safeText(row[key], 40);
+    for (const output of (Array.isArray(row.outputs) ? row.outputs : []).slice(0, 32)) if (isObject(output) && creativePath(output.path)
+        && Number.isSafeInteger(output.bytes) && output.bytes >= 0 && HASH_PATTERN.test(output.sha256 ?? '')) {
+      out.outputs.push({ path: safeText(output.path, 500), bytes: output.bytes, sha256: output.sha256,
+        mediaType: typeof output.mediaType === 'string' && /^[A-Za-z0-9.+-]+\/[A-Za-z0-9.+-]+$/.test(output.mediaType) ? output.mediaType : 'application/octet-stream' });
+    }
+    if (isObject(row.result)) out.result = creativeMetadata(row.result);
+    if (row.error) out.error = { code: safeId(row.error.code) || 'CREATIVE_FAILED', message: 'This creative task needs review. Inspect its status and private runtime configuration before starting another task.' };
+    return out;
+  };
+  const receipt = { ok: true, metadataOnly: true, ...(typeof result.replayed === 'boolean' ? { replayed: result.replayed } : {}) };
+  if (kind !== 'inventory') {
+    if (kind === 'assign') {
+      const row = assignment(result.assignment);
+      const actual = result.assignment?.toolIds;
+      if (!row || row.projectId !== input.projectId || !Array.isArray(actual) || actual.length !== input.toolIds.length
+        || new Set(actual).size !== actual.length || actual.some(id => !input.toolIds.includes(id))) throw failure();
+      return { ...receipt, assignment: row };
+    }
+    const row = job(result.job);
+    if (!row || kind === 'run' && (row.id !== input.id || row.projectId !== input.projectId || row.operation !== input.operation || result.accepted !== true)) throw failure();
+    return { ...receipt, ...(kind === 'run' ? { accepted: true } : {}), job: row,
+      ...(row.operation.startsWith('adobe.') && (kind === 'cancel' || row.result?.cleanup === 'pending' || row.result?.state === 'outcome_unconfirmed')
+        ? { guidance: 'Local task state does not confirm that Adobe stopped or that uploaded assets were removed. Inspect the retained remote outcome and cleanup receipt before another request; usage already sent may remain billable.' } : {}) };
+  }
+  if (result.companyId !== input.companyId) throw failure();
+  const out = { ...receipt, companyId: input.companyId, configured: result.configured === true, tools: [], projects: [], eligibleEmployees: [], assignments: [], jobs: [], limits: {} };
+  for (const row of (Array.isArray(result.tools) ? result.tools : []).slice(0, 16)) {
+    if (!isObject(row) || !CREATIVE_TOOLS.includes(row.id)) continue;
+    out.tools.push({ id: row.id, configured: row.configured === true, available: row.available === true,
+      operations: (Array.isArray(row.operations) ? row.operations : []).filter(op => CREATIVE_OPERATIONS.includes(op) && creativeToolFor(op) === row.id),
+      ...(typeof row.version === 'string' ? { version: safeText(row.version, 80) } : {}),
+      ...(typeof row.readiness === 'string' && ['available', 'unavailable', 'not_configured', 'configured_unverified', 'verified'].includes(row.readiness) ? { readiness: row.readiness } : {}),
+      ...(typeof row.remoteAuthVerified === 'boolean' ? { remoteAuthVerified: row.remoteAuthVerified } : {}),
+      ...(row.reason ? { reason: 'Tool is not ready. Review the private runtime configuration and software availability.' } : {}) });
+  }
+  for (const row of (Array.isArray(result.projects) ? result.projects : []).slice(0, 100)) {
+    if (!isObject(row) || row.companyId !== input.companyId || !safeId(row.id)) continue;
+    out.projects.push({ id: row.id, companyId: row.companyId, ...(safeId(row.departmentId) ? { departmentId: row.departmentId } : {}),
+      allowedOperations: (Array.isArray(row.allowedOperations) ? row.allowedOperations : []).filter(op => CREATIVE_OPERATIONS.includes(op)), allowExternalUpload: row.allowExternalUpload === true });
+  }
+  for (const row of (Array.isArray(result.eligibleEmployees) ? result.eligibleEmployees : []).slice(0, 200)) {
+    if (!isObject(row) || !safeId(row.id) || row.companyId && row.companyId !== input.companyId || input.employeeId && row.id !== input.employeeId) continue;
+    out.eligibleEmployees.push({ id: row.id, name: safeText(row.name, 150), role: safeText(row.role, 200), ...(safeId(row.departmentId) ? { departmentId: row.departmentId } : {}), status: row.status === 'active' ? 'active' : 'unavailable' });
+  }
+  out.assignments = (Array.isArray(result.assignments) ? result.assignments : []).slice(-100).map(assignment).filter(Boolean);
+  out.jobs = (Array.isArray(result.jobs) ? result.jobs : []).slice(-100).map(job).filter(Boolean);
+  if (isObject(result.limits)) for (const [key, value] of Object.entries(result.limits)) if (/^[A-Za-z][A-Za-z0-9]{0,50}$/.test(key) && Number.isSafeInteger(value) && value >= 0) out.limits[key] = value;
+  return out;
+}
+
 function workerSummary(worker) {
   if (!isObject(worker)) throw new ToolError('Runtime returned an invalid worker status.', 'runtime_bad_response');
   const out = {};
@@ -277,10 +439,25 @@ function rejection(status, body) {
     INVALID_REQUEST: 'The runtime rejected the command envelope.',
     INVALID_INPUT: 'The runtime rejected one or more command fields.',
     CAPACITY: 'The runtime reached a capacity bound. Inspect its state before submitting more work.',
+    CREATIVE_RECEIPT_MISMATCH: 'This id already belongs to a different creative request. Preserve the original id and body.',
+    CREATIVE_AUTHORITY_DENIED: 'Current scoped creative.execute authority is missing, expired, revoked or outside the approved project. Tool assignment does not grant this authority.',
+    CREATIVE_SCOPE_DENIED: 'The company, employee, office or department is outside the requested active scope.',
+    CREATIVE_PROJECT_DENIED: 'This company project is not approved for the requested operation.',
+    CREATIVE_NOT_ASSIGNED: 'Assign this reviewed tool and approved project to the employee before starting a task.',
+    CREATIVE_JOB_NOT_FOUND: 'The creative job does not belong to the requested company.',
+    CREATIVE_CONFIG_INVALID: 'Review the private owner-authored creative configuration before another request.',
+    CREATIVE_NOT_READY: 'Configure an available tool, approved project assignment and current creative.execute authority before dispatch.',
+    PATH_DENIED: 'Choose a regular input file inside the configured approved project; host paths and symlinks are not accepted.',
+    OPERATION_DENIED: 'The requested tool or operation is not configured for this approved project.',
+    INPUT_TYPE_DENIED: 'Choose a supported file type for this creative operation.',
+    CREATIVE_INPUT_CHANGED: 'The project input changed after admission. Inspect the retained task before another explicit request.',
+    CREATIVE_CAPACITY: 'Creative history is full. Review it on the runtime; existing receipts are retained.',
+    CREATIVE_BUSY: 'Creative execution capacity is full. Inspect current tasks before submitting more work; retain the original request id and body.',
+    EXTERNAL_UPLOAD_DENIED: 'The owner must explicitly enable this project upload and licensed API billing before Adobe execution.',
   };
-  if (status === 401 || status === 403) return new ToolError('Runtime access was denied. Verify the private control-token file and runtime owner access.', 'runtime_access_denied');
-  if (status >= 300 && status < 400) return new ToolError('Runtime redirects are not allowed.', 'runtime_redirect_rejected');
   const code = isObject(body) && Object.hasOwn(known, body.code) ? body.code : null;
+  if (status === 401 || status === 403 && !code) return new ToolError('Runtime access was denied. Verify the private control-token file and runtime owner access.', 'runtime_access_denied');
+  if (status >= 300 && status < 400) return new ToolError('Runtime redirects are not allowed.', 'runtime_redirect_rejected');
   if (code) return new ToolError(known[code], code);
   if (status === 409) return new ToolError(known.CONFLICT, 'CONFLICT');
   if (status === 429) return new ToolError('The runtime is busy. Inspect status before attempting another operation.', 'runtime_busy');
@@ -295,12 +472,16 @@ export function createRuntimeClient(config, { fetchImpl = globalThis.fetch, time
   if (typeof fetchImpl !== 'function' || !Number.isSafeInteger(timeoutMs) || timeoutMs < 1 || timeoutMs > REQUEST_TIMEOUT_MS ||
       !Number.isSafeInteger(responseLimit) || responseLimit < 1 || responseLimit > RESPONSE_LIMIT) throw new TypeError('Invalid runtime client options');
   return async function request(method, route, body) {
-    let modelRead = false;
-    if (method === 'GET' && route.startsWith('/v1/models?')) {
+    let scopedRead = false;
+    if (method === 'GET' && ['/v1/models?', '/v1/creative?', '/v1/creative/jobs?'].some(prefix => route.startsWith(prefix))) {
       const query = new URL(route, origin).searchParams;
-      modelRead = !route.includes('#') && query.getAll('companyId').length === 1 && query.getAll('employeeId').length <= 1 && [...query.entries()].every(([key, value]) => ['companyId', 'employeeId'].includes(key) && ID_PATTERN.test(value));
+      const job = route.startsWith('/v1/creative/jobs?');
+      const allowed = job ? ['companyId', 'jobId'] : ['companyId', 'employeeId'];
+      const pattern = route.startsWith('/v1/creative') ? CREATIVE_ID_PATTERN : ID_PATTERN;
+      scopedRead = !route.includes('#') && query.getAll('companyId').length === 1 && (!job || query.getAll('jobId').length === 1)
+        && [...query.entries()].every(([key, value]) => allowed.includes(key) && query.getAll(key).length === 1 && pattern.test(value));
     }
-    if (!ROUTES.has(`${method} ${route}`) && !modelRead) throw new InvalidParams('Runtime route is not exposed by this adapter.');
+    if (!ROUTES.has(`${method} ${route}`) && !scopedRead) throw new InvalidParams('Runtime route is not exposed by this adapter.');
     const target = new URL(route, origin);
     if (target.origin !== origin) throw new InvalidParams('Runtime origin mismatch.');
     const serialized = body === undefined ? undefined : JSON.stringify(body);
@@ -319,7 +500,7 @@ export function createRuntimeClient(config, { fetchImpl = globalThis.fetch, time
       if (response.redirected || (response.url && new URL(response.url).origin !== origin)) throw new ToolError('Runtime redirects are not allowed.', 'runtime_redirect_rejected');
       if (!response.ok) {
         let errorBody;
-        if (![401, 403].includes(response.status) && response.status >= 400) {
+        if (response.status !== 401 && response.status >= 400) {
           try { errorBody = await readBoundedJson(response, Math.min(responseLimit, 64 * 1024), controller.signal); } catch { /* Never forward arbitrary server error text. */ }
         } else { void response.body?.cancel().catch(() => {}); }
         throw rejection(response.status, errorBody);
@@ -334,7 +515,7 @@ export function createRuntimeClient(config, { fetchImpl = globalThis.fetch, time
     catch (error) {
       controller.abort();
       const failure = error instanceof ToolError ? error : new ToolError('The runtime could not be reached at its configured origin.', 'runtime_unreachable');
-      if (method === 'POST') throw new ToolError(`${failure.message} No retry was sent. The operation may already have been applied; inspect office_summary or runtime_status. Retain the original command id.`, failure.code);
+      if (method === 'POST') throw new ToolError(`${failure.message} No retry was sent. The operation may already have been applied; inspect ${route.startsWith('/v1/creative/') ? 'creative_inventory or creative_job' : 'office_summary or runtime_status'}. Retain the original command id.`, failure.code);
       throw failure;
     } finally { clearTimeout(timer); }
   };
@@ -399,6 +580,18 @@ export function createToolHandler({ request }) {
       case 'model_pool_request': return modelResult(await request('POST', '/v1/models/pull', modelArgs(args, 'request')));
       case 'model_pool_cancel': return modelResult(await request('POST', '/v1/models/cancel', modelArgs(args, 'cancel')));
       case 'model_pool_select': return modelResult(await request('POST', '/v1/models/select', modelArgs(args, 'select')));
+      case 'creative_inventory':
+      case 'creative_assign':
+      case 'creative_run':
+      case 'creative_job':
+      case 'creative_cancel': {
+        const kind = name.slice('creative_'.length);
+        const input = creativeArgs(args, kind);
+        const route = kind === 'inventory' ? `/v1/creative?${new URLSearchParams(input)}`
+          : kind === 'job' ? `/v1/creative/jobs?${new URLSearchParams(input)}` : `/v1/creative/${kind}`;
+        const result = await request(['inventory', 'job'].includes(kind) ? 'GET' : 'POST', route, ['inventory', 'job'].includes(kind) ? undefined : input);
+        return creativeResult(result, input, kind);
+      }
       default: throw new InvalidParams('Unknown tool.');
     }
   };

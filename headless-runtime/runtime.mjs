@@ -5,6 +5,8 @@ import { fileURLToPath } from 'node:url';
 import { RuntimeError, validateCommandEnvelope } from './contract.mjs';
 import { readSecretFile } from './secrets.mjs';
 import { HeadlessCloudSync } from './cloud-sync.mjs';
+import { CreativeToolsService, CreativeToolsError } from './creative-tools.mjs';
+import { executeCreativeWorkerRequest, prepareCreativeWorkerContext } from './creative-worker.mjs';
 
 const require = createRequire(import.meta.url);
 const defaultRepoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -39,7 +41,7 @@ function unwrap(result) {
 
 /** Injectable controller; persistent command idempotency belongs to the Rust core. */
 export class RuntimeController {
-  constructor({ office, worker, projectSnapshot, stateHash, modelPool, cloudSync, capabilities = {} }) {
+  constructor({ office, worker, projectSnapshot, stateHash, modelPool, cloudSync, creativeTools, capabilities = {} }) {
     this.office = office;
     this.worker = worker;
     this.projectSnapshot = projectSnapshot;
@@ -47,6 +49,7 @@ export class RuntimeController {
     this.capabilities = capabilities;
     this.modelPool = modelPool;
     this.cloudSync = cloudSync;
+    this.creativeTools = creativeTools;
     this.singleRun = null;
     this.closing = null;
   }
@@ -94,6 +97,21 @@ export class RuntimeController {
     }
   }
 
+  async creativeOperation(operation, input) {
+    if (!this.creativeTools || !['snapshot', 'assign', 'run', 'job', 'cancel'].includes(operation)) {
+      throw new RuntimeError('CREATIVE_UNAVAILABLE', 'This runtime has no configured creative-tools adapter.', 503);
+    }
+    try {
+      const result = await this.creativeTools[operation](input);
+      return result?.ok === true && ['assign', 'run', 'cancel'].includes(operation)
+        ? { ...result, id: input.id } : result;
+    }
+    catch (error) {
+      if (error instanceof CreativeToolsError) throw new RuntimeError(error.code, error.message, error.status);
+      throw new RuntimeError('CREATIVE_UNAVAILABLE', 'The creative operation could not be confirmed. Inspect its original receipt before retrying.', 503);
+    }
+  }
+
   setEnabled(enabled) {
     if (typeof enabled !== 'boolean') throw new RuntimeError('INVALID_REQUEST', 'enabled must be boolean.');
     const current = this.worker.status();
@@ -120,6 +138,7 @@ export class RuntimeController {
       const results = await Promise.allSettled([
         () => this.office.stopObserving?.(), () => this.worker.stop(),
         () => this.cloudSync?.close(), () => this.modelPool?.close(),
+        () => this.creativeTools?.close(),
       ].map(async cleanup => cleanup()));
       // The pool aborts provider calls. A short grace period allows their durable
       // settlement; an unconfirmed attempt is reconciled by native lease recovery.
@@ -144,6 +163,11 @@ export function createRuntime(options = {}) {
   if (!Number.isInteger(concurrency) || concurrency < 1 || concurrency > 4) {
     throw new RuntimeError('INVALID_CONFIG', 'Concurrency must be between one and four.', 503);
   }
+  // Programmatic injection is local-only. Validate before allocating registries
+  // so an invalid adapter cannot retain an owner lock or start an observer.
+  if (options.generate !== undefined && typeof options.generate !== 'function') {
+    throw new RuntimeError('INVALID_CONFIG', 'The injected generation adapter must be a function.', 503);
+  }
   fs.mkdirSync(dataDir, { recursive: true, mode: 0o700 });
   const dist = path.join(repoRoot, 'desktop-shell/dist/main');
   let modules;
@@ -161,60 +185,85 @@ export function createRuntime(options = {}) {
   }
   const secrets = options.secretFiles ?? {};
   const getSecret = provider => secrets[provider] ? readSecretFile(secrets[provider]) : null;
-  const office = new modules.OfficeService({
-    userDataPath: dataDir, seedDir, binaryPath, githubToken: () => getSecret('github'),
-  });
-  // Programmatic injection is for local tests; no CLI/environment/HTTP setting
-  // can replace the model adapter or execute supplied code.
-  if (options.generate !== undefined && typeof options.generate !== 'function') {
-    throw new RuntimeError('INVALID_CONFIG', 'The injected generation adapter must be a function.', 503);
+  let office, creativeTools, cloudSync, modelPool, worker;
+  try {
+    office = new modules.OfficeService({
+      userDataPath: dataDir, seedDir, binaryPath, githubToken: () => getSecret('github'),
+    });
+    creativeTools = new CreativeToolsService({ stateDir: dataDir, repoRoot,
+      configFile: options.creativeConfigFile, snapshot: () => office.officeSnapshot() });
+    cloudSync = new HeadlessCloudSync({ enabled: options.cloudSyncEnabled === true, url: options.cloudUrl,
+      pairingFile: options.cloudPairingFile, keyFile: options.cloudEncryptionKeyFile, intervalSeconds: options.cloudSyncIntervalSeconds,
+      stateDir: dataDir, CloudSyncService: modules.CloudSyncService,
+      stateHash: modules.syncStateHash,
+      allowKnownSchemaDefaults: options.cloudAllowKnownSchemaDefaults === true, knownParentDefaultsMatch: modules.knownParentDefaultsMatch,
+      snapshot: () => office.officeSnapshot(), command: request => office.officeCommand(request),
+      ...(options.cloudFetch ? { fetchImpl: options.cloudFetch } : {}) });
+    modelPool = new modules.ModelPoolService({ stateDir: dataDir, snapshot: () => office.officeSnapshot(),
+      baseUrl: options.ollamaBaseUrl, localOnlyConfirmed: options.ollamaLocalOnly === true,
+      ...(options.modelFetch ? { fetchFn: options.modelFetch } : {}) });
+    const generate = options.generate ?? (async (request, job) => {
+      if (request.provider === 'ollama') {
+        return modelPool.generateForJob(job, request);
+      }
+      if (!['openai', 'anthropic'].includes(request.provider)) {
+        throw new RuntimeError('PROVIDER_UNAVAILABLE', 'This provider adapter is unavailable.', 503);
+      }
+      const key = getSecret(request.provider);
+      if (!key) throw new RuntimeError('SECRET_UNAVAILABLE', 'The selected provider secret is not configured.', 503);
+      return modules.generateWithProvider(request.provider, key, request);
+    });
+    worker = new modules.OfficeWorkerPool({
+      snapshot: () => office.officeSnapshot(), command: request => office.workerCommand(request),
+      artifactRoot: path.join(dataDir, 'office-artifacts'), seedDir, generate,
+      managedToolCapabilities: ['github.publish_changes', 'creative.execute'],
+      prepareContext: async job => {
+        const contexts = [];
+        if (job.allowedTools.includes('github.read_repository')) contexts.push(await office.prepareWorkerContext(job));
+        if (job.allowedTools.includes('creative.execute')) contexts.push(await prepareCreativeWorkerContext({ service: creativeTools, office, job }));
+        return contexts.join('\n\n');
+      },
+      validateJob: async job => {
+        await modelPool.validateJob(job);
+        if (job.allowedTools.includes('creative.execute')) await prepareCreativeWorkerContext({ service: creativeTools, office, job });
+      },
+      executeTool: async (job, text, context) => {
+        if (job.allowedTools.includes('creative.execute')) {
+          return executeCreativeWorkerRequest({ service: creativeTools, office, job, text, signal: context.signal });
+        }
+        if (!job.allowedTools.includes('github.publish_changes')) throw new Error('GitHub publication capability is unavailable.');
+        await office.assertWorkerCapability(job, 'github.publish_changes');
+        let changes;
+        try { changes = JSON.parse(text); } catch { throw new Error('Expected a managed JSON changeset. Artifact preserved.'); }
+        if (!changes || typeof changes !== 'object' || Array.isArray(changes)) throw new Error('Expected a managed JSON changeset.');
+        const result = await office.githubOperation({ ...changes, action: 'github_operation',
+          companyId: job.companyId, operation: 'publish_changes', reviewed: job.authorized });
+        const snapshot = unwrap(result);
+        const published = snapshot.lastAction?.github;
+        if (typeof published?.url !== 'string') throw new Error('GitHub publication returned no verified evidence.');
+        return { summary: `Published commit ${published.commit}`, evidenceUrl: published.url };
+      },
+    }, concurrency);
+    office.startObserving();
+    cloudSync.start();
+    return new RuntimeController({ office, worker, modelPool, cloudSync, creativeTools,
+      projectSnapshot: modules.cloudSnapshot, stateHash: modules.syncStateHash,
+      capabilities: { providerAdapters: ['openai', 'anthropic', 'ollama-loopback'],
+        configuredProviders: ['openai', 'anthropic'].filter(provider => !!secrets[provider]),
+        githubRead: !!secrets.github, githubPublish: !!secrets.github, sharedModels: options.ollamaLocalOnly === true,
+        cloudSync: options.cloudSyncEnabled === true, creativeTools: !!options.creativeConfigFile } });
+  } catch (error) {
+    // Construction is intentionally synchronous for embedded callers. Dispose
+    // every successfully constructed component, preserving the startup cause.
+    // Async hosts await this non-enumerable promise before reporting failure or
+    // retrying, so registry leases cannot race a replacement controller.
+    const cleanupPromise = Promise.allSettled([
+      () => office?.stopObserving?.(), () => worker?.stop(),
+      () => cloudSync?.close(), () => modelPool?.close(), () => creativeTools?.close(),
+    ].map(async cleanup => cleanup()));
+    const failure = error instanceof Error && Object.isExtensible(error) ? error
+      : new RuntimeError('STARTUP_FAILED', 'Runtime initialization failed. Review configuration before retrying.', 503);
+    Object.defineProperty(failure, 'cleanupPromise', { value: cleanupPromise });
+    throw failure;
   }
-  const cloudSync = new HeadlessCloudSync({ enabled: options.cloudSyncEnabled === true, url: options.cloudUrl,
-    pairingFile: options.cloudPairingFile, keyFile: options.cloudEncryptionKeyFile, intervalSeconds: options.cloudSyncIntervalSeconds,
-    stateDir: dataDir, CloudSyncService: modules.CloudSyncService,
-    stateHash: modules.syncStateHash,
-    allowKnownSchemaDefaults: options.cloudAllowKnownSchemaDefaults === true, knownParentDefaultsMatch: modules.knownParentDefaultsMatch,
-    snapshot: () => office.officeSnapshot(), command: request => office.officeCommand(request),
-    ...(options.cloudFetch ? { fetchImpl: options.cloudFetch } : {}) });
-  const modelPool = new modules.ModelPoolService({ stateDir: dataDir, snapshot: () => office.officeSnapshot(),
-    baseUrl: options.ollamaBaseUrl, localOnlyConfirmed: options.ollamaLocalOnly === true,
-    ...(options.modelFetch ? { fetchFn: options.modelFetch } : {}) });
-  const generate = options.generate ?? (async (request, job) => {
-    if (request.provider === 'ollama') {
-      return modelPool.generateForJob(job, request);
-    }
-    if (!['openai', 'anthropic'].includes(request.provider)) {
-      throw new RuntimeError('PROVIDER_UNAVAILABLE', 'This provider adapter is unavailable.', 503);
-    }
-    const key = getSecret(request.provider);
-    if (!key) throw new RuntimeError('SECRET_UNAVAILABLE', 'The selected provider secret is not configured.', 503);
-    return modules.generateWithProvider(request.provider, key, request);
-  });
-  const worker = new modules.OfficeWorkerPool({
-    snapshot: () => office.officeSnapshot(), command: request => office.workerCommand(request),
-    artifactRoot: path.join(dataDir, 'office-artifacts'), seedDir, generate,
-    prepareContext: job => office.prepareWorkerContext(job),
-    validateJob: job => modelPool.validateJob(job),
-    executeTool: async (job, text) => {
-      if (!job.allowedTools.includes('github.publish_changes')) throw new Error('GitHub publication capability is unavailable.');
-      await office.assertWorkerCapability(job, 'github.publish_changes');
-      let changes;
-      try { changes = JSON.parse(text); } catch { throw new Error('Expected a managed JSON changeset. Artifact preserved.'); }
-      if (!changes || typeof changes !== 'object' || Array.isArray(changes)) throw new Error('Expected a managed JSON changeset.');
-      const result = await office.githubOperation({ ...changes, action: 'github_operation',
-        companyId: job.companyId, operation: 'publish_changes', reviewed: job.authorized });
-      const snapshot = unwrap(result);
-      const published = snapshot.lastAction?.github;
-      if (typeof published?.url !== 'string') throw new Error('GitHub publication returned no verified evidence.');
-      return { summary: `Published commit ${published.commit}`, evidenceUrl: published.url };
-    },
-  }, concurrency);
-  office.startObserving();
-  cloudSync.start();
-  return new RuntimeController({ office, worker, modelPool, cloudSync,
-    projectSnapshot: modules.cloudSnapshot, stateHash: modules.syncStateHash,
-    capabilities: { providerAdapters: ['openai', 'anthropic', 'ollama-loopback'],
-      configuredProviders: ['openai', 'anthropic'].filter(provider => !!secrets[provider]),
-      githubRead: !!secrets.github, githubPublish: !!secrets.github, sharedModels: options.ollamaLocalOnly === true,
-      cloudSync: options.cloudSyncEnabled === true } });
 }

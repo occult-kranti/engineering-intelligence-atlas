@@ -1,0 +1,13 @@
+# Optional /etc/systemd/system/daftar-runtime.service.d/30-creative-gpu.conf.
+# Review actual host device nodes and groups before applying; this is not a
+# driver installer. Keep the CPU override unless a GPU job needs these devices.
+[Service]
+PrivateDevices=false
+DevicePolicy=closed
+DeviceAllow=
+DeviceAllow=/dev/nvidia0 rw
+DeviceAllow=/dev/nvidiactl rw
+DeviceAllow=/dev/nvidia-uvm rw
+DeviceAllow=/dev/nvidia-uvm-tools rw
+# For a reviewed AMD/Intel render node, replace NVIDIA entries with its exact
+# /dev/dri/renderD... path and add the existing render group if required.
