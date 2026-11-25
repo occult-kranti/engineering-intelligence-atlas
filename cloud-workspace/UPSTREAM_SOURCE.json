@@ -1,14 +1,16 @@
 {
   "schemaVersion": 1,
   "projectId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8",
-  "sourceCommit": "0449717b8efdee18c3a206fac441e64efc6745bb",
-  "deploymentId": "appgdep_6b02142ce61c81918bbdf675b28973fa",
-  "version": 13,
-  "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_57b9df32db3481919776758089ec8d99",
-  "deployedAt": "2026-11-21T21:59:14.323269+00:00",
+  "canonicalRepository": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+  "canonicalCommit": "ce0423cb534a156bbd16c051c6a65421bf78e889",
+  "sourceCommit": "3427589634c00fe12a084b56bff4c225dbd64ca8",
+  "deploymentId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgdep_01adc08c13608191a7a7c57663310af2",
+  "version": 19,
+  "versionId": "appgprj_6b00f398b7f48191a9fd66db3c4554b8~appgver_d47ef57d8d0c81919577278bae346012",
+  "deployedAt": "2026-11-25T23:24:41.252569+00:00",
   "url": "https://atlas-command-office.whatswrong-inc.chatgpt.site/",
   "audience": "owner-only",
   "hasMcp": false,
   "newMembershipsOrAudienceGrants": 0,
-  "scope": "Source mirror of owner-only Site version 13. Deployment archive, runtime data and credentials are excluded. The paired runtime was not upgraded by this frontend deployment."
+  "scope": "Source mirror of the deployed owner-only company setup refresh: 350 routed public resources, 21 skill routes, complete native twenty-skill display and Donna Brain renderer/backend integration. Existing concepts, bindings, runtime data and credentials are preserved. Native owner-workspace setup remains pending the existing paired desktop's explicit sync."
 }

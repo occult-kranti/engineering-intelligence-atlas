@@ -12,6 +12,15 @@ const binary = path.join(repoRoot, 'desktop-shell', 'native', process.platform =
 const seedDir = path.join(repoRoot, 'company');
 const temporary: string[] = [];
 function userData(): string { const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'atlas-company-test-')); temporary.push(dir); return dir; }
+function uncheckedSeed(): string {
+  const dir = userData();
+  for (const file of ['team.json', 'roadmap.json']) fs.copyFileSync(path.join(seedDir, file), path.join(dir, file));
+  // First-registration cases must not depend on the packaged repository audit's current state.
+  const company = JSON.parse(fs.readFileSync(path.join(seedDir, 'engineering-intelligence-atlas.json'), 'utf8'));
+  Object.assign(company, { githubStatus: 'unchecked', registeredAt: null, lastCheckedAt: null, githubError: null, defaultBranch: null, headSha: null, stars: null, openIssues: null, pushedAt: null });
+  fs.writeFileSync(path.join(dir, 'engineering-intelligence-atlas.json'), JSON.stringify(company));
+  return dir;
+}
 afterEach(() => { for (const dir of temporary.splice(0)) fs.rmSync(dir, { recursive: true, force: true }); });
 
 const repositoryUrl = 'https://github.com/occult-kranti/engineering-intelligence-atlas';
@@ -66,7 +75,7 @@ describe('compiled Rust / desktop bridge integration', () => {
     expect(fs.existsSync(binary), 'Run npm run build:native before desktop tests').toBe(true);
   });
   it('registers verified metadata, persists the company, and protects the automated task', async () => {
-    const dir = userData();
+    const dir = userData(); const seedDir = uncheckedSeed();
     const service = new CompanyService({ userDataPath: dir, seedDir, binaryPath: binary, listRuns: () => [], fetch: goodFetch });
     expect((await service.companySnapshot()).company?.githubStatus).toBe('unchecked');
     const registered = await service.registerCompany({ repoUrl: repositoryUrl });
@@ -77,10 +86,24 @@ describe('compiled Rust / desktop bridge integration', () => {
     expect((await service.updateCompanyTask({ id: 'github-register', status: 'done', evidence: 'pretend' })).error).toMatch(/verified GitHub/);
   });
   it('records failed connection checks without claiming registration succeeded', async () => {
-    const service = new CompanyService({ userDataPath: userData(), seedDir, binaryPath: binary, listRuns: () => [], fetch: async () => new Response('private', { status: 404 }) });
+    const service = new CompanyService({ userDataPath: userData(), seedDir: uncheckedSeed(), binaryPath: binary, listRuns: () => [], fetch: async () => new Response('private', { status: 404 }) });
     const failed = await service.registerCompany({ repoUrl: repositoryUrl });
     expect(failed.company?.githubStatus).toBe('error'); expect(failed.company?.registeredAt).toBeNull(); expect(failed.error).toMatch(/not found/);
     expect(failed.tasks.find(t => t.id === 'github-register')?.status).toBe('todo');
+  });
+  it('preserves bundled audit evidence when a later connection check fails', async () => {
+    const bundled = JSON.parse(fs.readFileSync(path.join(seedDir, 'engineering-intelligence-atlas.json'), 'utf8'));
+    const service = new CompanyService({ userDataPath: userData(), seedDir, binaryPath: binary, listRuns: () => [], fetch: async () => new Response('rate limited', { status: 429 }) });
+    const initial = await service.companySnapshot();
+    expect(initial.error).toBeNull();
+    expect(initial.company).toMatchObject(bundled);
+    const registrationTask = initial.tasks.find(t => t.id === 'github-register');
+    expect(registrationTask?.status).toBe('done');
+    const failed = await service.refreshCompany();
+    expect(failed.company?.githubStatus).toBe('error'); expect(failed.error).toMatch(/rate-limited/);
+    expect(failed.company?.registeredAt).toBe(bundled.registeredAt);
+    expect(failed.company?.headSha).toBe(bundled.headSha);
+    expect(failed.tasks.find(t => t.id === 'github-register')).toEqual(registrationTask);
   });
   it('preserves corrupt state and does not silently reset it', async () => {
     const dir = userData(); const service = new CompanyService({ userDataPath: dir, seedDir, binaryPath: binary, listRuns: () => [] });

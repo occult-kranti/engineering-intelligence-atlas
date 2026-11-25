@@ -4486,5 +4486,70 @@ export const RESOURCES: Resource[] = [
     "license": "Original examples in this repository; external documentation uses its own published terms.",
     "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
     "verified": "2026-11-25"
+  },
+  {
+    "domain": "Company research operations",
+    "name": "Agent Reach operations: published review workflow",
+    "type": "Pinned runtime workflow reference",
+    "level": "Practical",
+    "url": "https://github.com/occult-kranti/Agent-Reach/blob/328c834cf0c99144966608ebbd8b60bb3d99889d/skills/agent-reach-ops/SKILL.md",
+    "purpose": "Select platform actions with source provenance, bounded execution and truthful content-completeness receipts.",
+    "prereqs": "A scoped company task and current source and capability records",
+    "access": "Public repository source",
+    "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+    "caveat": "Source is on an audit branch. Installing a runtime adapter does not install Agent Reach or authorize browser-session import.",
+    "verified": "2026-11-25"
+  },
+  {
+    "domain": "Company research operations",
+    "name": "Olympus evidence rounds: published operating contract",
+    "type": "Pinned runtime workflow reference",
+    "level": "Practical",
+    "url": "https://github.com/occult-kranti/india-corporate-intelligence/blob/b77ac58c2ad288acbd4db89c710239b0536e1a3b/.agents/skills/olympus-evidence-rounds/SKILL.md",
+    "purpose": "Run bounded case questions and independent source review while retaining actual worker, source and result provenance.",
+    "prereqs": "A scoped company task and current source and capability records",
+    "access": "Public repository source",
+    "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+    "caveat": "Source is on an archive feature branch. A round plan or source hash does not establish a completed investigation or factual-graph admission.",
+    "verified": "2026-11-25"
+  },
+  {
+    "domain": "Company research operations",
+    "name": "Olympus project archive: published recovery contract",
+    "type": "Pinned runtime workflow reference",
+    "level": "Practical",
+    "url": "https://github.com/occult-kranti/india-corporate-intelligence/blob/b77ac58c2ad288acbd4db89c710239b0536e1a3b/.agents/skills/olympus-project-archive/SKILL.md",
+    "purpose": "Reconcile published branches and recovered artifacts with explicit coverage, redaction, privacy and release receipts.",
+    "prereqs": "A scoped company task and current source and capability records",
+    "access": "Public repository source",
+    "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+    "caveat": "A published unmerged branch is already pushed. Public source presence does not remove privacy, rights or factual-graph holds.",
+    "verified": "2026-11-25"
+  },
+  {
+    "domain": "Company research operations",
+    "name": "Daftar skill revision evaluation protocol",
+    "type": "Pinned runtime workflow reference",
+    "level": "Practical",
+    "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/cb0f9fedbfab7169f55b2b9fb74edc8ff6e58d77/skills/agent-research-director/references/evaluation_protocol.md",
+    "purpose": "Freeze baseline and candidate tasks, evaluate raw outcomes independently and preserve inconclusive or rejected revisions.",
+    "prereqs": "A scoped company task and current source and capability records",
+    "access": "Public repository source",
+    "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+    "caveat": "Static validation and synthetic fixtures do not establish improved agent performance; the receipt gate never automatically promotes skills.",
+    "verified": "2026-11-25"
+  },
+  {
+    "domain": "Company research operations",
+    "name": "Daftar GitHub release role contract",
+    "type": "Pinned runtime workflow reference",
+    "level": "Practical",
+    "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/blob/cb0f9fedbfab7169f55b2b9fb74edc8ff6e58d77/company/role-library/github-release.md",
+    "purpose": "Publish reviewed company artifacts against an expected repository head and verify source and deployment receipts separately.",
+    "prereqs": "A scoped company task and current source and capability records",
+    "access": "Public repository source",
+    "license": "Repository terms; inspect the pinned source and applicable license before reuse.",
+    "caveat": "This role contract grants no executable capability. Exact publication and live deployment require their own observed receipts.",
+    "verified": "2026-11-25"
   }
 ];
