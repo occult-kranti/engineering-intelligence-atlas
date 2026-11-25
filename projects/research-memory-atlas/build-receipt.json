@@ -47,9 +47,9 @@
     "projects/research-memory-atlas/runtime/store.mjs": "3d2be0ec9dec2cd14786cf5ccfcbf3d92859b45227723aaaf1361b2dacbcff84",
     "projects/research-memory-atlas/templates/document.css": "5f5fb878f2b4f5b3c9390a327fe1eea05efffe6c514a3175e83dcebcc167b81f",
     "projects/research-memory-atlas/web/README.md": "58fe4b3aad83a69f58595014a0b343d3bbf94aacaea2fc90fffa81f3520f6e63",
-    "projects/research-memory-atlas/web/app.mjs": "beed88d68fd510ea170b51c982fb1f587a095929717ad392a5a09b303abcd931",
-    "projects/research-memory-atlas/web/atlas.css": "6ce10f82670d78c96568eb61c730f5db5af6af9742298f5a30b2dd7fe5b51a90",
-    "projects/research-memory-atlas/web/index.html": "a831e1bb93404664616fbd508fe83e5493132fc82e208b1af5b4048196cd9597",
+    "projects/research-memory-atlas/web/app.mjs": "c19ae7e9df845e2fdd01085d5449cb4659c02f136435e0e97f2af9b324327a5a",
+    "projects/research-memory-atlas/web/atlas.css": "349837718959e6285f2c2baf71c181e282c1b0a4bb9f5977a7f2afdb1c8f3a38",
+    "projects/research-memory-atlas/web/index.html": "767c0d52620cbd013ed00e7202f019b445db97e6572e6d6e523405d52ff57166",
     "scripts/build-research-memory.mjs": "c63add7cefa1d9fd1345f60c417dd3e81d4d2efcd89a9419bcf711337cfcb6ec"
   },
   "obsidianNotes": 1649,

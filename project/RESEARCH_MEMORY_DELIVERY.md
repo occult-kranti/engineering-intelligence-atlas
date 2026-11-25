@@ -195,7 +195,7 @@ Latest local checks for this source preparation:
 | Resource projections | Match canonical source |
 | Native resource-router integration | 13 tests passed, including required native integration |
 | Native main and renderer type checking | Passed |
-| Static build and portable asset integrity | 418 verified client files |
+| Static build and portable asset integrity | 420 verified client files |
 
 The first remote attempt, [run 45576673677](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/45576673677)
 on `ce44e94530b6541fec1bba644ec9c893088b0bc3`, passed Linux and Windows packaging
@@ -228,6 +228,25 @@ updated source/output hashes and an explicit public asset entry. The actual view
 module graph imports successfully, and focused regressions cover the complete
 offline dependency closure. Independent browser scripts now all execute and retain
 evidence; any failed script still fails the combined job.
+
+All web browser gates passed on [run 45580956453](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/45580956453)
+at `5f1e41112f4936a3bb6546500ce49b8a9ca0923b`, including the research explorer,
+background studio and synthetic native Brain interaction. Headless, cloud and
+container verification also passed. A final packaging review then added the exact
+public `company/knowledge-memory/atlas.json` to the installer's explicit allowlist.
+The packaged-app smoke independently compares that shipped file's SHA-256 to the
+canonical source, without making a provider call. The final head must pass this
+additional check in both Linux and Windows packages before it is treated as the
+verified installable source.
+
+Reviewing that run's screenshots found two visual issues despite functional
+success. The canvas's reduced-motion rule removed SVG group translations, so
+the Brain now uses absolute geometry coordinates. Scoped card surface rules
+restore readable text across the shell themes. The research explorer now shows
+labels on selection, hover or keyboard focus while retaining all records and
+edges, and its skip link remains hidden until focused. Focused browser
+regressions cover the observed geometry, contrast, label and skip-link failures;
+the next exact-head screenshots must confirm the repairs before merge.
 
 Local Chromium could not start under the workspace socket policy. DOM checks are
 not reported as browser acceptance. Both GitHub CI and Pages install Chromium and

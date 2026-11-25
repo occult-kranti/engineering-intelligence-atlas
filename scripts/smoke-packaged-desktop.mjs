@@ -201,6 +201,15 @@ try {
   assert.equal(buildMeta.arch, process.arch, 'Packaged helper metadata arch mismatch.');
   assert.equal(buildMeta.binary, helperName, 'Packaged helper metadata binary mismatch.');
   if (isWin) assert.equal(peMachine(binary), 0x8664, 'Packaged helper is not PE x64.');
+  // Worker public-research recall reads this exact seed path. Check the shipped
+  // bytes independently of the renderer assets; no provider request is needed.
+  const researchResource = 'company/knowledge-memory/atlas.json';
+  const packagedResearch = join(appInfo.resourcesPath, 'company', 'knowledge-memory', 'atlas.json');
+  const canonicalResearch = join(root, 'company', 'knowledge-memory', 'atlas.json');
+  assert(existsSync(packagedResearch), 'Packaged public research atlas is missing from company resources.');
+  assert(existsSync(canonicalResearch), 'Canonical public research atlas is missing from the acceptance checkout.');
+  const publicResearchSha256 = sha256File(packagedResearch);
+  assert.equal(publicResearchSha256, sha256File(canonicalResearch), 'Packaged public research atlas differs from its canonical source.');
   page = await firstWindowWithDiagnostics(application);
   page.setDefaultTimeout(15000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
@@ -316,6 +325,7 @@ try {
     packaged: true,
     userDataIsolated: true,
     nativeBinarySha256: crypto.createHash('sha256').update(readFileSync(binary)).digest('hex'),
+    publicResearchAtlas: { resource: researchResource, sha256: publicResearchSha256, matchesCanonicalSource: true, verification: 'packaged-file checksum; no provider request' },
     rendererPreferences: preferences,
     osSandbox: noOsSandbox ? 'disabled only for isolated CI runner' : 'default',
     nativeStateLoaded: true,

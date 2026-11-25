@@ -125,8 +125,9 @@ export function mountDonnaBrain(host:HTMLElement, options:DonnaBrainOptions):Don
     const captions=['COMPANY & STRUCTURE','PEOPLE & KNOWLEDGE','GOALS & WORK'];
     captions.forEach((caption,i)=>{const t=svg('text',{x:20+i*280,y:22,class:'brain-graph-heading'});t.textContent=caption;drawing.append(t);});
     for(const edge of layout.edges){const a=points.get(edge.source)!,b=points.get(edge.target)!;const path=svg('path',{d:`M${a.x} ${a.y} C${a.x+80} ${a.y},${b.x-80} ${b.y},${b.x} ${b.y}`,class:'brain-edge'+(edge.type==='supersedes'?' brain-edge-correction':'')});const t=svg('title');t.textContent=edge.label||edge.type;path.append(t);drawing.append(path);}
-    for(const {node,x,y} of layout.points){const g=svg('g',{transform:`translate(${x} ${y})`,class:'brain-graph-node'+(selected===node.id?' selected':''),tabindex:0,role:'button','aria-label':`${node.label} · ${human(node.type)}`,'aria-pressed':String(selected===node.id)});g.dataset.brainNode=node.id;
-      const circle=svg('circle',{r:7,'data-kind':node.type}), label=svg('text',{x:14,y:4});label.textContent=node.label.length>25?node.label.slice(0,23)+'…':node.label;
+    // Use geometry attributes: the surrounding canvas disables CSS transforms in reduced-motion mode.
+    for(const {node,x,y} of layout.points){const g=svg('g',{class:'brain-graph-node'+(selected===node.id?' selected':''),tabindex:0,role:'button','aria-label':`${node.label} · ${human(node.type)}`,'aria-pressed':String(selected===node.id)});g.dataset.brainNode=node.id;
+      const circle=svg('circle',{cx:x,cy:y,r:7,'data-kind':node.type}), label=svg('text',{x:x+14,y:y+4});label.textContent=node.label.length>25?node.label.slice(0,23)+'…':node.label;
       const full=svg('title');full.textContent=node.label+' · '+human(node.status);g.append(circle,label,full);drawing.append(g);
     }
     graphHost.append(drawing);

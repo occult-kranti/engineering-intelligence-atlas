@@ -7,7 +7,7 @@ import { appendDonnaDraft } from './resource-library/model.542d169556b0324a.js';
 import { mountHardwareWorkbench } from './hardware-workbench.3545929af89e886f.js';
 import { RESOURCE_CATALOG } from './resource-library/catalog.5cefe406132c0787.js';
 import { validGlobalCeiling } from './resource-library/budget.b11c1448a6dc69d7.js';
-import { mountDonnaBrain } from './brain/panel.19a6ac9eada208eb.js';
+import { mountDonnaBrain } from './brain/panel.7d21b06d5a1bbe16.js';
 const bridge = window.desktopBridge;
 let modelPoolPanel = null;
 function $(id) {

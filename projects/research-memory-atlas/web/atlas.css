@@ -8,3 +8,12 @@
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
 /* Equation geometry and graph labels retain readable scale in the studio pane. */
 .mathml-equation{max-width:100%;overflow-x:auto;padding:8px 0;color:#ecdfba}.mathml-equation math{font-size:1.2rem}.graph-node text{font-size:18px}.graph-node.selected text{font-size:21px}.export-links{font-size:11px!important;line-height:1.8!important}.atlas-summary>span{max-width:115px}
+/* Offscreen fixed links can appear in a full-page capture after scrolling.
+   Keep the skip target visually hidden until keyboard focus actually reaches it. */
+.skip-link:not(:focus){clip-path:inset(50%);opacity:0;pointer-events:none}
+.skip-link:focus{clip-path:none;opacity:1;pointer-events:auto}
+/* Label visibility changes only the annotation layer, never the graph topology. */
+.graph-node .node-label{opacity:0;pointer-events:none}
+.graph-node.selected .node-label,.graph-node:hover .node-label,.graph-node:focus .node-label{opacity:1}
+#graph-world:has(.graph-node:hover) .graph-node.selected:not(:hover) .node-label,
+#graph-world:has(.graph-node:focus) .graph-node.selected:not(:focus) .node-label{opacity:0}

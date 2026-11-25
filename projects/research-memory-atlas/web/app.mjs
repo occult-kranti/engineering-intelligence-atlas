@@ -224,17 +224,13 @@ function renderGraph() {
     const line = svg('line', { x1: a.x, y1: a.y, x2: b.x, y2: b.y, class: 'graph-edge' + (edge.type === 'analogy' ? ' analogy' : edge.type === 'contradicts' ? ' contradiction' : '') + (selected ? ' selected-edge' : '') });
     line.append(svg('title', {}, human(edge.type))); world.append(line);
   }
-  const degree = new Map(nodes.map(node => [node.id, 0]));
-  edges.forEach(edge => { degree.set(edge.source, degree.get(edge.source) + 1); degree.set(edge.target, degree.get(edge.target) + 1); });
-  const labeled = new Set([...nodes].sort((a, b) => degree.get(b.id) - degree.get(a.id) || compare(a, b)).slice(0, nodes.length > 80 ? 24 : 36).map(node => node.id));
-  for (const node of nodes) {
+  // Preserve every visible node and edge; labels appear on selection, hover or
+  // focus instead of painting dozens of overlapping names across the topology.
+  for (const node of [...nodes.filter(node => node.id !== state.selected), ...nodes.filter(node => node.id === state.selected)]) {
     const p = coords.get(node.id), selected = node.id === state.selected, catalogue = isCatalogue(node), domain = Object.hasOwn(domains, node.domain) ? node.domain : 'memory';
     const group = svg('g', { transform: `translate(${p.x} ${p.y})`, class: 'graph-node domain-' + domain + (selected ? ' selected' : '') + (catalogue ? ' catalogue' : ''), 'data-node': node.id, tabindex: selected ? '0' : '-1', role: 'button', 'aria-label': node.label + '. ' + (catalogue ? 'Catalogue only, proof not reviewed.' : human(node.status || 'status not specified')), 'aria-pressed': String(selected) });
     group.append(svg('title', {}, node.label + ' · ' + human(node.type)), svg('circle', { r: 27, fill: 'transparent' }), svg('circle', { r: selected ? 23 : 19, class: 'node-ring' }), svg('circle', { r: selected ? 12 : 9, class: 'node-dot' }));
-    if (selected || labeled.has(node.id)) {
-      const right = p.x < 970, label = [...node.label];
-      group.append(svg('text', { x: right ? 19 : -19, y: 5, 'text-anchor': right ? 'start' : 'end' }, label.length > 29 ? label.slice(0, 28).join('') + '…' : node.label));
-    }
+    group.append(svg('text', { class: 'node-label', 'text-anchor': 'start', 'aria-hidden': 'true' }, node.label));
     group.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); event.stopPropagation(); select(node.id); $('selection-label')?.focus?.(); } });
     world.append(group);
   }
@@ -300,7 +296,37 @@ function render() {
 function syncControls() { $('search').value = state.query; $('domain-select').value = state.domain; $('type-select').value = state.type; $('catalogue-toggle').checked = state.catalogue; $('node-cap').value = String(state.cap); }
 function filterChanged() { state.page = 0; state.focus = null; state.retrieval = null; state.focusTruncated = false; resetCamera(); render(); }
 function resetCamera() { state.zoom = 1; state.x = state.y = 0; applyCamera(); }
-function applyCamera() { $('graph-world').setAttribute('transform', `translate(${state.x} ${state.y}) scale(${state.zoom})`); $('zoom-value').textContent = Math.round(state.zoom * 100) + '%'; }
+function updateGraphLabels() {
+  const frame = $('graph-svg').getBoundingClientRect();
+  if (frame.width < 1 || frame.height < 1) return;
+  for (const label of $('graph-world').querySelectorAll('.node-label')) {
+    const group = label.parentElement, matrix = group.getScreenCTM();
+    if (!matrix) continue;
+    const scale = Math.hypot(matrix.a, matrix.b);
+    if (!Number.isFinite(scale) || scale <= 0) continue;
+    // Keep the active label readable in screen pixels, including the narrow
+    // viewport and zoomed-out drawing. Full names remain in the list/inspector.
+    label.style.fontSize = `${(group.classList.contains('selected') ? 15 : 14) / scale}px`;
+    label.style.strokeWidth = `${4 / scale}px`;
+    const title = state.nodeMap.get(group.dataset.node)?.label || '', chars = [...title];
+    label.textContent = title;
+    const maxWidth = Math.max(1, Math.min(300, frame.width - 28)) / scale;
+    if (label.getComputedTextLength() > maxWidth) {
+      let low = 0, high = chars.length;
+      while (low < high) {
+        const mid = Math.ceil((low + high) / 2);
+        label.textContent = chars.slice(0, mid).join('') + '…';
+        if (label.getComputedTextLength() <= maxWidth) low = mid; else high = mid - 1;
+      }
+      label.textContent = chars.slice(0, low).join('') + '…';
+    }
+    const width = label.getComputedTextLength() * scale;
+    const left = Math.max(frame.left + 12, Math.min(matrix.e + 15, frame.right - width - 12));
+    label.setAttribute('x', String((left - matrix.e) / scale));
+    label.setAttribute('y', String((matrix.f - 36 < frame.top + 40 ? 28 : -18) / scale));
+  }
+}
+function applyCamera() { $('graph-world').setAttribute('transform', `translate(${state.x} ${state.y}) scale(${state.zoom})`); $('zoom-value').textContent = Math.round(state.zoom * 100) + '%'; updateGraphLabels(); }
 function zoom(factor, cx = 600, cy = 430) { const next = Math.max(.45, Math.min(3.5, state.zoom * factor)); const ratio = next / state.zoom; state.x = cx - (cx - state.x) * ratio; state.y = cy - (cy - state.y) * ratio; state.zoom = next; applyCamera(); }
 function pan(x, y) { state.x = Math.max(-3600, Math.min(3600, state.x + x)); state.y = Math.max(-2600, Math.min(2600, state.y + y)); applyCamera(); }
 
@@ -362,6 +388,7 @@ $('retry-load').addEventListener('click', loadAtlas);
 $('zoom-in').addEventListener('click', () => zoom(1.2)); $('zoom-out').addEventListener('click', () => zoom(1 / 1.2)); $('fit-view').addEventListener('click', resetCamera);
 for (const button of document.querySelectorAll('[data-pan]')) button.addEventListener('click', () => { const direction = button.dataset.pan; pan(direction === 'left' ? 80 : direction === 'right' ? -80 : 0, direction === 'up' ? 80 : direction === 'down' ? -80 : 0); });
 const surface = $('graph-svg'); let drag;
+if ('ResizeObserver' in globalThis) new ResizeObserver(updateGraphLabels).observe(surface);
 surface.addEventListener('pointerdown', event => { if (event.button !== 0) return; drag = { id: event.pointerId, x: event.clientX, y: event.clientY, moved: false, node: event.target.closest?.('[data-node]')?.getAttribute('data-node') }; delete surface.dataset.dragged; surface.setPointerCapture(event.pointerId); });
 surface.addEventListener('pointermove', event => { if (!drag || drag.id !== event.pointerId) return; const dx = event.clientX - drag.x, dy = event.clientY - drag.y; if (Math.abs(dx) + Math.abs(dy) > 2 || drag.moved) { drag.moved = true; surface.dataset.dragged = 'true'; surface.classList.add('dragging'); const box = surface.getBoundingClientRect(); pan(dx * 1200 / box.width, dy * 860 / box.height); drag.x = event.clientX; drag.y = event.clientY; } });
 const stopDrag = event => { if (drag?.id === event.pointerId) { const selected = !drag.moved && event.type === 'pointerup' ? drag.node : null; if (surface.hasPointerCapture(event.pointerId)) surface.releasePointerCapture(event.pointerId); drag = null; surface.classList.remove('dragging'); delete surface.dataset.dragged; if (selected) select(selected); } };

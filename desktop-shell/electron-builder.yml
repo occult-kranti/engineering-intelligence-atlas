@@ -24,6 +24,7 @@ extraResources:
       - 'role-library/**'
       - 'company-kits/**'
       - 'portfolio-presets.json'
+      - 'knowledge-memory/atlas.json'
   - from: resources/atlas
     to: atlas
     filter:

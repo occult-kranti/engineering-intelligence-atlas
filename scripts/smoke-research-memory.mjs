@@ -54,14 +54,32 @@ try {
     await page.goto(base, { waitUntil: 'networkidle' }); await ready(page);
     assert.equal(await page.locator('#domain-select').inputValue(), 'memory');
     const initial = await page.locator('.graph-node').count(); assert.ok(initial > 0 && initial <= 80);
+    const initialEdges = await page.locator('.graph-edge').count();
+    const skip = page.locator('.skip-link');
+    assert.equal(await skip.evaluate(node => getComputedStyle(node).opacity), '0');
+    await skip.focus(); assert.equal(await skip.evaluate(node => getComputedStyle(node).opacity), '1');
+    await page.locator('#search').focus(); assert.equal(await skip.evaluate(node => getComputedStyle(node).opacity), '0');
     assert.equal(await page.locator('.graph-node.catalogue').count(), 0);
     assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
     if (catalogueCount) { assert.ok((await page.locator('#results-count').textContent()).includes(catalogueMarker)); assert.match(await page.locator('#results-count').textContent(), /excluded/); }
     const target = page.locator('.graph-node').nth(Math.min(1, initial - 1));
     const id = await target.getAttribute('data-node'); await target.locator('.node-dot').click();
     assert.equal(await page.locator('#selection-label').textContent(), atlas.nodes.find(node => node.id === id).label);
+    await page.mouse.move(0, 0);
+    const labels = await page.evaluate(() => {
+      const frame = document.querySelector('#graph-svg').getBoundingClientRect();
+      const selected = document.querySelector('.graph-node.selected .node-label'), rect = selected.getBoundingClientRect(), matrix = selected.getScreenCTM();
+      return { visible: [...document.querySelectorAll('.node-label')].filter(node => Number(getComputedStyle(node).opacity) > 0).length,
+        fontPixels: parseFloat(getComputedStyle(selected).fontSize) * Math.hypot(matrix.a, matrix.b),
+        left: rect.left - frame.left, right: frame.right - rect.right, top: rect.top - frame.top };
+    });
+    assert.equal(labels.visible, 1, `${width}: dense labels must not overlap at rest`);
+    assert.ok(labels.fontPixels >= 13.5, `${width}: selected label must remain readable on screen`);
+    assert.ok(labels.left >= -1 && labels.right >= -1 && labels.top >= -1, `${width}: selected label must remain within the graph frame`);
+    assert.equal(await page.locator('.graph-node').count(), initial); assert.equal(await page.locator('.graph-edge').count(), initialEdges);
     await page.screenshot({ path: path.join(out, `memory-${width}.png`), fullPage: width !== 1440 }); screenshots.push(`memory-${width}.png`);
     checks.push(`${width}: local dataset, bounded graph, catalogue separation, real node selection, readable inspector and no horizontal overflow`);
+    checks.push(`${width}: decluttered active label at readable screen size; all nodes/edges retained; skip link appears only on focus`);
     if (width === 1440) {
       await page.locator('#zoom-in').click(); assert.notEqual(await page.locator('#zoom-value').textContent(), '100%');
       await page.locator('#fit-view').click(); assert.equal(await page.locator('#zoom-value').textContent(), '100%');
