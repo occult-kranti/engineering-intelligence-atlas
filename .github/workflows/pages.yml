@@ -22,21 +22,23 @@ on:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: true
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
+    outputs:
+      artifact_name: ${{ steps.artifact-name.outputs.name }}
+      artifact_id: ${{ steps.upload.outputs.artifact_id }}
+      source_sha: ${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
+      - name: Name this build's Pages artifact
+        id: artifact-name
+        run: echo "name=github-pages-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -51,6 +53,7 @@ jobs:
           node projects/architecture-library/validate.mjs
           node scripts/validate-research-memory.mjs
           node --test projects/research-memory-atlas/tests/*.test.mjs
+          node --test scripts/pages-artifact-ready.test.mjs
       - name: Build portable static atlas from source
         run: node scripts/build-static.mjs
       - name: Verify model and game resource integrity before deployment
@@ -78,7 +81,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ui-screenshots
+          name: ui-screenshots-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             site-source/.work/ui-screenshots
             site-source/.work/architecture-ui
@@ -88,11 +91,44 @@ jobs:
             desktop-shell/.work/donna-brain-ui
           include-hidden-files: true
           if-no-files-found: warn
-      - uses: actions/configure-pages@v5
       - name: Upload verified client files only
+        id: upload
         uses: actions/upload-pages-artifact@v3
         with:
+          name: ${{ steps.artifact-name.outputs.name }}
           path: docs
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      actions: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.build.outputs.source_sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/configure-pages@v5
+      - name: Verify the uploaded artifact identity and metadata visibility
+        timeout-minutes: 2
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PAGES_ARTIFACT_ID: ${{ needs.build.outputs.artifact_id }}
+          PAGES_ARTIFACT_NAME: ${{ needs.build.outputs.artifact_name }}
+          PAGES_SOURCE_SHA: ${{ needs.build.outputs.source_sha }}
+        run: node scripts/pages-artifact-ready.mjs
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          # Keep the build's identity when only this job is retried.
+          artifact_name: ${{ needs.build.outputs.artifact_name }}
