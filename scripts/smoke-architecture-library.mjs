@@ -33,12 +33,13 @@ const server = createServer((request, response) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const base = `http://127.0.0.1:${server.address().port}${mount}`;
 const checks = [], screenshots = [];
-let browser;
+let browser, activePage;
 try {
   browser = await chromium.launch({ headless: true });
   for (const viewport of [{ width: 1440, height: 1000 }, { width: 390, height: 844 }, { width: 320, height: 740 }]) {
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce', acceptDownloads: true });
     const page = await context.newPage();
+    activePage = page;
     const errors = [], failed = [], remote = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
@@ -62,6 +63,7 @@ try {
       screenshots.push(file); checks.push(`${view}/${viewport.width}: populated view and no horizontal overflow`);
     }
     await page.locator('[data-view="buildings"]').click();
+    await page.locator('[data-view="buildings"][aria-current="page"]').waitFor();
     await page.locator('#search').fill('gobekli');
     assert.equal(await page.locator('[data-record]').count(), 1);
     await page.locator('.record-open').click();
@@ -70,6 +72,7 @@ try {
     assert((await page.locator('#record-dialog a[href^="https://"]').count()) > 0);
     await page.keyboard.press('Escape');
     await page.locator('#record-dialog').waitFor({ state: 'hidden' });
+    await page.waitForURL(url => url.hash === '#buildings');
     assert(!page.url().includes('#monument/'));
     await page.locator('#search').fill('<img src=x onerror=alert(1)>');
     assert.equal(await page.locator('[data-record]').count(), 0);
@@ -84,16 +87,25 @@ try {
     await page.locator('#reset').click();
     checks.push(`${viewport.width}: accent-insensitive search, sources, Escape, empty state, region and overlapping period filters`);
     await page.goto(`${base}index.html#content`, { waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'networkidle' }); // Exercise an initial fragment, not only same-document hash navigation.
     await page.waitForFunction(() => document.documentElement.dataset.ready === 'true');
     assert.equal(await page.locator('[data-record]').count(), monuments.length);
     checks.push(`${viewport.width}: initial skip-anchor URL renders the catalog`);
     await page.goto(`${base}index.html#monument/${monuments[0].id}`, { waitUntil: 'networkidle' });
+    await page.reload({ waitUntil: 'networkidle' });
     await page.locator('#record-dialog[open]').waitFor();
     assert.equal(await page.locator('#record-title').textContent(), monuments[0].name);
     await page.locator('#close-dialog').click();
+    await page.waitForURL(url => !url.hash.startsWith('#monument/'));
     await page.locator('[data-view="samples"]').click();
+    await page.locator('[data-view="samples"][aria-current="page"]').waitFor();
     await page.locator('.skip').focus();
+    await page.evaluate(() => {
+      window.__architectureSkipRouteComplete = false;
+      window.addEventListener('hashchange', () => { window.__architectureSkipRouteComplete = true; }, { once: true });
+    });
     await page.keyboard.press('Enter');
+    await page.waitForFunction(() => window.__architectureSkipRouteComplete === true);
     assert.equal(await page.locator('[data-view="samples"]').getAttribute('aria-current'), 'page');
     checks.push(`${viewport.width}: keyboard skip link preserves the selected section`);
     for (const format of ['blend', 'glb']) {
@@ -109,6 +121,7 @@ try {
   }
   const failedContext = await browser.newContext();
   const failedPage = await failedContext.newPage();
+  activePage = failedPage;
   await failedPage.route('**/data/monuments.json', route => route.fulfill({ status: 503, body: '{}' }));
   await failedPage.goto(`${base}index.html`);
   await failedPage.getByRole('alert').waitFor();
@@ -119,6 +132,24 @@ try {
     data: 'Public architecture library only; no private workspace, external service or paid provider calls.' };
   fs.writeFileSync(path.join(evidence, 'receipt.json'), JSON.stringify(receipt, null, 2) + '\n');
   console.log(JSON.stringify(receipt, null, 2));
+} catch (error) {
+  if (activePage && !activePage.isClosed()) {
+    const state = await activePage.evaluate(() => ({
+      url: location.href, ready: document.documentElement.dataset.ready,
+      selectedView: document.querySelector('[data-view][aria-current="page"]')?.getAttribute('data-view'),
+      query: document.querySelector('#search')?.value,
+      region: document.querySelector('#region')?.value,
+      category: document.querySelector('#category')?.value,
+      era: document.querySelector('#era')?.value,
+      summary: document.querySelector('#result-summary')?.textContent,
+      recordCount: document.querySelectorAll('[data-record]').length,
+      sampleCount: document.querySelectorAll('[data-sample]').length,
+      error: document.querySelector('[role="alert"]')?.textContent,
+    })).catch(() => ({ unavailable: true }));
+    await activePage.screenshot({ path: path.join(evidence, 'failure.png') }).catch(() => {});
+    fs.writeFileSync(path.join(evidence, 'failure.json'), JSON.stringify({ message: error.message, checks, state }, null, 2) + '\n');
+  }
+  throw error;
 } finally {
   await browser?.close();
   await new Promise(resolve => server.close(resolve));
