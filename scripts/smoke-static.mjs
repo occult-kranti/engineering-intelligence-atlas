@@ -34,6 +34,44 @@ const server = createServer((request, response) => {
 });
 await new Promise((done) => server.listen(0, '127.0.0.1', done));
 const base = `http://127.0.0.1:${server.address().port}${mount}`;
+const routeHeadings = {
+  workspace: /^Good work starts\s*with a clear view\.$/,
+  roadmap: /^A clear path to what’s next\.$/,
+  overview: /^An evidence atlas for engineering organizations, agent skills, and the public hiring market$/,
+  roles: /^\d+ roles by function$/,
+  library: /^Curated resources and the agent ecosystem$/,
+  jobs: /^Verified hiring records, dated and sourced$/,
+  reverse: /^Defensive reverse-engineering evidence base$/,
+  research: /^Paper catalog and the director loop$/,
+  science: /^The scientific research and open-model library$/,
+  methodology: /^How this atlas was built and where it stops$/,
+  director: /^A team for your next idea\.$/,
+};
+async function waitForRoute(page, route, viewport, errors, failedRequests, phase = 'navigation') {
+  assert(routeHeadings[route], `Missing route acceptance heading: ${route}`);
+  try {
+    // Suspense can retain the previous route's hidden heading while loading a
+    // lazy chapter. Require the requested chapter's accessible, visible heading;
+    // neither a stale heading nor a permanently loading route can satisfy this.
+    await page.locator('main').getByRole('heading', { name: routeHeadings[route] }).waitFor({ state: 'visible' });
+    assert.equal(new URL(page.url()).hash, `#/${route}`, `${route}: navigation must retain the requested route`);
+  } catch (error) {
+    const diagnostics = await page.evaluate(() => ({
+      url: location.href,
+      mainText: document.querySelector('main')?.innerText.slice(0, 12000),
+      headings: [...document.querySelectorAll('main h1, main h2')].map(node => ({
+        text: node.textContent, rendered: Boolean(node.getClientRects().length),
+        display: getComputedStyle(node).display, visibility: getComputedStyle(node).visibility,
+        ancestorHidden: Boolean(node.closest('[hidden],[aria-hidden="true"]')),
+      })),
+      resources: performance.getEntriesByType('resource').filter(item => /\.(?:js|mjs|css)(?:\?|$)/.test(item.name)).map(item => ({ url: item.name, duration: item.duration, size: item.transferSize })),
+    })).catch(cause => ({ diagnosticError: String(cause) }));
+    const name = `failure-${phase}-${route}-${viewport.width}`;
+    await page.screenshot({ path: join(screenshotRoot, `${name}.png`), fullPage: false }).catch(() => {});
+    writeFileSync(join(screenshotRoot, `${name}.json`), JSON.stringify({ route, viewport, phase, error: String(error), browserErrors: errors, failedRequests, diagnostics }, null, 2) + '\n');
+    throw new Error(`${route}/${viewport.width}/${phase}: requested route heading did not become visible; see ${name}.json`, { cause: error });
+  }
+}
 async function assertStudioContrast(page, viewport, theme) {
   // Measure actual canvas controls and the active surface. The legacy sidebar
   // is hidden by design and must not be made visible to satisfy this gate.
@@ -101,7 +139,9 @@ try {
     const context = await browser.newContext({ viewport, reducedMotion: 'reduce' });
     const page = await context.newPage();
     const errors = [];
+    const failedRequests = [];
     page.on('pageerror', (error) => errors.push(error.message));
+    page.on('requestfailed', request => failedRequests.push({ url: request.url(), resourceType: request.resourceType(), error: request.failure()?.errorText }));
     page.on('response', (response) => {
       if (response.url().startsWith(base) && response.status() >= 400) {
         errors.push(`${response.status()} ${response.url()}`);
@@ -109,7 +149,14 @@ try {
     });
     for (const route of routes) {
       await page.goto(`${base}#/${route}`, { waitUntil: 'networkidle' });
-      await page.locator('main h1, main h2').first().waitFor({ state: 'visible' });
+      await waitForRoute(page, route, viewport, errors, failedRequests);
+      if (route === 'overview') {
+        await page.getByRole('button', { name: 'Skill package: Graph Memory Research', exact: true }).click();
+        await page.getByRole('heading', { name: 'Graph Memory Research', exact: true }).waitFor({ state: 'visible' });
+        await page.getByRole('button', { name: 'Graph memory & evidence', exact: true }).click();
+        assert.equal(await page.getByRole('button', { name: 'Graph memory & evidence', exact: true }).getAttribute('aria-pressed'), 'true');
+        interactionChecks.push(`Overview ${viewport.width}: Graph Memory Research renders, opens its evidence brief and belongs to the selectable memory domain`);
+      }
       const dimensions = await page.evaluate(() => ({ actual: document.documentElement.scrollWidth, expected: innerWidth }));
       assert(dimensions.actual <= dimensions.expected + 1, `${route}/${viewport.width}: horizontal overflow ${dimensions.actual}`);
       assert.deepEqual(errors, [], `${route}/${viewport.width}: browser errors`);
@@ -124,7 +171,7 @@ try {
     await page.reload({ waitUntil: 'networkidle' });
     await context.setOffline(true);
     await page.reload({ waitUntil: 'networkidle' });
-    await page.locator('main h1, main h2').first().waitFor({ state: 'visible' });
+    await waitForRoute(page, routes.at(-1), viewport, errors, failedRequests, 'offline-reload');
     assert.deepEqual(errors, [], `offline/${viewport.width}: browser errors`);
     checked += 1;
     await context.close();

@@ -30,6 +30,7 @@ const SKILL_POS: Record<string, { x: number; y: number }> = {
   'chemistry-research': { x: 480, y: 724 },
   'biology-research': { x: 660, y: 724 },
   'science-history-research': { x: 850, y: 724 },
+  'graph-memory-research': { x: 480, y: 610 },
 };
 
 const DOMAINS: { id: string; label: string; x: number; y: number; skills: string[] }[] = [
@@ -42,6 +43,7 @@ const DOMAINS: { id: string; label: string; x: number; y: number; skills: string
   { id: 'd-local', label: 'Local model runtimes', x: 706, y: 344, skills: ['local-model-runtime-engineering'] },
   { id: 'd-gov', label: 'Multi-agent governance', x: 342, y: 290, skills: ['agent-research-director'] },
   { id: 'd-supply', label: 'Skill supply chain', x: 618, y: 236, skills: ['agent-research-director', 'local-model-runtime-engineering'] },
+  { id: 'd-memory', label: 'Graph memory & evidence', x: 430, y: 500, skills: ['graph-memory-research', 'mathematics-research', 'agent-research-director'] },
   // Science & models domains
   { id: 'd-games', label: 'Game reconstruction', x: 262, y: 560, skills: ['game-reconstruction-engineering'] },
   { id: 'd-openmodels', label: 'Open-model landscape', x: 700, y: 536, skills: ['ai-open-model-research', 'local-model-runtime-engineering'] },
@@ -137,7 +139,7 @@ export default function Overview() {
       {/* Constellation */}
       <SectionHeader
         kicker="Chapter 01 · Constellation"
-        title="Fifteen skill packages, one coordinated system"
+        title={`${SKILL_PACKAGES.length} skill packages, one coordinated system`}
       >
         Select a package or domain node — by pointer or keyboard — to read its
         evidence brief. The director package coordinates; specialists execute
@@ -167,7 +169,7 @@ export default function Overview() {
           <svg
             viewBox="0 0 960 800"
             role="group"
-            aria-label="Network of fifteen skill packages and their domains"
+            aria-label={`Network of ${SKILL_PACKAGES.length} skill packages and their domains`}
             className="h-auto w-full"
           >
             {/* edges */}

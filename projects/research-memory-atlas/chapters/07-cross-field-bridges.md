@@ -24,7 +24,7 @@ $$
 L=\begin{pmatrix}1&-1&0\\-1&2&-1\\0&-1&1\end{pmatrix}.
 $$
 
-Its eigenvalues are 0, 1 and 3. The zero mode is constant. The other two represent increasing variation across adjacent nodes. For a node vector x=(1,0,−1), Lx=x and xᵀLx=2. Directly summing the squared edge differences gives (1−0)²+(0+1)²=2, confirming the Dirichlet-energy identity. [pf-graph-energy](formula-catalogue.md#pf-graph-energy).
+Its eigenvalues are 0, 1 and 3. The zero mode is constant. The other two represent increasing variation across adjacent nodes. For a node vector x=(1,0,−1), Lx=x and xᵀLx=2. Directly summing the squared edge differences gives (1−0)²+(0+1)²=2, confirming the Dirichlet-energy identity. [pf-graph-energy](../FORMULA_NOTEBOOK.md#pf-graph-energy).
 
 Now choose a time law. In diffusion, dx/dt=−αLx, that vector decays as exp(−αt). In a spring system with equal masses m, d²x/dt²=−(k/m)Lx, it oscillates at √(k/m). In a graph regularizer, minimize ‖x−y‖²+λxᵀLx; then x=(I+λL)⁻¹y and there is no physical time at all. The same eigenvalue enters three different equations, with three different interpretations and units. Calling all three “frequency memory” would hide the crucial model choice.
 
@@ -32,7 +32,7 @@ For knowledge retrieval, edge meaning must be chosen before filtering. A nonnega
 
 ## Caching: operator reuse is conditional
 
-A linear solve b↦A⁻¹b admits reusable factorizations when A is unchanged. Change geometry, boundary conditions, material coefficients or discretization and the operator can change. Charge equilibration shows a second dependency: even if one local descriptor changes, a global conservation constraint can alter the entire solved state. [pf-qeq](formula-catalogue.md#pf-qeq), [Rappé and Goddard](https://pubs.acs.org/doi/10.1021/j100161a070).
+A linear solve b↦A⁻¹b admits reusable factorizations when A is unchanged. Change geometry, boundary conditions, material coefficients or discretization and the operator can change. Charge equilibration shows a second dependency: even if one local descriptor changes, a global conservation constraint can alter the entire solved state. [pf-qeq](../FORMULA_NOTEBOOK.md#pf-qeq), [Rappé and Goddard](https://pubs.acs.org/doi/10.1021/j100161a070).
 
 The analogous software rule is precise: a cached answer should depend on the content/version of its evidence, query normalization, scope, retrieval parameters and model or schema version. A time-to-live alone is not enough when a dependency is edited before expiry. An answer citing a withdrawn paper or an obsolete repository state should be invalidated by that change. A cached summary should not survive merely because its title remained unchanged.
 

@@ -880,16 +880,16 @@ certificate, a published explanation and an accepted prize submission
 are separate records.</p>
 <h2 id="how-to-use-this-volume">How to use this volume</h2>
 <p>Begin with a question and follow the smallest set of prerequisites
-that makes it answerable. Use the <a
-href="02-formula-notebook.md">formula notebook</a> for assumptions,
-symbols, derivation sketches and worked checks. Use
-<code>nodes.json</code>, <code>edges.json</code> and
+that makes it answerable. Use the <a href="formula-notebook.html">formula
+notebook</a> for assumptions, symbols, derivation sketches and worked
+checks. Use <code>nodes.json</code>, <code>edges.json</code> and
 <code>formulas.json</code> for the machine-readable network. Use <a
-href="04-ai-mathematics-audit.md">the AI evidence audit</a> when a
-headline says a problem has been solved. The <a
-href="openai-math-catalogue.json">complete captured OpenAI catalogue</a>
-enumerates manuscript metadata; individual entries remain explicitly
-unreviewed unless promoted in the separate claim ledger.</p>
+href="ai-mathematics.html">the AI evidence audit</a> when a headline says
+a problem has been solved. The <a
+href="ai-manuscript-catalogue.csv">complete captured
+OpenAI catalogue</a> enumerates manuscript metadata; individual entries
+remain explicitly unreviewed unless promoted in the separate claim
+ledger.</p>
 <p>The main discipline is to distinguish five operations: representing
 an object, measuring it, approximating it, proving a property about it,
 and interpreting the property in an application. A force-directed
@@ -1497,9 +1497,9 @@ finite set of charges to become a volume, surface or line integral.
 Always match the source measure to its units: volume density is C/m³,
 surface density C/m² and line density C/m. Substituting one into the
 wrong measure can produce a plausible diagram and an incorrect
-dimension. See <a href="formula-catalogue.md#pf-coulomb">pf-coulomb</a>
+dimension. See <a href="formula-notebook.html#pf-coulomb">pf-coulomb</a>
 and <a
-href="formula-catalogue.md#pf-charge-integral">pf-charge-integral</a>.</p>
+href="formula-notebook.html#pf-charge-integral">pf-charge-integral</a>.</p>
 <p>The electrostatic force does conservative work, so introduce a scalar
 potential with <strong>E</strong> = −∇φ. A volt is a joule per coulomb.
 Field is a spatial derivative of potential and therefore has units V/m;
@@ -1511,7 +1511,7 @@ collapse in which charge, voltage, field intensity and stored energy are
 treated as interchangeable. <a
 href="https://www.feynmanlectures.caltech.edu/II_06.html">Potential
 construction</a>, <a
-href="formula-catalogue.md#pf-potential-gradient">pf-potential-gradient</a>.</p>
+href="formula-notebook.html#pf-potential-gradient">pf-potential-gradient</a>.</p>
 <p><strong>Worked spherical calculation.</strong> A total charge Q
 spread uniformly through a sphere of radius R has density 3Q/(4πR³). A
 Gaussian sphere at r&lt;R encloses Qr³/R³, giving E(r)=Qr/(4πεR³).
@@ -1542,8 +1542,8 @@ boundary is a Dirichlet problem. Specifying its normal derivative is a
 Neumann problem. A pure Neumann problem needs compatibility between
 total source and boundary flux and leaves an arbitrary additive
 constant. Mixed boundaries need their own existence and uniqueness
-conditions. <a href="formula-catalogue.md#pf-gauss">pf-gauss</a>, <a
-href="formula-catalogue.md#pf-poisson">pf-poisson</a>, <a
+conditions. <a href="formula-notebook.html#pf-gauss">pf-gauss</a>, <a
+href="formula-notebook.html#pf-poisson">pf-poisson</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_07.html">Feynman
 boundary analysis</a>.</p>
 <p>The uniqueness proof is an especially useful reusable pattern.
@@ -1558,7 +1558,7 @@ Their difference u is harmonic and vanishes at the boundary. Multiply
 must vanish, so u is constant, then zero. This is more powerful than a
 picture of field lines: any candidate solution satisfying the equation
 and prescribed boundary is the solution in that domain. <a
-href="formula-catalogue.md#pf-dirichlet-uniqueness">pf-dirichlet-uniqueness</a>.</p>
+href="formula-notebook.html#pf-dirichlet-uniqueness">pf-dirichlet-uniqueness</a>.</p>
 <p><strong>Image-charge example.</strong> A charge q at height a above a
 grounded plane has the same upper-half-space potential as q together
 with a fictitious −q reflected beneath the plane. The construction is
@@ -1568,7 +1568,7 @@ q²/(16πεa²). The physical induced surface charge is not a literal point
 charge beneath the conductor. The assembly energy is −q²/(16πεa),
 carrying a half-factor relative to q times the induced potential because
 the induced distribution changes during assembly. <a
-href="formula-catalogue.md#pf-image-plane">pf-image-plane</a>, <a
+href="formula-notebook.html#pf-image-plane">pf-image-plane</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_08.html">energy
 discussion</a>.</p>
 <p>A Green function is an impulse response for the spatial operator
@@ -1579,8 +1579,8 @@ summarizes total charge, the dipole summarizes its first moment, and
 higher moments resolve finer angular structure. A zero monopole does not
 mean zero field. The truncation is useful only when the observation
 distance exceeds the source extent sufficiently for the needed accuracy.
-<a href="formula-catalogue.md#pf-green">pf-green</a>, <a
-href="formula-catalogue.md#pf-multipoles">pf-multipoles</a>, <a
+<a href="formula-notebook.html#pf-green">pf-green</a>, <a
+href="formula-notebook.html#pf-multipoles">pf-multipoles</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_06.html">potential
 methods</a>.</p>
 <h2 id="matter-changes-the-closure">3. Matter changes the closure</h2>
@@ -1595,7 +1595,7 @@ tensor. Hysteresis, nonlinear response, dispersion and microscopic
 interfaces can invalidate that simple closure. <a
 href="https://www.feynmanlectures.caltech.edu/II_10.html">Feynman,
 Dielectrics</a>, <a
-href="formula-catalogue.md#pf-polarization">pf-polarization</a>.</p>
+href="formula-notebook.html#pf-polarization">pf-polarization</a>.</p>
 <p>At an ordinary electrostatic interface, tangential <strong>E</strong>
 is continuous, while the jump in normal <strong>D</strong> equals free
 surface charge. A jump in permittivity therefore changes the normal
@@ -1603,7 +1603,7 @@ field even without free interface charge. In numerical work, flux
 continuity should be built into the discretization. Treating every
 interface point as if ε were a globally constant scalar can violate the
 governing conservation law. <a
-href="formula-catalogue.md#pf-interface">pf-interface</a>.</p>
+href="formula-notebook.html#pf-interface">pf-interface</a>.</p>
 <p>The energy formula U=½∫<strong>E</strong>·<strong>D</strong> dV
 belongs to a linear, nondispersive, quasistatically assembled material
 model. For a nonlinear reversible material, the charging integral
@@ -1612,8 +1612,8 @@ For irreversible media, a state function may not account for all losses.
 Capacitance is a geometry-and-material relation between conductor
 charges and potentials; multi-conductor systems naturally have a
 capacitance matrix rather than a single scalar. <a
-href="formula-catalogue.md#pf-field-energy">pf-field-energy</a>, <a
-href="formula-catalogue.md#pf-capacitance">pf-capacitance</a>, <a
+href="formula-notebook.html#pf-field-energy">pf-field-energy</a>, <a
+href="formula-notebook.html#pf-capacitance">pf-capacitance</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_08.html">electrostatic
 energy</a>.</p>
 <h2 id="screening-is-a-model-of-responsive-particles">4. Screening is a
@@ -1626,8 +1626,8 @@ produces a positive inverse screening length squared. The resulting
 screened potential is proportional to exp(−r/λD)/r. Without the
 small-potential condition, the nonlinear Poisson–Boltzmann problem must
 be treated directly. <a
-href="formula-catalogue.md#pf-debye">pf-debye</a>, <a
-href="formula-catalogue.md#pf-pb">pf-pb</a>.</p>
+href="formula-notebook.html#pf-debye">pf-debye</a>, <a
+href="formula-notebook.html#pf-pb">pf-pb</a>.</p>
 <p>This continuum picture neglects some correlations, ion-size effects,
 chemical specificity and atomic solvent structure. It can still be
 useful when those omissions are controlled against the observable of
@@ -1656,7 +1656,7 @@ the mesh, move the outer boundary and test interfaces separately. The
 exact polynomial φ=x²+y² is a useful implementation check because the
 stencil returns its Laplacian exactly, yet that one check is not a
 convergence theorem. <a
-href="formula-catalogue.md#pf-fd-poisson">pf-fd-poisson</a>.</p>
+href="formula-notebook.html#pf-fd-poisson">pf-fd-poisson</a>.</p>
 <p>The finite-element weak form moves derivatives from the solution onto
 a test function through integration by parts. This permits a broader
 function space, accommodates geometry and gives an energy
@@ -1668,7 +1668,7 @@ The original <a
 href="https://www.sciencedirect.com/science/article/pii/0021999187901409">Greengard–Rokhlin
 paper</a> supplies primary provenance for fast many-particle evaluation;
 this atlas does not reproduce its timings. <a
-href="formula-catalogue.md#pf-weak-form">pf-weak-form</a>.</p>
+href="formula-notebook.html#pf-weak-form">pf-weak-form</a>.</p>
 <p>Ewald methods split a periodic long-range sum into rapidly convergent
 real- and reciprocal-space contributions plus self/boundary corrections.
 Charge neutrality and the chosen periodic boundary convention are part
@@ -1703,7 +1703,7 @@ the useful transfer is a dependency rule: derived cached quantities must
 be keyed by all effective inputs, including global constraints and
 parameter versions. That is a design lesson from a mathematical
 structure, not a claim that a repository stores Coulomb fields. <a
-href="formula-catalogue.md#pf-qeq">pf-qeq</a>, <a
+href="formula-notebook.html#pf-qeq">pf-qeq</a>, <a
 href="https://pubs.acs.org/doi/10.1021/j100161a070">Rappé and Goddard,
 1991</a>.</p>
 <h2 id="questions-that-test-understanding">Questions that test
@@ -1748,7 +1748,7 @@ isolated current segment is a field-calculation idealization, not a
 complete stationary circuit. A wire that delivers charge somewhere must
 have a consistent source, sink or return path in the physical
 description. <a
-href="formula-catalogue.md#pf-continuity">pf-continuity</a>.</p>
+href="formula-notebook.html#pf-continuity">pf-continuity</a>.</p>
 <p>The magnetic part of the Lorentz force is
 q<strong>v</strong>×<strong>B</strong>. Its scalar product with velocity
 vanishes, so it bends an ideal particle trajectory without doing
@@ -1756,7 +1756,7 @@ instantaneous mechanical work. Electric fields can change the particle’s
 kinetic energy. This does not mean magnets can never exchange energy
 with mechanical systems: moving conductors, changing currents, source
 circuits and induced electric fields provide the relevant work channels.
-See <a href="formula-catalogue.md#pf-lorentz">pf-lorentz</a> and <a
+See <a href="formula-notebook.html#pf-lorentz">pf-lorentz</a> and <a
 href="https://www.feynmanlectures.caltech.edu/II_17.html">Feynman’s
 induction treatment</a>.</p>
 <p><strong>Worked circular motion.</strong> In a uniform magnetic field,
@@ -1777,8 +1777,8 @@ algebraically only when symmetry controls the integrand. For a long
 straight wire, cylindrical symmetry gives B=μ₀I/(2πr). For a finite
 arbitrary conductor, choosing a convenient loop does not manufacture
 symmetry. <a
-href="formula-catalogue.md#pf-biot-savart">pf-biot-savart</a>, <a
-href="formula-catalogue.md#pf-ampere">pf-ampere</a>, <a
+href="formula-notebook.html#pf-biot-savart">pf-biot-savart</a>, <a
+href="formula-notebook.html#pf-ampere">pf-ampere</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_13.html">magnetostatic
 source</a>.</p>
 <p>Because ∇·<strong>B</strong>=0, a vector potential can locally
@@ -1788,7 +1788,7 @@ condition removes redundant representation degrees of freedom when
 solving equations, but gauge choice does not change the observable
 field. Multiply connected domains and quantum phase experiments require
 care beyond an elementary local argument. <a
-href="formula-catalogue.md#pf-vector-potential">pf-vector-potential</a>,
+href="formula-notebook.html#pf-vector-potential">pf-vector-potential</a>,
 <a href="https://www.feynmanlectures.caltech.edu/II_15.html">Feynman,
 The Vector Potential</a>.</p>
 <p>For a small current loop, the magnetic moment is current times
@@ -1799,7 +1799,7 @@ positions are allowed to change together, the power supplies must be
 included in energy bookkeeping. Differentiating a field-energy
 expression while silently holding the wrong control variable fixed can
 predict the wrong mechanical force. <a
-href="formula-catalogue.md#pf-dipole-torque">pf-dipole-torque</a>.</p>
+href="formula-notebook.html#pf-dipole-torque">pf-dipole-torque</a>.</p>
 <h2 id="time-dependence-closes-the-conservation-laws">3. Time dependence
 closes the conservation laws</h2>
 <p>Faraday’s law connects changing magnetic flux with electric
@@ -1809,8 +1809,8 @@ force. Inductance summarizes a quasistatic flux-current relation; an
 ideal linear inductor stores ½LI² and opposes changes through a voltage
 L dI/dt. These relations are not license to ignore radiation,
 resistance, saturation or changing geometry. <a
-href="formula-catalogue.md#pf-faraday">pf-faraday</a>, <a
-href="formula-catalogue.md#pf-inductor">pf-inductor</a>.</p>
+href="formula-notebook.html#pf-faraday">pf-faraday</a>, <a
+href="formula-notebook.html#pf-inductor">pf-inductor</a>.</p>
 <p>Ampère’s original steady-current form cannot be the full
 time-dependent law because its divergence would force
 ∇·<strong>J</strong>=0 at all times. Adding ε₀∂<strong>E</strong>/∂t in
@@ -1820,7 +1820,7 @@ The complete vacuum Maxwell system then yields waves with c=1/√(μ₀ε₀).
 The constants must be interpreted under modern SI: c is exact, while μ₀
 and ε₀ are connected to measured electromagnetic constants rather than
 both separately exact. <a
-href="formula-catalogue.md#pf-maxwell">pf-maxwell</a>, <a
+href="formula-notebook.html#pf-maxwell">pf-maxwell</a>, <a
 href="https://physics.nist.gov/cuu/Constants/">NIST constants</a>.</p>
 <p><strong>Deriving the energy budget.</strong> Dot the Ampère–Maxwell
 equation with <strong>E</strong>, dot Faraday’s law with
@@ -1834,7 +1834,7 @@ equation specifies storage, transport and transfer to matter. A
 resonator can concentrate energy spatially while obeying this budget. An
 apparent gain must be assessed across a closed boundary and a full time
 interval, including sources and stored-energy changes. <a
-href="formula-catalogue.md#pf-poynting">pf-poynting</a>, <a
+href="formula-notebook.html#pf-poynting">pf-poynting</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_27.html">Feynman, Field
 Energy and Field Momentum</a>.</p>
 <h2 id="from-moments-to-statistical-order">4. From moments to
@@ -1847,7 +1847,7 @@ free-current bookkeeping from magnetization, but a constitutive law is
 still required. Linear isotropic susceptibility is useful only within
 its domain; hysteresis and domain rearrangement cannot be reconstructed
 from one constant χ. <a
-href="formula-catalogue.md#pf-magnetization">pf-magnetization</a>, <a
+href="formula-notebook.html#pf-magnetization">pf-magnetization</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_36.html">Feynman,
 Ferromagnetism</a>.</p>
 <p>For independent two-state magnetic moments, the partition function is
@@ -1855,7 +1855,7 @@ Z=2cosh(μB/kBT). Differentiating its logarithm gives M=nμtanh(μB/kBT).
 At weak field this is nμ²B/(kBT), while at high field it saturates. The
 factor for a classical continuously oriented moment differs; importing
 the classical 1/3 into a two-state model mixes models. <a
-href="formula-catalogue.md#pf-paramagnet">pf-paramagnet</a>, <a
+href="formula-notebook.html#pf-paramagnet">pf-paramagnet</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_35.html">Feynman,
 Paramagnetism and Magnetic Resonance</a>.</p>
 <p>Collective magnetism requires interactions. Ising variables retain a
@@ -1866,7 +1866,7 @@ possible phases. Frustration means local interaction preferences cannot
 all be simultaneously satisfied; it does not simply mean “complex
 network.” A finite graph with an energy function also differs from an
 infinite system with a thermodynamic phase transition. <a
-href="formula-catalogue.md#pf-spin-model">pf-spin-model</a>, <a
+href="formula-notebook.html#pf-spin-model">pf-spin-model</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_37.html">Feynman,
 Magnetic Materials</a>.</p>
 <p>The computational connection to associative memory is specific:
@@ -1886,7 +1886,7 @@ demagnetizing terms as needed. Unit-length dynamics should preserve
 drive supplies work. Those provide useful numerical checks. The γ
 convention must specify whether the effective field is
 <strong>H</strong> in A/m or <strong>B</strong> in tesla. <a
-href="formula-catalogue.md#pf-llg">pf-llg</a>, <a
+href="formula-notebook.html#pf-llg">pf-llg</a>, <a
 href="https://math.nist.gov/oommf/doc/userguide21a0/userguidexml/sec_oxsEvolvers.html">NIST
 OOMMF evolvers</a>.</p>
 <p>A skyrmion charge integrates how a two-dimensional magnetization
@@ -1898,7 +1898,7 @@ The <a
 href="https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/adma.202403274">2024
 skyrmion-bag experiment</a> supplies a material-specific example;
 geometry, field and temperature limit its stability. <a
-href="formula-catalogue.md#pf-skyrmion">pf-skyrmion</a>.</p>
+href="formula-notebook.html#pf-skyrmion">pf-skyrmion</a>.</p>
 <p>Two other topological ideas deserve separate nodes. A Berry phase is
 acquired by a quantum state transported adiabatically around a parameter
 loop; it requires eigenstates and a transport law, not merely a drawn
@@ -1906,9 +1906,9 @@ cycle. A two-dimensional vortex has winding of an angular order
 parameter around a defect. Its energy grows logarithmically with size,
 as does its placement entropy, motivating a vortex-unbinding mechanism.
 Neither winding construction is identical to skyrmion charge. <a
-href="formula-catalogue.md#pf-berry-phase">pf-berry-phase</a>, <a
+href="formula-notebook.html#pf-berry-phase">pf-berry-phase</a>, <a
 href="https://doi.org/10.1098/rspa.1984.0023">Berry, 1984</a>; <a
-href="formula-catalogue.md#pf-vortex-energy">pf-vortex-energy</a>, <a
+href="formula-notebook.html#pf-vortex-energy">pf-vortex-energy</a>, <a
 href="https://doi.org/10.1088/0022-3719/6/7/010">Kosterlitz and
 Thouless, 1973</a>.</p>
 <h2 id="plasma-and-superconducting-bridges">6. Plasma and
@@ -1921,8 +1921,8 @@ Fourier component; it does not create an oscillation. Adding fluid
 inertia and magnetic tension produces Alfvén waves. The fluid
 approximation must be reconsidered near kinetic scales or when predicted
 speeds approach c. <a
-href="formula-catalogue.md#pf-mhd-induction">pf-mhd-induction</a>, <a
-href="formula-catalogue.md#pf-alfven">pf-alfven</a>, <a
+href="formula-notebook.html#pf-mhd-induction">pf-mhd-induction</a>, <a
+href="formula-notebook.html#pf-alfven">pf-alfven</a>, <a
 href="https://farside.ph.utexas.edu/teaching/plasma/Plasmahtml/node107.html">Fitzpatrick’s
 MHD-wave notes</a>.</p>
 <p>Superconductivity introduces a coherent quantum phase. The Josephson
@@ -1931,7 +1931,7 @@ providing a precise frequency-voltage conversion. An ideal zero-voltage
 supercurrent has zero electrical power IV; it is not an energy source.
 Circuit resistance, capacitance, magnetic flux and quasiparticle
 channels determine actual device dynamics. <a
-href="formula-catalogue.md#pf-josephson">pf-josephson</a>, <a
+href="formula-notebook.html#pf-josephson">pf-josephson</a>, <a
 href="https://www.feynmanlectures.caltech.edu/III_21.html">Feynman, A
 Seminar on Superconductivity</a>.</p>
 <h2 id="selected-20242026-frontier-and-proof-status-boundaries">7.
@@ -1952,7 +1952,7 @@ matrix-valued fields. The commutator term makes curvature nonlinear. A
 Wilson loop traces group-valued transport around a closed path,
 cancelling endpoint gauge transformations. A software graph cycle is not
 a Wilson loop without this additional structure. <a
-href="formula-catalogue.md#pf-nonabelian">pf-nonabelian</a>, <a
+href="formula-notebook.html#pf-nonabelian">pf-nonabelian</a>, <a
 href="https://www.tpi.uni-jena.de/~floerchinger/qft2/lecture15/">gauge-theory
 lecture</a>.</p>
 <p>The current 2026 status must be stated narrowly. The <a
@@ -2006,8 +2006,8 @@ electrostatics, but the force is attractive for positive masses and the
 potential obeys ∇²Φ=+4πGρₘ. The acceleration is −∇Φ. This is an exact
 correspondence between mathematical operator forms under different
 source conventions; it does not identify mass with electric charge. <a
-href="formula-catalogue.md#pf-newton">pf-newton</a>, <a
-href="formula-catalogue.md#pf-grav-poisson">pf-grav-poisson</a>, <a
+href="formula-notebook.html#pf-newton">pf-newton</a>, <a
+href="formula-notebook.html#pf-grav-poisson">pf-grav-poisson</a>, <a
 href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html">Tong,
 weak gravity</a>.</p>
 <p><strong>Worked tidal calculation.</strong> For Φ=−GM/r, the Hessian
@@ -2022,7 +2022,7 @@ coefficient −GM/r³. The trace vanishes outside the source, agreeing with
 the vacuum Poisson equation. Transforming into a frame falling with one
 particle removes its local acceleration but cannot remove this relative
 effect across the pair. That is the Newtonian precursor of curvature. <a
-href="formula-catalogue.md#pf-curvature">pf-curvature</a>, <a
+href="formula-notebook.html#pf-curvature">pf-curvature</a>, <a
 href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S3.html">Tong,
 Riemannian geometry</a>.</p>
 <p>For two bodies, relative and center-of-mass coordinates separate the
@@ -2031,7 +2031,7 @@ mass enters the relative orbital frequency. Energy and angular momentum
 reduce the central-force problem to one radial degree of freedom.
 Confusing one body’s barycentric radius with the relative semimajor axis
 creates a mass-ratio error even when Kepler’s formula looks familiar. <a
-href="formula-catalogue.md#pf-kepler">pf-kepler</a>, <a
+href="formula-notebook.html#pf-kepler">pf-kepler</a>, <a
 href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html">Tong,
 geodesics and orbital limits</a>.</p>
 <h2 id="variational-mechanics-is-the-bridge-to-geometry">2. Variational
@@ -2042,7 +2042,7 @@ conditions and use the arbitrariness of the remaining variation. This
 gives Euler–Lagrange equations. The word stationary matters: some
 physical paths are saddle points, so “nature always minimizes action” is
 too strong. <a
-href="formula-catalogue.md#pf-variational">pf-variational</a>.</p>
+href="formula-notebook.html#pf-variational">pf-variational</a>.</p>
 <p>In relativity, the metric converts coordinate displacements into
 invariant intervals. For a timelike worldline, dτ²=−ds²/c² gives the
 proper time a comoving ideal clock measures. Coordinate time is a label
@@ -2050,7 +2050,7 @@ attached to a chart; it need not coincide with every clock. In flat
 inertial coordinates the metric produces familiar special-relativistic
 time dilation. In curved geometry, the full metric and observer path
 must be used. <a
-href="formula-catalogue.md#pf-metric-time">pf-metric-time</a>, <a
+href="formula-notebook.html#pf-metric-time">pf-metric-time</a>, <a
 href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S2.html">Tong,
 differential geometry</a>.</p>
 <p>To differentiate a vector field while retaining its geometric
@@ -2060,8 +2060,8 @@ transported parallel to itself, giving an acceleration term plus a
 connection term. Connection components can be nonzero in flat polar
 coordinates; curvature is the tensorial obstruction that remains after
 coordinate effects are separated. <a
-href="formula-catalogue.md#pf-connection">pf-connection</a>, <a
-href="formula-catalogue.md#pf-geodesic">pf-geodesic</a>.</p>
+href="formula-notebook.html#pf-connection">pf-connection</a>, <a
+href="formula-notebook.html#pf-geodesic">pf-geodesic</a>.</p>
 <p><strong>A useful invariance check.</strong> In a flat plane, a
 straight path written in Cartesian coordinates has zero coordinate
 acceleration. In polar coordinates the radial coordinate generally
@@ -2079,7 +2079,7 @@ with a possible cosmological constant. In length coordinates, curvature
 has units m⁻² and the factor G/c⁴ turns energy density into the same
 units. The contracted Bianchi identity makes the geometric side
 covariantly divergence free, demanding compatible matter conservation.
-<a href="formula-catalogue.md#pf-einstein">pf-einstein</a>, <a
+<a href="formula-notebook.html#pf-einstein">pf-einstein</a>, <a
 href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S4.html">Tong,
 Einstein equations</a>.</p>
 <p>The Einstein–Hilbert action packages this structure. Varying the
@@ -2088,7 +2088,7 @@ variation requires the correct boundary data and corresponding boundary
 action. It is not legitimate to drop a boundary divergence merely
 because the final equation is familiar. The chosen matter action
 determines its own equations and stress tensor. <a
-href="formula-catalogue.md#pf-einstein-action">pf-einstein-action</a>.</p>
+href="formula-notebook.html#pf-einstein-action">pf-einstein-action</a>.</p>
 <p>The Newtonian limit is a nontrivial consistency check. A weak, static
 metric has g₀₀≈−(1+2Φ/c²). For slowly moving particles, the geodesic
 equation recovers acceleration −∇Φ, while the field equations recover
@@ -2113,7 +2113,7 @@ at every radius. Its mass parameter sets rₛ=2GM/c². The coefficient
 singularity at rₛ is removable by a suitable chart, whereas the central
 curvature singularity is a different issue. Rotating objects require
 additional structure such as the Kerr solution. <a
-href="formula-catalogue.md#pf-schwarzschild">pf-schwarzschild</a>, <a
+href="formula-notebook.html#pf-schwarzschild">pf-schwarzschild</a>, <a
 href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S6.html">Tong,
 black holes</a>.</p>
 <p>The redshift calculation illustrates the role of observers. A
@@ -2126,7 +2126,7 @@ potential difference ΔΦ loses a fraction ΔΦ/c² of its frequency. A
 one-metre height difference near Earth’s surface is an illustrative
 fractional scale near 10⁻¹⁶; interpreting clock data at that scale
 requires systematic control as well as stability. <a
-href="formula-catalogue.md#pf-redshift">pf-redshift</a>, <a
+href="formula-notebook.html#pf-redshift">pf-redshift</a>, <a
 href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html">Tong,
 geodesics</a>.</p>
 <p>Light deflection and perihelion advance follow from null and timelike
@@ -2135,7 +2135,7 @@ depend on impact parameter or orbital eccentricity. Strong lensing, spin
 and finite-source effects require extensions. A formula with a small
 expansion parameter should carry the parameter’s estimated size whenever
 used for a numerical claim. <a
-href="formula-catalogue.md#pf-weak-orbit-tests">pf-weak-orbit-tests</a>.</p>
+href="formula-notebook.html#pf-weak-orbit-tests">pf-weak-orbit-tests</a>.</p>
 <h2 id="gravitational-waves-connect-derivatives-to-data">5.
 Gravitational waves connect derivatives to data</h2>
 <p>Linearizing the metric around a background produces a wave equation
@@ -2144,8 +2144,8 @@ constrain dipole behavior, leaving a changing mass quadrupole as the
 leading slow-motion source. The radiative strain is proportional to its
 second time derivative; emitted power depends on the squared third
 derivative. The exact definition of the trace-free quadrupole fixes the
-prefactor. <a href="formula-catalogue.md#pf-gw-strain">pf-gw-strain</a>,
-<a href="formula-catalogue.md#pf-gw-power">pf-gw-power</a>, <a
+prefactor. <a href="formula-notebook.html#pf-gw-strain">pf-gw-strain</a>,
+<a href="formula-notebook.html#pf-gw-power">pf-gw-power</a>, <a
 href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html">Tong,
 weak gravity</a>.</p>
 <p>For a circular binary, the leading luminosity grows as separation to
@@ -2171,7 +2171,7 @@ stress-energy conservation describes dilution and pressure work. A
 length-valued scale factor with k=−1,0,+1 is used in the catalogue. A
 dimensionless scale factor is equally legitimate if the curvature
 parameter’s units change consistently. <a
-href="formula-catalogue.md#pf-friedmann">pf-friedmann</a>, <a
+href="formula-notebook.html#pf-friedmann">pf-friedmann</a>, <a
 href="https://davidtong.org/teaching/cosmology/cosmohtml/S1.html">Tong,
 The Expanding Universe</a>.</p>
 <p>For a separately conserved component with constant p=wρc²,
@@ -2180,7 +2180,7 @@ radiation has an additional redshift factor; a vacuum-like component has
 constant density. Acceleration depends on ρ+3p/c², so negative enough
 pressure can accelerate expansion without a local repulsive force law
 between ordinary masses. <a
-href="formula-catalogue.md#pf-equation-state">pf-equation-state</a>.</p>
+href="formula-notebook.html#pf-equation-state">pf-equation-state</a>.</p>
 <p>Distances, redshifts, clustering and growth constrain these models
 statistically. The <a href="https://arxiv.org/html/2607.27410v3">DESI
 DR2 Lyα full-shape analysis, July/August 2026</a> adds Alcock–Paczyński
@@ -2200,7 +2200,7 @@ relation it yields area entropy. A solar-mass Schwarzschild example has
 a very low predicted temperature; inverse mass scaling and negative heat
 capacity follow algebraically. These relations do not determine the
 final evaporation state or resolve the information problem. <a
-href="formula-catalogue.md#pf-hawking">pf-hawking</a>, <a
+href="formula-notebook.html#pf-hawking">pf-hawking</a>, <a
 href="https://authors.library.caltech.edu/records/2wsvj-qrt68">Hawking,
 1975</a>.</p>
 <p>Entanglement experiments are often proposed to probe gravitational
@@ -2224,7 +2224,7 @@ optimal leading slope in its admissible class Ā for the lightest
 non-vacuum Virasoro-primary dimension. “Spinless” sums primaries of all
 spins by dimension. Equality with the infinite-order finite-derivative
 optimum remains conjectural; <a
-href="formula-catalogue.md#pf-bootstrap">pf-bootstrap</a> records this
+href="formula-notebook.html#pf-bootstrap">pf-bootstrap</a> records this
 distinction and computes the constant. Both are preprints with disclosed
 AI provenance and partial human-understanding status; their proofs were
 not independently replayed here. The <a
@@ -2249,7 +2249,7 @@ needs the observable, its units, an amplitude, a coupling mechanism, a
 measurement procedure and a dynamical model. Cycles per second and
 radians per second differ by 2π. An energy, a graph eigenvalue or a
 visual pattern cannot acquire units of hertz merely by being labelled a
-frequency. <a href="formula-catalogue.md#pf-frequency">pf-frequency</a>,
+frequency. <a href="formula-notebook.html#pf-frequency">pf-frequency</a>,
 <a href="https://www.feynmanlectures.caltech.edu/I_21.html">Feynman, The
 Harmonic Oscillator</a>.</p>
 <p>This chapter follows a progression from one degree of freedom to
@@ -2266,7 +2266,7 @@ angular frequency is √(k/m). This is a local approximation, not an
 assertion that every system is globally sinusoidal. Higher-order terms
 can shift frequency with amplitude, couple harmonics or create
 bifurcations. <a
-href="formula-catalogue.md#pf-oscillator">pf-oscillator</a>.</p>
+href="formula-notebook.html#pf-oscillator">pf-oscillator</a>.</p>
 <p><strong>Worked energy cycle.</strong> For m=1 kg, k=100 N/m and
 amplitude 0.02 m, the total oscillator energy is 0.02 J. At an extreme,
 velocity is zero and the energy is elastic. At equilibrium, displacement
@@ -2282,7 +2282,7 @@ twice as fast in the weakly damped regime. Critical and overdamped
 motion have different solution forms. A quality factor Q quantifies
 storage relative to loss under a stated convention; it does not specify
 stored energy without amplitude or input. <a
-href="formula-catalogue.md#pf-damped">pf-damped</a>, <a
+href="formula-notebook.html#pf-damped">pf-damped</a>, <a
 href="https://www.feynmanlectures.caltech.edu/I_23.html">Feynman,
 Resonance</a>.</p>
 <h2 id="resonance-is-a-driven-response-with-an-energy-budget">2.
@@ -2293,14 +2293,14 @@ stiffness/inertia mismatch and dissipative lag. The measured variable
 matters: displacement, velocity and dissipated-power peaks can occur at
 different frequencies. At zero damping and exact resonance, the finite
 steady-response formula breaks down; the transient amplitude grows
-instead. <a href="formula-catalogue.md#pf-forced">pf-forced</a>.</p>
+instead. <a href="formula-notebook.html#pf-forced">pf-forced</a>.</p>
 <p>Multiply the motion equation by velocity to obtain dE/dt=Fv−bv². The
 average energy change over a steady cycle is zero, so input power
 balances dissipation plus any extracted load power. A high amplitude in
 a low-loss resonator is compatible with small power input because energy
 circulates between storage forms. Connecting a load changes both the
 budget and the response. <a
-href="formula-catalogue.md#pf-resonant-power">pf-resonant-power</a>, <a
+href="formula-notebook.html#pf-resonant-power">pf-resonant-power</a>, <a
 href="https://www.feynmanlectures.caltech.edu/II_27.html">electromagnetic
 conservation counterpart</a>.</p>
 <p><strong>A useful experimental question set.</strong> What is driving
@@ -2321,7 +2321,7 @@ stiffness ensure real nonnegative squared frequencies. Different mode
 shapes are orthogonal in the mass-weighted inner product, not
 necessarily under an arbitrary Euclidean normalization. A zero mode can
 express a symmetry, such as translation of an unconstrained system. <a
-href="formula-catalogue.md#pf-normal-modes">pf-normal-modes</a>, <a
+href="formula-notebook.html#pf-normal-modes">pf-normal-modes</a>, <a
 href="https://www.feynmanlectures.caltech.edu/I_49.html">Feynman,
 Modes</a>.</p>
 <p>Two equal masses joined by one spring already illustrate the
@@ -2345,8 +2345,8 @@ between time and spectral representations. An infinite sinusoid is
 represented by delta distributions, not a finite-energy spectral bump.
 Finite measurement duration supplies a different object: a windowed
 record. <a
-href="formula-catalogue.md#pf-fourier-series">pf-fourier-series</a>, <a
-href="formula-catalogue.md#pf-fourier">pf-fourier</a>, <a
+href="formula-notebook.html#pf-fourier-series">pf-fourier-series</a>, <a
+href="formula-notebook.html#pf-fourier">pf-fourier</a>, <a
 href="https://www.feynmanlectures.caltech.edu/I_50.html">Feynman,
 Harmonics</a>.</p>
 <p>The Laplace transform adds a complex growth/decay parameter and
@@ -2355,7 +2355,7 @@ stability of a linear time-invariant system. A transfer function alone
 describes the zero-initial-state response; a system with stored initial
 energy has an additional response. The frequency response on an
 imaginary-axis slice must respect the region of convergence. <a
-href="formula-catalogue.md#pf-laplace">pf-laplace</a>, <a
+href="formula-notebook.html#pf-laplace">pf-laplace</a>, <a
 href="https://www.feynmanlectures.caltech.edu/I_25.html">Feynman, Linear
 Systems</a>.</p>
 <p>Convolution represents a linear time-invariant system as a sum of
@@ -2365,7 +2365,7 @@ is a different kind of memory unless a specific kernel model is being
 implemented. For an exponential kernel, the same equation describes an
 ordinary low-pass filter or a designed smoothing rule. Similar algebra
 does not establish common empirical mechanism. <a
-href="formula-catalogue.md#pf-convolution">pf-convolution</a>.</p>
+href="formula-notebook.html#pf-convolution">pf-convolution</a>.</p>
 <h2 id="digital-spectra-require-an-observation-model">5. Digital spectra
 require an observation model</h2>
 <p>Uniform sampling identifies frequencies that differ by an integer
@@ -2374,7 +2374,7 @@ second is indistinguishable from a suitable 300 Hz cosine. No digital
 filter can recover which one existed before sampling without additional
 information. Analog anti-alias filtering and a bandwidth assumption are
 therefore part of the measurement. <a
-href="formula-catalogue.md#pf-sampling">pf-sampling</a>, <a
+href="formula-notebook.html#pf-sampling">pf-sampling</a>, <a
 href="https://ieeexplore.ieee.org/abstract/document/1697831/authors">Shannon’s
 original communication paper</a>.</p>
 <p>The discrete Fourier transform maps N samples to N coefficients. Its
@@ -2383,8 +2383,8 @@ interpolation of the same finite-record spectrum; it does not create new
 observation time. Windowing trades sidelobe leakage against effective
 main-lobe width. A single periodogram is noisy, and averaging changes
 variance and resolution. <a
-href="formula-catalogue.md#pf-dft">pf-dft</a>, <a
-href="formula-catalogue.md#pf-periodogram">pf-periodogram</a>.</p>
+href="formula-notebook.html#pf-dft">pf-dft</a>, <a
+href="formula-notebook.html#pf-periodogram">pf-periodogram</a>.</p>
 <p><strong>Worked normalization check.</strong> With an unscaled DFT, a
 perfectly bin-centered real cosine of amplitude A has two coefficients
 of magnitude NA/2. Dividing each magnitude by N yields A/2 in the
@@ -2400,7 +2400,7 @@ evidence of a stable oscillator or two resolvable tones. For clock work,
 Allan deviation compares adjacent averaged fractional frequencies across
 an averaging timescale. It cancels constant bias, so a biased clock can
 have excellent stability. <a
-href="formula-catalogue.md#pf-allan">pf-allan</a>, <a
+href="formula-notebook.html#pf-allan">pf-allan</a>, <a
 href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication1065.pdf">NIST
 Handbook of Frequency Stability Analysis</a>.</p>
 <h2 id="waves-couple-space-to-time">6. Waves couple space to time</h2>
@@ -2410,8 +2410,8 @@ relation ω(k). Phase velocity ω/k describes moving phase fronts; group
 velocity dω/dk describes a narrow envelope under suitable conditions. In
 strongly dispersive or absorptive systems, that envelope can reshape, so
 a group-velocity number is not automatically signal or energy speed. <a
-href="formula-catalogue.md#pf-wave">pf-wave</a>, <a
-href="formula-catalogue.md#pf-dispersion">pf-dispersion</a>, <a
+href="formula-notebook.html#pf-wave">pf-wave</a>, <a
+href="formula-notebook.html#pf-dispersion">pf-dispersion</a>, <a
 href="https://www.feynmanlectures.caltech.edu/I_48.html">Feynman,
 Beats</a>.</p>
 <p>Two nearby sinusoidal frequencies factor into a carrier and a signed
@@ -2429,7 +2429,7 @@ directions, producing frequencies that generally are not integer
 multiples of one fundamental. A bending plate involves a fourth-order
 spatial operator, so its spectrum cannot be obtained by reusing a
 membrane formula without justification. <a
-href="formula-catalogue.md#pf-membrane">pf-membrane</a>, <a
+href="formula-notebook.html#pf-membrane">pf-membrane</a>, <a
 href="https://www.feynmanlectures.caltech.edu/I_49.html">Feynman,
 Modes</a>.</p>
 <p>In acoustics, plane-wave pressure and particle velocity are related
@@ -2438,7 +2438,7 @@ transmission. A transmitted pressure amplitude can exceed the incident
 amplitude while transmitted power remains below incident power because
 the impedances differ. This is a practical example of why amplitude and
 energy must not be conflated. <a
-href="formula-catalogue.md#pf-acoustic">pf-acoustic</a>, <a
+href="formula-notebook.html#pf-acoustic">pf-acoustic</a>, <a
 href="https://www.feynmanlectures.caltech.edu/I_47.html">Feynman, Sound
 and the Wave Equation</a>.</p>
 <h2 id="quantum-frequency-and-current-devices">7. Quantum frequency and
@@ -2449,7 +2449,7 @@ thermal equilibrium the mean occupation is Bose distributed; a
 low-frequency mode can have many thermal quanta even at temperatures
 that sound cold in everyday language. Coherent control requires adequate
 preparation, coupling, isolation and measurement. <a
-href="formula-catalogue.md#pf-quantum-oscillator">pf-quantum-oscillator</a>.</p>
+href="formula-notebook.html#pf-quantum-oscillator">pf-quantum-oscillator</a>.</p>
 <p>The <a href="https://arxiv.org/html/2503.03898v1">2025
 acoustic-phonon phase-gate preprint</a> demonstrates phase control and
 number-resolving detection in a circuit-coupled acoustic setting. Its
@@ -2485,7 +2485,7 @@ eigenvectors coalesce. A zero matrix with two equal eigenvalues does not
 qualify because it still has a complete eigenbasis. Spectral sensitivity
 near a degeneracy does not automatically improve measurement
 signal-to-noise after noise, loss and coupling are accounted for. <a
-href="formula-catalogue.md#pf-exceptional">pf-exceptional</a>.</p>
+href="formula-notebook.html#pf-exceptional">pf-exceptional</a>.</p>
 <h2 id="the-exact-graph-bridge">9. The exact graph bridge</h2>
 <p>For a symmetric nonnegative weighted graph,
 <strong>L</strong>=<strong>D</strong>−<strong>W</strong> satisfies</p>
@@ -2495,12 +2495,12 @@ and rapidly varying node signals relative to the chosen edges. If the
 time law is diffusion, each nonconstant component decays. If the time
 law is an inertial spring model, it oscillates. The operator alone does
 not choose between those dynamics and has no intrinsic SI frequency. <a
-href="formula-catalogue.md#pf-graph-energy">pf-graph-energy</a>.</p>
+href="formula-notebook.html#pf-graph-energy">pf-graph-energy</a>.</p>
 <p>Graph wavelets apply spectral kernels to localized node indicators.
 Their scale parameter is a graph spectral scale, not a biological
 rhythm. Polynomial approximations make sparse filtering possible without
 full diagonalization. <a
-href="formula-catalogue.md#pf-graph-wavelet">pf-graph-wavelet</a>, <a
+href="formula-notebook.html#pf-graph-wavelet">pf-graph-wavelet</a>, <a
 href="https://arxiv.org/abs/0912.3848">Hammond, Vandergheynst and
 Gribonval</a>.</p>
 <p>For a knowledge system, this can help find neighborhoods, multiscale
@@ -2612,7 +2612,7 @@ two represent increasing variation across adjacent nodes. For a node
 vector x=(1,0,−1), Lx=x and xᵀLx=2. Directly summing the squared edge
 differences gives (1−0)²+(0+1)²=2, confirming the Dirichlet-energy
 identity. <a
-href="formula-catalogue.md#pf-graph-energy">pf-graph-energy</a>.</p>
+href="formula-notebook.html#pf-graph-energy">pf-graph-energy</a>.</p>
 <p>Now choose a time law. In diffusion, dx/dt=−αLx, that vector decays
 as exp(−αt). In a spring system with equal masses m, d²x/dt²=−(k/m)Lx,
 it oscillates at √(k/m). In a graph regularizer, minimize ‖x−y‖²+λxᵀLx;
@@ -2635,7 +2635,7 @@ unchanged. Change geometry, boundary conditions, material coefficients
 or discretization and the operator can change. Charge equilibration
 shows a second dependency: even if one local descriptor changes, a
 global conservation constraint can alter the entire solved state. <a
-href="formula-catalogue.md#pf-qeq">pf-qeq</a>, <a
+href="formula-notebook.html#pf-qeq">pf-qeq</a>, <a
 href="https://pubs.acs.org/doi/10.1021/j100161a070">Rappé and
 Goddard</a>.</p>
 <p>The analogous software rule is precise: a cached answer should depend

@@ -70,10 +70,10 @@ the printable book's source appendix and front matter.
 
 The separately delivered printable edition has **276 pages**, all 177 formula
 cards, all 24 claim records and a 148-entry source-access appendix. Its final
-SHA-256 is `a3bf03c3e47c4691c9851778d683ec327841feb4166ca076f25dd8a6edc72dd0`.
+SHA-256 is `ca44464a83b2ec046eb7410e85cf0bcf28cb11602c0fb6f323a562c34d1247ab`.
 Two layout passes checked representative formula, claim and source pages; no
 missing glyphs, unresolved internal links or text outside page boundaries remain.
-The PDF is 827,862 bytes and preserves the four canonical source fingerprints.
+The PDF is 827,858 bytes and preserves the four canonical source fingerprints.
 
 This is a deep, selected study map with explicit omitted branches, not a claim
 that every subfield or every current paper has been exhausted. Formula cards
@@ -193,8 +193,29 @@ Latest local checks for this source preparation:
 | Research build provenance | Valid; 177 MathML equations; no private public-graph records |
 | Project skill synchronization | 16 skills / 7 mirrors match |
 | Resource projections | Match canonical source |
+| Native resource-router integration | 13 tests passed, including required native integration |
 | Native main and renderer type checking | Passed |
 | Static build and portable asset integrity | 417 verified client files |
+
+The first remote attempt, [run 45576673677](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/45576673677)
+on `ce44e94530b6541fec1bba644ec9c893088b0bc3`, passed Linux and Windows packaging
+and their real native-core smokes, cloud browser coverage, container checks,
+database connectors, editor, design tools, creative installer and checksums.
+It found an actual Overview render error: the new skill lacked graph coordinates.
+The follow-up supplies the skill and its domain, renders the package count from
+data, and confirms all 16 nodes through an actual React render. Browser readiness
+now names the expected route heading and preserves failure diagnostics.
+
+The same attempt exposed resource-router test constants still set to 333/15 and
+a test-only TypeScript resolver that omitted transitive shared-module imports.
+The focused correction passes all 13 resource-router checks. Android failed before
+compilation when Maven Central returned HTTP 429 for dependencies; no APK success
+is attributed to that attempt. All required gates must pass on the follow-up head.
+
+The follow-up also repairs chapter-to-notebook and AI catalogue links across source
+Markdown, assembled documents and offline HTML. Formula anchors work in ordinary
+Markdown renderers as well as the published documents. Release validation resolves
+the actual files and public HTML anchors rather than merely checking link syntax.
 
 Local Chromium could not start under the workspace socket policy. DOM checks are
 not reported as browser acceptance. Both GitHub CI and Pages install Chromium and

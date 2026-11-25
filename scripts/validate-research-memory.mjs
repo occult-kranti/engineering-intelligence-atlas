@@ -52,7 +52,9 @@ assert.equal(graph.claims.length,24);assert.equal(counts.cataloguePapers,730);as
 assert.ok(graph.nodes.filter(n=>n.type.startsWith('catalogue-')).every(n=>n.status==='catalogued-not-individually-reviewed'));
 assert.equal(prerequisitePlan(graph,{query:'',asOf:'2026-11-25T12:00:00Z'},{allowedScopes:['public'],policyVersion:'release-validation'}).acyclic,true);
 for(const filename of ['index.html','app.mjs','atlas.css','document.css','study-guide.html','formula-notebook.html','ai-mathematics.html','source-register.csv','ai-manuscript-catalogue.csv','brain-notes.zip'])assert.ok(read('site-source/public/research-memory/'+filename).length>0,filename);
-const python=spawnSync('python3',['-c',`import json,pathlib,zipfile,xml.etree.ElementTree as ET,csv,sys
+const python=spawnSync('python3',['-c',String.raw`import json,pathlib,zipfile,xml.etree.ElementTree as ET,csv,sys,re
+from html.parser import HTMLParser
+from urllib.parse import urlsplit,unquote
 p=pathlib.Path(sys.argv[1]);g=json.loads((p/'atlas.json').read_text())
 for f in (p/'exports/graphs').glob('*.graphml'): ET.parse(f)
 with zipfile.ZipFile(p/'exports/brain-notes.zip') as z:
@@ -61,6 +63,28 @@ with zipfile.ZipFile(p/'exports/brain-notes.zip') as z:
  assert all(not n.startswith('/') and '..' not in pathlib.PurePosixPath(n).parts for n in z.namelist())
 with (p/'exports/ai-manuscript-catalogue.csv').open() as f: assert len(list(csv.DictReader(f)))==730
 with (p/'exports/source-register.csv').open() as f: assert len(list(csv.DictReader(f)))==len(g['sources'])
-`,project],{encoding:'utf8'});
+for f in [p/n for n in ['STUDY_GUIDE.md','FORMULA_NOTEBOOK.md','AI_MATHEMATICS.md','IMPLEMENTATION.md','README.md']]+list((p/'chapters').glob('*.md')):
+ for target in re.findall(r'\]\(([^)\s]+)\)',f.read_text()):
+  u=urlsplit(target)
+  if u.scheme or not u.path: continue
+  assert (f.parent/unquote(u.path)).exists(), f'Missing Markdown target: {f.name}: {target}'
+class Document(HTMLParser):
+ def __init__(self,file):
+  super().__init__();self.ids=set();self.links=[];self.feed(file.read_text())
+ def handle_starttag(self,tag,attrs):
+  a=dict(attrs)
+  if a.get('id'):self.ids.add(a['id'])
+  if a.get('href'):self.links.append(a['href'])
+public=pathlib.Path(sys.argv[2]);documents={f.resolve():Document(f) for f in public.glob('*.html')}
+for name in ['study-guide.html','formula-notebook.html','ai-mathematics.html']:
+ f=(public/name).resolve()
+ for target in documents[f].links:
+  u=urlsplit(target)
+  if u.scheme or u.netloc:continue
+  destination=(f.parent/unquote(u.path)).resolve() if u.path else f
+  assert destination.is_relative_to(public.resolve()) and destination.is_file(), f'Missing public document target: {name}: {target}'
+  if u.fragment and destination in documents:
+   assert unquote(u.fragment) in documents[destination].ids, f'Missing public anchor: {name}: {target}'
+`,project,path.join(root,'site-source/public/research-memory')],{encoding:'utf8'});
 assert.equal(python.status,0,python.stderr);
-console.log(JSON.stringify({valid:true,revision:graph.revision,counts,formulaMathML:graph.formulas.length,reviewedClaims:graph.claims.length,generatedInputs:Object.keys(actual).length,privateRecordsInPublicGraph:0,originalProofsReplayed:0},null,2));
+console.log(JSON.stringify({valid:true,revision:graph.revision,counts,formulaMathML:graph.formulas.length,reviewedClaims:graph.claims.length,generatedInputs:Object.keys(actual).length,documentLinksValidated:true,privateRecordsInPublicGraph:0,originalProofsReplayed:0},null,2));

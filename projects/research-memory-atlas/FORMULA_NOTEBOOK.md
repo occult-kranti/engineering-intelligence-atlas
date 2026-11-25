@@ -4,7 +4,9 @@
 
 ## electrostatics
 
-### Coulomb force between point charges {#pf-coulomb}
+<a id="pf-coulomb"></a>
+
+### Coulomb force between point charges
 
 $$
 \mathbf F_{1\leftarrow2}=\frac{q_1q_2}{4\pi\varepsilon_0}\frac{\mathbf r_1-\mathbf r_2}{|\mathbf r_1-\mathbf r_2|^3}
@@ -35,7 +37,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Electrostatics](https://www.feynmanlectures.caltech.edu/II_04.html); [NIST CODATA fundamental physical constants (2022 adjustment)](https://physics.nist.gov/cuu/Constants/)
 
-### Field of a continuous charge distribution {#pf-charge-integral}
+<a id="pf-charge-integral"></a>
+
+### Field of a continuous charge distribution
 
 $$
 \mathbf E(\mathbf r)=\frac{1}{4\pi\varepsilon_0}\int \rho(\mathbf r')\frac{\mathbf r-\mathbf r'}{|\mathbf r-\mathbf r'|^3}\,d^3r'
@@ -66,7 +70,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Electrostatics](https://www.feynmanlectures.caltech.edu/II_04.html); [The Feynman Lectures on Physics: The Electric Field in Various Circumstances](https://www.feynmanlectures.caltech.edu/II_06.html)
 
-### Potential difference and field {#pf-potential-gradient}
+<a id="pf-potential-gradient"></a>
+
+### Potential difference and field
 
 $$
 \phi(b)-\phi(a)=-\int_a^b\mathbf E\cdot d\mathbf l,\qquad \mathbf E=-\nabla\phi
@@ -97,7 +103,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Electric Field in Various Circumstances](https://www.feynmanlectures.caltech.edu/II_06.html); [The Feynman Lectures on Physics: The Laws of Induction](https://www.feynmanlectures.caltech.edu/II_17.html)
 
-### Gauss law, integral and differential {#pf-gauss}
+<a id="pf-gauss"></a>
+
+### Gauss law, integral and differential
 
 $$
 \oint_{\partial V}\mathbf E\cdot\mathbf n\,dA=\frac{Q_V}{\varepsilon_0},\qquad \nabla\cdot\mathbf E=\frac{\rho}{\varepsilon_0}
@@ -130,7 +138,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Electrostatics](https://www.feynmanlectures.caltech.edu/II_04.html)
 
-### Poisson and Laplace equations {#pf-poisson}
+<a id="pf-poisson"></a>
+
+### Poisson and Laplace equations
 
 $$
 -\nabla\cdot(\varepsilon\nabla\phi)=\rho_f;\qquad \nabla^2\phi=-\rho/\varepsilon_0\ \text{in vacuum}
@@ -162,7 +172,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Electric Field in Various Circumstances](https://www.feynmanlectures.caltech.edu/II_06.html); [The Feynman Lectures on Physics: Dielectrics](https://www.feynmanlectures.caltech.edu/II_10.html)
 
-### Energy proof of Dirichlet uniqueness {#pf-dirichlet-uniqueness}
+<a id="pf-dirichlet-uniqueness"></a>
+
+### Energy proof of Dirichlet uniqueness
 
 $$
 \int_\Omega\varepsilon|\nabla u|^2\,dV=0\ \Longrightarrow\ u=0,\quad u=\phi_1-\phi_2,\ u|_{\partial\Omega}=0
@@ -194,7 +206,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Electric Field in Various Circumstances (Continued)](https://www.feynmanlectures.caltech.edu/II_07.html)
 
-### Point charge over a grounded plane {#pf-image-plane}
+<a id="pf-image-plane"></a>
+
+### Point charge over a grounded plane
 
 $$
 \phi(\rho,z)=\frac{q}{4\pi\varepsilon_0}\left[\frac{1}{\sqrt{\rho^2+(z-a)^2}}-\frac{1}{\sqrt{\rho^2+(z+a)^2}}\right],\ z>0
@@ -226,7 +240,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Electric Field in Various Circumstances](https://www.feynmanlectures.caltech.edu/II_06.html); [The Feynman Lectures on Physics: Electrostatic Energy](https://www.feynmanlectures.caltech.edu/II_08.html)
 
-### Dirichlet Green-function solution {#pf-green}
+<a id="pf-green"></a>
+
+### Dirichlet Green-function solution
 
 $$
 -\nabla^2 G(\mathbf r,\mathbf r')=\delta(\mathbf r-\mathbf r'),\quad \phi(\mathbf r)=\varepsilon_0^{-1}\int_\Omega G\rho\,dV'\quad(\phi|_{\partial\Omega}=0)
@@ -261,7 +277,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Electric Field in Various Circumstances](https://www.feynmanlectures.caltech.edu/II_06.html); [The Feynman Lectures on Physics: The Electric Field in Various Circumstances (Continued)](https://www.feynmanlectures.caltech.edu/II_07.html)
 
-### Monopole and dipole far field {#pf-multipoles}
+<a id="pf-multipoles"></a>
+
+### Monopole and dipole far field
 
 $$
 \phi(\mathbf r)=\frac{1}{4\pi\varepsilon_0}\left(\frac{Q}{r}+\frac{\mathbf p\cdot\hat{\mathbf r}}{r^2}+O(r^{-3})\right),\qquad \mathbf p=\int\rho(\mathbf r')\mathbf r'\,dV'
@@ -296,7 +314,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Electric Field in Various Circumstances](https://www.feynmanlectures.caltech.edu/II_06.html)
 
-### Capacitor response and energy {#pf-capacitance}
+<a id="pf-capacitance"></a>
+
+### Capacitor response and energy
 
 $$
 C=Q/V,\qquad C_{\mathrm{plates}}=\varepsilon A/d,\qquad U=\tfrac12 CV^2=Q^2/(2C)
@@ -330,7 +350,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Dielectrics](https://www.feynmanlectures.caltech.edu/II_10.html); [The Feynman Lectures on Physics: Electrostatic Energy](https://www.feynmanlectures.caltech.edu/II_08.html)
 
-### Electrostatic field energy {#pf-field-energy}
+<a id="pf-field-energy"></a>
+
+### Electrostatic field energy
 
 $$
 U=\tfrac12\int\rho\phi\,dV=\tfrac12\int\varepsilon_0|\mathbf E|^2\,dV
@@ -363,7 +385,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Electrostatic Energy](https://www.feynmanlectures.caltech.edu/II_08.html)
 
-### Bound charge and displacement {#pf-polarization}
+<a id="pf-polarization"></a>
+
+### Bound charge and displacement
 
 $$
 \rho_b=-\nabla\cdot\mathbf P,\quad \sigma_b=\mathbf P\cdot\mathbf n,\quad \mathbf D=\varepsilon_0\mathbf E+\mathbf P,\quad \nabla\cdot\mathbf D=\rho_f
@@ -396,7 +420,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Dielectrics](https://www.feynmanlectures.caltech.edu/II_10.html)
 
-### Electrostatic interface jumps {#pf-interface}
+<a id="pf-interface"></a>
+
+### Electrostatic interface jumps
 
 $$
 \mathbf n\cdot(\mathbf D_2-\mathbf D_1)=\sigma_f,\qquad \mathbf n\times(\mathbf E_2-\mathbf E_1)=0
@@ -427,7 +453,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Dielectrics](https://www.feynmanlectures.caltech.edu/II_10.html)
 
-### Debye length and screened potential {#pf-debye}
+<a id="pf-debye"></a>
+
+### Debye length and screened potential
 
 $$
 \lambda_D^{-2}=\sum_s\frac{n_s q_s^2}{\varepsilon k_B T_s},\qquad \phi(r)=\frac{q}{4\pi\varepsilon r}e^{-r/\lambda_D}
@@ -462,7 +490,9 @@ $$
 
 **Sources:** [Goldstein and Keyser: Soft Matter and Biological Physics, section 2.3](https://www.damtp.cam.ac.uk/user/gold/pdfs/teaching/Handout_SMB_131125.pdf); [Neural network Poisson–Boltzmann electrostatics for biomolecular interactions](https://www.sciencedirect.com/science/article/pii/S0021999125007284)
 
-### Nonlinear Poisson–Boltzmann equation {#pf-pb}
+<a id="pf-pb"></a>
+
+### Nonlinear Poisson–Boltzmann equation
 
 $$
 -\nabla\cdot(\varepsilon\nabla\phi)=\rho_{\mathrm{fixed}}+\sum_s q_s n_s^{(0)}\exp[-q_s\phi/(k_BT)]
@@ -495,7 +525,9 @@ $$
 
 **Sources:** [Goldstein and Keyser: Soft Matter and Biological Physics, section 2.3](https://www.damtp.cam.ac.uk/user/gold/pdfs/teaching/Handout_SMB_131125.pdf); [Neural network Poisson–Boltzmann electrostatics for biomolecular interactions](https://www.sciencedirect.com/science/article/pii/S0021999125007284); [Accurate and Scalable Continuum Electrostatics for Large Biomolecular Systems: The pyDelPhi Poisson–Boltzmann Framework](https://pubs.acs.org/doi/10.1021/acs.jcim.5c02818)
 
-### Variational/finite-element weak form {#pf-weak-form}
+<a id="pf-weak-form"></a>
+
+### Variational/finite-element weak form
 
 $$
 \int_\Omega \varepsilon\nabla\phi\cdot\nabla v\,dV=\int_\Omega\rho_f v\,dV\quad\forall v|_{\partial\Omega}=0
@@ -528,7 +560,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Electric Field in Various Circumstances (Continued)](https://www.feynmanlectures.caltech.edu/II_07.html); [Accurate and Scalable Continuum Electrostatics for Large Biomolecular Systems: The pyDelPhi Poisson–Boltzmann Framework](https://pubs.acs.org/doi/10.1021/acs.jcim.5c02818)
 
-### Five-point finite-difference Laplacian {#pf-fd-poisson}
+<a id="pf-fd-poisson"></a>
+
+### Five-point finite-difference Laplacian
 
 $$
 \frac{\phi_{i+1,j}+\phi_{i-1,j}+\phi_{i,j+1}+\phi_{i,j-1}-4\phi_{i,j}}{h^2}=-\frac{\rho_{i,j}}{\varepsilon}
@@ -560,7 +594,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Electric Field in Various Circumstances (Continued)](https://www.feynmanlectures.caltech.edu/II_07.html)
 
-### Constrained charge-equilibration system {#pf-qeq}
+<a id="pf-qeq"></a>
+
+### Constrained charge-equilibration system
 
 $$
 \min_{\mathbf q}\left(\tfrac12\mathbf q^T H\mathbf q+\boldsymbol\chi^T\mathbf q\right),\quad\mathbf1^T\mathbf q=Q;\quad\begin{bmatrix}H&\mathbf1\\\mathbf1^T&0\end{bmatrix}\begin{bmatrix}\mathbf q\\\eta\end{bmatrix}=\begin{bmatrix}-\boldsymbol\chi\\Q\end{bmatrix}
@@ -593,7 +629,9 @@ $$
 
 **Sources:** [Kim and Cheng: Long-range electrostatics for machine learning interatomic potentials is easier than we thought](https://arxiv.org/html/2512.18029v1); [Rappé and Goddard: Charge equilibration for molecular dynamics simulations](https://pubs.acs.org/doi/10.1021/j100161a070)
 
-### Analytic zeros as two-dimensional charge sources {#pf-log-potential}
+<a id="pf-log-potential"></a>
+
+### Analytic zeros as two-dimensional charge sources
 
 $$
 \Delta\log|g(z)|=2\pi\sum_j m_j\delta^{(2)}(z-z_j)\quad\text{for holomorphic }g\text{ without poles}
@@ -627,7 +665,9 @@ $$
 
 ## frequency
 
-### Cycles, angular frequency and phase {#pf-frequency}
+<a id="pf-frequency"></a>
+
+### Cycles, angular frequency and phase
 
 $$
 f=\frac1T,\qquad \omega=2\pi f,\qquad \theta(t)=\theta_0+\int_0^t\omega(t')\,dt',\qquad x(t)=A\cos\theta(t)
@@ -663,7 +703,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Harmonic Oscillator](https://www.feynmanlectures.caltech.edu/I_21.html)
 
-### Small-amplitude harmonic oscillator {#pf-oscillator}
+<a id="pf-oscillator"></a>
+
+### Small-amplitude harmonic oscillator
 
 $$
 m\ddot x+kx=0,\qquad \omega_0=\sqrt{k/m},\qquad x=A\cos(\omega_0t+\phi),\qquad E=\frac12m\dot x^2+\frac12kx^2
@@ -697,7 +739,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Harmonic Oscillator](https://www.feynmanlectures.caltech.edu/I_21.html)
 
-### Damped free motion and quality factor {#pf-damped}
+<a id="pf-damped"></a>
+
+### Damped free motion and quality factor
 
 $$
 \ddot x+2\gamma\dot x+\omega_0^2x=0,\quad \omega_d=\sqrt{\omega_0^2-\gamma^2},\quad x=Ae^{-\gamma t}\cos(\omega_dt+\phi),\quad Q=\frac{\omega_0}{2\gamma}
@@ -731,7 +775,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Resonance](https://www.feynmanlectures.caltech.edu/I_23.html)
 
-### Driven response and displacement resonance {#pf-forced}
+<a id="pf-forced"></a>
+
+### Driven response and displacement resonance
 
 $$
 m\ddot x+b\dot x+kx=F_0\cos\omega t,\quad H(\omega)=\frac{X}{F_0}=\frac1{k-m\omega^2+i b\omega},\quad |X|=\frac{F_0}{\sqrt{(k-m\omega^2)^2+b^2\omega^2}}
@@ -767,7 +813,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Resonance](https://www.feynmanlectures.caltech.edu/I_23.html); [The Feynman Lectures on Physics: Linear Systems and Review](https://www.feynmanlectures.caltech.edu/I_25.html)
 
-### Resonant power and storage budget {#pf-resonant-power}
+<a id="pf-resonant-power"></a>
+
+### Resonant power and storage budget
 
 $$
 \frac{dE}{dt}=F(t)\dot x-b\dot x^2,\qquad \langle P_{\mathrm{in}}\rangle=\frac12b\omega^2|X|^2=\langle P_{\mathrm{loss}}\rangle\quad\text{in steady state}
@@ -802,7 +850,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Resonance](https://www.feynmanlectures.caltech.edu/I_23.html); [The Feynman Lectures on Physics: Field Energy and Field Momentum](https://www.feynmanlectures.caltech.edu/II_27.html)
 
-### Coupled normal-mode eigenproblem {#pf-normal-modes}
+<a id="pf-normal-modes"></a>
+
+### Coupled normal-mode eigenproblem
 
 $$
 M\ddot{\mathbf x}+K\mathbf x=0,\qquad K\boldsymbol\phi_n=\omega_n^2M\boldsymbol\phi_n,\qquad \boldsymbol\phi_m^TM\boldsymbol\phi_n=\delta_{mn}\ \text{under chosen normalization}
@@ -837,7 +887,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Modes](https://www.feynmanlectures.caltech.edu/I_49.html)
 
-### Fourier series with a declared normalization {#pf-fourier-series}
+<a id="pf-fourier-series"></a>
+
+### Fourier series with a declared normalization
 
 $$
 x(t)=\sum_{n\in\mathbb{Z}}c_ne^{in\omega_0t},\qquad c_n=\frac1T\int_0^T x(t)e^{-in\omega_0t}\,dt,\qquad \omega_0=2\pi/T
@@ -868,7 +920,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Harmonics](https://www.feynmanlectures.caltech.edu/I_50.html)
 
-### Continuous Fourier transform and Parseval identity {#pf-fourier}
+<a id="pf-fourier"></a>
+
+### Continuous Fourier transform and Parseval identity
 
 $$
 \widetilde x(f)=\int_{-\infty}^{\infty}x(t)e^{-i2\pi ft}\,dt,\qquad x(t)=\int_{-\infty}^{\infty}\widetilde x(f)e^{i2\pi ft}\,df,\qquad \int|x|^2dt=\int|\widetilde x|^2df
@@ -899,7 +953,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Harmonics](https://www.feynmanlectures.caltech.edu/I_50.html); [The Feynman Lectures on Physics: Linear Systems and Review](https://www.feynmanlectures.caltech.edu/I_25.html)
 
-### Impulse response and convolution theorem {#pf-convolution}
+<a id="pf-convolution"></a>
+
+### Impulse response and convolution theorem
 
 $$
 y(t)=\int_{-\infty}^{\infty}h(t-\tau)x(\tau)\,d\tau=(h*x)(t),\qquad \widetilde y(f)=\widetilde h(f)\widetilde x(f)
@@ -933,7 +989,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Linear Systems and Review](https://www.feynmanlectures.caltech.edu/I_25.html)
 
-### Unilateral Laplace transform and oscillator poles {#pf-laplace}
+<a id="pf-laplace"></a>
+
+### Unilateral Laplace transform and oscillator poles
 
 $$
 X(s)=\int_0^\infty x(t)e^{-st}\,dt,\qquad \mathcal L[\dot x]=sX-x(0^+),\qquad H(s)=\frac1{ms^2+bs+k}
@@ -966,7 +1024,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Linear Systems and Review](https://www.feynmanlectures.caltech.edu/I_25.html)
 
-### Discrete Fourier transform and bin scale {#pf-dft}
+<a id="pf-dft"></a>
+
+### Discrete Fourier transform and bin scale
 
 $$
 X_k=\sum_{n=0}^{N-1}x_ne^{-i2\pi kn/N},\qquad x_n=\frac1N\sum_{k=0}^{N-1}X_ke^{i2\pi kn/N},\qquad \Delta f=\frac{f_s}{N}
@@ -999,7 +1059,9 @@ $$
 
 **Sources:** [Shannon: Communication in the Presence of Noise](https://ieeexplore.ieee.org/abstract/document/1697831/authors); [Riley and Howe: Handbook of Frequency Stability Analysis (NIST SP 1065)](https://www.nist.gov/publications/handbook-frequency-stability-analysis)
 
-### Band-limited sampling and alias equivalence {#pf-sampling}
+<a id="pf-sampling"></a>
+
+### Band-limited sampling and alias equivalence
 
 $$
 x(t)=\sum_{n\in\mathbb{Z}}x(nT_s)\,\operatorname{sinc}\!\left(\frac{t-nT_s}{T_s}\right),\quad \operatorname{sinc}(u)=\frac{\sin\pi u}{\pi u},\quad f_s=1/T_s>2B
@@ -1033,7 +1095,9 @@ $$
 
 **Sources:** [Shannon: Communication in the Presence of Noise](https://ieeexplore.ieee.org/abstract/document/1697831/authors)
 
-### Windowed two-sided power spectral estimate {#pf-periodogram}
+<a id="pf-periodogram"></a>
+
+### Windowed two-sided power spectral estimate
 
 $$
 \widehat S_{xx}(f_k)=\frac{\left|\sum_{n=0}^{N-1}w_nx_ne^{-i2\pi kn/N}\right|^2}{f_s\sum_{n=0}^{N-1}w_n^2},\qquad f_k=\frac{kf_s}{N}
@@ -1067,7 +1131,9 @@ $$
 
 **Sources:** [Riley and Howe: Handbook of Frequency Stability Analysis (NIST SP 1065)](https://www.nist.gov/publications/handbook-frequency-stability-analysis); [The Feynman Lectures on Physics: Harmonics](https://www.feynmanlectures.caltech.edu/I_50.html)
 
-### Wave and Helmholtz equations {#pf-wave}
+<a id="pf-wave"></a>
+
+### Wave and Helmholtz equations
 
 $$
 \partial_t^2u=c_w^2\nabla^2u,\qquad u(\mathbf x,t)=\Re[U(\mathbf x)e^{-i\omega t}]\Rightarrow(\nabla^2+k^2)U=0,\quad k=\omega/c_w
@@ -1100,7 +1166,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Sound. The wave equation](https://www.feynmanlectures.caltech.edu/I_47.html); [The Feynman Lectures on Physics: Modes](https://www.feynmanlectures.caltech.edu/I_49.html)
 
-### Phase, group velocity and beat structure {#pf-dispersion}
+<a id="pf-dispersion"></a>
+
+### Phase, group velocity and beat structure
 
 $$
 v_p=\frac{\omega}{k},\qquad v_g=\frac{d\omega}{dk},\qquad \cos(\omega_1t)+\cos(\omega_2t)=2\cos\!\left(\frac{\omega_1-\omega_2}{2}t\right)\cos\!\left(\frac{\omega_1+\omega_2}{2}t\right)
@@ -1131,7 +1199,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Beats](https://www.feynmanlectures.caltech.edu/I_48.html)
 
-### Plane-wave acoustic impedance and intensity {#pf-acoustic}
+<a id="pf-acoustic"></a>
+
+### Plane-wave acoustic impedance and intensity
 
 $$
 Z_0=\rho_0c_w,\quad \widehat p=Z_0\widehat v,\quad \langle I\rangle=\frac{|\widehat p|^2}{2Z_0},\quad r_p=\frac{Z_2-Z_1}{Z_2+Z_1}
@@ -1166,7 +1236,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Sound. The wave equation](https://www.feynmanlectures.caltech.edu/I_47.html)
 
-### Rectangular membrane eigenfrequencies {#pf-membrane}
+<a id="pf-membrane"></a>
+
+### Rectangular membrane eigenfrequencies
 
 $$
 \partial_t^2u=\frac{\mathcal T}{\sigma}\nabla^2u,\qquad f_{mn}=\frac12\sqrt{\frac{\mathcal T}{\sigma}}\sqrt{\left(\frac m{L_x}\right)^2+\left(\frac n{L_y}\right)^2},\quad m,n\ge1
@@ -1200,7 +1272,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Modes](https://www.feynmanlectures.caltech.edu/I_49.html)
 
-### Quantum mode energies and thermal occupation {#pf-quantum-oscillator}
+<a id="pf-quantum-oscillator"></a>
+
+### Quantum mode energies and thermal occupation
 
 $$
 E_n=\hbar\omega\left(n+\frac12\right),\qquad \Delta E=\hbar\omega=hf,\qquad \bar n=\frac1{e^{\hbar\omega/(k_BT)}-1}
@@ -1235,7 +1309,9 @@ $$
 
 **Sources:** [Qiao et al.: Acoustic phonon phase gates with number-resolving phonon detection](https://arxiv.org/html/2503.03898v1); [NIST CODATA fundamental physical constants (2022 adjustment)](https://physics.nist.gov/cuu/Constants/)
 
-### Nonoverlapping Allan variance {#pf-allan}
+<a id="pf-allan"></a>
+
+### Nonoverlapping Allan variance
 
 $$
 \bar y_k(\tau)=\frac1\tau\int_{k\tau}^{(k+1)\tau}\frac{\nu(t)-\nu_0}{\nu_0}\,dt,\qquad \sigma_y^2(\tau)=\frac12\left\langle\left(\bar y_{k+1}-\bar y_k\right)^2\right\rangle
@@ -1268,7 +1344,9 @@ $$
 
 **Sources:** [Riley and Howe: Handbook of Frequency Stability Analysis (NIST SP 1065)](https://www.nist.gov/publications/handbook-frequency-stability-analysis); [A thorium-229 optical nuclear clock with feedback loop](https://www.nature.com/articles/s41586-026-11084-4)
 
-### A two-mode non-Hermitian exceptional point {#pf-exceptional}
+<a id="pf-exceptional"></a>
+
+### A two-mode non-Hermitian exceptional point
 
 $$
 H=\begin{pmatrix}m&i\kappa\\i\kappa&-m\end{pmatrix},\qquad H^2=(m^2-\kappa^2)I,\qquad \lambda_\pm=\pm\sqrt{m^2-\kappa^2}
@@ -1299,7 +1377,9 @@ $$
 
 **Sources:** [Xia et al.: Acoustic topological Jackiw–Rebbi states at symmetry broken interfaces](https://www.nature.com/articles/s41467-026-77579-w); [Ding et al.: Absorbing exceptional point of coherent vortex beams](https://www.nature.com/articles/s41467-026-78506-9)
 
-### Graph Laplacian energy, diffusion and physical modes {#pf-graph-energy}
+<a id="pf-graph-energy"></a>
+
+### Graph Laplacian energy, diffusion and physical modes
 
 $$
 L=D-W,\qquad \mathbf x^TL\mathbf x=\frac12\sum_{ij}w_{ij}(x_i-x_j)^2,\qquad \dot{\mathbf x}=-\alpha L\mathbf x,\qquad M\ddot{\mathbf x}+kL\mathbf x=0
@@ -1334,7 +1414,9 @@ $$
 
 **Sources:** [Hammond, Vandergheynst and Gribonval: Wavelets on Graphs via Spectral Graph Theory](https://arxiv.org/abs/0912.3848); [The Feynman Lectures on Physics: Modes](https://www.feynmanlectures.caltech.edu/I_49.html)
 
-### Spectral graph filters and localized wavelets {#pf-graph-wavelet}
+<a id="pf-graph-wavelet"></a>
+
+### Spectral graph filters and localized wavelets
 
 $$
 L=U\Lambda U^T,\qquad g(sL)=U\,g(s\Lambda)\,U^T,\qquad \psi_{s,n}=g(sL)\mathbf e_n,\qquad \widehat{\mathbf x}=U^T\mathbf x
@@ -1372,7 +1454,9 @@ $$
 
 ## gravity
 
-### Newtonian force and potential {#pf-newton}
+<a id="pf-newton"></a>
+
+### Newtonian force and potential
 
 $$
 \mathbf F=-\frac{GMm}{r^3}\mathbf r,\qquad \Phi=-\frac{GM}{r},\qquad \mathbf g=-\nabla\Phi
@@ -1405,7 +1489,9 @@ $$
 
 **Sources:** [David Tong: Geodesics in Spacetime](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html); [NIST CODATA fundamental physical constants (2022 adjustment)](https://physics.nist.gov/cuu/Constants/)
 
-### Gravitational Poisson equation {#pf-grav-poisson}
+<a id="pf-grav-poisson"></a>
+
+### Gravitational Poisson equation
 
 $$
 \nabla^2\Phi=4\pi G\rho_m,\qquad \oint\mathbf g\cdot d\mathbf A=-4\pi GM_{\mathrm{enc}}
@@ -1437,7 +1523,9 @@ $$
 
 **Sources:** [David Tong: When Gravity is Weak](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html)
 
-### Two-body orbit period and energy {#pf-kepler}
+<a id="pf-kepler"></a>
+
+### Two-body orbit period and energy
 
 $$
 T^2=\frac{4\pi^2a^3}{G(M+m)},\qquad E=-\frac{GMm}{2a},\qquad v_{\mathrm{rel}}^2=G(M+m)\left(\frac2r-\frac1a\right)
@@ -1470,7 +1558,9 @@ $$
 
 **Sources:** [David Tong: Geodesics in Spacetime](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html)
 
-### Euler–Lagrange equation from stationary action {#pf-variational}
+<a id="pf-variational"></a>
+
+### Euler–Lagrange equation from stationary action
 
 $$
 S[q]=\int_{t_0}^{t_1}L(q,\dot q,t)\,dt,\qquad \delta S=0\Rightarrow\frac{d}{dt}\frac{\partial L}{\partial\dot q^i}-\frac{\partial L}{\partial q^i}=0
@@ -1502,7 +1592,9 @@ $$
 
 **Sources:** [David Tong: Geodesics in Spacetime](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html)
 
-### Metric and measured proper time {#pf-metric-time}
+<a id="pf-metric-time"></a>
+
+### Metric and measured proper time
 
 $$
 ds^2=g_{\mu\nu}dx^\mu dx^\nu=-c^2d\tau^2,\qquad d\tau=dt\sqrt{1-v^2/c^2}\quad\text{in inertial Minkowski coordinates}
@@ -1536,7 +1628,9 @@ $$
 
 **Sources:** [David Tong: Geodesics in Spacetime](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html); [David Tong: Introducing Differential Geometry](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S2.html)
 
-### Levi-Civita connection {#pf-connection}
+<a id="pf-connection"></a>
+
+### Levi-Civita connection
 
 $$
 \Gamma^{\rho}_{\mu\nu}=\frac12g^{\rho\sigma}\left(\partial_\mu g_{\sigma\nu}+\partial_\nu g_{\sigma\mu}-\partial_\sigma g_{\mu\nu}\right)
@@ -1566,7 +1660,9 @@ $$
 
 **Sources:** [David Tong: Introducing Riemannian Geometry](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S3.html)
 
-### Affinely parameterized geodesic equation {#pf-geodesic}
+<a id="pf-geodesic"></a>
+
+### Affinely parameterized geodesic equation
 
 $$
 \frac{d^2x^\mu}{d\lambda^2}+\Gamma^\mu_{\alpha\beta}\frac{dx^\alpha}{d\lambda}\frac{dx^\beta}{d\lambda}=0
@@ -1596,7 +1692,9 @@ $$
 
 **Sources:** [David Tong: Geodesics in Spacetime](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html)
 
-### Curvature and geodesic deviation {#pf-curvature}
+<a id="pf-curvature"></a>
+
+### Curvature and geodesic deviation
 
 $$
 R^\rho{}_{\sigma\mu\nu}=\partial_\mu\Gamma^\rho_{\nu\sigma}-\partial_\nu\Gamma^\rho_{\mu\sigma}+\Gamma^\rho_{\mu\alpha}\Gamma^\alpha_{\nu\sigma}-\Gamma^\rho_{\nu\alpha}\Gamma^\alpha_{\mu\sigma},\qquad \frac{D^2\xi^\rho}{d\tau^2}=R^\rho{}_{\sigma\mu\nu}u^\sigma u^\mu\xi^\nu
@@ -1629,7 +1727,9 @@ $$
 
 **Sources:** [David Tong: Introducing Riemannian Geometry](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S3.html); [David Tong: When Gravity is Weak](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html)
 
-### Einstein field equations and local conservation {#pf-einstein}
+<a id="pf-einstein"></a>
+
+### Einstein field equations and local conservation
 
 $$
 G_{\mu\nu}+\Lambda g_{\mu\nu}=\frac{8\pi G}{c^4}T_{\mu\nu},\qquad G_{\mu\nu}=R_{\mu\nu}-\frac12Rg_{\mu\nu},\qquad \nabla^\mu T_{\mu\nu}=0
@@ -1664,7 +1764,9 @@ $$
 
 **Sources:** [David Tong: The Einstein Equations](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S4.html); [David Tong: When Gravity is Weak](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html)
 
-### Einstein–Hilbert action {#pf-einstein-action}
+<a id="pf-einstein-action"></a>
+
+### Einstein–Hilbert action
 
 $$
 S=\frac{c^3}{16\pi G}\int d^4x\,\sqrt{-g}\,(R-2\Lambda)+S_m+S_{\partial},\qquad x^0=ct
@@ -1699,7 +1801,9 @@ $$
 
 **Sources:** [David Tong: The Einstein Equations](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S4.html)
 
-### Schwarzschild exterior and horizon scale {#pf-schwarzschild}
+<a id="pf-schwarzschild"></a>
+
+### Schwarzschild exterior and horizon scale
 
 $$
 ds^2=-\left(1-\frac{r_s}{r}\right)c^2dt^2+\left(1-\frac{r_s}{r}\right)^{-1}dr^2+r^2d\Omega^2,\qquad r_s=\frac{2GM}{c^2}
@@ -1734,7 +1838,9 @@ $$
 
 **Sources:** [David Tong: Black Holes](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S6.html); [NIST CODATA fundamental physical constants (2022 adjustment)](https://physics.nist.gov/cuu/Constants/)
 
-### Static gravitational frequency comparison {#pf-redshift}
+<a id="pf-redshift"></a>
+
+### Static gravitational frequency comparison
 
 $$
 \frac{\nu_r}{\nu_e}=\sqrt{\frac{1-r_s/r_e}{1-r_s/r_r}},\qquad \frac{\Delta\nu}{\nu}\simeq\frac{\Phi_e-\Phi_r}{c^2}
@@ -1767,7 +1873,9 @@ $$
 
 **Sources:** [David Tong: Geodesics in Spacetime](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html); [A thorium-229 optical nuclear clock with feedback loop](https://www.nature.com/articles/s41586-026-11084-4)
 
-### Weak-field light deflection and perihelion advance {#pf-weak-orbit-tests}
+<a id="pf-weak-orbit-tests"></a>
+
+### Weak-field light deflection and perihelion advance
 
 $$
 \alpha\simeq\frac{4GM}{bc^2},\qquad \Delta\varpi\simeq\frac{6\pi GM}{a(1-e^2)c^2}\quad\text{per orbit}
@@ -1802,7 +1910,9 @@ $$
 
 **Sources:** [David Tong: Geodesics in Spacetime](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html)
 
-### Leading quadrupole gravitational-wave strain {#pf-gw-strain}
+<a id="pf-gw-strain"></a>
+
+### Leading quadrupole gravitational-wave strain
 
 $$
 h_{ij}^{\mathrm{TT}}(t,\mathbf x)=\frac{2G}{c^4R}\,\ddot Q_{ij}^{\mathrm{TT}}(t-R/c),\qquad Q_{ij}=\int\rho_m\left(x_ix_j-\frac13r^2\delta_{ij}\right)d^3x
@@ -1839,7 +1949,9 @@ $$
 
 **Sources:** [David Tong: When Gravity is Weak](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html)
 
-### Quadrupole luminosity and circular binary loss {#pf-gw-power}
+<a id="pf-gw-power"></a>
+
+### Quadrupole luminosity and circular binary loss
 
 $$
 P=\frac{G}{5c^5}\left\langle\dddot Q_{ij}\dddot Q_{ij}\right\rangle,\qquad P_{\mathrm{circ}}=\frac{32G^4\mu^2 M_T^3}{5c^5r^5},\quad M_T=m_1+m_2
@@ -1876,7 +1988,9 @@ $$
 
 **Sources:** [David Tong: When Gravity is Weak](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html); [LIGO–Virgo–KAGRA: GWTC-5.0 — Tests of General Relativity](https://arxiv.org/abs/2607.19293)
 
-### Friedmann expansion and fluid conservation {#pf-friedmann}
+<a id="pf-friedmann"></a>
+
+### Friedmann expansion and fluid conservation
 
 $$
 H^2=\frac{8\pi G}{3}\rho_m-\frac{kc^2}{a^2}+\frac{\Lambda c^2}{3},\qquad H=\frac{\dot a}{a},\qquad \dot\rho_m+3H\left(\rho_m+\frac p{c^2}\right)=0
@@ -1912,7 +2026,9 @@ $$
 
 **Sources:** [David Tong: Cosmology — The Expanding Universe](https://davidtong.org/teaching/cosmology/cosmohtml/S1.html); [David Tong: The Einstein Equations](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S4.html); [DESI DR2 Results IV: Alcock–Paczyński Measurements from the Lyman Alpha Forest and Cosmological Constraints](https://arxiv.org/html/2607.27410v3)
 
-### Equation-of-state density scaling and acceleration {#pf-equation-state}
+<a id="pf-equation-state"></a>
+
+### Equation-of-state density scaling and acceleration
 
 $$
 p=w\rho_m c^2\Rightarrow\rho_m\propto a^{-3(1+w)},\qquad \frac{\ddot a}{a}=-\frac{4\pi G}{3}\left(\rho_m+\frac{3p}{c^2}\right)+\frac{\Lambda c^2}{3}
@@ -1947,7 +2063,9 @@ $$
 
 **Sources:** [David Tong: Cosmology — The Expanding Universe](https://davidtong.org/teaching/cosmology/cosmohtml/S1.html); [DESI DR2 Results IV: Alcock–Paczyński Measurements from the Lyman Alpha Forest and Cosmological Constraints](https://arxiv.org/html/2607.27410v3)
 
-### Schwarzschild Hawking temperature and area entropy {#pf-hawking}
+<a id="pf-hawking"></a>
+
+### Schwarzschild Hawking temperature and area entropy
 
 $$
 T_H=\frac{\hbar c^3}{8\pi GMk_B},\qquad S_{\mathrm{BH}}=\frac{k_B A}{4\ell_P^2},\qquad \ell_P^2=\frac{\hbar G}{c^3},\quad A=4\pi r_s^2
@@ -1984,7 +2102,9 @@ $$
 
 **Sources:** [Hawking: Particle creation by black holes](https://authors.library.caltech.edu/records/2wsvj-qrt68); [David Tong: Black Holes](https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S6.html); [NIST CODATA fundamental physical constants (2022 adjustment)](https://physics.nist.gov/cuu/Constants/)
 
-### Reported leading spinless modular-bootstrap slope {#pf-bootstrap}
+<a id="pf-bootstrap"></a>
+
+### Reported leading spinless modular-bootstrap slope
 
 $$
 \Lambda_V=\frac{12\pi^2}{\pi^2+4\operatorname{arsinh}^2(1)}\approx9.1266,\qquad \Delta_1\le\frac{c_{\mathrm{CFT}}}{\Lambda_V}+o(c_{\mathrm{CFT}})
@@ -2018,7 +2138,9 @@ $$
 
 ## magnetism
 
-### Charge continuity {#pf-continuity}
+<a id="pf-continuity"></a>
+
+### Charge continuity
 
 $$
 \frac{\partial\rho}{\partial t}+\nabla\cdot\mathbf J=0
@@ -2047,7 +2169,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Magnetostatics](https://www.feynmanlectures.caltech.edu/II_13.html); [The Feynman Lectures on Physics: Electrostatics](https://www.feynmanlectures.caltech.edu/II_04.html)
 
-### Lorentz force and magnetic work {#pf-lorentz}
+<a id="pf-lorentz"></a>
+
+### Lorentz force and magnetic work
 
 $$
 \mathbf F=q(\mathbf E+\mathbf v\times\mathbf B),\qquad \mathbf F_B\cdot\mathbf v=0
@@ -2080,7 +2204,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Magnetostatics](https://www.feynmanlectures.caltech.edu/II_13.html); [The Feynman Lectures on Physics: Field Energy and Field Momentum](https://www.feynmanlectures.caltech.edu/II_27.html)
 
-### Biot–Savart magnetic field {#pf-biot-savart}
+<a id="pf-biot-savart"></a>
+
+### Biot–Savart magnetic field
 
 $$
 \mathbf B(\mathbf r)=\frac{\mu_0}{4\pi}\int \frac{\mathbf J(\mathbf r')\times(\mathbf r-\mathbf r')}{|\mathbf r-\mathbf r'|^3}\,d^3r'
@@ -2110,7 +2236,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Magnetostatics](https://www.feynmanlectures.caltech.edu/II_13.html); [The Feynman Lectures on Physics: The Vector Potential](https://www.feynmanlectures.caltech.edu/II_15.html)
 
-### Ampère and Maxwell–Ampère laws {#pf-ampere}
+<a id="pf-ampere"></a>
+
+### Ampère and Maxwell–Ampère laws
 
 $$
 \nabla\times\mathbf B=\mu_0\mathbf J+\mu_0\varepsilon_0\frac{\partial\mathbf E}{\partial t},\qquad \oint\mathbf B\cdot d\mathbf l=\mu_0I_{\mathrm{enc}}\ \text{in steady vacuum}
@@ -2144,7 +2272,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Electrostatics](https://www.feynmanlectures.caltech.edu/II_04.html); [The Feynman Lectures on Physics: Magnetostatics](https://www.feynmanlectures.caltech.edu/II_13.html)
 
-### Vector potential and gauge change {#pf-vector-potential}
+<a id="pf-vector-potential"></a>
+
+### Vector potential and gauge change
 
 $$
 \mathbf B=\nabla\times\mathbf A,\quad\mathbf E=-\nabla\phi-\partial_t\mathbf A,\quad\mathbf A'=\mathbf A+\nabla\chi,\quad\phi'=\phi-\partial_t\chi
@@ -2178,7 +2308,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Vector Potential](https://www.feynmanlectures.caltech.edu/II_15.html); [The Feynman Lectures III.21: A Seminar on Superconductivity](https://www.feynmanlectures.caltech.edu/III_21.html)
 
-### Magnetic dipole moment, torque and interaction {#pf-dipole-torque}
+<a id="pf-dipole-torque"></a>
+
+### Magnetic dipole moment, torque and interaction
 
 $$
 \boldsymbol\mu=I A\mathbf n,\qquad\boldsymbol\tau=\boldsymbol\mu\times\mathbf B,\qquad U_{\mathrm{int}}=-\boldsymbol\mu\cdot\mathbf B
@@ -2212,7 +2344,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Vector Potential](https://www.feynmanlectures.caltech.edu/II_15.html)
 
-### Faraday induction including moving circuits {#pf-faraday}
+<a id="pf-faraday"></a>
+
+### Faraday induction including moving circuits
 
 $$
 \mathcal E=\oint_{C(t)}(\mathbf E+\mathbf u\times\mathbf B)\cdot d\mathbf l=-\frac{d}{dt}\int_{S(t)}\mathbf B\cdot d\mathbf A
@@ -2247,7 +2381,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Laws of Induction](https://www.feynmanlectures.caltech.edu/II_17.html)
 
-### Inductance and stored energy {#pf-inductor}
+<a id="pf-inductor"></a>
+
+### Inductance and stored energy
 
 $$
 \Psi=LI,\qquad V_L=L\frac{dI}{dt},\qquad U_L=\tfrac12 LI^2
@@ -2280,7 +2416,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: The Laws of Induction](https://www.feynmanlectures.caltech.edu/II_17.html); [The Feynman Lectures on Physics: Field Energy and Field Momentum](https://www.feynmanlectures.caltech.edu/II_27.html)
 
-### Vacuum Maxwell equations {#pf-maxwell}
+<a id="pf-maxwell"></a>
+
+### Vacuum Maxwell equations
 
 $$
 \nabla\cdot\mathbf E=\rho/\varepsilon_0,\quad\nabla\cdot\mathbf B=0,\quad\nabla\times\mathbf E=-\partial_t\mathbf B,\quad\nabla\times\mathbf B=\mu_0\mathbf J+\mu_0\varepsilon_0\partial_t\mathbf E
@@ -2313,7 +2451,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Electrostatics](https://www.feynmanlectures.caltech.edu/II_04.html); [The Feynman Lectures on Physics: Field Energy and Field Momentum](https://www.feynmanlectures.caltech.edu/II_27.html)
 
-### Poynting energy balance {#pf-poynting}
+<a id="pf-poynting"></a>
+
+### Poynting energy balance
 
 $$
 \partial_t u+\nabla\cdot\mathbf S=-\mathbf J\cdot\mathbf E,\quad u=\tfrac12\varepsilon_0 E^2+\frac{B^2}{2\mu_0},\quad \mathbf S=\frac{\mathbf E\times\mathbf B}{\mu_0}
@@ -2347,7 +2487,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Field Energy and Field Momentum](https://www.feynmanlectures.caltech.edu/II_27.html)
 
-### Magnetization and bound currents {#pf-magnetization}
+<a id="pf-magnetization"></a>
+
+### Magnetization and bound currents
 
 $$
 \mathbf B=\mu_0(\mathbf H+\mathbf M),\quad\mathbf J_b=\nabla\times\mathbf M,\quad\mathbf K_b=\mathbf M\times\mathbf n
@@ -2380,7 +2522,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Ferromagnetism](https://www.feynmanlectures.caltech.edu/II_36.html); [The Feynman Lectures on Physics: Magnetic Materials](https://www.feynmanlectures.caltech.edu/II_37.html)
 
-### Independent spin-half paramagnet {#pf-paramagnet}
+<a id="pf-paramagnet"></a>
+
+### Independent spin-half paramagnet
 
 $$
 Z_1=2\cosh(\mu B/k_BT),\qquad M=n\mu\tanh(\mu B/k_BT)
@@ -2414,7 +2558,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Paramagnetism and Magnetic Resonance](https://www.feynmanlectures.caltech.edu/II_35.html)
 
-### Ising and Heisenberg model Hamiltonians {#pf-spin-model}
+<a id="pf-spin-model"></a>
+
+### Ising and Heisenberg model Hamiltonians
 
 $$
 H_{\mathrm{Ising}}=-\sum_{\langle ij\rangle}J_{ij}s_i s_j-\sum_i h_i s_i,\quad H_{\mathrm{H}}=-\sum_{\langle ij\rangle}J_{ij}\mathbf S_i\cdot\mathbf S_j
@@ -2447,7 +2593,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Ferromagnetism](https://www.feynmanlectures.caltech.edu/II_36.html); [The Feynman Lectures on Physics: Magnetic Materials](https://www.feynmanlectures.caltech.edu/II_37.html)
 
-### Larmor and cyclotron frequencies {#pf-larmor}
+<a id="pf-larmor"></a>
+
+### Larmor and cyclotron frequencies
 
 $$
 \omega_L=|\gamma|B,\qquad \omega_c=|q|B/m,\qquad r_L=m v_\perp/(|q|B)
@@ -2481,7 +2629,9 @@ $$
 
 **Sources:** [The Feynman Lectures on Physics: Magnetostatics](https://www.feynmanlectures.caltech.edu/II_13.html); [The Feynman Lectures on Physics: Paramagnetism and Magnetic Resonance](https://www.feynmanlectures.caltech.edu/II_35.html)
 
-### Gilbert dynamics in an effective-B convention {#pf-llg}
+<a id="pf-llg"></a>
+
+### Gilbert dynamics in an effective-B convention
 
 $$
 \dot{\mathbf m}=-\frac{\gamma_B}{1+\alpha^2}\left[\mathbf m\times\mathbf B_{\mathrm{eff}}+\alpha\mathbf m\times(\mathbf m\times\mathbf B_{\mathrm{eff}})\right]
@@ -2513,7 +2663,9 @@ $$
 
 **Sources:** [NIST OOMMF User Guide: Evolvers](https://math.nist.gov/oommf/doc/userguide21a0/userguidexml/sec_oxsEvolvers.html)
 
-### Skyrmion topological charge {#pf-skyrmion}
+<a id="pf-skyrmion"></a>
+
+### Skyrmion topological charge
 
 $$
 Q=\frac{1}{4\pi}\int\mathbf m\cdot(\partial_x\mathbf m\times\partial_y\mathbf m)\,dx\,dy
@@ -2542,7 +2694,9 @@ $$
 
 **Sources:** [Yang et al.: Embedded Skyrmion Bags in Thin Films of Chiral Magnets](https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/adma.202403274)
 
-### Resistive MHD induction equation {#pf-mhd-induction}
+<a id="pf-mhd-induction"></a>
+
+### Resistive MHD induction equation
 
 $$
 \partial_t\mathbf B=\nabla\times(\mathbf v\times\mathbf B)+\eta_m\nabla^2\mathbf B,\qquad\eta_m=(\mu_0\sigma)^{-1}
@@ -2575,7 +2729,9 @@ $$
 
 **Sources:** [Richard Fitzpatrick: MHD Waves](https://farside.ph.utexas.edu/teaching/plasma/Plasmahtml/node107.html); [The Feynman Lectures on Physics: The Laws of Induction](https://www.feynmanlectures.caltech.edu/II_17.html)
 
-### Shear Alfvén dispersion {#pf-alfven}
+<a id="pf-alfven"></a>
+
+### Shear Alfvén dispersion
 
 $$
 v_A=\frac{B_0}{\sqrt{\mu_0\rho_m}},\qquad\omega^2=k_\parallel^2 v_A^2
@@ -2607,7 +2763,9 @@ $$
 
 **Sources:** [Richard Fitzpatrick: MHD Waves](https://farside.ph.utexas.edu/teaching/plasma/Plasmahtml/node107.html)
 
-### Josephson phase-voltage and current relations {#pf-josephson}
+<a id="pf-josephson"></a>
+
+### Josephson phase-voltage and current relations
 
 $$
 I=I_c\sin\delta,\qquad\dot\delta=\frac{2eV}{\hbar},\qquad f_J=\frac{2e}{h}V
@@ -2641,7 +2799,9 @@ $$
 
 **Sources:** [The Feynman Lectures III.21: A Seminar on Superconductivity](https://www.feynmanlectures.caltech.edu/III_21.html); [NIST CODATA fundamental physical constants (2022 adjustment)](https://physics.nist.gov/cuu/Constants/)
 
-### Non-Abelian curvature and Wilson loop {#pf-nonabelian}
+<a id="pf-nonabelian"></a>
+
+### Non-Abelian curvature and Wilson loop
 
 $$
 F_{\mu\nu}=\partial_\mu A_\nu-\partial_\nu A_\mu-ig[A_\mu,A_\nu],\qquad W(C)=\frac1{d_R}\operatorname{Tr}_R\mathcal P\exp\!\left(ig\oint_C A_\mu dx^\mu\right)
@@ -2677,7 +2837,9 @@ $$
 
 **Sources:** [Floerchinger: Quantum field theory 2, lecture 15 — Wegner-Wilson loops and confinement](https://www.tpi.uni-jena.de/~floerchinger/qft2/lecture15/); [Yang–Mills group: Pure Yang–Mills results and verification](https://github.com/yang-mills-group/YM)
 
-### Adiabatic geometric phase {#pf-berry-phase}
+<a id="pf-berry-phase"></a>
+
+### Adiabatic geometric phase
 
 $$
 \gamma_n(C)=i\oint_C\langle n(\mathbf R)|\nabla_{\mathbf R}n(\mathbf R)\rangle\cdot d\mathbf R\pmod{2\pi}
@@ -2709,7 +2871,9 @@ $$
 
 **Sources:** [Berry: Quantal phase factors accompanying adiabatic changes](https://doi.org/10.1098/rspa.1984.0023)
 
-### Two-dimensional vortex energy–entropy estimate {#pf-vortex-energy}
+<a id="pf-vortex-energy"></a>
+
+### Two-dimensional vortex energy–entropy estimate
 
 $$
 E[\theta]=\frac{\rho_s}{2}\int|\nabla\theta|^2d^2r,\qquad E_{n}\simeq\pi\rho_s n^2\log(L/a),\qquad F_{|n|=1}\simeq(\pi\rho_s-2k_BT)\log(L/a)
@@ -2746,7 +2910,9 @@ $$
 
 ## mathematics
 
-### Quadratic equation by completing the square {#mf-quadratic}
+<a id="mf-quadratic"></a>
+
+### Quadratic equation by completing the square
 
 $$
 x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}
@@ -2774,7 +2940,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Finite binomial theorem {#mf-binomial}
+<a id="mf-binomial"></a>
+
+### Finite binomial theorem
 
 $$
 (a+b)^n=\sum_{k=0}^{n}\binom nk a^{n-k}b^k
@@ -2802,7 +2970,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Complex exponential and phase {#mf-euler}
+<a id="mf-euler"></a>
+
+### Complex exponential and phase
 
 $$
 e^{i\theta}=\cos\theta+i\sin\theta
@@ -2829,7 +2999,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Rank–nullity and lost directions {#mf-rank}
+<a id="mf-rank"></a>
+
+### Rank–nullity and lost directions
 
 $$
 \operatorname{rank}A+\dim\ker A=n,\qquad A:\mathbb{R}^n\to\mathbb{R}^m
@@ -2856,7 +3028,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Cauchy–Schwarz and cosine similarity {#mf-inner}
+<a id="mf-inner"></a>
+
+### Cauchy–Schwarz and cosine similarity
 
 $$
 |\langle x,y\rangle|\le\|x\|\|y\|,\qquad \cos\theta=\frac{x^Ty}{\|x\|\|y\|}
@@ -2884,7 +3058,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Two-dimensional determinant and inverse {#mf-det}
+<a id="mf-det"></a>
+
+### Two-dimensional determinant and inverse
 
 $$
 \det A=ad-bc,\quad A^{-1}=\frac1{ad-bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}
@@ -2911,7 +3087,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Real symmetric spectral decomposition {#mf-spectral}
+<a id="mf-spectral"></a>
+
+### Real symmetric spectral decomposition
 
 $$
 A=Q\Lambda Q^T,\qquad Q^TQ=I
@@ -2939,7 +3117,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Singular value decomposition {#mf-svd}
+<a id="mf-svd"></a>
+
+### Singular value decomposition
 
 $$
 A=U\Sigma V^*,\qquad \sigma_i^2=\lambda_i(A^*A)
@@ -2967,7 +3147,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Moore–Penrose pseudoinverse {#mf-pinv}
+<a id="mf-pinv"></a>
+
+### Moore–Penrose pseudoinverse
 
 $$
 A^+=V\Sigma^+U^*,\quad x_*=A^+b
@@ -2996,7 +3178,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Least squares normal equations {#mf-least}
+<a id="mf-least"></a>
+
+### Least squares normal equations
 
 $$
 \min_x\|Ax-b\|_2^2\Rightarrow A^TAx=A^Tb
@@ -3024,7 +3208,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Centered covariance and PCA {#mf-pca}
+<a id="mf-pca"></a>
+
+### Centered covariance and PCA
 
 $$
 C=\frac{X^TX}{N-1},\quad Cv_i=\lambda_i v_i
@@ -3053,7 +3239,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Relative error and matrix condition number {#mf-cond}
+<a id="mf-cond"></a>
+
+### Relative error and matrix condition number
 
 $$
 \kappa_2(A)=\frac{\sigma_{\max}}{\sigma_{\min}},\quad \frac{\|\delta x\|}{\|x\|}\le\kappa_2(A)\frac{\|\delta b\|}{\|b\|}
@@ -3082,7 +3270,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Derivative as a controlled limit {#mf-derivative}
+<a id="mf-derivative"></a>
+
+### Derivative as a controlled limit
 
 $$
 f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}h
@@ -3109,7 +3299,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Taylor theorem with an explicit remainder {#mf-taylor}
+<a id="mf-taylor"></a>
+
+### Taylor theorem with an explicit remainder
 
 $$
 f(x+h)=\sum_{k=0}^{n}\frac{f^{(k)}(x)}{k!}h^k+\frac{f^{(n+1)}(\xi)}{(n+1)!}h^{n+1}
@@ -3136,7 +3328,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Multivariable chain rule {#mf-chain}
+<a id="mf-chain"></a>
+
+### Multivariable chain rule
 
 $$
 D(f\circ g)(x)=Df(g(x))Dg(x)
@@ -3164,7 +3358,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Fundamental theorem of calculus {#mf-ftc}
+<a id="mf-ftc"></a>
+
+### Fundamental theorem of calculus
 
 $$
 \frac d{dx}\int_a^x f(t)\,dt=f(x),\quad \int_a^b F'(x)\,dx=F(b)-F(a)
@@ -3192,7 +3388,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Change of variables and volume {#mf-jacobian}
+<a id="mf-jacobian"></a>
+
+### Change of variables and volume
 
 $$
 \int_{\phi(U)}f(x)\,dx=\int_U f(\phi(u))|\det D\phi(u)|\,du
@@ -3221,7 +3419,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Divergence theorem {#mf-div}
+<a id="mf-div"></a>
+
+### Divergence theorem
 
 $$
 \int_\Omega\nabla\cdot F\,dV=\int_{\partial\Omega}F\cdot n\,dS
@@ -3249,7 +3449,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Generalized Stokes theorem {#mf-stokes}
+<a id="mf-stokes"></a>
+
+### Generalized Stokes theorem
 
 $$
 \int_M d\omega=\int_{\partial M}\omega
@@ -3277,7 +3479,9 @@ $$
 
 **Sources:** [Introducing Differential Geometry, David Tong, section 2.4.5](https://www.davidtong.org/teaching/general-relativity/grhtml/S2)
 
-### Euler–Lagrange stationarity {#mf-eulerlagrange}
+<a id="mf-eulerlagrange"></a>
+
+### Euler–Lagrange stationarity
 
 $$
 \frac d{dt}\frac{\partial L}{\partial\dot q}-\frac{\partial L}{\partial q}=0
@@ -3305,7 +3509,9 @@ $$
 
 **Sources:** [The Lagrangian Formalism, David Tong](https://davidtong.org/pdfs/teaching/classical-dynamics/clas2.pdf)
 
-### Bayes rule with dependent evidence awareness {#mf-bayes}
+<a id="mf-bayes"></a>
+
+### Bayes rule with dependent evidence awareness
 
 $$
 P(H\mid E)=\frac{P(E\mid H)P(H)}{P(E)}
@@ -3333,7 +3539,9 @@ $$
 
 **Sources:** [MIT 18.05 Class 03: Conditional Probability, Independence, Bayes' Theorem](https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_lec03.pdf)
 
-### Covariance and variance propagation {#mf-cov}
+<a id="mf-cov"></a>
+
+### Covariance and variance propagation
 
 $$
 \operatorname{Cov}(X,Y)=E[(X-EX)(Y-EY)],\quad \operatorname{Var}(a^TX)=a^T\Sigma a
@@ -3360,7 +3568,9 @@ $$
 
 **Sources:** [MIT 18.05: Introduction to Probability and Statistics](https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/); [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Multivariate Gaussian density {#mf-gauss}
+<a id="mf-gauss"></a>
+
+### Multivariate Gaussian density
 
 $$
 p(x)=\frac{e^{-\frac12(x-\mu)^T\Sigma^{-1}(x-\mu)}}{(2\pi)^{d/2}\det(\Sigma)^{1/2}}
@@ -3388,7 +3598,9 @@ $$
 
 **Sources:** [MIT 18.05: Introduction to Probability and Statistics](https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/)
 
-### Hoeffding bound for bounded independent samples {#mf-hoeffding}
+<a id="mf-hoeffding"></a>
+
+### Hoeffding bound for bounded independent samples
 
 $$
 P(|\bar X-E\bar X|\ge\epsilon)\le2e^{-2N\epsilon^2/(b-a)^2}
@@ -3416,7 +3628,9 @@ $$
 
 **Sources:** [Concentration inequalities, Cosma Shalizi](https://www.stat.cmu.edu/~cshalizi/sml/21/lectures/06/lecture-06.html)
 
-### Shannon entropy {#mf-entropy}
+<a id="mf-entropy"></a>
+
+### Shannon entropy
 
 $$
 H(X)=-\sum_xp(x)\log_2p(x)
@@ -3443,7 +3657,9 @@ $$
 
 **Sources:** [A Mathematical Theory of Communication, Claude Shannon](https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf); [Entropy, Relative Entropy, and Mutual Information, Tsachy Weissman](https://web.stanford.edu/class/ee376a/files/lecture_3.pdf)
 
-### Relative entropy {#mf-kl}
+<a id="mf-kl"></a>
+
+### Relative entropy
 
 $$
 D_{KL}(p\|q)=\sum_xp(x)\log\frac{p(x)}{q(x)}\ge0
@@ -3470,7 +3686,9 @@ $$
 
 **Sources:** [Entropy, Relative Entropy, and Mutual Information, Tsachy Weissman](https://web.stanford.edu/class/ee376a/files/lecture_3.pdf)
 
-### Mutual information {#mf-mi}
+<a id="mf-mi"></a>
+
+### Mutual information
 
 $$
 I(X;Y)=D_{KL}(p_{XY}\|p_Xp_Y)=H(X)-H(X\mid Y)
@@ -3497,7 +3715,9 @@ $$
 
 **Sources:** [Entropy, Relative Entropy, and Mutual Information, Tsachy Weissman](https://web.stanford.edu/class/ee376a/files/lecture_3.pdf)
 
-### Markov transition and stationary distribution {#mf-markov}
+<a id="mf-markov"></a>
+
+### Markov transition and stationary distribution
 
 $$
 p_{t+1}=P^Tp_t,\quad P\mathbf1=\mathbf1,\quad P^T\pi=\pi
@@ -3525,7 +3745,9 @@ $$
 
 **Sources:** [MIT 18.05: Introduction to Probability and Statistics](https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/); [The PageRank Citation Ranking: Bringing Order to the Web](https://cs.brown.edu/courses/csci2531/papers/pagerank.pdf)
 
-### Adjacency powers count walks {#mf-walks}
+<a id="mf-walks"></a>
+
+### Adjacency powers count walks
 
 $$
 (A^k)_{ij}=\#\{\text{length-k walks from }i\text{ to }j\}
@@ -3553,7 +3775,9 @@ $$
 
 **Sources:** [Essential spectral theory and graph drawing, Daniel Spielman](https://www.cs.yale.edu/homes/spielman/561/lect02-18.pdf)
 
-### Graph Laplacian energy {#mf-lap}
+<a id="mf-lap"></a>
+
+### Graph Laplacian energy
 
 $$
 L=D-W=B^T C B,\quad x^TLx=\sum_{\{i,j\}}w_{ij}(x_i-x_j)^2
@@ -3582,7 +3806,9 @@ $$
 
 **Sources:** [Essential spectral theory and graph drawing, Daniel Spielman](https://www.cs.yale.edu/homes/spielman/561/lect02-18.pdf)
 
-### Normalized Laplacian {#mf-normalized}
+<a id="mf-normalized"></a>
+
+### Normalized Laplacian
 
 $$
 \mathcal L=I-D^{-1/2}WD^{-1/2}
@@ -3609,7 +3835,9 @@ $$
 
 **Sources:** [Conductance, the Normalized Laplacian, and Cheeger's Inequality, Daniel Spielman](https://www.cs.yale.edu/homes/spielman/561/lect11-18.pdf)
 
-### Personalized PageRank as a convergent recurrence {#mf-pagerank}
+<a id="mf-pagerank"></a>
+
+### Personalized PageRank as a convergent recurrence
 
 $$
 r=\alpha P^Tr+(1-\alpha)v=(1-\alpha)(I-\alpha P^T)^{-1}v
@@ -3637,7 +3865,9 @@ $$
 
 **Sources:** [The PageRank Citation Ranking: Bringing Order to the Web](https://cs.brown.edu/courses/csci2531/papers/pagerank.pdf)
 
-### Effective electrical resistance {#mf-resistance}
+<a id="mf-resistance"></a>
+
+### Effective electrical resistance
 
 $$
 R_{ij}=(e_i-e_j)^TL^+(e_i-e_j)
@@ -3665,7 +3895,9 @@ $$
 
 **Sources:** [Essential spectral theory and graph drawing, Daniel Spielman](https://www.cs.yale.edu/homes/spielman/561/lect02-18.pdf)
 
-### Cheeger inequality for an undirected weighted graph {#mf-cheeger}
+<a id="mf-cheeger"></a>
+
+### Cheeger inequality for an undirected weighted graph
 
 $$
 \frac{\lambda_2(\mathcal L)}2\le\phi(G)\le\sqrt{2\lambda_2(\mathcal L)}
@@ -3692,7 +3924,9 @@ $$
 
 **Sources:** [Conductance, the Normalized Laplacian, and Cheeger's Inequality, Daniel Spielman](https://www.cs.yale.edu/homes/spielman/561/lect11-18.pdf)
 
-### Heat diffusion on a graph {#mf-diffusion}
+<a id="mf-diffusion"></a>
+
+### Heat diffusion on a graph
 
 $$
 \dot x=-Lx,\quad x(t)=e^{-tL}x(0)=\sum_k e^{-t\lambda_k}\langle q_k,x(0)\rangle q_k
@@ -3719,7 +3953,9 @@ $$
 
 **Sources:** [Essential spectral theory and graph drawing, Daniel Spielman](https://www.cs.yale.edu/homes/spielman/561/lect02-18.pdf)
 
-### Shortest-path Bellman recurrence {#mf-bellman}
+<a id="mf-bellman"></a>
+
+### Shortest-path Bellman recurrence
 
 $$
 d(v)=\min_{(u,v)\in E}[d(u)+w(u,v)],\qquad d(s)=0
@@ -3747,7 +3983,9 @@ $$
 
 **Sources:** [Algorithms, chapter 8: Shortest Paths, Jeff Erickson](https://jeffe.cs.illinois.edu/teaching/algorithms/book/08-sssp.pdf)
 
-### Newton root iteration {#mf-newton}
+<a id="mf-newton"></a>
+
+### Newton root iteration
 
 $$
 x_{k+1}=x_k-\frac{f(x_k)}{f'(x_k)}
@@ -3775,7 +4013,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Gradient descent descent bound {#mf-gradient}
+<a id="mf-gradient"></a>
+
+### Gradient descent descent bound
 
 $$
 x^+=x-\eta\nabla f(x),\quad f(x^+)\le f(x)-\eta(1-L\eta/2)\|\nabla f(x)\|^2
@@ -3803,7 +4043,9 @@ $$
 
 **Sources:** [Convex Optimization, Stephen Boyd and Lieven Vandenberghe](https://web.stanford.edu/~boyd/cvxbook/)
 
-### KKT optimality conditions {#mf-kkt}
+<a id="mf-kkt"></a>
+
+### KKT optimality conditions
 
 $$
 \nabla f(x)+\sum_i\lambda_i\nabla g_i(x)+A^T\nu=0,\quad \lambda_i g_i(x)=0
@@ -3832,7 +4074,9 @@ $$
 
 **Sources:** [Convex Optimization, Stephen Boyd and Lieven Vandenberghe](https://web.stanford.edu/~boyd/cvxbook/)
 
-### Conjugate-gradient condition-number bound {#mf-cg}
+<a id="mf-cg"></a>
+
+### Conjugate-gradient condition-number bound
 
 $$
 \|e_k\|_A\le2\left(\frac{\sqrt\kappa-1}{\sqrt\kappa+1}\right)^k\|e_0\|_A
@@ -3861,7 +4105,9 @@ $$
 
 **Sources:** [An Introduction to the Conjugate Gradient Method Without the Agonizing Pain, Jonathan Shewchuk](https://www.cs.cmu.edu/afs/cs/Web/People/quake-papers/painless-conjugate-gradient.pdf)
 
-### Centered second derivative {#mf-difference}
+<a id="mf-difference"></a>
+
+### Centered second derivative
 
 $$
 f''(x)=\frac{f(x+h)-2f(x)+f(x-h)}{h^2}+O(h^2)
@@ -3888,7 +4134,9 @@ $$
 
 **Sources:** [Finite Difference Methods for PDEs, Per-Olof Persson](https://persson.berkeley.edu/math228b/html/finite_difference_methods_for_PDEs.html)
 
-### Weak Poisson formulation {#mf-weakpoisson}
+<a id="mf-weakpoisson"></a>
+
+### Weak Poisson formulation
 
 $$
 -\Delta u=f,\ u|_{\partial\Omega}=0\quad\Rightarrow\quad\int_\Omega\nabla u\cdot\nabla v=\int_\Omega fv\ \ \forall v\in H_0^1(\Omega)
@@ -3917,7 +4165,9 @@ $$
 
 **Sources:** [Notes on Partial Differential Equations, John K. Hunter](https://www.math.ucdavis.edu/~hunter/pdes/pde_notes.pdf)
 
-### Explicit heat-scheme stability {#mf-cfl}
+<a id="mf-cfl"></a>
+
+### Explicit heat-scheme stability
 
 $$
 u_j^{n+1}=u_j^n+r(u_{j+1}^n-2u_j^n+u_{j-1}^n),\qquad 0\le r=\kappa\Delta t/\Delta x^2\le\tfrac12
@@ -3946,7 +4196,9 @@ $$
 
 **Sources:** [Finite Difference Methods for PDEs, Per-Olof Persson](https://persson.berkeley.edu/math228b/html/finite_difference_methods_for_PDEs.html)
 
-### Fixed-point convergence and stopping bound {#mf-contraction}
+<a id="mf-contraction"></a>
+
+### Fixed-point convergence and stopping bound
 
 $$
 \|T(x)-T(y)\|\le q\|x-y\|,\ q<1,\quad \|x_k-x_*\|\le\frac{q}{1-q}\|x_k-x_{k-1}\|
@@ -3973,7 +4225,9 @@ $$
 
 **Sources:** [The Contraction Mapping Theorem, Hunter and Nachtergaele](https://www.math.ucdavis.edu/~hunter/book/ch3.pdf)
 
-### Ridge/Tikhonov regularization {#mf-tikhonov}
+<a id="mf-tikhonov"></a>
+
+### Ridge/Tikhonov regularization
 
 $$
 x_\lambda=(A^TA+\lambda I)^{-1}A^Tb,\qquad \lambda>0
@@ -4000,7 +4254,9 @@ $$
 
 **Sources:** [Convex Optimization, Stephen Boyd and Lieven Vandenberghe](https://web.stanford.edu/~boyd/cvxbook/); [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Optimal truncated SVD error {#mf-lowrank}
+<a id="mf-lowrank"></a>
+
+### Optimal truncated SVD error
 
 $$
 A_k=\sum_{i=1}^k\sigma_i u_iv_i^*,\quad\|A-A_k\|_F^2=\sum_{i>k}\sigma_i^2
@@ -4027,7 +4283,9 @@ $$
 
 **Sources:** [Linear Algebra, Gilbert Strang, MIT 18.06SC](https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/)
 
-### Composite Simpson integration error {#mf-simpson}
+<a id="mf-simpson"></a>
+
+### Composite Simpson integration error
 
 $$
 \int_a^b f(x)dx\approx\frac h3[f_0+f_N+4\!\sum_{j\ odd}f_j+2\!\sum_{j\ even,\ 0<j<N}f_j]
@@ -4054,7 +4312,9 @@ $$
 
 **Sources:** [Calculus, Gilbert Strang: MIT OpenCourseWare edition](https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/)
 
-### Cauchy integral formula {#mf-cauchy}
+<a id="mf-cauchy"></a>
+
+### Cauchy integral formula
 
 $$
 f(z_0)=\frac1{2\pi i}\oint_\gamma\frac{f(z)}{z-z_0}\,dz
@@ -4081,7 +4341,9 @@ $$
 
 **Sources:** [Cauchy's Integral Formula and Power and Laurent Series Expansion, Yum-Tong Siu](https://people.math.harvard.edu/~siu/math113/5_cauchy_integral_formula_power_and_laurent_series_expansion.pdf)
 
-### Fourier transform and Plancherel convention {#mf-fourier}
+<a id="mf-fourier"></a>
+
+### Fourier transform and Plancherel convention
 
 $$
 \hat f(\omega)=\int_\mathbb{R} f(t)e^{-i\omega t}dt,\quad\int|f|^2dt=\frac1{2\pi}\int|\hat f|^2d\omega
@@ -4110,7 +4372,9 @@ $$
 
 **Sources:** [Notes on Partial Differential Equations, John K. Hunter](https://www.math.ucdavis.edu/~hunter/pdes/pde_notes.pdf)
 
-### Heat equation spectral solution {#mf-heatkernel}
+<a id="mf-heatkernel"></a>
+
+### Heat equation spectral solution
 
 $$
 \partial_tu=\kappa\Delta u,\quad\hat u(k,t)=e^{-\kappa|k|^2t}\hat u(k,0)
@@ -4138,7 +4402,9 @@ $$
 
 **Sources:** [Notes on Partial Differential Equations, John K. Hunter](https://www.math.ucdavis.edu/~hunter/pdes/pde_notes.pdf)
 
-### Wave equation dispersion relation {#mf-wave}
+<a id="mf-wave"></a>
+
+### Wave equation dispersion relation
 
 $$
 u_{tt}=c^2\Delta u,\quad u=e^{i(k\cdot x-\omega t)}\Rightarrow\omega^2=c^2|k|^2
@@ -4166,7 +4432,9 @@ $$
 
 **Sources:** [Notes on Partial Differential Equations, John K. Hunter](https://www.math.ucdavis.edu/~hunter/pdes/pde_notes.pdf)
 
-### Integer Sobolev norm {#mf-sobolev}
+<a id="mf-sobolev"></a>
+
+### Integer Sobolev norm
 
 $$
 \|u\|_{H^s(\Omega)}^2=\sum_{|\alpha|\le s}\|D^\alpha u\|_{L^2(\Omega)}^2
@@ -4195,7 +4463,9 @@ $$
 
 **Sources:** [Notes on Partial Differential Equations, John K. Hunter](https://www.math.ucdavis.edu/~hunter/pdes/pde_notes.pdf)
 
-### Metric Laplacian on a manifold {#mf-laplacebeltrami}
+<a id="mf-laplacebeltrami"></a>
+
+### Metric Laplacian on a manifold
 
 $$
 \Delta_gu=\frac1{\sqrt{|g|}}\partial_i\left(\sqrt{|g|}\,g^{ij}\partial_ju\right)
@@ -4224,7 +4494,9 @@ $$
 
 **Sources:** [General Relativity, chapter 3: Differential Geometry, David Tong](https://davidtong.org/pdfs/teaching/general-relativity/gr3.pdf)
 
-### Curvature as a covariant-derivative commutator {#mf-curvature}
+<a id="mf-curvature"></a>
+
+### Curvature as a covariant-derivative commutator
 
 $$
 R(X,Y)Z=\nabla_X\nabla_YZ-\nabla_Y\nabla_XZ-\nabla_{[X,Y]}Z
@@ -4252,7 +4524,9 @@ $$
 
 **Sources:** [General Relativity, chapter 3: Differential Geometry, David Tong](https://davidtong.org/pdfs/teaching/general-relativity/gr3.pdf)
 
-### Homology: cycles modulo boundaries {#mf-homology}
+<a id="mf-homology"></a>
+
+### Homology: cycles modulo boundaries
 
 $$
 H_k=\ker\partial_k/\operatorname{im}\partial_{k+1},\quad\partial_k\partial_{k+1}=0
@@ -4280,7 +4554,9 @@ $$
 
 **Sources:** [Algebraic Topology, Allen Hatcher](https://pi.math.cornell.edu/~hatcher/AT/ATpage.html)
 
-### Euler characteristic of a finite complex {#mf-eulerchar}
+<a id="mf-eulerchar"></a>
+
+### Euler characteristic of a finite complex
 
 $$
 \chi=\sum_k(-1)^kc_k=\sum_k(-1)^k\beta_k
@@ -4307,7 +4583,9 @@ $$
 
 **Sources:** [Algebraic Topology, Allen Hatcher](https://pi.math.cornell.edu/~hatcher/AT/ATpage.html)
 
-### Group representations preserve composition {#mf-representation}
+<a id="mf-representation"></a>
+
+### Group representations preserve composition
 
 $$
 \rho(gh)=\rho(g)\rho(h),\quad\rho(e)=I
@@ -4334,7 +4612,9 @@ $$
 
 **Sources:** [Fields and Galois Theory, J. S. Milne, version 5.10](https://www.jmilne.org/math/CourseNotes/ft.html)
 
-### Finite Galois correspondence {#mf-galois}
+<a id="mf-galois"></a>
+
+### Finite Galois correspondence
 
 $$
 E\longmapsto\operatorname{Gal}(L/E),\qquad H\longmapsto L^H,\qquad [L:E]=|\operatorname{Gal}(L/E)|
@@ -4362,7 +4642,9 @@ $$
 
 **Sources:** [Fields and Galois Theory, J. S. Milne, version 5.10](https://www.jmilne.org/math/CourseNotes/ft.html)
 
-### Zeta Dirichlet series and Euler product {#mf-zeta}
+<a id="mf-zeta"></a>
+
+### Zeta Dirichlet series and Euler product
 
 $$
 \zeta(s)=\sum_{n=1}^\infty n^{-s}=\prod_{p\ \mathrm{prime}}(1-p^{-s})^{-1},\quad\Re s>1
@@ -4390,7 +4672,9 @@ $$
 
 **Sources:** [NIST DLMF 25.2: Definition and Expansions of the Riemann zeta function](https://dlmf.nist.gov/25.2)
 
-### Short Weierstrass curve and nonsingularity {#mf-elliptic}
+<a id="mf-elliptic"></a>
+
+### Short Weierstrass curve and nonsingularity
 
 $$
 y^2=x^3+ax+b,\qquad\Delta=-16(4a^3+27b^2)\ne0
@@ -4418,7 +4702,9 @@ $$
 
 **Sources:** [Elliptic Curves, J. S. Milne, first edition](https://www.jmilne.org/math/Books/ectext6.pdf)
 
-### Naturality square {#mf-naturality}
+<a id="mf-naturality"></a>
+
+### Naturality square
 
 $$
 G(f)\circ\eta_X=\eta_Y\circ F(f)
@@ -4446,7 +4732,9 @@ $$
 
 **Sources:** [Basic Category Theory, Tom Leinster, version 2](https://arxiv.org/abs/1612.09375v2)
 
-### Yoneda lemma {#mf-yoneda}
+<a id="mf-yoneda"></a>
+
+### Yoneda lemma
 
 $$
 \operatorname{Nat}(\operatorname{Hom}(A,-),F)\cong F(A)
@@ -4473,7 +4761,9 @@ $$
 
 **Sources:** [Basic Category Theory, Tom Leinster, version 2](https://arxiv.org/abs/1612.09375v2)
 
-### Permanent versus determinant {#mf-permanent}
+<a id="mf-permanent"></a>
+
+### Permanent versus determinant
 
 $$
 \operatorname{per}(A)=\sum_{\sigma\in S_n}\prod_i a_{i,\sigma(i)},\qquad\det(A)=\sum_{\sigma\in S_n}\operatorname{sgn}(\sigma)\prod_i a_{i,\sigma(i)}
@@ -4500,7 +4790,9 @@ $$
 
 **Sources:** [VP ≠ VNP over every field: statement and research artifact](https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/vp-vnp)
 
-### Critical path in a dependency DAG {#mf-dagtime}
+<a id="mf-dagtime"></a>
+
+### Critical path in a dependency DAG
 
 $$
 T(v)=c(v)+\max_{u\to v}T(u)
@@ -4530,7 +4822,9 @@ $$
 
 ## memory
 
-### Adjacency and weighted degree {#gf-adjacency}
+<a id="gf-adjacency"></a>
+
+### Adjacency and weighted degree
 
 $$
 A_{ij}=w_{ij},\qquad d_i=\sum_j A_{ij},\qquad D=\operatorname{diag}(d_i)
@@ -4558,7 +4852,9 @@ $$
 
 **Sources:** [The PageRank Citation Ranking: Bringing Order to the Web](https://ilpubs.stanford.edu/422/)
 
-### Combinatorial Laplacian {#gf-laplacian}
+<a id="gf-laplacian"></a>
+
+### Combinatorial Laplacian
 
 $$
 L=D-A,\qquad L\mathbf 1=0
@@ -4585,7 +4881,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Dirichlet quadratic form {#gf-dirichlet}
+<a id="gf-dirichlet"></a>
+
+### Dirichlet quadratic form
 
 $$
 x^TLx=\frac12\sum_{i,j}w_{ij}(x_i-x_j)^2
@@ -4613,7 +4911,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Grounded Poisson problem {#gf-grounded}
+<a id="gf-grounded"></a>
+
+### Grounded Poisson problem
 
 $$
 L_{II}u_I=b_I-L_{IB}u_B
@@ -4643,7 +4943,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Graph heat flow {#gf-heat}
+<a id="gf-heat"></a>
+
+### Graph heat flow
 
 $$
 \frac{dx}{dt}=-\kappa Lx,\qquad x(t)=e^{-\kappa Lt}x(0)
@@ -4671,7 +4973,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Graph wave modes {#gf-graph-wave}
+<a id="gf-graph-wave"></a>
+
+### Graph wave modes
 
 $$
 \ddot x+\omega_0^2 Lx=0,\qquad \omega_k=\omega_0\sqrt{\lambda_k}
@@ -4700,7 +5004,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Row-stochastic transition {#gf-transition}
+<a id="gf-transition"></a>
+
+### Row-stochastic transition
 
 $$
 P_{ij}=A_{ij}/d_i\quad(d_i>0)
@@ -4728,7 +5034,9 @@ $$
 
 **Sources:** [The PageRank Citation Ranking: Bringing Order to the Web](https://ilpubs.stanford.edu/422/)
 
-### Personalized PageRank {#gf-ppr}
+<a id="gf-ppr"></a>
+
+### Personalized PageRank
 
 $$
 p_{t+1}=\alpha P^Tp_t+(1-\alpha)s,\qquad p_*=(1-\alpha)(I-\alpha P^T)^{-1}s
@@ -4758,7 +5066,9 @@ $$
 
 **Sources:** [HippoRAG: Neurobiologically Inspired Long-Term Memory for Large Language Models](https://arxiv.org/abs/2405.14831); [The PageRank Citation Ranking: Bringing Order to the Web](https://ilpubs.stanford.edu/422/)
 
-### PageRank residual bound {#gf-ppr-error}
+<a id="gf-ppr-error"></a>
+
+### PageRank residual bound
 
 $$
 \lVert p_t-p_*\rVert_1\leq\frac{\lVert p_{t+1}-p_t\rVert_1}{1-\alpha}
@@ -4786,7 +5096,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Positive inverse document frequency {#gf-idf}
+<a id="gf-idf"></a>
+
+### Positive inverse document frequency
 
 $$
 \operatorname{idf}(t)=\log\left(1+\frac{N-n_t+0.5}{n_t+0.5}\right)
@@ -4814,7 +5126,9 @@ $$
 
 **Sources:** [The Probabilistic Relevance Framework: BM25 and Beyond](https://doi.org/10.1561/1500000019)
 
-### BM25 retrieval score {#gf-bm25}
+<a id="gf-bm25"></a>
+
+### BM25 retrieval score
 
 $$
 S(q,d)=\sum_{t\in q}\operatorname{idf}(t)\frac{f_{t,d}(k_1+1)}{f_{t,d}+k_1(1-b+b|d|/\overline{|d|})}
@@ -4844,7 +5158,9 @@ $$
 
 **Sources:** [The Probabilistic Relevance Framework: BM25 and Beyond](https://doi.org/10.1561/1500000019)
 
-### Cosine similarity {#gf-cosine}
+<a id="gf-cosine"></a>
+
+### Cosine similarity
 
 $$
 \operatorname{sim}(x,y)=\frac{x^Ty}{\lVert x\rVert_2\lVert y\rVert_2}
@@ -4872,7 +5188,9 @@ $$
 
 **Sources:** [From RAG to Memory: Non-Parametric Continual Learning for Large Language Models](https://arxiv.org/html/2502.14802v2)
 
-### Weighted reciprocal rank fusion {#gf-rrf}
+<a id="gf-rrf"></a>
+
+### Weighted reciprocal rank fusion
 
 $$
 R(d)=\sum_j\frac{w_j}{c+r_j(d)}
@@ -4901,7 +5219,9 @@ $$
 
 **Sources:** [Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods](https://cormack.uwaterloo.ca/cormack/cormacksigir09-rrf.pdf)
 
-### Relevance and redundancy tradeoff {#gf-mmr}
+<a id="gf-mmr"></a>
+
+### Relevance and redundancy tradeoff
 
 $$
 d_* =\arg\max_{d\notin S}\left[\lambda\,r(q,d)-(1-\lambda)\max_{s\in S}\operatorname{sim}(d,s)\right]
@@ -4929,7 +5249,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Shannon entropy of a declared distribution {#gf-entropy}
+<a id="gf-entropy"></a>
+
+### Shannon entropy of a declared distribution
 
 $$
 H(X)=-\sum_x p(x)\log_2 p(x)
@@ -4957,7 +5279,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Expected local cache latency {#gf-latency}
+<a id="gf-latency"></a>
+
+### Expected local cache latency
 
 $$
 \mathbb{E}[T]=hT_{\mathrm{hit}}+(1-h)T_{\mathrm{miss}}
@@ -4986,7 +5310,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Two-level average memory access time {#gf-amat}
+<a id="gf-amat"></a>
+
+### Two-level average memory access time
 
 $$
 T_{\mathrm{avg}}=T_1+m_1(T_2+m_2T_3)
@@ -5015,7 +5341,9 @@ $$
 
 **Sources:** [Efficient stack distance computation for priority replacement policies](https://research.ibm.com/publications/efficient-stack-distance-computation-for-priority-replacement-policies)
 
-### Poisson-update freshness model {#gf-ttl-probability}
+<a id="gf-ttl-probability"></a>
+
+### Poisson-update freshness model
 
 $$
 \Pr(\text{at least one update in }t)=1-e^{-\lambda t}
@@ -5042,7 +5370,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Fully associative LRU hit condition {#gf-lru-distance}
+<a id="gf-lru-distance"></a>
+
+### Fully associative LRU hit condition
 
 $$
 \text{hit at capacity }C\iff d_{\mathrm{reuse}}<C
@@ -5071,7 +5401,9 @@ $$
 
 **Sources:** [Efficient stack distance computation for priority replacement policies](https://research.ibm.com/publications/efficient-stack-distance-computation-for-priority-replacement-policies)
 
-### Complete cache dependency key {#gf-cache-key}
+<a id="gf-cache-key"></a>
+
+### Complete cache dependency key
 
 $$
 K=\operatorname{SHA256}(\operatorname{canon}(q,V,A,S,P,T,\theta))
@@ -5105,7 +5437,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Evidence selection under a byte budget {#gf-budget-knapsack}
+<a id="gf-budget-knapsack"></a>
+
+### Evidence selection under a byte budget
 
 $$
 \max_{z_i\in\{0,1\}}\sum_i u_i z_i\quad\text{s.t.}\quad\sum_i b_i z_i\le B
@@ -5134,7 +5468,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Traversal complexity {#gf-bfs}
+<a id="gf-bfs"></a>
+
+### Traversal complexity
 
 $$
 T_{\mathrm{BFS}}=O(|V_r|+|E_r|),\qquad M=O(|V_r|)
@@ -5162,7 +5498,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### DAG topological condition {#gf-topological}
+<a id="gf-topological"></a>
+
+### DAG topological condition
 
 $$
 |\operatorname{Kahn}(G)|=|V|\iff G\text{ is a DAG}
@@ -5189,7 +5527,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Simple Hebbian weight construction {#gf-hebb}
+<a id="gf-hebb"></a>
+
+### Simple Hebbian weight construction
 
 $$
 W_{ij}=\frac1N\sum_{\mu=1}^{P}\xi_i^{(\mu)}\xi_j^{(\mu)},\qquad W_{ii}=0
@@ -5218,7 +5558,9 @@ $$
 
 **Sources:** [Neural networks and physical systems with emergent collective computational abilities](https://pmc.ncbi.nlm.nih.gov/articles/PMC346238/)
 
-### Binary Hopfield Lyapunov function {#gf-hopfield-energy}
+<a id="gf-hopfield-energy"></a>
+
+### Binary Hopfield Lyapunov function
 
 $$
 E(s)=-\frac12s^TWs+\theta^Ts
@@ -5247,7 +5589,9 @@ $$
 
 **Sources:** [Neural networks and physical systems with emergent collective computational abilities](https://pmc.ncbi.nlm.nih.gov/articles/PMC346238/)
 
-### Scaled dot-product attention {#gf-attention}
+<a id="gf-attention"></a>
+
+### Scaled dot-product attention
 
 $$
 \operatorname{Attention}(Q,K,V)=\operatorname{softmax}(QK^T/\sqrt{d_k})V
@@ -5275,7 +5619,9 @@ $$
 
 **Sources:** [Attention Is All You Need](https://papers.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html); [Hopfield Networks is All You Need](https://arxiv.org/abs/2008.02217)
 
-### Exponential retrieval-priority heuristic {#gf-retention}
+<a id="gf-retention"></a>
+
+### Exponential retrieval-priority heuristic
 
 $$
 w(t)=w_0e^{-t/\tau}
@@ -5303,7 +5649,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Evidence precision and recall {#gf-precision}
+<a id="gf-precision"></a>
+
+### Evidence precision and recall
 
 $$
 \operatorname{Precision}=\frac{|R\cap G|}{|R|},\qquad\operatorname{Recall}=\frac{|R\cap G|}{|G|}
@@ -5331,7 +5679,9 @@ $$
 
 **Sources:** [LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory](https://arxiv.org/abs/2410.10813); [The evolution of GraphRAG: Advancing systems and evaluation together](https://www.microsoft.com/en-us/research/story/the-evolution-of-graphrag-advancing-systems-and-evaluation-together/)
 
-### Discounted cumulative gain {#gf-ndcg}
+<a id="gf-ndcg"></a>
+
+### Discounted cumulative gain
 
 $$
 \operatorname{DCG}@k=\sum_{i=1}^k\frac{2^{rel_i}-1}{\log_2(i+1)},\qquad\operatorname{nDCG}@k=\operatorname{DCG}@k/\operatorname{IDCG}@k
@@ -5359,7 +5709,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Brier calibration score {#gf-brier}
+<a id="gf-brier"></a>
+
+### Brier calibration score
 
 $$
 B=\frac1n\sum_{i=1}^n(p_i-y_i)^2
@@ -5388,7 +5740,9 @@ $$
 
 **Sources:** [Daftar graph-memory implementation and executed tests](https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas)
 
-### Measured improvement in a fixed loop {#gf-novelty-loop}
+<a id="gf-novelty-loop"></a>
+
+### Measured improvement in a fixed loop
 
 $$
 \Delta U_k=U(\text{system}_{k+1};D)-U(\text{system}_{k};D)

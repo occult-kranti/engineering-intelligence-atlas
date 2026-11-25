@@ -1,6 +1,6 @@
 # What recent AI mathematics results actually establish
 
-**Evidence cutoff: 25 November 2026.** This audit identifies substantial recent results and keeps each conclusion attached to its precise problem, assumptions, artifact and verification status. It does not support the proposition that Claude or OpenAI has solved all mathematics. The structured [claim register](03-ai-math-claim-register.md) contains the selected findings; [the metadata catalogue](openai-math-catalogue.json) separately enumerates the complete captured OpenAI release.
+**Evidence cutoff: 25 November 2026.** This audit identifies substantial recent results and keeps each conclusion attached to its precise problem, assumptions, artifact and verification status. It does not support the proposition that Claude or OpenAI has solved all mathematics. The structured [claim register](#ai-mathematics-claim-register) contains the selected findings; [the metadata catalogue](data/mathematics/openai-math-catalogue.json) separately enumerates the complete captured OpenAI release.
 
 The distinctions below matter directly to a research memory system. A memory entry should not become more certain merely because it is linked to many other entries. It should become more useful because a reader can recover the exact statement, its evidence and the boundary at which the conclusion stops applying.
 

@@ -4,7 +4,7 @@
 
 ## How to use this volume
 
-Begin with a question and follow the smallest set of prerequisites that makes it answerable. Use the [formula notebook](02-formula-notebook.md) for assumptions, symbols, derivation sketches and worked checks. Use `nodes.json`, `edges.json` and `formulas.json` for the machine-readable network. Use [the AI evidence audit](04-ai-mathematics-audit.md) when a headline says a problem has been solved. The [complete captured OpenAI catalogue](openai-math-catalogue.json) enumerates manuscript metadata; individual entries remain explicitly unreviewed unless promoted in the separate claim ledger.
+Begin with a question and follow the smallest set of prerequisites that makes it answerable. Use the [formula notebook](../FORMULA_NOTEBOOK.md) for assumptions, symbols, derivation sketches and worked checks. Use `nodes.json`, `edges.json` and `formulas.json` for the machine-readable network. Use [the AI evidence audit](../AI_MATHEMATICS.md) when a headline says a problem has been solved. The [complete captured OpenAI catalogue](../data/mathematics/openai-math-catalogue.json) enumerates manuscript metadata; individual entries remain explicitly unreviewed unless promoted in the separate claim ledger.
 
 The main discipline is to distinguish five operations: representing an object, measuring it, approximating it, proving a property about it, and interpreting the property in an application. A force-directed picture represents a graph. A shortest-path algorithm measures one kind of route cost. A vector embedding approximates semantic relationships. A convergence argument proves something about an iteration. None of these alone demonstrates that a software memory system operates like a biological brain.
 
