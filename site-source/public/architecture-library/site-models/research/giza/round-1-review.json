@@ -1,0 +1,49 @@
+{
+  "schemaVersion": 1,
+  "round": 1,
+  "expert": "Heritage survey and architectural accuracy",
+  "status": "visual assets acquired; measured accuracy blocked",
+  "findings": [
+    {
+      "finding": "Reusable site-specific surface bytes exist",
+      "evidence": [
+        "assets.json",
+        "blender-inspection.json"
+      ],
+      "impact": "Implementation can load actual captured geometry rather than invented blocks",
+      "change": "Use immutable source hashes and explicit visual-reference labels",
+      "acceptance": "Downloaded bytes match hashes; GLB loads; license and adaptation credits are visible"
+    },
+    {
+      "finding": "Metric scale and registration are not established",
+      "evidence": [
+        "assets.json",
+        "measurements.json"
+      ],
+      "impact": "Dimension tools could imply unsupported accuracy",
+      "change": "Keep source units unknown; store any later similarity transform and fitting landmarks separately",
+      "acceptance": "Measured mode remains disabled until surveyed datum, independent checkpoints and residuals are recorded"
+    },
+    {
+      "finding": "Coverage and texture resolution are incomplete",
+      "evidence": [
+        "plateau-preview.png",
+        "blender-inspection.json"
+      ],
+      "impact": "Million-triangle master cannot meet complete extreme-detail request",
+      "change": "Label clipped/unknown surfaces and avoid filling them as observed geometry",
+      "acceptance": "Exterior/interior/roof/occlusion coverage manifest and close-up texture checks accompany every claimed feature"
+    },
+    {
+      "finding": "Reconstructed casing dimensions differ from surviving fabric",
+      "evidence": [
+        "measurements.json",
+        "giza-dash-2015"
+      ],
+      "impact": "A single ideal envelope conflates time states",
+      "change": "Separate original-envelope reconstruction, captured present fabric and inferred gap fill",
+      "acceptance": "Each layer declares evidence class and date; no reconstructed point is counted as an independent control checkpoint"
+    }
+  ],
+  "nextRoundReview": "Review the root implementation against source hashes, licensing display, accuracy gating, visible gaps, units, and layer separation."
+}

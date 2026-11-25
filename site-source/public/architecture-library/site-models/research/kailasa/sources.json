@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "runId": "architecture-reality-round1-2026-11-25",
+  "nodeId": "reality-capture-kailasa",
+  "attempt": 1,
+  "accessed": "2026-11-25",
+  "sources": [
+    {
+      "id": "asi-ellora",
+      "title": "Ellora Caves",
+      "url": "https://asi.nic.in/pages/WorldHeritageElloraCaves",
+      "publisher": "Archaeological Survey of India",
+      "kind": "primary",
+      "evidence": "Primary custodian page identifies Kailasa as Cave16; no reusable 3D dataset or dimensional control supplied on this page."
+    },
+    {
+      "id": "gsxn-record",
+      "title": "Ellora Caves | India",
+      "url": "https://zenodo.org/records/10269303",
+      "publisher": "Zenodo / 3DBigDataSpace",
+      "kind": "primary",
+      "evidence": "Record and API inspected; CC-BY-4.0, 11,670,764-byte GLB, Objaverse/Sketchfab provenance."
+    },
+    {
+      "id": "gsxn-api",
+      "title": "Ellora record machine-readable metadata",
+      "url": "https://zenodo.org/api/records/10269303",
+      "publisher": "Zenodo",
+      "kind": "primary",
+      "evidence": "Exact download size, MD5 and license ID verified."
+    },
+    {
+      "id": "gsxn-original",
+      "title": "Ellora Caves | India \u2014 original model listing",
+      "url": "https://sketchfab.com/3d-models/ellora-caves-india-1a5ec1e212f9451e80dc051e97164d17",
+      "publisher": "Sketchfab / Graphic solutions, embedded older credit GSXNet",
+      "kind": "primary",
+      "evidence": "Indexed creator listing advertises CC Attribution and photogrammetry/3D scan; direct web retrieval403. Local GLB embeds GSXNet, original modelURL and CC-BY-4.0."
+    },
+    {
+      "id": "cc-by",
+      "title": "CC BY 4.0 deed",
+      "url": "https://creativecommons.org/licenses/by/4.0/",
+      "publisher": "Creative Commons",
+      "kind": "primary",
+      "evidence": "Permits sharing/adaptation including commercial under attribution conditions; no warranty of all necessary rights."
+    },
+    {
+      "id": "klein-models",
+      "title": "Ellora Caves: 3-D photogrammetry by Arno Klein (2023)",
+      "url": "https://zenodo.org/records/22163078",
+      "publisher": "Arno Klein / Zenodo",
+      "kind": "primary",
+      "evidence": "Source-owner deposited feature models; titlecaptureyear2023, publicationdate2025-04-15, recordcreated2026-08-29; dates are distinct."
+    },
+    {
+      "id": "klein-api",
+      "title": "Klein photogrammetry machine-readable record",
+      "url": "https://zenodo.org/api/records/22163078",
+      "publisher": "Zenodo",
+      "kind": "primary",
+      "evidence": "CC-BY-NC-4.0 and 165,806,576-byte glb.zip MD5 verified; OBJ1,024,920,308bytes exceeds acquisition budget."
+    },
+    {
+      "id": "klein-raw",
+      "title": "Ellora Caves: RAW photos by Arno Klein (2023)",
+      "url": "https://zenodo.org/records/22136858",
+      "publisher": "Arno Klein / Zenodo",
+      "kind": "primary",
+      "evidence": "CC-BY-NC-4.0 viaAPI; HinduRAW16,122,822,229bytes, not acquired; photography alone does not establish calibrated scan accuracy."
+    },
+    {
+      "id": "klein-site",
+      "title": "Ellora Caves Documentation",
+      "url": "https://elloracaves.org/explore?cave=16",
+      "publisher": "Arno Klein / Ellora Caves project",
+      "kind": "primary",
+      "evidence": "Public documentation link. Returned app shell; interactive contents not exercised in a browser."
+    },
+    {
+      "id": "sidhu",
+      "title": "Kailasa Temple at Ellora",
+      "url": "https://sketchfab.com/3d-models/kailasa-temple-at-ellora-c2d066f668034e1c893480e7f9190824",
+      "publisher": "sikandar sidhu / Sketchfab",
+      "kind": "primary",
+      "evidence": "Creator describes photogrammetry. Published2017-05-06; API2,940,225faces and1,475,075vertices, download disabled and no license."
+    },
+    {
+      "id": "sidhu-api",
+      "title": "Sidhu public model API",
+      "url": "https://api.sketchfab.com/v3/models/c2d066f668034e1c893480e7f9190824",
+      "publisher": "Sketchfab",
+      "kind": "primary",
+      "evidence": "isDownloadable:false,license:{}; public metadata only, no asset extraction."
+    },
+    {
+      "id": "itek-june",
+      "title": "Kailasa Temple 49-million-splat reconstruction",
+      "url": "https://itek-media.com/xgrids-portalcam-india-kailasa-temple-3dgs/",
+      "publisher": "iTek Media",
+      "kind": "primary",
+      "evidence": "June10,2026 creator reports49M splats,1.5GB optimized,33GB raw,PortalCam/LCC2; performance and fidelity author-reported, not independent survey validation."
+    },
+    {
+      "id": "itek-rights",
+      "title": "iTek samples: ownership and permitted use",
+      "url": "https://itek-media.com/samples/",
+      "publisher": "iTek Media",
+      "kind": "primary",
+      "evidence": "Explicit viewing/evaluation-only policy; no reuse license granted. Kailasa download request-gated. No request submitted or data extracted."
+    },
+    {
+      "id": "itek-viewer",
+      "title": "Gaussian Splats \u2014 The Kailasa Temple",
+      "url": "https://itek-media.com/gs/the_kailasa_temple/",
+      "publisher": "iTek Media",
+      "kind": "primary",
+      "evidence": "Source-owned public viewer link; not downloaded or browser-tested."
+    },
+    {
+      "id": "arrival-viewer",
+      "title": "Kailasa Temple LCC2 (The 3DGS Fidelity Challenge)",
+      "url": "https://arrival.space/opuslab_kailasatemple_3dgschallenge",
+      "publisher": "OpusLab / Arrival.Space",
+      "kind": "primary",
+      "evidence": "Public scene linked by iTek; not an asset reuse grant and not browser-tested."
+    },
+    {
+      "id": "openheritage-search",
+      "title": "OpenHeritage3D contributor policy",
+      "url": "https://www.openheritage3d.org/joinusPage",
+      "publisher": "OpenHeritage3D",
+      "kind": "primary",
+      "evidence": "Contributor-selected licenses and documentation of rights matter. Bounded Ellora/Kailasa search found no identified site-specific record; this is not a claim of absence."
+    }
+  ]
+}

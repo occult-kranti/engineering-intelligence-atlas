@@ -1,0 +1,382 @@
+{
+  "schemaVersion": 1,
+  "id": "el-markaz-islami-mosque",
+  "source": {
+    "id": "el-markaz-islami-mosque",
+    "format": "obj",
+    "path": "/workspace/scratch/4a07ba7b19a1/sacred-site-originals/acquired/el-markaz-islami-mosque/mesh_metashape.obj",
+    "bytes": 296868910,
+    "sha256": "b216639cae63edbbe429f435bbf3eca181d10deceea756594acbc2a00e207a9c",
+    "license": "CC-BY-4.0",
+    "creator": "Rucha Shende, Sudhir Mudur, Tiberiu Popa, Kaustubha Mendhurwar \u2014 Concordia University",
+    "url": "https://zenodo.org/records/17063337",
+    "rightsReviewed": true,
+    "rightsNote": "Source-owner academic dataset publishes CC BY 4.0. Selected member byte size and CRC32 verified; entire ZIP MD5 was not verified. No surveyed units or capture-permit verification inferred.",
+    "sourceArchive": "16-Islamic-Center-of-Quebec-El-MarkazIslami-Mosque.zip",
+    "sourceMember": "16-Islamic-Center-of-Quebec-El-MarkazIslami-Mosque/6_metashape/mesh_metashape.obj",
+    "sourceCrc32": "bdc95822",
+    "acquisitionRecord": "projects/architecture-library/site-models/research/sacred-sites/acquisition.json",
+    "priorBlenderOBJImport": {
+      "removedFaces": 12,
+      "cause": "not established; source repeated-index count is zero"
+    },
+    "reviewedWebLimitBytes": 67108864,
+    "budgetReview": "Moderator approved 64 MiB dense-asset / 160 MiB collection exception to retain every source normal, color, position and face.",
+    "acquisitionScript": "projects/architecture-library/site-models/research/sacred-sites/acquire_meshes.py"
+  },
+  "conversion": {
+    "sourceSha256": "b216639cae63edbbe429f435bbf3eca181d10deceea756594acbc2a00e207a9c",
+    "sourceBytes": 296868910,
+    "vertices": 1554546,
+    "triangles": 3104134,
+    "indexCount": 9312402,
+    "repeatedIndexTriangles": 0,
+    "zeroAreaFloat32Triangles": 2,
+    "allFacesRetained": true,
+    "sourceBounds": {
+      "min": [
+        -4.929494,
+        -4.524787,
+        -16.672556
+      ],
+      "max": [
+        7.263009,
+        4.981806,
+        -6.782788
+      ],
+      "dimensions": [
+        12.192503,
+        9.506592999999999,
+        9.889768
+      ],
+      "units": "unverified source coordinate units"
+    },
+    "precision": {
+      "position": {
+        "storage": "IEEE754 Float32",
+        "comparison": "Source decimal parsed as nearest IEEE754 Float64, then Math.fround; parsing bound retained separately.",
+        "decimalToFloat32IsLossless": false,
+        "sampleCount": 1554546,
+        "maxAbsoluteErrorPerAxis": [
+          2.3840332019631205e-07,
+          2.3840332019631205e-07,
+          4.999999987376214e-07
+        ],
+        "rmsErrorPerAxis": [
+          8.199820795110591e-08,
+          5.667321422340274e-08,
+          2.8003485777235523e-07
+        ],
+        "conservativeFloat64ParsingBound": 3.70205111011046e-15,
+        "worstExamples": [
+          {
+            "decimal": "5.834059",
+            "parsedFloat64": 5.834059,
+            "float32": 5.83405876159668,
+            "absoluteError": 2.3840332019631205e-07
+          },
+          {
+            "decimal": "4.009691",
+            "parsedFloat64": 4.009691,
+            "float32": 4.00969123840332,
+            "absoluteError": 2.3840332019631205e-07
+          },
+          {
+            "decimal": "-16.210938",
+            "parsedFloat64": -16.210938,
+            "float32": -16.2109375,
+            "absoluteError": 4.999999987376214e-07
+          }
+        ]
+      },
+      "color": {
+        "storage": "IEEE754 Float32",
+        "comparison": "Source decimal parsed as nearest IEEE754 Float64, then Math.fround; parsing bound retained separately.",
+        "decimalToFloat32IsLossless": false,
+        "sampleCount": 1554546,
+        "maxAbsoluteErrorPerAxis": [
+          2.964401246696724e-08,
+          2.964401246696724e-08,
+          2.964401246696724e-08
+        ],
+        "rmsErrorPerAxis": [
+          1.42531606865819e-08,
+          1.4041948212961297e-08,
+          1.2601700232687327e-08
+        ],
+        "conservativeFloat64ParsingBound": 2.150783995347183e-16,
+        "worstExamples": [
+          {
+            "decimal": "0.760784",
+            "parsedFloat64": 0.760784,
+            "float32": 0.7607839703559875,
+            "absoluteError": 2.964401246696724e-08
+          },
+          {
+            "decimal": "0.760784",
+            "parsedFloat64": 0.760784,
+            "float32": 0.7607839703559875,
+            "absoluteError": 2.964401246696724e-08
+          },
+          {
+            "decimal": "0.760784",
+            "parsedFloat64": 0.760784,
+            "float32": 0.7607839703559875,
+            "absoluteError": 2.964401246696724e-08
+          }
+        ]
+      },
+      "normal": {
+        "storage": "IEEE754 Float32",
+        "comparison": "Source decimal parsed as nearest IEEE754 Float64, then Math.fround; parsing bound retained separately.",
+        "decimalToFloat32IsLossless": false,
+        "sampleCount": 1554546,
+        "maxAbsoluteErrorPerAxis": [
+          2.9800415024539006e-08,
+          2.9800415024539006e-08,
+          2.9800415024539006e-08
+        ],
+        "rmsErrorPerAxis": [
+          1.4255690128146815e-08,
+          1.3362566038954054e-08,
+          1.3202260080131297e-08
+        ],
+        "conservativeFloat64ParsingBound": 2.220446049250313e-16,
+        "worstExamples": [
+          {
+            "decimal": "0.839102",
+            "parsedFloat64": 0.839102,
+            "float32": 0.839102029800415,
+            "absoluteError": 2.9800415024539006e-08
+          },
+          {
+            "decimal": "0.948477",
+            "parsedFloat64": 0.948477,
+            "float32": 0.948477029800415,
+            "absoluteError": 2.9800415024539006e-08
+          },
+          {
+            "decimal": "0.604727",
+            "parsedFloat64": 0.604727,
+            "float32": 0.604727029800415,
+            "absoluteError": 2.9800415024539006e-08
+          }
+        ]
+      }
+    },
+    "coordinateRescale": false,
+    "axisConversion": false,
+    "vertexReordering": false,
+    "indexReordering": false,
+    "uvPresent": false,
+    "normalsPresent": true,
+    "normalsRegenerated": false,
+    "materialLibraries": [
+      "16.mtl"
+    ],
+    "materialNames": [
+      "Solid"
+    ],
+    "materialFilesLoaded": false,
+    "materialNotice": "Referenced MTL files are not loaded; no UV records or textures are supplied. RGB numbers are retained without a color-space conversion; source color space is unverified."
+  },
+  "compression": {
+    "extension": "EXT_meshopt_compression",
+    "encoderMethod": "QUANTIZE",
+    "quantizeTransformApplied": false,
+    "indices": "Uint32 triangle triples: ATTRIBUTES/12-byte grouping; Uint16: INDICES sequence; exact order retained",
+    "filters": "NONE",
+    "encoderVersion": "1.2.0",
+    "gltfTransformVersion": "4.5.1"
+  },
+  "preservation": {
+    "accessorBytesEqual": true,
+    "indexBytesAndCountsEqual": true,
+    "textureBytesEqual": true,
+    "materialPropertiesEqual": true,
+    "nodeTransformsEqual": true,
+    "hierarchyEqual": true,
+    "primitiveModesEqual": true,
+    "noDecimation": true,
+    "noQuantizeTransform": true,
+    "noLossyFilters": true,
+    "rawJSONTransformEquality": null
+  },
+  "sourceSnapshot": {
+    "accessors": [
+      {
+        "name": "source-color",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 1554546,
+        "bytes": 18654552,
+        "sha256": "3886f419781b64760332698caa26da09607fe2f1edade1aaa269a4ce66f3bbfa"
+      },
+      {
+        "name": "source-normal",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 1554546,
+        "bytes": 18654552,
+        "sha256": "219d60fdac48bbc7fd766874321c4236b7df072a30c3940d014cac6596aeaf65"
+      },
+      {
+        "name": "source-position",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 1554546,
+        "bytes": 18654552,
+        "sha256": "11ecf749e9154f71b4f27c1cfc963af256645a6b81220b6307b9b92562569195"
+      },
+      {
+        "name": "source-indices",
+        "type": "SCALAR",
+        "componentType": 5125,
+        "normalized": false,
+        "count": 9312402,
+        "bytes": 37249608,
+        "sha256": "737c47a1bd9a66089cf80a7cedec3796d703129939406f385dabce28ee5b21bb"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "el-markaz-islami-mosque",
+        "primitives": [
+          {
+            "mode": 4,
+            "indices": 3,
+            "attributes": {
+              "COLOR_0": 0,
+              "NORMAL": 1,
+              "POSITION": 2
+            },
+            "material": 0,
+            "targets": 0
+          }
+        ]
+      }
+    ],
+    "textures": [],
+    "materials": [
+      {
+        "name": "source-vertex-rgb",
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "emissiveFactor": [
+          0,
+          0,
+          0
+        ],
+        "metallicFactor": 1,
+        "roughnessFactor": 1,
+        "alphaMode": "OPAQUE",
+        "alphaCutoff": 0.5,
+        "doubleSided": true,
+        "baseColorTexture": null,
+        "emissiveTexture": null,
+        "normalTexture": null,
+        "occlusionTexture": null,
+        "metallicRoughnessTexture": null,
+        "extensions": [
+          "KHR_materials_unlit"
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "name": "source-coordinates-unchanged",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [],
+        "mesh": 0
+      }
+    ],
+    "scenes": [
+      {
+        "name": "source-scene",
+        "children": [
+          0
+        ]
+      }
+    ],
+    "totals": {
+      "meshCount": 1,
+      "nodeCount": 1,
+      "vertexEntries": 1554546,
+      "triangles": 3104134,
+      "indices": 9312402,
+      "repeatedIndexTriangles": 0
+    }
+  },
+  "output": {
+    "web": {
+      "file": "el-markaz-islami-mosque.glb",
+      "bytes": 49140024,
+      "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67"
+    },
+    "blenderReady": {
+      "file": "el-markaz-islami-mosque.decompressed.glb",
+      "bytes": 93215020,
+      "sha256": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+      "note": "Meshopt removed and decoded accessors verified. Editor import may change topology; consult separate actual editor receipts. No face-removal cause inferred."
+    }
+  },
+  "sizeTarget": {
+    "bytes": 26214400,
+    "met": false
+  },
+  "assetAudit": {
+    "guidance": [
+      "OpenCodeGameStudios asset-audit",
+      "OpenCodeGameStudios asset-spec"
+    ],
+    "scope": "Applied checks, not the entire upstream workflow or an imported permission grant.",
+    "naming": "Stable lowercase hyphenated site IDs from the approved brief.",
+    "specification": "Preserve all source positions, vertex RGB, indices, texture bytes and transforms; no simplification or invented detail.",
+    "formatChecked": true,
+    "sourceHashMatched": true,
+    "missingReferences": [
+      {
+        "name": "16.mtl",
+        "status": "referenced MTL not supplied or loaded"
+      }
+    ],
+    "generatedFilesReferencedByReceipt": true,
+    "sizeBudgetBytes": 26214400,
+    "artBible": "No upstream project art bible exists; the approved source-preservation brief governs.",
+    "shaderNotice": "Unlit vertex-color material; no inferred source color-space conversion."
+  },
+  "scaleVerified": false,
+  "coordinateUnits": "unverified source units; no rescaling performed",
+  "generatedAt": "2026-11-25T04:12:40.636Z",
+  "releaseBudget": {
+    "bytes": 67108864,
+    "met": true,
+    "review": "Moderator approved 64 MiB dense-asset / 160 MiB collection exception to retain every source normal, color, position and face."
+  },
+  "implementationSourceSha256": "019b59a1126ccc34c5af6361e7ce2096f238723e9eb3d376193d23d854f831fd",
+  "guidanceRecord": "../applied-guidance.json"
+}

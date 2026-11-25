@@ -21,6 +21,8 @@ jobs:
           cache-dependency-path: site-source/package-lock.json
       - run: npm ci
         working-directory: site-source
+      - name: Restore byte-identical captured model inputs
+        run: node scripts/materialize-heritage-models.mjs
       - name: Check, build and test without live service credentials
         working-directory: site-source
         run: |
@@ -36,19 +38,27 @@ jobs:
           node --test projects/architecture-library/tests/*.test.mjs scripts/architecture-library-assets.test.mjs scripts/static-build-lib.test.mjs
           python3 -m unittest discover -s projects/architecture-library/samples -p 'test_*.py' -v
           python3 -m unittest discover -s projects/architecture-library/geospatial/tests -p 'test_*.py' -v
+      - name: Verify pinned game resources and preserving geometry pipeline
+        run: |
+          npm --prefix integrations/heritage-assets ci --ignore-scripts --no-audit --no-fund
+          node scripts/check-game-heritage.mjs
       - name: Install browser for the release gate
         working-directory: site-source
         run: npx playwright install --with-deps chromium
       - name: Verify all workspace panels before publishing a release
         run: node scripts/smoke-static.mjs
       - name: Verify architecture library on desktop and mobile
-        run: node scripts/smoke-architecture-library.mjs
+        run: |
+          node scripts/smoke-architecture-library.mjs
+          node scripts/smoke-heritage-viewer.mjs
       - name: Retain architecture library browser evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: architecture-library-ui
-          path: site-source/.work/architecture-ui
+          path: |
+            site-source/.work/architecture-ui
+            site-source/.work/heritage-ui
           if-no-files-found: warn
       - name: Retain release browser evidence
         if: always()

@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "upstream": "OpenCode Game Studios",
+  "upstreamCommit": "85aa449a0cbc2ca44916455185c9d3b4a23a7429",
+  "reviewed": "2026-11-25",
+  "selectedSources": [
+    {
+      "path": ".agents/modules/engine-godot/agents/godot-specialist.md",
+      "sha256": "7c8d8b61d54d18368c519eed2259ea2553fecba1330e92e6cd54edf519028936"
+    },
+    {
+      "path": ".agents/modules/qa/skills/perf-profile/SKILL.md",
+      "sha256": "2f94c7692c4fa29cc688fbd25eb61c41efbd45671a1476fa5af55ca3dcf6b670"
+    },
+    {
+      "path": "docs/engine-reference/godot/VERSION.md",
+      "sha256": "7e1e7fcbe391d571ed819f611a833d0c088c08d9a8eda2ddb53f3110e5d06877"
+    },
+    {
+      "path": "docs/engine-reference/godot/deprecated-apis.md",
+      "sha256": "98e51b798d3d8e9c0beecdadd94e5d30849a35edba6eaf53474442d52a51cb9b"
+    },
+    {
+      "path": "docs/engine-reference/godot/breaking-changes.md",
+      "sha256": "26b6dd24120bfaffcf9566907fbc3e610f0b9d8f3107320f55a8fb8ce3fd5240"
+    },
+    {
+      "path": "docs/engine-reference/godot/modules/rendering.md",
+      "sha256": "bd4c8be3f923be44bf6f9ffe6cbbbcd9736ac40c76cd969bcf4e2cf546ceabae"
+    }
+  ],
+  "applied": [
+    "Verify actual engine version and relevant APIs before implementation.",
+    "Use typed GDScript, PackedScene instantiation and explicit scene cleanup.",
+    "Separate measured importer time and memory from unmeasured FPS and target-device performance.",
+    "Profile before proposing optimisation; preserve source data and do not infer budgets."
+  ],
+  "scope": "Source guidance applied to a new isolated audit project; upstream code and instructions were not installed as runtime authority. User authorization already covers implementation.",
+  "engineVerified": "4.7.2.stable.official.ed1daf0bf",
+  "officialApiReferences": [
+    "https://docs.godotengine.org/en/stable/classes/class_gltfdocument.html",
+    "https://docs.godotengine.org/en/stable/classes/class_mesh.html",
+    "https://docs.godotengine.org/en/stable/classes/class_os.html"
+  ]
+}

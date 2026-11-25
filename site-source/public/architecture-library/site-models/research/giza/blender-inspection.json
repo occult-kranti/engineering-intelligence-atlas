@@ -1,0 +1,44 @@
+{
+  "tool": "Blender 4.5.17 LTS",
+  "source": "giza-plateau-pierre391-original.glb",
+  "meshObjects": 12,
+  "vertices": 763436,
+  "polygons": 1163285,
+  "worldBounds": {
+    "min": [
+      -5.717258930206299,
+      -7.132998466491699,
+      -3.3101859092712402
+    ],
+    "max": [
+      5.0552544593811035,
+      5.7225422859191895,
+      5.210320949554443
+    ],
+    "extents": [
+      10.772513389587402,
+      12.855541229248047,
+      8.520506858825684
+    ]
+  },
+  "units": "source scene units; physical metre scale NOT verified",
+  "images": [
+    {
+      "name": "Image_0",
+      "width": 1024,
+      "height": 1024
+    }
+  ],
+  "accuracyVerified": false,
+  "interiorsVerified": false,
+  "render": {
+    "width": 640,
+    "height": 480,
+    "samples": 8,
+    "device": "CPU",
+    "output": "plateau-preview.png"
+  },
+  "visualReview": "Preview inspected: two pyramids clearly visible, clipped/holed plateau margin and incomplete apparent Menkaure area; texture detail is insufficient for block-level inspection.",
+  "previewSha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5",
+  "rawSourceSha256": "7ba058be251b6c3e24c476e1386fd4defb21b626c4093e981a38723dd4e73c1e"
+}

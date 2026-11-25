@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "blenderVersion": "4.5.17 LTS",
+  "blenderBuildHash": "2f5ec98689b8",
+  "sourceFile": "mesh_metashape.obj",
+  "sourceSha256": "02014fbc7e830c331330a454726a8e0f0af541d89eb7de8c1e56f319830dd64c",
+  "sourceUnits": "unverified; no metric rescale or normalization applied",
+  "sourceAxisConvention": "unverified; XYZ imported unchanged using Y-forward/Z-up setting",
+  "displayMaterial": "captured per-vertex colour via emission; no image textures synthesized",
+  "glTFConvention": "standard Y-up conversion by Blender exporter",
+  "meshes": [
+    {
+      "name": "mesh_metashape",
+      "vertices": 1881698,
+      "polygons": 3757757,
+      "triangles": 3757757,
+      "colourAttributes": [
+        {
+          "name": "Color",
+          "domain": "POINT",
+          "type": "FLOAT_COLOR",
+          "elements": 1881698
+        }
+      ],
+      "uvLayers": 0,
+      "sourceBounds": {
+        "minimum": [
+          -7.970555782318115,
+          -5.534197807312012,
+          -18.367019653320312
+        ],
+        "maximum": [
+          5.807343006134033,
+          2.6339800357818604,
+          -6.070713996887207
+        ]
+      },
+      "matrixWorld": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "meshCount": 1,
+  "vertices": 1881698,
+  "triangles": 3757757,
+  "importAndExportSeconds": 20.175,
+  "lodReductionApplied": false,
+  "elapsedSeconds": 35.237,
+  "outputs": [
+    {
+      "file": "converted.glb",
+      "bytes": 105309688,
+      "sha256": "568dbe78af5084444d9cb72e0b8fc70eb675b35e6f12509566f3d50056eae84b"
+    },
+    {
+      "file": "preview.png",
+      "bytes": 216693,
+      "sha256": "30556dacc5fd2b3b9a084fa7ce73bc27477f8da0ae0c616d3f446b48f8e328be"
+    }
+  ],
+  "sourceTriangles": 3757768,
+  "sourceFacesWithRepeatedVertexIndex": 0,
+  "removedFacesOnImport": 11,
+  "strictSourceTriangleEquality": false,
+  "removedFaceCountMatchesSourceRepeatedIndexFaces": false,
+  "assetRole": "inspection derivative; raw OBJ is the source master"
+}

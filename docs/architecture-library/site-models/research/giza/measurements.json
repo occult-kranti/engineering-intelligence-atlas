@@ -1,0 +1,90 @@
+{
+  "schemaVersion": 1,
+  "units": "metres",
+  "purpose": "Reference evidence only; not used to claim the downloaded meshes were surveyed",
+  "records": [
+    {
+      "id": "khufu-original-casing-baseline-2015",
+      "site": "khufu",
+      "sourceIds": [
+        "giza-dash-2015"
+      ],
+      "surfaceState": "Estimated original casing baseline, not the present eroded core",
+      "coordinateSystem": "GPMP local control grid; not an EPSG identifier",
+      "method": "Linear-regression baseline fitting and extrapolated corner intersections",
+      "confidenceLevelReported": 0.95,
+      "sideLengths": [
+        {
+          "side": "north",
+          "min": 230.256,
+          "estimate": 230.329,
+          "max": 230.402
+        },
+        {
+          "side": "east",
+          "min": 230.295,
+          "estimate": 230.334,
+          "max": 230.373
+        },
+        {
+          "side": "south",
+          "min": 230.329,
+          "estimate": 230.384,
+          "max": 230.439
+        },
+        {
+          "side": "west",
+          "min": 230.378,
+          "estimate": 230.407,
+          "max": 230.436
+        }
+      ],
+      "meanSideLength": 230.363,
+      "caution": "Confidence intervals describe the fitted archaeological baseline estimate; they are not a mesh RMSE or a full-surface tolerance."
+    },
+    {
+      "id": "khufu-original-height-overview",
+      "site": "khufu",
+      "sourceIds": [
+        "giza-mota-khufu"
+      ],
+      "value": 146.5,
+      "quantity": "original height",
+      "evidenceClass": "official nominal overview",
+      "uncertainty": null
+    },
+    {
+      "id": "khafre-height-overview",
+      "site": "khafre",
+      "sourceIds": [
+        "giza-mota-khafre"
+      ],
+      "value": 143.5,
+      "quantity": "nominal height in monument overview",
+      "evidenceClass": "official nominal overview; distinguish from extant summit",
+      "uncertainty": null
+    },
+    {
+      "id": "khafre-current-reference-2025",
+      "site": "khafre",
+      "sourceIds": [
+        "giza-scidep-2025"
+      ],
+      "height": 136.4,
+      "baseLength": 215.3,
+      "evidenceClass": "research-paper introductory reference dimensions, not new surface measurement",
+      "uncertainty": null
+    },
+    {
+      "id": "menkaure-original-height-overview",
+      "site": "menkaure",
+      "sourceIds": [
+        "giza-mota-menkaure"
+      ],
+      "value": 65,
+      "quantity": "original height",
+      "evidenceClass": "official rounded overview",
+      "uncertainty": null
+    }
+  ]
+}

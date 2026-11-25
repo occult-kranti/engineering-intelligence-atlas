@@ -1,0 +1,1051 @@
+{
+  "schemaVersion": 1,
+  "title": "Verified art, Blender learning and game-asset references",
+  "checkedOn": "2026-11-25",
+  "timezone": "America/New_York",
+  "scope": "Project-local reference catalog and planned learning exercises; no personal skill installation or external content mirroring.",
+  "externalSpendUsd": 0,
+  "verificationMethod": "Read primary creator/publisher pages and official documentation; query exact supplied GitHub repository metadata where available. A 404 means unavailable to this check, not proof of historical nonexistence. Search non-results do not establish that a lesson never existed.",
+  "executionClaims": {
+    "tutorialsCompleted": false,
+    "newArtExercisesExecuted": false,
+    "softwareInstalledByThisCatalog": false,
+    "thirdPartyAssetsDownloadedByThisCatalog": false,
+    "purchasesMade": false
+  },
+  "resources": [
+    {
+      "id": "practice-drawing-this",
+      "name": "Practice Drawing This",
+      "type": "interactive-drawing-reference",
+      "canonicalUrls": {
+        "home": "https://practicedrawingthis.com/",
+        "models": "https://practicedrawingthis.com/cgi-bin/3d-models-index.cgi",
+        "anatomy": "https://practicedrawingthis.com/cgi-bin/3d-models-index.cgi?section=3d-models-anatomy",
+        "timedDrawing": "https://practicedrawingthis.com/timed-drawing/"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "Free browser references include primitive forms, rotatable anatomy, and dynamically posable body-part models.",
+          "sourceIds": [
+            "pdt-models",
+            "pdt-anatomy"
+          ]
+        },
+        {
+          "claim": "Timed drawing offers selectable intervals and browser-local progress backup; the publisher documents lighting controls in its 3D viewer.",
+          "sourceIds": [
+            "pdt-timed",
+            "pdt-lighting"
+          ]
+        }
+      ],
+      "license": {
+        "label": "Custom reference-use terms; individual third-party source rights also apply.",
+        "scope": "Drawing studies may be published or sold; raw photographs, model files and site code may not be scraped or repackaged into a competing reference library without permission.",
+        "redistribution": "Link to the service; do not vendor its raw reference collection.",
+        "sourceIds": [
+          "pdt-terms"
+        ]
+      },
+      "access": {
+        "cost": "Free public reference tools.",
+        "signup": "No account wall appeared in the retrieved model index or timed-drawing page; an optional newsletter exists. Interactive browser execution was not tested.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "A free anatomy website is an open-source anatomy asset library.",
+          "status": "incorrect",
+          "correction": "The service is a reference practice resource with custom terms; no blanket open-source or CC0 grant was verified.",
+          "sourceIds": [
+            "pdt-terms"
+          ]
+        },
+        {
+          "claim": "The proposed fifteen-minute routine is the site's official routine.",
+          "status": "incorrect",
+          "correction": "The site promotes a 25-minute routine; the fifteen-minute routine in ART_FUNDAMENTALS.md is an original Daftar practice plan.",
+          "sourceIds": [
+            "pdt-home"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Gesture and form observation",
+        "Anatomy construction studies",
+        "Three-value lighting studies",
+        "Memory redraws"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "pdt-home",
+          "url": "https://practicedrawingthis.com/cgi-bin/index.cgi",
+          "title": "Practice Drawing This home",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "pdt-models",
+          "url": "https://www.practicedrawingthis.com/cgi-bin/3d-models-index.cgi",
+          "title": "3D Model Drawing Reference",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "pdt-anatomy",
+          "url": "https://practicedrawingthis.com/cgi-bin/3d-models-index.cgi?section=3d-models-anatomy",
+          "title": "3D anatomy reference index",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "pdt-timed",
+          "url": "https://practicedrawingthis.com/cgi-bin/morning-sketches-app-overview.cgi?illo=model-organic-008-bent-cone-002",
+          "title": "Timed Drawing Exercises",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "pdt-lighting",
+          "url": "https://practicedrawingthis.com/cgi-bin/carousel.cgi?episode=blog-2025-09-21-prepare-your-workspace-so-that-it-is-easy-to-start-drawing-the-next-day&section=newsletter-archive",
+          "title": "Publisher explanation of model controls and lighting",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "pdt-terms",
+          "url": "https://www.practicedrawingthis.com/cgi-bin/terms.cgi?terms=1",
+          "title": "Privacy And Terms Of Use",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "grant-abbitt-game-art",
+      "name": "Grant Abbitt: game art learning",
+      "type": "creator-courses",
+      "canonicalUrls": {
+        "home": "https://www.gabbitt.co.uk/",
+        "courses": "https://www.gabbitt.co.uk/courses",
+        "youtube": "https://www.youtube.com/@grabbitt",
+        "store": "https://grantabbitt.gumroad.com/"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "The official course index includes Realistic Low Poly Game Assets - Rocks and Detailed Game Assets, alongside beginner and paid character/animation courses.",
+          "sourceIds": [
+            "grant-courses"
+          ]
+        },
+        {
+          "claim": "A verified low-poly character lesson is Blender Low Poly Character: PS1 Style Modeling for Beginners.",
+          "sourceIds": [
+            "grant-ps1"
+          ]
+        }
+      ],
+      "license": {
+        "label": "Creator and platform terms; individual downloads need their own license check.",
+        "scope": "Public viewing is not permission to redistribute videos or project files.",
+        "sourceIds": [
+          "grant-courses",
+          "grant-store"
+        ]
+      },
+      "access": {
+        "cost": "Free public tutorials; premium courses and product-specific downloads are separate.",
+        "signup": "YouTube viewing follows platform requirements; download checkout and course enrollment vary.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "youtube.com/@GrantAbbitt is the canonical channel.",
+          "status": "corrected",
+          "correction": "The retrieved official channel handle is @grabbitt.",
+          "sourceIds": [
+            "grant-channel"
+          ]
+        },
+        {
+          "claim": "Exact lesson: Blender Low Poly Character for Games.",
+          "status": "unverified-exact-title",
+          "correction": "Use the verified PS1-style character lesson or the creator course index rather than a guessed title.",
+          "sourceIds": [
+            "grant-ps1",
+            "grant-courses"
+          ]
+        },
+        {
+          "claim": "Free Blender Game Dev Pack on Gumroad.",
+          "status": "unverified-specific-product",
+          "correction": "The verified store lists individual reference/model resources; the named pack was not established. Do not invent a pack URL or reuse license.",
+          "sourceIds": [
+            "grant-store"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Make a small original prop",
+        "Practice low-poly silhouette and UVs",
+        "Block an original articulated character"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "grant-courses",
+          "url": "https://www.gabbitt.co.uk/courses",
+          "title": "Grant Abbitt Course Library",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "grant-channel",
+          "url": "https://www.youtube.com/channel/UCZFUrFoqvqlN8seaAeEwjlw",
+          "title": "Grant Abbitt official channel",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "grant-ps1",
+          "url": "https://www.youtube.com/watch?v=uIHuqFLa_X0",
+          "title": "Blender Low Poly Character: PS1 Style Modeling for Beginners",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "grant-rocks",
+          "url": "https://www.youtube.com/watch?v=WQHBSgRQ50o",
+          "title": "Realistic Low Poly Game Assets - Rocks",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "grant-store",
+          "url": "https://grantabbitt.gumroad.com/",
+          "title": "Gabbitt media storefront",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "cgcookie-game-assets",
+      "name": "CG Cookie: Modeling Video Game Assets in Blender",
+      "type": "course",
+      "canonicalUrls": {
+        "course": "https://www.cgcookie.com/courses/modeling-video-game-assets-in-blender/"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "The course is credited to Kent Trammell; its description includes work by Kent Trammell and Jonathan Williamson. It covers scale, pivots, sculpting and low-resolution retopology.",
+          "sourceIds": [
+            "cg-modeling"
+          ]
+        }
+      ],
+      "license": {
+        "label": "Course and download terms; no open redistribution license verified.",
+        "scope": "Link to lessons; author new exercises and original assets.",
+        "sourceIds": [
+          "cg-modeling"
+        ]
+      },
+      "access": {
+        "cost": "Subscription/enrollment offering; use free alternatives for the zero-spend track.",
+        "signup": "Course access requires the appropriate account/entitlement; not acquired.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "This CG Cookie course is taught by Grant Abbitt.",
+          "status": "incorrect",
+          "correction": "Its named instructor is Kent Trammell. Grant Abbitt is maintained as a separate creator resource.",
+          "sourceIds": [
+            "cg-modeling"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Study scale and pivot discipline",
+        "Compare sculpt/retopology silhouettes",
+        "Prepare an original game prop"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "cg-modeling",
+          "url": "https://www.cgcookie.com/courses/modeling-video-game-assets-in-blender/",
+          "title": "Modeling Video Game Assets in Blender",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "cgcookie-modular-assets",
+      "name": "CG Cookie: Building Modular Game Assets",
+      "type": "course",
+      "canonicalUrls": {
+        "course": "https://www.cgcookie.com/courses/building-modular-game-assets",
+        "learningPath": "https://www.cgcookie.com/bundles/build-game-ready-assets-in-blender"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "Kent Trammell's modular course covers a grid-aligned environment kit, shared UV space and a Unity import workflow. The separate game-ready learning path covers retopology, UVs and baking.",
+          "sourceIds": [
+            "cg-modular",
+            "cg-path"
+          ]
+        }
+      ],
+      "license": {
+        "label": "Course and download terms; no open redistribution license verified.",
+        "scope": "Use as instruction; do not rehost course media or assume downloadable files are CC0.",
+        "sourceIds": [
+          "cg-modular",
+          "cg-path"
+        ]
+      },
+      "access": {
+        "cost": "Paid/subscription learning; optional reference only in the current zero-spend plan.",
+        "signup": "Enrollment/entitlement required; not acquired.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "Every linked CG Cookie learning resource is free.",
+          "status": "incorrect",
+          "correction": "The learning path advertises paid access; no purchase was made.",
+          "sourceIds": [
+            "cg-path"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Define modular dimensions and pivots",
+        "Build an original snapping kit",
+        "Check seams and materials inside the target engine"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "cg-modular",
+          "url": "https://www.cgcookie.com/courses/building-modular-game-assets",
+          "title": "Building Modular Game Assets",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "cg-path",
+          "url": "https://www.cgcookie.com/bundles/build-game-ready-assets-in-blender",
+          "title": "Learning Path: Build Game-Ready Assets in Blender",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "ducky3d-motion-materials",
+      "name": "Ducky 3D: motion and material studies",
+      "type": "creator-courses",
+      "canonicalUrls": {
+        "home": "https://www.ducky3d.com/",
+        "about": "https://www.ducky3d.com/about",
+        "youtube": "https://www.youtube.com/channel/UCuNhGhbemBkdflZ1FGJ0lUQ"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "The creator describes work in stylized animation for brands and live concerts, plus animation education, tools and courses. The official website links its YouTube channel.",
+          "sourceIds": [
+            "ducky-about",
+            "ducky-home"
+          ]
+        }
+      ],
+      "license": {
+        "label": "Creator/platform and per-product terms; no blanket open-source grant verified.",
+        "scope": "Study the workflow and create original material tests; do not assume tutorial files or shaders are redistributable.",
+        "sourceIds": [
+          "ducky-about",
+          "ducky-home"
+        ]
+      },
+      "access": {
+        "cost": "Public videos plus separate commercial courses/add-ons.",
+        "signup": "Per-platform viewing/download conditions; no product acquired.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "Blender to Unity Complete Pipeline 2024 is a verified Ducky 3D lesson.",
+          "status": "unverified-exact-title",
+          "correction": "No primary result established that exact title. Use engine documentation for import semantics and Ducky 3D as a motion/material study source.",
+          "sourceIds": [
+            "ducky-home",
+            "ducky-about"
+          ]
+        },
+        {
+          "claim": "github.com/Ducky3D is a verified free Unity shader/tool distribution.",
+          "status": "unverified-creator-link",
+          "correction": "No creator-owned GitHub distribution was established from the official links. Similar community projects inspired by the creator are not his repository.",
+          "sourceIds": [
+            "ducky-home"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Small looping effect study",
+        "Material value and contrast study",
+        "Rebuild a chosen visual effect in engine and measure it"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "ducky-about",
+          "url": "https://www.ducky3d.com/about",
+          "title": "Ducky 3D official about",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "ducky-home",
+          "url": "https://www.ducky3d.com/",
+          "title": "Ducky 3D official home",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "polyfjord-tools",
+      "name": "Polyfjord tools and procedural studies",
+      "type": "creator-tools",
+      "canonicalUrls": {
+        "home": "https://polyfjord.com/",
+        "tools": "https://tools.polyfjord.com/",
+        "github": "https://github.com/polyfjord"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "The creator tools page links web experiments, a Simple Audio Visualizer, Simple Bounce Curve, and QT-Pie. The public GitHub profile links back to polyfjord.com.",
+          "sourceIds": [
+            "poly-tools",
+            "poly-github"
+          ]
+        }
+      ],
+      "license": {
+        "label": "Per-tool code licenses and per-product asset terms.",
+        "scope": "Check each linked repository or download separately; the creator catalog is not one blanket asset license.",
+        "sourceIds": [
+          "poly-tools"
+        ]
+      },
+      "access": {
+        "cost": "Public tool index and some open repositories; other products/courses have separate terms.",
+        "signup": "Public index readable without login; interactive operation not tested.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "github.com/polyfjord/blender-procedural-assets is a verified node-group repository.",
+          "status": "unavailable-at-check",
+          "correction": "The GitHub repository metadata request returned 404. This does not prove it never existed; it must not be used as a pinned dependency.",
+          "sourceIds": [
+            "poly-missing-api"
+          ]
+        },
+        {
+          "claim": "Exact lesson: Blender Procedural Rocks Tutorial by Polyfjord.",
+          "status": "unverified-exact-title",
+          "correction": "No primary source established this exact attribution. For a verified rock exercise use Grant Abbitt's official rock lesson; retain Polyfjord for verified tool/procedural studies.",
+          "sourceIds": [
+            "poly-tools",
+            "poly-github"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Procedural motion experiments",
+        "Audio-reactive study planning",
+        "Evaluate one tool in an isolated Blender profile"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "poly-tools",
+          "url": "https://tools.polyfjord.com/",
+          "title": "Polyfjord official tools index",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "poly-github",
+          "url": "https://github.com/polyfjord",
+          "title": "Polyfjord GitHub profile",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "poly-missing-api",
+          "url": "https://api.github.com/repos/polyfjord/blender-procedural-assets",
+          "title": "Supplied repository lookup",
+          "verification": "primary-github-api",
+          "observation": "404 Not Found",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "polyfjord-qt-pie",
+      "name": "Polyfjord QT-Pie",
+      "type": "blender-addon",
+      "canonicalUrls": {
+        "repository": "https://github.com/polyfjord/QT-Pie",
+        "officialIndex": "https://tools.polyfjord.com/"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "QT-Pie provides a configurable pie menu across Blender editors; its README states Blender 4.5+ and the repository displays GPL-3.0 licensing.",
+          "sourceIds": [
+            "qt-repo"
+          ]
+        }
+      ],
+      "license": {
+        "label": "GPL-3.0 repository code.",
+        "scope": "Preserve code license/notices when distributing; inspect the exact revision before installation.",
+        "sourceIds": [
+          "qt-repo"
+        ]
+      },
+      "access": {
+        "cost": "Public source code.",
+        "signup": "No account needed to read the public repository.",
+        "installed": false,
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "A workflow add-on guarantees a fixed productivity multiplier.",
+          "status": "unsupported",
+          "correction": "No Daftar timing experiment has been run; measure a repeatable task before deciding whether to adopt it.",
+          "sourceIds": [
+            "qt-repo"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Optional shortcut experiment after learning native Blender controls"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "qt-repo",
+          "url": "https://github.com/polyfjord/QT-Pie",
+          "title": "QT-Pie repository and README",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "polyfjord-pattern-generator",
+      "name": "Polyfjord Animated Pattern Generator",
+      "type": "procedural-web-tool",
+      "canonicalUrls": {
+        "repository": "https://github.com/polyfjord/Animated-Pattern-Generator",
+        "app": "https://tools.polyfjord.com/animated_pattern_generator.html"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "The README describes a web app that makes loopable patterns and exports image sequences or WebM; its repository displays GPL-3.0.",
+          "sourceIds": [
+            "pattern-repo"
+          ]
+        }
+      ],
+      "license": {
+        "label": "GPL-3.0 code; output-specific license not independently established.",
+        "scope": "Do not infer that the code license is a separate blanket license for all inputs or generated media.",
+        "sourceIds": [
+          "pattern-repo"
+        ]
+      },
+      "access": {
+        "cost": "Public source and hosted app.",
+        "signup": "No login wall appeared in the read-only repository evidence; app execution not tested.",
+        "installed": false,
+        "downloaded": false
+      },
+      "claimCorrections": [],
+      "recommendedUse": [
+        "Plan a simple animated pattern test",
+        "Compare a generated texture loop with an original engine shader"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "pattern-repo",
+          "url": "https://github.com/polyfjord/Animated-Pattern-Generator",
+          "title": "Animated Pattern Generator repository",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "ryan-king-art-rigging",
+      "name": "Ryan King Art: animation and rigging",
+      "type": "creator-courses",
+      "canonicalUrls": {
+        "about": "https://ryankingart.wordpress.com/77-2/",
+        "youtube": "https://www.youtube.com/@RyanKingArt",
+        "animationLesson": "https://ryanking.artstation.com/projects/Eab3W2",
+        "ikFiles": "https://www.patreon.com/ryankingart/posts/arm-and-leg-ik-65379888"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "The creator publishes Blender tutorials and separate digital products. His portfolio lists Animation for Beginners!, and his Patreon offers Arm and Leg IK Rigging tutorial files as a free download.",
+          "sourceIds": [
+            "ryan-about",
+            "ryan-animation",
+            "ryan-ik"
+          ]
+        }
+      ],
+      "license": {
+        "label": "Creator/product terms; free tutorial files are not a verified open-source rig license.",
+        "scope": "Inspect the download's terms before redistribution; this catalog links only.",
+        "sourceIds": [
+          "ryan-ik",
+          "ryan-about"
+        ]
+      },
+      "access": {
+        "cost": "Public tutorials and some free files; other products paid.",
+        "signup": "Patreon may require an account for downloads; no download was attempted.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "github.com/ryankingart/blender-game-rig is a verified game-rig repository.",
+          "status": "unavailable-at-check",
+          "correction": "GitHub metadata returned 404; no rig dependency was imported.",
+          "sourceIds": [
+            "ryan-missing-api"
+          ]
+        },
+        {
+          "claim": "Exact lesson: Blender Game Animation Fundamentals.",
+          "status": "unverified-exact-title",
+          "correction": "Use the verified Animation for Beginners! page and the IK tutorial resource instead of that unsupported exact title.",
+          "sourceIds": [
+            "ryan-animation",
+            "ryan-ik"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Make an original simple rig",
+        "Compare elbow/knee deformation",
+        "Export separately named idle/walk clips and inspect them in engine"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "ryan-about",
+          "url": "https://ryankingart.wordpress.com/77-2/",
+          "title": "Ryan King Art official about and links",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "ryan-animation",
+          "url": "https://ryanking.artstation.com/projects/Eab3W2",
+          "title": "Animation for Beginners!",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "ryan-ik",
+          "url": "https://www.patreon.com/ryankingart/posts/arm-and-leg-ik-65379888",
+          "title": "Arm and Leg IK Rigging (Free Tutorial Files)",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "ryan-missing-api",
+          "url": "https://api.github.com/repos/ryankingart/blender-game-rig",
+          "title": "Supplied repository lookup",
+          "verification": "primary-github-api",
+          "observation": "404 Not Found",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "machin3tools",
+      "name": "MACHIN3tools",
+      "type": "blender-addon",
+      "canonicalUrls": {
+        "documentation": "https://machin3.io/MACHIN3tools/docs/",
+        "officialStore": "https://machin3.gumroad.com/l/MACHIN3tools",
+        "creatorListing": "https://superhivemarket.com/products/machin3tools/docs"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "The creator sells Prime and DeusEx variants of a Blender tool/pie-menu collection. The creator's marketplace listing identifies the code license as GPL.",
+          "sourceIds": [
+            "machin-store",
+            "machin-market"
+          ]
+        }
+      ],
+      "license": {
+        "label": "GPL per creator marketplace; exact downloaded version/license must be checked if later acquired.",
+        "scope": "GPL source rights and current distribution price are separate. No authoritative public GitHub repository was verified.",
+        "sourceIds": [
+          "machin-market"
+        ]
+      },
+      "access": {
+        "cost": "Paid current creator distribution; no purchase made by this source-review task.",
+        "signup": "Store acquisition requirements apply.",
+        "installed": false,
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "github.com/machin3io/MACHIN3tools is the verified canonical public repository.",
+          "status": "unavailable-at-check",
+          "correction": "GitHub metadata returned 404. Use creator documentation/store URLs; do not silently replace it with an unverified mirror.",
+          "sourceIds": [
+            "machin-missing-api",
+            "machin-market"
+          ]
+        },
+        {
+          "claim": "The current official add-on is free.",
+          "status": "incorrect",
+          "correction": "The current creator offering is commercial; old free/pay-what-you-want descriptions are stale.",
+          "sourceIds": [
+            "machin-store"
+          ]
+        },
+        {
+          "claim": "90% of professionals use it; it makes work 10x faster.",
+          "status": "unsupported-quantification",
+          "correction": "No primary evidence or controlled benchmark substantiates those figures. Omit them.",
+          "sourceIds": [
+            "machin-store",
+            "machin-market"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Optional productivity evaluation after baseline proficiency",
+        "Keep the default practice track on native Blender tools"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "machin-store",
+          "url": "https://machin3.gumroad.com/l/MACHIN3tools",
+          "title": "MACHIN3 creator storefront",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "machin-market",
+          "url": "https://superhivemarket.com/products/machin3tools/docs",
+          "title": "MACHIN3 creator marketplace listing",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "machin-docs",
+          "url": "https://machin3.io/MACHIN3tools/docs/",
+          "title": "MACHIN3tools documentation",
+          "verification": "primary-public-page",
+          "observation": "direct fetch returned 403; URL verified by creator marketplace link",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "machin-missing-api",
+          "url": "https://api.github.com/repos/machin3io/MACHIN3tools",
+          "title": "Supplied repository lookup",
+          "verification": "primary-github-api",
+          "observation": "404 Not Found",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "poly-haven-assets",
+      "name": "Poly Haven",
+      "type": "asset-library",
+      "canonicalUrls": {
+        "home": "https://polyhaven.com/",
+        "license": "https://polyhaven.com/license"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "The publisher releases its HDRIs, textures and models under CC0, permitting commercial use and redistribution without required attribution.",
+          "sourceIds": [
+            "ph-license"
+          ]
+        }
+      ],
+      "license": {
+        "label": "CC0 assets.",
+        "scope": "CC0 does not extend to all website text, logos or example renders; website scraping and public API use have separate terms.",
+        "sourceIds": [
+          "ph-license"
+        ]
+      },
+      "access": {
+        "cost": "Free public assets; optional paid support/add-on offerings are separate.",
+        "signup": "Public catalog/license readable without login; no download attempted.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "CC0 assets mean the entire website may be mirrored without conditions.",
+          "status": "incorrect",
+          "correction": "The license page distinguishes downloadable CC0 assets from website content and access/API terms.",
+          "sourceIds": [
+            "ph-license"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Select one neutral HDRI for a repeatable lighting setup",
+        "Use one licensed texture as a material-study input",
+        "Record exact asset URL and downloaded-file hash when acquisition happens"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "ph-license",
+          "url": "https://polyhaven.com/license",
+          "title": "Poly Haven asset license and service terms",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "kenney-assets",
+      "name": "Kenney game assets",
+      "type": "asset-library",
+      "canonicalUrls": {
+        "assets": "https://kenney.nl/assets",
+        "support": "https://kenney.nl/support",
+        "bundle": "https://kenney.itch.io/kenney-game-assets"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "Kenney states that the game assets on its asset pages are CC0 and usable commercially without required attribution.",
+          "sourceIds": [
+            "kenney-support"
+          ]
+        },
+        {
+          "claim": "The publisher currently advertises more than 60,000 assets in its paid all-in-one convenience bundle of freely available content; this count was not independently enumerated.",
+          "sourceIds": [
+            "kenney-bundle"
+          ]
+        }
+      ],
+      "license": {
+        "label": "CC0 for assets on the asset pages.",
+        "scope": "Retain the included pack license in a provenance record; the Kenney logo is reserved for official projects. Other software/products have their own terms.",
+        "sourceIds": [
+          "kenney-support"
+        ]
+      },
+      "access": {
+        "cost": "Individual website asset packs free; all-in-one bundle is paid. Use individual packs for the zero-spend track.",
+        "signup": "Public catalog readable without login; individual download not attempted.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "Kenney has exactly 50,000+ assets and everything is a free single download.",
+          "status": "qualified",
+          "correction": "The current bundle description reports 60,000+ and sells the combined download; individual public packs remain free. Avoid treating the marketing count as an independent inventory.",
+          "sourceIds": [
+            "kenney-bundle",
+            "kenney-assets"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Prototype controls/UI with a small coherent pack",
+        "Replace one placeholder with an original asset",
+        "Measure style/readability before expanding the asset collection"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "kenney-support",
+          "url": "https://kenney.nl/support",
+          "title": "Kenney support and licensing FAQ",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "kenney-assets",
+          "url": "https://kenney.nl/assets",
+          "title": "Kenney asset catalog",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "kenney-bundle",
+          "url": "https://kenney.itch.io/kenney-game-assets",
+          "title": "Kenney official All-in-1 bundle",
+          "verification": "primary-public-page",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    },
+    {
+      "id": "blender-manual-asset-fundamentals",
+      "name": "Blender Manual: asset fundamentals",
+      "type": "official-documentation",
+      "canonicalUrls": {
+        "gltf": "https://docs.blender.org/manual/en/latest/addons/scene_gltf2.html",
+        "baking": "https://docs.blender.org/manual/en/latest/render/cycles/baking.html?highlight=bake",
+        "mirror": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html",
+        "weightPaint": "https://docs.blender.org/manual/en/5.0/sculpt_paint/weight_paint/usage.html"
+      },
+      "verifiedFacts": [
+        {
+          "claim": "The glTF exporter documents supported animation channels and export modes; its restrictions require a real engine import check. The baking manual covers UV/image targets and normal-map baking.",
+          "sourceIds": [
+            "bl-gltf",
+            "bl-bake"
+          ]
+        },
+        {
+          "claim": "Mirror configuration depends on origin/axis settings. Skin deformation can be adjusted with vertex-group weights, especially around joints.",
+          "sourceIds": [
+            "bl-mirror",
+            "bl-weights"
+          ]
+        }
+      ],
+      "license": {
+        "label": "Documentation reference; no manual text or implementation vendored.",
+        "scope": "Follow the actual software/add-on license if code is later copied.",
+        "sourceIds": [
+          "bl-gltf",
+          "bl-bake"
+        ]
+      },
+      "access": {
+        "cost": "Public documentation.",
+        "signup": "No account required for public manual; direct fetches failed, indexed primary excerpts were readable.",
+        "downloaded": false
+      },
+      "claimCorrections": [
+        {
+          "claim": "Every Blender material, modifier, constraint or effect automatically survives GLB export.",
+          "status": "incorrect",
+          "correction": "Export support varies by data type and exporter version; bake or rebuild unsupported content, then inspect the imported result.",
+          "sourceIds": [
+            "bl-gltf",
+            "bl-bake"
+          ]
+        }
+      ],
+      "recommendedUse": [
+        "Use documentation matching the installed Blender version",
+        "Validate export rather than inferring engine behavior from the Blender viewport"
+      ],
+      "checkedOn": "2026-11-25",
+      "executionStatus": "reference-verified; not-installed-or-executed",
+      "sources": [
+        {
+          "id": "bl-gltf",
+          "url": "https://docs.blender.org/manual/en/latest/addons/scene_gltf2.html",
+          "title": "Blender Manual glTF 2.0",
+          "verification": "primary-indexed-documentation",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "bl-bake",
+          "url": "https://docs.blender.org/manual/en/latest/render/cycles/baking.html?highlight=bake",
+          "title": "Blender Manual Render Baking",
+          "verification": "primary-indexed-documentation",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "bl-mirror",
+          "url": "https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/mirror.html",
+          "title": "Blender Manual Mirror Modifier",
+          "verification": "primary-indexed-documentation",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        },
+        {
+          "id": "bl-weights",
+          "url": "https://docs.blender.org/manual/en/5.0/sculpt_paint/weight_paint/usage.html",
+          "title": "Blender Manual Using Vertex Groups",
+          "verification": "primary-indexed-documentation",
+          "observation": "readable",
+          "checkedOn": "2026-11-25"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "engine": "Godot 4.7.2.stable.official.ed1daf0bf",
+  "sourceMasterCoordinates": "unchanged by harness; input transforms retained",
+  "measuredOn": "Linux execution host,2026-11-25 UTC; three audits run concurrently",
+  "fpsMeasured": false,
+  "sourceCodeSha256": {
+    "audit.gd": "47c828d7528823b1dba356357a61e659e91e9b2fdc3b610b8356fbdf637a4a62",
+    "run-audit.mjs": "6bca58371e6bf1bad372082c6b4d742f667459ce691b9551d60c1c7f583863d7",
+    "glb.mjs": "43ae9f68caa98ba0f227876801bb00c6ebda7379de1d261c26f65ae7b5bb44bd",
+    "project.godot": "d0aaf4e32f7caf226edca6fc730127219817c5d55a36878b0fe82c1bf347569b"
+  },
+  "results": [
+    {
+      "id": "kailasa-context",
+      "inputSha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+      "inputBytes": 11669704,
+      "vertices": 273390,
+      "triangles": 136499,
+      "vertexColourCount": 0,
+      "appendMs": 227.805,
+      "instantiateMs": 33.057,
+      "inspectionMs": 88.234,
+      "processMs": 834.8562670000001,
+      "sampledPeakRssMiB": 110.29,
+      "trackedPeakMiB": 68.46,
+      "checksPassed": 14,
+      "ok": true
+    },
+    {
+      "id": "st-george-antiochian-orthodox-church",
+      "inputSha256": "56a214714c1740aec8e831947b4260a380ecc48fa664ae9aea609a28e6b3fd38",
+      "inputBytes": 112836116,
+      "vertices": 1881698,
+      "triangles": 3757768,
+      "vertexColourCount": 1881698,
+      "appendMs": 2250.883,
+      "instantiateMs": 233.373,
+      "inspectionMs": 1650.46,
+      "processMs": 5088.170184,
+      "sampledPeakRssMiB": 774.26,
+      "trackedPeakMiB": 867.79,
+      "checksPassed": 14,
+      "ok": true
+    },
+    {
+      "id": "el-markaz-islami-mosque",
+      "inputSha256": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+      "inputBytes": 93215020,
+      "vertices": 1554546,
+      "triangles": 3104134,
+      "vertexColourCount": 1554546,
+      "appendMs": 2287.409,
+      "instantiateMs": 187.975,
+      "inspectionMs": 1343.768,
+      "processMs": 4628.157520999999,
+      "sampledPeakRssMiB": 679.32,
+      "trackedPeakMiB": 666.74,
+      "checksPassed": 14,
+      "ok": true
+    }
+  ]
+}

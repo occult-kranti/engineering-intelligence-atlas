@@ -1,0 +1,321 @@
+{
+  "schemaVersion": 1,
+  "contractId": "site-model-accuracy-v1",
+  "reviewedAt": "2026-11-25",
+  "status": "proposed-project-acceptance-contract",
+  "purpose": "Feature-level faithful models of identified Giza pyramids, Kailasa Cave 16, and named church/mosque sites; separate captured present state from reconstruction",
+  "notASurveyCertificate": true,
+  "currentBaseline": {
+    "localModelCount": 7,
+    "metricVerifiedCount": 0,
+    "gizaLocalModels": 4,
+    "kailasaContextModels": 1,
+    "churchExteriorModels": 1,
+    "mosqueExteriorModels": 1,
+    "detailFragments": "CC-BY-NC-4.0, source-only, unregistered; excluded from the seven integrated local models",
+    "countsDescribeIntegrationBaselineNotFullSiteCoverage": true,
+    "evidence": [
+      "research/giza/assets.json",
+      "research/giza/blender-inspection.json",
+      "research/kailasa/round-1-evidence.json",
+      "research/sacred-sites/sites.json"
+    ],
+    "sacredSiteRecords": [
+      {
+        "siteId": "st-george-antiochian-orthodox-church",
+        "name": "St. George Antiochian Orthodox Church, Montreal",
+        "evidence": "evidence/st-george-antiochian-orthodox-church.json",
+        "sourceVertices": 1881698,
+        "sourceTriangles": 3757768,
+        "capturedAppearance": "RGB vertex colour; not calibrated albedo",
+        "coverage": "captured exterior; interior/roof/occlusion completeness not established",
+        "metricVerified": false,
+        "sourceUnitsVerified": false,
+        "sourceTopologyPreservedInGlb": true,
+        "masterRetained": true,
+        "publishedGlb": {
+          "route": "direct source-preserving OBJ to Float32 GLB plus losslessly checked meshopt encoding",
+          "file": "assets/st-george-antiochian-orthodox-church.glb",
+          "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6",
+          "triangles": 3757768,
+          "sourceTrianglesRetained": true,
+          "sourceDecimalCoordinatesStoredAsFloat32": true,
+          "evidence": "evidence/st-george-antiochian-orthodox-church.json"
+        },
+        "previewInspection": {
+          "importedTriangles": 3757757,
+          "importRemovedFaces": 11,
+          "importRemovalCause": "unverified",
+          "route": "separate Blender inspection used to render the preview",
+          "blenderVersion": "4.5.17 LTS",
+          "sourceTopologyPreservedInGlb": false,
+          "sha256": "568dbe78af5084444d9cb72e0b8fc70eb675b35e6f12509566f3d50056eae84b",
+          "role": "inspection derivative only; not the published preserving GLB"
+        }
+      },
+      {
+        "siteId": "el-markaz-islami-mosque",
+        "name": "Islamic Center of Quebec — El Markaz Islami, Montreal",
+        "evidence": "evidence/el-markaz-islami-mosque.json",
+        "sourceVertices": 1554546,
+        "sourceTriangles": 3104134,
+        "capturedAppearance": "RGB vertex colour; not calibrated albedo",
+        "coverage": "captured exterior; interior/roof/occlusion completeness not established",
+        "metricVerified": false,
+        "sourceUnitsVerified": false,
+        "sourceTopologyPreservedInGlb": true,
+        "masterRetained": true,
+        "publishedGlb": {
+          "route": "direct source-preserving OBJ to Float32 GLB plus losslessly checked meshopt encoding",
+          "file": "assets/el-markaz-islami-mosque.glb",
+          "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67",
+          "triangles": 3104134,
+          "sourceTrianglesRetained": true,
+          "sourceDecimalCoordinatesStoredAsFloat32": true,
+          "evidence": "evidence/el-markaz-islami-mosque.json"
+        },
+        "previewInspection": {
+          "importedTriangles": 3104122,
+          "importRemovedFaces": 12,
+          "importRemovalCause": "unverified",
+          "route": "separate Blender inspection used to render the preview",
+          "blenderVersion": "4.5.17 LTS",
+          "sourceTopologyPreservedInGlb": false,
+          "sha256": "d60954718f3a7bb0b0acd5faeee078d36222151def3b287c1c1b9d8e8aa1f35a",
+          "role": "inspection derivative only; not the published preserving GLB"
+        }
+      }
+    ],
+    "kailasaPreview": {
+      "siteId": "kailasa-context",
+      "publishedTriangles": 136499,
+      "previewTriangles": 136498,
+      "removedOnPreviewImport": 1,
+      "cause": "unverified",
+      "publishedGlbSha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc",
+      "evidence": "evidence/kailasa-context.json",
+      "metricVerified": false
+    }
+  },
+  "projectTargets": [
+    {
+      "id": "whole-site",
+      "label": "Whole-site layout",
+      "targetP95ErrorMetres": 0.05,
+      "maximumErrorMetres": 0.1,
+      "scope": "Declared exterior site coordinates and large forms, including separated buildings and levels",
+      "recommendedControlUncertaintyMetres": 0.016666666666666666,
+      "minimumIndependentCheckpointsProposed": 30,
+      "status": "proposed-project-target-not-source-achievement",
+      "testQuantity": "3D Euclidean residual at independently surveyed checkpoints; declared surface-distance protocol additionally required for fine relief",
+      "units": "metres",
+      "currentAssetsQualified": false,
+      "checkpointCountIsSufficientByItself": false
+    },
+    {
+      "id": "architectural-feature",
+      "label": "Architectural features",
+      "targetP95ErrorMetres": 0.01,
+      "maximumErrorMetres": 0.02,
+      "scope": "Declared walls, openings, columns, steps, vaults and masonry interfaces",
+      "recommendedControlUncertaintyMetres": 0.0033333333333333335,
+      "minimumIndependentCheckpointsProposed": 30,
+      "status": "proposed-project-target-not-source-achievement",
+      "testQuantity": "3D Euclidean residual at independently surveyed checkpoints; declared surface-distance protocol additionally required for fine relief",
+      "units": "metres",
+      "currentAssetsQualified": false,
+      "checkpointCountIsSufficientByItself": false
+    },
+    {
+      "id": "ornament",
+      "label": "Individual ornament or relief",
+      "targetP95ErrorMetres": 0.001,
+      "maximumErrorMetres": 0.002,
+      "scope": "A bounded, directly captured relief/ornament patch; not a whole-monument promise",
+      "recommendedControlUncertaintyMetres": 0.0003333333333333333,
+      "minimumIndependentCheckpointsProposed": 30,
+      "status": "proposed-project-target-not-source-achievement",
+      "testQuantity": "3D Euclidean residual at independently surveyed checkpoints; declared surface-distance protocol additionally required for fine relief",
+      "units": "metres",
+      "currentAssetsQualified": false,
+      "checkpointCountIsSufficientByItself": false
+    }
+  ],
+  "definitions": {
+    "metricAccuracy": "Agreement with independent reference measurements in an identified datum at a declared epoch and spatial scope",
+    "geometricResolution": "Smallest feature sampled and represented by actual observations; must be evaluated locally",
+    "textureResolution": "Effective physical surface sampling of captured appearance after projection, not nominal image dimensions",
+    "coverage": "Recorded observed/missing/occluded/inferred regions against a named feature inventory",
+    "density": "Vertex/triangle/point count; no implication of accuracy, completeness or effective feature resolution"
+  },
+  "evidenceLayers": [
+    {
+      "id": "present-capture",
+      "description": "Observed fabric at the recorded capture date, including damage and restoration",
+      "metricClaimAllowedOnlyAfterQualification": true
+    },
+    {
+      "id": "historical-reconstruction",
+      "description": "Source-supported historical envelope or interpreted missing feature, explicitly separate from observations",
+      "mayBeIndependentSurveyCheckpoint": false
+    },
+    {
+      "id": "inferred-fill",
+      "description": "Interpolated, generated, repaired or otherwise conjectural surface",
+      "mayBePresentedAsCapture": false
+    },
+    {
+      "id": "source-reference",
+      "description": "Unregistered reference or rights-restricted/view-only feature",
+      "automaticPlacementAllowed": false
+    }
+  ],
+  "requiredEvidence": {
+    "identityAndRights": [
+      "exact monument/site identifier and feature location",
+      "custodian/source owner and acquisition permission where relevant",
+      "component-specific license including images and derivatives",
+      "capture date/epoch and restoration/condition state",
+      "immutable original download URL/version and SHA-256"
+    ],
+    "surveyAndCalibration": [
+      "physical units; axes; handedness; origin; horizontal and vertical datums or documented local frame",
+      "instrument/camera identity and calibration, observation method and reference uncertainty",
+      "control coordinates with units, source, uncertainties and spatial distribution",
+      "raw observations or sufficiently auditable processing records",
+      "separate held-out checkpoint file fixed before registration and excluded from tuning",
+      "feature inventory and region-level coverage/occlusion mask"
+    ],
+    "processing": [
+      "immutable master manifest and reversible derivative chain",
+      "software versions, commands/parameters and timestamps",
+      "explicit coordinate-transform chain, matrix convention and scale provenance",
+      "face/vertex/colour/image differences before and after conversion",
+      "cleaning, smoothing, hole-filling, decimation and texture-baking ledger",
+      "error-budget contributions and correlated/systematic limitations"
+    ],
+    "acceptance": [
+      "independent checkpoint residual vectors and identifiers",
+      "per-region sample counts, distribution, RMSE, nearest-rank P95 and maximum 3D residual",
+      "holdout selection method, uncertainty and independent reviewer",
+      "feature-level coverage, resolution and appearance inspection",
+      "proposed target selection and explicit acceptance decision for named scope/epoch",
+      "derivative-to-master comparison after simplification/conversion"
+    ]
+  },
+  "checkpointProtocol": {
+    "independence": "No checkpoint used for control fitting, ICP, scale estimation, camera calibration, correction or threshold tuning",
+    "selection": "Declare representative spatial strata before evaluation: footprint quadrants, height bands, separated components and feature classes; include weak/occluded-adjacent regions",
+    "holdoutRule": "Proposed: at least 20% of independently surveyed usable landmarks and at least 30 checkpoint observations per claimed profile/assessment unit; meeting the count alone is insufficient",
+    "smallFeatureAlternative": "Independent high-accuracy patch reference or calibrated artefact with documented uncertainty and equivalent spatial coverage; justify the protocol explicitly",
+    "residual": "e_i = norm(modelPosition_i - independentReferencePosition_i) after the frozen registered transform",
+    "rmse": "sqrt(sum(e_i^2)/N); report additionally, never substitute for maximum or coverage",
+    "p95": "Sort all retained e_i ascending; use nearest-rank e_(ceil(0.95*N)); N must be stated",
+    "maximum": "Maximum retained 3D residual; do not delete large residuals merely to pass",
+    "outliers": "Preserve raw observations and full-set statistics; any exclusion must have an independent documented cause, affected region and both before/after results",
+    "distribution": "Report statistics by spatial stratum and feature class; a good global score does not qualify an untested region",
+    "notProofOf": "All-surface accuracy, hidden fabric, interiors, manufacturing suitability or a formal survey certification"
+  },
+  "errorBudget": {
+    "components": [
+      "reference/control uncertainty",
+      "sensor calibration and image/laser measurement uncertainty",
+      "scale and datum/registration uncertainty",
+      "time/condition mismatch",
+      "meshing and surface approximation",
+      "format/precision conversion",
+      "LOD simplification",
+      "checkpoint feature-identification uncertainty"
+    ],
+    "combinationRule": "Document bias and dependence. Use root-sum-square only with justified independence/distribution assumptions; otherwise use a conservative bound or mark unquantified. Report independent end-to-end checkpoint results regardless.",
+    "planningAllocation": "Recommended control/reference uncertainty <= one third of selected P95 target; proposed allocation, not a guarantee",
+    "unknownValuePolicy": "null/unknown is not zero and cannot pass a numeric acceptance gate"
+  },
+  "coverageVocabulary": [
+    "observed",
+    "partially-observed",
+    "occluded",
+    "not-captured",
+    "historically-reconstructed",
+    "inferred-fill",
+    "rights-unavailable",
+    "identity-unresolved"
+  ],
+  "publicationGates": {
+    "visualReference": [
+      "rights and attribution verified for intended output",
+      "source hash and evidence class shown",
+      "scale unknown stated when unverified",
+      "capture gaps and derivative changes disclosed"
+    ],
+    "metricClaim": [
+      "chosen proposed target accepted for a named scope",
+      "all required survey evidence present",
+      "independent holdout protocol satisfied",
+      "P95 and maximum within selected limits by required region",
+      "error budget and reference uncertainty support target",
+      "coverage limited explicitly to verified observed regions",
+      "independent reviewer records acceptance"
+    ],
+    "alwaysBlocked": [
+      "using triangle count or image size as proof of metric accuracy",
+      "presenting invented blockwork/ornament or filled holes as captured fabric",
+      "using a single assumed monument dimension as independent validation",
+      "silently registering different caves/sites/fragments",
+      "automatic redistribution of noncommercial or view-only detail in a general commercial-capable bundle"
+    ]
+  },
+  "siteGapMatrix": [
+    {
+      "siteId": "giza-khufu-khafre-menkaure",
+      "currentEvidence": "Three reduced individual meshes and partial plateau photogrammetry; separate published baseline/height references",
+      "missing": [
+        "original source capture/camera provenance",
+        "metric control and independent checkpoint report",
+        "complete present exterior and summit/basal coverage",
+        "registered interior capture where authorized",
+        "surface-state separation for missing casing and original envelope",
+        "verified close-up masonry/stone-joint resolution"
+      ],
+      "nextQualifyingInput": "Permitted controlled capture or licensed survey dataset, with current-fabric checkpoints and coverage map; no raw survey master acquired in this task"
+    },
+    {
+      "siteId": "kailasa-ellora-cave-16",
+      "currentEvidence": "Coarse context mesh; four clearly named Cave-16 feature references in a noncommercial archive",
+      "missing": [
+        "whole-temple rights-cleared high-detail capture",
+        "registered levels/interior/exterior and occlusion coverage",
+        "custodian-confirmed feature identity/placement",
+        "metric scale, controls and held-out checkpoints",
+        "compatible intended-use permission for detail fragments",
+        "detail-to-context transform and residuals"
+      ],
+      "nextQualifyingInput": "Rights-compatible full-site capture plus independently registered carved-feature patches; other Ellora caves must remain separate"
+    },
+    {
+      "siteId": "st-george-antiochian-orthodox-church",
+      "currentEvidence": "High-density captured exterior master with RGB vertices",
+      "missing": [
+        "metric datum, scale and independent checkpoints",
+        "verified roof/interior/occlusion inventory",
+        "calibrated material/colour reference if required",
+        "explanation/handling of 11 faces lost in importer derivative",
+        "frame-specific faithful close-up validation"
+      ],
+      "nextQualifyingInput": "Auditable survey/calibration and coverage evidence plus supplementary permitted captures; retain raw OBJ"
+    },
+    {
+      "siteId": "el-markaz-islami-mosque",
+      "currentEvidence": "High-density captured exterior master with RGB vertices",
+      "missing": [
+        "metric datum, scale and independent checkpoints",
+        "verified roof/interior/occlusion inventory",
+        "calibrated material/colour reference if required",
+        "explanation/handling of 12 faces lost in importer derivative",
+        "frame-specific faithful close-up validation"
+      ],
+      "nextQualifyingInput": "Auditable survey/calibration and coverage evidence plus supplementary permitted captures; retain raw OBJ"
+    }
+  ],
+  "implementationNote": "This file specifies acceptance and documents evidence gaps. It does not itself enforce viewer/pipeline behavior or certify any source."
+}

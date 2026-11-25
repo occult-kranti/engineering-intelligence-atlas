@@ -3,7 +3,12 @@ import path from 'node:path';
 
 const MAX_FILES = 220;
 const MAX_FILE_BYTES = 4 * 1024 * 1024;
-const MAX_TOTAL_BYTES = 14 * 1024 * 1024;
+// Full captured geometry is opt-in in the viewer and is never precached.
+// Only these seven reviewed models can exceed the normal 4 MiB asset cap.
+const CAPTURE_NAMES = new Set(['st-george-antiochian-orthodox-church', 'el-markaz-islami-mosque',
+  'kailasa-context', 'giza-plateau', 'khufu', 'khafre', 'menkaure']);
+const MAX_CAPTURE_BYTES = 64 * 1024 * 1024;
+const MAX_TOTAL_BYTES = 160 * 1024 * 1024;
 const extensions = new Set(['.html', '.css', '.mjs', '.json', '.md', '.py', '.blend', '.glb', '.png', '.geojson']);
 export function plainPath(root, candidate) {
   const relative = path.relative(root, candidate);
@@ -32,7 +37,9 @@ export function architectureLibraryInputs(repoRoot) {
     const from = path.join(source, relative);
     plainPath(repoRoot, from);
     const stat = fs.lstatSync(from);
-    if (!stat.isFile() || stat.size > MAX_FILE_BYTES) throw new Error(`Architecture asset is not a bounded regular file: ${relative}`);
+    const capture = /^site-models\/assets\/([a-z0-9-]+)\.glb$/.exec(relative);
+    const limit = capture && CAPTURE_NAMES.has(capture[1]) ? MAX_CAPTURE_BYTES : MAX_FILE_BYTES;
+    if (!stat.isFile() || stat.size > limit) throw new Error(`Architecture asset is not a bounded regular file: ${relative}`);
     bytes += stat.size;
     if (bytes > MAX_TOTAL_BYTES) throw new Error('Architecture library exceeds its static payload budget.');
     return { relative, from, bytes: stat.size };

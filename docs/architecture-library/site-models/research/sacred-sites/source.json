@@ -1,0 +1,38 @@
+{
+  "id": "heritage3dmtl-17063337",
+  "title": "Heritage3DMtl: An Open Multi-Modal UAV Dataset of Montreal's Diverse Heritage Buildings",
+  "url": "https://zenodo.org/records/17063337",
+  "api": "https://zenodo.org/api/records/17063337",
+  "doi": "10.5281/zenodo.17063337",
+  "creators": [
+    {
+      "name": "Shende, Rucha",
+      "affiliation": "Concordia University",
+      "orcid": "0009-0008-5414-6722"
+    },
+    {
+      "name": "Mudur, Sudhir",
+      "affiliation": "Concordia University",
+      "orcid": "0000-0003-4837-0118"
+    },
+    {
+      "name": "Popa, Tiberiu",
+      "affiliation": "Concordia University",
+      "orcid": "0000-0003-2223-4476"
+    },
+    {
+      "name": "Mendhurwar, Kaustubha",
+      "affiliation": "Concordia University",
+      "orcid": "0000-0002-3022-7156"
+    }
+  ],
+  "license": "CC-BY-4.0",
+  "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+  "licenseEvidence": {
+    "jsonPointer": "/metadata/license/id",
+    "value": "cc-by-4.0"
+  },
+  "retrievedAtUtc": "2026-11-25T03:56:56.319569+00:00",
+  "sourceKind": "author-deposited academic UAV photogrammetry dataset",
+  "coverage": "exteriors; camera poses, images, point clouds and reconstructed meshes"
+}

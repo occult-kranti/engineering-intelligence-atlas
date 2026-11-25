@@ -1,0 +1,53 @@
+{
+  "file": "mesh_metashape.obj",
+  "bytes": 296868910,
+  "sha256": "b216639cae63edbbe429f435bbf3eca181d10deceea756594acbc2a00e207a9c",
+  "counts": {
+    "vertices": 1554546,
+    "colouredVertices": 1554546,
+    "normals": 1554546,
+    "faces": 3104134,
+    "trianglesAfterFanTriangulation": 3104134,
+    "facesWithRepeatedVertexIndex": 0
+  },
+  "faceSizes": {
+    "3": 3104134
+  },
+  "sourceBounds": {
+    "minimum": [
+      -4.929494,
+      -4.524787,
+      -16.672556
+    ],
+    "maximum": [
+      7.263009,
+      4.981806,
+      -6.782788
+    ],
+    "extent": [
+      12.192503,
+      9.506592999999999,
+      9.889768
+    ],
+    "units": "source units; metres not established"
+  },
+  "colourRange": {
+    "minimum": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "maximum": [
+      0.94902,
+      0.964706,
+      0.968627
+    ]
+  },
+  "materialReferences": [
+    "16.mtl"
+  ],
+  "presentMaterialFiles": [],
+  "allPositionsAndColoursFinite": true,
+  "positivePositionIndicesInBounds": true,
+  "elapsedSeconds": 9.892
+}

@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "round": 2,
+  "expert": "coding-and-toolchain-integration",
+  "reviewType": "independent cross-review of changed Round 1 artifact",
+  "date": "2026-11-25",
+  "artifact": {
+    "manifest": "reports/heritage-panel-2026-11-24/round-1-artifact.json",
+    "declaredSha256": "5aa26c9d8361b786bfdf272bb80bb80ab11090275355c71a973b7f5f2070aeca",
+    "listedFilesVerified": 231,
+    "hashMismatches": [],
+    "baselineCommit": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48",
+    "scopeQualification": "Listed files verified; primary omissions recorded in E4-R2-02."
+  },
+  "verdict": "project-resource and native authority boundaries pass; implement three bounded runtime/provenance/release fixes before final review",
+  "findings": [
+    {
+      "id": "E4-R2-01",
+      "severity": "medium",
+      "status": "fix-required",
+      "finding": "A stalled model download has no deadline and the unload/cancel control is disabled for the duration of loading.",
+      "evidence": [
+        {
+          "path": "projects/architecture-library/site-models/site-models.mjs",
+          "lines": "39-48, 50-66, 68-96",
+          "observation": "unload() calls setControls(false), which disables #unload-model; loadSelected disables #load-model; fetch and reader.read use an AbortController without a timeout. Cancellation is only triggered by selecting another asset, pagehide or the disabled unload control."
+        },
+        {
+          "path": "scripts/smoke-heritage-viewer.mjs",
+          "lines": "78-99",
+          "observation": "Failure cases cover HTTP 503, same-size corrupt bytes and catalog failure, but no stalled response or cancellation during loading."
+        }
+      ],
+      "impact": "A slow or never-ending response can leave the selected model indefinitely in Loading state, with no direct cancel action. Byte limits bound transferred bytes but not wall time.",
+      "fix": "Give the download a bounded deadline, keep an explicit cancel/unload action enabled while a request is active, clear timers in finally, and guard status updates by request identity so a cancelled old request cannot overwrite the current selection.",
+      "acceptance": "A deliberately stalled GLB response reaches a readable timeout/retry state within the configured bound; clicking Cancel while loading aborts the request immediately, leaves the preview visible and permits a successful subsequent load; stale completion does not attach a canvas or replace the selected status."
+    },
+    {
+      "id": "E4-R2-02",
+      "severity": "medium",
+      "status": "fix-required",
+      "finding": "The round artifact hash covers listed integration/viewer files but omits changed primary workflow, role charter, catalog source and test files that this round is asked to review.",
+      "evidence": [
+        {
+          "path": "reports/heritage-panel-2026-11-24/round-1-artifact.json",
+          "observation": "All 231 listed files match their recorded hashes. Seventeen changed non-derived primary files are absent from the list, including .github/workflows/ci.yml, .github/workflows/pages.yml, company/role-library/engineering.md, company/role-library/qa.md, projects/architecture-library/static-assets.json, role charters, test edits and site-source/src/data/resources.ts."
+        }
+      ],
+      "impact": "The reported artifact identity is accurate for its list, but does not identify the complete primary changeset reviewed by the panel. Workflow or role edits could change without changing the next round identity.",
+      "fix": "Include every changed primary source/configuration/test/role file in the next artifact manifest, keep derived static projection verification separate, and record the precise hash construction method.",
+      "acceptance": "A comparison of changed primary paths against the next artifact manifest finds no unexplained omissions; all listed hashes match; changing a workflow or role charter changes the artifact identity."
+    },
+    {
+      "id": "E4-R2-03",
+      "severity": "medium",
+      "status": "release-gate-fix-required",
+      "finding": "The Pages deployment runs independently of the broad CI workflow and does not run the newly added resource-pack and geometry/catalog unit gates before uploading the site.",
+      "evidence": [
+        {
+          "path": ".github/workflows/ci.yml",
+          "observation": "The web job adds resource synchronizer verification/tests, heritage-assets tests, Godot audit tests and site-model catalog tests."
+        },
+        {
+          "path": ".github/workflows/pages.yml",
+          "observation": "The push/workflow_dispatch deploy job performs legacy architecture validation, static build and browser smokes, then uploads and deploys; it has no dependency on the CI web job and does not execute the new unit/integrity suites."
+        }
+      ],
+      "impact": "A main-branch push or manual Pages run can publish while the broader workflow fails its new integration or preserving-geometry checks. Browser smoke verifies visible models but is not a substitute for those failure-boundary tests.",
+      "fix": "Run the relevant new integrity/catalog/geometry gates inside the Pages workflow, preferably through a shared reusable gate, or make deployment consume successful evidence tied to the exact commit. Retain fail-closed ordering before upload/deploy.",
+      "acceptance": "An intentionally tampered pinned resource or failing heritage integrity test prevents the Pages upload/deploy steps for that exact revision; a successful gate retains its evidence and permits publishing."
+    }
+  ],
+  "passes": [
+    {
+      "finding": "Selected resource pack remains intact and project-scoped.",
+      "evidence": "python integrations/opencode-game-studios/sync_resources.py --check returned exit 0, 119 files verified at upstream85aa449a0cbc2ca44916455185c9d3b4a23a7429, executionEnabled false.",
+      "impact": "Materialized source guidance remains traceable without activating upstream hooks, MCP or a provider.",
+      "acceptance": "Passed current pack verification; no need to rerun all 17 unchanged fixture tests in this review."
+    },
+    {
+      "finding": "Role expansion preserves native authority.",
+      "evidence": {
+        "roleKeysChanged": false,
+        "capabilityChanges": [],
+        "nativeOrRuntimeFilesChanged": [],
+        "changedRoleFields": "brief, examples and references only"
+      },
+      "impact": "Donna ownership, employee identities and runtime grants are not changed by the resource references.",
+      "acceptance": "Passed exact comparison of role keys/capabilities and source change inventory."
+    },
+    {
+      "finding": "Viewer has useful existing integrity and isolation boundaries.",
+      "evidence": "Catalog validates local paths, HTTPS source links, reviewed licenses and false metric claims; download size and SHA-256 are checked before parsing; GLB external URLs are rejected and loader URL modification permits only embedded blob/data resources; rendering is event-driven and explicit unload disposes geometry/materials/textures.",
+      "impact": "Reviewed local assets cannot silently load remote glTF resources, and model scale remains unchanged.",
+      "acceptance": "Source review passed; actual Chromium execution remains a CI gate, not claimed executed by this reviewer."
+    },
+    {
+      "finding": "Static publication has measured byte boundaries.",
+      "evidence": {
+        "files": 158,
+        "actualBytes": 155342247,
+        "budgetBytes": 167772160,
+        "perCaptureBudgetBytes": 67108864,
+        "catalogModelCount": 7,
+        "code": "scripts/architecture-library-assets.mjs allowlists seven capture names, rejects symlinks and stale projection files"
+      },
+      "impact": "Large geometry is confined to reviewed capture files under a finite total budget; initial viewer loads previews only.",
+      "acceptance": "Current manifest total is below the static budget."
+    },
+    {
+      "finding": "Tool and framework claims distinguish execution from references.",
+      "evidence": "Integration README/tool-inventory record actual local version probes; resource-catalog record states selected definitions are not running employees/permissions and no provider/MCP activation. Model viewer and CI receipt disclaim physical accuracy, target-device performance, Unreal and VPS execution.",
+      "impact": "Installed tools, task guidance and untested deployments are not conflated.",
+      "acceptance": "Passed wording and evidence review; underlying full engine workflows are reviewed by the dedicated capture/engine experts."
+    }
+  ],
+  "omittedPrimaryPaths": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/pages.yml",
+    "cloud-workspace/lib/resource-catalog.ts",
+    "company/role-library/engineering.md",
+    "company/role-library/qa.md",
+    "desktop-shell/src/renderer/resource-library/catalog.ts",
+    "projects/architecture-library/index.html",
+    "projects/architecture-library/library.css",
+    "projects/architecture-library/static-assets.json",
+    "roles/blender-3d-designer/README.md",
+    "roles/engine-graphics-programmer/README.md",
+    "roles/game-designer/README.md",
+    "roles/game-tools-build-engineer/README.md",
+    "roles/gameplay-engineer/README.md",
+    "scripts/architecture-library-assets.test.mjs",
+    "scripts/resource-router.test.mjs",
+    "site-source/src/data/resources.ts"
+  ],
+  "checksPerformed": [
+    "Verified SHA-256 of all 231 listed Round 1 files",
+    "Verified current selected-resource pack via its CLI",
+    "Compared role keys and capability arrays against baseline",
+    "Inspected modified CI/Pages release steps",
+    "Inspected viewer load/decode/disposal/status paths and error smoke cases",
+    "Measured static publication input bytes"
+  ],
+  "notExecuted": [
+    "Local browser launch",
+    "Provider/API calls",
+    "Full unchanged 17-test synchronizer suite",
+    "Full repository stress suite",
+    "VPS deployment"
+  ],
+  "externalSpend": 0,
+  "codeChanged": false,
+  "nextRound": "Review the exact Round 2 changed artifact after moderator fixes."
+}

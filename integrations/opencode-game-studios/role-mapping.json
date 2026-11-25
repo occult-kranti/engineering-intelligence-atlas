@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "mode": "project-resource-reference",
+  "createsNativeEmployees": false,
+  "changesNativeAuthority": false,
+  "activatesMcpServers": false,
+  "installsGlobalSkills": false,
+  "permissionContract": "../creative-tools/RUNTIME_CONTRACT.md",
+  "assetContract": "HERITAGE_ASSET_CONTRACT.md",
+  "roleFamilies": {
+    "engineering": [
+      "resources/modules/programming/agents/gameplay-programmer.md",
+      "resources/modules/programming/agents/tools-programmer.md",
+      "resources/modules/architecture/agents/lead-programmer.md",
+      "resources/modules/engine-godot/agents/godot-specialist.md"
+    ],
+    "design-and-graphics": [
+      "resources/modules/design/agents/game-designer.md",
+      "resources/modules/art/agents/art-director.md",
+      "resources/modules/art/agents/technical-artist.md",
+      "resources/modules/art/skills/asset-spec/SKILL.md",
+      "resources/modules/art/skills/asset-audit/SKILL.md"
+    ],
+    "quality-assurance": [
+      "resources/modules/qa/agents/qa-lead.md",
+      "resources/modules/qa/agents/performance-analyst.md",
+      "resources/modules/qa/agents/security-engineer.md",
+      "resources/modules/qa/skills/test-evidence-review/SKILL.md"
+    ]
+  },
+  "panel": {
+    "moderator": {
+      "responsibility": "Bound work, assign exclusive file ownership, reconcile evidence, authorize the next artifact revision and publication within the user's approved scope.",
+      "references": ["resources/modules/core/agents/technical-director.md", "resources/modules/core/agents/producer.md", "resources/modules/core/skills/gate-check/SKILL.md"]
+    },
+    "heritage-and-survey-expert": {
+      "responsibility": "Check site identity, chronology, calibrated dimensions, source coverage and uncertainty; external domain evidence is still required.",
+      "references": ["HERITAGE_ASSET_CONTRACT.md", "resources/modules/art/skills/asset-spec/SKILL.md"]
+    },
+    "reality-capture-expert": {
+      "responsibility": "Inspect captured geometry, rights, source coordinates, colors and derivation losses; preserve an immutable source master.",
+      "references": ["resources/modules/art/agents/technical-artist.md", "resources/modules/art/skills/asset-audit/SKILL.md"]
+    },
+    "engine-and-performance-expert": {
+      "responsibility": "Verify actual target-engine import and measured CPU/memory/geometry budgets while retaining high-detail masters.",
+      "references": ["resources/modules/engine-godot/agents/godot-specialist.md", "resources/modules/qa/agents/performance-analyst.md", "resources/modules/qa/skills/perf-profile/SKILL.md"]
+    },
+    "coding-and-toolchain-expert": {
+      "responsibility": "Maintain reproducible pinned tools/resources, protect project configuration, test failures and preserve native permissions.",
+      "references": ["resources/modules/programming/agents/tools-programmer.md", "resources/modules/qa/agents/security-engineer.md", "resources/modules/qa/skills/test-evidence-review/SKILL.md"]
+    }
+  },
+  "roundContract": {
+    "rounds": 3,
+    "requiresChangedArtifactBetweenRounds": true,
+    "requiredReviewFields": ["artifactRevision", "finding", "evidence", "impact", "change", "acceptanceResult"],
+    "resourceLimitsAreEnforcedBy": "Actual task runner and native creative runtime, not imported agent frontmatter",
+    "defaultTaskBudget": {"maxMinutes": 25, "maxToolCalls": 30, "externalSpend": 0, "providerCalls": 0}
+  }
+}

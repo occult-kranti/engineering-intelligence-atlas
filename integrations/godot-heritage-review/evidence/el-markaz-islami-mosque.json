@@ -1,0 +1,336 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "inputName": "el-markaz-islami-mosque.decompressed.glb",
+  "inputSha256": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+  "inputBytes": 93215020,
+  "expected": {
+    "schemaVersion": 1,
+    "inputSha256": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+    "inputBytes": 93215020,
+    "vertices": 1554546,
+    "triangles": 3104134,
+    "indexCount": 9312402,
+    "colourCount": 1554546,
+    "surfaces": 1,
+    "meshInstances": 1,
+    "worldBounds": {
+      "minimum": [
+        -4.9294939041137695,
+        -4.524786949157715,
+        -16.672555923461914
+      ],
+      "maximum": [
+        7.263009071350098,
+        4.981805801391602,
+        -6.782787799835205
+      ]
+    },
+    "instances": [
+      {
+        "nodeIndex": 0,
+        "name": "source-coordinates-unchanged",
+        "worldMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "primitives": [
+          {
+            "meshIndex": 0,
+            "primitiveIndex": 0,
+            "vertices": 1554546,
+            "indexCount": 9312402,
+            "triangles": 3104134,
+            "colourCount": 1554546,
+            "maximumIndex": 1554545
+          }
+        ]
+      }
+    ],
+    "units": "input coordinate units; no scale calibration performed",
+    "validation": {
+      "positionsFinite": true,
+      "coloursFinite": true,
+      "indicesInBounds": true,
+      "noExternalDependencies": true,
+      "staticUncompressedTriangles": true
+    }
+  },
+  "engine": {
+    "allFinite": true,
+    "appendMilliseconds": 2287.409,
+    "colourCount": 1554546,
+    "elapsedMilliseconds": 4445.673,
+    "engine": {
+      "build": "official",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (official)",
+      "timestamp": 0
+    },
+    "fpsMeasured": false,
+    "generatePackInstantiateMilliseconds": 187.975,
+    "headless": true,
+    "importPath": "GLTFDocument runtime import, PackedScene.pack and instantiate; editor auto-LOD pipeline not invoked",
+    "indexCount": 9312402,
+    "indicesValid": true,
+    "inputSha256": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+    "inspectionMilliseconds": 1343.768,
+    "memoryMeaning": "Godot tracked allocations; not OS RSS or GPU memory",
+    "meshInstances": 1,
+    "nodes": [
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": ".",
+        "worldMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "source-coordinates-unchanged",
+        "worldMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    ],
+    "platform": "Linux",
+    "schemaVersion": 1,
+    "sourceHashUnchanged": true,
+    "surfaces": [
+      {
+        "colourCount": 1554546,
+        "indexCount": 9312402,
+        "indicesSha256": "22144724e5454b5887d4c4ef8b2ea3ff46ecccb8015d92f005689447aee73f6b",
+        "maximumIndex": 1554545,
+        "nodePath": "source-coordinates-unchanged",
+        "surface": 0,
+        "triangles": 3104134,
+        "vertices": 1554546
+      }
+    ],
+    "trackedStaticMemoryBytes": 360928243,
+    "trackedStaticMemoryPeakBytes": 699125715,
+    "triangles": 3104134,
+    "vertices": 1554546,
+    "worldBounds": {
+      "maximum": [
+        7.2630090713501,
+        4.9818058013916,
+        -6.78278732299805
+      ],
+      "minimum": [
+        -4.92949390411377,
+        -4.52478694915771,
+        -16.6725559234619
+      ]
+    }
+  },
+  "process": {
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "wallMilliseconds": 4628.157520999999,
+    "sampledPeakRssBytes": 712323072,
+    "memoryMeaning": "Linux VmRSS sampled every50ms; lower bound on process peak, not GPU or target-device memory"
+  },
+  "checks": [
+    {
+      "name": "Godot 4",
+      "passed": true,
+      "expected": 4,
+      "observed": 4
+    },
+    {
+      "name": "vertices",
+      "passed": true,
+      "expected": 1554546,
+      "observed": 1554546
+    },
+    {
+      "name": "triangles",
+      "passed": true,
+      "expected": 3104134,
+      "observed": 3104134
+    },
+    {
+      "name": "indexCount",
+      "passed": true,
+      "expected": 9312402,
+      "observed": 9312402
+    },
+    {
+      "name": "colourCount",
+      "passed": true,
+      "expected": 1554546,
+      "observed": 1554546
+    },
+    {
+      "name": "meshInstances",
+      "passed": true,
+      "expected": 1,
+      "observed": 1
+    },
+    {
+      "name": "surface count",
+      "passed": true,
+      "expected": 1,
+      "observed": 1
+    },
+    {
+      "name": "finite positions, colours and transforms",
+      "passed": true,
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "indices within imported vertices",
+      "passed": true,
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "immutable copied input",
+      "passed": true,
+      "expected": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+      "observed": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6"
+    },
+    {
+      "name": "world bounds minimum",
+      "passed": true,
+      "expected": {
+        "values": [
+          -4.9294939041137695,
+          -4.524786949157715,
+          -16.672555923461914
+        ],
+        "tolerance": 0.00016672555923461914
+      },
+      "observed": [
+        -4.92949390411377,
+        -4.52478694915771,
+        -16.6725559234619
+      ]
+    },
+    {
+      "name": "world bounds maximum",
+      "passed": true,
+      "expected": {
+        "values": [
+          7.263009071350098,
+          4.981805801391602,
+          -6.782787799835205
+        ],
+        "tolerance": 0.00016672555923461914
+      },
+      "observed": [
+        7.2630090713501,
+        4.9818058013916,
+        -6.78278732299805
+      ]
+    },
+    {
+      "name": "original input remains unchanged",
+      "passed": true,
+      "expected": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+      "observed": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6"
+    },
+    {
+      "name": "copied input remains unchanged",
+      "passed": true,
+      "expected": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+      "observed": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6"
+    }
+  ],
+  "error": null,
+  "fpsMeasured": false,
+  "targetDeviceProfiled": false,
+  "dataTransformAppliedByHarness": false,
+  "limitations": [
+    "Runtime GLTFDocument path; editor import cache and automatic LOD generation are not tested.",
+    "Counts, finite colour values and colour presence are checked; colour-byte equivalence and image appearance are not established.",
+    "Import timing and sampled memory describe this host, not rendering FPS or a shipping-device budget."
+  ]
+}

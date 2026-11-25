@@ -1,0 +1,1164 @@
+{
+  "schemaVersion": 1,
+  "round": 1,
+  "baselineCommit": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48",
+  "artifactSha256": "5aa26c9d8361b786bfdf272bb80bb80ab11090275355c71a973b7f5f2070aeca",
+  "files": [
+    {
+      "path": "company/role-library/index.json",
+      "bytes": 53643,
+      "sha256": "9b187ca358c52f20158e5cb7698c46fed1f60d76daab6ace2060e5edfeef18d7"
+    },
+    {
+      "path": "company/role-library/resource-catalog.json",
+      "bytes": 407498,
+      "sha256": "4c27b6a647c37670fd20699e53bb4d81b26ca7750c89dd7665cd5875cfe8a102"
+    },
+    {
+      "path": "integrations/godot-heritage-review/.gitignore",
+      "bytes": 57,
+      "sha256": "1db672278485df1628e15ec7423511f0f326681646a41c5bc242f0326fd7a952"
+    },
+    {
+      "path": "integrations/godot-heritage-review/README.md",
+      "bytes": 6883,
+      "sha256": "66e77645cd29e4c206da614a482b60aeac72eb86aa8f4a2e0dc28750393278e1"
+    },
+    {
+      "path": "integrations/godot-heritage-review/audit.gd",
+      "bytes": 6586,
+      "sha256": "47c828d7528823b1dba356357a61e659e91e9b2fdc3b610b8356fbdf637a4a62"
+    },
+    {
+      "path": "integrations/godot-heritage-review/evidence/el-markaz-islami-mosque.json",
+      "bytes": 7899,
+      "sha256": "d143793d7ca36389e41e8a30d6988a4cfee6f3f2947cad118ac80e9cf8a98924"
+    },
+    {
+      "path": "integrations/godot-heritage-review/evidence/kailasa-context.json",
+      "bytes": 17405,
+      "sha256": "7bbbcb0fc675c1204e61d57dc295e435c82dfaa488a6b223d3337684a37f5b93"
+    },
+    {
+      "path": "integrations/godot-heritage-review/evidence/st-george-antiochian-orthodox-church.json",
+      "bytes": 7917,
+      "sha256": "45a999ad92b53e7a51d4692daa4dbe3d0aeecc43a5565ab2e740781c41a69ac7"
+    },
+    {
+      "path": "integrations/godot-heritage-review/evidence/summary.json",
+      "bytes": 2152,
+      "sha256": "4a101baeef874dde94258ad1ab7c97da0a7ae7b27929580e67f76008280859a9"
+    },
+    {
+      "path": "integrations/godot-heritage-review/glb.mjs",
+      "bytes": 9409,
+      "sha256": "43ae9f68caa98ba0f227876801bb00c6ebda7379de1d261c26f65ae7b5bb44bd"
+    },
+    {
+      "path": "integrations/godot-heritage-review/project.godot",
+      "bytes": 310,
+      "sha256": "d0aaf4e32f7caf226edca6fc730127219817c5d55a36878b0fe82c1bf347569b"
+    },
+    {
+      "path": "integrations/godot-heritage-review/run-audit.mjs",
+      "bytes": 8171,
+      "sha256": "6bca58371e6bf1bad372082c6b4d742f667459ce691b9551d60c1c7f583863d7"
+    },
+    {
+      "path": "integrations/godot-heritage-review/source-use.json",
+      "bytes": 2016,
+      "sha256": "9cbf742221ebeff6349d49462e46218314757c5fdc99fc599251ab1480843663"
+    },
+    {
+      "path": "integrations/godot-heritage-review/test/audit.test.mjs",
+      "bytes": 3409,
+      "sha256": "ebc0838ae155f71772eb13df673c2bd2c9658deeb43346d9666370d4d2c6ea4c"
+    },
+    {
+      "path": "integrations/godot-heritage-review/test/fixture.mjs",
+      "bytes": 1642,
+      "sha256": "feca3fb2fee60f331614dab9f0e94a0510f28d8da5008769f8fc2acb6a92e825"
+    },
+    {
+      "path": "integrations/godot-heritage-review/test/smoke.mjs",
+      "bytes": 991,
+      "sha256": "929ae757f351cdfb7b45ff3c67c7fe7f32fe929b5ca7c44e26fb5e16905d66da"
+    },
+    {
+      "path": "integrations/heritage-assets/README.md",
+      "bytes": 10007,
+      "sha256": "1f90ddf8f37253267adff12fb8dd08848c2848317c1c276947156d74c8e7a8bf"
+    },
+    {
+      "path": "integrations/heritage-assets/acquisition-manifest.json",
+      "bytes": 9136,
+      "sha256": "b77ae4966f6b3ebf492c7ad90a1b5dca6efd51fb4d761a997fa37cae77b993c7"
+    },
+    {
+      "path": "integrations/heritage-assets/applied-guidance.json",
+      "bytes": 1203,
+      "sha256": "747939b3dc9fdfd8b7f6c1e9d16d21b459efea6038ed7ea56c268c85f77677d7"
+    },
+    {
+      "path": "integrations/heritage-assets/blender-review.py",
+      "bytes": 5077,
+      "sha256": "751414e799ada48c585abc2df35fc2f2dc82c72008ac37030e343060c6b9efb5"
+    },
+    {
+      "path": "integrations/heritage-assets/build-receipt.json",
+      "bytes": 100435,
+      "sha256": "93fd82217e7907b75e5e9f22a9af94cd7bb569430c4357ee9c59422f479d23d1"
+    },
+    {
+      "path": "integrations/heritage-assets/package-lock.json",
+      "bytes": 2568,
+      "sha256": "c145a358c75ac0bf1de67b3d56e62f6aa42df3968df585f470c85d9143c69768"
+    },
+    {
+      "path": "integrations/heritage-assets/package.json",
+      "bytes": 502,
+      "sha256": "7dd4360faafd8ae0ad72b68a22426257fe8f193053342d0fc08e10e36414c897"
+    },
+    {
+      "path": "integrations/heritage-assets/preserve.mjs",
+      "bytes": 36246,
+      "sha256": "019b59a1126ccc34c5af6361e7ce2096f238723e9eb3d376193d23d854f831fd"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/el-markaz-islami-mosque.json",
+      "bytes": 12061,
+      "sha256": "e3e1fde901a569f66b0472e64a7e8ce46ab468552f14ecf83247fa55017a3b26"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/giza-plateau.json",
+      "bytes": 26985,
+      "sha256": "c979ae310aa744b1c5d11efe637041283df9eaf08aff19e2e2e9192636e92dc3"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/kailasa-context.json",
+      "bytes": 15002,
+      "sha256": "b2bbff4eb846dfe53dfee399fb87a6370ada04bbf4e8d39b7677eda5aeb83234"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/khafre.json",
+      "bytes": 6571,
+      "sha256": "b1360136b3d42a992724d642ee93fc430c24d984014f24c19ef38c771e080909"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/khufu.json",
+      "bytes": 6933,
+      "sha256": "3f3c9f51238a0d932d2f3a884d7e82a505af92d0e6bba7138a40b76034be20b1"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/menkaure.json",
+      "bytes": 7222,
+      "sha256": "d3a94a5313c33a3623dce1215bd4d28c7356925ec9cea9339a82baafe7e61da0"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/st-george-antiochian-orthodox-church.json",
+      "bytes": 12150,
+      "sha256": "7508d54d36ea17175d7941446ae4050aec5ab89130c8145b65f3239fa6a994bc"
+    },
+    {
+      "path": "integrations/heritage-assets/test/preserve.test.mjs",
+      "bytes": 11046,
+      "sha256": "07c93c49ed3f67b6bf9c4cde367a2f18d7518596734486756b39c041f860a3f4"
+    },
+    {
+      "path": "integrations/heritage-assets/verification.json",
+      "bytes": 2937,
+      "sha256": "72502313c6d457a1b4eed19a33987f3e8da05f6ee5323bf842cad022d2d65595"
+    },
+    {
+      "path": "integrations/opencode-game-studios/.gitignore",
+      "bytes": 39,
+      "sha256": "55ee47764ef1451dd34ef9007329b79bd46d58647a954f8eee8c77446c14a853"
+    },
+    {
+      "path": "integrations/opencode-game-studios/HERITAGE_ASSET_CONTRACT.md",
+      "bytes": 7987,
+      "sha256": "ef4719194dc8782f363fe5810b5bdf3ee46ab5f172326c6a3180114cb6716ab0"
+    },
+    {
+      "path": "integrations/opencode-game-studios/README.md",
+      "bytes": 7281,
+      "sha256": "19de42ab03b4364720ab741f85a7c76935165f097e7c89ba5e2cfb4c9c1721fd"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/UPSTREAM-LICENSE",
+      "bytes": 1078,
+      "sha256": "1281ffedda7559df1a4b2c4f64a23920a839bdf4832558c846a2020b937167d5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/agents/lead-programmer.md",
+      "bytes": 5174,
+      "sha256": "a6da14463b284d7ea9aaf1fec68679468fea746d957f07df63d17f3866bf21d6"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/commands/architecture-review.md",
+      "bytes": 177,
+      "sha256": "06ce1b1e35045cd58b827b56146103a2ee6c76a614d7df0fa68ceea4f5cad868"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/commands/create-control-manifest.md",
+      "bytes": 192,
+      "sha256": "5b5ed5aab5205b0ff3331a9cb2cd9407e527577bc692a0dc4857ea8099b09b1f"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/modulefile.yaml",
+      "bytes": 383,
+      "sha256": "c9fa776d3b9a3dbb2f4f14ac9a6877064bff7be67285447ffee781e44135527d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/rules/design-docs.md",
+      "bytes": 3101,
+      "sha256": "d29dabb766c871cdae0464e00a9730f655f0de911a05c32465f46949e43da3d9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/skills/architecture-review/SKILL.md",
+      "bytes": 24716,
+      "sha256": "95a969eca8745f3984b697f7692095c72b9b95b2d65cbf09543deb363e58e6ab"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/skills/create-control-manifest/SKILL.md",
+      "bytes": 9351,
+      "sha256": "d87bc8d20ad74d34dd2ac969b68448e211082d72a81776285bca972291c73f30"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/skills/propagate-design-change/SKILL.md",
+      "bytes": 7826,
+      "sha256": "e0145ee67521eaf89de6be67dee333fef1bf7c276d9085f3b6187738bfd7a067"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/agents/art-director.md",
+      "bytes": 5699,
+      "sha256": "c5510a0e3614ceb83cff3dcec8b91d98442bd90705d295b97f425bd30ab5e34d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/agents/technical-artist.md",
+      "bytes": 5109,
+      "sha256": "10243b19da47dc6a030ab9b694b3268458071b994d0ec34182003931b51d213f"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/commands/art-generate.md",
+      "bytes": 176,
+      "sha256": "c0e8f6b0b6d4374286b196876fcd355a5039c10c449d2167b29a23bb60b901b5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/modulefile.yaml",
+      "bytes": 357,
+      "sha256": "281201375b99eb1c4b7c194a73b257e672c6fecd51bab4f7e02f912b63298c86"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/skills/art-bible/SKILL.md",
+      "bytes": 24567,
+      "sha256": "2021b757e407843bcc18c0bcad537684600ec4b25b9e645dac0965a9405f328b"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/skills/art-generate/SKILL.md",
+      "bytes": 9977,
+      "sha256": "c85faead6bc2bf0bb6c1e6d30680929216dcb1d4b8449fbe2d302c7c2ee9d478"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/skills/asset-audit/SKILL.md",
+      "bytes": 6997,
+      "sha256": "19bf6cd002beaa5d8ce3e7925ee70d33c7d75eca1d02a57b98b8ef376958cd89"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/skills/asset-spec/SKILL.md",
+      "bytes": 13653,
+      "sha256": "f5b74adcd62302466d5a314066e941b92191e2e596aaa3ea99d4fdbe764e9f55"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/agents/creative-director.md",
+      "bytes": 16985,
+      "sha256": "3121650db52c814ea46d3eaf4307fd6ce8b875033d8a9e3c935c7d00a5862406"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/agents/producer.md",
+      "bytes": 6560,
+      "sha256": "95dd7e0eadd68968a27042d7d1c27dda56b83fdc80d6e8422ae521163588f26d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/agents/technical-director.md",
+      "bytes": 6777,
+      "sha256": "3d7eb127f9cc89b4d4658e3a6ce888670377fb2260248a008bd29358e0bd674a"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/architecture-decision.md",
+      "bytes": 183,
+      "sha256": "0dd22294859c4c82a398fec5409b6cc31470fdd483e092d71994d4033ade3239"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/concept-brainstorm.md",
+      "bytes": 158,
+      "sha256": "715bae7e62e938aa307f733f78d10178585619b8fd10f495cd473ad1891d4970"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/create-architecture.md",
+      "bytes": 178,
+      "sha256": "8dd9198397b13cf3415e1c263d51b8f355626ae82138701f82f0764ed7c713cf"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/help.md",
+      "bytes": 136,
+      "sha256": "4a8de821a52b463199817739bed378c74028ef90b5d2ae38c0679ea02c763b1e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/init-template.md",
+      "bytes": 156,
+      "sha256": "84ea7f30dd59b3fde3c96e2dd6a44e92c3727d26e683502b2a3ca2606e4fbb99"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/map-systems.md",
+      "bytes": 150,
+      "sha256": "4e1ab5df724f2f64071bc1d2a7a11f8b79815a5310eb1e9f16318688e3530205"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/project-stage-detect.md",
+      "bytes": 182,
+      "sha256": "0dff757deaec6006fe5669c8394c511d6bb93a829244b1600d817d34575b86bf"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/setup-engine.md",
+      "bytes": 149,
+      "sha256": "009c79d581848e976658fee5cb7d37b8bae7d2c168b2fc0276bccb44db4bcc38"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/start.md",
+      "bytes": 133,
+      "sha256": "679fb8744fcc42e77f0eac42a2dccf0e58477a6c807e56e60037a5935453e469"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/docs/context-management.md",
+      "bytes": 4344,
+      "sha256": "35250419e9f093e6eb7861f5c5b6f04118b091ad636d35b49cbef56eee3e6c83"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/docs/coordination-rules.md",
+      "bytes": 2248,
+      "sha256": "3b7c1bd00fba8c9a0805287fd187747f472decd36cffe700ec1c3fb6b3f5df38"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/docs/director-gates.md",
+      "bytes": 32289,
+      "sha256": "eb0334f9cf733c12eb973dd0ee1ecc4ce89c343a01e786e6cc76dbe691201495"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/docs/workflow-catalog.yaml",
+      "bytes": 14622,
+      "sha256": "777b45cb6aff2ad7305c7b0f6fb659677f94fe2477980dc798a82bfcbaeb7d60"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/modulefile.yaml",
+      "bytes": 856,
+      "sha256": "b7f975e934d5c9bcbebf1f7dc031aaeeb5d6df7a5ea8c7191512484cc7eb7a4c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/architecture-decision/SKILL.md",
+      "bytes": 19260,
+      "sha256": "348e77693f871a35a54163355a2925b592b5026128b59270c169f800ec970578"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/concept-brainstorm/SKILL.md",
+      "bytes": 20404,
+      "sha256": "617bedfa38632c99a99b3693eb6fd0c39e872f0f4a92539c9d786e4c8f6e13c1"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/create-architecture/SKILL.md",
+      "bytes": 15844,
+      "sha256": "6e30d131830e71f795ceddbe6a4074c4a5e271ee77b6c10cf0e51839ec644e6d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/gate-check/SKILL.md",
+      "bytes": 34409,
+      "sha256": "7515eb279315991a8bc4fe7eed369170249f0a5a6f8d95d188d521ae2f798849"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/help/SKILL.md",
+      "bytes": 9395,
+      "sha256": "7f574e3f224b74c53520ee020ea3fed029352ae7ffcd3c2ff57844ea64e45f0e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/init-template/SKILL.md",
+      "bytes": 11929,
+      "sha256": "1d781709ee98ed7e2f7c283326626c4ce16edd45e263a56a60d82269730cb6c4"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/map-systems/SKILL.md",
+      "bytes": 16136,
+      "sha256": "f3a2902c0ae6e2eeb8d290baa9ff4d0bb6c6c3e62e89fe3a4d3f5d86de8d7798"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/project-stage-detect/SKILL.md",
+      "bytes": 6400,
+      "sha256": "2c36b8527e43a685a2e99fe7b8234a7ad1f50493df0b07dc2a61a865f43b2e46"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/setup-engine/SKILL.md",
+      "bytes": 47984,
+      "sha256": "ea07a8840d1cb6bda0b5297172b3b17cc2658328368ffbeb4f2200d4a8b52be9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/start/SKILL.md",
+      "bytes": 15703,
+      "sha256": "002bb54474e0678083d3a1e7bff6c973834336f1ad4c636ac5f88da474d04087"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/agents/economy-designer.md",
+      "bytes": 6583,
+      "sha256": "1ba7d80363f41f7f364d79c87b516dbbfb96cdc55a18910d8bc03dc9c9ec09ab"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/agents/game-designer.md",
+      "bytes": 12583,
+      "sha256": "2387edf3d17b7103e57b208b6ee874db8aba44586aaeb6da163f15ac02653bc8"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/agents/systems-designer.md",
+      "bytes": 7255,
+      "sha256": "812679e88f497fe5a4cc29882f772661445239ef65ac63f83ebe224d88e968d6"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/design-review.md",
+      "bytes": 156,
+      "sha256": "b44982db7b0600894af92fca8b45c613f93df5aca5072ce2c69f3c2e5e8a85cd"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/design-system.md",
+      "bytes": 147,
+      "sha256": "142c867ce2180edee4b5602acbf357c6fb150387487429e33513be423e701556"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/quick-design.md",
+      "bytes": 153,
+      "sha256": "afcbf16f0131f42b8e350bbc1bde69b6176ab0ab9f60108349e5870856027f12"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/review-all-gdds.md",
+      "bytes": 165,
+      "sha256": "076d4f43898bb5dc15bf279ddd06dc6d908a1efa92888b9d92f87649bcf8d26b"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/team-combat.md",
+      "bytes": 137,
+      "sha256": "1ed91be63a30afee2e0c8e8d1a4296137b5fb436e074c47dc8c4a4a229271390"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/modulefile.yaml",
+      "bytes": 517,
+      "sha256": "8a017475339413b54ab7b7190ea27cf61af9b7c158d434ff4434f40257c11fbc"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/balance-check/SKILL.md",
+      "bytes": 6198,
+      "sha256": "14e11670ef45e6dfc19c0a8c63720a5d0353109c58939ed93464d229a781c79c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/consistency-check/SKILL.md",
+      "bytes": 9666,
+      "sha256": "e16448cd8ffad47a382e28bcb5f750b47851e754d2bc22ee82946c76703058d0"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/content-audit/SKILL.md",
+      "bytes": 7159,
+      "sha256": "295891c2603284666c9b41946beecb7c4c20a7ec67c688e1e6dc1adcd4101398"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/design-review/SKILL.md",
+      "bytes": 13177,
+      "sha256": "a43746bd02112a79cf3c11b7d9a645720e2be07ada01a8a8b228c73635e687e9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/design-system/SKILL.md",
+      "bytes": 40097,
+      "sha256": "a6ea8c825e5372e6707e13a03512f65efe1300353b8c60b46da0f30364ff7881"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/estimate/SKILL.md",
+      "bytes": 4257,
+      "sha256": "aeef37d1aa4fa6e99252c57468dbf28df7173d5f1b80a838ff673ac1b78c12ad"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/playtest-report/SKILL.md",
+      "bytes": 5063,
+      "sha256": "7a984404ab35b3322517b3d5da20139fbe9ceb19a6d3463c64aab93a681b13b4"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/quick-design/SKILL.md",
+      "bytes": 9513,
+      "sha256": "379d1ab1552c8bc3cabb956becb816a982b31e534a9707116c446abaddd6e22c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/review-all-gdds/SKILL.md",
+      "bytes": 26165,
+      "sha256": "9594c3f560db12cc541c78ae789230adab3d9fb1cb56acaa8fca681674946ca7"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/scope-check/SKILL.md",
+      "bytes": 4313,
+      "sha256": "d91631b2b6768a3a7ab17ddfc2499af4289cad58483f9c4d4b62c1aefac9a337"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/team-combat/SKILL.md",
+      "bytes": 6655,
+      "sha256": "ec6a267ffe2813b1d678a9d2f38451783023254851646b437daf8b2b716fec07"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-csharp-specialist.md",
+      "bytes": 17351,
+      "sha256": "078f5e0e684c4250e0338f9772100151624d7d0d996068ba91f57351798dcc77"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-gdextension-specialist.md",
+      "bytes": 14079,
+      "sha256": "ea3fde5ede4f461efef07b289706ecb6a41f4da7dde297aa75662df9272f55cf"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-gdscript-specialist.md",
+      "bytes": 12608,
+      "sha256": "78b697523450063af58101df2896dd46c225af44a8024fd8c6867df596dacc5e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-shader-specialist.md",
+      "bytes": 12247,
+      "sha256": "011361413d58a2452c0de58d353a0e3c042aaaec84232dbb961713749be326a7"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-specialist.md",
+      "bytes": 9793,
+      "sha256": "d000db781e5ec56ded7a2c5d761268307496f737fd50644c6043c0dc96fa3715"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/modulefile.yaml",
+      "bytes": 364,
+      "sha256": "f43182dad6be18b32037ae21c798e70fc04ad9d7e02bd3fad9039f46b5b6967b"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/ai-programmer.md",
+      "bytes": 13056,
+      "sha256": "99442b7be5d1ce291a8e59344fe1ec1ee0dc5a36f626f9222c1b758b621ad904"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/engine-programmer.md",
+      "bytes": 14039,
+      "sha256": "e63b37d8ccb7eab6cd315925b6528111a1bde2e984476cce4d71928e25638488"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/gameplay-programmer.md",
+      "bytes": 14327,
+      "sha256": "6ded85f4fd70811e4ffd38472fd2bc0fb54f2d0ef0e56b9deeb08aa0bf539675"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/network-programmer.md",
+      "bytes": 4678,
+      "sha256": "ea6145c6620918e0bc136f9c93b3a719bf146ce6c43f8898d4308e983e0cc8a4"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/tools-programmer.md",
+      "bytes": 4871,
+      "sha256": "ef35370801e353886a7c41b148c5e100804b66851af6b24f0d89054df23c6aa8"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/modulefile.yaml",
+      "bytes": 390,
+      "sha256": "2956523eaddfd49c1213b589383f17703a7df5dee4edfb196ab2737b1c527000"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/ai-code.md",
+      "bytes": 2396,
+      "sha256": "b0ec879a4e850e038d9de6c384f26afa600b762f1ffd3278f4effcc19249f703"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/engine-code.md",
+      "bytes": 2340,
+      "sha256": "99a5dd01fd39b4f70f7784ff3bbd1e7cb58b5ef33dd8f021c85048a288339e51"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/gameplay-code.md",
+      "bytes": 2038,
+      "sha256": "cc8fcd71a0203e1fda2de2a97ff32b9ddca7f651a5531af687d5f837fe3ce110"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/network-code.md",
+      "bytes": 2547,
+      "sha256": "8ae8ce995517707e983a5dbd59e37d0d10c3bee9b80e3430519b070eaaf522c5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/shader-code.md",
+      "bytes": 2777,
+      "sha256": "f4bdb555c0504b8f8d1ec2da2b452380be62c86889bf5946d8d9a77ba39527e9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/agents/performance-analyst.md",
+      "bytes": 4727,
+      "sha256": "029098df4824ab2d73d1c773d0b3f5d888ab29534a6a4aef56a65f6443c56db0"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/agents/qa-lead.md",
+      "bytes": 7217,
+      "sha256": "a374790be400eb33afa3d760ff6986f9050eecaf5688419e507eb413a44574e5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/agents/qa-tester.md",
+      "bytes": 9092,
+      "sha256": "ac9e4aa763fac93d3daf16c1cac3dd88f9f78f32d93e94612e195eb2d18be2c0"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/agents/security-engineer.md",
+      "bytes": 6498,
+      "sha256": "f6284fa4690d305f6347e13ceb0961d69185159a59b94f8b9a84239dc447042e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/autopilot-playtest.md",
+      "bytes": 189,
+      "sha256": "43113900c7523130c1d906e2778585d080bcc7fac271eba633fa1b6ab55df61d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/bug-report.md",
+      "bytes": 131,
+      "sha256": "2a391f5655ce8a2158118e6c113e7b1dd8b7ece3be063866d78ea81c6c39abbd"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/bug-triage.md",
+      "bytes": 143,
+      "sha256": "1ca4bed2355cf936e643df9d1e21163e5b0249f05bc40079fe364108e5ee2e3b"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/qa-plan.md",
+      "bytes": 136,
+      "sha256": "cf0570ea7d8e112d7d05ed0fe1d8491170af2c74ecb6009309f3c48286e910b9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/regression-suite.md",
+      "bytes": 159,
+      "sha256": "3f915e2188484e3ad16c33210446f3a897ec64771818bf60da2d0d0e497045f5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/security-audit.md",
+      "bytes": 149,
+      "sha256": "1dbe2096e0d683d4980413eb4ef301ec6eb9d63a2aa2cb9d9b8b16ea8a63f230"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/smoke-check.md",
+      "bytes": 138,
+      "sha256": "449c9089f009b8a2fccb2f56008eff20bbf20fe99b96167da0d63500691215aa"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/soak-test.md",
+      "bytes": 126,
+      "sha256": "0226bcc8534a299e16667a871ec109be5780f6a525a92ae1d68249596f757585"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/team-polish.md",
+      "bytes": 147,
+      "sha256": "59270699008d25e241fa59653bdaa1b84ed8a12f91b9fbbdb4a6eeedfad24abf"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/team-qa.md",
+      "bytes": 122,
+      "sha256": "f30e1159c001c025899dc6640e17749e4f95235e1c7642f5dfde75334b95755e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/test-evidence-review.md",
+      "bytes": 160,
+      "sha256": "5b7b1010ec10af7e8c86d85867e373292bc31e28065d9354060114ce7193a31e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/test-flakiness.md",
+      "bytes": 144,
+      "sha256": "1490a9d3cb3e983d88c3b6804ceecdef23b660d639cb902594dcd5cf708dc09c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/test-helpers.md",
+      "bytes": 145,
+      "sha256": "47667e8203b0c59c97bc4b51596b5ca175f8eb700bf2558334884efdfd67905d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/test-setup.md",
+      "bytes": 141,
+      "sha256": "13535ebf87d12157da1caf89e02f5a6116e34e02565059ed74da91d79d719aff"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/modulefile.yaml",
+      "bytes": 819,
+      "sha256": "a2166430208d6f6843c962452bdb165b2e8151c5d7310b7f956d7e687e789e67"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/rules/test-standards.md",
+      "bytes": 2115,
+      "sha256": "dc1aea7e714578ae66a1469a0c236d24282f15466dcea80ebd366efe0dde07de"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/automated-smoke-test/SKILL.md",
+      "bytes": 6751,
+      "sha256": "54c6df3e7dd5eda4c8b1ad8a5bb165ee6513cd002a94bb8db457c03f055d1d13"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/autopilot-playtest/SKILL.md",
+      "bytes": 7321,
+      "sha256": "31129ba065ece32f68e28112a227a380ee3abc083ed8cf5dc070f4adcfbb71e5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/bug-report/SKILL.md",
+      "bytes": 5966,
+      "sha256": "05fb5bf33e50709c5a3b65ebac19db6e6f3ce7bded9dacb80dad4a50329f94b8"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/bug-triage/SKILL.md",
+      "bytes": 7885,
+      "sha256": "e1505648600d1adf9603700ddbff3498339ce454d75025fff907ea996146b259"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/perf-profile/SKILL.md",
+      "bytes": 4093,
+      "sha256": "2f94c7692c4fa29cc688fbd25eb61c41efbd45671a1476fa5af55ca3dcf6b670"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/qa-plan/SKILL.md",
+      "bytes": 11143,
+      "sha256": "fea238b6e8e3bd24f90d8ccf03f08fb71c679e91f5d39a04893c059f73ab0bf8"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/regression-suite/SKILL.md",
+      "bytes": 8775,
+      "sha256": "e5f923ba3224228dc954951d307629d3bc3825b6d0aba504da52eb3257c24eee"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/security-audit/SKILL.md",
+      "bytes": 8739,
+      "sha256": "3e912b17ea3af31391bf787bd3080492460af68ddb6b5f9456f572f1f4566e0f"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/skill-improve/SKILL.md",
+      "bytes": 4704,
+      "sha256": "88157514e7ed75b876241085d276f35c743e4fbc98d7836356d1b82441982f5c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/skill-test/SKILL.md",
+      "bytes": 13145,
+      "sha256": "ef9cf919b22decadc00bee06a88468a5ee29cf6cb3f3c063a3f26b92d2e89079"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/smoke-check/SKILL.md",
+      "bytes": 15456,
+      "sha256": "29dcaa5034b2fdcf5cc031f74c1926bcf53d2e82c0a6690eade7ce4a170812d1"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/soak-test/SKILL.md",
+      "bytes": 9479,
+      "sha256": "0b22f710cb9492ea6c75d3a1af5fe0c3d06e104516583453e1a3f99850b94ca4"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/team-polish/SKILL.md",
+      "bytes": 6678,
+      "sha256": "2bb303ae247855e01f71c8309afef6a987be0ae1d127ab86c8ab1b165c6b00bb"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/team-qa/SKILL.md",
+      "bytes": 10996,
+      "sha256": "46fccd0aeca759f37025528abd74ba0c810a9489bde9ec98592aa6372dc03ba3"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/test-evidence-review/SKILL.md",
+      "bytes": 8964,
+      "sha256": "44aedabaf93c7f0176ee34d06e5c67ffdb32ad3c59fb8eae375e4e0adadb495a"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/test-flakiness/SKILL.md",
+      "bytes": 8149,
+      "sha256": "a4979138c5efe227bf72befa2d16e4c443e40f1b74a55d3b40289468c3656920"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/test-helpers/SKILL.md",
+      "bytes": 12429,
+      "sha256": "16b40e245edf63aa6317d41959741392ace8beeb46a87f757dac0400ede072b6"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/test-setup/SKILL.md",
+      "bytes": 12231,
+      "sha256": "8eb7ba9bcf3e164e1dc8df1e336d67f06c7f079bb59fada518d1aa89123f7849"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/receipt.json",
+      "bytes": 287,
+      "sha256": "5c8d1c9a355832a6855da38d8a1e3819c5437de6613622bc682cb4cffefc5504"
+    },
+    {
+      "path": "integrations/opencode-game-studios/role-mapping.json",
+      "bytes": 3428,
+      "sha256": "4077f56c9451df55ff59679f9fe2fb5289c483f30e8589b1873b23610e1b6d52"
+    },
+    {
+      "path": "integrations/opencode-game-studios/round-1-implementation.json",
+      "bytes": 28157,
+      "sha256": "8d5819ae5cf235789d229fc626d115e483092fe6044aa6d05e0656ceaf09635c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/round-1-review.json",
+      "bytes": 17323,
+      "sha256": "874b01d6ce8b1ad92975ea578313ddbb85c47e6fbb11d0dc4b1a6cf9be701835"
+    },
+    {
+      "path": "integrations/opencode-game-studios/sync_resources.py",
+      "bytes": 13106,
+      "sha256": "31d4a3409b1ab7ce5dde6a82b4fccc427be340685ff2c5263f61b81023a18eab"
+    },
+    {
+      "path": "integrations/opencode-game-studios/test_sync_resources.py",
+      "bytes": 9493,
+      "sha256": "b1f3b90455f2d7331eb718fbb0e0588e67103ddfaad7f054e7852333e9664fca"
+    },
+    {
+      "path": "integrations/opencode-game-studios/tool-inventory.json",
+      "bytes": 8794,
+      "sha256": "5b720a7f371b11acbeed6d20893f145d59bfabae5a453880642af7b0d9ce6396"
+    },
+    {
+      "path": "integrations/opencode-game-studios/upstream.lock.json",
+      "bytes": 31090,
+      "sha256": "ee0afcefe11a903682755c795a2038340146f402b308e71fa797b367593204fb"
+    },
+    {
+      "path": "projects/architecture-library/site-models/ACCURACY.md",
+      "bytes": 14002,
+      "sha256": "0f4006ea92f8979c71945a65bf9ecfc79096dc40d3939907ce866a18dab56b73"
+    },
+    {
+      "path": "projects/architecture-library/site-models/ATTRIBUTION.md",
+      "bytes": 5974,
+      "sha256": "3b09f7c7fa93cf4cdcf3f6a021ec843f209006c52ac206bea1074c6a795cfcce"
+    },
+    {
+      "path": "projects/architecture-library/site-models/README.md",
+      "bytes": 9139,
+      "sha256": "17e2f17cebd9cbf64fd02f345634d8b17bc58644781c0d2722bc960100cca1d8"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/el-markaz-islami-mosque.glb",
+      "bytes": 49140024,
+      "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/giza-plateau.glb",
+      "bytes": 20918772,
+      "sha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/kailasa-context.glb",
+      "bytes": 6594948,
+      "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/khafre.glb",
+      "bytes": 1187380,
+      "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/khufu.glb",
+      "bytes": 1786680,
+      "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/menkaure.glb",
+      "bytes": 3075716,
+      "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb",
+      "bytes": 61470040,
+      "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6"
+    },
+    {
+      "path": "projects/architecture-library/site-models/capture-requirements.json",
+      "bytes": 14641,
+      "sha256": "41789c25115ab4e9f829581c74c39dcb81a556b0d5ef9f8c2bf45582632208c8"
+    },
+    {
+      "path": "projects/architecture-library/site-models/catalog-core.mjs",
+      "bytes": 4058,
+      "sha256": "bd0e0020eea0b37c4fd2cdc2a55b0133e3ad6e0ce7c1223376d2cb8376db85a1"
+    },
+    {
+      "path": "projects/architecture-library/site-models/catalog.json",
+      "bytes": 18039,
+      "sha256": "a96bc01e9df22619e0ff8a9aa0f450846403637babf67d79d0942fe1da5116ed"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/el-markaz-islami-mosque.json",
+      "bytes": 14532,
+      "sha256": "c194ea18eefa2c37c6c5a39062015b001e3f74e68f072eb4770423805c01dd1c"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/giza-plateau.json",
+      "bytes": 28320,
+      "sha256": "3543047c193af0d695df951fe7c3e147c14c51acf71d9d36b395b91121bf2ee6"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/kailasa-context.json",
+      "bytes": 15692,
+      "sha256": "87bd1f028aeb30e0ad1c87d9b342e2ae2cefe260e316ba6c137c9d5f19d8bb31"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/khafre.json",
+      "bytes": 8001,
+      "sha256": "5981ce6bb9cd04653fa43c03786723c187c33cb9d44a5b5e73bac8e96beff2d2"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/khufu.json",
+      "bytes": 8364,
+      "sha256": "3d4c066ee9125e3468ff173835d651db99935227a2b36d04b2e95eebab7ccac0"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/menkaure.json",
+      "bytes": 8650,
+      "sha256": "1104582832ef78ed539fe7835c39f8dcdd8886d5c6a8197a2b054c022c8c87fa"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/st-george-antiochian-orthodox-church.json",
+      "bytes": 14609,
+      "sha256": "f7d1e818e0f04859e26f6bd5d1b514600a9b4751692788470f1f29804a242d40"
+    },
+    {
+      "path": "projects/architecture-library/site-models/index.html",
+      "bytes": 6390,
+      "sha256": "7726eca38e9b88a9488f74b2476959f4695d687ebc3e7cbd9b5bb4d0b0ca804c"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/el-markaz-islami-mosque.png",
+      "bytes": 195369,
+      "sha256": "fdf42f31bb7459ac7f69c8dc64f17f62ac28de1660b71cfb033b2174873a6c24"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/giza-plateau.png",
+      "bytes": 403947,
+      "sha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/kailasa-context.png",
+      "bytes": 384297,
+      "sha256": "085eefea5174c71b86b66d2b0359045b1750d4624a3409fde5039950c2e80c9e"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/khafre.png",
+      "bytes": 235509,
+      "sha256": "f30b127acd935f7d6183e14713a574989662380b1efe289c3e51d9d030dfd448"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/khufu.png",
+      "bytes": 236159,
+      "sha256": "641e416fc1e9c35552db989bc3e4bc0baa052e400c063ce539e8f102ff39fde7"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/menkaure.png",
+      "bytes": 217376,
+      "sha256": "8ac94772b75ad458b0d14ed0ec55e447ce21779be778583052470f5661151bcf"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/st-george-antiochian-orthodox-church.png",
+      "bytes": 216693,
+      "sha256": "30556dacc5fd2b3b9a084fa7ce73bc27477f8da0ae0c616d3f446b48f8e328be"
+    },
+    {
+      "path": "projects/architecture-library/site-models/render_preview.py",
+      "bytes": 4546,
+      "sha256": "eacc28c3cb887ab92be4e2789173e29ff496d5063bd70b24e39e614dd65a3344"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/README.md",
+      "bytes": 6800,
+      "sha256": "2acc5d1da78b492f8a14dcef257c759a456f410f3acd140871723cdfa2e1b723"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/assets.json",
+      "bytes": 10975,
+      "sha256": "4e3b3e09a185e1eee21d10e0d96b1900771073a398e94767555c2c3481f280db"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/blender-inspection.json",
+      "bytes": 1198,
+      "sha256": "4f843f1c7fe3a54fcf80f569dd490ba6478c6cd3b62eb2770036b379bc17abd6"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/measurements.json",
+      "bytes": 2525,
+      "sha256": "c0141849ae8d9aafa5657d2b975b05fffd5adfc544e3bc921b91e557e0728428"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/plateau-preview.png",
+      "bytes": 403947,
+      "sha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/round-1-review.json",
+      "bytes": 2237,
+      "sha256": "12b96bd0d7a9722a429b4c6b71bb8eeadf129b4aae40c248e47af942cd800c83"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/sources.json",
+      "bytes": 7983,
+      "sha256": "6655cb633386ff567345bb1144d42b7df70056d0e4aada1d250e6233c361d3a1"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/kailasa/README.md",
+      "bytes": 9850,
+      "sha256": "caf4106093ad9918b59287f9692db3e40a6d9f6593b1fa741a5c8ec492dffda7"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/kailasa/archive-inventory.json",
+      "bytes": 18766,
+      "sha256": "9fd9824df459286d0312f05a724a2e7ef15f8f1d9622577658ef951812762dfd"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/kailasa/round-1-evidence.json",
+      "bytes": 14833,
+      "sha256": "e09558449205000d59b9eeefed1ee80ab98e98b408106af42a01efcebc59bb21"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/kailasa/sources.json",
+      "bytes": 5955,
+      "sha256": "3cbf5b6815a26b7196984ae291fbe7c17d0b1831e615a5f9f09057956c9e333b"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/README.md",
+      "bytes": 7307,
+      "sha256": "194b72baadbbe5a68f9ef217a476a1b08087e7812a7994d24bfa80ef7fa63bd9"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/acquire_meshes.py",
+      "bytes": 4481,
+      "sha256": "10c4a0d8917808651cd279ea1b1224b586cb6647308ca95701ed471f8e8e1e3f"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/acquisition.json",
+      "bytes": 4759,
+      "sha256": "11f8f9e134d3d95c71bfe6f017da13cac0a2f8ca0951926437033815cf0df7cf"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/el-markaz-islami-mosque-blender-inspection.json",
+      "bytes": 2272,
+      "sha256": "0155c96aea9e42a884a43ec2aa8c4fb9a85e692e773f2b2559eff722727b8f02"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/el-markaz-islami-mosque-source-inspection.json",
+      "bytes": 1021,
+      "sha256": "1adcc49585afe4d66ce2b69ea54156cba38b33a23f17cae1e7557e9b5e4553a7"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/inspect_blender.py",
+      "bytes": 5323,
+      "sha256": "6d097538f7e243e19e50b1cdac1f1bee727d9ad8b55f018233587085ed2c07a6"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/inspect_source_obj.py",
+      "bytes": 2872,
+      "sha256": "f0dae0584f01776d9dd9cc9df2f5f15e1088a83cd5a5f4f965af6e1df514ffd4"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/sites.json",
+      "bytes": 11562,
+      "sha256": "0721d6a6d24e756821c46100f675563bb5ab5ce21de6c401dc687b2f0e112596"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/source.json",
+      "bytes": 1209,
+      "sha256": "4c90f71857e6aa0f3f12e9d69a0a3227f05a265214aa82660d3825c3ff77ca46"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/st-george-antiochian-orthodox-church-blender-inspection.json",
+      "bytes": 2273,
+      "sha256": "ae9d7452cbacb4200c32643e57d85ef19ddf6937609d818d7284b022b05b96b3"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/st-george-antiochian-orthodox-church-source-inspection.json",
+      "bytes": 1059,
+      "sha256": "29d8aa6c818999448df7e858f81b6c925823519ae09ee96ec70b245e2adf0188"
+    },
+    {
+      "path": "projects/architecture-library/site-models/site-models.css",
+      "bytes": 8973,
+      "sha256": "b11267b857dbfa090702e80687c7a19c20d84382e901c7f5537d3218129a336b"
+    },
+    {
+      "path": "projects/architecture-library/site-models/site-models.mjs",
+      "bytes": 10056,
+      "sha256": "a854defdfec5943efd6ddaa1ec6fd5d1392297d5e75083b79029ca39fb94e1e8"
+    },
+    {
+      "path": "projects/architecture-library/site-models/tests/catalog.test.mjs",
+      "bytes": 4729,
+      "sha256": "e16490f6513312470eb0b1487d720cf4faa037284827d4bf59c81211c858908c"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/BufferGeometryUtils.mjs",
+      "bytes": 39166,
+      "sha256": "dd7ceffba30bf275369cb1078a267c720e4cbaaceec31f199b7b9a516f4ba6e3"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/GLTFLoader.mjs",
+      "bytes": 119868,
+      "sha256": "e5c986887a5353d7da8ad42f0a911c85de9bd6d728a0568d5255b03ddcf79bbc"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/MESHOPT-LICENSE.md",
+      "bytes": 1079,
+      "sha256": "f03037ca7bad1e3eb7f4a63fa6084a8baabd5ba30d3c239a9a7f35705d873e26"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/OrbitControls.mjs",
+      "bytes": 40931,
+      "sha256": "0b524db46ffcd65359d2efd51827d0b077796f1ee174e2740ae238ddad5ec3af"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/THREE-LICENSE.md",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/manifest.json",
+      "bytes": 2632,
+      "sha256": "a700c2868c698e1324b70a3c718eb236181583f2652ffddb8d345b6500337908"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/meshopt_decoder.mjs",
+      "bytes": 29059,
+      "sha256": "cb08bf53ad8ad9693d8bb759b2dbade350eb38bcce63d005385e225b564c5f6a"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/three.core.mjs",
+      "bytes": 1474799,
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/three.module.mjs",
+      "bytes": 658902,
+      "sha256": "419439a8f5286ac48f1659174497b0845ecc541dcbd3ebcb59efe0b200eb6eef"
+    },
+    {
+      "path": "projects/architecture-library/site-models/viewer.mjs",
+      "bytes": 6013,
+      "sha256": "6526eba8287f30aa49614086de42b9a958a2a7eafc0201272b378666ec19ce5d"
+    },
+    {
+      "path": "scripts/architecture-library-assets.mjs",
+      "bytes": 4836,
+      "sha256": "ade0f52c13c1e7c50d547653c3dd2bb622af2e3077def0299023aab8cafabeaf"
+    },
+    {
+      "path": "scripts/prepare-heritage-catalog.py",
+      "bytes": 12602,
+      "sha256": "105074e24a5a4f3880c163da4d7e9cf478a30cdd154d6f583c89d155d99b1669"
+    },
+    {
+      "path": "scripts/smoke-heritage-viewer.mjs",
+      "bytes": 8589,
+      "sha256": "70897e3c574fc09970dd67912b7058aa52ff51e6bf31236da747bed3e299f7f8"
+    },
+    {
+      "path": "scripts/vendor-heritage-viewer.mjs",
+      "bytes": 2349,
+      "sha256": "b540ce13642857bc4cb7d319d67b56cf4702e49ed365c3b1a2de68a20dd7a305"
+    }
+  ],
+  "scope": "Primary implementation files and source assets; derived static copies have separate build-info verification."
+}

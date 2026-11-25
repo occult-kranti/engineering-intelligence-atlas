@@ -1,0 +1,820 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "inputName": "kailasa-context.decompressed.glb",
+  "inputSha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+  "inputBytes": 11669704,
+  "expected": {
+    "schemaVersion": 1,
+    "inputSha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+    "inputBytes": 11669704,
+    "vertices": 273390,
+    "triangles": 136499,
+    "indexCount": 409497,
+    "colourCount": 0,
+    "surfaces": 5,
+    "meshInstances": 5,
+    "worldBounds": {
+      "minimum": [
+        -1128.169345855713,
+        -296.875075892146,
+        -1279.2977184435156
+      ],
+      "maximum": [
+        1458.0472946166992,
+        565.2213959294576,
+        1304.4206036581347
+      ]
+    },
+    "instances": [
+      {
+        "nodeIndex": 8,
+        "name": "Retopo_Model_Tex_0",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.629206791697868e-05,
+          -99.99999999999868,
+          0,
+          0,
+          99.99999999999868,
+          -1.629206791697868e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "primitives": [
+          {
+            "meshIndex": 4,
+            "primitiveIndex": 0,
+            "vertices": 11255,
+            "indexCount": 16881,
+            "triangles": 5627,
+            "colourCount": 0,
+            "maximumIndex": 11254
+          }
+        ]
+      },
+      {
+        "nodeIndex": 7,
+        "name": "Retopo_Model_Tex_0",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.629206791697868e-05,
+          -99.99999999999868,
+          0,
+          0,
+          99.99999999999868,
+          -1.629206791697868e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "primitives": [
+          {
+            "meshIndex": 3,
+            "primitiveIndex": 0,
+            "vertices": 65534,
+            "indexCount": 98298,
+            "triangles": 32766,
+            "colourCount": 0,
+            "maximumIndex": 65533
+          }
+        ]
+      },
+      {
+        "nodeIndex": 6,
+        "name": "Retopo_Model_Tex_0",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.629206791697868e-05,
+          -99.99999999999868,
+          0,
+          0,
+          99.99999999999868,
+          -1.629206791697868e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "primitives": [
+          {
+            "meshIndex": 2,
+            "primitiveIndex": 0,
+            "vertices": 65533,
+            "indexCount": 98295,
+            "triangles": 32765,
+            "colourCount": 0,
+            "maximumIndex": 65532
+          }
+        ]
+      },
+      {
+        "nodeIndex": 5,
+        "name": "Retopo_Model_Tex_0",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.629206791697868e-05,
+          -99.99999999999868,
+          0,
+          0,
+          99.99999999999868,
+          -1.629206791697868e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "primitives": [
+          {
+            "meshIndex": 1,
+            "primitiveIndex": 0,
+            "vertices": 65534,
+            "indexCount": 97722,
+            "triangles": 32574,
+            "colourCount": 0,
+            "maximumIndex": 65533
+          }
+        ]
+      },
+      {
+        "nodeIndex": 4,
+        "name": "Retopo_Model_Tex_0",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.629206791697868e-05,
+          -99.99999999999868,
+          0,
+          0,
+          99.99999999999868,
+          -1.629206791697868e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "primitives": [
+          {
+            "meshIndex": 0,
+            "primitiveIndex": 0,
+            "vertices": 65534,
+            "indexCount": 98301,
+            "triangles": 32767,
+            "colourCount": 0,
+            "maximumIndex": 65533
+          }
+        ]
+      }
+    ],
+    "units": "input coordinate units; no scale calibration performed",
+    "validation": {
+      "positionsFinite": true,
+      "coloursFinite": true,
+      "indicesInBounds": true,
+      "noExternalDependencies": true,
+      "staticUncompressedTriangles": true
+    }
+  },
+  "engine": {
+    "allFinite": true,
+    "appendMilliseconds": 227.805,
+    "colourCount": 0,
+    "elapsedMilliseconds": 427.641,
+    "engine": {
+      "build": "official",
+      "hash": "ed1daf0bf001b61586d9930840f2f1394092c079",
+      "hex": 263938,
+      "major": 4,
+      "minor": 7,
+      "patch": 2,
+      "status": "stable",
+      "string": "4.7.2-stable (official)",
+      "timestamp": 0
+    },
+    "fpsMeasured": false,
+    "generatePackInstantiateMilliseconds": 33.057,
+    "headless": true,
+    "importPath": "GLTFDocument runtime import, PackedScene.pack and instantiate; editor auto-LOD pipeline not invoked",
+    "indexCount": 409497,
+    "indicesValid": true,
+    "inputSha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+    "inspectionMilliseconds": 88.234,
+    "memoryMeaning": "Godot tracked allocations; not OS RSS or GPU memory",
+    "meshInstances": 5,
+    "nodes": [
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": ".",
+        "worldMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          2.22044604925031e-16,
+          -1,
+          0,
+          0,
+          1,
+          2.22044604925031e-16,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "Sketchfab_model",
+        "worldMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          2.22044604925031e-16,
+          -1,
+          0,
+          0,
+          1,
+          2.22044604925031e-16,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          -1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "Sketchfab_model/ellora_fbx",
+        "worldMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          2.22044604925031e-16,
+          0,
+          0,
+          -2.22044604925031e-16,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "Sketchfab_model/ellora_fbx/RootNode",
+        "worldMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          2.22044604925031e-16,
+          0,
+          0,
+          -2.22044604925031e-16,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.62920678121736e-05,
+          -100,
+          0,
+          0,
+          100,
+          -1.62920678121736e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.62920678121736e-05,
+          -100,
+          0,
+          0,
+          100,
+          -1.62920678121736e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_05",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.62920678121736e-05,
+          -100,
+          0,
+          0,
+          100,
+          -1.62920678121736e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_04",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.62920678121736e-05,
+          -100,
+          0,
+          0,
+          100,
+          -1.62920678121736e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_03",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.62920678121736e-05,
+          -100,
+          0,
+          0,
+          100,
+          -1.62920678121736e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_02",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.62920678121736e-05,
+          -100,
+          0,
+          0,
+          100,
+          -1.62920678121736e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      },
+      {
+        "localMatrixColumnMajor": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "path": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_0",
+        "worldMatrixColumnMajor": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.62920678121736e-05,
+          -100,
+          0,
+          0,
+          100,
+          -1.62920678121736e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ]
+      }
+    ],
+    "platform": "Linux",
+    "schemaVersion": 1,
+    "sourceHashUnchanged": true,
+    "surfaces": [
+      {
+        "colourCount": 0,
+        "indexCount": 16881,
+        "indicesSha256": "da4b0c1d8388638f821a61116265bd765518a2ead8fa9c8b6be79f9510492886",
+        "maximumIndex": 11254,
+        "nodePath": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_05",
+        "surface": 0,
+        "triangles": 5627,
+        "vertices": 11255
+      },
+      {
+        "colourCount": 0,
+        "indexCount": 98298,
+        "indicesSha256": "31e0dd7a37fc86b53abe78044564115692ec7b3055d2db1ea01d0702e7afa5dc",
+        "maximumIndex": 65533,
+        "nodePath": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_04",
+        "surface": 0,
+        "triangles": 32766,
+        "vertices": 65534
+      },
+      {
+        "colourCount": 0,
+        "indexCount": 98295,
+        "indicesSha256": "86a4233edb48ad67c6e046dda7379564757ec5f35935be8d4f2d31c0e658678e",
+        "maximumIndex": 65532,
+        "nodePath": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_03",
+        "surface": 0,
+        "triangles": 32765,
+        "vertices": 65533
+      },
+      {
+        "colourCount": 0,
+        "indexCount": 97722,
+        "indicesSha256": "c6a68bede3bbf3e82c8fa1af21f950fc8ca51c6dd560742212b38061a75b85f5",
+        "maximumIndex": 65533,
+        "nodePath": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_02",
+        "surface": 0,
+        "triangles": 32574,
+        "vertices": 65534
+      },
+      {
+        "colourCount": 0,
+        "indexCount": 98301,
+        "indicesSha256": "ca16a9408b8146b53a0c1b69d14f75d2363391eb88e8956a077d06f3a60b8204",
+        "maximumIndex": 65533,
+        "nodePath": "Sketchfab_model/ellora_fbx/RootNode/Retopo_Model/Retopo_Model_Tex_0",
+        "surface": 0,
+        "triangles": 32767,
+        "vertices": 65534
+      }
+    ],
+    "trackedStaticMemoryBytes": 57084513,
+    "trackedStaticMemoryPeakBytes": 71786903,
+    "triangles": 136499,
+    "vertices": 273390,
+    "worldBounds": {
+      "maximum": [
+        1458.04736328125,
+        565.221435546875,
+        1304.42053222656
+      ],
+      "minimum": [
+        -1128.16931152344,
+        -296.875061035156,
+        -1279.29772949219
+      ]
+    }
+  },
+  "process": {
+    "exitCode": 0,
+    "signal": null,
+    "timedOut": false,
+    "wallMilliseconds": 834.8562670000001,
+    "sampledPeakRssBytes": 115646464,
+    "memoryMeaning": "Linux VmRSS sampled every50ms; lower bound on process peak, not GPU or target-device memory"
+  },
+  "checks": [
+    {
+      "name": "Godot 4",
+      "passed": true,
+      "expected": 4,
+      "observed": 4
+    },
+    {
+      "name": "vertices",
+      "passed": true,
+      "expected": 273390,
+      "observed": 273390
+    },
+    {
+      "name": "triangles",
+      "passed": true,
+      "expected": 136499,
+      "observed": 136499
+    },
+    {
+      "name": "indexCount",
+      "passed": true,
+      "expected": 409497,
+      "observed": 409497
+    },
+    {
+      "name": "colourCount",
+      "passed": true,
+      "expected": 0,
+      "observed": 0
+    },
+    {
+      "name": "meshInstances",
+      "passed": true,
+      "expected": 5,
+      "observed": 5
+    },
+    {
+      "name": "surface count",
+      "passed": true,
+      "expected": 5,
+      "observed": 5
+    },
+    {
+      "name": "finite positions, colours and transforms",
+      "passed": true,
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "indices within imported vertices",
+      "passed": true,
+      "expected": true,
+      "observed": true
+    },
+    {
+      "name": "immutable copied input",
+      "passed": true,
+      "expected": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+      "observed": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9"
+    },
+    {
+      "name": "world bounds minimum",
+      "passed": true,
+      "expected": {
+        "values": [
+          -1128.169345855713,
+          -296.875075892146,
+          -1279.2977184435156
+        ],
+        "tolerance": 0.014580472946166993
+      },
+      "observed": [
+        -1128.16931152344,
+        -296.875061035156,
+        -1279.29772949219
+      ]
+    },
+    {
+      "name": "world bounds maximum",
+      "passed": true,
+      "expected": {
+        "values": [
+          1458.0472946166992,
+          565.2213959294576,
+          1304.4206036581347
+        ],
+        "tolerance": 0.014580472946166993
+      },
+      "observed": [
+        1458.04736328125,
+        565.221435546875,
+        1304.42053222656
+      ]
+    },
+    {
+      "name": "original input remains unchanged",
+      "passed": true,
+      "expected": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+      "observed": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9"
+    },
+    {
+      "name": "copied input remains unchanged",
+      "passed": true,
+      "expected": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+      "observed": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9"
+    }
+  ],
+  "error": null,
+  "fpsMeasured": false,
+  "targetDeviceProfiled": false,
+  "dataTransformAppliedByHarness": false,
+  "limitations": [
+    "Runtime GLTFDocument path; editor import cache and automatic LOD generation are not tested.",
+    "Counts, finite colour values and colour presence are checked; colour-byte equivalence and image appearance are not established.",
+    "Import timing and sampled memory describe this host, not rendering FPS or a shipping-device budget."
+  ]
+}

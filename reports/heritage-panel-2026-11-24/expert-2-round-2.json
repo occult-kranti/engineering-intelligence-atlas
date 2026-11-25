@@ -1,0 +1,606 @@
+{
+  "schemaVersion": 1,
+  "round": 2,
+  "expert": {
+    "id": "expert-2",
+    "agent": "/root/audit_readiness",
+    "lens": "Reality capture and geometry preservation",
+    "continuity": "Recovery review for the missing expert-2 Round 2 record; this reviewer is a different AI agent from the historical Round 1 identity /root/mcp_vscode."
+  },
+  "reviewedAtUtc": "2026-11-25T06:32:25.189198+00:00",
+  "reviewType": "Independent review of the current geometry payload and preservation evidence; documentation correction by this reviewer is explicitly identified.",
+  "artifactIdentity": {
+    "sha256": "ba73f1bc9b5570c51a26c6ac2ccc34fbaffbad719ecbc140717f7ce38d9f8de0",
+    "scope": "Only the explicitly listed reviewed files; this is not the final full-changeset moderator artifact identity.",
+    "hashMethod": "SHA256 of UTF-8 concatenation of lexically sorted path + NUL + lowercase file SHA256 + LF.",
+    "baselineCommit": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48",
+    "priorRoundManifest": "reports/heritage-panel-2026-11-24/round-1-artifact.json",
+    "priorRoundArtifactSha256": "5aa26c9d8361b786bfdf272bb80bb80ab11090275355c71a973b7f5f2070aeca",
+    "files": [
+      {
+        "path": "integrations/godot-heritage-review/README.md",
+        "sha256": "560345f6ec9246d0533ce55825f817a21ff1f136ea6f11f0fb2f6cd8ada699d5"
+      },
+      {
+        "path": "integrations/godot-heritage-review/audit.gd",
+        "sha256": "47c828d7528823b1dba356357a61e659e91e9b2fdc3b610b8356fbdf637a4a62"
+      },
+      {
+        "path": "integrations/godot-heritage-review/evidence/el-markaz-islami-mosque.json",
+        "sha256": "d143793d7ca36389e41e8a30d6988a4cfee6f3f2947cad118ac80e9cf8a98924"
+      },
+      {
+        "path": "integrations/godot-heritage-review/evidence/kailasa-context.json",
+        "sha256": "7bbbcb0fc675c1204e61d57dc295e435c82dfaa488a6b223d3337684a37f5b93"
+      },
+      {
+        "path": "integrations/godot-heritage-review/evidence/st-george-antiochian-orthodox-church.json",
+        "sha256": "45a999ad92b53e7a51d4692daa4dbe3d0aeecc43a5565ab2e740781c41a69ac7"
+      },
+      {
+        "path": "integrations/godot-heritage-review/evidence/summary.json",
+        "sha256": "4a101baeef874dde94258ad1ab7c97da0a7ae7b27929580e67f76008280859a9"
+      },
+      {
+        "path": "integrations/godot-heritage-review/glb.mjs",
+        "sha256": "43ae9f68caa98ba0f227876801bb00c6ebda7379de1d261c26f65ae7b5bb44bd"
+      },
+      {
+        "path": "integrations/godot-heritage-review/run-audit.mjs",
+        "sha256": "6bca58371e6bf1bad372082c6b4d742f667459ce691b9551d60c1c7f583863d7"
+      },
+      {
+        "path": "integrations/godot-heritage-review/test/audit.test.mjs",
+        "sha256": "ebc0838ae155f71772eb13df673c2bd2c9658deeb43346d9666370d4d2c6ea4c"
+      },
+      {
+        "path": "integrations/heritage-assets/README.md",
+        "sha256": "bbbcc09be5a121e429e18a1e061b16833635c900ac3cb1476ec0b334373ed522"
+      },
+      {
+        "path": "integrations/heritage-assets/acquisition-manifest.json",
+        "sha256": "b77ae4966f6b3ebf492c7ad90a1b5dca6efd51fb4d761a997fa37cae77b993c7"
+      },
+      {
+        "path": "integrations/heritage-assets/applied-guidance.json",
+        "sha256": "747939b3dc9fdfd8b7f6c1e9d16d21b459efea6038ed7ea56c268c85f77677d7"
+      },
+      {
+        "path": "integrations/heritage-assets/package-lock.json",
+        "sha256": "c145a358c75ac0bf1de67b3d56e62f6aa42df3968df585f470c85d9143c69768"
+      },
+      {
+        "path": "integrations/heritage-assets/package.json",
+        "sha256": "7dd4360faafd8ae0ad72b68a22426257fe8f193053342d0fc08e10e36414c897"
+      },
+      {
+        "path": "integrations/heritage-assets/packed-models/manifest.json",
+        "sha256": "6b4b2f3dd796b6e42534b64ad334ccbe81bd41cb9f3db551b051397bd2103a42"
+      },
+      {
+        "path": "integrations/heritage-assets/preserve.mjs",
+        "sha256": "019b59a1126ccc34c5af6361e7ce2096f238723e9eb3d376193d23d854f831fd"
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/el-markaz-islami-mosque.json",
+        "sha256": "e3e1fde901a569f66b0472e64a7e8ce46ab468552f14ecf83247fa55017a3b26"
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/giza-plateau.json",
+        "sha256": "c979ae310aa744b1c5d11efe637041283df9eaf08aff19e2e2e9192636e92dc3"
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/kailasa-context.json",
+        "sha256": "b2bbff4eb846dfe53dfee399fb87a6370ada04bbf4e8d39b7677eda5aeb83234"
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/khafre.json",
+        "sha256": "b1360136b3d42a992724d642ee93fc430c24d984014f24c19ef38c771e080909"
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/khufu.json",
+        "sha256": "3f3c9f51238a0d932d2f3a884d7e82a505af92d0e6bba7138a40b76034be20b1"
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/menkaure.json",
+        "sha256": "d3a94a5313c33a3623dce1215bd4d28c7356925ec9cea9339a82baafe7e61da0"
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/st-george-antiochian-orthodox-church.json",
+        "sha256": "7508d54d36ea17175d7941446ae4050aec5ab89130c8145b65f3239fa6a994bc"
+      },
+      {
+        "path": "integrations/heritage-assets/test/preserve.test.mjs",
+        "sha256": "07c93c49ed3f67b6bf9c4cde367a2f18d7518596734486756b39c041f860a3f4"
+      },
+      {
+        "path": "projects/architecture-library/site-models/ACCURACY.md",
+        "sha256": "55ef58a3845984ff9d4070513542a6500ac29e3ecb92e04a180958e4a889b647"
+      },
+      {
+        "path": "projects/architecture-library/site-models/ATTRIBUTION.md",
+        "sha256": "3b09f7c7fa93cf4cdcf3f6a021ec843f209006c52ac206bea1074c6a795cfcce"
+      },
+      {
+        "path": "projects/architecture-library/site-models/README.md",
+        "sha256": "3be8af088771a673d693ceefd151fd7968dec87866d1b6bbaec9e6664ffc6661"
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/el-markaz-islami-mosque.glb",
+        "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67"
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/giza-plateau.glb",
+        "sha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564"
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/kailasa-context.glb",
+        "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc"
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/khafre.glb",
+        "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd"
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/khufu.glb",
+        "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1"
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/menkaure.glb",
+        "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70"
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb",
+        "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6"
+      },
+      {
+        "path": "projects/architecture-library/site-models/capture-requirements.json",
+        "sha256": "e6b5bbd2b353edb772cc5fb5503ced3280d1d6eb9f1d1eae995e9f0d5f0aebf5"
+      },
+      {
+        "path": "projects/architecture-library/site-models/catalog-core.mjs",
+        "sha256": "bd0e0020eea0b37c4fd2cdc2a55b0133e3ad6e0ce7c1223376d2cb8376db85a1"
+      },
+      {
+        "path": "projects/architecture-library/site-models/catalog.json",
+        "sha256": "481ab80f734ab89c834c6ac539156eb356393dbab43ad75c4e42eac72f1b0349"
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/el-markaz-islami-mosque.json",
+        "sha256": "c194ea18eefa2c37c6c5a39062015b001e3f74e68f072eb4770423805c01dd1c"
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/giza-plateau.json",
+        "sha256": "3543047c193af0d695df951fe7c3e147c14c51acf71d9d36b395b91121bf2ee6"
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/kailasa-context.json",
+        "sha256": "87bd1f028aeb30e0ad1c87d9b342e2ae2cefe260e316ba6c137c9d5f19d8bb31"
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/khafre.json",
+        "sha256": "5981ce6bb9cd04653fa43c03786723c187c33cb9d44a5b5e73bac8e96beff2d2"
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/khufu.json",
+        "sha256": "3d4c066ee9125e3468ff173835d651db99935227a2b36d04b2e95eebab7ccac0"
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/menkaure.json",
+        "sha256": "1104582832ef78ed539fe7835c39f8dcdd8886d5c6a8197a2b054c022c8c87fa"
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/st-george-antiochian-orthodox-church.json",
+        "sha256": "f7d1e818e0f04859e26f6bd5d1b514600a9b4751692788470f1f29804a242d40"
+      },
+      {
+        "path": "projects/architecture-library/site-models/tests/catalog.test.mjs",
+        "sha256": "dd669a2ae7678b64c90b10ba0ebbe8c3a156842b99dfebea188b7818c16da8bb"
+      },
+      {
+        "path": "scripts/materialize-heritage-models.mjs",
+        "sha256": "3c9b891f72e83554bda3200a122994fb759c69dd03adf22207bf0ee135441886"
+      },
+      {
+        "path": "scripts/materialize-heritage-models.test.mjs",
+        "sha256": "2c09432ea6e3de07fa6c9f161c8d3b6efc5169054bc44c8c2dd7d5d112dcc906"
+      }
+    ]
+  },
+  "outcome": "pass-for-reviewed-preservation-and-documented-engine-scope; final publication requires the moderator's separate integration and release gates",
+  "summary": "All seven current web models match their catalog hashes, acquired-source hashes and decoded preservation receipts when accessor metadata is compared by semantic binding. Fifty targeted tests pass. The Godot documentation now distinguishes the three previously executed engine audits, eligible but unexecuted Giza plateau, and three quantized pyramid derivatives rejected by the current preflight. No geometry, engine results, field accuracy or completed later review round was invented.",
+  "findings": [
+    {
+      "id": "E2-R2-01",
+      "severity": "medium",
+      "status": "fixed-locally",
+      "finding": "A generic instruction to decode a web GLB before the Godot audit omitted the non-normalized Float32 POSITION restriction.",
+      "relatedFinding": "E3-R2-02",
+      "change": "Documented component type 5126, the retained normalized signed 16-bit positions in Khufu/Khafre/Menkaure, the three actual engine-audited models and the absence of a Giza-plateau engine receipt.",
+      "evidence": [
+        "integrations/godot-heritage-review/glb.mjs",
+        "integrations/godot-heritage-review/README.md",
+        "projects/architecture-library/site-models/README.md"
+      ],
+      "acceptance": "Actual decoded-GLB preflight accepts the four Float32 inputs and rejects the three quantized pyramid inputs; the documentation retains that distinction from Godot engine compatibility."
+    },
+    {
+      "id": "E2-R2-02",
+      "severity": "info",
+      "status": "disclosed-limitation",
+      "finding": "Fine feature fidelity, physical scale, full coverage and field accuracy remain unverified for the supplied collection.",
+      "evidence": [
+        "projects/architecture-library/site-models/ACCURACY.md",
+        "projects/architecture-library/site-models/catalog.json"
+      ],
+      "acceptance": "All seven catalog entries keep measurement disabled and metric verification false; context sources are not relabeled complete surveys."
+    }
+  ],
+  "passedChecks": [
+    {
+      "finding": "Original acquired files are unchanged against the seven acquisition-manifest SHA256 values.",
+      "scope": "Hashed originals in the existing acquisition workspace; did not download or recertify source rights."
+    },
+    {
+      "finding": "Current web bytes, decoded accessor hashes/counts, texture hashes, material data, node transforms, hierarchy and triangle totals agree with preservation receipts.",
+      "scope": "Compared current decoded data to stored source snapshots by mesh/primitive/semantic binding. Raw original GLB node transform and association fields also match for all five GLB inputs. Original OBJ conversion was not regenerated."
+    },
+    {
+      "finding": "Seven catalog, provenance and preview checks pass, including restricted-source exclusion and preservation/preview route distinctions.",
+      "evidence": "projects/architecture-library/site-models/tests/catalog.test.mjs"
+    },
+    {
+      "finding": "Preservation fixtures verify exact position/color/index decoding through independent Three.js and reject unsupported/malformed source data.",
+      "evidence": "integrations/heritage-assets/test/preserve.test.mjs"
+    },
+    {
+      "finding": "Multipart reconstruction and corruption/overwrite/symlink failure tests pass without changing production assets.",
+      "evidence": "scripts/materialize-heritage-models.test.mjs"
+    }
+  ],
+  "tests": [
+    {
+      "command": "node --test integrations/heritage-assets/test/preserve.test.mjs integrations/godot-heritage-review/test/audit.test.mjs projects/architecture-library/site-models/tests/catalog.test.mjs scripts/materialize-heritage-models.test.mjs",
+      "startedAtUtc": "2026-11-25T06:29:02.879312+00:00",
+      "finishedAtUtc": "2026-11-25T06:29:03.322249+00:00",
+      "exitCode": 0,
+      "tests": 50,
+      "passed": 50,
+      "failed": 0,
+      "skipped": 0,
+      "logSha256": "da46e6321a53276b29023d0dfc5a68dba83154673a1a8c83b9e19e10db70f9a9",
+      "resultSummary": "24 preservation + 11 Godot preflight/failure-boundary + 7 catalog + 8 multipart transport tests."
+    }
+  ],
+  "productionVerification": {
+    "schemaVersion": 1,
+    "startedAtUtc": "2026-11-25T06:31:17.250Z",
+    "finishedAtUtc": "2026-11-25T06:31:23.399Z",
+    "kind": "Read-only source hashing, GLB decode and persisted receipt comparison plus Godot preflight; no engine launch or source write",
+    "metadataComparison": "Compare accessors by mesh/primitive/semantic bindings, remapping declaration indices; round-trip computed numeric JSON metadata to normalize signed zero. Accessor and texture SHA256 comparisons remain exact byte comparisons. Original GLB JSON node transform/association fields compared directly.",
+    "assets": [
+      {
+        "id": "st-george-antiochian-orthodox-church",
+        "webSha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6",
+        "acquiredSourceSha256": "02014fbc7e830c331330a454726a8e0f0af541d89eb7de8c1e56f319830dd64c",
+        "sourceHashMatches": true,
+        "decompressedSha256": "56a214714c1740aec8e831947b4260a380ecc48fa664ae9aea609a28e6b3fd38",
+        "triangles": 3757768,
+        "vertices": 1881698,
+        "preservation": {
+          "accessorBytesEqual": true,
+          "indexBytesAndCountsEqual": true,
+          "textureBytesEqual": true,
+          "materialPropertiesEqual": true,
+          "nodeTransformsEqual": true,
+          "hierarchyEqual": true,
+          "primitiveModesEqual": true,
+          "noDecimation": true,
+          "noQuantizeTransform": true,
+          "noLossyFilters": true
+        },
+        "rawTransformEquality": null,
+        "positionFormats": [
+          {
+            "componentType": 5126,
+            "normalized": false
+          }
+        ],
+        "godotPreflight": {
+          "eligible": true,
+          "vertices": 1881698,
+          "triangles": 3757768,
+          "meshInstances": 1
+        },
+        "actualEngineRerun": false
+      },
+      {
+        "id": "el-markaz-islami-mosque",
+        "webSha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67",
+        "acquiredSourceSha256": "b216639cae63edbbe429f435bbf3eca181d10deceea756594acbc2a00e207a9c",
+        "sourceHashMatches": true,
+        "decompressedSha256": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+        "triangles": 3104134,
+        "vertices": 1554546,
+        "preservation": {
+          "accessorBytesEqual": true,
+          "indexBytesAndCountsEqual": true,
+          "textureBytesEqual": true,
+          "materialPropertiesEqual": true,
+          "nodeTransformsEqual": true,
+          "hierarchyEqual": true,
+          "primitiveModesEqual": true,
+          "noDecimation": true,
+          "noQuantizeTransform": true,
+          "noLossyFilters": true
+        },
+        "rawTransformEquality": null,
+        "positionFormats": [
+          {
+            "componentType": 5126,
+            "normalized": false
+          }
+        ],
+        "godotPreflight": {
+          "eligible": true,
+          "vertices": 1554546,
+          "triangles": 3104134,
+          "meshInstances": 1
+        },
+        "actualEngineRerun": false
+      },
+      {
+        "id": "kailasa-context",
+        "webSha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc",
+        "acquiredSourceSha256": "bde3cb75d9fd68a355d5452d55b92b54b52d5aa7c15ba9c61a034392e59db807",
+        "sourceHashMatches": true,
+        "decompressedSha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+        "triangles": 136499,
+        "vertices": 273390,
+        "preservation": {
+          "accessorBytesEqual": true,
+          "indexBytesAndCountsEqual": true,
+          "textureBytesEqual": true,
+          "materialPropertiesEqual": true,
+          "nodeTransformsEqual": true,
+          "hierarchyEqual": true,
+          "primitiveModesEqual": true,
+          "noDecimation": true,
+          "noQuantizeTransform": true,
+          "noLossyFilters": true
+        },
+        "rawTransformEquality": true,
+        "positionFormats": [
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          }
+        ],
+        "godotPreflight": {
+          "eligible": true,
+          "vertices": 273390,
+          "triangles": 136499,
+          "meshInstances": 5
+        },
+        "actualEngineRerun": false
+      },
+      {
+        "id": "khufu",
+        "webSha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1",
+        "acquiredSourceSha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1",
+        "sourceHashMatches": true,
+        "decompressedSha256": "22aa915dc69eec7c0f9c2c588ed69b603b47c81ad52b641a36dc7e7e18a1ee41",
+        "triangles": 180160,
+        "vertices": 117818,
+        "preservation": {
+          "accessorBytesEqual": true,
+          "indexBytesAndCountsEqual": true,
+          "textureBytesEqual": true,
+          "materialPropertiesEqual": true,
+          "nodeTransformsEqual": true,
+          "hierarchyEqual": true,
+          "primitiveModesEqual": true,
+          "noDecimation": true,
+          "noQuantizeTransform": true,
+          "noLossyFilters": true
+        },
+        "rawTransformEquality": true,
+        "positionFormats": [
+          {
+            "componentType": 5122,
+            "normalized": true
+          }
+        ],
+        "godotPreflight": {
+          "eligible": false,
+          "error": "Accessor outside bufferView"
+        },
+        "actualEngineRerun": false
+      },
+      {
+        "id": "khafre",
+        "webSha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+        "acquiredSourceSha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+        "sourceHashMatches": true,
+        "decompressedSha256": "a750b15588136ad9e1a8bbff46057f8e1d1c940566e55dd44e737d1ad1b11702",
+        "triangles": 96181,
+        "vertices": 69826,
+        "preservation": {
+          "accessorBytesEqual": true,
+          "indexBytesAndCountsEqual": true,
+          "textureBytesEqual": true,
+          "materialPropertiesEqual": true,
+          "nodeTransformsEqual": true,
+          "hierarchyEqual": true,
+          "primitiveModesEqual": true,
+          "noDecimation": true,
+          "noQuantizeTransform": true,
+          "noLossyFilters": true
+        },
+        "rawTransformEquality": true,
+        "positionFormats": [
+          {
+            "componentType": 5122,
+            "normalized": true
+          }
+        ],
+        "godotPreflight": {
+          "eligible": false,
+          "error": "Accessor outside bufferView"
+        },
+        "actualEngineRerun": false
+      },
+      {
+        "id": "menkaure",
+        "webSha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70",
+        "acquiredSourceSha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70",
+        "sourceHashMatches": true,
+        "decompressedSha256": "7026917f11cc1a47c16a532087cb015a18ce8f348b89a0d4412408229e347bb2",
+        "triangles": 146089,
+        "vertices": 125284,
+        "preservation": {
+          "accessorBytesEqual": true,
+          "indexBytesAndCountsEqual": true,
+          "textureBytesEqual": true,
+          "materialPropertiesEqual": true,
+          "nodeTransformsEqual": true,
+          "hierarchyEqual": true,
+          "primitiveModesEqual": true,
+          "noDecimation": true,
+          "noQuantizeTransform": true,
+          "noLossyFilters": true
+        },
+        "rawTransformEquality": true,
+        "positionFormats": [
+          {
+            "componentType": 5122,
+            "normalized": true
+          }
+        ],
+        "godotPreflight": {
+          "eligible": false,
+          "error": "Accessor outside bufferView"
+        },
+        "actualEngineRerun": false
+      },
+      {
+        "id": "giza-plateau",
+        "webSha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564",
+        "acquiredSourceSha256": "7ba058be251b6c3e24c476e1386fd4defb21b626c4093e981a38723dd4e73c1e",
+        "sourceHashMatches": true,
+        "decompressedSha256": "dd62abbdf5047f856bb701d44010e44c90a3448079a0c8b6fb20472f895c48c3",
+        "triangles": 1163285,
+        "vertices": 763436,
+        "preservation": {
+          "accessorBytesEqual": true,
+          "indexBytesAndCountsEqual": true,
+          "textureBytesEqual": true,
+          "materialPropertiesEqual": true,
+          "nodeTransformsEqual": true,
+          "hierarchyEqual": true,
+          "primitiveModesEqual": true,
+          "noDecimation": true,
+          "noQuantizeTransform": true,
+          "noLossyFilters": true
+        },
+        "rawTransformEquality": true,
+        "positionFormats": [
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          },
+          {
+            "componentType": 5126,
+            "normalized": false
+          }
+        ],
+        "godotPreflight": {
+          "eligible": true,
+          "vertices": 763436,
+          "triangles": 1163285,
+          "meshInstances": 12
+        },
+        "actualEngineRerun": false
+      }
+    ]
+  },
+  "diagnostics": {
+    "metadataComparison": "A naive deep comparison against serialized JSON distinguishes runtime negative zero from stored zero and may compare incidental accessor declaration indices. The final comparison canonicalizes only JSON metadata and binding indices; decoded attribute/index/texture byte hashes are unchanged. No model, original receipt or production geometry was edited to obtain a pass."
+  },
+  "implementationChangedByReview": {
+    "geometryChanged": false,
+    "engineHarnessChanged": false,
+    "documentationChanged": [
+      "integrations/godot-heritage-review/README.md",
+      "projects/architecture-library/site-models/README.md"
+    ]
+  },
+  "notExecutedThisReview": [
+    "No actual Godot or Blender process was launched; engine results quoted remain the separate recorded earlier runs.",
+    "No browser rendering, FPS/device benchmark, metric survey, source rights certification, network acquisition or production deployment was performed.",
+    "The original dense OBJ-to-GLB conversions were not regenerated. Source bytes, current output bytes and recorded semantic-binding hashes were checked."
+  ],
+  "limits": [
+    "The 50 passing checks include synthetic test geometry and production metadata/hash checks, not a new whole-site capture or physical survey.",
+    "The Godot preflight rejects signed 16-bit quantized positions as outside its supported accessor format; its generic error does not establish that the underlying file is invalid or that Godot cannot import it.",
+    "This reviewer did not accept or claim completion of Round 3 or the final deployment."
+  ],
+  "externalSpendUsd": 0,
+  "nextStep": "Moderator combines this recovered review with the other expert reports, records the complete changed artifact, and runs remaining integration/browser/release gates before publication."
+}

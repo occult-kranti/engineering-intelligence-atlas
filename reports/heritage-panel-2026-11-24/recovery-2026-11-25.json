@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "reviewType": "separate recovery integration review",
+  "reviewer": "/root/github_audit",
+  "reviewedAtUtc": "2026-11-25T06:41:08.469408+00:00",
+  "baselineCommit": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48",
+  "initialStatus": {
+    "recursivePaths": 464,
+    "modified": 45,
+    "deletedGenerated": 18,
+    "untracked": 401,
+    "untrackedBytes": 187875163
+  },
+  "remoteVerifiedBeforeRecovery": {
+    "repository": "https://github.com/occult-kranti/engineering-intelligence-atlas",
+    "main": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48",
+    "heritageFeatureBranch": "absent"
+  },
+  "passed": [
+    {
+      "command": "node scripts/check-game-heritage.mjs",
+      "results": {
+        "resourceIntegrityTests": 17,
+        "nodeTests": 60,
+        "blenderHelperTests": 10
+      }
+    },
+    {
+      "command": "node --test scripts/architecture-library-assets.test.mjs scripts/resource-router.test.mjs",
+      "tests": 18
+    },
+    {
+      "command": "python3 scripts/sync-skills.py --check",
+      "packages": 15,
+      "publicMirrors": 7,
+      "drift": []
+    },
+    {
+      "command": "python3 scripts/sync-resource-projections.py",
+      "mode": "read-only default"
+    },
+    {
+      "command": "node scripts/resource-router.mjs --check-atlas",
+      "catalogRecords": 333,
+      "projectionRecords": 333,
+      "preservedOriginalRecords": 296
+    },
+    {
+      "command": "npm --prefix site-source run check"
+    },
+    {
+      "command": "node scripts/build-static.mjs",
+      "verifiedClientFiles": 379
+    },
+    {
+      "command": "git diff --check before staging",
+      "scope": "Existing tracked edits only"
+    },
+    {
+      "command": "git diff --cached --check excluding verified vendor/resource directories",
+      "scope": "Authored changes"
+    }
+  ],
+  "blocked": [
+    {
+      "command": "node scripts/smoke-heritage-viewer.mjs",
+      "cause": "Expected bundled Playwright Chromium executable absent; no browser page opened"
+    },
+    {
+      "command": "HERITAGE_CHROMIUM_EXECUTABLE=/usr/bin/chromium node scripts/smoke-heritage-viewer.mjs",
+      "cause": "System Chromium aborts: socket() failed: Operation not permitted; no browser page opened"
+    }
+  ],
+  "securityScan": {
+    "scope": "Initial changed text files under 2MB plus explicit public-path inventory and size check",
+    "matches": "Two fake credential-URL rejection fixtures; no real credential found in this bounded scan",
+    "exhaustive": false
+  },
+  "retainedNotReexecuted": [
+    "Actual Godot import receipts for Kailasa context, St. George Church and El Markaz Islami Mosque",
+    "Earlier Blender source/import render and inspection receipts"
+  ],
+  "notClaimed": [
+    "Third four-expert round completed",
+    "Independent field accuracy",
+    "Target-device FPS",
+    "Unreal engine execution",
+    "VPS deployment",
+    "Remote CI or Pages success before their actual receipts"
+  ],
+  "artifactManifest": "recovery-artifact.json",
+  "retainedUpstreamWhitespace": {
+    "warningCount": 4,
+    "description": "Three exact-byte Three.js copies have the same indentation line; one pinned upstream gate-check skill has trailing whitespace. No upstream bytes modified."
+  }
+}

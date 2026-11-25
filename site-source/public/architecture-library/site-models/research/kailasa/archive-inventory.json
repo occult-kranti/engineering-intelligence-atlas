@@ -1,0 +1,816 @@
+{
+  "schemaVersion": 1,
+  "sourceId": "klein-models",
+  "license": "CC-BY-NC-4.0",
+  "archiveSha256": "b196ed85582a99e954de71f45ea28ddf9d2d0aceea33f0ef4ce501ce21e50d35",
+  "models": [
+    {
+      "archiveMember": "glb/c16_floor2_saptamatrika.glb",
+      "bytes": 7646656,
+      "sha256": "93d4a5ea29dcbbcf140df2193e2d12f9301d99423d4d66547fc51e772dea977e",
+      "meshes": 1,
+      "triangles": 52735,
+      "positionEntries": 32041,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false,
+      "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-cave16-research-only/c16_floor2_saptamatrika.glb",
+      "caveIdentityBasis": "Author archive filename explicitly starts c16_; feature coverage only, not complete temple."
+    },
+    {
+      "archiveMember": "glb/c29_shiva.glb",
+      "bytes": 8830596,
+      "sha256": "5886421be6960f501c554634c160f104eb2105f07721ab805bce57a388b0b765",
+      "meshes": 1,
+      "triangles": 93208,
+      "positionEntries": 54785,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c33_floor2_sarvanubhuti.glb",
+      "bytes": 7922124,
+      "sha256": "fd78aff76ad6c0ec87327c171e94b35ab1066d76d186268524cfbc2000c0d6f2",
+      "meshes": 1,
+      "triangles": 86238,
+      "positionEntries": 51676,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c29_shrine.glb",
+      "bytes": 7490408,
+      "sha256": "166dcc962bc13860ee2a4df6ebaca9381a4745e90299c9d5bddb07ed86ec0e7a",
+      "meshes": 1,
+      "triangles": 95832,
+      "positionEntries": 58493,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c21_dwarapala.glb",
+      "bytes": 8527808,
+      "sha256": "06f22f58105077187f486af13b51cfc4a36922471837fe76073ff5c86d7d0724",
+      "meshes": 1,
+      "triangles": 71404,
+      "positionEntries": 43184,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c29_south-entrance-right-lion.glb",
+      "bytes": 9662320,
+      "sha256": "8ee23ff1a852fece6fa338e639c830e62b2ee32fdb93ebf27eaab68a9537322a",
+      "meshes": 1,
+      "triangles": 93582,
+      "positionEntries": 52837,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c2016_floor2_little-dwarapala.glb",
+      "bytes": 5193156,
+      "sha256": "af72f9024158bf94836191b62c616482e51db5fc3b4d78cbb817f0e2af62a227",
+      "meshes": 1,
+      "triangles": 31292,
+      "positionEntries": 18379,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false,
+      "caveIdentityBasis": "Ambiguous author filename; not reassigned to Cave16."
+    },
+    {
+      "archiveMember": "glb/c32_elephant-and-surround.glb",
+      "bytes": 9058564,
+      "sha256": "1f1294f3acca17d56ec0e9baf0ecd4bd0451d69f0dec8e4a6f1a30e1b3b21c00",
+      "meshes": 1,
+      "triangles": 99995,
+      "positionEntries": 59695,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c33_floor2_ambika.glb",
+      "bytes": 8297364,
+      "sha256": "ef85820621beabeab4b2570813c8792d57ed4531d254994b851cb0a7e4c03dc4",
+      "meshes": 1,
+      "triangles": 90375,
+      "positionEntries": 55560,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c32_floor2_pillar.glb",
+      "bytes": 8427324,
+      "sha256": "fd598fecdc7a332067ceebbc22ccc24a69230527d62fb4f6d41c13dc03b16723",
+      "meshes": 1,
+      "triangles": 68709,
+      "positionEntries": 42681,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c32_floor2_sarvanubhuti.glb",
+      "bytes": 9005684,
+      "sha256": "175f153b2206b40be8977671fb9d8d32b60eb44007b502a817485464268f3375",
+      "meshes": 1,
+      "triangles": 95693,
+      "positionEntries": 59303,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c32_elephant.glb",
+      "bytes": 7992520,
+      "sha256": "399ab00c02f9897ed83c6fe855c0fcdd012b2bc0fff08390d72a1ebeb926a3b1",
+      "meshes": 1,
+      "triangles": 59091,
+      "positionEntries": 35212,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c29_dwarapala.glb",
+      "bytes": 7235224,
+      "sha256": "938f9bb0577a248e9ac7f4c7cb8315f868e2a2710888f166e3fa58ee14d838f6",
+      "meshes": 1,
+      "triangles": 84799,
+      "positionEntries": 50231,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c32_floor2_ambika.glb",
+      "bytes": 9024524,
+      "sha256": "b85efde6ae3500733feaffb58cd2d4584550bd555a14f7c3ccb5f0a9344dfab4",
+      "meshes": 1,
+      "triangles": 92842,
+      "positionEntries": 57174,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c16_floor2_figures-right-of-saptamatrika.glb",
+      "bytes": 8627996,
+      "sha256": "068e542006a1c3ba84ea8ce57f856002c3a1f8b1a391b88fb56f43d8a90ff5b4",
+      "meshes": 1,
+      "triangles": 92218,
+      "positionEntries": 56072,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false,
+      "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-cave16-research-only/c16_floor2_figures-right-of-saptamatrika.glb",
+      "caveIdentityBasis": "Author archive filename explicitly starts c16_; feature coverage only, not complete temple."
+    },
+    {
+      "archiveMember": "glb/c16_creature.glb",
+      "bytes": 8770464,
+      "sha256": "f183d9195d1cab64b4d6eb682963b86bc3c8afa45e80e001513f7a4ff2bc0ee4",
+      "meshes": 1,
+      "triangles": 63446,
+      "positionEntries": 36927,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false,
+      "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-cave16-research-only/c16_creature.glb",
+      "caveIdentityBasis": "Author archive filename explicitly starts c16_; feature coverage only, not complete temple."
+    },
+    {
+      "archiveMember": "glb/c1016_floor2_dancing-shiva.glb",
+      "bytes": 6685280,
+      "sha256": "853e42929955908ee6c54c245bc14fa20ac2a1e33cc353ea3dedd3dc8139b9e7",
+      "meshes": 1,
+      "triangles": 44586,
+      "positionEntries": 27968,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false,
+      "caveIdentityBasis": "Ambiguous author filename; not reassigned to Cave16."
+    },
+    {
+      "archiveMember": "glb/c21_bracket-yaksha.glb",
+      "bytes": 8936004,
+      "sha256": "d0974e5938ec96d19f7788d767c6116f8b3c9ab4b2b852ae09a4bbf682fb0d87",
+      "meshes": 1,
+      "triangles": 64657,
+      "positionEntries": 39117,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c29_south-entrance-left-lion.glb",
+      "bytes": 9532356,
+      "sha256": "335ca328d5ecf5320771ef5685090fb59f578df75263a21eb8720bfe69be71fc",
+      "meshes": 1,
+      "triangles": 94528,
+      "positionEntries": 53434,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c32_floor2_ceiling-lotus.glb",
+      "bytes": 5699948,
+      "sha256": "0be0e0cb59c63a255cfd6d0780a812f19e2284e83414981511883c0d8b1c7f54",
+      "meshes": 1,
+      "triangles": 27881,
+      "positionEntries": 16634,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false
+    },
+    {
+      "archiveMember": "glb/c16_floor2_figures-left-of-saptamatrika.glb",
+      "bytes": 8602080,
+      "sha256": "8e0f7ba2f363fda29eebecfab1f0a7e3ab00b2273e89975ec7d0f34c475ea409",
+      "meshes": 1,
+      "triangles": 74372,
+      "positionEntries": 45391,
+      "externalReferences": [],
+      "images": [
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        },
+        {
+          "dimensions": [
+            4096,
+            4096
+          ],
+          "format": "JPEG"
+        }
+      ],
+      "asset": {
+        "version": "2.0"
+      },
+      "extensionsUsed": [],
+      "scaleVerified": false,
+      "registrationVerified": false,
+      "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-cave16-research-only/c16_floor2_figures-left-of-saptamatrika.glb",
+      "caveIdentityBasis": "Author archive filename explicitly starts c16_; feature coverage only, not complete temple."
+    }
+  ]
+}

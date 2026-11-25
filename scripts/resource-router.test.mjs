@@ -35,7 +35,7 @@ test('migration preserves every original field and covers the exact repository s
   const projection = JSON.parse(/export\s+const\s+RESOURCES\s*:\s*Resource\[\]\s*=\s*([\s\S]*);\s*$/.exec(source)[1]);
   assert.equal(catalog.source.recordCount, 296);
   assert.deepEqual(catalog.resources.slice(0, 296).map(api.legacyResource), projection.slice(0, 296));
-  assert.equal(catalog.resources.length, 303);
+  assert.equal(catalog.resources.length, 333);
   const skills = fs.readdirSync(path.join(root, 'skills')).filter(name => fs.existsSync(path.join(root, 'skills', name, 'SKILL.md'))).sort();
   assert.deepEqual(catalog.routes.map(r => r.skill).sort(), skills);
   assert.equal(skills.length, 15);

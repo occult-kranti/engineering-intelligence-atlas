@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "encoding": "concatenated-original-bytes",
+  "chunkBytes": 10485760,
+  "totalBytes": 131528836,
+  "models": [
+    {
+      "id": "st-george-antiochian-orthodox-church",
+      "target": "projects/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb",
+      "bytes": 61470040,
+      "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6",
+      "parts": [
+        {
+          "file": "st-george-antiochian-orthodox-church.000.part",
+          "bytes": 10485760,
+          "sha256": "435daebd17f2b9b6f1a0ce9c6efe15ebd56541776129bc3c53ce2b280475ace6"
+        },
+        {
+          "file": "st-george-antiochian-orthodox-church.001.part",
+          "bytes": 10485760,
+          "sha256": "b2f4f8edb11b4a47a1ef66e02d679e8be60546eb9bcbe1db33457135b921ad1b"
+        },
+        {
+          "file": "st-george-antiochian-orthodox-church.002.part",
+          "bytes": 10485760,
+          "sha256": "e83cd47d1642dda0bb9ff98ae826cdd57fd62469f4a28e3529a2fcdb88597d85"
+        },
+        {
+          "file": "st-george-antiochian-orthodox-church.003.part",
+          "bytes": 10485760,
+          "sha256": "88ade03e24de4ea85dad11c4645d90ea47e79de4314601f084aedab608ce3bf1"
+        },
+        {
+          "file": "st-george-antiochian-orthodox-church.004.part",
+          "bytes": 10485760,
+          "sha256": "66c88dbe1f465baf662f167bed4bac699a1a4b15f6cb02bb9c663506fe3fe236"
+        },
+        {
+          "file": "st-george-antiochian-orthodox-church.005.part",
+          "bytes": 9041240,
+          "sha256": "5174b3bc8a5661318d040eacbef51a988478ac23f2812497d7c548757975f6ec"
+        }
+      ]
+    },
+    {
+      "id": "el-markaz-islami-mosque",
+      "target": "projects/architecture-library/site-models/assets/el-markaz-islami-mosque.glb",
+      "bytes": 49140024,
+      "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67",
+      "parts": [
+        {
+          "file": "el-markaz-islami-mosque.000.part",
+          "bytes": 10485760,
+          "sha256": "28912857e0f690a26ab414fc9809fd7c1ea4f5b29b46f4216c66e7028c14287c"
+        },
+        {
+          "file": "el-markaz-islami-mosque.001.part",
+          "bytes": 10485760,
+          "sha256": "959f943fd38ca9a1108cbe21a378b51da24073ccb50b072753cd9512ce4bba1a"
+        },
+        {
+          "file": "el-markaz-islami-mosque.002.part",
+          "bytes": 10485760,
+          "sha256": "2d955c65a3913ace4753c8c7bcfe1babb80e61f1ffda30a98cf13ee87b61766f"
+        },
+        {
+          "file": "el-markaz-islami-mosque.003.part",
+          "bytes": 10485760,
+          "sha256": "54539c430f0223950c0263b5a30a752f9ef7ddb520ae958b4d853e70f1114f91"
+        },
+        {
+          "file": "el-markaz-islami-mosque.004.part",
+          "bytes": 7196984,
+          "sha256": "7b608df8b034f3c5ca00a50260a28377f1f1dcad687893585f64c994c6458e7a"
+        }
+      ]
+    },
+    {
+      "id": "giza-plateau",
+      "target": "projects/architecture-library/site-models/assets/giza-plateau.glb",
+      "bytes": 20918772,
+      "sha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564",
+      "parts": [
+        {
+          "file": "giza-plateau.000.part",
+          "bytes": 10485760,
+          "sha256": "e21c7fbc32620e82bc7fbe0c0b296307374e99fea0d4f2fbf6b4c69298f7931f"
+        },
+        {
+          "file": "giza-plateau.001.part",
+          "bytes": 10433012,
+          "sha256": "a32baac7d66c627f5d39da34bfe468b332b82516ad8df6173a5a2a30bc575176"
+        }
+      ]
+    }
+  ]
+}
