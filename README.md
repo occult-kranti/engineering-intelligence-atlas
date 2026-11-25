@@ -1,5 +1,10 @@
 # Daftar — personal agent office
 
+## Donna Brain, research atlas and design backgrounds
+
+The built-in **Brain** surface connects company records, repositories, people, skills, decisions, questions and setup drafts. [Implementation and study guide](projects/research-memory-atlas/README.md) · [177 formula cards](projects/research-memory-atlas/FORMULA_NOTEBOOK.md) · [AI mathematics audit](projects/research-memory-atlas/AI_MATHEMATICS.md) · [15 design backgrounds](projects/design-backgrounds/README.md) · [Delivery evidence](project/RESEARCH_MEMORY_DELIVERY.md).
+
+
 ## Captured places and game-art research — 2026-11-25
 
 The [captured-place viewer](https://occult-kranti.github.io/engineering-intelligence-atlas/architecture-library/site-models/index.html)

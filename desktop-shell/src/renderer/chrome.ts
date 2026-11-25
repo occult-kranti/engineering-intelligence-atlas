@@ -8,6 +8,8 @@ import { appendDonnaDraft } from './resource-library/model.js';
 import { mountHardwareWorkbench } from './hardware-workbench.js';
 import { RESOURCE_CATALOG } from './resource-library/catalog.js';
 import { validGlobalCeiling } from './resource-library/budget.js';
+import { mountDonnaBrain, type DonnaBrainPanel } from './brain/panel.js';
+import type { OfficeSnapshot as BrainOfficeSnapshot } from './brain/office-types.js';
 /**
  * Local chrome/launcher page logic. Runs only on file:// inside the sandboxed
  * shell window. Structural copies of the bridge types live here so the
@@ -607,6 +609,7 @@ const VIEW_LABELS: Record<ViewName, string> = {
 let activeView: ViewName = 'office';
 let contentMode = false;
 let endlessWorkspace: CanvasWorkspace | null = null;
+let donnaBrainPanel: DonnaBrainPanel | null = null;
 // Live surfaces share refreshes, but an unfinished policy edit belongs to its
 // form until confirmed saved or explicitly reset, even after focus moves away.
 const canvasFormDrafts = new Set<string>();
@@ -1962,7 +1965,7 @@ function renderOffice(): void {
       : 'The permanent observer runs in your desktop or VPS runtime. The native index refreshes with every saved command.';
     observer.title = officeObservation?.issues.map(issue => `${issue.code}: ${issue.count}`).join('\n') ?? '';
   }
-  renderOfficeScope(); renderWorker(); renderCompanyHierarchy(); renderUnifiedWorkspace(); modelPoolPanel?.refreshScope(); if (!officeState) return;
+  renderOfficeScope(); renderWorker(); renderCompanyHierarchy(); renderUnifiedWorkspace(); modelPoolPanel?.refreshScope(); donnaBrainPanel?.refresh(); if (!officeState) return;
   const employees = scopedEmployees(); const jobs = scopedJobs();
   $('office-active-employees').textContent = number(employees.filter((e) => e.status === 'active').length);
   $('office-queued-jobs').textContent = number(jobs.filter((j) => j.status === 'queued' || j.status === 'waiting-budget').length);
@@ -3652,6 +3655,7 @@ function initEndlessWorkspace(): void {
   };
   add('donna','Donna · conversation',donna,'Donna',680,400);
   add('crew','Donna & sub-Donnas',crew,'Donna',800,720);
+  add('brain','Donna Brain · company memory',$('donna-brain-surface'),'Donna',1180,820);
   add('policy','Budget & autonomy',$('workspace-policy'),'Donna',880,680);
   add('scope','Company & department',scope,'Office',760,510);
   add('company-directory','Find a company',studio.elements.listHost,'Office',620,690);
@@ -3749,6 +3753,27 @@ function initEndlessWorkspace(): void {
 }
 
 // ---------------------------------------------------------------- boot
+function initDonnaBrain(): void {
+  donnaBrainPanel = mountDonnaBrain($('donna-brain-mount'), {
+    context: () => ({
+      snapshot: officeState as unknown as BrainOfficeSnapshot | null,
+      companyId: officeCompany()?.id ?? null,
+      writable: Boolean(officeState && bridge?.officeCommand && workspaceAvailable() && !workspaceReadOnly()),
+      modeLabel: workspaceReadOnly() ? 'Example company · read only' : bridge?.transport === 'cloud-browser' ? 'Private company · native confirmation' : 'Saved company records',
+      unavailableReason: workspaceReadOnly() ? 'This sample is read only. Open your private workspace to save memories and setup goals.' : 'Load a connected company workspace to save memories and setup goals.',
+    }),
+    command: async command => {
+      if (command.action !== 'add_knowledge' && command.action !== 'create_goal') throw new Error('This Brain action is not supported by the saved-record controls.');
+      return await workspaceCommand({ ...command, action: command.action }, 'Donna Brain record confirmed.') as unknown as BrainOfficeSnapshot;
+    },
+  });
+  $('header-open-brain').onclick = () => {
+    if (endlessWorkspace) endlessWorkspace.open('brain', { nearCamera: true });
+    else { navigate('office'); $('donna-brain-surface').classList.remove('hidden'); $('donna-brain-surface').scrollIntoView({block:'nearest'}); }
+    donnaBrainPanel?.refresh();
+  };
+  window.addEventListener('beforeunload', () => donnaBrainPanel?.destroy(), { once: true });
+}
 function addToDonnaDraft(text: string): void {
   const input = $('chat-message') as HTMLTextAreaElement;
   const draft = appendDonnaDraft(input.value, text);
@@ -3779,6 +3804,7 @@ function boot(): void {
   initStudio(); initWorkspace(); initOffice(); initCompanyHierarchy(); initUnifiedWorkspace(); initFreeflowHost(); initGitHubTools(); initPortfolio(); initAuthority(); initDecisionPanels(); initCloudConnection(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
   modelPoolPanel = mountModelPool($('system-view'), bridge, () => ({ activeCompanyId: officeState?.activeCompanyId,
     companies: officeState?.companies || [], employees: officeState?.employees || [] }), workspaceReadOnly);
+  initDonnaBrain();
   initEndlessWorkspace();
   initReferenceRoom();
   if (!bridge) {

@@ -9,10 +9,11 @@ const src = path.join(here, '..', 'src', 'renderer');
 const dest = path.join(here, '..', 'dist', 'renderer');
 
 fs.mkdirSync(dest, { recursive: true });
-for (const name of ['chrome.html', 'chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'hardware-workbench.css']) {
+for (const name of ['chrome.html', 'chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'hardware-workbench.css', 'brain/panel.css']) {
   const from = path.join(src, name);
   // freeflow.css is optional so the build works before it is added.
   if (name === 'freeflow.css' && !fs.existsSync(from)) continue;
+  fs.mkdirSync(path.dirname(path.join(dest, name)), { recursive: true });
   fs.copyFileSync(from, path.join(dest, name));
 }
 copyCompanyStudio(path.resolve(here, '../..'), path.join(dest, 'studios/threejs'));

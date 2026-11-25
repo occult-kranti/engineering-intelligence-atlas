@@ -190,3 +190,21 @@ test('a failed pre-dispatch brief write rolls back admission and the same reques
   assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_messages').get().n,2);
  }finally{globalThis.fetch=previous;}
 });
+
+
+test('Donna Brain freshness also governs the hosted legacy context',()=>{
+ const fixture=structuredClone(state);
+ const record=(id,body,createdAt,extra={})=>({id,companyId:'atlas',title:id,createdAt,artifactUri:'',summary:JSON.stringify({kind:'daftar-brain-note',version:1,type:'fact',body,tags:[],supersedes:null,expiresAt:null,...extra})});
+ fixture.knowledge=[
+  record('old','SUPERSEDED_CANARY','2000-01-01T00:00:00Z'),
+  record('new','CURRENT_EVIDENCE','2001-01-01T00:00:00Z',{supersedes:'old'}),
+  record('expired','EXPIRED_CANARY','2000-01-01T00:00:00Z',{expiresAt:'2001-01-01T00:00:00Z'}),
+  record('invalid','INVALID_CANARY','2000-01-01T00:00:00Z',{expiresAt:'not-a-date'}),
+  record('future-format','UNSUPPORTED_CANARY','2000-01-01T00:00:00Z',{version:2}),
+  {companyId:'atlas',title:'Legacy ID-less summary',summary:'LEGACY_ALLOWED'},
+  {id:'other',companyId:'secret-other',title:'Private',summary:'FOREIGN_CANARY'}
+ ];
+ const actual=JSON.stringify(scopedContext(fixture,{kind:'company',id:'atlas'}));
+ assert.ok(actual.includes('CURRENT_EVIDENCE'));assert.ok(actual.includes('LEGACY_ALLOWED'));
+ for(const canary of ['SUPERSEDED_CANARY','EXPIRED_CANARY','INVALID_CANARY','UNSUPPORTED_CANARY','FOREIGN_CANARY'])assert.ok(!actual.includes(canary),canary);
+});

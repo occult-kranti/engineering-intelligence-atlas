@@ -1,0 +1,1415 @@
+[
+  {
+    "source": "m-logic",
+    "target": "m-sets",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-sets",
+    "target": "m-equations",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-equations",
+    "target": "m-polynomials",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-polynomials",
+    "target": "m-complex",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-complex",
+    "target": "m-complexanalysis",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-complexanalysis",
+    "target": "m-zeta",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-logic",
+    "target": "m-induction",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-induction",
+    "target": "m-proof",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-proof",
+    "target": "m-types",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-types",
+    "target": "m-axioms",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-sets",
+    "target": "m-groups",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-groups",
+    "target": "m-rings",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-rings",
+    "target": "m-fields",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-fields",
+    "target": "m-galois",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-groups",
+    "target": "m-representations",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-representations",
+    "target": "m-lie",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-lie",
+    "target": "m-connection",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-connection",
+    "target": "m-curvature",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-equations",
+    "target": "m-vectors",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-vectors",
+    "target": "m-basis",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-basis",
+    "target": "m-rank",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-rank",
+    "target": "m-pseudoinverse",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-pseudoinverse",
+    "target": "m-regularization",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-vectors",
+    "target": "m-inner",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-inner",
+    "target": "m-spectral",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-spectral",
+    "target": "m-svd",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-svd",
+    "target": "m-pca",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-pca",
+    "target": "m-embedding",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-inner",
+    "target": "m-leastsquares",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-leastsquares",
+    "target": "m-conditioning",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-conditioning",
+    "target": "m-floating",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-floating",
+    "target": "m-cg",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-limits",
+    "target": "m-derivative",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-derivative",
+    "target": "m-taylor",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-taylor",
+    "target": "m-rootfinding",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-rootfinding",
+    "target": "m-fixedpoint",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-derivative",
+    "target": "m-chain",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-chain",
+    "target": "m-gradient",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-gradient",
+    "target": "m-variation",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-variation",
+    "target": "m-pde",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-integral",
+    "target": "m-jacobian",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-jacobian",
+    "target": "m-divergence",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-divergence",
+    "target": "m-weak",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-weak",
+    "target": "m-fem",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-integral",
+    "target": "m-measure",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-measure",
+    "target": "m-functional",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-functional",
+    "target": "m-operators",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-operators",
+    "target": "m-sobolev",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-sobolev",
+    "target": "m-pde",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-complex",
+    "target": "m-fourier",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-fourier",
+    "target": "m-distribution",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-distribution",
+    "target": "m-heat",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-heat",
+    "target": "m-graphdiffusion",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-euclidean",
+    "target": "m-manifold",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-manifold",
+    "target": "m-tangent",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-tangent",
+    "target": "m-metric",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-metric",
+    "target": "m-connection",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-connection",
+    "target": "m-curvature",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-topology",
+    "target": "m-homotopy",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-homotopy",
+    "target": "m-simplicial",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-simplicial",
+    "target": "m-homology",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-homology",
+    "target": "m-cohomology",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-cohomology",
+    "target": "m-hodge",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-homology",
+    "target": "m-persistent",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-sets",
+    "target": "m-graph",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-graph",
+    "target": "m-adjacency",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-adjacency",
+    "target": "m-incidence",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-incidence",
+    "target": "m-laplacian",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-laplacian",
+    "target": "m-resistance",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-laplacian",
+    "target": "m-spectral",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-spectral",
+    "target": "m-graphdiffusion",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-graph",
+    "target": "m-shortest",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-shortest",
+    "target": "m-dag",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-dag",
+    "target": "m-scc",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-probability",
+    "target": "m-randomvariable",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-randomvariable",
+    "target": "m-bayes",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-bayes",
+    "target": "m-entropy",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-entropy",
+    "target": "m-kl",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-kl",
+    "target": "m-mutual",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-randomvariable",
+    "target": "m-covariance",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-covariance",
+    "target": "m-gaussian",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-gaussian",
+    "target": "m-montecarlo",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-montecarlo",
+    "target": "m-concentration",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-probability",
+    "target": "m-markov",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-markov",
+    "target": "m-cheeger",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-gradient",
+    "target": "m-optimization",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-optimization",
+    "target": "m-gradientdescent",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-gradientdescent",
+    "target": "m-duality",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-duality",
+    "target": "m-linearprogram",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-taylor",
+    "target": "m-finitedifference",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-finitedifference",
+    "target": "m-quadrature",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-fields",
+    "target": "m-primes",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-primes",
+    "target": "m-elliptic",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-elliptic",
+    "target": "m-modular",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-modular",
+    "target": "m-langlands",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-rings",
+    "target": "m-commutative",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-commutative",
+    "target": "m-schemes",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-schemes",
+    "target": "m-langlands",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-sets",
+    "target": "m-category",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-category",
+    "target": "m-functor",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-functor",
+    "target": "m-natural",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-natural",
+    "target": "m-universal",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-universal",
+    "target": "m-yoneda",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-tensor",
+    "target": "m-complexity",
+    "type": "prerequisite_of",
+    "label": "Learn before",
+    "source_ids": []
+  },
+  {
+    "source": "m-spectral",
+    "target": "m-laplacian",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-inner",
+    "target": "m-resistance",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-bayes",
+    "target": "m-causal",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-conditioning",
+    "target": "m-regularization",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-category",
+    "target": "m-schemes",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-measure",
+    "target": "m-probability",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-stokes",
+    "target": "m-curvature",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-variation",
+    "target": "m-geodesic",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-metric",
+    "target": "m-laplacebeltrami",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-laplacian",
+    "target": "m-heat",
+    "type": "related",
+    "label": "Useful mathematical bridge",
+    "source_ids": []
+  },
+  {
+    "source": "m-logic",
+    "target": "m-ai-universal",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-history",
+      "ms-clay-ym"
+    ]
+  },
+  {
+    "source": "m-proof",
+    "target": "m-ai-universal",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-history",
+      "ms-clay-ym"
+    ]
+  },
+  {
+    "source": "m-proof",
+    "target": "m-ai-imo",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-gemini-imo"
+    ]
+  },
+  {
+    "source": "m-combinatorics",
+    "target": "m-ai-imo",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-gemini-imo"
+    ]
+  },
+  {
+    "source": "m-graph",
+    "target": "m-ai-unitdistance",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-unit-paper",
+      "ms-oai-unit"
+    ]
+  },
+  {
+    "source": "m-fields",
+    "target": "m-ai-unitdistance",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-unit-paper",
+      "ms-oai-unit"
+    ]
+  },
+  {
+    "source": "m-primes",
+    "target": "m-ai-unitdistance",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-unit-paper",
+      "ms-oai-unit"
+    ]
+  },
+  {
+    "source": "m-proof",
+    "target": "m-ai-ten",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-ten",
+      "ms-oai-ten-paper"
+    ]
+  },
+  {
+    "source": "m-graph",
+    "target": "m-ai-ten",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-ten",
+      "ms-oai-ten-paper"
+    ]
+  },
+  {
+    "source": "m-complexity",
+    "target": "m-ai-ten",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-ten",
+      "ms-oai-ten-paper"
+    ]
+  },
+  {
+    "source": "m-zeta",
+    "target": "m-ai-zeta",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-zeta"
+    ]
+  },
+  {
+    "source": "m-complexanalysis",
+    "target": "m-ai-zeta",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-zeta"
+    ]
+  },
+  {
+    "source": "m-elliptic",
+    "target": "m-ai-flt",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-flt",
+      "ms-flt-code"
+    ]
+  },
+  {
+    "source": "m-modular",
+    "target": "m-ai-flt",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-flt",
+      "ms-flt-code"
+    ]
+  },
+  {
+    "source": "m-types",
+    "target": "m-ai-flt",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-flt",
+      "ms-flt-code"
+    ]
+  },
+  {
+    "source": "m-axioms",
+    "target": "m-ai-flt",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-flt",
+      "ms-flt-code"
+    ]
+  },
+  {
+    "source": "m-pde",
+    "target": "m-ai-nsforced",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ns-paper",
+      "ms-ns-code",
+      "ms-ns-audit",
+      "ms-clay-ns",
+      "ms-ns-translation"
+    ]
+  },
+  {
+    "source": "m-sobolev",
+    "target": "m-ai-nsforced",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ns-paper",
+      "ms-ns-code",
+      "ms-ns-audit",
+      "ms-clay-ns",
+      "ms-ns-translation"
+    ]
+  },
+  {
+    "source": "m-weak",
+    "target": "m-ai-nsforced",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ns-paper",
+      "ms-ns-code",
+      "ms-ns-audit",
+      "ms-clay-ns",
+      "ms-ns-translation"
+    ]
+  },
+  {
+    "source": "m-types",
+    "target": "m-ai-nsforced",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ns-paper",
+      "ms-ns-code",
+      "ms-ns-audit",
+      "ms-clay-ns",
+      "ms-ns-translation"
+    ]
+  },
+  {
+    "source": "m-pde",
+    "target": "m-ai-euler",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ns-code"
+    ]
+  },
+  {
+    "source": "m-gradient",
+    "target": "m-ai-euler",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ns-code"
+    ]
+  },
+  {
+    "source": "m-proof",
+    "target": "m-ai-ns-translation",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ns-translation"
+    ]
+  },
+  {
+    "source": "m-types",
+    "target": "m-ai-ns-translation",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ns-translation"
+    ]
+  },
+  {
+    "source": "m-pde",
+    "target": "m-ai-ns-translation",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ns-translation"
+    ]
+  },
+  {
+    "source": "m-sets",
+    "target": "m-ai-catalogue",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-catalogue",
+      "ms-oai-history"
+    ]
+  },
+  {
+    "source": "m-proof",
+    "target": "m-ai-catalogue",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-catalogue",
+      "ms-oai-history"
+    ]
+  },
+  {
+    "source": "m-proof",
+    "target": "m-ai-withdrawals",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-history"
+    ]
+  },
+  {
+    "source": "m-schemes",
+    "target": "m-ai-withdrawals",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-history"
+    ]
+  },
+  {
+    "source": "m-graph",
+    "target": "m-ai-3sum",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-3sum",
+      "ms-claude-formal"
+    ]
+  },
+  {
+    "source": "m-complexity",
+    "target": "m-ai-3sum",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-3sum",
+      "ms-claude-formal"
+    ]
+  },
+  {
+    "source": "m-complexity",
+    "target": "m-ai-claudeeth",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-eth"
+    ]
+  },
+  {
+    "source": "m-logarithms",
+    "target": "m-ai-claudeeth",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-eth"
+    ]
+  },
+  {
+    "source": "m-complexity",
+    "target": "m-ai-oaieth",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-community",
+      "ms-oai-catalogue"
+    ]
+  },
+  {
+    "source": "m-fourier",
+    "target": "m-ai-smoothing",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-community",
+      "ms-oai-catalogue"
+    ]
+  },
+  {
+    "source": "m-wave",
+    "target": "m-ai-smoothing",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-community",
+      "ms-oai-catalogue"
+    ]
+  },
+  {
+    "source": "m-sobolev",
+    "target": "m-ai-smoothing",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-community",
+      "ms-oai-catalogue"
+    ]
+  },
+  {
+    "source": "m-lie",
+    "target": "m-ai-ymexistence",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ym-checks",
+      "ms-oai-community"
+    ]
+  },
+  {
+    "source": "m-operators",
+    "target": "m-ai-ymexistence",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ym-checks",
+      "ms-oai-community"
+    ]
+  },
+  {
+    "source": "m-pde",
+    "target": "m-ai-ymexistence",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-ym-checks",
+      "ms-oai-community"
+    ]
+  },
+  {
+    "source": "m-operators",
+    "target": "m-ai-ymgap",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-clay-ym",
+      "ms-ym-checks"
+    ]
+  },
+  {
+    "source": "m-pde",
+    "target": "m-ai-ymgap",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-clay-ym",
+      "ms-ym-checks"
+    ]
+  },
+  {
+    "source": "m-fields",
+    "target": "m-ai-vpvnp",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-vp"
+    ]
+  },
+  {
+    "source": "m-determinant",
+    "target": "m-ai-vpvnp",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-vp"
+    ]
+  },
+  {
+    "source": "m-complexity",
+    "target": "m-ai-vpvnp",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-claude-vp"
+    ]
+  },
+  {
+    "source": "m-complexity",
+    "target": "m-ai-oai-newnine",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-catalogue",
+      "ms-oai-history"
+    ]
+  },
+  {
+    "source": "m-linearprogram",
+    "target": "m-ai-oai-newnine",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-oai-catalogue",
+      "ms-oai-history"
+    ]
+  },
+  {
+    "source": "m-zeta",
+    "target": "m-ai-rh",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-rh-author",
+      "ms-rh-community",
+      "ms-rh-mit",
+      "ms-clay-rh"
+    ]
+  },
+  {
+    "source": "m-types",
+    "target": "m-ai-rh",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-rh-author",
+      "ms-rh-community",
+      "ms-rh-mit",
+      "ms-clay-rh"
+    ]
+  },
+  {
+    "source": "m-axioms",
+    "target": "m-ai-rh",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-rh-author",
+      "ms-rh-community",
+      "ms-rh-mit",
+      "ms-clay-rh"
+    ]
+  },
+  {
+    "source": "m-zeta",
+    "target": "m-ai-grh",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-rh-author",
+      "ms-rh-mit"
+    ]
+  },
+  {
+    "source": "m-representations",
+    "target": "m-ai-grh",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-rh-author",
+      "ms-rh-mit"
+    ]
+  },
+  {
+    "source": "m-pde",
+    "target": "m-ai-unforcedns",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-unforced-ns"
+    ]
+  },
+  {
+    "source": "m-sobolev",
+    "target": "m-ai-unforcedns",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-unforced-ns"
+    ]
+  },
+  {
+    "source": "m-types",
+    "target": "m-ai-unforcedns",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-unforced-ns"
+    ]
+  },
+  {
+    "source": "m-floating",
+    "target": "m-ai-unforcedns",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-unforced-ns"
+    ]
+  },
+  {
+    "source": "m-measure",
+    "target": "m-ai-kakeya",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-kakeya"
+    ]
+  },
+  {
+    "source": "m-fourier",
+    "target": "m-ai-kakeya",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-kakeya"
+    ]
+  },
+  {
+    "source": "m-metric",
+    "target": "m-ai-kakeya",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-kakeya"
+    ]
+  },
+  {
+    "source": "m-schemes",
+    "target": "m-ai-langlands",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-langlands",
+      "ms-langlands1"
+    ]
+  },
+  {
+    "source": "m-category",
+    "target": "m-ai-langlands",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-langlands",
+      "ms-langlands1"
+    ]
+  },
+  {
+    "source": "m-representations",
+    "target": "m-ai-langlands",
+    "type": "prerequisite_of",
+    "label": "Background for assessing the stated result",
+    "source_ids": [
+      "ms-langlands",
+      "ms-langlands1"
+    ]
+  }
+]

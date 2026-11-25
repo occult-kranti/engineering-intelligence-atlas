@@ -1,0 +1,2191 @@
+{
+  "schemaVersion": 1,
+  "evaluatedAtUtc": "2026-11-25T08:05:19.301Z",
+  "setName": "Authored public-atlas retrieval sanity set, revision 1",
+  "scope": "Small authored sanity set; labels selected from this corpus before running comparisons. Not a held-out benchmark, SOTA assessment, or general retrieval-quality estimate.",
+  "graph": {
+    "revision": "3b8237b5e3a033dc9bfa148507ec2d6203c7806228b524afada3a2c47299df1b",
+    "sha256": "265029374ee837a7766e61a58b4bc98967f41f48c3f44b8f74d7ca3cdd8effb5",
+    "nodes": 1649,
+    "edges": 1518,
+    "sources": 878
+  },
+  "questionsSha256": "0941667ee4f6c80165fb8adbc54e3df661c14329f93e34053885a2067b42711c",
+  "software": {
+    "node": "v24.22.3",
+    "v8": "13.6.233.17-node.63",
+    "platform": "linux",
+    "architecture": "x64",
+    "cpuModel": "AMD EPYC 9V74 80-Core Processor",
+    "graphVersion": "daftar-graph-memory-2",
+    "graphCoreSha256": "ee79572eab4ed6a0420fff3f845323b78ce9b57799b03b2e4644ff894fc9b5f7",
+    "storeSha256": "3d2be0ec9dec2cd14786cf5ccfcbf3d92859b45227723aaaf1361b2dacbcff84"
+  },
+  "grant": {
+    "allowedScopes": [
+      "public"
+    ],
+    "policyVersion": "fixed-public-evaluation-v1"
+  },
+  "options": {
+    "maxResults": 6,
+    "maxBytes": 12288,
+    "seedLimit": 8,
+    "scopes": [
+      "public"
+    ],
+    "asOf": "2026-11-25T00:00:00.000Z"
+  },
+  "method": {
+    "lexicalBaseline": "Same production queryGraph implementation with alpha=0. Graph mass stays at lexical seeds; the unchanged reciprocal-rank fusion still executes. This is not a separately implemented pure BM25 scorer.",
+    "default": "Same queryGraph with alpha=0.85 and default relation allowlist; no core or parameter changes were made to improve outcomes.",
+    "success": "At least one predeclared acceptable ID among returned records, with an identical maximum of six results and 12288 bytes.",
+    "mrr": "Mean reciprocal rank of first acceptable ID over 12 answerable questions. Acceptable sets are intentionally bounded, not exhaustive relevance labels.",
+    "abstention": "Zero records is required for an absent-answer control. Returning topically related records fails this conservative check; the retriever does not synthesize an answer."
+  },
+  "summary": {
+    "lexical_only_alpha_0": {
+      "alpha": 0,
+      "answerableSuccesses": 11,
+      "answerableTotal": 12,
+      "answerableMRR": 0.8541666666666666,
+      "absentControlsAbstained": 1,
+      "absentControlsTotal": 2,
+      "failedQuestionIds": [
+        "q05",
+        "q13"
+      ]
+    },
+    "default_alpha_085": {
+      "alpha": 0.85,
+      "answerableSuccesses": 11,
+      "answerableTotal": 12,
+      "answerableMRR": 0.8194444444444443,
+      "absentControlsAbstained": 1,
+      "absentControlsTotal": 2,
+      "failedQuestionIds": [
+        "q05",
+        "q13"
+      ]
+    }
+  },
+  "answerableSuccessDelta": 0,
+  "comparisonConclusion": "Default graph propagation does not improve Success@6 on this small authored set.",
+  "outcomes": [
+    {
+      "id": "q01",
+      "category": "memory",
+      "question": "Which dependencies must a result cache key include when source evidence or scope policy changes?",
+      "acceptableIds": [
+        "g-cache",
+        "g-invalidate",
+        "gf-cache-key"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "g-cache",
+            "g-invalidate",
+            "g-memo",
+            "gf-cache-key",
+            "g-kv",
+            "g-dag"
+          ],
+          "returnedLabels": [
+            "Result cache",
+            "Dependency invalidation",
+            "Memoization",
+            "Complete cache dependency key",
+            "Attention key-value cache",
+            "Prerequisite DAG"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-cache",
+            "g-invalidate",
+            "gf-cache-key"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 5391,
+          "rankDetails": [
+            {
+              "id": "g-cache",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "g-invalidate",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "g-memo",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "gf-cache-key",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "g-kv",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "g-dag",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "g-cache",
+            "g-invalidate",
+            "gf-cache-key",
+            "g-forgetting",
+            "g-memo",
+            "g-kv"
+          ],
+          "returnedLabels": [
+            "Result cache",
+            "Dependency invalidation",
+            "Complete cache dependency key",
+            "Forgetting and retention",
+            "Memoization",
+            "Attention key-value cache"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-cache",
+            "g-invalidate",
+            "gf-cache-key"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 133,
+          "residual": 9.575046896852235e-11,
+          "packetBytes": 5300,
+          "rankDetails": [
+            {
+              "id": "g-cache",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "g-invalidate",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "gf-cache-key",
+              "lexicalRank": 4,
+              "graphRank": 3,
+              "score": 0.026736111
+            },
+            {
+              "id": "g-forgetting",
+              "lexicalRank": 8,
+              "graphRank": 4,
+              "score": 0.025643382
+            },
+            {
+              "id": "g-memo",
+              "lexicalRank": 3,
+              "graphRank": 12,
+              "score": 0.025595238
+            },
+            {
+              "id": "g-kv",
+              "lexicalRank": 5,
+              "graphRank": 9,
+              "score": 0.025529543
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q02",
+      "category": "memory",
+      "question": "Why does time-to-live fail to detect revoked scope or a changed source?",
+      "acceptableIds": [
+        "g-ttl",
+        "g-scope",
+        "g-invalidate"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "g-ttl",
+            "g-snapshot",
+            "m-ai-grh",
+            "p-exceptional-points",
+            "g-semantic",
+            "g-cache"
+          ],
+          "returnedLabels": [
+            "Time-to-live",
+            "Immutable snapshots",
+            "Dirichlet generalized RH: independently checked scope",
+            "Exceptional points",
+            "Semantic memory",
+            "Result cache"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-ttl"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 5830,
+          "rankDetails": [
+            {
+              "id": "g-ttl",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "g-snapshot",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "m-ai-grh",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "p-exceptional-points",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "g-semantic",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "g-cache",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "g-ttl",
+            "g-snapshot",
+            "p-exceptional-points",
+            "g-semantic",
+            "g-cache",
+            "m-ai-grh"
+          ],
+          "returnedLabels": [
+            "Time-to-live",
+            "Immutable snapshots",
+            "Exceptional points",
+            "Semantic memory",
+            "Result cache",
+            "Dirichlet generalized RH: independently checked scope"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-ttl"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 133,
+          "residual": 9.464314977603565e-11,
+          "packetBytes": 5855,
+          "rankDetails": [
+            {
+              "id": "g-ttl",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "g-snapshot",
+              "lexicalRank": 2,
+              "graphRank": 8,
+              "score": 0.02642315
+            },
+            {
+              "id": "p-exceptional-points",
+              "lexicalRank": 4,
+              "graphRank": 7,
+              "score": 0.026072761
+            },
+            {
+              "id": "g-semantic",
+              "lexicalRank": 5,
+              "graphRank": 6,
+              "score": 0.025990676
+            },
+            {
+              "id": "g-cache",
+              "lexicalRank": 6,
+              "graphRank": 5,
+              "score": 0.025920746
+            },
+            {
+              "id": "m-ai-grh",
+              "lexicalRank": 3,
+              "graphRank": 14,
+              "score": 0.025332475
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q03",
+      "category": "memory",
+      "question": "What is the attention key-value cache, and how is it different from an editable evidence graph?",
+      "acceptableIds": [
+        "g-kv"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "g-kv",
+            "g-provider-cache",
+            "gf-attention",
+            "g-scope",
+            "g-edge",
+            "g-attention"
+          ],
+          "returnedLabels": [
+            "Attention key-value cache",
+            "Provider prompt cache",
+            "Scaled dot-product attention",
+            "Scope-first retrieval",
+            "Typed directed relations",
+            "Attention-based association"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-kv"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 5170,
+          "rankDetails": [
+            {
+              "id": "g-kv",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "g-provider-cache",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "gf-attention",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "g-scope",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "g-edge",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "g-attention",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "g-kv",
+            "g-provider-cache",
+            "gf-attention",
+            "g-attention",
+            "g-cache",
+            "g-edge"
+          ],
+          "returnedLabels": [
+            "Attention key-value cache",
+            "Provider prompt cache",
+            "Scaled dot-product attention",
+            "Attention-based association",
+            "Result cache",
+            "Typed directed relations"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-kv"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 129,
+          "residual": 9.597270028652137e-11,
+          "packetBytes": 5424,
+          "rankDetails": [
+            {
+              "id": "g-kv",
+              "lexicalRank": 1,
+              "graphRank": 2,
+              "score": 0.027683765
+            },
+            {
+              "id": "g-provider-cache",
+              "lexicalRank": 2,
+              "graphRank": 5,
+              "score": 0.026898263
+            },
+            {
+              "id": "gf-attention",
+              "lexicalRank": 3,
+              "graphRank": 4,
+              "score": 0.026810516
+            },
+            {
+              "id": "g-attention",
+              "lexicalRank": 6,
+              "graphRank": 3,
+              "score": 0.026262626
+            },
+            {
+              "id": "g-cache",
+              "lexicalRank": 12,
+              "graphRank": 1,
+              "score": 0.025364299
+            },
+            {
+              "id": "g-edge",
+              "lexicalRank": 5,
+              "graphRank": 14,
+              "score": 0.024844075
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q04",
+      "category": "memory",
+      "question": "When should a research improvement loop stop instead of repeatedly searching?",
+      "acceptableIds": [
+        "g-stop",
+        "g-loop",
+        "gf-novelty-loop"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "gf-novelty-loop",
+            "g-loop",
+            "m-ai-unitdistance",
+            "g-stop",
+            "oai-family-191",
+            "oai-family-226"
+          ],
+          "returnedLabels": [
+            "Measured improvement in a fixed loop",
+            "Research improvement loops",
+            "Planar unit distances: polynomial construction improvement",
+            "Stopping criteria",
+            "A power improvement in the Heilbronn triangle lower bound",
+            "The double-dimer loop ensemble converges to CLE<sub>4</sub>"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "gf-novelty-loop",
+            "g-loop",
+            "g-stop"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 5944,
+          "rankDetails": [
+            {
+              "id": "gf-novelty-loop",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "g-loop",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "m-ai-unitdistance",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "g-stop",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "oai-family-191",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "oai-family-226",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "g-loop",
+            "gf-novelty-loop",
+            "oai-family-191",
+            "g-stop",
+            "m-ai-unitdistance",
+            "oai-paper-0342"
+          ],
+          "returnedLabels": [
+            "Research improvement loops",
+            "Measured improvement in a fixed loop",
+            "A power improvement in the Heilbronn triangle lower bound",
+            "Stopping criteria",
+            "Planar unit distances: polynomial construction improvement",
+            "A power improvement in the Heilbronn triangle lower bound"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-loop",
+            "gf-novelty-loop",
+            "g-stop"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 135,
+          "residual": 9.541748827998323e-11,
+          "packetBytes": 6078,
+          "rankDetails": [
+            {
+              "id": "g-loop",
+              "lexicalRank": 2,
+              "graphRank": 1,
+              "score": 0.027604442
+            },
+            {
+              "id": "gf-novelty-loop",
+              "lexicalRank": 1,
+              "graphRank": 4,
+              "score": 0.027330943
+            },
+            {
+              "id": "oai-family-191",
+              "lexicalRank": 5,
+              "graphRank": 2,
+              "score": 0.026674938
+            },
+            {
+              "id": "g-stop",
+              "lexicalRank": 4,
+              "graphRank": 5,
+              "score": 0.026394231
+            },
+            {
+              "id": "m-ai-unitdistance",
+              "lexicalRank": 3,
+              "graphRank": 9,
+              "score": 0.026017943
+            },
+            {
+              "id": "oai-paper-0342",
+              "lexicalRank": 8,
+              "graphRank": 3,
+              "score": 0.025816993
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q05",
+      "category": "prerequisites",
+      "question": "Which concept comes before Fourier transforms in the prerequisite graph?",
+      "acceptableIds": [
+        "m-complex"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "m-fourier",
+            "oai-family-130",
+            "oai-paper-0725",
+            "g-dag",
+            "g-scope",
+            "g-node"
+          ],
+          "returnedLabels": [
+            "Fourier transforms and distributions",
+            "Exact Fourier transforms below $`n\\log n`$",
+            "The logarithmic exponent of finite Fourier transforms",
+            "Prerequisite DAG",
+            "Scope-first retrieval",
+            "Atomic concept and claim nodes"
+          ],
+          "resultCount": 6,
+          "success": false,
+          "matchedAcceptableIds": [],
+          "firstAcceptableRank": null,
+          "reciprocalRank": 0,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 5776,
+          "rankDetails": [
+            {
+              "id": "m-fourier",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "oai-family-130",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "oai-paper-0725",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "g-dag",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "g-scope",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "g-node",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "oai-family-130",
+            "m-fourier",
+            "oai-family-081",
+            "g-dag",
+            "oai-paper-0725",
+            "g-grounding"
+          ],
+          "returnedLabels": [
+            "Exact Fourier transforms below $`n\\log n`$",
+            "Fourier transforms and distributions",
+            "Riesz transforms and rectifiability in higher codimension",
+            "Prerequisite DAG",
+            "The logarithmic exponent of finite Fourier transforms",
+            "Grounding and boundary conditions"
+          ],
+          "resultCount": 6,
+          "success": false,
+          "matchedAcceptableIds": [],
+          "firstAcceptableRank": null,
+          "reciprocalRank": 0,
+          "iterations": 141,
+          "residual": 9.662341422921743e-11,
+          "packetBytes": 5892,
+          "rankDetails": [
+            {
+              "id": "oai-family-130",
+              "lexicalRank": 2,
+              "graphRank": 1,
+              "score": 0.027604442
+            },
+            {
+              "id": "m-fourier",
+              "lexicalRank": 1,
+              "graphRank": 7,
+              "score": 0.026841204
+            },
+            {
+              "id": "oai-family-081",
+              "lexicalRank": 8,
+              "graphRank": 3,
+              "score": 0.025816993
+            },
+            {
+              "id": "g-dag",
+              "lexicalRank": 4,
+              "graphRank": 9,
+              "score": 0.025769928
+            },
+            {
+              "id": "oai-paper-0725",
+              "lexicalRank": 3,
+              "graphRank": 11,
+              "score": 0.025732171
+            },
+            {
+              "id": "g-grounding",
+              "lexicalRank": 7,
+              "graphRank": 8,
+              "score": 0.025219491
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q06",
+      "category": "prerequisites",
+      "question": "Before personalized PageRank, what should I know about random walk transitions and fixed points?",
+      "acceptableIds": [
+        "g-walk",
+        "m-fixedpoint"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "mf-pagerank",
+            "gf-ppr",
+            "g-pagerank",
+            "g-walk",
+            "oai-paper-0375",
+            "m-fixedpoint"
+          ],
+          "returnedLabels": [
+            "Personalized PageRank as a convergent recurrence",
+            "Personalized PageRank",
+            "Personalized PageRank",
+            "Random walk transition",
+            "A Linear Clock for Random Walk on Tree-Weighted Planar Maps",
+            "Contractions and fixed points"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-walk",
+            "m-fixedpoint"
+          ],
+          "firstAcceptableRank": 4,
+          "reciprocalRank": 0.25,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 6342,
+          "rankDetails": [
+            {
+              "id": "mf-pagerank",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "gf-ppr",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "g-pagerank",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "g-walk",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "oai-paper-0375",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "m-fixedpoint",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "g-pagerank",
+            "mf-pagerank",
+            "g-walk",
+            "gf-ppr",
+            "m-fixedpoint",
+            "oai-family-328"
+          ],
+          "returnedLabels": [
+            "Personalized PageRank",
+            "Personalized PageRank as a convergent recurrence",
+            "Random walk transition",
+            "Personalized PageRank",
+            "Contractions and fixed points",
+            "Nonexpansive fixed points in reflexive Banach spaces"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-walk",
+            "m-fixedpoint"
+          ],
+          "firstAcceptableRank": 3,
+          "reciprocalRank": 0.3333333333333333,
+          "iterations": 139,
+          "residual": 8.835288657408349e-11,
+          "packetBytes": 6209,
+          "rankDetails": [
+            {
+              "id": "g-pagerank",
+              "lexicalRank": 3,
+              "graphRank": 1,
+              "score": 0.027348426
+            },
+            {
+              "id": "mf-pagerank",
+              "lexicalRank": 1,
+              "graphRank": 4,
+              "score": 0.027330943
+            },
+            {
+              "id": "g-walk",
+              "lexicalRank": 4,
+              "graphRank": 2,
+              "score": 0.026915323
+            },
+            {
+              "id": "gf-ppr",
+              "lexicalRank": 2,
+              "graphRank": 7,
+              "score": 0.026576793
+            },
+            {
+              "id": "m-fixedpoint",
+              "lexicalRank": 6,
+              "graphRank": 3,
+              "score": 0.026262626
+            },
+            {
+              "id": "oai-family-328",
+              "lexicalRank": 7,
+              "graphRank": 5,
+              "score": 0.025694604
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q07",
+      "category": "formulas",
+      "question": "Give the personalized PageRank recurrence with restart and its convergence or residual error bound.",
+      "acceptableIds": [
+        "gf-ppr",
+        "gf-ppr-error",
+        "mf-pagerank"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "mf-pagerank",
+            "g-pagerank",
+            "gf-ppr-error",
+            "g-convergence",
+            "gf-ppr",
+            "mf-cg"
+          ],
+          "returnedLabels": [
+            "Personalized PageRank as a convergent recurrence",
+            "Personalized PageRank",
+            "PageRank residual bound",
+            "Contraction and convergence",
+            "Personalized PageRank",
+            "Conjugate-gradient condition-number bound"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "mf-pagerank",
+            "gf-ppr-error",
+            "gf-ppr"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 6259,
+          "rankDetails": [
+            {
+              "id": "mf-pagerank",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "g-pagerank",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "gf-ppr-error",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "g-convergence",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "gf-ppr",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "mf-cg",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "g-pagerank",
+            "mf-pagerank",
+            "gf-ppr-error",
+            "g-convergence",
+            "gf-ppr",
+            "mf-cg"
+          ],
+          "returnedLabels": [
+            "Personalized PageRank",
+            "Personalized PageRank as a convergent recurrence",
+            "PageRank residual bound",
+            "Contraction and convergence",
+            "Personalized PageRank",
+            "Conjugate-gradient condition-number bound"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "mf-pagerank",
+            "gf-ppr-error",
+            "gf-ppr"
+          ],
+          "firstAcceptableRank": 2,
+          "reciprocalRank": 0.5,
+          "iterations": 109,
+          "residual": 9.410320242445914e-11,
+          "packetBytes": 6283,
+          "rankDetails": [
+            {
+              "id": "g-pagerank",
+              "lexicalRank": 2,
+              "graphRank": 1,
+              "score": 0.027604442
+            },
+            {
+              "id": "mf-pagerank",
+              "lexicalRank": 1,
+              "graphRank": 5,
+              "score": 0.027162673
+            },
+            {
+              "id": "gf-ppr-error",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "g-convergence",
+              "lexicalRank": 4,
+              "graphRank": 2,
+              "score": 0.026915323
+            },
+            {
+              "id": "gf-ppr",
+              "lexicalRank": 5,
+              "graphRank": 9,
+              "score": 0.025529543
+            },
+            {
+              "id": "mf-cg",
+              "lexicalRank": 6,
+              "graphRank": 11,
+              "score": 0.02501067
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q08",
+      "category": "formulas",
+      "question": "How does Bayes rule update dependent evidence without assuming conditional independence?",
+      "acceptableIds": [
+        "mf-bayes"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "mf-bayes",
+            "m-groups",
+            "m-bayes",
+            "m-ai-unforcedns",
+            "g-reviews",
+            "g-temporal-eval"
+          ],
+          "returnedLabels": [
+            "Bayes rule with dependent evidence awareness",
+            "Groups and symmetry",
+            "Bayesian conditioning",
+            "Alpöge–Buckmaster unforced Navier–Stokes package",
+            "Independent criticism",
+            "Temporal update tests"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "mf-bayes"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 6142,
+          "rankDetails": [
+            {
+              "id": "mf-bayes",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "m-groups",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "m-bayes",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "m-ai-unforcedns",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "g-reviews",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "g-temporal-eval",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "mf-bayes",
+            "m-bayes",
+            "m-groups",
+            "g-temporal-eval",
+            "m-ai-unforcedns",
+            "g-reviews"
+          ],
+          "returnedLabels": [
+            "Bayes rule with dependent evidence awareness",
+            "Bayesian conditioning",
+            "Groups and symmetry",
+            "Temporal update tests",
+            "Alpöge–Buckmaster unforced Navier–Stokes package",
+            "Independent criticism"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "mf-bayes"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 124,
+          "residual": 8.74159001551435e-11,
+          "packetBytes": 6163,
+          "rankDetails": [
+            {
+              "id": "mf-bayes",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "m-bayes",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "m-groups",
+              "lexicalRank": 2,
+              "graphRank": 6,
+              "score": 0.026735093
+            },
+            {
+              "id": "g-temporal-eval",
+              "lexicalRank": 6,
+              "graphRank": 5,
+              "score": 0.025920746
+            },
+            {
+              "id": "m-ai-unforcedns",
+              "lexicalRank": 4,
+              "graphRank": 10,
+              "score": 0.025625
+            },
+            {
+              "id": "g-reviews",
+              "lexicalRank": 5,
+              "graphRank": 11,
+              "score": 0.02524377
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q09",
+      "category": "formulas",
+      "question": "Why can nonoverlapping Allan variance be zero for a clock with constant frequency bias?",
+      "acceptableIds": [
+        "pf-allan"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "pf-allan",
+            "p-allan",
+            "m-regularization",
+            "p-frequency",
+            "p-schwarzschild",
+            "p-spectral-estimation"
+          ],
+          "returnedLabels": [
+            "Nonoverlapping Allan variance",
+            "Allan deviation",
+            "Regularization and inverse problems",
+            "Frequency and angular frequency",
+            "Schwarzschild geometry",
+            "Spectral estimation"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "pf-allan"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 6850,
+          "rankDetails": [
+            {
+              "id": "pf-allan",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "p-allan",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "m-regularization",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "p-frequency",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "p-schwarzschild",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "p-spectral-estimation",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "pf-allan",
+            "p-allan",
+            "p-frequency",
+            "m-regularization",
+            "p-spectral-estimation",
+            "p-redshift"
+          ],
+          "returnedLabels": [
+            "Nonoverlapping Allan variance",
+            "Allan deviation",
+            "Frequency and angular frequency",
+            "Regularization and inverse problems",
+            "Spectral estimation",
+            "Gravitational redshift"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "pf-allan"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 106,
+          "residual": 9.384755767106216e-11,
+          "packetBytes": 6710,
+          "rankDetails": [
+            {
+              "id": "pf-allan",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "p-allan",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "p-frequency",
+              "lexicalRank": 4,
+              "graphRank": 3,
+              "score": 0.026736111
+            },
+            {
+              "id": "m-regularization",
+              "lexicalRank": 3,
+              "graphRank": 8,
+              "score": 0.026167134
+            },
+            {
+              "id": "p-spectral-estimation",
+              "lexicalRank": 6,
+              "graphRank": 4,
+              "score": 0.026089015
+            },
+            {
+              "id": "p-redshift",
+              "lexicalRank": 7,
+              "graphRank": 5,
+              "score": 0.025694604
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q10",
+      "category": "cross-field",
+      "question": "How does the graph Laplacian pseudoinverse give effective electrical resistance from injected unit current?",
+      "acceptableIds": [
+        "mf-resistance"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "mf-resistance",
+            "m-resistance",
+            "g-laplacian",
+            "p-graph-modes",
+            "mf-lap",
+            "m-normalized"
+          ],
+          "returnedLabels": [
+            "Effective electrical resistance",
+            "Effective resistance",
+            "Graph Laplacian",
+            "Graph Laplacian modes",
+            "Graph Laplacian energy",
+            "Normalized graph Laplacian"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "mf-resistance"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 5948,
+          "rankDetails": [
+            {
+              "id": "mf-resistance",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "m-resistance",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "g-laplacian",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "p-graph-modes",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "mf-lap",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "m-normalized",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "mf-resistance",
+            "m-resistance",
+            "m-laplacian",
+            "g-laplacian",
+            "p-graph-modes",
+            "mf-lap"
+          ],
+          "returnedLabels": [
+            "Effective electrical resistance",
+            "Effective resistance",
+            "Graph Laplacians",
+            "Graph Laplacian",
+            "Graph Laplacian modes",
+            "Graph Laplacian energy"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "mf-resistance"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 105,
+          "residual": 9.604250363525198e-11,
+          "packetBytes": 6309,
+          "rankDetails": [
+            {
+              "id": "mf-resistance",
+              "lexicalRank": 1,
+              "graphRank": 2,
+              "score": 0.027683765
+            },
+            {
+              "id": "m-resistance",
+              "lexicalRank": 2,
+              "graphRank": 4,
+              "score": 0.027066532
+            },
+            {
+              "id": "m-laplacian",
+              "lexicalRank": 7,
+              "graphRank": 1,
+              "score": 0.026400783
+            },
+            {
+              "id": "g-laplacian",
+              "lexicalRank": 3,
+              "graphRank": 9,
+              "score": 0.026017943
+            },
+            {
+              "id": "p-graph-modes",
+              "lexicalRank": 4,
+              "graphRank": 8,
+              "score": 0.025919118
+            },
+            {
+              "id": "mf-lap",
+              "lexicalRank": 5,
+              "graphRank": 11,
+              "score": 0.02524377
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q11",
+      "category": "cross-field",
+      "question": "When can graph eigenvalues become physical frequencies, and what dynamics and units are needed?",
+      "acceptableIds": [
+        "g-frequency-bridge",
+        "gf-graph-wave"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "g-frequency-bridge",
+            "pf-graph-energy",
+            "g-dirichlet",
+            "p-graph-modes",
+            "g-sqlite",
+            "mf-diffusion"
+          ],
+          "returnedLabels": [
+            "Spectral graph modes",
+            "Graph Laplacian energy, diffusion and physical modes",
+            "Discrete Dirichlet energy",
+            "Graph Laplacian modes",
+            "SQLite transaction isolation",
+            "Heat diffusion on a graph"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-frequency-bridge"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 6461,
+          "rankDetails": [
+            {
+              "id": "g-frequency-bridge",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "pf-graph-energy",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "g-dirichlet",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "p-graph-modes",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "g-sqlite",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "mf-diffusion",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "g-frequency-bridge",
+            "g-dirichlet",
+            "pf-graph-energy",
+            "p-graph-modes",
+            "g-sqlite",
+            "mf-diffusion"
+          ],
+          "returnedLabels": [
+            "Spectral graph modes",
+            "Discrete Dirichlet energy",
+            "Graph Laplacian energy, diffusion and physical modes",
+            "Graph Laplacian modes",
+            "SQLite transaction isolation",
+            "Heat diffusion on a graph"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-frequency-bridge"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 132,
+          "residual": 8.729107793980563e-11,
+          "packetBytes": 6486,
+          "rankDetails": [
+            {
+              "id": "g-frequency-bridge",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "g-dirichlet",
+              "lexicalRank": 3,
+              "graphRank": 4,
+              "score": 0.026810516
+            },
+            {
+              "id": "pf-graph-energy",
+              "lexicalRank": 2,
+              "graphRank": 7,
+              "score": 0.026576793
+            },
+            {
+              "id": "p-graph-modes",
+              "lexicalRank": 4,
+              "graphRank": 6,
+              "score": 0.026231061
+            },
+            {
+              "id": "g-sqlite",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "mf-diffusion",
+              "lexicalRank": 6,
+              "graphRank": 16,
+              "score": 0.024362041
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q12",
+      "category": "cross-field",
+      "question": "How do magnetic spin models relate to associative memory without making software weights measured magnetic couplings?",
+      "acceptableIds": [
+        "g-magnetism-bridge",
+        "g-hopfield",
+        "gf-hopfield-energy"
+      ],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "g-magnetism-bridge",
+            "g-hopfield",
+            "g-attention",
+            "g-hebb",
+            "g-hipporag",
+            "p-spin"
+          ],
+          "returnedLabels": [
+            "Spin models and associative networks",
+            "Hopfield associative memory",
+            "Attention-based association",
+            "Hebbian associations",
+            "HippoRAG associative retrieval",
+            "Spin and Zeeman splitting"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-magnetism-bridge",
+            "g-hopfield"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 5535,
+          "rankDetails": [
+            {
+              "id": "g-magnetism-bridge",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "g-hopfield",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "g-attention",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "g-hebb",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "g-hipporag",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "p-spin",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "g-hopfield",
+            "g-attention",
+            "g-magnetism-bridge",
+            "g-hebb",
+            "p-spin",
+            "g-hipporag"
+          ],
+          "returnedLabels": [
+            "Hopfield associative memory",
+            "Attention-based association",
+            "Spin models and associative networks",
+            "Hebbian associations",
+            "Spin and Zeeman splitting",
+            "HippoRAG associative retrieval"
+          ],
+          "resultCount": 6,
+          "success": true,
+          "matchedAcceptableIds": [
+            "g-hopfield",
+            "g-magnetism-bridge"
+          ],
+          "firstAcceptableRank": 1,
+          "reciprocalRank": 1,
+          "iterations": 125,
+          "residual": 8.591242825728062e-11,
+          "packetBytes": 5560,
+          "rankDetails": [
+            {
+              "id": "g-hopfield",
+              "lexicalRank": 2,
+              "graphRank": 1,
+              "score": 0.027604442
+            },
+            {
+              "id": "g-attention",
+              "lexicalRank": 3,
+              "graphRank": 2,
+              "score": 0.027163338
+            },
+            {
+              "id": "g-magnetism-bridge",
+              "lexicalRank": 1,
+              "graphRank": 6,
+              "score": 0.026999503
+            },
+            {
+              "id": "g-hebb",
+              "lexicalRank": 4,
+              "graphRank": 3,
+              "score": 0.026736111
+            },
+            {
+              "id": "p-spin",
+              "lexicalRank": 6,
+              "graphRank": 8,
+              "score": 0.025445633
+            },
+            {
+              "id": "g-hipporag",
+              "lexicalRank": 5,
+              "graphRank": 13,
+              "score": 0.024973656
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q13",
+      "category": "absent-answer",
+      "question": "Who approved the private payroll budget for the invented company Aster Quay on 17 November 2026?",
+      "acceptableIds": [],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "ready",
+          "returnedIds": [
+            "g-zero",
+            "gf-budget-knapsack",
+            "m-ai-rh",
+            "m-ai-oai-newnine",
+            "pf-resonant-power",
+            "g-scope"
+          ],
+          "returnedLabels": [
+            "GraphRAG Zero",
+            "Evidence selection under a byte budget",
+            "Riemann Hypothesis: November formal proof and independent checks",
+            "OpenAI November 24 complexity and polytope additions",
+            "Resonant power and storage budget",
+            "Scope-first retrieval"
+          ],
+          "resultCount": 6,
+          "success": false,
+          "matchedAcceptableIds": [],
+          "firstAcceptableRank": null,
+          "reciprocalRank": 0,
+          "iterations": 1,
+          "residual": 0,
+          "packetBytes": 6410,
+          "rankDetails": [
+            {
+              "id": "g-zero",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "gf-budget-knapsack",
+              "lexicalRank": 2,
+              "graphRank": 2,
+              "score": 0.027419355
+            },
+            {
+              "id": "m-ai-rh",
+              "lexicalRank": 3,
+              "graphRank": 3,
+              "score": 0.026984127
+            },
+            {
+              "id": "m-ai-oai-newnine",
+              "lexicalRank": 4,
+              "graphRank": 4,
+              "score": 0.0265625
+            },
+            {
+              "id": "pf-resonant-power",
+              "lexicalRank": 5,
+              "graphRank": 5,
+              "score": 0.026153846
+            },
+            {
+              "id": "g-scope",
+              "lexicalRank": 6,
+              "graphRank": 6,
+              "score": 0.025757576
+            }
+          ]
+        },
+        "default_alpha_085": {
+          "status": "ready",
+          "returnedIds": [
+            "g-zero",
+            "gf-budget-knapsack",
+            "m-ai-rh",
+            "m-ai-oai-newnine",
+            "g-donna",
+            "pf-resonant-power"
+          ],
+          "returnedLabels": [
+            "GraphRAG Zero",
+            "Evidence selection under a byte budget",
+            "Riemann Hypothesis: November formal proof and independent checks",
+            "OpenAI November 24 complexity and polytope additions",
+            "Donna evidence handoff",
+            "Resonant power and storage budget"
+          ],
+          "resultCount": 6,
+          "success": false,
+          "matchedAcceptableIds": [],
+          "firstAcceptableRank": null,
+          "reciprocalRank": 0,
+          "iterations": 137,
+          "residual": 9.502955111984424e-11,
+          "packetBytes": 6439,
+          "rankDetails": [
+            {
+              "id": "g-zero",
+              "lexicalRank": 1,
+              "graphRank": 1,
+              "score": 0.027868852
+            },
+            {
+              "id": "gf-budget-knapsack",
+              "lexicalRank": 2,
+              "graphRank": 3,
+              "score": 0.027240143
+            },
+            {
+              "id": "m-ai-rh",
+              "lexicalRank": 3,
+              "graphRank": 11,
+              "score": 0.025732171
+            },
+            {
+              "id": "m-ai-oai-newnine",
+              "lexicalRank": 4,
+              "graphRank": 10,
+              "score": 0.025625
+            },
+            {
+              "id": "g-donna",
+              "lexicalRank": 7,
+              "graphRank": 6,
+              "score": 0.025531434
+            },
+            {
+              "id": "pf-resonant-power",
+              "lexicalRank": 5,
+              "graphRank": 9,
+              "score": 0.025529543
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "q14",
+      "category": "absent-answer",
+      "question": "zibberflume thraxomite quuxphenion",
+      "acceptableIds": [],
+      "variants": {
+        "lexical_only_alpha_0": {
+          "status": "no-match",
+          "returnedIds": [],
+          "returnedLabels": [],
+          "resultCount": 0,
+          "success": true,
+          "matchedAcceptableIds": [],
+          "firstAcceptableRank": null,
+          "reciprocalRank": 0,
+          "iterations": 0,
+          "residual": 0,
+          "packetBytes": 565,
+          "rankDetails": []
+        },
+        "default_alpha_085": {
+          "status": "no-match",
+          "returnedIds": [],
+          "returnedLabels": [],
+          "resultCount": 0,
+          "success": true,
+          "matchedAcceptableIds": [],
+          "firstAcceptableRank": null,
+          "reciprocalRank": 0,
+          "iterations": 0,
+          "residual": 0,
+          "packetBytes": 565,
+          "rankDetails": []
+        }
+      }
+    }
+  ],
+  "emptyQuery": {
+    "lexical_only_alpha_0": {
+      "status": "no-match",
+      "resultCount": 0,
+      "passed": true
+    },
+    "default_alpha_085": {
+      "status": "no-match",
+      "resultCount": 0,
+      "passed": true
+    }
+  },
+  "timing": {
+    "queryId": "q01",
+    "query": "Which dependencies must a result cache key include when source evidence or scope policy changes?",
+    "alpha": 0.85,
+    "options": {
+      "maxResults": 6,
+      "maxBytes": 12288,
+      "seedLimit": 8,
+      "scopes": [
+        "public"
+      ],
+      "asOf": "2026-11-25T00:00:00.000Z"
+    },
+    "cacheKind": "local-result-cache",
+    "snapshotSha256": "24f15d4a9152021459a1609de9b8ad0a06fea1cd7a8b39b73dfb4d834bbf4e48",
+    "storeCompositeRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15",
+    "sequence": "Five TTL=0 runs, one untimed cache-populating query, five TTL=3600000 warm runs",
+    "noCache": [
+      {
+        "run": 1,
+        "durationMs": 138.013568,
+        "cacheHit": false,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      },
+      {
+        "run": 2,
+        "durationMs": 89.876902,
+        "cacheHit": false,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      },
+      {
+        "run": 3,
+        "durationMs": 150.119169,
+        "cacheHit": false,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      },
+      {
+        "run": 4,
+        "durationMs": 173.792301,
+        "cacheHit": false,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      },
+      {
+        "run": 5,
+        "durationMs": 89.646846,
+        "cacheHit": false,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      }
+    ],
+    "warm": [
+      {
+        "run": 1,
+        "durationMs": 51.442452,
+        "cacheHit": true,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      },
+      {
+        "run": 2,
+        "durationMs": 86.575662,
+        "cacheHit": true,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      },
+      {
+        "run": 3,
+        "durationMs": 61.13206,
+        "cacheHit": true,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      },
+      {
+        "run": 4,
+        "durationMs": 34.49052,
+        "cacheHit": true,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      },
+      {
+        "run": 5,
+        "durationMs": 61.725916,
+        "cacheHit": true,
+        "status": "ready",
+        "resultIds": [
+          "g-cache",
+          "g-invalidate",
+          "gf-cache-key",
+          "g-forgetting",
+          "g-memo",
+          "g-kv"
+        ],
+        "resultRevision": "630c8d297f95a7fd5b0e489bb0250e64c4f3cf7e02887b4f7ec6d852e9654c15"
+      }
+    ],
+    "noCacheMedianMs": 138.013568,
+    "warmMedianMs": 61.13206,
+    "medianRatioNoCacheOverWarm": 2.2576299244618943,
+    "providerCalls": 0,
+    "limits": "No-result-cache cold only: filesystem and process/JIT caches were not cleared. Each measured store query reloads, verifies and filters the snapshot. Five samples in one process are noisy and order-dependent; no provider token, billable-money or inference-cache saving follows."
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026-11-25-game-art-and-heritage",
+  "catalogVersion": "2026-11-25-research-memory-design",
   "source": {
     "path": "site-source/src/data/resources.ts",
     "fileSha256": "e1c4307f56b2374dfd23826bce554f1b8faa27e6482cfaf8563d071ee48a86a1",
@@ -42,6 +42,20 @@
       "compiledAt": "2026-11-25",
       "coverage": "29 audited creator, art-reference, asset, exporter and engine-documentation records; staged production plan and original practice routine.",
       "evidenceNote": "Primary sources and corrections retained; no claim that lessons, software installations or future asset-production tasks were completed."
+    },
+    {
+      "name": "Physics, mathematics and graph-memory atlas",
+      "path": "projects/research-memory-atlas/atlas.json",
+      "compiledAt": "2026-11-25",
+      "coverage": "367 concepts, 177 formula cards, 24 selected AI claims and a pinned catalogue of 730 manuscripts in 375 families.",
+      "evidenceNote": "Frontier coverage is selected; catalogue titles are not individually reviewed proofs. Native and hosted retrieval use the public graph only. Source reading depth and mathematical assumptions remain attached."
+    },
+    {
+      "name": "Design team background studies",
+      "path": "projects/design-backgrounds/styles.json",
+      "compiledAt": "2026-11-25",
+      "coverage": "15 original CSS/SVG styles with selectable previews, exact CSS export, static defaults and six optional gentle-motion treatments.",
+      "evidenceNote": "All examples are illustrative approximations. DOM checks and primary-doc guidance are recorded separately from browser/device measurements; no fifteen-second or performance guarantee is claimed."
     }
   ],
   "resources": [
@@ -11584,6 +11598,429 @@
         ],
         "capabilityHints": []
       }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "Obsidian Help: Graph view",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://obsidian.md/help/plugins/graph",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-af2495a5610cf01f",
+      "kind": "documentation",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "official-documentation"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "15f98cb8dd3c1b8783c42d5ac1c925d80b370246397e314dc29b287aa7efe320"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "From RAG to Memory: Non-Parametric Continual Learning for Large Language Models",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://arxiv.org/html/2502.14802v2",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-fcd4f4d3620c3cb5",
+      "kind": "paper",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "selected-methods-and-limitations"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "0624ea7ebfecc952963f39dc1fcdcbc4a834abf75ea4a17c1b679342632df9b3"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "The evolution of GraphRAG: Advancing systems and evaluation together",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://www.microsoft.com/en-us/research/story/the-evolution-of-graphrag-advancing-systems-and-evaluation-together/",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-e52109ecb4f96768",
+      "kind": "documentation",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "official-research-announcement-selected-sections"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "e50ca9655b0c3792912e60f9554181e44989c23703464313f54eaaa79ddde6ab"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "Zep: A Temporal Knowledge Graph Architecture for Agent Memory",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://arxiv.org/html/2501.13956v1",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-c6dcc9f1916ce63b",
+      "kind": "paper",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "selected-methods"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "cdd124f872cd22d335a468ddc554b6d93ac001cde60d2235fcbd795212aa67c6"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://arxiv.org/abs/2410.10813",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-7d8bb2e98eb1cf17",
+      "kind": "paper",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "abstract"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "825b0e7778cd4c567f654a6495d5a965beb4988e06cb91fab9ec149a045cfd88"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://cormack.uwaterloo.ca/cormack/cormacksigir09-rrf.pdf",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-9fdb2d61306deb60",
+      "kind": "paper",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "original-paper-selected-sections"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "38502529720f71c7fb72181c070ae5973b33da97e05d54b6c0414815329251a3"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "Daftar graph-memory implementation and executed tests",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-1d33cfef85e3cd74",
+      "kind": "repository",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "locally-executed-source"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "0e584a1599aff99fc53ea65330f5121fc077917e7cfb7cc86b9c8fb52e93580b"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "Using CSS gradients",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Images/Using_gradients",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-14292ec1c02d3b47",
+      "kind": "documentation",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "gradient types, layered/repeating gradients sections read"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "864a53ea5a60d48b179cd727bd1da1ae4f2af96dd0e8da653e6c781b2e5e9e51"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "prefers-reduced-motion",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-a893493200c86881",
+      "kind": "documentation",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "syntax and accessibility example read"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "cd17ee40c85150bbb5c0200ae9a49e5eef3775678ae04da55fcfd3d93b5ac9ae"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "SVG feTurbulence",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/feTurbulence",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-24a97863bb048ca3",
+      "kind": "documentation",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "attributes and example read"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "9c2e04d43f0db94b058882e065f66ba36e6046f97052186011d96e3469848bbb"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "Three.js responsive design",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://threejs.org/manual/pages/responsive.html",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-94d2a99915b72887",
+      "kind": "documentation",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "responsive sizing and bounded drawing-buffer section read"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "67ee21ae6d85845e1c942c9fc7ff59d7e2a030fae22daf6c654cc32711a2abf9"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "Daftar Surface Studies: fifteen design backgrounds",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://occult-kranti.github.io/engineering-intelligence-atlas/design-backgrounds/",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-7d01abc5302ca8ed",
+      "kind": "collection",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Original local CSS/SVG source and 48 DOM/contrast/parity checks inspected; real browser verification pending CI."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "012fc96807caeb283f26f1a6cdd976846315ee8aab4b8c2d106c1fdd869e4d6e"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
     }
   ],
   "routes": [
@@ -11706,7 +12143,8 @@
       "skill": "spatial-3d-production-engineering",
       "roleKeys": [
         "design-architecture",
-        "frontend-extensions"
+        "frontend-extensions",
+        "figma-design-systems"
       ],
       "purpose": "Build and inspect an accessible, performant 3D browser or asset workflow.",
       "resourceIds": [
@@ -11728,12 +12166,18 @@
         "resource-d4127d96e03244a6",
         "resource-7f87ef404a252bd0",
         "resource-b7fbb1c1453a9f53",
-        "resource-56a9f49159da443c"
+        "resource-56a9f49159da443c",
+        "resource-14292ec1c02d3b47",
+        "resource-a893493200c86881",
+        "resource-24a97863bb048ca3",
+        "resource-94d2a99915b72887",
+        "resource-7d01abc5302ca8ed"
       ],
       "localReferences": [
         "reports/sota_3d_embodied_security_models.md",
         "company/role-library/engineering.md",
-        "projects/game-development-research/README.md"
+        "projects/game-development-research/README.md",
+        "projects/design-backgrounds/README.md"
       ]
     },
     {
@@ -11896,6 +12340,32 @@
       ],
       "localReferences": [
         "scientific-research-library/agents/science-historian.md"
+      ]
+    },
+    {
+      "skill": "graph-memory-research",
+      "roleKeys": [
+        "donna",
+        "research-knowledge",
+        "knowledge",
+        "math-geometry",
+        "paired-research",
+        "resonance-advisor"
+      ],
+      "purpose": "Retrieve bounded public evidence, explain graph-memory mathematics, and preserve provenance through scoped cache and Obsidian workflows.",
+      "resourceIds": [
+        "resource-af2495a5610cf01f",
+        "resource-fcd4f4d3620c3cb5",
+        "resource-e52109ecb4f96768",
+        "resource-c6dcc9f1916ce63b",
+        "resource-7d8bb2e98eb1cf17",
+        "resource-9fdb2d61306deb60",
+        "resource-1d33cfef85e3cd74"
+      ],
+      "localReferences": [
+        "projects/research-memory-atlas/README.md",
+        "projects/research-memory-atlas/IMPLEMENTATION.md",
+        "skills/graph-memory-research/SKILL.md"
       ]
     }
   ]

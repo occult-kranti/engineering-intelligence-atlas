@@ -1,0 +1,4861 @@
+[
+  {
+    "id": "pf-coulomb",
+    "label": "Coulomb force between point charges",
+    "domain": "electrostatics",
+    "latex": "\\mathbf F_{1\\leftarrow2}=\\frac{q_1q_2}{4\\pi\\varepsilon_0}\\frac{\\mathbf r_1-\\mathbf r_2}{|\\mathbf r_1-\\mathbf r_2|^3}",
+    "variables": [
+      {
+        "symbol": "F",
+        "meaning": "force on charge 1",
+        "unit": "N"
+      },
+      {
+        "symbol": "q_1,q_2",
+        "meaning": "signed charges",
+        "unit": "C"
+      },
+      {
+        "symbol": "r_1,r_2",
+        "meaning": "positions",
+        "unit": "m"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      }
+    ],
+    "assumptions": [
+      "Static point charges in vacuum; positions are distinct.",
+      "External forces may be required to hold the charges fixed."
+    ],
+    "derivation": "Rotational symmetry makes the field radial. Integrating Gauss flux over a sphere gives E times 4 pi r squared equal to q/epsilon_0. Multiplication by a second test charge gives the vector force; the signed product determines attraction or repulsion.",
+    "example": "Two charges of +1 nC separated by 0.10 m repel with approximately 8.99e-7 N. Doubling the separation reduces this by four, while reversing one charge reverses the direction.",
+    "limitations": [
+      "Point-charge self-energy diverges in the classical continuum model.",
+      "Moving sources require retardation and magnetic terms; inserting a scalar dielectric constant is not valid for every interface."
+    ],
+    "source_ids": [
+      "ps-flp-electro",
+      "ps-constants"
+    ],
+    "prerequisite_ids": [
+      "p-charge",
+      "p-electric-field"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-charge-integral",
+    "label": "Field of a continuous charge distribution",
+    "domain": "electrostatics",
+    "latex": "\\mathbf E(\\mathbf r)=\\frac{1}{4\\pi\\varepsilon_0}\\int \\rho(\\mathbf r')\\frac{\\mathbf r-\\mathbf r'}{|\\mathbf r-\\mathbf r'|^3}\\,d^3r'",
+    "variables": [
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "rho",
+        "meaning": "volume charge density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "r,r'",
+        "meaning": "observation/source positions",
+        "unit": "m"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      }
+    ],
+    "assumptions": [
+      "Known static source distribution in unbounded vacuum with suitable convergence.",
+      "Surface and line sources require their corresponding measures."
+    ],
+    "derivation": "Partition the source into small cells carrying dq=rho dV. Add their Coulomb fields and take the continuum limit. Differentiation under the integral is justified away from singular source points and under appropriate integrability conditions.",
+    "example": "A uniformly charged sphere has the same exterior field as a point charge at its center. Inside, enclosed charge scales as r cubed, so its radial field scales as r rather than r to the minus two.",
+    "limitations": [
+      "Do not integrate a volume density against an area measure.",
+      "Known-charge superposition does not remove the need to solve induced charges self-consistently."
+    ],
+    "source_ids": [
+      "ps-flp-electro",
+      "ps-flp-potential"
+    ],
+    "prerequisite_ids": [
+      "p-coulomb",
+      "p-superposition"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-potential-gradient",
+    "label": "Potential difference and field",
+    "domain": "electrostatics",
+    "latex": "\\phi(b)-\\phi(a)=-\\int_a^b\\mathbf E\\cdot d\\mathbf l,\\qquad \\mathbf E=-\\nabla\\phi",
+    "variables": [
+      {
+        "symbol": "phi",
+        "meaning": "electric potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "l",
+        "meaning": "path displacement",
+        "unit": "m"
+      },
+      {
+        "symbol": "a,b",
+        "meaning": "initial and final spatial points",
+        "unit": "m in Cartesian coordinates"
+      }
+    ],
+    "assumptions": [
+      "Static fields with zero circulation on relevant loops.",
+      "A globally single-valued potential needs suitable topology or explicit cuts."
+    ],
+    "derivation": "Work on a charge is q times the line integral of E. Define potential energy U=q phi so force is minus its gradient. Path independence follows from curl-free E in a simply connected region; local curl-free conditions alone do not settle every global topological question.",
+    "example": "Between plates at 0 V and 12 V separated by 3 mm, a uniform field has magnitude 4000 V/m and points from the higher potential plate toward the lower one.",
+    "limitations": [
+      "Potential is not field strength.",
+      "Time-dependent induction makes the electric field include -partial A/partial t and generally prevents a purely scalar global description."
+    ],
+    "source_ids": [
+      "ps-flp-potential",
+      "ps-flp-induction"
+    ],
+    "prerequisite_ids": [
+      "p-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-gauss",
+    "label": "Gauss law, integral and differential",
+    "domain": "electrostatics",
+    "latex": "\\oint_{\\partial V}\\mathbf E\\cdot\\mathbf n\\,dA=\\frac{Q_V}{\\varepsilon_0},\\qquad \\nabla\\cdot\\mathbf E=\\frac{\\rho}{\\varepsilon_0}",
+    "variables": [
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "n",
+        "meaning": "outward unit normal",
+        "unit": "1"
+      },
+      {
+        "symbol": "A",
+        "meaning": "area",
+        "unit": "m^2"
+      },
+      {
+        "symbol": "Q_V",
+        "meaning": "enclosed total charge",
+        "unit": "C"
+      },
+      {
+        "symbol": "rho",
+        "meaning": "charge density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "V, partial V",
+        "meaning": "enclosed spatial region and its oriented boundary",
+        "unit": "region with volume measure m^3"
+      }
+    ],
+    "assumptions": [
+      "Classical vacuum Maxwell law, interpreted distributionally for idealized charges."
+    ],
+    "derivation": "Apply the divergence theorem to the differential law over any volume. Conversely, if the flux identity holds for every sufficiently small volume, its local density relation follows. The law does not require symmetry, but symmetry is what allows a scalar field magnitude to be pulled outside a surface integral.",
+    "example": "For a long line charge lambda, a cylindrical Gaussian surface gives E(2 pi r L)=lambda L/epsilon_0 and E=lambda/(2 pi epsilon_0 r). End effects are excluded by the infinite-line approximation.",
+    "limitations": [
+      "Zero net flux does not imply zero field.",
+      "A Gaussian surface may enclose zero net charge despite strong dipole fields crossing it."
+    ],
+    "source_ids": [
+      "ps-flp-electro"
+    ],
+    "prerequisite_ids": [
+      "p-gauss"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-poisson",
+    "label": "Poisson and Laplace equations",
+    "domain": "electrostatics",
+    "latex": "-\\nabla\\cdot(\\varepsilon\\nabla\\phi)=\\rho_f;\\qquad \\nabla^2\\phi=-\\rho/\\varepsilon_0\\ \\text{in vacuum}",
+    "variables": [
+      {
+        "symbol": "phi",
+        "meaning": "potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "epsilon",
+        "meaning": "local scalar permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "rho_f",
+        "meaning": "free charge density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "rho",
+        "meaning": "total vacuum-source density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      }
+    ],
+    "assumptions": [
+      "Electrostatics with a local linear constitutive law D=epsilon E.",
+      "Boundary data and interface jump conditions are part of the problem."
+    ],
+    "derivation": "Substitute E=-grad phi into div D=rho_f. If epsilon is constant it leaves the derivative; if epsilon varies it must remain inside. Laplace's equation is the charge-free constant-permittivity special case, not a general replacement for all dielectric problems.",
+    "example": "In a one-dimensional interval with constant rho, phi''=-rho/epsilon and phi is quadratic. With zero rho and endpoint values 0 and V0, phi=V0 x/L is linear.",
+    "limitations": [
+      "Dropping gradients of epsilon at an interface changes the physical boundary problem.",
+      "Pure Neumann boundary data require a compatibility condition and a reference potential."
+    ],
+    "source_ids": [
+      "ps-flp-potential",
+      "ps-flp-dielectric"
+    ],
+    "prerequisite_ids": [
+      "p-gauss",
+      "p-potential",
+      "p-displacement"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-dirichlet-uniqueness",
+    "label": "Energy proof of Dirichlet uniqueness",
+    "domain": "electrostatics",
+    "latex": "\\int_\\Omega\\varepsilon|\\nabla u|^2\\,dV=0\\ \\Longrightarrow\\ u=0,\\quad u=\\phi_1-\\phi_2,\\ u|_{\\partial\\Omega}=0",
+    "variables": [
+      {
+        "symbol": "u",
+        "meaning": "difference of candidate potentials",
+        "unit": "V"
+      },
+      {
+        "symbol": "epsilon",
+        "meaning": "positive permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "Omega",
+        "meaning": "connected domain",
+        "unit": "m^3"
+      },
+      {
+        "symbol": "phi_1,phi_2",
+        "meaning": "candidate potentials with identical Dirichlet data",
+        "unit": "V"
+      },
+      {
+        "symbol": "dV",
+        "meaning": "spatial volume measure",
+        "unit": "m^3"
+      }
+    ],
+    "assumptions": [
+      "Both solutions satisfy the same charge equation and Dirichlet boundary data.",
+      "Permittivity is positive and fields have sufficient weak regularity."
+    ],
+    "derivation": "Subtract the equations, multiply -div(epsilon grad u)=0 by u and integrate. Integration by parts leaves a nonnegative gradient integral because u vanishes on the boundary. Therefore grad u is zero almost everywhere; connectedness and zero boundary value remove the constant.",
+    "example": "Once an image-charge construction meets the grounded-plane boundary and the prescribed source singularity, uniqueness identifies it with the physical solution in the upper half-space.",
+    "limitations": [
+      "The proof changes for Neumann conditions, where a constant remains.",
+      "Negative, complex or nonlinear constitutive response can invalidate this particular coercive-energy argument."
+    ],
+    "source_ids": [
+      "ps-flp-boundary"
+    ],
+    "prerequisite_ids": [
+      "p-poisson",
+      "p-dirichlet"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-image-plane",
+    "label": "Point charge over a grounded plane",
+    "domain": "electrostatics",
+    "latex": "\\phi(\\rho,z)=\\frac{q}{4\\pi\\varepsilon_0}\\left[\\frac{1}{\\sqrt{\\rho^2+(z-a)^2}}-\\frac{1}{\\sqrt{\\rho^2+(z+a)^2}}\\right],\\ z>0",
+    "variables": [
+      {
+        "symbol": "q",
+        "meaning": "physical charge",
+        "unit": "C"
+      },
+      {
+        "symbol": "rho",
+        "meaning": "cylindrical radial coordinate",
+        "unit": "m"
+      },
+      {
+        "symbol": "z",
+        "meaning": "height above plane",
+        "unit": "m"
+      },
+      {
+        "symbol": "a",
+        "meaning": "charge height",
+        "unit": "m"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "phi",
+        "meaning": "potential",
+        "unit": "V"
+      }
+    ],
+    "assumptions": [
+      "Infinite ideal grounded plane z=0; physical charge at z=a>0; vacuum above."
+    ],
+    "derivation": "Place an auxiliary charge -q at z=-a. Equal distances on z=0 cancel the two potentials. The resulting function has the required source and boundary behavior; uniqueness establishes its physical validity only in z>0.",
+    "example": "The physical charge feels the image's field at separation 2a, giving downward force q squared/(16 pi epsilon_0 a squared). The actual induced charge is distributed on the plane, not concentrated at the image location.",
+    "limitations": [
+      "Using q times the entire induced potential as the assembly energy misses a factor 1/2.",
+      "The image solution cannot be interpreted as physical charges inside the conductor."
+    ],
+    "source_ids": [
+      "ps-flp-potential",
+      "ps-flp-energy"
+    ],
+    "prerequisite_ids": [
+      "p-images",
+      "p-dirichlet"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-green",
+    "label": "Dirichlet Green-function solution",
+    "domain": "electrostatics",
+    "latex": "-\\nabla^2 G(\\mathbf r,\\mathbf r')=\\delta(\\mathbf r-\\mathbf r'),\\quad \\phi(\\mathbf r)=\\varepsilon_0^{-1}\\int_\\Omega G\\rho\\,dV'\\quad(\\phi|_{\\partial\\Omega}=0)",
+    "variables": [
+      {
+        "symbol": "G",
+        "meaning": "Dirichlet Green kernel",
+        "unit": "1/m"
+      },
+      {
+        "symbol": "delta",
+        "meaning": "three-dimensional delta distribution",
+        "unit": "1/m^3"
+      },
+      {
+        "symbol": "rho",
+        "meaning": "charge density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "phi",
+        "meaning": "potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "r,r_prime",
+        "meaning": "observation and source positions",
+        "unit": "m"
+      },
+      {
+        "symbol": "Omega",
+        "meaning": "spatial domain of the Green problem",
+        "unit": "region with volume measure m^3"
+      },
+      {
+        "symbol": "dV_prime",
+        "meaning": "source volume element",
+        "unit": "m^3"
+      }
+    ],
+    "assumptions": [
+      "Constant vacuum permittivity and grounded Dirichlet boundary.",
+      "For nonzero boundary values, a boundary term or harmonic extension must be added."
+    ],
+    "derivation": "Invert the linear operator using its response to a unit delta source. In free three-dimensional space G=1/(4 pi distance), fixed by integrating its radial gradient over a small sphere. A bounded domain needs a Green function that also vanishes on its boundary.",
+    "example": "For a point source rho=q delta(r'-r0), the volume integral reduces to q G(r,r0)/epsilon_0, reproducing Coulomb plus any boundary correction.",
+    "limitations": [
+      "A kernel is an operator inverse with boundary and nullspace choices, not a universal similarity function.",
+      "Singular integrals need specialized quadrature or analytic treatment."
+    ],
+    "source_ids": [
+      "ps-flp-potential",
+      "ps-flp-boundary"
+    ],
+    "prerequisite_ids": [
+      "p-poisson",
+      "p-greens"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-multipoles",
+    "label": "Monopole and dipole far field",
+    "domain": "electrostatics",
+    "latex": "\\phi(\\mathbf r)=\\frac{1}{4\\pi\\varepsilon_0}\\left(\\frac{Q}{r}+\\frac{\\mathbf p\\cdot\\hat{\\mathbf r}}{r^2}+O(r^{-3})\\right),\\qquad \\mathbf p=\\int\\rho(\\mathbf r')\\mathbf r'\\,dV'",
+    "variables": [
+      {
+        "symbol": "phi",
+        "meaning": "potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "Q",
+        "meaning": "total charge",
+        "unit": "C"
+      },
+      {
+        "symbol": "p",
+        "meaning": "electric dipole moment",
+        "unit": "C m"
+      },
+      {
+        "symbol": "r",
+        "meaning": "distance from expansion origin",
+        "unit": "m"
+      },
+      {
+        "symbol": "rho",
+        "meaning": "charge density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "r_prime",
+        "meaning": "source coordinate relative to the chosen expansion origin",
+        "unit": "m"
+      },
+      {
+        "symbol": "hat_r",
+        "meaning": "unit observation direction",
+        "unit": "1"
+      },
+      {
+        "symbol": "dV_prime",
+        "meaning": "source volume element",
+        "unit": "m^3"
+      }
+    ],
+    "assumptions": [
+      "Localized distribution of extent a with observation distance r much larger than a."
+    ],
+    "derivation": "Taylor-expand 1/|r-r'| in the small ratio |r'|/r. Integrating the first term collects total charge; the linear term collects the first moment. Higher angular moments successively improve the approximation but require their own error control.",
+    "example": "For charges +q and -q at separation d, Q=0 and p=q d along the negative-to-positive axis. Potential then decays as 1/r squared and electric field as 1/r cubed.",
+    "limitations": [
+      "A neutral distribution's dipole is origin independent; a charged distribution's dipole generally is not.",
+      "Near-field use without an error estimate can be poor."
+    ],
+    "source_ids": [
+      "ps-flp-potential"
+    ],
+    "prerequisite_ids": [
+      "p-superposition",
+      "p-multipoles"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-capacitance",
+    "label": "Capacitor response and energy",
+    "domain": "electrostatics",
+    "latex": "C=Q/V,\\qquad C_{\\rm plates}=\\varepsilon A/d,\\qquad U=\\tfrac12 CV^2=Q^2/(2C)",
+    "variables": [
+      {
+        "symbol": "C",
+        "meaning": "capacitance",
+        "unit": "F"
+      },
+      {
+        "symbol": "Q",
+        "meaning": "plate charge magnitude",
+        "unit": "C"
+      },
+      {
+        "symbol": "V",
+        "meaning": "potential difference",
+        "unit": "V"
+      },
+      {
+        "symbol": "epsilon",
+        "meaning": "permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "A",
+        "meaning": "plate area",
+        "unit": "m^2"
+      },
+      {
+        "symbol": "d",
+        "meaning": "spacing",
+        "unit": "m"
+      },
+      {
+        "symbol": "U",
+        "meaning": "stored field energy",
+        "unit": "J"
+      }
+    ],
+    "assumptions": [
+      "Linear dielectric response; parallel plates have d small relative to lateral size.",
+      "Energy is quasistatic and reversible in the ideal model."
+    ],
+    "derivation": "Gauss gives E=Q/(epsilon A); integrating across the gap gives V=Ed and C=epsilon A/d. Charging from zero requires integral V(q)dq, yielding Q squared/(2C). Fixed-charge and fixed-voltage mechanical variations involve different source-work accounting.",
+    "example": "A 1 microfarad capacitor at 10 V stores 50 microjoules. Halving d at fixed Q halves the energy; at fixed V it doubles stored energy because the source supplies additional charge and work.",
+    "limitations": [
+      "A battery-connected force calculation must include battery work.",
+      "Fringing, dispersion, breakdown and dielectric loss are omitted."
+    ],
+    "source_ids": [
+      "ps-flp-dielectric",
+      "ps-flp-energy"
+    ],
+    "prerequisite_ids": [
+      "p-capacitance",
+      "p-electric-energy"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-field-energy",
+    "label": "Electrostatic field energy",
+    "domain": "electrostatics",
+    "latex": "U=\\tfrac12\\int\\rho\\phi\\,dV=\\tfrac12\\int\\varepsilon_0|\\mathbf E|^2\\,dV",
+    "variables": [
+      {
+        "symbol": "U",
+        "meaning": "energy",
+        "unit": "J"
+      },
+      {
+        "symbol": "rho",
+        "meaning": "charge density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "phi",
+        "meaning": "potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "dV",
+        "meaning": "spatial volume element",
+        "unit": "m^3"
+      }
+    ],
+    "assumptions": [
+      "Smooth or properly regularized static sources in vacuum.",
+      "Boundary term at infinity vanishes or is explicitly accounted for."
+    ],
+    "derivation": "The factor 1/2 counts each pair interaction once. Substitute rho=-epsilon_0 Laplacian phi and integrate by parts; the volume term becomes epsilon_0 times gradient phi squared. Surface terms encode boundary-source work and cannot be ignored without a decay/boundary argument.",
+    "example": "For a sphere of radius a holding charge on its surface, the exterior integral gives U=q squared/(8 pi epsilon_0 a). Sending a to zero exposes the classical self-energy divergence.",
+    "limitations": [
+      "Pair interaction energy may be negative even though full field energy is nonnegative after including self-energies.",
+      "In nonlinear/dispersive matter, 1/2 E dot D is not a universally complete energy expression."
+    ],
+    "source_ids": [
+      "ps-flp-energy"
+    ],
+    "prerequisite_ids": [
+      "p-electric-energy",
+      "p-poisson"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-polarization",
+    "label": "Bound charge and displacement",
+    "domain": "electrostatics",
+    "latex": "\\rho_b=-\\nabla\\cdot\\mathbf P,\\quad \\sigma_b=\\mathbf P\\cdot\\mathbf n,\\quad \\mathbf D=\\varepsilon_0\\mathbf E+\\mathbf P,\\quad \\nabla\\cdot\\mathbf D=\\rho_f",
+    "variables": [
+      {
+        "symbol": "P",
+        "meaning": "polarization",
+        "unit": "C/m^2"
+      },
+      {
+        "symbol": "rho_b,rho_f",
+        "meaning": "bound/free volume densities",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "sigma_b",
+        "meaning": "bound surface charge",
+        "unit": "C/m^2"
+      },
+      {
+        "symbol": "D",
+        "meaning": "electric displacement",
+        "unit": "C/m^2"
+      },
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "n",
+        "meaning": "outward normal",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Continuum coarse graining over microscopic dipoles; P is defined inside material."
+    ],
+    "derivation": "A spatially uniform dipole distribution cancels in the bulk but leaves surface poles. Unequal dipole density leaves bulk charge proportional to minus divergence. Combining free and bound charge in Gauss's law and rearranging defines D.",
+    "example": "A uniformly polarized slab with P normal to the faces has zero bulk bound charge and equal/opposite surface charges. Their field opposes P inside the slab.",
+    "limitations": [
+      "D is not a second independent force field.",
+      "The division into free and bound charge depends on the material description and must be stated consistently."
+    ],
+    "source_ids": [
+      "ps-flp-dielectric"
+    ],
+    "prerequisite_ids": [
+      "p-polarization",
+      "p-gauss"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-interface",
+    "label": "Electrostatic interface jumps",
+    "domain": "electrostatics",
+    "latex": "\\mathbf n\\cdot(\\mathbf D_2-\\mathbf D_1)=\\sigma_f,\\qquad \\mathbf n\\times(\\mathbf E_2-\\mathbf E_1)=0",
+    "variables": [
+      {
+        "symbol": "D_1,D_2",
+        "meaning": "displacement on two sides",
+        "unit": "C/m^2"
+      },
+      {
+        "symbol": "E_1,E_2",
+        "meaning": "electric fields",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "sigma_f",
+        "meaning": "free surface charge",
+        "unit": "C/m^2"
+      },
+      {
+        "symbol": "n",
+        "meaning": "normal pointing from side 1 to side 2",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Stationary interface with no singular time-changing magnetic flux.",
+      "The chosen normal fixes the jump sign."
+    ],
+    "derivation": "Integrate Gauss's law over a thin pillbox crossing the interface; side flux vanishes in the thin limit. Integrate curl-free E around a thin rectangle; the two long tangential sides survive. These equations remain valid even when normal E itself is discontinuous.",
+    "example": "With no free surface charge and scalar epsilon_2=2 epsilon_1, the normal electric field on side 2 is half that on side 1, while their tangential components agree.",
+    "limitations": [
+      "Continuity of normal E is not a universal dielectric boundary condition.",
+      "Singular surface polarization needs careful distributional treatment."
+    ],
+    "source_ids": [
+      "ps-flp-dielectric"
+    ],
+    "prerequisite_ids": [
+      "p-dielectric-interface",
+      "p-displacement"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-debye",
+    "label": "Debye length and screened potential",
+    "domain": "electrostatics",
+    "latex": "\\lambda_D^{-2}=\\sum_s\\frac{n_s q_s^2}{\\varepsilon k_B T_s},\\qquad \\phi(r)=\\frac{q}{4\\pi\\varepsilon r}e^{-r/\\lambda_D}",
+    "variables": [
+      {
+        "symbol": "lambda_D",
+        "meaning": "screening length",
+        "unit": "m"
+      },
+      {
+        "symbol": "n_s",
+        "meaning": "equilibrium species number density",
+        "unit": "1/m^3"
+      },
+      {
+        "symbol": "q_s,q",
+        "meaning": "species and test charges",
+        "unit": "C"
+      },
+      {
+        "symbol": "epsilon",
+        "meaning": "permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "k_B",
+        "meaning": "Boltzmann constant",
+        "unit": "J/K"
+      },
+      {
+        "symbol": "T_s",
+        "meaning": "species temperature",
+        "unit": "K"
+      },
+      {
+        "symbol": "phi",
+        "meaning": "potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "r",
+        "meaning": "distance",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Classical weakly coupled mean-field charges in thermal equilibrium.",
+      "Linearization requires |q_s phi| much smaller than k_B T_s."
+    ],
+    "derivation": "Boltzmann densities vary as n_s exp(-q_s phi/k_B T_s). Expand to first order and use neutral equilibrium to cancel the constant source. Poisson becomes (Laplacian-lambda_D^{-2})phi=-q delta/epsilon, whose radial decaying solution is the screened kernel.",
+    "example": "At r=lambda_D the screened potential is e^{-1} of the bare potential. At very small r relative to lambda_D the asymptotic expression recovers Coulomb behavior, although the weak-potential assumption can then fail.",
+    "limitations": [
+      "Strong correlations, finite ion size and large potentials invalidate elementary Debye–Hückel theory.",
+      "A screening length is not a universal cutoff where all fields vanish."
+    ],
+    "source_ids": [
+      "ps-pb-foundations",
+      "ps-neural-pb"
+    ],
+    "prerequisite_ids": [
+      "p-poisson-boltzmann",
+      "p-debye"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-pb",
+    "label": "Nonlinear Poisson–Boltzmann equation",
+    "domain": "electrostatics",
+    "latex": "-\\nabla\\cdot(\\varepsilon\\nabla\\phi)=\\rho_{\\rm fixed}+\\sum_s q_s n_s^{(0)}\\exp[-q_s\\phi/(k_BT)]",
+    "variables": [
+      {
+        "symbol": "phi",
+        "meaning": "potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "epsilon",
+        "meaning": "permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "rho_fixed",
+        "meaning": "fixed source density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "q_s",
+        "meaning": "species charge",
+        "unit": "C"
+      },
+      {
+        "symbol": "n_s0",
+        "meaning": "reference number density",
+        "unit": "1/m^3"
+      },
+      {
+        "symbol": "k_B",
+        "meaning": "Boltzmann constant",
+        "unit": "J/K"
+      },
+      {
+        "symbol": "T",
+        "meaning": "temperature",
+        "unit": "K"
+      }
+    ],
+    "assumptions": [
+      "Mean-field thermal ionic distributions with point-ion idealization and suitable chemical-potential references."
+    ],
+    "derivation": "Couple Poisson electrostatics to equilibrium Boltzmann occupation of each charge species. The potential now determines its own source, producing a nonlinear fixed-point problem. Dielectric boundaries and solvent-exclusion regions require separate domains and jump conditions.",
+    "example": "For symmetric monovalent electrolyte, the mobile charge is -2 e n0 sinh(e phi/k_B T). Linearizing sinh near zero recovers Debye screening with lambda_D squared=epsilon k_B T/(2 n0 e squared).",
+    "limitations": [
+      "A low PDE residual does not certify the selected dielectric model.",
+      "Ion crowding and correlations can require models beyond PB."
+    ],
+    "source_ids": [
+      "ps-pb-foundations",
+      "ps-neural-pb",
+      "ps-pydelphi"
+    ],
+    "prerequisite_ids": [
+      "p-poisson",
+      "p-poisson-boltzmann"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-weak-form",
+    "label": "Variational/finite-element weak form",
+    "domain": "electrostatics",
+    "latex": "\\int_\\Omega \\varepsilon\\nabla\\phi\\cdot\\nabla v\\,dV=\\int_\\Omega\\rho_f v\\,dV\\quad\\forall v|_{\\partial\\Omega}=0",
+    "variables": [
+      {
+        "symbol": "phi",
+        "meaning": "solution potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "v",
+        "meaning": "test potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "epsilon",
+        "meaning": "permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "rho_f",
+        "meaning": "free charge density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "Omega",
+        "meaning": "domain",
+        "unit": "m^3"
+      },
+      {
+        "symbol": "dV",
+        "meaning": "spatial volume element",
+        "unit": "m^3"
+      }
+    ],
+    "assumptions": [
+      "Dirichlet boundary conditions; test functions vanish on the boundary.",
+      "A suitable positive permittivity ensures coercivity after nullspace handling."
+    ],
+    "derivation": "Multiply the divergence-form Poisson equation by a test function and integrate by parts. Choose basis functions N_i and write phi=sum phi_i N_i. The matrix K_ij=integral epsilon grad N_i dot grad N_j is sparse when supports overlap locally.",
+    "example": "A one-dimensional mesh with spacing h and constant epsilon produces the familiar tridiagonal second-difference system after the standard assembly and boundary elimination.",
+    "limitations": [
+      "Minimizing an unconstrained graph energy without fixing the constant mode leaves a nullspace.",
+      "Mesh convergence, source regularization and geometry error remain distinct."
+    ],
+    "source_ids": [
+      "ps-flp-boundary",
+      "ps-pydelphi"
+    ],
+    "prerequisite_ids": [
+      "p-finite-element",
+      "p-poisson"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-fd-poisson",
+    "label": "Five-point finite-difference Laplacian",
+    "domain": "electrostatics",
+    "latex": "\\frac{\\phi_{i+1,j}+\\phi_{i-1,j}+\\phi_{i,j+1}+\\phi_{i,j-1}-4\\phi_{i,j}}{h^2}=-\\frac{\\rho_{i,j}}{\\varepsilon}",
+    "variables": [
+      {
+        "symbol": "phi_ij",
+        "meaning": "grid potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "h",
+        "meaning": "uniform grid spacing",
+        "unit": "m"
+      },
+      {
+        "symbol": "rho_ij",
+        "meaning": "grid volume density in a translationally invariant model",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "epsilon",
+        "meaning": "permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "i,j",
+        "meaning": "integer grid-point indices",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Uniform square grid, constant epsilon, smooth solution and a two-coordinate reduction.",
+      "Boundary treatment must preserve the intended physical problem."
+    ],
+    "derivation": "Expand neighboring values in Taylor series. Odd terms cancel between opposite neighbors; the second derivatives survive and fourth derivatives set leading O(h squared) truncation error. The matrix form resembles a graph Laplacian because each row compares a node with adjacent nodes.",
+    "example": "For phi=x squared+y squared the stencil gives exactly 4, equal to the analytic Laplacian at every interior point for any h. That is an exact polynomial check, not a convergence proof for arbitrary geometry.",
+    "limitations": [
+      "Discontinuous coefficients require flux-conserving stencils, not this naive constant-epsilon formula.",
+      "A solver residual can be tiny while discretization error is large."
+    ],
+    "source_ids": [
+      "ps-flp-boundary"
+    ],
+    "prerequisite_ids": [
+      "p-finite-difference",
+      "p-poisson"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-qeq",
+    "label": "Constrained charge-equilibration system",
+    "domain": "electrostatics",
+    "latex": "\\min_{\\mathbf q}\\left(\\tfrac12\\mathbf q^T H\\mathbf q+\\boldsymbol\\chi^T\\mathbf q\\right),\\quad\\mathbf1^T\\mathbf q=Q;\\quad\\begin{bmatrix}H&\\mathbf1\\\\\\mathbf1^T&0\\end{bmatrix}\\begin{bmatrix}\\mathbf q\\\\\\eta\\end{bmatrix}=\\begin{bmatrix}-\\boldsymbol\\chi\\\\Q\\end{bmatrix}",
+    "variables": [
+      {
+        "symbol": "q",
+        "meaning": "atomic-charge vector",
+        "unit": "C"
+      },
+      {
+        "symbol": "H",
+        "meaning": "charge-energy Hessian",
+        "unit": "J/C^2"
+      },
+      {
+        "symbol": "chi",
+        "meaning": "linear electronegativity-like coefficient",
+        "unit": "J/C"
+      },
+      {
+        "symbol": "Q",
+        "meaning": "total charge",
+        "unit": "C"
+      },
+      {
+        "symbol": "eta",
+        "meaning": "constraint multiplier",
+        "unit": "J/C"
+      },
+      {
+        "symbol": "1",
+        "meaning": "vector with every component equal to one; superscript T denotes transpose",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Quadratic differentiable energy; Hessian positive on the charge-conserving subspace for a unique minimum.",
+      "The model parameters are calibrated in a consistent unit convention."
+    ],
+    "derivation": "Introduce a Lagrange multiplier for total charge. Setting charge derivatives to zero gives Hq+chi+eta times one=0 and the last row imposes conservation. Solve the saddle-point system or eliminate the constraint; explicit matrix inversion is usually unnecessary.",
+    "example": "For two identical sites with equal chi and symmetric positive hardness, neutrality implies q1=-q2 and symmetry gives both zero. A difference in chi produces opposite charges while keeping total charge fixed.",
+    "limitations": [
+      "Unique minimized latent charges are not a unique partition of the quantum electron density.",
+      "Global coupling changes complexity and cache invalidation relative to purely local features."
+    ],
+    "source_ids": [
+      "ps-les-perspective",
+      "ps-qeq-original"
+    ],
+    "prerequisite_ids": [
+      "p-charge-equilibration",
+      "p-electric-energy"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-log-potential",
+    "label": "Analytic zeros as two-dimensional charge sources",
+    "domain": "electrostatics",
+    "latex": "\\Delta\\log|g(z)|=2\\pi\\sum_j m_j\\delta^{(2)}(z-z_j)\\quad\\text{for holomorphic }g\\text{ without poles}",
+    "variables": [
+      {
+        "symbol": "g",
+        "meaning": "nonzero holomorphic function except isolated zeros",
+        "unit": "chosen normalization"
+      },
+      {
+        "symbol": "z",
+        "meaning": "complex coordinate",
+        "unit": "chosen coordinate unit"
+      },
+      {
+        "symbol": "z_j",
+        "meaning": "zero locations",
+        "unit": "same as z"
+      },
+      {
+        "symbol": "m_j",
+        "meaning": "zero multiplicities",
+        "unit": "1"
+      },
+      {
+        "symbol": "delta2",
+        "meaning": "two-dimensional delta",
+        "unit": "coordinate unit^-2"
+      }
+    ],
+    "assumptions": [
+      "Distributional equality; g has isolated zeros and no poles in the domain.",
+      "Logarithm is of a dimensionless normalized modulus; branch of log g is not required for log|g|."
+    ],
+    "derivation": "Locally factor g(z)=(z-zj)^mj h(z) with h nonzero. Log|h| is harmonic, while integrating the normal derivative of log radius around a small circle gives 2 pi. Summing multiplicities yields the distributional source. For meromorphic g, poles add negative charges.",
+    "example": "For g(z)=z squared, log|g|=2 log r. Its Laplacian vanishes away from zero but integrated flux is 4 pi, exposing why a pointwise calculation alone misses the source.",
+    "limitations": [
+      "This mathematical potential has no SI electric charge unless a physical scaling is supplied.",
+      "The bootstrap paper uses the analogy under precise analytic constraints, not as evidence of electrical memory in software."
+    ],
+    "source_ids": [
+      "ps-bootstrap-ai"
+    ],
+    "prerequisite_ids": [
+      "p-log-potential",
+      "p-poisson"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-continuity",
+    "label": "Charge continuity",
+    "domain": "magnetism",
+    "latex": "\\frac{\\partial\\rho}{\\partial t}+\\nabla\\cdot\\mathbf J=0",
+    "variables": [
+      {
+        "symbol": "rho",
+        "meaning": "charge density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "J",
+        "meaning": "current density",
+        "unit": "A/m^2"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Local charge conservation and differentiable/coarse-grained fields, or distributional interpretation."
+    ],
+    "derivation": "Charge in a fixed region changes by minus outward current through its boundary. The divergence theorem converts that integral balance into the local equation. Taking divergence of Maxwell–Ampère and using Gauss gives the same identity, which explains why the displacement-current term is necessary.",
+    "example": "If current enters a capacitor plate at 2 mA and does not leave through conduction, charge grows at 2 microcoulombs per millisecond. The gap's changing electric flux preserves Maxwell–Ampère consistency.",
+    "limitations": [
+      "Steady current requires divergence-free J, not necessarily a spatially uniform J.",
+      "A charge density can be stationary while charges continuously flow."
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics",
+      "ps-flp-electro"
+    ],
+    "prerequisite_ids": [
+      "p-current",
+      "p-charge"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-lorentz",
+    "label": "Lorentz force and magnetic work",
+    "domain": "magnetism",
+    "latex": "\\mathbf F=q(\\mathbf E+\\mathbf v\\times\\mathbf B),\\qquad \\mathbf F_B\\cdot\\mathbf v=0",
+    "variables": [
+      {
+        "symbol": "F",
+        "meaning": "force",
+        "unit": "N"
+      },
+      {
+        "symbol": "q",
+        "meaning": "charge",
+        "unit": "C"
+      },
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "v",
+        "meaning": "velocity",
+        "unit": "m/s"
+      },
+      {
+        "symbol": "B",
+        "meaning": "magnetic flux density",
+        "unit": "T"
+      },
+      {
+        "symbol": "F_B",
+        "meaning": "magnetic contribution q v cross B to force",
+        "unit": "N"
+      }
+    ],
+    "assumptions": [
+      "Classical point-particle force law for prescribed fields.",
+      "Radiation reaction and quantum spin coupling are separate effects."
+    ],
+    "derivation": "The magnetic cross product is perpendicular to v; dotting the equation with v leaves power q E dot v. A magnetic field can redirect motion and transmit forces while energy exchange in a complete electromechanical device is tracked through electric fields, moving sources and field energy.",
+    "example": "For q=1 C, speed 2 m/s and perpendicular B=3 T, magnetic force magnitude is 6 N. If motion becomes parallel to B the force vanishes despite nonzero field.",
+    "limitations": [
+      "Zero magnetic work on an ideal point charge does not mean a motor cannot do work.",
+      "Use relativistic momentum at high velocities."
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics",
+      "ps-flp-poynting"
+    ],
+    "prerequisite_ids": [
+      "p-lorentz"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-biot-savart",
+    "label": "Biot–Savart magnetic field",
+    "domain": "magnetism",
+    "latex": "\\mathbf B(\\mathbf r)=\\frac{\\mu_0}{4\\pi}\\int \\frac{\\mathbf J(\\mathbf r')\\times(\\mathbf r-\\mathbf r')}{|\\mathbf r-\\mathbf r'|^3}\\,d^3r'",
+    "variables": [
+      {
+        "symbol": "B",
+        "meaning": "magnetic field",
+        "unit": "T"
+      },
+      {
+        "symbol": "J",
+        "meaning": "steady current density",
+        "unit": "A/m^2"
+      },
+      {
+        "symbol": "r,r'",
+        "meaning": "positions",
+        "unit": "m"
+      },
+      {
+        "symbol": "mu_0",
+        "meaning": "vacuum permeability",
+        "unit": "H/m"
+      }
+    ],
+    "assumptions": [
+      "Steady localized divergence-free currents in vacuum; adequate decay at infinity."
+    ],
+    "derivation": "In Coulomb gauge the magnetostatic vector potential solves Laplacian A=-mu_0 J. Inverting with the Coulomb kernel and taking curl yields Biot–Savart. A thin wire replaces J dV by I dl, preserving orientation of the cross product.",
+    "example": "For an infinite straight wire, angular integration gives B=mu_0 I/(2 pi r). A 1 A current at 1 cm gives approximately 20 microtesla.",
+    "limitations": [
+      "A finite isolated wire segment cannot carry a truly steady current without a return path.",
+      "Retarded electrodynamics is required when changes propagate over relevant timescales."
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics",
+      "ps-flp-vector-potential"
+    ],
+    "prerequisite_ids": [
+      "p-current",
+      "p-biot-savart"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-ampere",
+    "label": "Ampère and Maxwell–Ampère laws",
+    "domain": "magnetism",
+    "latex": "\\nabla\\times\\mathbf B=\\mu_0\\mathbf J+\\mu_0\\varepsilon_0\\frac{\\partial\\mathbf E}{\\partial t},\\qquad \\oint\\mathbf B\\cdot d\\mathbf l=\\mu_0I_{\\rm enc}\\ \\text{in steady vacuum}",
+    "variables": [
+      {
+        "symbol": "B",
+        "meaning": "magnetic field",
+        "unit": "T"
+      },
+      {
+        "symbol": "J",
+        "meaning": "current density",
+        "unit": "A/m^2"
+      },
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "I_enc",
+        "meaning": "enclosed current",
+        "unit": "A"
+      },
+      {
+        "symbol": "mu_0",
+        "meaning": "permeability",
+        "unit": "H/m"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      },
+      {
+        "symbol": "dl",
+        "meaning": "oriented line element along the circulation path",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Vacuum macroscopic source description; steady integral form omits displacement only when time derivative vanishes."
+    ],
+    "derivation": "Stokes's theorem converts circulation into curl flux. The displacement term makes divergence of the right side vanish when continuity and Gauss hold. In matter one may use H and D with free sources, but that requires consistent constitutive definitions.",
+    "example": "For a long solenoid with n turns per meter and current I, neglect exterior/fringing field to obtain B approximately mu_0 n I. With n=1000/m and I=0.1 A this is about 0.126 mT.",
+    "limitations": [
+      "The law is exact in its regime; easy extraction of B needs symmetry.",
+      "Dropping displacement current can fail even in a capacitor with no conduction across its gap."
+    ],
+    "source_ids": [
+      "ps-flp-electro",
+      "ps-flp-magnetostatics"
+    ],
+    "prerequisite_ids": [
+      "p-ampere",
+      "p-current"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-vector-potential",
+    "label": "Vector potential and gauge change",
+    "domain": "magnetism",
+    "latex": "\\mathbf B=\\nabla\\times\\mathbf A,\\quad\\mathbf E=-\\nabla\\phi-\\partial_t\\mathbf A,\\quad\\mathbf A'=\\mathbf A+\\nabla\\chi,\\quad\\phi'=\\phi-\\partial_t\\chi",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "vector potential",
+        "unit": "T m"
+      },
+      {
+        "symbol": "B",
+        "meaning": "magnetic field",
+        "unit": "T"
+      },
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "phi",
+        "meaning": "scalar potential",
+        "unit": "V"
+      },
+      {
+        "symbol": "chi",
+        "meaning": "gauge function",
+        "unit": "V s"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      },
+      {
+        "symbol": "A_prime",
+        "meaning": "gauge-transformed vector potential",
+        "unit": "T m"
+      },
+      {
+        "symbol": "phi_prime",
+        "meaning": "gauge-transformed scalar potential",
+        "unit": "V"
+      }
+    ],
+    "assumptions": [
+      "Locally smooth potentials on a suitable patch; global topology may require overlapping patches."
+    ],
+    "derivation": "Curl of a gradient is zero, so B is unchanged. In E, minus grad partial_t chi cancels plus grad partial_t chi when mixed derivatives commute. A gauge condition is a representation choice, while observables are unchanged.",
+    "example": "A constant uniform B along z admits symmetric gauge A=(-By/2,Bx/2,0) and Landau gauge A=(0,Bx,0); their difference is a gradient and both produce the same curl.",
+    "limitations": [
+      "Gauge freedom is not additional extractable physical energy.",
+      "A globally nontrivial loop can retain physical phase information even where local field vanishes."
+    ],
+    "source_ids": [
+      "ps-flp-vector-potential",
+      "ps-superconductivity"
+    ],
+    "prerequisite_ids": [
+      "p-vector-potential",
+      "p-gauge"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-dipole-torque",
+    "label": "Magnetic dipole moment, torque and interaction",
+    "domain": "magnetism",
+    "latex": "\\boldsymbol\\mu=I A\\mathbf n,\\qquad\\boldsymbol\\tau=\\boldsymbol\\mu\\times\\mathbf B,\\qquad U_{\\rm int}=-\\boldsymbol\\mu\\cdot\\mathbf B",
+    "variables": [
+      {
+        "symbol": "mu",
+        "meaning": "magnetic moment",
+        "unit": "A m^2"
+      },
+      {
+        "symbol": "I",
+        "meaning": "loop current",
+        "unit": "A"
+      },
+      {
+        "symbol": "A",
+        "meaning": "loop area",
+        "unit": "m^2"
+      },
+      {
+        "symbol": "n",
+        "meaning": "normal by right-hand rule",
+        "unit": "1"
+      },
+      {
+        "symbol": "tau",
+        "meaning": "torque",
+        "unit": "N m"
+      },
+      {
+        "symbol": "B",
+        "meaning": "external field",
+        "unit": "T"
+      },
+      {
+        "symbol": "U_int",
+        "meaning": "effective dipole interaction energy",
+        "unit": "J"
+      }
+    ],
+    "assumptions": [
+      "Small loop in approximately uniform external B, or permanent dipole with fixed moment.",
+      "For externally maintained current loops, source work is included in the effective mechanical potential convention."
+    ],
+    "derivation": "Add Lorentz forces on loop elements. Uniform-field forces cancel in translation but their moments add to the cross-product torque. Integrating angular work gives minus mu B cos theta for the effective orientation potential.",
+    "example": "A 0.1 A loop of area 0.01 m squared has moment 0.001 A m squared. Perpendicular to a 0.2 T field, its torque is 0.0002 N m.",
+    "limitations": [
+      "Effective mechanical interaction energy is not necessarily the complete field-plus-power-supply energy.",
+      "Spatially varying fields require force gradients and possibly higher multipoles."
+    ],
+    "source_ids": [
+      "ps-flp-vector-potential"
+    ],
+    "prerequisite_ids": [
+      "p-magnetic-dipole",
+      "p-lorentz"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-faraday",
+    "label": "Faraday induction including moving circuits",
+    "domain": "magnetism",
+    "latex": "\\mathcal E=\\oint_{C(t)}(\\mathbf E+\\mathbf u\\times\\mathbf B)\\cdot d\\mathbf l=-\\frac{d}{dt}\\int_{S(t)}\\mathbf B\\cdot d\\mathbf A",
+    "variables": [
+      {
+        "symbol": "emf",
+        "meaning": "electromotive force",
+        "unit": "V"
+      },
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "u",
+        "meaning": "circuit-element velocity",
+        "unit": "m/s"
+      },
+      {
+        "symbol": "B",
+        "meaning": "magnetic field",
+        "unit": "T"
+      },
+      {
+        "symbol": "A",
+        "meaning": "oriented area",
+        "unit": "m^2"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      },
+      {
+        "symbol": "C(t)",
+        "meaning": "oriented moving closed circuit",
+        "unit": "curve with arc length in m"
+      },
+      {
+        "symbol": "S(t)",
+        "meaning": "moving surface spanning C(t)",
+        "unit": "surface with area measure m^2"
+      },
+      {
+        "symbol": "dl",
+        "meaning": "oriented circuit line element",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Smooth moving closed circuit and compatible moving surface; orientations obey Stokes's convention."
+    ],
+    "derivation": "The local Maxwell law gives curl E=-partial_t B for a stationary loop. A moving boundary sweeps magnetic flux; its transport term is the motional u cross B contribution. Combining both yields the total derivative of flux and avoids attributing every emf to the same mechanism.",
+    "example": "A rod of length 0.2 m moving at 3 m/s perpendicular to a 0.5 T field produces emf B L u=0.3 V in a compatible sliding-loop geometry.",
+    "limitations": [
+      "The circuit's motion must be distinguished from the charge's drift velocity.",
+      "Flux rule signs depend on orientation, not a verbal preference for positive current."
+    ],
+    "source_ids": [
+      "ps-flp-induction"
+    ],
+    "prerequisite_ids": [
+      "p-faraday",
+      "p-magnetic-flux"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-inductor",
+    "label": "Inductance and stored energy",
+    "domain": "magnetism",
+    "latex": "\\Psi=LI,\\qquad V_L=L\\frac{dI}{dt},\\qquad U_L=\\tfrac12 LI^2",
+    "variables": [
+      {
+        "symbol": "Psi",
+        "meaning": "flux linkage",
+        "unit": "Wb"
+      },
+      {
+        "symbol": "L",
+        "meaning": "inductance",
+        "unit": "H"
+      },
+      {
+        "symbol": "I",
+        "meaning": "current",
+        "unit": "A"
+      },
+      {
+        "symbol": "V_L",
+        "meaning": "passive-sign inductor voltage",
+        "unit": "V"
+      },
+      {
+        "symbol": "U_L",
+        "meaning": "stored energy",
+        "unit": "J"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Fixed linear geometry with constant L, negligible hysteresis and radiation.",
+      "Passive voltage/current sign convention."
+    ],
+    "derivation": "Induced emf opposes changing flux; with passive circuit sign convention the terminal voltage is L dI/dt. Integrate power V I over the charging trajectory: integral L I dI gives half L I squared. Nonlinear inductors instead require integrating their actual flux-linkage relation.",
+    "example": "A 10 mH inductor at 2 A stores 0.020 J. Raising current linearly at 100 A/s requires 1 V across the ideal inductive component.",
+    "limitations": [
+      "A nonlinear core can make L current dependent.",
+      "Real coil resistance and core losses require extra energy terms."
+    ],
+    "source_ids": [
+      "ps-flp-induction",
+      "ps-flp-poynting"
+    ],
+    "prerequisite_ids": [
+      "p-inductance",
+      "p-faraday"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-maxwell",
+    "label": "Vacuum Maxwell equations",
+    "domain": "magnetism",
+    "latex": "\\nabla\\cdot\\mathbf E=\\rho/\\varepsilon_0,\\quad\\nabla\\cdot\\mathbf B=0,\\quad\\nabla\\times\\mathbf E=-\\partial_t\\mathbf B,\\quad\\nabla\\times\\mathbf B=\\mu_0\\mathbf J+\\mu_0\\varepsilon_0\\partial_t\\mathbf E",
+    "variables": [
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "B",
+        "meaning": "magnetic field",
+        "unit": "T"
+      },
+      {
+        "symbol": "rho",
+        "meaning": "charge density",
+        "unit": "C/m^3"
+      },
+      {
+        "symbol": "J",
+        "meaning": "current density",
+        "unit": "A/m^2"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "vacuum permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "mu_0",
+        "meaning": "vacuum permeability",
+        "unit": "H/m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Classical electromagnetic field theory with no magnetic monopole sources."
+    ],
+    "derivation": "The divergence equations constrain initial fields and the curl equations evolve them. Taking divergences shows the magnetic constraint is preserved and charge conservation preserves the electric constraint. Source-free curls combine into wave equations with c squared=1/(mu_0 epsilon_0).",
+    "example": "For a plane wave in vacuum, E and B are perpendicular to each other and propagation, with magnitudes E=c B. A 1 V/m wave therefore has B about 3.34 nT.",
+    "limitations": [
+      "Material response needs constitutive or microscopic dynamics.",
+      "Maxwell theory alone does not determine charge trajectories or quantum particle creation."
+    ],
+    "source_ids": [
+      "ps-flp-electro",
+      "ps-flp-poynting"
+    ],
+    "prerequisite_ids": [
+      "p-maxwell",
+      "p-gauss",
+      "p-faraday"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-poynting",
+    "label": "Poynting energy balance",
+    "domain": "magnetism",
+    "latex": "\\partial_t u+\\nabla\\cdot\\mathbf S=-\\mathbf J\\cdot\\mathbf E,\\quad u=\\tfrac12\\varepsilon_0 E^2+\\frac{B^2}{2\\mu_0},\\quad \\mathbf S=\\frac{\\mathbf E\\times\\mathbf B}{\\mu_0}",
+    "variables": [
+      {
+        "symbol": "u",
+        "meaning": "field energy density",
+        "unit": "J/m^3"
+      },
+      {
+        "symbol": "S",
+        "meaning": "energy flux density",
+        "unit": "W/m^2"
+      },
+      {
+        "symbol": "J",
+        "meaning": "current density",
+        "unit": "A/m^2"
+      },
+      {
+        "symbol": "E",
+        "meaning": "electric field",
+        "unit": "V/m"
+      },
+      {
+        "symbol": "B",
+        "meaning": "magnetic field",
+        "unit": "T"
+      },
+      {
+        "symbol": "epsilon_0",
+        "meaning": "permittivity",
+        "unit": "F/m"
+      },
+      {
+        "symbol": "mu_0",
+        "meaning": "permeability",
+        "unit": "H/m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Vacuum field-energy convention with all material current included in J."
+    ],
+    "derivation": "Dot Maxwell–Ampère with E and Faraday with B/mu_0, then subtract using div(E cross B)=B dot curl E-E dot curl B. Quadratic time derivatives collect into u, leaving work on charges as J dot E. Integrate over the full apparatus boundary to test any proposed energy gain.",
+    "example": "A driven resonator in periodic steady state has zero average stored-energy change, so average input equals dissipation plus delivered load power. Large internal circulating energy does not alter this balance.",
+    "limitations": [
+      "A measured voltage peak does not determine net power without phase and impedance.",
+      "In dispersive media, material energy must be included explicitly."
+    ],
+    "source_ids": [
+      "ps-flp-poynting"
+    ],
+    "prerequisite_ids": [
+      "p-maxwell",
+      "p-poynting"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-magnetization",
+    "label": "Magnetization and bound currents",
+    "domain": "magnetism",
+    "latex": "\\mathbf B=\\mu_0(\\mathbf H+\\mathbf M),\\quad\\mathbf J_b=\\nabla\\times\\mathbf M,\\quad\\mathbf K_b=\\mathbf M\\times\\mathbf n",
+    "variables": [
+      {
+        "symbol": "B",
+        "meaning": "magnetic field",
+        "unit": "T"
+      },
+      {
+        "symbol": "H",
+        "meaning": "magnetic field intensity",
+        "unit": "A/m"
+      },
+      {
+        "symbol": "M",
+        "meaning": "magnetization",
+        "unit": "A/m"
+      },
+      {
+        "symbol": "J_b",
+        "meaning": "bound volume current",
+        "unit": "A/m^2"
+      },
+      {
+        "symbol": "K_b",
+        "meaning": "bound surface current",
+        "unit": "A/m"
+      },
+      {
+        "symbol": "n",
+        "meaning": "outward normal",
+        "unit": "1"
+      },
+      {
+        "symbol": "mu_0",
+        "meaning": "permeability",
+        "unit": "H/m"
+      }
+    ],
+    "assumptions": [
+      "Macroscopic coarse-grained magnetic dipole description."
+    ],
+    "derivation": "Neighboring microscopic current loops cancel in a uniform interior, leaving surface circulation. Spatial variation leaves residual curl M in the bulk. Defining H=B/mu_0-M separates these bound currents from free ones in the static curl equation.",
+    "example": "A uniformly magnetized long cylinder along its axis has no bulk bound current but an azimuthal surface current. This is why a solenoid is a useful field analogy.",
+    "limitations": [
+      "Equivalent bound currents are a coarse-grained representation, not literal smooth microscopic wires.",
+      "H and B differ in magnetic matter and their units differ."
+    ],
+    "source_ids": [
+      "ps-flp-ferromagnetism",
+      "ps-flp-magnetic-materials"
+    ],
+    "prerequisite_ids": [
+      "p-magnetization"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-paramagnet",
+    "label": "Independent spin-half paramagnet",
+    "domain": "magnetism",
+    "latex": "Z_1=2\\cosh(\\mu B/k_BT),\\qquad M=n\\mu\\tanh(\\mu B/k_BT)",
+    "variables": [
+      {
+        "symbol": "Z_1",
+        "meaning": "one-spin partition function",
+        "unit": "1"
+      },
+      {
+        "symbol": "mu",
+        "meaning": "two-level moment magnitude",
+        "unit": "J/T"
+      },
+      {
+        "symbol": "B",
+        "meaning": "applied field",
+        "unit": "T"
+      },
+      {
+        "symbol": "k_B",
+        "meaning": "Boltzmann constant",
+        "unit": "J/K"
+      },
+      {
+        "symbol": "T",
+        "meaning": "temperature",
+        "unit": "K"
+      },
+      {
+        "symbol": "M",
+        "meaning": "magnetization magnitude",
+        "unit": "A/m"
+      },
+      {
+        "symbol": "n",
+        "meaning": "spin number density",
+        "unit": "1/m^3"
+      }
+    ],
+    "assumptions": [
+      "Noninteracting two-state moments with energies -mu B and +mu B, in thermal equilibrium.",
+      "Negligible self-field and exchange."
+    ],
+    "derivation": "Sum Boltzmann weights of the two Zeeman levels. The weighted mean moment is mu times the population difference, yielding tanh. For weak field expand tanh x approximately x, giving M approximately n mu squared B/(k_B T).",
+    "example": "If mu B/(k_B T)=0.01, magnetization is approximately 1% of its saturated value n mu. In the large positive-field/low-temperature limit it approaches n mu.",
+    "limitations": [
+      "This has no 1/3 factor: that factor belongs to a classical freely orientable moment model.",
+      "Interactions near magnetic ordering invalidate independent spins."
+    ],
+    "source_ids": [
+      "ps-flp-paramagnetism"
+    ],
+    "prerequisite_ids": [
+      "p-spin",
+      "p-paramagnetism"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-spin-model",
+    "label": "Ising and Heisenberg model Hamiltonians",
+    "domain": "magnetism",
+    "latex": "H_{\\rm Ising}=-\\sum_{\\langle ij\\rangle}J_{ij}s_i s_j-\\sum_i h_i s_i,\\quad H_{\\rm H}=-\\sum_{\\langle ij\\rangle}J_{ij}\\mathbf S_i\\cdot\\mathbf S_j",
+    "variables": [
+      {
+        "symbol": "H",
+        "meaning": "model energy/operator",
+        "unit": "J"
+      },
+      {
+        "symbol": "J_ij",
+        "meaning": "exchange coefficient in dimensionless-spin convention",
+        "unit": "J"
+      },
+      {
+        "symbol": "s_i",
+        "meaning": "Ising spin ±1",
+        "unit": "1"
+      },
+      {
+        "symbol": "h_i",
+        "meaning": "local field energy coefficient",
+        "unit": "J"
+      },
+      {
+        "symbol": "S_i",
+        "meaning": "dimensionless classical spin or quantum spin operator",
+        "unit": "1"
+      },
+      {
+        "symbol": "i,j",
+        "meaning": "site indices; angle-bracket pair is counted once",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Each unordered pair is counted once; spin normalization and sign convention are explicit.",
+      "These are models whose couplings must be justified for a material or computational task."
+    ],
+    "derivation": "Rotationally invariant pair interaction has leading scalar S_i dot S_j. Strong easy-axis reduction gives binary s_i. With the minus sign used here, positive J favors aligned neighbors. The same pair-energy algebra can appear in optimization or associative-memory models without making those systems physical magnets.",
+    "example": "Two Ising spins with J=1 energy unit have aligned energy -1 and anti-aligned energy +1. A single spin flip costs 2J in this two-site example.",
+    "limitations": [
+      "Using spin operators with units of hbar changes the units assigned to J.",
+      "A toy network minimum is not evidence that the brain uses this microscopic Hamiltonian."
+    ],
+    "source_ids": [
+      "ps-flp-ferromagnetism",
+      "ps-flp-magnetic-materials"
+    ],
+    "prerequisite_ids": [
+      "p-ising",
+      "p-heisenberg",
+      "p-exchange"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-larmor",
+    "label": "Larmor and cyclotron frequencies",
+    "domain": "magnetism",
+    "latex": "\\omega_L=|\\gamma|B,\\qquad \\omega_c=|q|B/m,\\qquad r_L=m v_\\perp/(|q|B)",
+    "variables": [
+      {
+        "symbol": "omega_L,omega_c",
+        "meaning": "angular frequencies",
+        "unit": "rad/s"
+      },
+      {
+        "symbol": "gamma",
+        "meaning": "gyromagnetic ratio in B convention",
+        "unit": "rad/(s T)"
+      },
+      {
+        "symbol": "B",
+        "meaning": "uniform magnetic field",
+        "unit": "T"
+      },
+      {
+        "symbol": "q",
+        "meaning": "charge",
+        "unit": "C"
+      },
+      {
+        "symbol": "m",
+        "meaning": "particle mass",
+        "unit": "kg"
+      },
+      {
+        "symbol": "v_perp",
+        "meaning": "perpendicular speed",
+        "unit": "m/s"
+      },
+      {
+        "symbol": "r_L",
+        "meaning": "gyroradius",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Nonrelativistic charged-particle orbit; uniform field; gyrofrequency formula neglects collisions.",
+      "Spin precession has its own measured gyromagnetic ratio."
+    ],
+    "derivation": "Equate magnetic force |q|vB to centripetal m v squared/r to obtain radius and cyclotron rate. Spin precession instead follows torque on angular momentum with mu=gamma angular momentum. The two rates need not coincide because spin and orbital gyromagnetic ratios differ.",
+    "example": "Doubling B halves gyroradius at fixed speed and doubles angular frequency. Convert to cycles per second by dividing omega by 2 pi, not by simply relabeling its unit.",
+    "limitations": [
+      "Relativistic orbital motion requires the Lorentz factor in momentum.",
+      "MRI/NMR and electron-spin frequencies require the correct species gamma."
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics",
+      "ps-flp-paramagnetism"
+    ],
+    "prerequisite_ids": [
+      "p-larmor",
+      "p-plasma-gyro"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-llg",
+    "label": "Gilbert dynamics in an effective-B convention",
+    "domain": "magnetism",
+    "latex": "\\dot{\\mathbf m}=-\\frac{\\gamma_B}{1+\\alpha^2}\\left[\\mathbf m\\times\\mathbf B_{\\rm eff}+\\alpha\\mathbf m\\times(\\mathbf m\\times\\mathbf B_{\\rm eff})\\right]",
+    "variables": [
+      {
+        "symbol": "m",
+        "meaning": "unit magnetization direction",
+        "unit": "1"
+      },
+      {
+        "symbol": "gamma_B",
+        "meaning": "positive Gilbert gyromagnetic magnitude using tesla",
+        "unit": "1/(s T)"
+      },
+      {
+        "symbol": "alpha",
+        "meaning": "Gilbert damping",
+        "unit": "1"
+      },
+      {
+        "symbol": "B_eff",
+        "meaning": "effective field",
+        "unit": "T"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Fixed magnetization magnitude, local micromagnetic continuum, no additional spin torque/noise terms.",
+      "B_eff=mu_0 H_eff when translating the cited OOMMF H convention."
+    ],
+    "derivation": "Start with implicit Gilbert precession plus alpha m cross m-dot and solve for m-dot in the tangent plane to the unit sphere. The denominator 1+alpha squared converts Gilbert to explicit Landau–Lifshitz form. Cross products ensure m dot m-dot=0 analytically.",
+    "example": "With alpha=0 and fixed field, the magnetization precesses at gamma_B B while its polar angle stays fixed. Positive alpha aligns it with a static field and decreases the Zeeman energy.",
+    "limitations": [
+      "Mixing gamma in m/(A s) with B in tesla misses a permeability conversion.",
+      "A numerical method should check norm drift, energy balance and timestep convergence."
+    ],
+    "source_ids": [
+      "ps-oommf"
+    ],
+    "prerequisite_ids": [
+      "p-llg",
+      "p-larmor"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-skyrmion",
+    "label": "Skyrmion topological charge",
+    "domain": "magnetism",
+    "latex": "Q=\\frac{1}{4\\pi}\\int\\mathbf m\\cdot(\\partial_x\\mathbf m\\times\\partial_y\\mathbf m)\\,dx\\,dy",
+    "variables": [
+      {
+        "symbol": "Q",
+        "meaning": "degree/topological charge",
+        "unit": "1"
+      },
+      {
+        "symbol": "m",
+        "meaning": "unit magnetization field",
+        "unit": "1"
+      },
+      {
+        "symbol": "x,y",
+        "meaning": "spatial coordinates",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Smooth unit field on a plane compactified by fixed boundary magnetization, or an appropriate closed oriented surface."
+    ],
+    "derivation": "The scalar triple product is the pullback of the unit sphere's area form. Integrating counts the signed area covered on that sphere; division by 4 pi gives the map's integer degree under the compactness/boundary assumptions.",
+    "example": "A constant magnetization has zero derivatives and Q=0. A texture wrapping the sphere once has Q=+1 or -1 according to orientation convention.",
+    "limitations": [
+      "Finite open boundaries, singular configurations and discrete sampling can allow changes or noninteger numerical estimates.",
+      "Topology does not establish unlimited lifetime or practical memory endurance."
+    ],
+    "source_ids": [
+      "ps-skyrmion-bags"
+    ],
+    "prerequisite_ids": [
+      "p-skyrmion"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-mhd-induction",
+    "label": "Resistive MHD induction equation",
+    "domain": "magnetism",
+    "latex": "\\partial_t\\mathbf B=\\nabla\\times(\\mathbf v\\times\\mathbf B)+\\eta_m\\nabla^2\\mathbf B,\\qquad\\eta_m=(\\mu_0\\sigma)^{-1}",
+    "variables": [
+      {
+        "symbol": "B",
+        "meaning": "magnetic field",
+        "unit": "T"
+      },
+      {
+        "symbol": "v",
+        "meaning": "fluid velocity",
+        "unit": "m/s"
+      },
+      {
+        "symbol": "eta_m",
+        "meaning": "magnetic diffusivity",
+        "unit": "m^2/s"
+      },
+      {
+        "symbol": "sigma",
+        "meaning": "electrical conductivity",
+        "unit": "S/m"
+      },
+      {
+        "symbol": "mu_0",
+        "meaning": "permeability",
+        "unit": "H/m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Single-fluid nonrelativistic MHD, scalar uniform conductivity and div B=0.",
+      "Displacement current, Hall term and electron inertia omitted."
+    ],
+    "derivation": "Combine Ohm's law J=sigma(E+v cross B), Faraday's law and J approximately curl B/mu_0. The curl-curl identity and div B=0 turn resistive curl into a diffusion term. Ideal flux freezing is the limit eta_m=0 under smoothness conditions.",
+    "example": "With v=0 a sinusoidal field component B_k decays as exp(-eta_m k squared t). Finer spatial structure decays faster; this is diffusion, not oscillation.",
+    "limitations": [
+      "Reconnection often requires kinetic or nonideal effects beyond this simple closure.",
+      "Electrical resistivity and magnetic diffusivity have different units despite often sharing the symbol eta."
+    ],
+    "source_ids": [
+      "ps-mhd",
+      "ps-flp-induction"
+    ],
+    "prerequisite_ids": [
+      "p-mhd",
+      "p-faraday"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-alfven",
+    "label": "Shear Alfvén dispersion",
+    "domain": "magnetism",
+    "latex": "v_A=\\frac{B_0}{\\sqrt{\\mu_0\\rho_m}},\\qquad\\omega^2=k_\\parallel^2 v_A^2",
+    "variables": [
+      {
+        "symbol": "v_A",
+        "meaning": "Alfvén speed",
+        "unit": "m/s"
+      },
+      {
+        "symbol": "B_0",
+        "meaning": "uniform equilibrium field magnitude",
+        "unit": "T"
+      },
+      {
+        "symbol": "rho_m",
+        "meaning": "mass density",
+        "unit": "kg/m^3"
+      },
+      {
+        "symbol": "mu_0",
+        "meaning": "permeability",
+        "unit": "H/m"
+      },
+      {
+        "symbol": "omega",
+        "meaning": "angular frequency",
+        "unit": "rad/s"
+      },
+      {
+        "symbol": "k_parallel",
+        "meaning": "parallel wavenumber",
+        "unit": "rad/m"
+      }
+    ],
+    "assumptions": [
+      "Linear ideal MHD transverse perturbations around a uniform stationary background."
+    ],
+    "derivation": "Linearized induction relates transverse delta B to the fluid displacement gradient along B0. Magnetic tension supplies restoring force B0 squared/mu_0 times that second derivative, while rho_m supplies inertia. The resulting one-dimensional wave speed is v_A.",
+    "example": "For B0=1 mT and rho_m=1e-6 kg/m cubed, v_A is about 892 m/s. Halving density raises the speed by square root of two.",
+    "limitations": [
+      "At kinetic scales, dispersive and collisionless corrections change the branch.",
+      "If the formula approaches c, relativistic MHD is required."
+    ],
+    "source_ids": [
+      "ps-mhd"
+    ],
+    "prerequisite_ids": [
+      "p-alfven",
+      "p-mhd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-josephson",
+    "label": "Josephson phase-voltage and current relations",
+    "domain": "magnetism",
+    "latex": "I=I_c\\sin\\delta,\\qquad\\dot\\delta=\\frac{2eV}{\\hbar},\\qquad f_J=\\frac{2e}{h}V",
+    "variables": [
+      {
+        "symbol": "I,I_c",
+        "meaning": "junction and critical currents",
+        "unit": "A"
+      },
+      {
+        "symbol": "delta",
+        "meaning": "gauge-invariant phase difference",
+        "unit": "rad"
+      },
+      {
+        "symbol": "e",
+        "meaning": "positive elementary charge magnitude",
+        "unit": "C"
+      },
+      {
+        "symbol": "V",
+        "meaning": "voltage under declared phase orientation",
+        "unit": "V"
+      },
+      {
+        "symbol": "hbar,h",
+        "meaning": "reduced/full Planck constants",
+        "unit": "J s"
+      },
+      {
+        "symbol": "f_J",
+        "meaning": "Josephson frequency",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Ideal Josephson element; chosen phase and voltage signs are consistent.",
+      "Dissipative/quasiparticle channels require additional circuit terms."
+    ],
+    "derivation": "Coupled condensate amplitudes carry a relative phase. Pair charge 2e turns a potential difference into an energy difference 2eV; quantum phase evolves at energy/hbar. The sinusoidal pair-current relation converts that phase evolution into an alternating current.",
+    "example": "At 1 microvolt, f_J is approximately 483.6 MHz. This links voltage and frequency through exact SI-defined e and h, though the experiment still has uncertainty and circuit limitations.",
+    "limitations": [
+      "An ideal dc Josephson supercurrent at zero voltage does not supply free electrical power.",
+      "Flux, phase, voltage and geometry conventions must be explicit in loops."
+    ],
+    "source_ids": [
+      "ps-superconductivity",
+      "ps-constants"
+    ],
+    "prerequisite_ids": [
+      "p-superconductivity",
+      "p-gauge"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-nonabelian",
+    "label": "Non-Abelian curvature and Wilson loop",
+    "domain": "magnetism",
+    "latex": "F_{\\mu\\nu}=\\partial_\\mu A_\\nu-\\partial_\\nu A_\\mu-ig[A_\\mu,A_\\nu],\\qquad W(C)=\\frac1{d_R}\\operatorname{Tr}_R\\mathcal P\\exp\\!\\left(ig\\oint_C A_\\mu dx^\\mu\\right)",
+    "variables": [
+      {
+        "symbol": "A_mu",
+        "meaning": "Hermitian gauge connection",
+        "unit": "energy in natural units"
+      },
+      {
+        "symbol": "F_munu",
+        "meaning": "gauge curvature",
+        "unit": "energy^2 in natural units"
+      },
+      {
+        "symbol": "g",
+        "meaning": "4D gauge coupling",
+        "unit": "1"
+      },
+      {
+        "symbol": "x_mu",
+        "meaning": "coordinate",
+        "unit": "energy^-1 in natural units"
+      },
+      {
+        "symbol": "d_R",
+        "meaning": "representation dimension",
+        "unit": "1"
+      },
+      {
+        "symbol": "W",
+        "meaning": "normalized loop observable",
+        "unit": "1"
+      },
+      {
+        "symbol": "P",
+        "meaning": "path-ordering operation",
+        "unit": "not a numeric variable"
+      },
+      {
+        "symbol": "C",
+        "meaning": "closed oriented spacetime path",
+        "unit": "path coordinates in energy^-1 natural units"
+      },
+      {
+        "symbol": "R",
+        "meaning": "chosen representation in which the trace is taken",
+        "unit": "representation label"
+      }
+    ],
+    "assumptions": [
+      "Natural units hbar=c=1; Hermitian generators and covariant derivative D_mu=partial_mu-ig A_mu.",
+      "Representation and regularization are specified for quantum expectations."
+    ],
+    "derivation": "Commuting covariant derivatives gives [D_mu,D_nu]=-ig F_munu. Noncommuting generators introduce the commutator term absent in U(1). Parallel transport around a closed path transforms by conjugation, so its trace is gauge invariant.",
+    "example": "For commuting matrices the commutator vanishes and path ordering becomes unnecessary, recovering the Abelian flux-phase relation. Small plaquettes approach identity plus ig area times curvature.",
+    "limitations": [
+      "A graph cycle is not automatically a Wilson loop: it needs group-valued transport and a gauge transformation law.",
+      "Formal continuum path integrals do not by themselves prove existence or a mass gap; the 2026 assessment separates those statements."
+    ],
+    "source_ids": [
+      "ps-gauge",
+      "ps-ym-assessment"
+    ],
+    "prerequisite_ids": [
+      "p-nonabelian",
+      "p-wilson-loop"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-berry-phase",
+    "label": "Adiabatic geometric phase",
+    "domain": "magnetism",
+    "latex": "\\gamma_n(C)=i\\oint_C\\langle n(\\mathbf R)|\\nabla_{\\mathbf R}n(\\mathbf R)\\rangle\\cdot d\\mathbf R\\pmod{2\\pi}",
+    "variables": [
+      {
+        "symbol": "gamma_n",
+        "meaning": "geometric phase",
+        "unit": "rad"
+      },
+      {
+        "symbol": "R",
+        "meaning": "external Hamiltonian parameters",
+        "unit": "parameter dependent"
+      },
+      {
+        "symbol": "n(R)",
+        "meaning": "normalized instantaneous nondegenerate eigenstate",
+        "unit": "state normalization"
+      },
+      {
+        "symbol": "C",
+        "meaning": "closed parameter path",
+        "unit": "not a scalar"
+      },
+      {
+        "symbol": "n",
+        "meaning": "isolated instantaneous eigenstate label",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Adiabatic transport of an isolated nondegenerate eigenstate; gap and evolution rate permit neglect of transitions.",
+      "The eigenstate gauge is handled consistently along the closed loop."
+    ],
+    "derivation": "Insert an instantaneous eigenstate times a phase into the time-dependent Schrödinger equation and project onto that eigenstate. Besides the energy-integral dynamical phase, its changing basis contributes i times the inner product with its parameter derivative. A gauge rephasing shifts the local connection by a gradient, leaving closed-loop phase invariant modulo 2pi.",
+    "example": "A spin one half following a slowly rotated field accumulates a geometric phase whose magnitude is half the enclosed solid angle, with sign fixed by eigenstate and orientation. Reversing path orientation reverses that geometric contribution.",
+    "limitations": [
+      "Fast driving, degeneracy or dissipation requires a different treatment.",
+      "A cycle in a repository dependency graph does not acquire a Berry phase merely because it is closed."
+    ],
+    "source_ids": [
+      "ps-berry"
+    ],
+    "prerequisite_ids": [
+      "p-berry-phase",
+      "p-spin",
+      "p-gauge"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-vortex-energy",
+    "label": "Two-dimensional vortex energy–entropy estimate",
+    "domain": "magnetism",
+    "latex": "E[\\theta]=\\frac{\\rho_s}{2}\\int|\\nabla\\theta|^2d^2r,\\qquad E_{n}\\simeq\\pi\\rho_s n^2\\log(L/a),\\qquad F_{|n|=1}\\simeq(\\pi\\rho_s-2k_BT)\\log(L/a)",
+    "variables": [
+      {
+        "symbol": "rho_s",
+        "meaning": "two-dimensional phase stiffness in stated convention",
+        "unit": "J"
+      },
+      {
+        "symbol": "theta",
+        "meaning": "compact angular order parameter",
+        "unit": "rad"
+      },
+      {
+        "symbol": "n",
+        "meaning": "integer vortex winding",
+        "unit": "1"
+      },
+      {
+        "symbol": "L,a",
+        "meaning": "system and core scales",
+        "unit": "m"
+      },
+      {
+        "symbol": "T",
+        "meaning": "temperature",
+        "unit": "K"
+      },
+      {
+        "symbol": "F,E",
+        "meaning": "free energy and energy",
+        "unit": "J"
+      },
+      {
+        "symbol": "k_B",
+        "meaning": "Boltzmann constant",
+        "unit": "J K^-1"
+      },
+      {
+        "symbol": "r",
+        "meaning": "two-dimensional spatial position",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Long-distance continuum XY-type model, a≪L, one isolated vortex and ignored core energy.",
+      "The free-energy estimate is heuristic; interactions and renormalized stiffness determine the full transition."
+    ],
+    "derivation": "For winding n, theta=n times polar angle and gradient magnitude is |n|/r. Integrating rho_s n²/(2r²) over a circular annulus gives the logarithmic energy. A vortex can occupy roughly (L/a)² core positions, so its configurational entropy is 2kB log(L/a). Subtracting TS shows how entropy can overcome defect cost.",
+    "example": "A double-winding isolated defect has four times the logarithmic energy of a unit defect, while two widely separated unit defects have approximately twice that self-energy before mutual interactions. This motivates splitting and defect-pair analysis.",
+    "limitations": [
+      "Setting the bare coefficient to zero is not an exact prediction of Tc for an arbitrary lattice or material.",
+      "This vortex topology differs from the two-dimensional-to-sphere winding used for magnetic skyrmions."
+    ],
+    "source_ids": [
+      "ps-kt"
+    ],
+    "prerequisite_ids": [
+      "p-vortex-unbinding",
+      "p-exchange"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-newton",
+    "label": "Newtonian force and potential",
+    "domain": "gravity",
+    "latex": "\\mathbf F=-\\frac{GMm}{r^3}\\mathbf r,\\qquad \\Phi=-\\frac{GM}{r},\\qquad \\mathbf g=-\\nabla\\Phi",
+    "variables": [
+      {
+        "symbol": "G",
+        "meaning": "gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "M,m",
+        "meaning": "source and test masses",
+        "unit": "kg"
+      },
+      {
+        "symbol": "r",
+        "meaning": "separation",
+        "unit": "m"
+      },
+      {
+        "symbol": "Phi",
+        "meaning": "potential per unit mass",
+        "unit": "m^2 s^-2"
+      },
+      {
+        "symbol": "g",
+        "meaning": "acceleration",
+        "unit": "m s^-2"
+      },
+      {
+        "symbol": "F",
+        "meaning": "gravitational force on test mass m",
+        "unit": "N"
+      }
+    ],
+    "assumptions": [
+      "Isolated point masses or a spherical exterior; weak field and slow motion.",
+      "Potential reference is zero at infinity."
+    ],
+    "derivation": "For a central inverse-square force, radial work gives dPhi/dr=GM/r². Integrating from infinity produces -GM/r. Multiplication by test mass returns potential energy and differentiation returns the attractive force. The potential is negative while its outward radial derivative is positive: the minus gradient points inward. The test mass cancels from acceleration, expressing universality of Newtonian free fall.",
+    "example": "At twice the radius, acceleration is one quarter as large and potential has half the magnitude. For G=6.67430e-11 SI, M=1e12 kg and r=1e3 m, g=6.67430e-5 m/s² and Phi=-0.066743 m²/s².",
+    "limitations": [
+      "A point-particle singularity does not describe the interior of an extended source.",
+      "Relativistic stress and dynamical geometry are absent; neither c nor wave propagation is present."
+    ],
+    "source_ids": [
+      "ps-tong-geodesics",
+      "ps-constants"
+    ],
+    "prerequisite_ids": [
+      "p-newton-gravity",
+      "p-grav-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-grav-poisson",
+    "label": "Gravitational Poisson equation",
+    "domain": "gravity",
+    "latex": "\\nabla^2\\Phi=4\\pi G\\rho_m,\\qquad \\oint\\mathbf g\\cdot d\\mathbf A=-4\\pi GM_{\\rm enc}",
+    "variables": [
+      {
+        "symbol": "Phi",
+        "meaning": "Newtonian gravitational potential",
+        "unit": "m^2 s^-2"
+      },
+      {
+        "symbol": "rho_m",
+        "meaning": "mass density",
+        "unit": "kg m^-3"
+      },
+      {
+        "symbol": "g",
+        "meaning": "gravitational acceleration",
+        "unit": "m s^-2"
+      },
+      {
+        "symbol": "A",
+        "meaning": "oriented surface element",
+        "unit": "m^2"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "M_enc",
+        "meaning": "mass enclosed by the oriented integration surface",
+        "unit": "kg"
+      }
+    ],
+    "assumptions": [
+      "Newtonian continuum description with specified boundary conditions."
+    ],
+    "derivation": "An inward inverse-square field carries flux -4piGM across any enclosing sphere. Add fields from source elements, use the divergence theorem and substitute g=-grad Phi. For a uniform sphere, enclosed mass grows as r³, hence the interior acceleration is linear in r. Continuity of potential and its first derivative at the surface fixes the interior constant.",
+    "example": "A sphere of radius R and mass M has Phi(r)=-GM(3R²-r²)/(2R³) inside. Differentiation gives g=-GM r/R³; its Laplacian is 3GM/R³=4piG rho_m. The field vanishes at the center without the potential vanishing.",
+    "limitations": [
+      "The sign is opposite the electric-potential equation with positive charge density.",
+      "For infinite homogeneous matter, an isolated zero-at-infinity potential is unavailable; cosmological boundary assumptions are needed."
+    ],
+    "source_ids": [
+      "ps-tong-weak-gravity"
+    ],
+    "prerequisite_ids": [
+      "p-grav-potential",
+      "p-gauss"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-kepler",
+    "label": "Two-body orbit period and energy",
+    "domain": "gravity",
+    "latex": "T^2=\\frac{4\\pi^2a^3}{G(M+m)},\\qquad E=-\\frac{GMm}{2a},\\qquad v_{\\rm rel}^2=G(M+m)\\left(\\frac2r-\\frac1a\\right)",
+    "variables": [
+      {
+        "symbol": "T",
+        "meaning": "orbital period",
+        "unit": "s"
+      },
+      {
+        "symbol": "a",
+        "meaning": "semimajor axis of relative orbit",
+        "unit": "m"
+      },
+      {
+        "symbol": "E",
+        "meaning": "total orbital energy in center-of-mass frame",
+        "unit": "J"
+      },
+      {
+        "symbol": "v_rel",
+        "meaning": "relative speed",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "r",
+        "meaning": "relative separation",
+        "unit": "m"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "M,m",
+        "meaning": "two gravitating body masses",
+        "unit": "kg"
+      }
+    ],
+    "assumptions": [
+      "Bound Newtonian two-body ellipse; negligible external forces, radiation and finite-size effects."
+    ],
+    "derivation": "Introduce reduced mass mu=Mm/(M+m), so the relative coordinate has kinetic energy mu v²/2 and potential -GMm/r. Conservation of angular momentum gives equal areas in equal times. Integrating one ellipse gives the period; evaluating energy at a turning point yields the semimajor-axis expression and then the vis-viva relation. The system's center-of-mass kinetic energy is excluded.",
+    "example": "For a circular orbit r=a, vis-viva reduces to v²=G(M+m)/a. Doubling a increases T by 2^(3/2), not by two, and halves the magnitude of the negative orbital energy.",
+    "limitations": [
+      "a belongs to the relative orbit, not necessarily the radius of either body's orbit around the barycenter.",
+      "An inspiralling binary has approximately changing orbital elements rather than one exact conserved E."
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "prerequisite_ids": [
+      "p-newton-gravity",
+      "p-orbits"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-variational",
+    "label": "Euler–Lagrange equation from stationary action",
+    "domain": "gravity",
+    "latex": "S[q]=\\int_{t_0}^{t_1}L(q,\\dot q,t)\\,dt,\\qquad \\delta S=0\\Rightarrow\\frac{d}{dt}\\frac{\\partial L}{\\partial\\dot q^i}-\\frac{\\partial L}{\\partial q^i}=0",
+    "variables": [
+      {
+        "symbol": "S",
+        "meaning": "action",
+        "unit": "J s"
+      },
+      {
+        "symbol": "L",
+        "meaning": "Lagrangian",
+        "unit": "J"
+      },
+      {
+        "symbol": "q^i",
+        "meaning": "generalized coordinates",
+        "unit": "coordinate dependent"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      },
+      {
+        "symbol": "t_0,t_1",
+        "meaning": "fixed endpoint times of the varied trajectory",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Differentiable paths and Lagrangian; endpoint variations vanish.",
+      "Constrained systems require appropriate independent coordinates or multipliers."
+    ],
+    "derivation": "Set q to q+epsilon eta, differentiate the integral at epsilon=0, and integrate the eta-dot term by parts. Endpoint terms disappear. The remaining integral has arbitrary eta, so its coefficient must vanish. This proves stationarity, not positive second variation. With L=m qdot²/2-U(q), the result is m qddot=-dU/dq.",
+    "example": "For U=kq²/2 the variation produces m qddot+kq=0. A constant added to L changes S by a constant duration-dependent offset but not the motion. A total time derivative changes only endpoint data.",
+    "limitations": [
+      "Stationary action need not minimize action globally.",
+      "A proposed learning or memory objective is a designed optimization rule unless an actual physical action has been derived."
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "prerequisite_ids": [
+      "p-action",
+      "p-harmonic-oscillator"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-metric-time",
+    "label": "Metric and measured proper time",
+    "domain": "gravity",
+    "latex": "ds^2=g_{\\mu\\nu}dx^\\mu dx^\\nu=-c^2d\\tau^2,\\qquad d\\tau=dt\\sqrt{1-v^2/c^2}\\quad\\text{in inertial Minkowski coordinates}",
+    "variables": [
+      {
+        "symbol": "g_munu",
+        "meaning": "metric components; signature (-,+,+,+)",
+        "unit": "dimensionless if all coordinates have length"
+      },
+      {
+        "symbol": "x^0=ct",
+        "meaning": "time coordinate in length units",
+        "unit": "m"
+      },
+      {
+        "symbol": "tau,t",
+        "meaning": "proper and coordinate times",
+        "unit": "s"
+      },
+      {
+        "symbol": "v",
+        "meaning": "coordinate speed in stated inertial frame",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "ds^2",
+        "meaning": "signed infinitesimal spacetime interval squared",
+        "unit": "m^2"
+      },
+      {
+        "symbol": "x^mu",
+        "meaning": "spacetime coordinates; all-length chart in the displayed convention",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Timelike worldline; positive proper-time increment.",
+      "The displayed square-root specialization requires Minkowski inertial coordinates."
+    ],
+    "derivation": "Insert the flat metric diag(-1,1,1,1) and dx^i=v^i dt into ds². Dividing by -c² gives dτ²=dt²(1-v²/c²). Proper time integrates locally measured clock intervals along a path; changing coordinates changes metric components but not that integral. In curved spacetime use the general metric expression rather than the flat specialization.",
+    "example": "At v=0.6c in an inertial frame, one second of coordinate time corresponds to 0.8 seconds along the moving worldline. This compares specified paths and coordinates, not absolute slowness of one object.",
+    "limitations": [
+      "Angular coordinates are dimensionless, so their metric components carry powers of length; unit labels must follow the chart.",
+      "Null curves have ds²=0 and no massive observer's proper-time parameter."
+    ],
+    "source_ids": [
+      "ps-tong-geodesics",
+      "ps-tong-differential-geometry"
+    ],
+    "prerequisite_ids": [
+      "p-metric",
+      "p-equivalence"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-connection",
+    "label": "Levi-Civita connection",
+    "domain": "gravity",
+    "latex": "\\Gamma^{\\rho}_{\\mu\\nu}=\\frac12g^{\\rho\\sigma}\\left(\\partial_\\mu g_{\\sigma\\nu}+\\partial_\\nu g_{\\sigma\\mu}-\\partial_\\sigma g_{\\mu\\nu}\\right)",
+    "variables": [
+      {
+        "symbol": "Gamma",
+        "meaning": "connection components",
+        "unit": "m^-1 when all coordinates have length"
+      },
+      {
+        "symbol": "g^rhosigma",
+        "meaning": "inverse metric",
+        "unit": "inverse metric-component units"
+      },
+      {
+        "symbol": "partial_mu",
+        "meaning": "coordinate derivative",
+        "unit": "inverse coordinate unit"
+      },
+      {
+        "symbol": "g_munu",
+        "meaning": "metric components; inverse is g^munu",
+        "unit": "dimensionless in all-length coordinates"
+      }
+    ],
+    "assumptions": [
+      "Nondegenerate differentiable metric; metric-compatible torsion-free connection."
+    ],
+    "derivation": "Write metric compatibility as partial_mu g_nu sigma minus two connection contractions equals zero. Add two cyclic permutations and subtract the third. Torsion freedom identifies lower-index permutations, leaving twice the desired metric-lowered connection. Multiplying by the inverse metric gives the formula. Connection coefficients transform with an extra derivative-of-coordinate term, so they are not tensor components.",
+    "example": "Flat Euclidean polar coordinates have Gamma^r_theta theta=-r and Gamma^theta_r theta=1/r. Nonzero coefficients therefore do not prove curvature. Their different units reflect that r has length and theta does not.",
+    "limitations": [
+      "A graph edge called a connection is not automatically a differential-geometric connection.",
+      "Nonzero connection at one point can be a coordinate effect; use curvature or measured relative acceleration."
+    ],
+    "source_ids": [
+      "ps-tong-riemann"
+    ],
+    "prerequisite_ids": [
+      "p-metric",
+      "p-connection"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-geodesic",
+    "label": "Affinely parameterized geodesic equation",
+    "domain": "gravity",
+    "latex": "\\frac{d^2x^\\mu}{d\\lambda^2}+\\Gamma^\\mu_{\\alpha\\beta}\\frac{dx^\\alpha}{d\\lambda}\\frac{dx^\\beta}{d\\lambda}=0",
+    "variables": [
+      {
+        "symbol": "lambda",
+        "meaning": "affine parameter; may be proper time for timelike paths",
+        "unit": "s if proper time"
+      },
+      {
+        "symbol": "x^mu",
+        "meaning": "spacetime coordinates",
+        "unit": "chart dependent"
+      },
+      {
+        "symbol": "Gamma",
+        "meaning": "Levi-Civita connection",
+        "unit": "chart dependent"
+      }
+    ],
+    "assumptions": [
+      "Freely falling structureless test object, or geometric-optics null ray, with negligible self-force.",
+      "Parameter is affine; a general reparameterization adds a tangent term."
+    ],
+    "derivation": "Use the quadratic geodesic Lagrangian one half g_munu xdot^mu xdot^nu. Its Euler–Lagrange equation yields a metric multiplying acceleration plus derivatives of the metric. Contract with the inverse metric and collect the symmetric velocity product into Gamma. Proper-time normalization fixes timelike tangent norm; null trajectories instead use a suitable affine parameter.",
+    "example": "With a constant Minkowski metric, Gamma=0 and the equation gives straight worldlines x^mu=A^mu lambda+B^mu. In polar coordinates the same straight path has nonzero radial/angular coordinate accelerations that cancel the connection terms.",
+    "limitations": [
+      "A rocket, charged particle under electromagnetic force, or pressure-supported fluid element is not generally geodesic.",
+      "Setting coordinate acceleration to zero is not a coordinate-invariant definition of free fall."
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "prerequisite_ids": [
+      "p-action",
+      "p-connection",
+      "p-geodesic"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-curvature",
+    "label": "Curvature and geodesic deviation",
+    "domain": "gravity",
+    "latex": "R^\\rho{}_{\\sigma\\mu\\nu}=\\partial_\\mu\\Gamma^\\rho_{\\nu\\sigma}-\\partial_\\nu\\Gamma^\\rho_{\\mu\\sigma}+\\Gamma^\\rho_{\\mu\\alpha}\\Gamma^\\alpha_{\\nu\\sigma}-\\Gamma^\\rho_{\\nu\\alpha}\\Gamma^\\alpha_{\\mu\\sigma},\\qquad \\frac{D^2\\xi^\\rho}{d\\tau^2}=R^\\rho{}_{\\sigma\\mu\\nu}u^\\sigma u^\\mu\\xi^\\nu",
+    "variables": [
+      {
+        "symbol": "R",
+        "meaning": "Riemann curvature; [nabla_mu,nabla_nu]V^rho=R^rho_sigma mu nu V^sigma",
+        "unit": "m^-2 in length coordinates"
+      },
+      {
+        "symbol": "u",
+        "meaning": "four-velocity",
+        "unit": "m s^-1 in length coordinates"
+      },
+      {
+        "symbol": "xi",
+        "meaning": "infinitesimal separation",
+        "unit": "m"
+      },
+      {
+        "symbol": "tau",
+        "meaning": "proper time",
+        "unit": "s"
+      },
+      {
+        "symbol": "Gamma",
+        "meaning": "Levi-Civita connection components",
+        "unit": "m^-1 in all-length coordinates"
+      },
+      {
+        "symbol": "D/dtau",
+        "meaning": "covariant derivative along the worldline",
+        "unit": "s^-1 acting on a transported quantity"
+      }
+    ],
+    "assumptions": [
+      "Nearby freely falling timelike geodesics form a smooth family; linear separation approximation.",
+      "The displayed Riemann sign and index order define the convention."
+    ],
+    "derivation": "Compute the commutator of two covariant derivatives; second derivatives of the vector cancel, leaving derivative and quadratic connection terms. For a family with commuting tangent and separation fields, exchange covariant derivatives and use Du/dτ=0. This produces relative acceleration proportional to curvature and separation. The right side has m/s², as an acceleration must.",
+    "example": "In a weak static field the spatial equation reduces to xi_ddot^i≈-partial_i partial_j Phi xi^j. For Phi=-GM/r, radial neighbors separate with coefficient +2GM/r³ while two transverse separations contract with coefficient -GM/r³.",
+    "limitations": [
+      "Other books reverse Riemann's sign or index order; equations must be translated together.",
+      "Local removal of Gamma does not remove Riemann curvature or finite-size tidal effects."
+    ],
+    "source_ids": [
+      "ps-tong-riemann",
+      "ps-tong-weak-gravity"
+    ],
+    "prerequisite_ids": [
+      "p-connection",
+      "p-curvature",
+      "p-tidal"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-einstein",
+    "label": "Einstein field equations and local conservation",
+    "domain": "gravity",
+    "latex": "G_{\\mu\\nu}+\\Lambda g_{\\mu\\nu}=\\frac{8\\pi G}{c^4}T_{\\mu\\nu},\\qquad G_{\\mu\\nu}=R_{\\mu\\nu}-\\frac12Rg_{\\mu\\nu},\\qquad \\nabla^\\mu T_{\\mu\\nu}=0",
+    "variables": [
+      {
+        "symbol": "G_munu",
+        "meaning": "Einstein tensor",
+        "unit": "m^-2 in length coordinates"
+      },
+      {
+        "symbol": "Lambda",
+        "meaning": "cosmological constant",
+        "unit": "m^-2"
+      },
+      {
+        "symbol": "T_munu",
+        "meaning": "stress-energy components in orthonormal frame",
+        "unit": "J m^-3"
+      },
+      {
+        "symbol": "R",
+        "meaning": "Ricci scalar",
+        "unit": "m^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum light speed",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "g_munu",
+        "meaning": "metric tensor components",
+        "unit": "dimensionless in all-length coordinates"
+      },
+      {
+        "symbol": "R_munu",
+        "meaning": "Ricci tensor, contraction of Riemann curvature",
+        "unit": "m^-2 in all-length coordinates"
+      }
+    ],
+    "assumptions": [
+      "Classical general relativity with the declared curvature/signature convention.",
+      "Matter equations and boundary/initial constraints must accompany the field equations."
+    ],
+    "derivation": "The contracted Bianchi identity gives divergence-free G. For constant Lambda the metric term also has zero covariant divergence, requiring compatible matter conservation. The coefficient is fixed by the weak, slowly varying, nonrelativistic limit recovering ∇²Phi=4piG rho_m. This is a nonlinear coupled PDE system because inverse metrics and products of metric derivatives appear in curvature.",
+    "example": "Dimensional check: G/c⁴ has units s²/(kg m); multiplication by T in kg/(m s²) gives m^-2. Vacuum T=0 does not force all Riemann components to vanish: the Schwarzschild exterior remains curved.",
+    "limitations": [
+      "Covariant local conservation does not imply one coordinate-independent globally conserved total energy in every cosmology.",
+      "Solving only one component without constraints or gauge control can produce spurious configurations."
+    ],
+    "source_ids": [
+      "ps-tong-einstein",
+      "ps-tong-weak-gravity"
+    ],
+    "prerequisite_ids": [
+      "p-curvature",
+      "p-stress-energy",
+      "p-einstein-eq"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-einstein-action",
+    "label": "Einstein–Hilbert action",
+    "domain": "gravity",
+    "latex": "S=\\frac{c^3}{16\\pi G}\\int d^4x\\,\\sqrt{-g}\\,(R-2\\Lambda)+S_m+S_{\\partial},\\qquad x^0=ct",
+    "variables": [
+      {
+        "symbol": "S,S_m,S_boundary",
+        "meaning": "total, matter and necessary boundary actions",
+        "unit": "J s"
+      },
+      {
+        "symbol": "g",
+        "meaning": "determinant of metric",
+        "unit": "dimensionless in length coordinates"
+      },
+      {
+        "symbol": "R,Lambda",
+        "meaning": "curvature scalar and cosmological constant",
+        "unit": "m^-2"
+      },
+      {
+        "symbol": "d^4x",
+        "meaning": "coordinate volume for all-length chart",
+        "unit": "m^4"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "x^mu",
+        "meaning": "spacetime coordinates including x^0=ct",
+        "unit": "m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "coordinate time",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Metric formulation, torsion-free connection, appropriate fixed boundary data.",
+      "S_boundary includes the term needed for a well-posed metric boundary variation when a boundary is present."
+    ],
+    "derivation": "Vary the inverse metric. The determinant contributes minus one half sqrt(-g) g_munu delta g^munu. The curvature variation contributes Ricci contraction plus a total divergence. After a compatible boundary treatment and definition of the stress tensor by variation of Sm, stationarity yields the Einstein equations. This organizes the derivation but is not a substitute for specifying the matter action.",
+    "example": "c³/G has units kg/s. The curvature integral has m², so the action has kg m²/s. If instead time is integrated as dt, an extra c arises from d(ct), explaining otherwise confusing c³ versus c⁴ prefactors.",
+    "limitations": [
+      "Dropping boundary terms while varying unrestricted boundary derivatives is invalid.",
+      "Additional higher-curvature operators describe different effective theories and can change field equations."
+    ],
+    "source_ids": [
+      "ps-tong-einstein"
+    ],
+    "prerequisite_ids": [
+      "p-action",
+      "p-einstein-eq"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-schwarzschild",
+    "label": "Schwarzschild exterior and horizon scale",
+    "domain": "gravity",
+    "latex": "ds^2=-\\left(1-\\frac{r_s}{r}\\right)c^2dt^2+\\left(1-\\frac{r_s}{r}\\right)^{-1}dr^2+r^2d\\Omega^2,\\qquad r_s=\\frac{2GM}{c^2}",
+    "variables": [
+      {
+        "symbol": "r_s",
+        "meaning": "Schwarzschild radius",
+        "unit": "m"
+      },
+      {
+        "symbol": "M",
+        "meaning": "mass parameter",
+        "unit": "kg"
+      },
+      {
+        "symbol": "r",
+        "meaning": "areal radius: spheres have area 4pi r²",
+        "unit": "m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "static exterior time coordinate",
+        "unit": "s"
+      },
+      {
+        "symbol": "dOmega²",
+        "meaning": "unit-sphere metric",
+        "unit": "1"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "ds^2",
+        "meaning": "signed infinitesimal spacetime interval squared",
+        "unit": "m^2"
+      }
+    ],
+    "assumptions": [
+      "Spherically symmetric vacuum region, Lambda=0; exterior chart r>r_s.",
+      "A material star may end outside r_s; its interior is not this vacuum solution."
+    ],
+    "derivation": "Spherical symmetry permits two radial metric functions. Vacuum equations plus asymptotic normalization fix them to reciprocal factors 1-2GM/(c²r). The weak-field expansion g00≈-(1+2Phi/c²) identifies M. The coordinate coefficient diverges at r_s, but curvature invariants are finite there for nonzero mass; a regular horizon-crossing chart separates horizon geometry from chart breakdown.",
+    "example": "For M=1.98847e30 kg, r_s≈2.953 km. At r=10r_s the static clock factor is sqrt(0.9), whereas treating r_s itself as an ordinary static observer location fails.",
+    "limitations": [
+      "Astrophysical spin requires Kerr rather than this one-parameter metric.",
+      "The Schwarzschild coordinate singularity and central curvature singularity are different phenomena."
+    ],
+    "source_ids": [
+      "ps-tong-black-holes",
+      "ps-constants"
+    ],
+    "prerequisite_ids": [
+      "p-einstein-eq",
+      "p-schwarzschild",
+      "p-horizons"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-redshift",
+    "label": "Static gravitational frequency comparison",
+    "domain": "gravity",
+    "latex": "\\frac{\\nu_r}{\\nu_e}=\\sqrt{\\frac{1-r_s/r_e}{1-r_s/r_r}},\\qquad \\frac{\\Delta\\nu}{\\nu}\\simeq\\frac{\\Phi_e-\\Phi_r}{c^2}",
+    "variables": [
+      {
+        "symbol": "nu_e,nu_r",
+        "meaning": "locally measured emitted/received frequencies",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "r_e,r_r",
+        "meaning": "static emitter/receiver areal radii",
+        "unit": "m"
+      },
+      {
+        "symbol": "Phi_e,Phi_r",
+        "meaning": "weak-field potentials",
+        "unit": "m^2 s^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "r_s",
+        "meaning": "Schwarzschild radius 2GM/c^2",
+        "unit": "m"
+      },
+      {
+        "symbol": "Delta_nu,nu",
+        "meaning": "received-minus-emitted frequency and emitted reference frequency in the weak expression",
+        "unit": "Hz"
+      }
+    ],
+    "assumptions": [
+      "Static observers and a photon in Schwarzschild exterior; no extra Doppler motion.",
+      "Second expression assumes potential differences and velocities are small relative to relativistic scales."
+    ],
+    "derivation": "Stationary geometry conserves photon energy associated with the time-translation Killing field. A static observer normalizes their four-velocity by the local lapse sqrt(1-r_s/r), so measured frequency is conserved coordinate energy divided by that lapse. The ratio gives the expression; expansion to first order gives the potential difference. Frequency increases during descent into lower potential.",
+    "example": "If a photon rises by h in a nearly uniform field g, Phi_r-Phi_e≈gh and its fractional frequency change is -gh/c². For h=1 m and g=9.81 m/s² this is about -1.09e-16.",
+    "limitations": [
+      "The observer trajectory is essential; there is no universal photon frequency independent of observer.",
+      "Clock stability at this scale is not sufficient to infer height without controlling clock systematic shifts."
+    ],
+    "source_ids": [
+      "ps-tong-geodesics",
+      "ps-nuclear-clock"
+    ],
+    "prerequisite_ids": [
+      "p-metric",
+      "p-redshift",
+      "p-frequency"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-weak-orbit-tests",
+    "label": "Weak-field light deflection and perihelion advance",
+    "domain": "gravity",
+    "latex": "\\alpha\\simeq\\frac{4GM}{bc^2},\\qquad \\Delta\\varpi\\simeq\\frac{6\\pi GM}{a(1-e^2)c^2}\\quad\\text{per orbit}",
+    "variables": [
+      {
+        "symbol": "alpha",
+        "meaning": "total light deflection",
+        "unit": "rad"
+      },
+      {
+        "symbol": "b",
+        "meaning": "asymptotic impact parameter",
+        "unit": "m"
+      },
+      {
+        "symbol": "Delta_varpi",
+        "meaning": "perihelion advance",
+        "unit": "rad per orbit"
+      },
+      {
+        "symbol": "a",
+        "meaning": "semimajor axis",
+        "unit": "m"
+      },
+      {
+        "symbol": "e",
+        "meaning": "eccentricity",
+        "unit": "1"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "M",
+        "meaning": "central source mass",
+        "unit": "kg"
+      }
+    ],
+    "assumptions": [
+      "Weak-field Schwarzschild propagation; b≫r_s and bound orbit far from strong-field instability.",
+      "Source and observer effectively far away for the displayed deflection."
+    ],
+    "derivation": "Insert conserved energy/angular momentum into the null or timelike geodesic equation. With u=1/r, the extra Schwarzschild term is proportional to GM u²/c². Perturb around a straight null path for deflection and a Kepler ellipse for apsidal advance. The perturbed orbital cosine accumulates a small phase shift, giving the quoted advance.",
+    "example": "For a circular-limit orbit at a=1000r_s, advance is approximately 3pi/1000≈0.00942 radians per orbit. Light with b=1000r_s bends by about 0.002 radians. These values are small enough for a first-order illustration, not precision inference.",
+    "limitations": [
+      "The near-circular expression is a limit; a perfectly circular orbit has no distinguished perihelion.",
+      "Strong deflection, spin, quadrupole moments and extended lenses require more complete models."
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "prerequisite_ids": [
+      "p-geodesic",
+      "p-schwarzschild",
+      "p-lensing",
+      "p-orbits"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-gw-strain",
+    "label": "Leading quadrupole gravitational-wave strain",
+    "domain": "gravity",
+    "latex": "h_{ij}^{\\rm TT}(t,\\mathbf x)=\\frac{2G}{c^4R}\\,\\ddot Q_{ij}^{\\rm TT}(t-R/c),\\qquad Q_{ij}=\\int\\rho_m\\left(x_ix_j-\\frac13r^2\\delta_{ij}\\right)d^3x",
+    "variables": [
+      {
+        "symbol": "h_TT",
+        "meaning": "transverse traceless wave strain",
+        "unit": "1"
+      },
+      {
+        "symbol": "Q_ij",
+        "meaning": "trace-free mass quadrupole",
+        "unit": "kg m^2"
+      },
+      {
+        "symbol": "R",
+        "meaning": "observer-source distance",
+        "unit": "m"
+      },
+      {
+        "symbol": "rho_m",
+        "meaning": "source mass density",
+        "unit": "kg m^-3"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "x_i,r",
+        "meaning": "source Cartesian coordinates and their magnitude relative to the chosen origin",
+        "unit": "m"
+      },
+      {
+        "symbol": "delta_ij",
+        "meaning": "Kronecker delta",
+        "unit": "1"
+      },
+      {
+        "symbol": "TT",
+        "meaning": "transverse traceless projection relative to the outgoing direction",
+        "unit": "projection label"
+      }
+    ],
+    "assumptions": [
+      "Weak, slow source and wave-zone observation R much larger than wavelength and source size.",
+      "TT projection is with respect to propagation direction; retarded time is essential."
+    ],
+    "derivation": "Solve the linearized Einstein wave equation with a retarded Green function. Stress-energy conservation converts the leading spatial stress integral to half the second time derivative of the mass moment. Project transverse to the outgoing ray and remove its trace. Conserved monopole and center-of-mass motion cannot provide the leading gravitational radiation term.",
+    "example": "Units: G Qddot/(c⁴R) is dimensionless. If Qij is constant or varies only linearly in time, this leading waveform vanishes. A nonspherical rotating mass distribution can have Q oscillating at twice the orbital frequency.",
+    "limitations": [
+      "The formula does not accurately model merger/ringdown strong-field dynamics.",
+      "A nonzero coordinate metric perturbation alone is not a measured strain; detector response and gauge-invariant tidal effect matter."
+    ],
+    "source_ids": [
+      "ps-tong-weak-gravity"
+    ],
+    "prerequisite_ids": [
+      "p-gravitational-waves",
+      "p-quadrupole"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-gw-power",
+    "label": "Quadrupole luminosity and circular binary loss",
+    "domain": "gravity",
+    "latex": "P=\\frac{G}{5c^5}\\left\\langle\\dddot Q_{ij}\\dddot Q_{ij}\\right\\rangle,\\qquad P_{\\rm circ}=\\frac{32G^4\\mu^2 M_T^3}{5c^5r^5},\\quad M_T=m_1+m_2",
+    "variables": [
+      {
+        "symbol": "P",
+        "meaning": "radiated power",
+        "unit": "W"
+      },
+      {
+        "symbol": "Q_ij",
+        "meaning": "trace-free quadrupole defined in pf-gw-strain",
+        "unit": "kg m^2"
+      },
+      {
+        "symbol": "mu",
+        "meaning": "reduced mass m1 m2/(m1+m2)",
+        "unit": "kg"
+      },
+      {
+        "symbol": "M_T",
+        "meaning": "total mass",
+        "unit": "kg"
+      },
+      {
+        "symbol": "r",
+        "meaning": "binary separation",
+        "unit": "m"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "m_1,m_2",
+        "meaning": "individual body masses",
+        "unit": "kg"
+      },
+      {
+        "symbol": "P_circ",
+        "meaning": "cycle-averaged circular-binary luminosity in this approximation",
+        "unit": "W"
+      }
+    ],
+    "assumptions": [
+      "Slow-motion weak-field quadrupole approximation; circular binary formula averages over an orbit.",
+      "Repeated spatial indices are summed and the quadrupole normalization is the trace-free convention above."
+    ],
+    "derivation": "Compute outgoing gravitational-wave energy flux and integrate over directions; the angular projection supplies the factor one fifth. For a circular binary, substitute positions relative to the center of mass into Q, differentiate three times and use Kepler omega²=GM_T/r³. Radiated power is positive, so orbital energy changes as dE_orb/dt=-P to this order.",
+    "example": "At fixed masses halving separation multiplies the circular quadrupole luminosity by 32. The Newtonian binding energy simultaneously becomes more negative. This scaling explains accelerating chirp qualitatively, while late merger needs a relativistic waveform.",
+    "limitations": [
+      "Some texts define a quadrupole three times larger, changing the prefactor by nine.",
+      "Catalog tests compare full inference models rather than this leading formula alone."
+    ],
+    "source_ids": [
+      "ps-tong-weak-gravity",
+      "ps-gwtc5"
+    ],
+    "prerequisite_ids": [
+      "p-quadrupole",
+      "p-orbits"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-friedmann",
+    "label": "Friedmann expansion and fluid conservation",
+    "domain": "gravity",
+    "latex": "H^2=\\frac{8\\pi G}{3}\\rho_m-\\frac{kc^2}{a^2}+\\frac{\\Lambda c^2}{3},\\qquad H=\\frac{\\dot a}{a},\\qquad \\dot\\rho_m+3H\\left(\\rho_m+\\frac p{c^2}\\right)=0",
+    "variables": [
+      {
+        "symbol": "a",
+        "meaning": "scale factor in this length-valued convention",
+        "unit": "m"
+      },
+      {
+        "symbol": "k",
+        "meaning": "spatial curvature sign -1,0,+1",
+        "unit": "1"
+      },
+      {
+        "symbol": "H",
+        "meaning": "Hubble expansion rate",
+        "unit": "s^-1"
+      },
+      {
+        "symbol": "rho_m",
+        "meaning": "energy density divided by c²",
+        "unit": "kg m^-3"
+      },
+      {
+        "symbol": "p",
+        "meaning": "isotropic pressure",
+        "unit": "Pa"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "Lambda",
+        "meaning": "cosmological constant, not double-counted in rho_m",
+        "unit": "m^-2"
+      }
+    ],
+    "assumptions": [
+      "FLRW homogeneous/isotropic background with a perfect fluid.",
+      "Lambda is displayed separately and must not also be double-counted inside rho_m."
+    ],
+    "derivation": "Insert the FLRW metric and isotropic stress tensor into the time-time Einstein equation. Covariant matter conservation yields the continuity equation, also expressible as d(rho_m c² a³)=-p d(a³) for a comoving volume. Spatial curvature acts through the metric rather than as a material fluid. A dimensionless alternative scale factor moves units into k; conventions cannot be mixed.",
+    "example": "For k=Lambda=0 and pressureless matter, rho_m∝a^-3. Substitution into H² gives a∝t^(2/3). Radiation instead gives a∝t^(1/2). Both imply declining H in those idealized eras.",
+    "limitations": [
+      "The background equations do not predict perturbation spectra or identify the dark-matter particle.",
+      "Fitting evolving dark energy requires an explicit dataset, likelihood and alternative-model parameterization."
+    ],
+    "source_ids": [
+      "ps-tong-cosmology",
+      "ps-tong-einstein",
+      "ps-desi2026"
+    ],
+    "prerequisite_ids": [
+      "p-flrw",
+      "p-friedmann"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-equation-state",
+    "label": "Equation-of-state density scaling and acceleration",
+    "domain": "gravity",
+    "latex": "p=w\\rho_m c^2\\Rightarrow\\rho_m\\propto a^{-3(1+w)},\\qquad \\frac{\\ddot a}{a}=-\\frac{4\\pi G}{3}\\left(\\rho_m+\\frac{3p}{c^2}\\right)+\\frac{\\Lambda c^2}{3}",
+    "variables": [
+      {
+        "symbol": "w",
+        "meaning": "constant equation-of-state parameter",
+        "unit": "1"
+      },
+      {
+        "symbol": "rho_m",
+        "meaning": "mass-equivalent energy density",
+        "unit": "kg m^-3"
+      },
+      {
+        "symbol": "a",
+        "meaning": "scale factor",
+        "unit": "m in chosen convention"
+      },
+      {
+        "symbol": "p",
+        "meaning": "pressure",
+        "unit": "Pa"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "Lambda",
+        "meaning": "cosmological constant displayed separately from fluid density",
+        "unit": "m^-2"
+      }
+    ],
+    "assumptions": [
+      "Each component is separately conserved and has constant w for the simple power law.",
+      "Classical homogeneous/isotropic GR background."
+    ],
+    "derivation": "Divide fluid conservation by rho_m and write H=adot/a. Integrating dln rho_m=-3(1+w)dln a gives the scaling. Combining the spatial Einstein equation with the time-time equation gives acceleration. With Lambda absent, a positive-density component accelerates expansion only when rho_m+3p/c² is negative, or w<-1/3.",
+    "example": "Matter w=0 dilutes as volume^-1; radiation w=1/3 has an extra factor a^-1 from photon redshift; vacuum-like w=-1 stays constant. These are distinct equations of state, not frequencies assigned to substances.",
+    "limitations": [
+      "A variable w(a) requires an exponential integral rather than this constant power.",
+      "Evidence for an effective fitted w differs from a derivation of a fundamental microscopic field."
+    ],
+    "source_ids": [
+      "ps-tong-cosmology",
+      "ps-desi2026"
+    ],
+    "prerequisite_ids": [
+      "p-friedmann",
+      "p-dark-energy"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-hawking",
+    "label": "Schwarzschild Hawking temperature and area entropy",
+    "domain": "gravity",
+    "latex": "T_H=\\frac{\\hbar c^3}{8\\pi GMk_B},\\qquad S_{\\rm BH}=\\frac{k_B A}{4\\ell_P^2},\\qquad \\ell_P^2=\\frac{\\hbar G}{c^3},\\quad A=4\\pi r_s^2",
+    "variables": [
+      {
+        "symbol": "T_H",
+        "meaning": "Hawking temperature measured relative to asymptotic time",
+        "unit": "K"
+      },
+      {
+        "symbol": "S_BH",
+        "meaning": "Bekenstein–Hawking entropy",
+        "unit": "J K^-1"
+      },
+      {
+        "symbol": "hbar",
+        "meaning": "reduced Planck constant",
+        "unit": "J s"
+      },
+      {
+        "symbol": "k_B",
+        "meaning": "Boltzmann constant",
+        "unit": "J K^-1"
+      },
+      {
+        "symbol": "ell_P",
+        "meaning": "Planck length",
+        "unit": "m"
+      },
+      {
+        "symbol": "G",
+        "meaning": "Newton gravitational constant",
+        "unit": "m^3 kg^-1 s^-2"
+      },
+      {
+        "symbol": "c",
+        "meaning": "vacuum speed of light",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "M",
+        "meaning": "Schwarzschild mass",
+        "unit": "kg"
+      },
+      {
+        "symbol": "A",
+        "meaning": "horizon area",
+        "unit": "m^2"
+      },
+      {
+        "symbol": "r_s",
+        "meaning": "Schwarzschild radius 2GM/c^2",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Semiclassical quantum fields on an approximately stationary uncharged nonrotating black-hole background.",
+      "Backreaction is slow and the mass is far above the Planck scale."
+    ],
+    "derivation": "The quantum-field mode-mixing calculation gives a thermal factor fixed by horizon surface gravity. For Schwarzschild the corresponding temperature scales inversely with mass. Inserting T_H into dS=d(Mc²)/T and integrating yields S proportional to M², equivalent to the area expression. This thermodynamic consistency check is not a replacement for the quantum-field derivation.",
+    "example": "A solar-mass Schwarzschild hole has T_H≈6.17e-8 K. Doubling mass halves its temperature and quadruples its area entropy. The sign of dT/dM gives negative heat capacity for an isolated asymptotically flat hole.",
+    "limitations": [
+      "These equations do not determine the endpoint of evaporation or resolve the information problem.",
+      "They are theoretical semiclassical predictions; analogue-system measurements are not direct observations of astrophysical Hawking radiation."
+    ],
+    "source_ids": [
+      "ps-hawking1975",
+      "ps-tong-black-holes",
+      "ps-constants"
+    ],
+    "prerequisite_ids": [
+      "p-schwarzschild",
+      "p-bh-thermodynamics",
+      "p-quantum-frequency"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-bootstrap",
+    "label": "Reported leading spinless modular-bootstrap slope",
+    "domain": "gravity",
+    "latex": "\\Lambda_V=\\frac{12\\pi^2}{\\pi^2+4\\operatorname{arsinh}^2(1)}\\approx9.1266,\\qquad \\Delta_1\\le\\frac{c_{\\rm CFT}}{\\Lambda_V}+o(c_{\\rm CFT})",
+    "variables": [
+      {
+        "symbol": "Lambda_V",
+        "meaning": "reported optimal leading coefficient for the admissible class A-bar of Definition 2.5",
+        "unit": "1"
+      },
+      {
+        "symbol": "c_CFT",
+        "meaning": "CFT central charge, not speed of light",
+        "unit": "1"
+      },
+      {
+        "symbol": "Delta_1",
+        "meaning": "lowest non-vacuum Virasoro-primary scaling dimension; primaries of all spins are included",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Cited November 2026 preprint's unitary compact 2D CFT assumptions: central charge above one and no additional currents beyond Virasoro.",
+      "Spinless means zero-angular-potential modular-S data, summing Virasoro primaries of all spins by scaling dimension; it does not restrict the spectrum to spin-zero operators.",
+      "Optimality is for the admissible class A-bar in Definition 2.5, which contains all finite derivative functionals; large-central-charge asymptotics."
+    ],
+    "derivation": "The cited work constructs upper bounds and obstructions using a complex-analytic potential built from zeros. Theorem 1 and Corollary 6 are computer-assisted; Appendix H supplies interval inequalities. We inspected the statement, admissible-class definition and scope discussion, not the complete proof or its computational certificate. Algebraically, arsinh(1)=log(1+sqrt(2)), so the slope is approximately 0.10957. A logarithmic potential encodes polynomial zero distributions through a two-dimensional Poisson identity.",
+    "example": "At c_CFT=1000 the leading term alone is about 109.57. It is not a rigorous finite-c upper bound by itself because the subleading term remains. Keeping only a leading asymptotic number can invert a close comparison.",
+    "limitations": [
+      "Equality between the optimum over A-bar and the P-to-infinity finite-derivative bootstrap bound is explicitly conjectural in Section 2.6.",
+      "A bound on a restricted bootstrap method is not existence of a CFT attaining it.",
+      "This is a preprint-result report with stated provenance, not our verified proof and not a complete solution of quantum gravity."
+    ],
+    "source_ids": [
+      "ps-bootstrap-ai"
+    ],
+    "prerequisite_ids": [
+      "p-modular-bootstrap",
+      "p-log-potential",
+      "p-holography"
+    ],
+    "status": "preprint-result-not-replayed"
+  },
+  {
+    "id": "pf-frequency",
+    "label": "Cycles, angular frequency and phase",
+    "domain": "frequency",
+    "latex": "f=\\frac1T,\\qquad \\omega=2\\pi f,\\qquad \\theta(t)=\\theta_0+\\int_0^t\\omega(t')\\,dt',\\qquad x(t)=A\\cos\\theta(t)",
+    "variables": [
+      {
+        "symbol": "f",
+        "meaning": "cycles per unit time",
+        "unit": "Hz=s^-1"
+      },
+      {
+        "symbol": "omega",
+        "meaning": "angular frequency",
+        "unit": "rad s^-1"
+      },
+      {
+        "symbol": "T",
+        "meaning": "period for a periodic signal",
+        "unit": "s"
+      },
+      {
+        "symbol": "theta",
+        "meaning": "phase",
+        "unit": "rad"
+      },
+      {
+        "symbol": "A",
+        "meaning": "amplitude",
+        "unit": "units of x"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "theta_0",
+        "meaning": "initial phase",
+        "unit": "rad"
+      },
+      {
+        "symbol": "x",
+        "meaning": "oscillating observable",
+        "unit": "same units as A"
+      },
+      {
+        "symbol": "t_prime",
+        "meaning": "time integration dummy variable",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "A repeatable phase or periodic model has been specified.",
+      "The reciprocal period relation applies to a genuinely periodic signal; instantaneous frequency needs an explicit phase representation."
+    ],
+    "derivation": "One cycle advances phase by 2pi radians. Dividing that phase change by its duration gives omega=2pi/T. Integrating variable angular frequency supplies accumulated phase. Radians are dimensionless in SI dimensional algebra but should remain visible to prevent lost 2pi factors. Frequency measures a rate of change, not amplitude, energy or importance.",
+    "example": "A 440 Hz sinusoid has omega≈2764.60 rad/s and period≈2.27273 ms. A pure time shift changes its phase while leaving the frequency unchanged. Doubling amplitude doubles x but leaves f unchanged in this kinematic model.",
+    "limitations": [
+      "A spatial graph eigenvalue does not have Hz without a temporal model and scale.",
+      "The frequency of a nonlinear signal can be definition dependent; a single number may not capture its spectrum."
+    ],
+    "source_ids": [
+      "ps-flp-oscillator"
+    ],
+    "prerequisite_ids": [
+      "p-frequency"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-oscillator",
+    "label": "Small-amplitude harmonic oscillator",
+    "domain": "frequency",
+    "latex": "m\\ddot x+kx=0,\\qquad \\omega_0=\\sqrt{k/m},\\qquad x=A\\cos(\\omega_0t+\\phi),\\qquad E=\\frac12m\\dot x^2+\\frac12kx^2",
+    "variables": [
+      {
+        "symbol": "m",
+        "meaning": "effective mass",
+        "unit": "kg"
+      },
+      {
+        "symbol": "k",
+        "meaning": "linear stiffness",
+        "unit": "N m^-1"
+      },
+      {
+        "symbol": "x,A",
+        "meaning": "displacement and amplitude",
+        "unit": "m"
+      },
+      {
+        "symbol": "omega_0",
+        "meaning": "natural angular frequency",
+        "unit": "rad s^-1"
+      },
+      {
+        "symbol": "E",
+        "meaning": "oscillator energy",
+        "unit": "J"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "phi",
+        "meaning": "initial phase offset",
+        "unit": "rad"
+      }
+    ],
+    "assumptions": [
+      "Motion near a stable equilibrium; quadratic potential and constant positive mass/stiffness.",
+      "No drive or dissipation in the stated equation."
+    ],
+    "derivation": "Expand a smooth potential around an equilibrium x=0: U=U0+(1/2)U''(0)x²+O(x³). The first derivative vanishes and k=U''(0)>0. Newton's law gives the equation. A trial exponential supplies roots ±i sqrt(k/m). Multiplying the equation by xdot shows dE/dt=0 and establishes energy exchange between kinetic and potential terms.",
+    "example": "For m=1 kg and k=100 N/m, omega0=10 rad/s and f0≈1.59155 Hz. At A=0.02 m, stored energy is 0.02 J and peak speed is 0.2 m/s. These values independently satisfy the energy formula.",
+    "limitations": [
+      "Large amplitude may require cubic or higher restoring terms.",
+      "A positive stiffness is a local stability condition; k=0 needs higher-order analysis and k<0 gives exponential instability."
+    ],
+    "source_ids": [
+      "ps-flp-oscillator"
+    ],
+    "prerequisite_ids": [
+      "p-harmonic-oscillator",
+      "p-frequency"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-damped",
+    "label": "Damped free motion and quality factor",
+    "domain": "frequency",
+    "latex": "\\ddot x+2\\gamma\\dot x+\\omega_0^2x=0,\\quad \\omega_d=\\sqrt{\\omega_0^2-\\gamma^2},\\quad x=Ae^{-\\gamma t}\\cos(\\omega_dt+\\phi),\\quad Q=\\frac{\\omega_0}{2\\gamma}",
+    "variables": [
+      {
+        "symbol": "gamma",
+        "meaning": "amplitude decay rate",
+        "unit": "s^-1"
+      },
+      {
+        "symbol": "omega_0,omega_d",
+        "meaning": "undamped and damped angular frequencies",
+        "unit": "rad s^-1"
+      },
+      {
+        "symbol": "Q",
+        "meaning": "oscillator quality factor",
+        "unit": "1"
+      },
+      {
+        "symbol": "x",
+        "meaning": "displacement",
+        "unit": "m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "A",
+        "meaning": "initial oscillation-envelope amplitude",
+        "unit": "m"
+      },
+      {
+        "symbol": "phi",
+        "meaning": "phase offset fixed by initial data",
+        "unit": "rad"
+      }
+    ],
+    "assumptions": [
+      "Linear viscous damping b=2m gamma.",
+      "Displayed oscillatory solution requires gamma<omega0; the Q interpretation as a narrow resonance assumes weak damping."
+    ],
+    "derivation": "The characteristic polynomial has roots -gamma±sqrt(gamma²-omega0²). In the underdamped regime they are a conjugate pair, giving an exponentially decaying envelope. Energy averaged over a weakly damped cycle decays approximately as exp(-2gamma t). Q compares the oscillation rate to this energy-decay rate, or stored energy to loss per radian.",
+    "example": "For omega0=10 rad/s and gamma=0.1/s, Q=50 and omega_d≈9.9995 rad/s. After ten seconds the amplitude has fallen to e^-1 of its initial envelope and cycle-averaged energy to approximately e^-2.",
+    "limitations": [
+      "Amplitude lifetime, energy lifetime and linewidth differ by factors of two.",
+      "At critical damping gamma=omega0 the cosine representation is replaced by (A+Bt)e^-gamma t."
+    ],
+    "source_ids": [
+      "ps-flp-resonance"
+    ],
+    "prerequisite_ids": [
+      "p-damping",
+      "p-harmonic-oscillator"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-forced",
+    "label": "Driven response and displacement resonance",
+    "domain": "frequency",
+    "latex": "m\\ddot x+b\\dot x+kx=F_0\\cos\\omega t,\\quad H(\\omega)=\\frac{X}{F_0}=\\frac1{k-m\\omega^2+i b\\omega},\\quad |X|=\\frac{F_0}{\\sqrt{(k-m\\omega^2)^2+b^2\\omega^2}}",
+    "variables": [
+      {
+        "symbol": "X",
+        "meaning": "complex displacement amplitude using exp(i omega t)",
+        "unit": "m"
+      },
+      {
+        "symbol": "H",
+        "meaning": "displacement/force transfer function",
+        "unit": "m N^-1"
+      },
+      {
+        "symbol": "F_0",
+        "meaning": "drive force amplitude",
+        "unit": "N"
+      },
+      {
+        "symbol": "b",
+        "meaning": "viscous damping coefficient",
+        "unit": "kg s^-1"
+      },
+      {
+        "symbol": "omega",
+        "meaning": "drive angular frequency",
+        "unit": "rad s^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "m",
+        "meaning": "effective mass",
+        "unit": "kg"
+      },
+      {
+        "symbol": "k",
+        "meaning": "linear stiffness",
+        "unit": "N m^-1"
+      },
+      {
+        "symbol": "x",
+        "meaning": "real displacement",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Linear time-invariant oscillator with steady sinusoidal forcing after transients decay.",
+      "b>0 for a stable dissipative steady state."
+    ],
+    "derivation": "Insert x=Re[X exp(iomega t)] into the differential equation. Derivatives multiply by iomega and -omega², producing an algebraic denominator. The denominator's magnitude gives amplitude and its argument gives phase lag. Minimizing its squared magnitude yields omega_peak²=omega0²-2gamma² for displacement when that expression is positive.",
+    "example": "At omega=omega0, X=-iF0/(b omega0), so displacement lags force by pi/2. For m=1 kg, k=100 N/m, b=0.2 kg/s and F0=0.1 N, |X|=0.05 m; whether the linear model remains valid must be checked at that amplitude.",
+    "limitations": [
+      "Velocity, displacement and absorbed-power peaks need not occur at the same frequency.",
+      "As b→0 at exact resonance there is no finite steady response; transient growth replaces the steady-state formula."
+    ],
+    "source_ids": [
+      "ps-flp-resonance",
+      "ps-flp-linear-systems"
+    ],
+    "prerequisite_ids": [
+      "p-forced-response",
+      "p-damping"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-resonant-power",
+    "label": "Resonant power and storage budget",
+    "domain": "frequency",
+    "latex": "\\frac{dE}{dt}=F(t)\\dot x-b\\dot x^2,\\qquad \\langle P_{\\rm in}\\rangle=\\frac12b\\omega^2|X|^2=\\langle P_{\\rm loss}\\rangle\\quad\\text{in steady state}",
+    "variables": [
+      {
+        "symbol": "E",
+        "meaning": "mechanical stored energy",
+        "unit": "J"
+      },
+      {
+        "symbol": "P_in,P_loss",
+        "meaning": "input and dissipated powers",
+        "unit": "W"
+      },
+      {
+        "symbol": "F",
+        "meaning": "external force",
+        "unit": "N"
+      },
+      {
+        "symbol": "b",
+        "meaning": "viscous damping coefficient",
+        "unit": "kg s^-1"
+      },
+      {
+        "symbol": "X",
+        "meaning": "displacement amplitude",
+        "unit": "m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "omega",
+        "meaning": "drive angular frequency",
+        "unit": "rad s^-1"
+      },
+      {
+        "symbol": "x",
+        "meaning": "real oscillator displacement",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Same linear oscillator and amplitude convention as pf-forced.",
+      "No unlisted storage or energy ports; steady state refers to cycle-averaged quantities."
+    ],
+    "derivation": "Multiply the equation of motion by velocity. The inertial and restoring terms become time derivatives of kinetic and potential energy; damping gives a nonnegative loss. A periodic steady state returns to the same energy each cycle, so average dE/dt vanishes. Evaluate mean squared sinusoidal velocity as omega²|X|²/2 to obtain dissipated power.",
+    "example": "Using b=0.2 kg/s, omega=10 rad/s and |X|=0.05 m gives mean loss 0.025 W. Input must supply that amount; a finite load adds another positive output term and changes the amplitude. The large response reflects stored energy and low loss.",
+    "limitations": [
+      "A high Q does not create power.",
+      "For active materials, feedback or pumping, their energy inputs must be added before asserting efficiency or gain."
+    ],
+    "source_ids": [
+      "ps-flp-resonance",
+      "ps-flp-poynting"
+    ],
+    "prerequisite_ids": [
+      "p-forced-response",
+      "p-power-budget"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-normal-modes",
+    "label": "Coupled normal-mode eigenproblem",
+    "domain": "frequency",
+    "latex": "M\\ddot{\\mathbf x}+K\\mathbf x=0,\\qquad K\\boldsymbol\\phi_n=\\omega_n^2M\\boldsymbol\\phi_n,\\qquad \\boldsymbol\\phi_m^TM\\boldsymbol\\phi_n=\\delta_{mn}\\ \\text{under chosen normalization}",
+    "variables": [
+      {
+        "symbol": "M",
+        "meaning": "symmetric positive mass matrix",
+        "unit": "kg for displacement coordinates"
+      },
+      {
+        "symbol": "K",
+        "meaning": "symmetric stiffness matrix",
+        "unit": "N m^-1"
+      },
+      {
+        "symbol": "phi_n",
+        "meaning": "mode shape; units depend on normalization",
+        "unit": "normalization dependent"
+      },
+      {
+        "symbol": "omega_n",
+        "meaning": "normal angular frequency",
+        "unit": "rad s^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "x",
+        "meaning": "displacement-coordinate vector",
+        "unit": "m"
+      },
+      {
+        "symbol": "delta_mn",
+        "meaning": "Kronecker delta under the chosen mode normalization",
+        "unit": "1"
+      },
+      {
+        "symbol": "m,n",
+        "meaning": "mode labels, distinct from a physical mass symbol",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Linear conservative system; M positive definite and K positive semidefinite for stability.",
+      "Coordinate units are compatible; other generalized coordinates require transformed matrices."
+    ],
+    "derivation": "Substitute one separable motion x=phi exp(iomega t) into the equations. Multiplying by M^-1/2 converts the problem to a symmetric ordinary eigenproblem, proving real nonnegative omega² under the assumptions. Distinct eigenvalues give mass-weighted orthogonality. Expand initial displacement and velocity in these modes to solve the motion.",
+    "example": "Two equal masses connected only by one spring have K=k[[1,-1],[-1,1]] and M=mI. The common translation mode has omega=0; the relative mode has omega=sqrt(2k/m). Zero stiffness for translation is a symmetry, not a numerical failure.",
+    "limitations": [
+      "Nonproportional damping or non-Hermitian coupling can destroy ordinary modal orthogonality.",
+      "Eigenvector magnitude is arbitrary until normalization or an actual excitation amplitude is assigned."
+    ],
+    "source_ids": [
+      "ps-flp-modes"
+    ],
+    "prerequisite_ids": [
+      "p-coupled-modes",
+      "p-harmonic-oscillator"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-fourier-series",
+    "label": "Fourier series with a declared normalization",
+    "domain": "frequency",
+    "latex": "x(t)=\\sum_{n\\in\\mathbb Z}c_ne^{in\\omega_0t},\\qquad c_n=\\frac1T\\int_0^T x(t)e^{-in\\omega_0t}\\,dt,\\qquad \\omega_0=2\\pi/T",
+    "variables": [
+      {
+        "symbol": "x,c_n",
+        "meaning": "signal and complex Fourier coefficients",
+        "unit": "same physical signal units"
+      },
+      {
+        "symbol": "T",
+        "meaning": "period",
+        "unit": "s"
+      },
+      {
+        "symbol": "n",
+        "meaning": "integer harmonic index",
+        "unit": "1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "omega_0",
+        "meaning": "fundamental angular frequency 2pi/T",
+        "unit": "rad s^-1"
+      }
+    ],
+    "assumptions": [
+      "A T-periodic square-integrable signal; reconstruction understood in L², with stronger pointwise conditions stated when needed."
+    ],
+    "derivation": "Exponentials with distinct integer harmonics are orthogonal over one period. Multiply a proposed expansion by exp(-imomega0t), integrate, and only coefficient m survives. Real signals obey c_-n=conjugate(c_n). Orthogonal projection explains why finite partial sums minimize mean-square residual among expansions using the retained harmonics.",
+    "example": "For x=A cos(omega0t), c1=c-1=A/2 and all other coefficients vanish. The time-averaged square is A²/2, matching |c1|²+|c-1|². A discontinuity can produce ringing of truncated sums without creating a new physical resonance.",
+    "limitations": [
+      "Pointwise convergence at discontinuities differs from mean-square convergence.",
+      "A visual harmonic fit does not establish the mechanism that generated a measured signal."
+    ],
+    "source_ids": [
+      "ps-flp-harmonics"
+    ],
+    "prerequisite_ids": [
+      "p-fourier-series",
+      "p-frequency"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-fourier",
+    "label": "Continuous Fourier transform and Parseval identity",
+    "domain": "frequency",
+    "latex": "\\widetilde x(f)=\\int_{-\\infty}^{\\infty}x(t)e^{-i2\\pi ft}\\,dt,\\qquad x(t)=\\int_{-\\infty}^{\\infty}\\widetilde x(f)e^{i2\\pi ft}\\,df,\\qquad \\int|x|^2dt=\\int|\\widetilde x|^2df",
+    "variables": [
+      {
+        "symbol": "f",
+        "meaning": "cyclic frequency",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "x",
+        "meaning": "time-domain signal",
+        "unit": "signal units"
+      },
+      {
+        "symbol": "x_tilde",
+        "meaning": "Fourier amplitude in this convention",
+        "unit": "signal units times s"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Integrable functions for the direct formula or an L²/distributional extension with the relevant convergence interpretation.",
+      "Both sides use the same 2pi convention."
+    ],
+    "derivation": "The transform resolves a signal into continuum exponential components. The inverse follows from the delta-function orthogonality identity; Parseval follows by inserting one inverse transform into the time inner product. A time derivative becomes multiplication by i2pi f when boundary terms vanish. This turns constant-coefficient linear differential equations into algebraic ones.",
+    "example": "A time shift x(t-t0) multiplies its transform by exp(-i2pi f t0) and leaves spectral magnitude unchanged. A wider time Gaussian has a narrower frequency Gaussian, demonstrating a scale tradeoff without invoking quantum physics.",
+    "limitations": [
+      "An infinite pure sinusoid needs delta distributions, not a finite-energy transform.",
+      "Transform amplitude, power spectrum and power spectral density have different units and normalizations."
+    ],
+    "source_ids": [
+      "ps-flp-harmonics",
+      "ps-flp-linear-systems"
+    ],
+    "prerequisite_ids": [
+      "p-fourier-transform",
+      "p-fourier-series"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-convolution",
+    "label": "Impulse response and convolution theorem",
+    "domain": "frequency",
+    "latex": "y(t)=\\int_{-\\infty}^{\\infty}h(t-\\tau)x(\\tau)\\,d\\tau=(h*x)(t),\\qquad \\widetilde y(f)=\\widetilde h(f)\\widetilde x(f)",
+    "variables": [
+      {
+        "symbol": "x,y",
+        "meaning": "input and output signals",
+        "unit": "application dependent"
+      },
+      {
+        "symbol": "h",
+        "meaning": "impulse response",
+        "unit": "output/(input times s)"
+      },
+      {
+        "symbol": "h_tilde",
+        "meaning": "frequency response",
+        "unit": "output/input"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "tau",
+        "meaning": "time integration dummy variable",
+        "unit": "s"
+      },
+      {
+        "symbol": "f",
+        "meaning": "cyclic frequency",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "x_tilde,y_tilde",
+        "meaning": "Fourier transforms of input and output in the stated convention",
+        "unit": "corresponding signal units times s"
+      }
+    ],
+    "assumptions": [
+      "Linear time-invariant system, with initial-condition response separately included.",
+      "Causal systems have h(t)=0 for t<0; integrals must converge in an appropriate sense."
+    ],
+    "derivation": "Represent an input as a weighted sum of delayed impulses. Linearity permits summing responses and time invariance makes each response a shifted copy of h. Swapping transform/integration under valid conditions turns the time convolution into a product. This distinguishes memory in a dynamical response kernel from a stored list of retrieved documents.",
+    "example": "For h(t)=tau^-1 exp(-t/tau) for t≥0, the DC gain is one and the transfer function is 1/(1+i2pi f tau). A unit step produces y=1-exp(-t/tau); the same kernel acts as an exponential smoother.",
+    "limitations": [
+      "A changing retrieval graph or input-dependent cache policy is not automatically time invariant.",
+      "Convolution with a learned kernel is a design model unless validated against the intended observations."
+    ],
+    "source_ids": [
+      "ps-flp-linear-systems"
+    ],
+    "prerequisite_ids": [
+      "p-convolution",
+      "p-fourier-transform"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-laplace",
+    "label": "Unilateral Laplace transform and oscillator poles",
+    "domain": "frequency",
+    "latex": "X(s)=\\int_0^\\infty x(t)e^{-st}\\,dt,\\qquad \\mathcal L[\\dot x]=sX-x(0^+),\\qquad H(s)=\\frac1{ms^2+bs+k}",
+    "variables": [
+      {
+        "symbol": "s",
+        "meaning": "complex growth/decay frequency",
+        "unit": "s^-1"
+      },
+      {
+        "symbol": "X(s)",
+        "meaning": "Laplace amplitude",
+        "unit": "signal units times s"
+      },
+      {
+        "symbol": "m,b,k",
+        "meaning": "oscillator coefficients",
+        "unit": "kg, kg s^-1, N m^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "x",
+        "meaning": "time-domain response; x(0+) is its right-limit initial value",
+        "unit": "signal units"
+      },
+      {
+        "symbol": "H(s)",
+        "meaning": "zero-initial-state displacement/force transfer function",
+        "unit": "m N^-1"
+      }
+    ],
+    "assumptions": [
+      "Causal functions of suitable exponential order and a specified region of convergence.",
+      "Transfer function describes zero-initial-state response; initial terms remain for general solutions."
+    ],
+    "derivation": "Integration by parts yields the derivative rule. Transform a second derivative twice, retain initial displacement and velocity, and rearrange the oscillator equation. The denominator's roots determine natural transients. For positive m,b,k both roots have negative real parts, so free transients decay; an imaginary-axis Fourier response can be evaluated where the transform has the appropriate limit.",
+    "example": "For m=1, b=2 and k=5 in compatible units, poles are -1±2i per second. The solution decays with one-second amplitude scale and oscillates at 2 rad/s. The natural undamped frequency is sqrt(5), not 2.",
+    "limitations": [
+      "Poles alone do not determine residues, input excitation, nonnormal transient growth or nonlinear stability.",
+      "Ignoring initial conditions can give an incorrect transient even when H is correct."
+    ],
+    "source_ids": [
+      "ps-flp-linear-systems"
+    ],
+    "prerequisite_ids": [
+      "p-laplace-transform",
+      "p-damping"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-dft",
+    "label": "Discrete Fourier transform and bin scale",
+    "domain": "frequency",
+    "latex": "X_k=\\sum_{n=0}^{N-1}x_ne^{-i2\\pi kn/N},\\qquad x_n=\\frac1N\\sum_{k=0}^{N-1}X_ke^{i2\\pi kn/N},\\qquad \\Delta f=\\frac{f_s}{N}",
+    "variables": [
+      {
+        "symbol": "x_n",
+        "meaning": "uniformly sampled finite record",
+        "unit": "signal units"
+      },
+      {
+        "symbol": "X_k",
+        "meaning": "unscaled DFT coefficient",
+        "unit": "signal units"
+      },
+      {
+        "symbol": "f_s",
+        "meaning": "sample rate",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "N",
+        "meaning": "record length",
+        "unit": "1"
+      },
+      {
+        "symbol": "Delta_f",
+        "meaning": "frequency-bin spacing",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "n,k",
+        "meaning": "sample and frequency-bin indices",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "N samples with fixed sample interval; stated normalization applies.",
+      "The DFT represents one period of a periodic extension of the record."
+    ],
+    "derivation": "Finite roots-of-unity sums are orthogonal, giving the inverse and finite Parseval relation sum|x|²=(1/N)sum|X|². Frequencies are k f_s/N with bins beyond Nyquist interpreted as negative frequencies. A fast Fourier transform computes this same transform efficiently; it is not a different physical spectrum.",
+    "example": "For f_s=1000 Hz and N=1000, bins are 1 Hz apart. Zero-padding to 4000 samples draws the same finite-record spectrum on a 0.25 Hz grid but does not quadruple the underlying observation time or resolve truly indistinguishable components.",
+    "limitations": [
+      "Bin spacing is not a complete statistical frequency-resolution or uncertainty statement.",
+      "An unnormalized DFT amplitude grows with N; compare signals only after the correct scaling/window correction."
+    ],
+    "source_ids": [
+      "ps-shannon-sampling",
+      "ps-allan"
+    ],
+    "prerequisite_ids": [
+      "p-fourier-transform",
+      "p-sampling",
+      "p-spectral-estimation"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-sampling",
+    "label": "Band-limited sampling and alias equivalence",
+    "domain": "frequency",
+    "latex": "x(t)=\\sum_{n\\in\\mathbb Z}x(nT_s)\\,\\operatorname{sinc}\\!\\left(\\frac{t-nT_s}{T_s}\\right),\\quad \\operatorname{sinc}(u)=\\frac{\\sin\\pi u}{\\pi u},\\quad f_s=1/T_s>2B",
+    "variables": [
+      {
+        "symbol": "B",
+        "meaning": "highest absolute signal frequency in a low-pass model",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "f_s",
+        "meaning": "sample rate",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "T_s",
+        "meaning": "sampling interval",
+        "unit": "s"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "x",
+        "meaning": "sampled/reconstructed continuous signal",
+        "unit": "signal units"
+      },
+      {
+        "symbol": "n",
+        "meaning": "integer sample index",
+        "unit": "1"
+      },
+      {
+        "symbol": "u",
+        "meaning": "dimensionless sinc argument",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Ideal signal band limit |f|≤B and ideal uniform samples over an unbounded record.",
+      "Strict inequality avoids endpoint ambiguities in simple practical statements."
+    ],
+    "derivation": "Sampling replicates the continuous spectrum at integer multiples of f_s. If neighboring replicas do not overlap, an ideal low-pass interpolation filter recovers the original band. The time-domain impulse response is the sinc kernel. At sample n, exp(i2pi(f+kf_s)n/f_s)=exp(i2pi f n/f_s), proving alias indistinguishability.",
+    "example": "A 700 Hz sinusoid sampled at 1000 Hz aliases to a signed -300 Hz complex sinusoid, or a 300 Hz real cosine. Once the analog content has aliased, adding a digital filter cannot infer which original frequency was present without additional information.",
+    "limitations": [
+      "Physical anti-alias filters have transition bands; sampling just above 2B may be impractical.",
+      "Finite duration, jitter, quantization and noise are additional errors beyond the ideal theorem."
+    ],
+    "source_ids": [
+      "ps-shannon-sampling"
+    ],
+    "prerequisite_ids": [
+      "p-sampling",
+      "p-fourier-transform"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-periodogram",
+    "label": "Windowed two-sided power spectral estimate",
+    "domain": "frequency",
+    "latex": "\\widehat S_{xx}(f_k)=\\frac{\\left|\\sum_{n=0}^{N-1}w_nx_ne^{-i2\\pi kn/N}\\right|^2}{f_s\\sum_{n=0}^{N-1}w_n^2},\\qquad f_k=\\frac{kf_s}{N}",
+    "variables": [
+      {
+        "symbol": "S_xx",
+        "meaning": "two-sided periodogram power spectral density",
+        "unit": "signal units squared per Hz"
+      },
+      {
+        "symbol": "w_n",
+        "meaning": "dimensionless window weights",
+        "unit": "1"
+      },
+      {
+        "symbol": "f_s",
+        "meaning": "sample rate",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "x_n",
+        "meaning": "sampled signal",
+        "unit": "signal units"
+      },
+      {
+        "symbol": "N",
+        "meaning": "number of samples",
+        "unit": "1"
+      },
+      {
+        "symbol": "n,k",
+        "meaning": "sample and frequency-bin indices",
+        "unit": "1"
+      },
+      {
+        "symbol": "f_k",
+        "meaning": "cyclic frequency of bin k",
+        "unit": "Hz"
+      }
+    ],
+    "assumptions": [
+      "Uniform sampling and stated two-sided PSD convention.",
+      "Mean/trend removal, window choice and averaging must be declared for a practical measurement."
+    ],
+    "derivation": "Windowing multiplies the record in time, so it convolves the underlying spectrum with the window transform. Squaring gives a power estimate; normalization by sample rate and squared window norm preserves the correct white-noise PSD scale. Integrating the discrete estimate with bin width f_s/N yields the corresponding weighted mean-square value.",
+    "example": "For a rectangular window, sum w²=N. A real signal's one-sided PSD doubles interior positive-frequency bins, but does not double DC or the Nyquist bin when present. Reporting one-sided amplitudes with a two-sided convention can introduce a factor of two error.",
+    "limitations": [
+      "A single periodogram has high variance; narrower bins alone do not guarantee a better estimate.",
+      "A peak can reflect window leakage, aliasing, interference or a transient; mechanism identification requires controls."
+    ],
+    "source_ids": [
+      "ps-allan",
+      "ps-flp-harmonics"
+    ],
+    "prerequisite_ids": [
+      "p-spectral-estimation",
+      "p-sampling"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-wave",
+    "label": "Wave and Helmholtz equations",
+    "domain": "frequency",
+    "latex": "\\partial_t^2u=c_w^2\\nabla^2u,\\qquad u(\\mathbf x,t)=\\Re[U(\\mathbf x)e^{-i\\omega t}]\\Rightarrow(\\nabla^2+k^2)U=0,\\quad k=\\omega/c_w",
+    "variables": [
+      {
+        "symbol": "u,U",
+        "meaning": "wave field and complex amplitude",
+        "unit": "field dependent"
+      },
+      {
+        "symbol": "c_w",
+        "meaning": "wave speed in chosen medium",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "k",
+        "meaning": "wavenumber magnitude",
+        "unit": "rad m^-1"
+      },
+      {
+        "symbol": "omega",
+        "meaning": "angular frequency",
+        "unit": "rad s^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "x",
+        "meaning": "spatial position",
+        "unit": "m"
+      }
+    ],
+    "assumptions": [
+      "Linear homogeneous nondispersive isotropic medium without sources or loss.",
+      "Boundary and initial conditions must be supplied."
+    ],
+    "derivation": "For a taut string, small transverse force imbalance is tension times curvature while inertia is mass per length times transverse acceleration; their ratio defines c_w². Analogous linearized conservation laws yield acoustic propagation. A single-frequency ansatz turns two time derivatives into -omega² and produces Helmholtz's spatial equation.",
+    "example": "u=A cos(kx-omega t) satisfies the wave equation when omega²=c_w²k². On a fixed string of length L, zero displacement at both ends requires k_n=npi/L and f_n=n c_w/(2L), n≥1.",
+    "limitations": [
+      "The speed c_w need not be vacuum light speed c.",
+      "Dispersive, attenuating, anisotropic and nonlinear media require modified operators and can have complex k."
+    ],
+    "source_ids": [
+      "ps-flp-wave",
+      "ps-flp-modes"
+    ],
+    "prerequisite_ids": [
+      "p-wave-equation",
+      "p-helmholtz"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-dispersion",
+    "label": "Phase, group velocity and beat structure",
+    "domain": "frequency",
+    "latex": "v_p=\\frac{\\omega}{k},\\qquad v_g=\\frac{d\\omega}{dk},\\qquad \\cos(\\omega_1t)+\\cos(\\omega_2t)=2\\cos\\!\\left(\\frac{\\omega_1-\\omega_2}{2}t\\right)\\cos\\!\\left(\\frac{\\omega_1+\\omega_2}{2}t\\right)",
+    "variables": [
+      {
+        "symbol": "v_p,v_g",
+        "meaning": "phase and narrowband group velocities",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "omega,k",
+        "meaning": "angular frequency and wavenumber",
+        "unit": "rad s^-1, rad m^-1"
+      },
+      {
+        "symbol": "omega_1,omega_2",
+        "meaning": "component angular frequencies",
+        "unit": "rad s^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Differentiable dispersion relation for the group-velocity approximation.",
+      "A narrow wave packet with sufficiently mild dispersion; group velocity is not always energy/information speed."
+    ],
+    "derivation": "A constant phase kx-omega t travels at omega/k. Expand omega(k) to first order near a carrier: the slowly varying envelope translates at the derivative. The trigonometric sum separates carrier and signed envelope for two frequencies; the magnitude of the envelope repeats at the difference frequency in cycles per second.",
+    "example": "Two tones at 440 Hz and 442 Hz yield two amplitude maxima per second. The signed envelope cosine has 1 Hz frequency but flips carrier phase, so its absolute amplitude repeats at 2 Hz. Confusing these gives a common factor-of-two error.",
+    "limitations": [
+      "A beat frequency does not imply new energy appears at that low frequency in a strictly linear spectral decomposition.",
+      "Near absorption resonances or severe reshaping, simple group-speed interpretation can fail."
+    ],
+    "source_ids": [
+      "ps-flp-beats"
+    ],
+    "prerequisite_ids": [
+      "p-dispersion",
+      "p-interference",
+      "p-frequency"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-acoustic",
+    "label": "Plane-wave acoustic impedance and intensity",
+    "domain": "frequency",
+    "latex": "Z_0=\\rho_0c_w,\\quad \\widehat p=Z_0\\widehat v,\\quad \\langle I\\rangle=\\frac{|\\widehat p|^2}{2Z_0},\\quad r_p=\\frac{Z_2-Z_1}{Z_2+Z_1}",
+    "variables": [
+      {
+        "symbol": "Z_0",
+        "meaning": "specific acoustic impedance",
+        "unit": "Pa s m^-1"
+      },
+      {
+        "symbol": "rho_0",
+        "meaning": "equilibrium mass density",
+        "unit": "kg m^-3"
+      },
+      {
+        "symbol": "p_hat",
+        "meaning": "pressure amplitude, peak not rms",
+        "unit": "Pa"
+      },
+      {
+        "symbol": "v_hat",
+        "meaning": "particle-velocity amplitude",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "I",
+        "meaning": "energy flux density",
+        "unit": "W m^-2"
+      },
+      {
+        "symbol": "r_p",
+        "meaning": "normal-incidence pressure reflection coefficient",
+        "unit": "1"
+      },
+      {
+        "symbol": "c_w",
+        "meaning": "sound-wave speed in the medium",
+        "unit": "m s^-1"
+      },
+      {
+        "symbol": "Z_1,Z_2",
+        "meaning": "real positive specific impedances of incident/transmitted media",
+        "unit": "Pa s m^-1"
+      }
+    ],
+    "assumptions": [
+      "Progressive lossless plane waves; real positive impedances for the simple intensity/reflection formulas.",
+      "Normal incidence between semi-infinite homogeneous media, continuity of pressure and normal velocity."
+    ],
+    "derivation": "Linearized momentum links the pressure gradient to particle acceleration, while continuity and compressibility determine c_w. For one traveling harmonic plane wave these give p=ρ0 c_w v. Average p(t)v(t) over a period for intensity. At an interface write incident plus reflected pressure and the opposite sign of reflected velocity; solve the two continuity equations.",
+    "example": "With Z1=400 and Z2=800 Pa s/m, r_p=1/3 and reflected power fraction is 1/9. The transmitted pressure amplitude is 4/3 of incident while transmitted power fraction is 8/9. Pressure amplitude above one does not violate conservation.",
+    "limitations": [
+      "Standing waves and near fields need complex impedance and phase-aware power accounting.",
+      "Pressure enhancement at a focus or interface is not total acoustic energy amplification."
+    ],
+    "source_ids": [
+      "ps-flp-wave"
+    ],
+    "prerequisite_ids": [
+      "p-acoustic-impedance",
+      "p-power-budget"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-membrane",
+    "label": "Rectangular membrane eigenfrequencies",
+    "domain": "frequency",
+    "latex": "\\partial_t^2u=\\frac{\\mathcal T}{\\sigma}\\nabla^2u,\\qquad f_{mn}=\\frac12\\sqrt{\\frac{\\mathcal T}{\\sigma}}\\sqrt{\\left(\\frac m{L_x}\\right)^2+\\left(\\frac n{L_y}\\right)^2},\\quad m,n\\ge1",
+    "variables": [
+      {
+        "symbol": "T_calligraphic",
+        "meaning": "uniform in-plane tension per length",
+        "unit": "N m^-1"
+      },
+      {
+        "symbol": "sigma",
+        "meaning": "mass per area",
+        "unit": "kg m^-2"
+      },
+      {
+        "symbol": "Lx,Ly",
+        "meaning": "rectangular side lengths",
+        "unit": "m"
+      },
+      {
+        "symbol": "f_mn",
+        "meaning": "modal cyclic frequency",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "u",
+        "meaning": "transverse displacement",
+        "unit": "m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "m,n",
+        "meaning": "positive integer mode indices, not masses",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Thin ideal membrane, small displacement, uniform isotropic tension and fixed edges.",
+      "Bending rigidity neglected; this is not a plate equation."
+    ],
+    "derivation": "Balance transverse force from tension on a differential patch with its inertial force. Separate u=X(x)Y(y)T(t); fixed boundaries select sine functions with integer half-wavelengths along both axes. Their squared wavenumbers add, which yields the displayed spectrum. Nodal lines depend on the particular mode and superposition.",
+    "example": "For a square of side 1 m with sqrt(T/sigma)=100 m/s, f11≈70.71 Hz while f12=f21≈111.80 Hz. These are not integer multiples, so a two-dimensional membrane does not have the simple harmonic ladder of an ideal one-dimensional string.",
+    "limitations": [
+      "A rigid bending plate has fourth-order spatial dynamics and different dispersion/boundary conditions.",
+      "Particle patterns in cymatics also depend on friction, airflow and particle transport; a photograph alone does not identify a unique eigenmode."
+    ],
+    "source_ids": [
+      "ps-flp-modes"
+    ],
+    "prerequisite_ids": [
+      "p-membranes",
+      "p-helmholtz",
+      "p-cymatics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-quantum-oscillator",
+    "label": "Quantum mode energies and thermal occupation",
+    "domain": "frequency",
+    "latex": "E_n=\\hbar\\omega\\left(n+\\frac12\\right),\\qquad \\Delta E=\\hbar\\omega=hf,\\qquad \\bar n=\\frac1{e^{\\hbar\\omega/(k_BT)}-1}",
+    "variables": [
+      {
+        "symbol": "E_n",
+        "meaning": "energy of harmonic oscillator level n",
+        "unit": "J"
+      },
+      {
+        "symbol": "n,nbar",
+        "meaning": "integer occupation and mean occupation",
+        "unit": "1"
+      },
+      {
+        "symbol": "h,hbar",
+        "meaning": "Planck and reduced Planck constants",
+        "unit": "J s"
+      },
+      {
+        "symbol": "T",
+        "meaning": "equilibrium temperature",
+        "unit": "K"
+      },
+      {
+        "symbol": "omega",
+        "meaning": "mode angular frequency",
+        "unit": "rad s^-1"
+      },
+      {
+        "symbol": "k_B",
+        "meaning": "Boltzmann constant",
+        "unit": "J K^-1"
+      },
+      {
+        "symbol": "Delta E",
+        "meaning": "spacing between neighboring oscillator levels",
+        "unit": "J"
+      },
+      {
+        "symbol": "f",
+        "meaning": "cyclic frequency omega/(2pi)",
+        "unit": "Hz"
+      }
+    ],
+    "assumptions": [
+      "An approximately harmonic quantum bosonic mode; the mean occupation formula requires thermal equilibrium.",
+      "Transition energy, occupation and zero-point offset are distinct quantities."
+    ],
+    "derivation": "Canonical quantization with [x,p]=i hbar permits ladder operators, giving H=hbar omega(a†a+1/2). The geometric series partition function yields Bose occupation. At kBT≫hbar omega, expansion of the exponential gives mean excitation energy approximately kBT; at low temperature occupancy falls exponentially while the zero-point contribution remains.",
+    "example": "At f=1 GHz, hf≈6.62607e-25 J, equivalent to kB times 0.04799 K. A 1 K thermal environment has mean occupation about 20.34; cooling and filtering matter for observing a near-ground-state acoustic mode.",
+    "limitations": [
+      "E=hf gives one quantum's transition energy, not total energy of any classical sound at frequency f.",
+      "Zero-point energy cannot be extracted cyclically as free work from an equilibrium ground state."
+    ],
+    "source_ids": [
+      "ps-phonon-gates",
+      "ps-constants"
+    ],
+    "prerequisite_ids": [
+      "p-quantum-frequency",
+      "p-phonons"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-allan",
+    "label": "Nonoverlapping Allan variance",
+    "domain": "frequency",
+    "latex": "\\bar y_k(\\tau)=\\frac1\\tau\\int_{k\\tau}^{(k+1)\\tau}\\frac{\\nu(t)-\\nu_0}{\\nu_0}\\,dt,\\qquad \\sigma_y^2(\\tau)=\\frac12\\left\\langle\\left(\\bar y_{k+1}-\\bar y_k\\right)^2\\right\\rangle",
+    "variables": [
+      {
+        "symbol": "y,ybar",
+        "meaning": "instantaneous and averaged fractional-frequency offset",
+        "unit": "1"
+      },
+      {
+        "symbol": "nu,nu0",
+        "meaning": "observed and nominal frequencies",
+        "unit": "Hz"
+      },
+      {
+        "symbol": "tau",
+        "meaning": "averaging interval",
+        "unit": "s"
+      },
+      {
+        "symbol": "sigma_y",
+        "meaning": "Allan deviation",
+        "unit": "1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "k",
+        "meaning": "successive nonoverlapping averaging-block index",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Specified averaging time, data continuity, estimator type and reference oscillator.",
+      "Finite-record confidence depends on noise type and effective degrees of freedom."
+    ],
+    "derivation": "A difference of adjacent averages cancels a constant frequency offset. Squaring and averaging measures variation at the chosen averaging scale; the factor one half matches the variance of independent equal-variance averages. Taking the square root gives Allan deviation. Overlapping estimators reuse samples for better statistical efficiency but require their own denominator and uncertainty treatment.",
+    "example": "For alternating averages +a,-a,+a,-a, every adjacent difference has magnitude 2a, giving sigma_y=sqrt(2)|a|. For a constant offset y=b all differences vanish: Allan deviation is zero although the clock frequency is biased.",
+    "limitations": [
+      "Excellent stability does not prove frequency accuracy.",
+      "Comparisons require matching averaging times, dead-time treatment and measurement bandwidth."
+    ],
+    "source_ids": [
+      "ps-allan",
+      "ps-nuclear-clock"
+    ],
+    "prerequisite_ids": [
+      "p-allan",
+      "p-spectral-estimation",
+      "p-frequency"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-exceptional",
+    "label": "A two-mode non-Hermitian exceptional point",
+    "domain": "frequency",
+    "latex": "H=\\begin{pmatrix}m&i\\kappa\\\\i\\kappa&-m\\end{pmatrix},\\qquad H^2=(m^2-\\kappa^2)I,\\qquad \\lambda_\\pm=\\pm\\sqrt{m^2-\\kappa^2}",
+    "variables": [
+      {
+        "symbol": "m,kappa",
+        "meaning": "effective model coefficients with matching units",
+        "unit": "eigenvalue units"
+      },
+      {
+        "symbol": "H",
+        "meaning": "effective two-mode operator",
+        "unit": "eigenvalue units"
+      },
+      {
+        "symbol": "lambda_pm",
+        "meaning": "model eigenvalues",
+        "unit": "same units as m"
+      },
+      {
+        "symbol": "I",
+        "meaning": "two-dimensional identity matrix",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Real m,kappa and the displayed effective matrix; physical units require a calibrated model.",
+      "An exceptional point at |m|=|kappa| requires the matrix be nonzero."
+    ],
+    "derivation": "Direct matrix multiplication cancels off-diagonal terms and gives a scalar multiple of identity. The characteristic polynomial is lambda²-(m²-kappa²). At nonzero m=kappa the double eigenvalue is zero, but H has rank one and only one independent null eigenvector, so it is defective. At m=kappa=0 the zero matrix instead has two eigenvectors and is not exceptional.",
+    "example": "For m=2 and kappa=1 in common units, eigenvalues are ±sqrt(3). For m=1 and kappa=2 they are ±i sqrt(3). These effective eigenvalues do not establish total physical gain without deriving the time convention, loss background and external driving.",
+    "limitations": [
+      "A square-root spectral response is not by itself improved signal-to-noise metrology.",
+      "Open-system mode descriptions must retain pumping, loss and radiation budgets."
+    ],
+    "source_ids": [
+      "ps-topological-acoustic",
+      "ps-cpa-vortex"
+    ],
+    "prerequisite_ids": [
+      "p-nonhermitian",
+      "p-exceptional-points"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-graph-energy",
+    "label": "Graph Laplacian energy, diffusion and physical modes",
+    "domain": "frequency",
+    "latex": "L=D-W,\\qquad \\mathbf x^TL\\mathbf x=\\frac12\\sum_{ij}w_{ij}(x_i-x_j)^2,\\qquad \\dot{\\mathbf x}=-\\alpha L\\mathbf x,\\qquad M\\ddot{\\mathbf x}+kL\\mathbf x=0",
+    "variables": [
+      {
+        "symbol": "W,D,L",
+        "meaning": "symmetric weights, weighted degrees, combinatorial Laplacian",
+        "unit": "1 in dimensionless graph convention"
+      },
+      {
+        "symbol": "x",
+        "meaning": "node signal or physical displacement, as specified",
+        "unit": "application dependent"
+      },
+      {
+        "symbol": "alpha",
+        "meaning": "diffusive rate coefficient",
+        "unit": "s^-1"
+      },
+      {
+        "symbol": "M",
+        "meaning": "mass matrix for physical model",
+        "unit": "kg"
+      },
+      {
+        "symbol": "k",
+        "meaning": "spring scale for physical model",
+        "unit": "N m^-1"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time; overdots denote time derivatives in this card",
+        "unit": "s"
+      },
+      {
+        "symbol": "w_ij",
+        "meaning": "symmetric nonnegative weight of edge ij",
+        "unit": "1 in the stated convention"
+      },
+      {
+        "symbol": "i,j",
+        "meaning": "node indices",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Undirected graph with nonnegative symmetric weights; these assumptions guarantee a positive semidefinite L.",
+      "The diffusion and mechanical equations are separate models using the same operator."
+    ],
+    "derivation": "Expand x^T(D-W)x and pair ij with ji to obtain the squared-difference energy. L times the constant vector is zero. In an eigenvector with eigenvalue lambda, diffusion decays as exp(-alpha lambda t), whereas equal-mass mechanical displacement oscillates at sqrt(k lambda/m). The algebra is shared while the empirical meaning, units and dynamics differ.",
+    "example": "For a two-node unit edge, L=[[1,-1],[-1,1]] has eigenvalues 0 and 2. The difference signal decays at 2alpha in diffusion; two equal masses oscillate at sqrt(2k/m). Neither eigenvalue alone is a frequency in Hz.",
+    "limitations": [
+      "Directed, signed or semantic relation graphs need separate operator choices; naive symmetric diffusion may erase meaning.",
+      "Graph smoothing can blur contradictory evidence; an analogy edge must not be used as proof propagation."
+    ],
+    "source_ids": [
+      "ps-graph-wavelets",
+      "ps-flp-modes"
+    ],
+    "prerequisite_ids": [
+      "p-graph-modes",
+      "p-coupled-modes"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "pf-graph-wavelet",
+    "label": "Spectral graph filters and localized wavelets",
+    "domain": "frequency",
+    "latex": "L=U\\Lambda U^T,\\qquad g(sL)=U\\,g(s\\Lambda)\\,U^T,\\qquad \\psi_{s,n}=g(sL)\\mathbf e_n,\\qquad \\widehat{\\mathbf x}=U^T\\mathbf x",
+    "variables": [
+      {
+        "symbol": "L",
+        "meaning": "symmetric graph Laplacian",
+        "unit": "1 under dimensionless weights"
+      },
+      {
+        "symbol": "U",
+        "meaning": "orthonormal eigenvector matrix",
+        "unit": "1"
+      },
+      {
+        "symbol": "Lambda",
+        "meaning": "diagonal eigenvalue matrix",
+        "unit": "1"
+      },
+      {
+        "symbol": "s",
+        "meaning": "graph spectral scale parameter",
+        "unit": "inverse eigenvalue units"
+      },
+      {
+        "symbol": "e_n",
+        "meaning": "indicator at node n",
+        "unit": "1"
+      },
+      {
+        "symbol": "g",
+        "meaning": "chosen scalar spectral filter kernel",
+        "unit": "dimensionless output in this convention"
+      },
+      {
+        "symbol": "psi_s,n",
+        "meaning": "filter response localized at node n and scale s",
+        "unit": "1 for a unit impulse"
+      },
+      {
+        "symbol": "x,x_hat",
+        "meaning": "node signal and its graph-spectral coefficients",
+        "unit": "same signal units"
+      },
+      {
+        "symbol": "n",
+        "meaning": "node label",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Finite undirected nonnegative-weight graph; functional calculus applied to its symmetric Laplacian.",
+      "Kernel/scale choices and an appropriate low-pass component determine invertibility and coverage."
+    ],
+    "derivation": "Diagonalizing a symmetric operator defines a function of that operator by applying the function to each eigenvalue. Applying the resulting filter to a node impulse localizes its response. Large eigenvalues encode rapidly changing neighboring node values, not necessarily fast changes in time. Polynomial approximations can evaluate a filter through sparse matrix-vector products without a complete eigendecomposition.",
+    "example": "On the two-node graph, g(lambda)=exp(-s lambda) preserves the constant component and attenuates the difference by exp(-2s). A wavelet kernel chosen with g(0)=0 removes the constant component; a separate scaling function is needed to reconstruct arbitrary constants.",
+    "limitations": [
+      "Graph filtering is a mathematical tool, not evidence that a notes graph has biological neural dynamics.",
+      "Using arbitrary relation types as nonnegative affinity weights can give a numerically valid but semantically misleading filter."
+    ],
+    "source_ids": [
+      "ps-graph-wavelets"
+    ],
+    "prerequisite_ids": [
+      "p-graph-modes",
+      "p-wavelet",
+      "p-fourier-transform"
+    ],
+    "status": "established"
+  }
+]

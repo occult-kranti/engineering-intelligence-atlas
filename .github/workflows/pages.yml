@@ -8,6 +8,10 @@ on:
       - 'desktop-shell/src/renderer/**'
       - 'company/**'
       - 'projects/architecture-library/**'
+      - 'projects/research-memory-atlas/**'
+      - 'projects/design-backgrounds/**'
+      - 'desktop-shell/src/shared/graphMemory.ts'
+      - 'desktop-shell/src/shared/donnaBrain.ts'
       - 'integrations/heritage-assets/**'
       - 'integrations/godot-heritage-review/**'
       - 'integrations/opencode-game-studios/**'
@@ -45,12 +49,16 @@ jobs:
           npm --prefix site-source run check
           npm --prefix site-source run check:migrations
           node projects/architecture-library/validate.mjs
+          node scripts/validate-research-memory.mjs
+          node --test projects/research-memory-atlas/tests/*.test.mjs
       - name: Build portable static atlas from source
         run: node scripts/build-static.mjs
       - name: Verify model and game resource integrity before deployment
         run: |
           npm --prefix integrations/heritage-assets ci --ignore-scripts --no-audit --no-fund
           node scripts/check-game-heritage.mjs
+      - name: Install locked DOM test dependency without native install scripts
+        run: npm --prefix desktop-shell ci --ignore-scripts --no-audit --no-fund
       - name: Install browser for Pages smoke test
         working-directory: site-source
         run: npx playwright install --with-deps chromium
@@ -60,6 +68,10 @@ jobs:
         run: |
           node scripts/smoke-architecture-library.mjs
           node scripts/smoke-heritage-viewer.mjs
+          node scripts/smoke-research-memory.mjs
+          node scripts/smoke-design-backgrounds.mjs --browser
+          node desktop-shell/scripts/copy-renderer-assets.mjs
+          node desktop-shell/tests/donna-brain-browser.mjs
       - name: Save every web and desktop workspace screen
         if: always()
         uses: actions/upload-artifact@v4
@@ -69,6 +81,10 @@ jobs:
             site-source/.work/ui-screenshots
             site-source/.work/architecture-ui
             site-source/.work/heritage-ui
+            site-source/.work/research-memory-ui
+            projects/design-backgrounds/verification
+            desktop-shell/.work/donna-brain-ui
+          include-hidden-files: true
           if-no-files-found: warn
       - uses: actions/configure-pages@v5
       - name: Upload verified client files only

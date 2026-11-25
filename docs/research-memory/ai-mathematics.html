@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>AI Mathematics: Evidence and Qualifications</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="document.css" />
+</head>
+<body><nav class="document-nav"><a href="./index.html">← Research graph</a><a href="./study-guide.html">Study guide</a><a href="./formula-notebook.html">Formulas</a><a href="./ai-mathematics.html">AI results</a></nav>
+<header id="title-block-header">
+<h1 class="title">AI Mathematics: Evidence and Qualifications</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#what-recent-ai-mathematics-results-actually-establish"
+id="toc-what-recent-ai-mathematics-results-actually-establish">What
+recent AI mathematics results actually establish</a>
+<ul>
+<li><a href="#read-a-claim-as-a-mathematical-object"
+id="toc-read-a-claim-as-a-mathematical-object">1. Read a claim as a
+mathematical object</a></li>
+<li><a
+href="#the-november-rh-result-deserves-its-actual-evidence-strength"
+id="toc-the-november-rh-result-deserves-its-actual-evidence-strength">2.
+The November RH result deserves its actual evidence strength</a></li>
+<li><a href="#navierstokes-illustrates-three-independent-questions"
+id="toc-navierstokes-illustrates-three-independent-questions">3.
+Navier–Stokes illustrates three independent questions</a></li>
+<li><a
+href="#algebraic-complexity-boolean-complexity-and-numerical-speed"
+id="toc-algebraic-complexity-boolean-complexity-and-numerical-speed">4.
+Algebraic complexity, Boolean complexity and numerical speed</a></li>
+<li><a
+href="#formalizing-flt-is-a-different-achievement-from-discovering-it"
+id="toc-formalizing-flt-is-a-different-achievement-from-discovering-it">5.
+Formalizing FLT is a different achievement from discovering it</a></li>
+<li><a
+href="#a-complete-captured-catalogue-is-not-complete-mathematical-verification"
+id="toc-a-complete-captured-catalogue-is-not-complete-mathematical-verification">6.
+A complete captured catalogue is not complete mathematical
+verification</a></li>
+<li><a href="#transfer-these-lessons-into-company-and-repository-memory"
+id="toc-transfer-these-lessons-into-company-and-repository-memory">7.
+Transfer these lessons into company and repository memory</a></li>
+<li><a href="#what-the-atlas-still-does-not-claim"
+id="toc-what-the-atlas-still-does-not-claim">8. What the atlas still
+does not claim</a></li>
+</ul></li>
+<li><a href="#ai-mathematics-claim-register"
+id="toc-ai-mathematics-claim-register">AI mathematics claim
+register</a></li>
+</ul>
+</nav>
+<h1 id="what-recent-ai-mathematics-results-actually-establish">What
+recent AI mathematics results actually establish</h1>
+<p><strong>Evidence cutoff: 25 November 2026.</strong> This audit
+identifies substantial recent results and keeps each conclusion attached
+to its precise problem, assumptions, artifact and verification status.
+It does not support the proposition that Claude or OpenAI has solved all
+mathematics. The structured <a href="03-ai-math-claim-register.md">claim
+register</a> contains the selected findings; <a
+href="openai-math-catalogue.json">the metadata catalogue</a> separately
+enumerates the complete captured OpenAI release.</p>
+<p>The distinctions below matter directly to a research memory system. A
+memory entry should not become more certain merely because it is linked
+to many other entries. It should become more useful because a reader can
+recover the exact statement, its evidence and the boundary at which the
+conclusion stops applying.</p>
+<h2 id="read-a-claim-as-a-mathematical-object">1. Read a claim as a
+mathematical object</h2>
+<p>A theorem has more structure than a headline. A useful representation
+is</p>
+<p>[ (, , , , , ). ]</p>
+<p>Changing any coordinate can change the problem. A theorem about a
+fixed dimension need not hold in arbitrary dimensions. An arithmetic
+circuit lower bound need not imply a Boolean computation lower bound.
+Existence need not imply uniqueness. A theorem about positive
+proportions of zeros need not locate every zero. A theorem about forced
+fluid flow need not settle unforced flow. These are logical
+distinctions, not rhetorical qualifications.</p>
+<p>The following table is an interpretation guide. It is not a claim
+that every cited artifact has reached the same maturity.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Evidence category</th>
+<th>What it can establish</th>
+<th>What it does not establish by itself</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Competition score</td>
+<td>Performance on the specified problem set and protocol</td>
+<td>General capacity to solve research conjectures</td>
+</tr>
+<tr class="even">
+<td>New mathematical proof</td>
+<td>A new theorem under its stated hypotheses</td>
+<td>Correctness of every corollary someone might infer</td>
+</tr>
+<tr class="odd">
+<td>Formalization of an old theorem</td>
+<td>A checked representation of known mathematics</td>
+<td>A first discovery of the underlying theorem</td>
+</tr>
+<tr class="even">
+<td>AI-assisted human research</td>
+<td>A documented research contribution with human development or
+evaluation</td>
+<td>Fully autonomous completion of every step</td>
+</tr>
+<tr class="odd">
+<td>Kernel-checked artifact</td>
+<td>Derivability of an exact encoded proposition under recorded
+axioms</td>
+<td>Correct translation of an unchecked informal problem</td>
+</tr>
+<tr class="even">
+<td>Independently matched and rechecked artifact</td>
+<td>Stronger evidence joining statement identity, proof validity and
+reproducibility</td>
+<td>An administrative prize decision or a conventional explanatory
+account</td>
+</tr>
+<tr class="odd">
+<td>Provider announcement</td>
+<td>What the provider claims and releases</td>
+<td>Independent confirmation of every claim</td>
+</tr>
+<tr class="even">
+<td>Conditional theorem</td>
+<td>An implication from its explicit hypotheses</td>
+<td>Availability or correctness of an omitted certificate</td>
+</tr>
+</tbody>
+</table>
+<p>Formal proof systems make this distinction operational: a proof term
+proves a type, under its actual declarations and axioms. The formal
+target still needs to match the intended mathematical target. The <a
+href="https://lean-lang.org/theorem_proving_in_lean4/Axioms-and-Computation/">Lean
+documentation on axioms</a> explains the foundational layer; a source
+hash, statement bridge and independent checker log address different
+layers above it.</p>
+<h2 id="the-november-rh-result-deserves-its-actual-evidence-strength">2.
+The November RH result deserves its actual evidence strength</h2>
+<p>The latest records are materially different from the August
+zeta-proportion result. Alpöge’s November release credits collaboration
+with Claude. The joint Lean FRO/Mathlib statement certifies that the
+formal proposition matches Mathlib’s <code>RiemannHypothesis</code>, and
+describes independent checking of an inert proof export. Andrew
+Sutherland’s MIT record adds detailed rebuild, axiom and checker
+evidence. This supports a strong conclusion about the formal RH proof;
+this atlas did not run those checks itself. <a
+href="https://alpo.ge/remark.pdf">Author announcement</a>, <a
+href="https://leanprover-community.github.io/blog/posts/riemann-hypothesis/">joint
+verification</a>, <a href="https://math.mit.edu/~drew/grh/">MIT
+verification record</a>.</p>
+<p>The institutional status is a different question. Clay’s retrieved
+page displays <strong>Active</strong>; a prize award was not established
+in this audit. Broader generalized-RH assertions also need their own
+exact theorem translations: checking the classical RH proposition does
+not automatically certify every statement that a reader might call GRH.
+<a href="https://www.claymath.org/millennium/riemann-hypothesis/">Clay
+status</a>.</p>
+<p>For a study graph, retain separate nodes for the zeta function,
+analytic continuation, the critical strip, the August proportion
+theorem, the November RH statement and each generalized theorem. The
+dependencies are mathematically useful. Merging the results because they
+share the word “Riemann” destroys the distinction between counting many
+zeros and locating all relevant zeros.</p>
+<h2 id="navierstokes-illustrates-three-independent-questions">3.
+Navier–Stokes illustrates three independent questions</h2>
+<p>The September OpenAI manuscript’s Theorem 1.1 is a
+<strong>forced</strong> breakdown statement: smooth compact forcing,
+zero initial velocity and bounded kinetic energy coexist with a velocity
+blowup at the terminal time. The pinned artifact supplies named
+comparator declarations. A separate audit repository reports statement
+and kernel checks for its explicitly identified upstream revision. Those
+are evidence about the exact forced theorem, not a proof of unforced
+Navier–Stokes. <a
+href="https://cdn.openai.com/pdf/32d9f210-8b73-45e0-91bc-82a30aef8a9a/navier-stokes.pdf">Original
+theorem</a>, <a
+href="https://github.com/openai/NavierStokesAndEuler/tree/f9e8bc5b38b6e212696e8a30e3e91517af887bbd">artifact</a>,
+<a
+href="https://github.com/francescoantoniodeluca/navier-stokes-formal-audit/tree/c2e4f438f7af8bbf222a59801696aca2c3c15b6f">independent
+audit</a>.</p>
+<p>The October translation critique asks whether the prose argument
+faithfully corresponds to intermediate formal estimates. It does not
+itself refute the final formal theorem, and its authors explicitly avoid
+claiming that the prose proof must be incorrect. This belongs in a
+separate evidence record: statement correctness, formal proof validity
+and expository correspondence are different questions. <a
+href="https://arxiv.org/abs/2610.08144">Original critical
+preprint</a>.</p>
+<p>The November Alpöge–Buckmaster package raises another issue. Its
+formal breakdown implications depend on a profile/certificate
+hypothesis. The inspected repository says numerical certificate data are
+absent, and the corrected package was not rebuilt. Its unconditional
+unforced conclusion therefore cannot be treated as established by the
+available conditional artifact alone. <a
+href="https://github.com/tristanbuckmaster/navier-stokes/tree/ad53419de079eb8f95f60313473374624a348546">Pinned
+repository and Lean notes</a>.</p>
+<p>The logical gap can be shown without fluid mechanics. Suppose the
+verified theorem is</p>
+<p>[ PQ. ]</p>
+<p>A verifier accepting this implication has not supplied a proof of
+(P). If (P) means “these numerical inequalities hold for this specific
+profile,” then the profile data, enclosing arithmetic, rounding policy
+and certificate checker remain part of the chain required to infer (Q).
+This is why a research graph should represent
+<code>requires_certificate</code> separately from
+<code>proves</code>.</p>
+<p>Similarly, in the PDE</p>
+<p>[ _tu+(u)u+p=u+f,u=0, ]</p>
+<p>the quantifiers (fu) and (u,[f=0]) describe different existence
+problems. Allowing a source term can change the admissible construction.
+The same equation template does not erase a condition on its terms.</p>
+<h2 id="algebraic-complexity-boolean-complexity-and-numerical-speed">4.
+Algebraic complexity, Boolean complexity and numerical speed</h2>
+<p>The Anthropic VP/VNP artifact claims arithmetic-circuit separations,
+with a characteristic-two exception for permanent bounds. Its README
+states that no human mathematician has checked the proof. The exact
+statement was inspected here; independent acceptance was not
+established. That is a narrower status than the independently certified
+RH result. <a
+href="https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/vp-vnp">Pinned
+artifact</a>.</p>
+<p>Why does the field matter? For a two-by-two matrix,</p>
+[
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mi>a</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>b</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>c</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>d</mi></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\begin{pmatrix}a&amp;b\\c&amp;d\end{pmatrix}</annotation></semantics></math>
+=ad+bc,
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mi>a</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>b</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>c</mi></mtd><mtd columnalign="center" style="text-align: center"><mi>d</mi></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">\begin{pmatrix}a&amp;b\\c&amp;d\end{pmatrix}</annotation></semantics></math>
+<p>=ad-bc. ]</p>
+<p>In characteristic two, (-1=1), so the two formulas coincide. An
+arithmetic lower bound that ignores this distinction would be misstated.
+The algebraic complexity problem also counts a different kind of
+computation from a Boolean machine operating on encoded inputs.
+Translating between models requires a theorem; it is not an automatic
+consequence of similar class names.</p>
+<p>ETH claims need a different distinction. Consider the reported
+shape</p>
+<p>[ T(n)=2^{O!(n)}. ]</p>
+<p>Writing (t=n), the ratio of the exponent to (n) is proportional to
+(t/t), which tends to zero. That explains the term
+<strong>subexponential</strong>. It does not turn the exponent into
+(O(n)), the scale that would yield polynomial running time. Hidden
+constants, enormous crossover points and memory costs also prevent an
+asymptotic statement from becoming a practical performance guarantee.
+The <a
+href="https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/eth">Anthropic
+ETH project</a> is recorded with that boundary; the separate <a
+href="https://openai.com/index/building-scientific-understanding-with-academic-communities/">OpenAI
+academic review announcement</a> has its own evidence status.</p>
+<p>The same lesson applies to a small polynomial exponent improvement.
+An algorithm with an asymptotic factor (n^{0.0008}) advantage can
+require implausibly large instances before overcoming even modest
+constants. The Alman–Vassilevska Williams paper reports such exponent
+improvements with bounded-integer and machine-model conditions, and
+documents substantial human development of the AI contribution. <a
+href="https://arxiv.org/abs/2610.06783v1">Original 3SUM/APSP
+paper</a>.</p>
+<h2
+id="formalizing-flt-is-a-different-achievement-from-discovering-it">5.
+Formalizing FLT is a different achievement from discovering it</h2>
+<p>The September Claude-assisted FLT release formalizes an existing
+mathematical theorem and its deep human foundations. The repository
+gives a precise positive-natural-number statement, a Mathlib bridge and
+reported independent-checker evidence. That is an important
+formalization achievement, but its historical category remains distinct
+from a first proof. <a
+href="https://www.anthropic.com/research/formalizing-fermats-last-theorem">Anthropic
+announcement</a>, <a
+href="https://github.com/anthropics/fermats-last-theorem/tree/6e837e75355538c7f80bab5b956861e86c4eacc2">pinned
+artifact</a>.</p>
+<p>A research memory should therefore record separate contribution
+fields: original theorem, proof strategy, formal translation,
+automation, expert statement review, kernel validation and exposition.
+Crediting all of those to a single model hides the work that made the
+result possible and obscures which part can be reproduced.</p>
+<h2
+id="a-complete-captured-catalogue-is-not-complete-mathematical-verification">6.
+A complete captured catalogue is not complete mathematical
+verification</h2>
+<p>The OpenAI snapshot is pinned to commit
+<code>3344da59991ed94f9ba711217b29c1d760badfa6</code>. Its header and
+the independent metadata parser agree on <strong>730 manuscripts and 375
+result families</strong>. Family IDs are non-contiguous and extend
+through 380. Older release counts describe older snapshots. The newest
+nine titles are included as metadata, with every entry defaulting to
+<code>catalogued_not_individually_reviewed</code>. <a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/CONTENTS.md">Pinned
+catalogue</a>.</p>
+<p>The publication history records withdrawals and repairs.
+Consequently, the graph must preserve the date and status of a claim,
+and avoid silently retrieving a withdrawn statement as settled
+knowledge. Metadata can be complete relative to a captured file while
+mathematical review is selective. <a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md">Pinned
+history</a>.</p>
+<p>The accompanying parser verifies the Git blob identity before
+extraction. It copies titles, identifiers and URLs, not the catalogue’s
+abstracts or proofs. The unchanged upstream Apache-2.0 license is
+included. A reproducible count means that another reader can inspect the
+exact collection; it does not certify the contents of every PDF.</p>
+<h2 id="transfer-these-lessons-into-company-and-repository-memory">7.
+Transfer these lessons into company and repository memory</h2>
+<p>A useful evidence record should retain the following fields:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Stable claim ID</td>
+<td>Keep links valid when a title changes</td>
+</tr>
+<tr class="even">
+<td>Exact statement and quantifiers</td>
+<td>Prevent retrieval from broadening the theorem</td>
+</tr>
+<tr class="odd">
+<td>Domain and model</td>
+<td>Preserve characteristic, dimension, machine model and units</td>
+</tr>
+<tr class="even">
+<td>Assumptions and certificates</td>
+<td>Make conditional dependencies explicit</td>
+</tr>
+<tr class="odd">
+<td>Source URL, revision and content hash</td>
+<td>Reconstruct the evidence that was actually reviewed</td>
+</tr>
+<tr class="even">
+<td>Access depth</td>
+<td>Distinguish full proof, theorem statement, abstract and
+announcement</td>
+</tr>
+<tr class="odd">
+<td>Publisher status</td>
+<td>Preserve what the original publisher says</td>
+</tr>
+<tr class="even">
+<td>Audit status</td>
+<td>Preserve the evaluator’s separate conclusion</td>
+</tr>
+<tr class="odd">
+<td>Human and model contributions</td>
+<td>Attribute discovery, checking and exposition accurately</td>
+</tr>
+<tr class="even">
+<td>Negative evidence and limitations</td>
+<td>Keep counterexamples, withdrawals and unresolved translation issues
+retrievable</td>
+</tr>
+<tr class="odd">
+<td>Next review trigger</td>
+<td>Refresh when a new version, withdrawal or independent audit
+appears</td>
+</tr>
+</tbody>
+</table>
+<p>Represent each relationship by its meaning.
+<code>prerequisite_of</code> organizes learning. <code>supports</code>
+joins evidence to a claim. <code>contradicts</code> records a
+substantive conflict. <code>supersedes</code> records a version change.
+<code>requires_certificate</code> prevents conditional results from
+losing their hypotheses. <code>similar_to</code> helps exploration but
+must not grant proof authority.</p>
+<p>When a company note or code dependency changes, invalidate derived
+summaries through the dependency graph. Do not delete the older
+evidence: mark it superseded and preserve its source version. When a
+source has not been read, attach that fact to the edge. When an agent
+repeats a statement from another agent, preserve the original provenance
+instead of manufacturing a second independent source.</p>
+<p>This gives a concrete acceptance criterion for the implemented memory
+layer: a query about a theorem should return its conditions and status
+with its summary. A query about a withdrawn result should surface the
+withdrawal. A query about “all solved problems” should distinguish the
+metadata collection from individually checked results. A query about an
+absent numerical certificate should not return an unconditional
+conclusion.</p>
+<h2 id="what-the-atlas-still-does-not-claim">8. What the atlas still
+does not claim</h2>
+<p>This is a representative mathematical and AI research map with a
+complete captured catalogue for one publisher, not an exhaustive review
+of every subfield or every Claude/OpenAI result. Source depth varies and
+is recorded. No giant Lean artifact was built during this task, and no
+prize award was inferred. The Yang–Mills existence assessment explicitly
+leaves mass gap outside its conclusion; the official complete problem
+remains labelled Unsolved. <a
+href="https://github.com/yang-mills-group/YM">Working-group
+assessment</a>, <a
+href="https://www.claymath.org/millennium/yang-mills-the-maths-gap/">Clay
+problem</a>.</p>
+<p>These limits are part of the deliverable. They identify the next
+research work precisely: translate additional theorem statements, locate
+independent assessment for newer claims, reproduce selected feasible
+artifacts, and add source-linked records without turning a growing
+catalogue into an unsupported universal claim.</p>
+<h1 id="ai-mathematics-claim-register">AI mathematics claim
+register</h1>
+<p>Snapshot: 25 November 2026. This is an evidence register, not an
+assertion that every listed result has been accepted. Exact proof scope
+and access depth are part of each record. No giant Lean release was
+compiled in this task.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Claim</th>
+<th>Category</th>
+<th>Assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><a href="#m-claim-universal">All mathematical problems have been
+solved</a></td>
+<td>universal claim audit</td>
+<td>unsupported universal premise</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-imo">Gemini Deep Think: IMO 2025 gold-standard
+performance</a></td>
+<td>competition benchmark</td>
+<td>benchmark result with bounded scope</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-unitdistance">Planar unit distances: polynomial
+construction improvement</a></td>
+<td>new research theorem</td>
+<td>theorem statement and external review report read</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-ten">OpenAI ten-advance collection</a></td>
+<td>research collection</td>
+<td>introductory result map read not all proofs audited</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-zeta">Claude-assisted simple critical-line
+zeta-zero proportion</a></td>
+<td>new research theorem</td>
+<td>primary abstract and provenance read</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-flt">Fermat’s Last Theorem: large Lean
+formalization</a></td>
+<td>formalization of an existing theorem</td>
+<td>formalization artifact and reported second kernel check read</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-nsforced">Forced three-dimensional Navier–Stokes
+breakdown</a></td>
+<td>new theorem with formal artifact</td>
+<td>formal theorem evidence strong but prose translation disputed</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-euler">Separate unforced Euler singularity
+artifact</a></td>
+<td>new theorem with formal artifact</td>
+<td>theorem entry points inspected</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-ns-translation">Navier–Stokes prose/formal
+translation criticism</a></td>
+<td>critical research audit</td>
+<td>documented translation issue not refutation of final formal
+statement</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-catalogue">OpenAI mathematics catalogue: exact
+metadata census</a></td>
+<td>research catalogue</td>
+<td>metadata count verified proofs not individually reviewed</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-withdrawals">OpenAI October Hodge-related
+withdrawals</a></td>
+<td>withdrawal/correction record</td>
+<td>withdrawal record confirmed</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-3sum">Truly subquadratic 3SUM and subcubic
+APSP</a></td>
+<td>AI-assisted human research theorem</td>
+<td>primary paper scope and formal limitations read</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-claudeeth">Claude ETH refutation artifact</a></td>
+<td>formal research artifact</td>
+<td>artifact statement read independent acceptance not established</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-oaieth">OpenAI fixed-width counting-SAT
+subexponential claim</a></td>
+<td>research claim under expert review</td>
+<td>announcement and catalogue locator read</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-smoothing">OpenAI local smoothing for the
+Euclidean wave equation</a></td>
+<td>frontier research claim</td>
+<td>announcement scope read exact proof not replayed</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-ymexistence">Four-dimensional Yang–Mills existence
+assessment</a></td>
+<td>independent expert assessment of research artifact</td>
+<td>expert assessment read existence only</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-ymgap">Complete Yang–Mills existence and mass-gap
+problem</a></td>
+<td>open-problem status</td>
+<td>no decisive mass gap proof identified</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-vpvnp">Anthropic VP≠VNP artifact</a></td>
+<td>formal research claim without human proof review</td>
+<td>statement inspected independent acceptance not established</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-oai-newnine">OpenAI November 24 complexity and
+polytope additions</a></td>
+<td>catalogued research claims</td>
+<td>metadata only no theorem adjudication</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-rh">Riemann Hypothesis: November formal proof and
+independent checks</a></td>
+<td>AI-assisted research with independently checked formal proof</td>
+<td>strong independent formal verification evidence</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-grh">Dirichlet generalized RH: independently
+checked scope</a></td>
+<td>generalization scope audit</td>
+<td>strong independent formal verification for dirichlet scope</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-unforcedns">Alpöge–Buckmaster unforced
+Navier–Stokes package</a></td>
+<td>conditional formal artifact with external numerical dependency</td>
+<td>conditional artifact inspected unconditional validation
+incomplete</td>
+</tr>
+<tr class="odd">
+<td><a href="#m-claim-kakeya">Wang–Zahl three-dimensional Kakeya
+theorem</a></td>
+<td>human research frontier</td>
+<td>primary abstract read</td>
+</tr>
+<tr class="even">
+<td><a href="#m-claim-langlands">Categorical unramified geometric
+Langlands project</a></td>
+<td>human research frontier</td>
+<td>project scope and part one abstract read</td>
+</tr>
+</tbody>
+</table>
+<p><a id="m-claim-universal"></a> ## All mathematical problems have been
+solved</p>
+<p><strong>Date:</strong> 2026-11-25. <strong>Category:</strong>
+universal claim audit.</p>
+<p><strong>System/author:</strong> No identified primary source asserts
+a defensible universal result. <strong>Model identification:</strong>
+Not applicable.</p>
+<p>No. A catalogue or benchmark cannot establish universal mathematical
+solvability.</p>
+<p><strong>Scope:</strong> A finite release contains selected
+statements; mathematical domains and problem formulations remain
+distinct.</p>
+<p><strong>Contribution:</strong> This is the atlas interpretation, not
+an attribution to either company.</p>
+<p><strong>Evidence assessment:</strong> unsupported universal premise.
+No universal certification identified.</p>
+<p><strong>Limits:</strong> Even verified headline theorems do not
+settle all related conjectures.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md">OpenAI
+mathematics release history, pinned snapshot</a>: Withdrawal and
+correction entries. Access: full history file inspected.</li>
+<li><a
+href="https://www.claymath.org/millennium/yang-mills-the-maths-gap/">Clay
+Mathematics Institute: Yang–Mills and the Mass Gap</a>: Current problem
+status. Access: current label and problem summary inspected.</li>
+</ul>
+<p><a id="m-claim-imo"></a> ## Gemini Deep Think: IMO 2025 gold-standard
+performance</p>
+<p><strong>Date:</strong> 2025-07. <strong>Category:</strong>
+competition benchmark.</p>
+<p><strong>System/author:</strong> Google DeepMind. <strong>Model
+identification:</strong> Advanced Gemini Deep Think experimental
+version.</p>
+<p>Five of six competition problems, 35 points, reported gold-medal
+standard.</p>
+<p><strong>Scope:</strong> 2025 IMO problem set; an evaluation of proof
+tasks with known assessment criteria.</p>
+<p><strong>Contribution:</strong> Human olympiad assessment is distinct
+from authoring a new research theorem.</p>
+<p><strong>Evidence assessment:</strong> benchmark result with bounded
+scope. Provider describes the olympiad assessment; not independently
+rerun here.</p>
+<p><strong>Limits:</strong> Not proof that arbitrary open conjectures
+can be solved.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://deepmind.google/blog/advanced-version-of-gemini-with-deep-think-officially-achieves-gold-medal-standard-at-the-international-mathematical-olympiad/">Gemini
+Deep Think IMO 2025 gold-medal-standard result</a>: Score and evaluation
+description. Access: announcement and score inspected.</li>
+</ul>
+<p><a id="m-claim-unitdistance"></a> ## Planar unit distances:
+polynomial construction improvement</p>
+<p><strong>Date:</strong> 2026-05-20. <strong>Category:</strong> new
+research theorem.</p>
+<p><strong>System/author:</strong> OpenAI. <strong>Model
+identification:</strong> Research model; no commercial model identifier
+inferred.</p>
+<p>There is δ&gt;0 and infinitely many n for which ν(n)≥n^(1+δ).</p>
+<p><strong>Scope:</strong> ν(n) counts the largest number of unordered
+Euclidean unit-distance pairs among n planar points.</p>
+<p><strong>Contribution:</strong> Human-edited exposition; external
+mathematicians reviewed and strengthened parts.</p>
+<p><strong>Evidence assessment:</strong> theorem statement and external
+review report read. Expert confirmation is described by the manuscript
+and announcement; no independent local derivation of the full
+construction.</p>
+<p><strong>Limits:</strong> Disproves the old near-linear conjectural
+scale; does not find the exact extremal function.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf">Planar
+Point Sets with Many Unit Distances</a>: Theorem 1.1. Access: 18-page
+PDF; Theorem 1.1 and construction outline inspected.</li>
+<li><a
+href="https://openai.com/index/model-disproves-discrete-geometry-conjecture/">An
+OpenAI model has disproved a central conjecture in discrete
+geometry</a>: External-review attribution. Access: announcement and
+external-review attribution inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-ten"></a> ## OpenAI ten-advance collection</p>
+<p><strong>Date:</strong> 2026-08. <strong>Category:</strong> research
+collection.</p>
+<p><strong>System/author:</strong> OpenAI. <strong>Model
+identification:</strong> Research model(s); exact commercial version not
+inferred.</p>
+<p>A collection covers discrete geometry, coding, group/operator
+problems and complexity.</p>
+<p><strong>Scope:</strong> Each of ten results has a separate theorem
+and assumptions.</p>
+<p><strong>Contribution:</strong> The release describes interactions
+with specialist reviewers and formalization.</p>
+<p><strong>Evidence assessment:</strong> introductory result map read
+not all proofs audited. No blanket independent acceptance is assigned to
+the collection.</p>
+<p><strong>Limits:</strong> 253 manuscript pages not checked line by
+line; catalogue depth differs from proof depth.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a href="https://openai.com/index/ten-advances-in-mathematics/">Ten
+advances in mathematics and theoretical computer science</a>: Result
+list. Access: dated announcement and result list inspected.</li>
+<li><a href="https://cdn.openai.com/pdf/ten-proofs-oai.pdf">Ten Advances
+in Mathematics and Theoretical Computer Science</a>: Introduction and
+theorem map. Access: PDF metadata and introductory result map
+inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-zeta"></a> ## Claude-assisted simple critical-line
+zeta-zero proportion</p>
+<p><strong>Date:</strong> 2026-08-19. <strong>Category:</strong> new
+research theorem.</p>
+<p><strong>System/author:</strong> Levent Alpöge and Ralph Furman;
+Anthropic. <strong>Model identification:</strong> Claude; exact version
+not inferred.</p>
+<p>The paper gives a simple critical-line zero proportion exceeding two
+thirds; a window calculation gives 0.6725.</p>
+<p><strong>Scope:</strong> Unconditional zeta-zero counting statement;
+paper also treats primitive Dirichlet L-functions.</p>
+<p><strong>Contribution:</strong> Authors verified and communicated the
+model-generated research.</p>
+<p><strong>Evidence assessment:</strong> primary abstract and provenance
+read. Formalization is reported; no local replay.</p>
+<p><strong>Limits:</strong> A positive proportion is not RH; do not
+merge the August theorem with November RH.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a href="https://arxiv.org/abs/2608.13637v2">More than two thirds of
+the zeta zeros are simple and on the critical line</a>: Abstract and
+provenance; arXiv v2. Access: abstract, version and provenance note
+inspected.</li>
+</ul>
+<p><a id="m-claim-flt"></a> ## Fermat’s Last Theorem: large Lean
+formalization</p>
+<p><strong>Date:</strong> 2026-09-04. <strong>Category:</strong>
+formalization of an existing theorem.</p>
+<p><strong>System/author:</strong> Anthropic and human mathematical
+contributors. <strong>Model identification:</strong> Claude; exact
+version not inferred.</p>
+<p>For natural n≥3 and positive natural a,b,c, a<sup>n+b</sup>n≠c^n.</p>
+<p><strong>Scope:</strong> Positive integers; n≥3; formal theorem
+matched to Mathlib.</p>
+<p><strong>Contribution:</strong> Depends on the human
+Frey–Serre–Ribet–Wiles–Taylor–Wiles development; experts advised and
+inspected.</p>
+<p><strong>Evidence assessment:</strong> formalization artifact and
+reported second kernel check read. README reports comparator and nanoda
+checks, with disclosed checker patches.</p>
+<p><strong>Limits:</strong> A new formalization, not the first proof of
+FLT; atlas did not build it.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://www.anthropic.com/research/formalizing-fermats-last-theorem">Formalizing
+Fermat’s Last Theorem</a>: Announcement. Access: dated announcement and
+human expert attribution inspected.</li>
+<li><a
+href="https://github.com/anthropics/fermats-last-theorem/tree/6e837e75355538c7f80bab5b956861e86c4eacc2">Fermat’s
+Last Theorem in Lean 4</a>: README, final check and Mathlib bridge.
+Access: README, theorem text and verification description
+inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-nsforced"></a> ## Forced three-dimensional
+Navier–Stokes breakdown</p>
+<p><strong>Date:</strong> 2026-09-08. <strong>Category:</strong> new
+theorem with formal artifact.</p>
+<p><strong>System/author:</strong> OpenAI. <strong>Model
+identification:</strong> Research model; commercial version not
+inferred.</p>
+<p>For every ν&gt;0, smooth compact forcing produces zero-initial-data
+smooth flow on [0,1) with bounded L² energy and unbounded L∞ near time
+1.</p>
+<p><strong>Scope:</strong> R³; divergence-free velocity; prescribed
+smooth forcing; Clay forced C/D formulations.</p>
+<p><strong>Contribution:</strong> Human theorem-statement assessment and
+independent formal audits are documented.</p>
+<p><strong>Evidence assessment:</strong> formal theorem evidence strong
+but prose translation disputed. Independent repository reports
+kernels/comparator and a Mathlib-only statement bridge for the
+explicitly older upstream revision.</p>
+<p><strong>Limits:</strong> Forced theorem does not settle unforced
+Navier–Stokes. Prose correspondence requires separate evaluation. Clay
+Active is not a prize award.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://cdn.openai.com/pdf/32d9f210-8b73-45e0-91bc-82a30aef8a9a/navier-stokes.pdf">Finite
+time blowup for Navier–Stokes</a>: Theorem 1.1. Access: Theorem 1.1 and
+proof-outline introduction inspected.</li>
+<li><a
+href="https://github.com/openai/NavierStokesAndEuler/tree/f9e8bc5b38b6e212696e8a30e3e91517af887bbd">OpenAI
+NavierStokesAndEuler formalization</a>: Comparator theorem declarations.
+Access: README and formalization metadata inspected.</li>
+<li><a
+href="https://github.com/francescoantoniodeluca/navier-stokes-formal-audit/tree/c2e4f438f7af8bbf222a59801696aca2c3c15b6f">Independent
+Navier–Stokes formal audit</a>: Pinned upstream and ClaySpec bridge.
+Access: README, exact upstream revision and scope inspected.</li>
+<li><a
+href="https://www.claymath.org/millennium/navier-stokes-equation/">Clay
+Mathematics Institute: Navier–Stokes Equation</a>: Active status.
+Access: current status label inspected.</li>
+<li><a href="https://arxiv.org/abs/2610.08144">Navier-Stokes lost in
+translation</a>: Natural-language/formal correspondence critique.
+Access: abstract and documented comparison scope inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-euler"></a> ## Separate unforced Euler singularity
+artifact</p>
+<p><strong>Date:</strong> 2026-09. <strong>Category:</strong> new
+theorem with formal artifact.</p>
+<p><strong>System/author:</strong> OpenAI. <strong>Model
+identification:</strong> Research model; commercial version not
+inferred.</p>
+<p>The repository separately formalizes finite-time breakdown for
+unforced three-dimensional Euler.</p>
+<p><strong>Scope:</strong> Euler has ν=0; do not transfer its conclusion
+to viscous unforced Navier–Stokes.</p>
+<p><strong>Contribution:</strong> Human statement and checker work is
+described in release metadata.</p>
+<p><strong>Evidence assessment:</strong> theorem entry points inspected.
+No separate local replay.</p>
+<p><strong>Limits:</strong> Viscosity and norm of breakdown are
+mathematically material.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://github.com/openai/NavierStokesAndEuler/tree/f9e8bc5b38b6e212696e8a30e3e91517af887bbd">OpenAI
+NavierStokesAndEuler formalization</a>: Euler theorem declaration list.
+Access: README and formalization metadata inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-ns-translation"></a> ## Navier–Stokes prose/formal
+translation criticism</p>
+<p><strong>Date:</strong> 2026-10-06. <strong>Category:</strong>
+critical research audit.</p>
+<p><strong>System/author:</strong> Bastounis, Circelli and Hansen.
+<strong>Model identification:</strong> Not applicable.</p>
+<p>The critique identifies differences between prose and formalized
+intermediate estimates.</p>
+<p><strong>Scope:</strong> Examples include derivative order in Lemma
+8.6 and a uniqueness inequality.</p>
+<p><strong>Contribution:</strong> Independent mathematical comparison by
+the named authors.</p>
+<p><strong>Evidence assessment:</strong> documented translation issue
+not refutation of final formal statement. This is itself a preprint; no
+independent adjudication of every objection performed.</p>
+<p><strong>Limits:</strong> Authors do not claim the natural-language
+proof is necessarily incorrect.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a href="https://arxiv.org/abs/2610.08144">Navier-Stokes lost in
+translation</a>: Lemma 8.6 discussion and explicit scope disclaimer.
+Access: abstract and documented comparison scope inspected.</li>
+</ul>
+<p><a id="m-claim-catalogue"></a> ## OpenAI mathematics catalogue: exact
+metadata census</p>
+<p><strong>Date:</strong> 2026-11-24. <strong>Category:</strong>
+research catalogue.</p>
+<p><strong>System/author:</strong> OpenAI. <strong>Model
+identification:</strong> Multiple research outputs; do not assign a
+single version.</p>
+<p>The pinned CONTENTS file yields 730 manuscript links grouped into 375
+result families.</p>
+<p><strong>Scope:</strong> Non-contiguous family IDs reach 380. Count
+manuscripts, families and verified theorems separately.</p>
+<p><strong>Contribution:</strong> Publisher maintains releases and
+corrections; atlas parsed metadata.</p>
+<p><strong>Evidence assessment:</strong> metadata count verified proofs
+not individually reviewed. Count checked programmatically; no universal
+proof validation.</p>
+<p><strong>Limits:</strong> All catalogue entries ≠ all open mathematics
+solved. All entries default to not individually reviewed.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/CONTENTS.md">OpenAI
+mathematics manuscript catalogue, pinned snapshot</a>: Entire metadata
+catalogue. Access: entire catalogue parsed for metadata.</li>
+<li><a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md">OpenAI
+mathematics release history, pinned snapshot</a>: Revision record.
+Access: full history file inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-withdrawals"></a> ## OpenAI October Hodge-related
+withdrawals</p>
+<p><strong>Date:</strong> 2026-10-07. <strong>Category:</strong>
+withdrawal/correction record.</p>
+<p><strong>System/author:</strong> OpenAI. <strong>Model
+identification:</strong> Not applicable.</p>
+<p>The release history withdraws three Hodge-related manuscripts after a
+stabilization-trace sign error.</p>
+<p><strong>Scope:</strong> Split abelian eightfold Weil classes;
+Kuga–Satake for K3; rational Hodge products of K3 surfaces.</p>
+<p><strong>Contribution:</strong> Publisher records errors and dependent
+repairs.</p>
+<p><strong>Evidence assessment:</strong> withdrawal record confirmed. No
+substitute proof is inferred from a later catalogue title.</p>
+<p><strong>Limits:</strong> Keep withdrawn statements in provenance,
+excluded from accepted theorem retrieval.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md">OpenAI
+mathematics release history, pinned snapshot</a>: October 7 withdrawal
+entry. Access: full history file inspected.</li>
+</ul>
+<p><a id="m-claim-3sum"></a> ## Truly subquadratic 3SUM and subcubic
+APSP</p>
+<p><strong>Date:</strong> 2026-10-05. <strong>Category:</strong>
+AI-assisted human research theorem.</p>
+<p><strong>System/author:</strong> Josh Alman and Virginia Vassilevska
+Williams; Anthropic. <strong>Model identification:</strong> Claude;
+exact version not inferred.</p>
+<p>The paper states bounded-integer 3SUM in O(n^1.9992) and APSP in
+O(n^2.9995), rounded exponents.</p>
+<p><strong>Scope:</strong> Retain integer-size bounds and computational
+model; formal scope differs for some real-input results.</p>
+<p><strong>Contribution:</strong> Authors understood, simplified,
+strengthened and extended Claude’s algorithm and accepted
+responsibility.</p>
+<p><strong>Evidence assessment:</strong> primary paper scope and formal
+limitations read. Original researchers are human coauthors, not an
+institutional endorsement by their universities.</p>
+<p><strong>Limits:</strong> An exponent improvement is asymptotic, not
+an established practical speedup.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a href="https://arxiv.org/abs/2610.06783v1">Truly Subquadratic 3SUM
+and Truly Subcubic APSP via Triangles in Sparse Lopsided Graphs</a>:
+Abstract, introduction and provenance. Access: abstract and theorem
+scope inspected.</li>
+<li><a
+href="https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5">Anthropic
+formal-math repository, pinned snapshot</a>: 3sum-apsp README and
+EndStatement.lean description. Access: README and 3SUM/APSP, ETH, VP/VNP
+project notes inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-claudeeth"></a> ## Claude ETH refutation artifact</p>
+<p><strong>Date:</strong> 2026-11. <strong>Category:</strong> formal
+research artifact.</p>
+<p><strong>System/author:</strong> Anthropic. <strong>Model
+identification:</strong> Internal research Claude; README separately
+names Claude Opus 5.5 at high effort for rederivation, not executed
+here.</p>
+<p>A deterministic counting 3-SAT algorithm is claimed with time 2^{O(n
+log log n / sqrt(log n))}.</p>
+<p><strong>Scope:</strong> Asymptotic Turing-machine model;
+variable-count interpretation must match the formal statement.</p>
+<p><strong>Contribution:</strong> No additional independent expert
+acceptance established in this audit.</p>
+<p><strong>Evidence assessment:</strong> artifact statement read
+independent acceptance not established. Formal checks are
+publisher-reported; atlas did not replay.</p>
+<p><strong>Limits:</strong> Subexponential is not polynomial time and
+does not establish P=NP.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/eth">A
+2^o(n) Time Algorithm for 3-SAT</a>: README; MainResults.lean and
+ETHIsFalse/MainTheorem entry descriptions. Access: README, machine model
+and theorem-entry descriptions inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-oaieth"></a> ## OpenAI fixed-width counting-SAT
+subexponential claim</p>
+<p><strong>Date:</strong> 2026-10-26. <strong>Category:</strong>
+research claim under expert review.</p>
+<p><strong>System/author:</strong> OpenAI. <strong>Model
+identification:</strong> Research model; exact version not inferred.</p>
+<p>Reports deterministic subexponential-time, polynomial-space counting
+of k-CNF assignments for fixed k.</p>
+<p><strong>Scope:</strong> Fixed k; asymptotic complexity and exact
+machine assumptions belong to the original theorem.</p>
+<p><strong>Contribution:</strong> Announcement names an external
+research review group.</p>
+<p><strong>Evidence assessment:</strong> announcement and catalogue
+locator read. Review described as ongoing; independent final
+certification not established here.</p>
+<p><strong>Limits:</strong> Paper proof not read line by line; no
+practical SAT solver result inferred.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://openai.com/index/building-scientific-understanding-with-academic-communities/">Working
+with academic communities to build scientific understanding</a>: ETH
+section. Access: dated page inspected.</li>
+<li><a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/CONTENTS.md">OpenAI
+mathematics manuscript catalogue, pinned snapshot</a>: Family 378;
+oai-paper-0721. Access: entire catalogue parsed for metadata.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-smoothing"></a> ## OpenAI local smoothing for the
+Euclidean wave equation</p>
+<p><strong>Date:</strong> 2026-10-26. <strong>Category:</strong>
+frontier research claim.</p>
+<p><strong>System/author:</strong> OpenAI. <strong>Model
+identification:</strong> Research model; exact version not inferred.</p>
+<p>Announces local smoothing in spatial dimensions at least two with
+harmonic-analysis consequences.</p>
+<p><strong>Scope:</strong> Exact integrability, derivative gain and
+endpoint restrictions require the original theorem.</p>
+<p><strong>Contribution:</strong> Academic engagement described in the
+announcement.</p>
+<p><strong>Evidence assessment:</strong> announcement scope read exact
+proof not replayed. No independent blanket certification established by
+this atlas.</p>
+<p><strong>Limits:</strong> Do not turn interior restriction-range
+consequences into all endpoint statements.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://openai.com/index/building-scientific-understanding-with-academic-communities/">Working
+with academic communities to build scientific understanding</a>: Local
+smoothing section. Access: dated page inspected.</li>
+<li><a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/CONTENTS.md">OpenAI
+mathematics manuscript catalogue, pinned snapshot</a>: Family 079;
+oai-paper-0159. Access: entire catalogue parsed for metadata.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-ymexistence"></a> ## Four-dimensional Yang–Mills
+existence assessment</p>
+<p><strong>Date:</strong> 2026-11-10. <strong>Category:</strong>
+independent expert assessment of research artifact.</p>
+<p><strong>System/author:</strong> OpenAI and Yang–Mills working group.
+<strong>Model identification:</strong> Research model; exact version not
+inferred.</p>
+<p>The working group reports a Wilson-lattice scaling-limit construction
+satisfying Wightman axioms.</p>
+<p><strong>Scope:</strong> Four dimensions; simple compact gauge groups;
+retain the group’s exact existence specification.</p>
+<p><strong>Contribution:</strong> Independent specialists assessed the
+construction.</p>
+<p><strong>Evidence assessment:</strong> expert assessment read
+existence only. A group assessment is stronger than an unreviewed
+provider headline; no local proof replay.</p>
+<p><strong>Limits:</strong> No mass gap or uniqueness of infinite-volume
+limit established by that assessment.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a href="https://github.com/yang-mills-group/YM">Yang–Mills
+working-group results and verification</a>: November 10 assessment.
+Access: assessment scope in README inspected.</li>
+<li><a
+href="https://openai.com/index/building-scientific-understanding-with-academic-communities/">Working
+with academic communities to build scientific understanding</a>:
+Yang–Mills section. Access: dated page inspected.</li>
+</ul>
+<p><a id="m-claim-ymgap"></a> ## Complete Yang–Mills existence and
+mass-gap problem</p>
+<p><strong>Date:</strong> 2026-11-25. <strong>Category:</strong>
+open-problem status.</p>
+<p><strong>System/author:</strong> Clay Mathematics Institute.
+<strong>Model identification:</strong> Not applicable.</p>
+<p>The complete Clay problem remains labelled Unsolved in the retrieved
+record.</p>
+<p><strong>Scope:</strong> Existence progress and strictly positive mass
+gap are distinct obligations.</p>
+<p><strong>Contribution:</strong> Status comes from the official problem
+owner and scoped working-group statement.</p>
+<p><strong>Evidence assessment:</strong> no decisive mass gap proof
+identified. No decisive primary proof of the full mass-gap conclusion
+found in this audit.</p>
+<p><strong>Limits:</strong> This is a dated status observation, not a
+forecast about future proof.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://www.claymath.org/millennium/yang-mills-the-maths-gap/">Clay
+Mathematics Institute: Yang–Mills and the Mass Gap</a>: Current status.
+Access: current label and problem summary inspected.</li>
+<li><a href="https://github.com/yang-mills-group/YM">Yang–Mills
+working-group results and verification</a>: Mass-gap exclusion. Access:
+assessment scope in README inspected.</li>
+</ul>
+<p><a id="m-claim-vpvnp"></a> ## Anthropic VP≠VNP artifact</p>
+<p><strong>Date:</strong> 2026-11-23. <strong>Category:</strong> formal
+research claim without human proof review.</p>
+<p><strong>System/author:</strong> Anthropic. <strong>Model
+identification:</strong> Internal research Claude; exact discovery
+version undisclosed.</p>
+<p>Claims VP≠VNP over all fields, with Hamiltonian-cycle lower bounds
+and permanent bounds outside characteristic two.</p>
+<p><strong>Scope:</strong> Arithmetic circuits; growth m^{c(log
+m)^(1/3)}; characteristic is material.</p>
+<p><strong>Contribution:</strong> README explicitly says no human
+mathematician has checked the proof.</p>
+<p><strong>Evidence assessment:</strong> statement inspected independent
+acceptance not established. No independent proof replay or semantic
+certification by this atlas.</p>
+<p><strong>Limits:</strong> Arithmetic VP/VNP is not Boolean P/NP.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/vp-vnp">VP
+≠ VNP over every field: statement and research artifact</a>: README and
+Statement.lean arithmetic-circuit definitions. Access: README and
+Statement.lean inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-oai-newnine"></a> ## OpenAI November 24 complexity and
+polytope additions</p>
+<p><strong>Date:</strong> 2026-11-24. <strong>Category:</strong>
+catalogued research claims.</p>
+<p><strong>System/author:</strong> OpenAI. <strong>Model
+identification:</strong> Research model(s); exact version not
+inferred.</p>
+<p>Nine new manuscripts in families 379–380 include tensor/circuit
+claims, multiplication exponents, sunflowers and linear programming.</p>
+<p><strong>Scope:</strong> Exact theorem/model assumptions not
+individually reviewed in this atlas.</p>
+<p><strong>Contribution:</strong> Human independent acceptance not
+established here.</p>
+<p><strong>Evidence assessment:</strong> metadata only no theorem
+adjudication. No independent validation assigned from the manuscript
+titles.</p>
+<p><strong>Limits:</strong> Do not present the 9/4 matrix-multiplication
+title as an atlas-verified theorem.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/CONTENTS.md">OpenAI
+mathematics manuscript catalogue, pinned snapshot</a>: Families 379–380.
+Access: entire catalogue parsed for metadata.</li>
+<li><a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md">OpenAI
+mathematics release history, pinned snapshot</a>: November 24 update.
+Access: full history file inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-rh"></a> ## Riemann Hypothesis: November formal proof
+and independent checks</p>
+<p><strong>Date:</strong> 2026-11-20. <strong>Category:</strong>
+AI-assisted research with independently checked formal proof.</p>
+<p><strong>System/author:</strong> Levent Alpöge with Claude.
+<strong>Model identification:</strong> Claude; exact version not
+inferred.</p>
+<p>The released formal proof is certified to match Mathlib’s
+RiemannHypothesis proposition.</p>
+<p><strong>Scope:</strong> The usual nontrivial-zero critical-line
+assertion; standard Lean foundational axioms.</p>
+<p><strong>Contribution:</strong> Alpöge supplied mathematical
+direction; independent formal-methods teams and Andrew Sutherland
+audited statements and proof exports.</p>
+<p><strong>Evidence assessment:</strong> strong independent formal
+verification evidence. Joint Lean FRO/Mathlib statement plus MIT
+reproduction record report matched theorem, restricted axioms and
+independent kernel checks.</p>
+<p><strong>Limits:</strong> Atlas did not execute the large proof.
+Conventional exposition and Clay prize process are separate; no prize
+award established.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a href="https://alpo.ge/remark.pdf">Alpöge’s Riemann Hypothesis
+announcement</a>: November 20 announcement. Access: four-page PDF
+inspected.</li>
+<li><a
+href="https://leanprover-community.github.io/blog/posts/riemann-hypothesis/">Lean
+verification of the Riemann Hypothesis</a>: November 21 joint
+verification statement. Access: full statement inspected.</li>
+<li><a href="https://math.mit.edu/~drew/grh/">RH Lean proof:
+verification files, Andrew Sutherland</a>: November 24 verifier status
+and axiom lists. Access: summary, theorem/axiom checklist and dated
+checker status inspected.</li>
+<li><a
+href="https://www.claymath.org/millennium/riemann-hypothesis/">Clay
+Mathematics Institute: Riemann Hypothesis</a>: Active status. Access:
+current label inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-grh"></a> ## Dirichlet generalized RH: independently
+checked scope</p>
+<p><strong>Date:</strong> 2026-11-20. <strong>Category:</strong>
+generalization scope audit.</p>
+<p><strong>System/author:</strong> Levent Alpöge with Claude.
+<strong>Model identification:</strong> Claude; exact version not
+inferred.</p>
+<p>MIT reports independently checked critical-strip zero statements for
+Dirichlet L-functions across all positive moduli and all characters,
+including the primitive-character formulation.</p>
+<p><strong>Scope:</strong> Zeros in 0&lt;Re(s)&lt;1 have real part 1/2.
+The additional nonvanishing theorem for Re(s)&gt;1/2 excludes the
+trivial-character pole at s=1.</p>
+<p><strong>Contribution:</strong> Author supplied formal proofs;
+Sutherland and independent proof-checker teams checked named
+declarations.</p>
+<p><strong>Evidence assessment:</strong> strong independent formal
+verification for dirichlet scope. Independent checks reported by MIT;
+this atlas reopened the exact scope and theorem declarations, without
+executing the proof.</p>
+<p><strong>Limits:</strong> These checked declarations do not establish
+general Dedekind, Hecke, automorphic or Artin L-function variants.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a href="https://alpo.ge/remark.pdf">Alpöge’s Riemann Hypothesis
+announcement</a>: Generalization discussion. Access: four-page PDF
+inspected.</li>
+<li><a href="https://math.mit.edu/~drew/grh/">RH Lean proof:
+verification files, Andrew Sutherland</a>: What was verified:
+declarations 3–5 and Scope paragraph. Access: summary, theorem/axiom
+checklist and dated checker status inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-unforcedns"></a> ## Alpöge–Buckmaster unforced
+Navier–Stokes package</p>
+<p><strong>Date:</strong> 2026-11-20. <strong>Category:</strong>
+conditional formal artifact with external numerical dependency.</p>
+<p><strong>System/author:</strong> Levent Alpöge and Tristan Buckmaster.
+<strong>Model identification:</strong> No exact model version
+established from inspected artifact.</p>
+<p>The available challenge declarations derive breakdown conditional on
+a bounded periodic similarity profile/certificate.</p>
+<p><strong>Scope:</strong> Numerical certificate/data are not included;
+interval arithmetic is outside the formalization.</p>
+<p><strong>Contribution:</strong> Authors provide a prose argument,
+conditional Lean statements and numerical-certification description.</p>
+<p><strong>Evidence assessment:</strong> conditional artifact inspected
+unconditional validation incomplete. README says corrected package not
+rebuilt; no local reconstruction or external unconditional validation
+established.</p>
+<p><strong>Limits:</strong> Do not represent conditional implications as
+an unconditional unforced-NS resolution.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a
+href="https://github.com/tristanbuckmaster/navier-stokes/tree/ad53419de079eb8f95f60313473374624a348546">Alpöge–Buckmaster
+unforced Navier–Stokes release</a>: Root README and lean/README;
+certificate and rebuild caveats. Access: root and Lean READMEs
+inspected.</li>
+</ul>
+<p>Artifact identifiers are preserved in
+<code>ai-math-claims.json</code>; a listed hash pins evidence and does
+not itself prove the mathematical claim.</p>
+<p><a id="m-claim-kakeya"></a> ## Wang–Zahl three-dimensional Kakeya
+theorem</p>
+<p><strong>Date:</strong> 2025-02-24. <strong>Category:</strong> human
+research frontier.</p>
+<p><strong>System/author:</strong> Hong Wang and Joshua Zahl.
+<strong>Model identification:</strong> Not an AI attribution.</p>
+<p>Every Kakeya set in R³ has full Hausdorff and Minkowski
+dimension.</p>
+<p><strong>Scope:</strong> Dimension three; definitions of Kakeya sets
+and both dimensions retained.</p>
+<p><strong>Contribution:</strong> Named human authors.</p>
+<p><strong>Evidence assessment:</strong> primary abstract read. Full
+proof not independently checked here.</p>
+<p><strong>Limits:</strong> Do not infer all-dimensional Kakeya from
+this source.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a href="https://arxiv.org/abs/2502.17655v1">Volume estimates for
+unions of convex sets, and the Kakeya set conjecture in three
+dimensions</a>: arXiv v1 abstract. Access: abstract and version record
+inspected.</li>
+</ul>
+<p><a id="m-claim-langlands"></a> ## Categorical unramified geometric
+Langlands project</p>
+<p><strong>Date:</strong> 2024-2025. <strong>Category:</strong> human
+research frontier.</p>
+<p><strong>System/author:</strong> Gaitsgory and coauthors.
+<strong>Model identification:</strong> Not an AI attribution.</p>
+<p>A five-paper project proves the categorical unramified geometric
+Langlands conjecture in its stated setting.</p>
+<p><strong>Scope:</strong> Characteristic-zero de Rham and Betti
+settings in inspected Part I.</p>
+<p><strong>Contribution:</strong> Multi-author human research
+program.</p>
+<p><strong>Evidence assessment:</strong> project scope and part one
+abstract read. Atlas did not verify every component.</p>
+<p><strong>Limits:</strong> Not every ramified, arithmetic or quantum
+Langlands conjecture.</p>
+<p><strong>Primary sources and exact locators:</strong></p>
+<ul>
+<li><a href="https://people.mpim-bonn.mpg.de/gaitsgde/GLC/">Proof of the
+geometric Langlands conjecture: five-paper project</a>: Authors’
+five-paper project. Access: authors’ project page inspected.</li>
+<li><a href="https://arxiv.org/abs/2405.03599v3">Proof of the geometric
+Langlands conjecture I: construction of the functor</a>: Part I v3
+abstract. Access: abstract and version history inspected.</li>
+</ul>
+</body>
+</html>

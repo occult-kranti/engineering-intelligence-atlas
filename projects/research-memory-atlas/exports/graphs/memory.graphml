@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"><key id="label" for="node" attr.name="label" attr.type="string"/><key id="status" for="node" attr.name="status" attr.type="string"/><key id="relation" for="edge" attr.name="relation" attr.type="string"/><graph id="memory" edgedefault="directed">
+<node id="g-graph"><data key="label">Typed knowledge graph</data><data key="status">established-method</data></node>
+<node id="g-node"><data key="label">Atomic concept and claim nodes</data><data key="status">established-method</data></node>
+<node id="g-edge"><data key="label">Typed directed relations</data><data key="status">established-method</data></node>
+<node id="g-backlink"><data key="label">Backlinks</data><data key="status">established-method</data></node>
+<node id="g-mention"><data key="label">Unlinked mentions</data><data key="status">established-method</data></node>
+<node id="g-identity"><data key="label">Entity identity and disambiguation</data><data key="status">established-method</data></node>
+<node id="g-provenance"><data key="label">Evidence provenance</data><data key="status">established-method</data></node>
+<node id="g-status"><data key="label">Claim status and uncertainty</data><data key="status">established-method</data></node>
+<node id="g-hash"><data key="label">Content addressing</data><data key="status">established-method</data></node>
+<node id="g-scope"><data key="label">Scope-first retrieval</data><data key="status">established-method</data></node>
+<node id="g-time"><data key="label">Bitemporal evidence</data><data key="status">established-method</data></node>
+<node id="g-interval"><data key="label">Temporal validity intervals</data><data key="status">established-method</data></node>
+<node id="g-snapshot"><data key="label">Immutable snapshots</data><data key="status">established-method</data></node>
+<node id="g-events"><data key="label">Event and decision ledger</data><data key="status">established-method</data></node>
+<node id="g-wal"><data key="label">Write-ahead logs</data><data key="status">established-method</data></node>
+<node id="g-sqlite"><data key="label">SQLite transaction isolation</data><data key="status">established-method</data></node>
+<node id="g-cache"><data key="label">Result cache</data><data key="status">established-method</data></node>
+<node id="g-memo"><data key="label">Memoization</data><data key="status">established-method</data></node>
+<node id="g-lru"><data key="label">Least recently used eviction</data><data key="status">established-method</data></node>
+<node id="g-fifo"><data key="label">Bounded FIFO eviction</data><data key="status">established-method</data></node>
+<node id="g-ttl"><data key="label">Time-to-live</data><data key="status">established-method</data></node>
+<node id="g-invalidate"><data key="label">Dependency invalidation</data><data key="status">established-method</data></node>
+<node id="g-provider-cache"><data key="label">Provider prompt cache</data><data key="status">established-method</data></node>
+<node id="g-kv"><data key="label">Attention key-value cache</data><data key="status">established-method</data></node>
+<node id="g-tokens"><data key="label">Tokenization</data><data key="status">established-method</data></node>
+<node id="g-idf"><data key="label">Inverse document frequency</data><data key="status">established-method</data></node>
+<node id="g-bm25"><data key="label">BM25 lexical ranking</data><data key="status">established-method</data></node>
+<node id="g-embedding"><data key="label">Embedding similarity</data><data key="status">established-method</data></node>
+<node id="g-cosine"><data key="label">Cosine similarity</data><data key="status">established-method</data></node>
+<node id="g-adjacency"><data key="label">Adjacency matrix</data><data key="status">established-method</data></node>
+<node id="g-degree"><data key="label">Degree and hub effects</data><data key="status">established-method</data></node>
+<node id="g-laplacian"><data key="label">Graph Laplacian</data><data key="status">established-method</data></node>
+<node id="g-dirichlet"><data key="label">Discrete Dirichlet energy</data><data key="status">established-method</data></node>
+<node id="g-grounding"><data key="label">Grounding and boundary conditions</data><data key="status">established-method</data></node>
+<node id="g-diffusion"><data key="label">Heat diffusion on graphs</data><data key="status">established-method</data></node>
+<node id="g-walk"><data key="label">Random walk transition</data><data key="status">established-method</data></node>
+<node id="g-pagerank"><data key="label">Personalized PageRank</data><data key="status">established-method</data></node>
+<node id="g-convergence"><data key="label">Contraction and convergence</data><data key="status">established-method</data></node>
+<node id="g-rrf"><data key="label">Reciprocal rank fusion</data><data key="status">established-method</data></node>
+<node id="g-mmr"><data key="label">Diversity-aware selection</data><data key="status">established-method</data></node>
+<node id="g-budget"><data key="label">Bounded evidence packets</data><data key="status">established-method</data></node>
+<node id="g-path"><data key="label">Explanation paths</data><data key="status">established-method</data></node>
+<node id="g-bfs"><data key="label">Bounded breadth-first traversal</data><data key="status">established-method</data></node>
+<node id="g-dag"><data key="label">Prerequisite DAG</data><data key="status">established-method</data></node>
+<node id="g-cycle"><data key="label">Cycle detection</data><data key="status">established-method</data></node>
+<node id="g-idempotency"><data key="label">Idempotent operations</data><data key="status">established-method</data></node>
+<node id="g-checkpoint"><data key="label">Durable checkpoints</data><data key="status">established-method</data></node>
+<node id="g-loop"><data key="label">Research improvement loops</data><data key="status">established-method</data></node>
+<node id="g-stop"><data key="label">Stopping criteria</data><data key="status">established-method</data></node>
+<node id="g-baseline"><data key="label">Retrieval baselines</data><data key="status">established-method</data></node>
+<node id="g-recall"><data key="label">Recall and precision</data><data key="status">established-method</data></node>
+<node id="g-ndcg"><data key="label">Ranking quality</data><data key="status">established-method</data></node>
+<node id="g-abstain"><data key="label">Abstention</data><data key="status">established-method</data></node>
+<node id="g-temporal-eval"><data key="label">Temporal update tests</data><data key="status">established-method</data></node>
+<node id="g-calibration"><data key="label">Calibration versus confidence</data><data key="status">established-method</data></node>
+<node id="g-leakage"><data key="label">Evaluation leakage</data><data key="status">established-method</data></node>
+<node id="g-episodic"><data key="label">Episodic memory</data><data key="status">established-method</data></node>
+<node id="g-semantic"><data key="label">Semantic memory</data><data key="status">established-method</data></node>
+<node id="g-replay"><data key="label">Replay and consolidation</data><data key="status">established-method</data></node>
+<node id="g-hebb"><data key="label">Hebbian associations</data><data key="status">established-method</data></node>
+<node id="g-hopfield"><data key="label">Hopfield associative memory</data><data key="status">established-method</data></node>
+<node id="g-attention"><data key="label">Attention-based association</data><data key="status">established-method</data></node>
+<node id="g-forgetting"><data key="label">Forgetting and retention</data><data key="status">established-method</data></node>
+<node id="g-obsidian"><data key="label">Obsidian-compatible notes</data><data key="status">established-method</data></node>
+<node id="g-foam"><data key="label">Foam in VS Code</data><data key="status">established-method</data></node>
+<node id="g-logseq"><data key="label">Logseq linked blocks</data><data key="status">established-method</data></node>
+<node id="g-graphiti"><data key="label">Graphiti temporal graph</data><data key="status">established-method</data></node>
+<node id="g-graphrag"><data key="label">GraphRAG and global synthesis</data><data key="status">representative-frontier</data></node>
+<node id="g-hipporag"><data key="label">HippoRAG associative retrieval</data><data key="status">representative-frontier</data></node>
+<node id="g-zero"><data key="label">GraphRAG Zero</data><data key="status">representative-frontier</data></node>
+<node id="g-hindsight"><data key="label">Hindsight memory operations</data><data key="status">representative-frontier</data></node>
+<node id="g-mem0"><data key="label">Mem0 consolidation</data><data key="status">representative-frontier</data></node>
+<node id="g-memgpt"><data key="label">MemGPT memory tiers</data><data key="status">representative-frontier</data></node>
+<node id="g-donna"><data key="label">Donna evidence handoff</data><data key="status">established-method</data></node>
+<node id="g-skills"><data key="label">Skill memory workflow</data><data key="status">established-method</data></node>
+<node id="g-repos"><data key="label">Repository knowledge graph</data><data key="status">established-method</data></node>
+<node id="g-reviews"><data key="label">Independent criticism</data><data key="status">established-method</data></node>
+<node id="g-publication"><data key="label">Publication receipts</data><data key="status">established-method</data></node>
+<node id="g-physics-bridge"><data key="label">Physics-to-memory operator bridges</data><data key="status">established-method</data></node>
+<node id="g-frequency-bridge"><data key="label">Spectral graph modes</data><data key="status">established-method</data></node>
+<node id="g-magnetism-bridge"><data key="label">Spin models and associative networks</data><data key="status">established-method</data></node>
+<node id="g-causality"><data key="label">Association versus causation</data><data key="status">established-method</data></node>
+<node id="g-compression"><data key="label">Lossy summary compression</data><data key="status">established-method</data></node>
+<node id="g-entropy"><data key="label">Information entropy</data><data key="status">established-method</data></node>
+<node id="g-cost"><data key="label">Cost and latency accounting</data><data key="status">established-method</data></node>
+<node id="g-questions"><data key="label">Question-led knowledge growth</data><data key="status">established-method</data></node>
+<node id="gf-adjacency"><data key="label">Adjacency and weighted degree</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-laplacian"><data key="label">Combinatorial Laplacian</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-dirichlet"><data key="label">Dirichlet quadratic form</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-grounded"><data key="label">Grounded Poisson problem</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-heat"><data key="label">Graph heat flow</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-graph-wave"><data key="label">Graph wave modes</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-transition"><data key="label">Row-stochastic transition</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-ppr"><data key="label">Personalized PageRank</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-ppr-error"><data key="label">PageRank residual bound</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-idf"><data key="label">Positive inverse document frequency</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-bm25"><data key="label">BM25 retrieval score</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-cosine"><data key="label">Cosine similarity</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-rrf"><data key="label">Weighted reciprocal rank fusion</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-mmr"><data key="label">Relevance and redundancy tradeoff</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-entropy"><data key="label">Shannon entropy of a declared distribution</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-latency"><data key="label">Expected local cache latency</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-amat"><data key="label">Two-level average memory access time</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-ttl-probability"><data key="label">Poisson-update freshness model</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-lru-distance"><data key="label">Fully associative LRU hit condition</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-cache-key"><data key="label">Complete cache dependency key</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-budget-knapsack"><data key="label">Evidence selection under a byte budget</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-bfs"><data key="label">Traversal complexity</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-topological"><data key="label">DAG topological condition</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-hebb"><data key="label">Simple Hebbian weight construction</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-hopfield-energy"><data key="label">Binary Hopfield Lyapunov function</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-attention"><data key="label">Scaled dot-product attention</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-retention"><data key="label">Exponential retrieval-priority heuristic</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-precision"><data key="label">Evidence precision and recall</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-ndcg"><data key="label">Discounted cumulative gain</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-brier"><data key="label">Brier calibration score</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="gf-novelty-loop"><data key="label">Measured improvement in a fixed loop</data><data key="status">formula-with-stated-assumptions</data></node>
+<edge id="e0" source="g-graph" target="g-node"><data key="relation">prerequisite_of</data></edge>
+<edge id="e1" source="g-node" target="g-edge"><data key="relation">prerequisite_of</data></edge>
+<edge id="e2" source="g-edge" target="g-backlink"><data key="relation">prerequisite_of</data></edge>
+<edge id="e3" source="g-backlink" target="g-obsidian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e4" source="g-node" target="g-identity"><data key="relation">prerequisite_of</data></edge>
+<edge id="e5" source="g-identity" target="g-provenance"><data key="relation">prerequisite_of</data></edge>
+<edge id="e6" source="g-provenance" target="g-status"><data key="relation">prerequisite_of</data></edge>
+<edge id="e7" source="g-status" target="g-questions"><data key="relation">prerequisite_of</data></edge>
+<edge id="e8" source="g-provenance" target="g-hash"><data key="relation">prerequisite_of</data></edge>
+<edge id="e9" source="g-hash" target="g-snapshot"><data key="relation">prerequisite_of</data></edge>
+<edge id="e10" source="g-snapshot" target="g-events"><data key="relation">prerequisite_of</data></edge>
+<edge id="e11" source="g-events" target="g-checkpoint"><data key="relation">prerequisite_of</data></edge>
+<edge id="e12" source="g-checkpoint" target="g-publication"><data key="relation">prerequisite_of</data></edge>
+<edge id="e13" source="g-scope" target="g-time"><data key="relation">prerequisite_of</data></edge>
+<edge id="e14" source="g-time" target="g-interval"><data key="relation">prerequisite_of</data></edge>
+<edge id="e15" source="g-interval" target="g-invalidate"><data key="relation">prerequisite_of</data></edge>
+<edge id="e16" source="g-invalidate" target="g-cache"><data key="relation">prerequisite_of</data></edge>
+<edge id="e17" source="g-memo" target="g-cache"><data key="relation">prerequisite_of</data></edge>
+<edge id="e18" source="g-cache" target="g-lru"><data key="relation">prerequisite_of</data></edge>
+<edge id="e19" source="g-lru" target="g-fifo"><data key="relation">prerequisite_of</data></edge>
+<edge id="e20" source="g-fifo" target="g-ttl"><data key="relation">prerequisite_of</data></edge>
+<edge id="e21" source="g-tokens" target="g-idf"><data key="relation">prerequisite_of</data></edge>
+<edge id="e22" source="g-idf" target="g-bm25"><data key="relation">prerequisite_of</data></edge>
+<edge id="e23" source="g-bm25" target="g-rrf"><data key="relation">prerequisite_of</data></edge>
+<edge id="e24" source="g-rrf" target="g-budget"><data key="relation">prerequisite_of</data></edge>
+<edge id="e25" source="g-embedding" target="g-cosine"><data key="relation">prerequisite_of</data></edge>
+<edge id="e26" source="g-cosine" target="g-rrf"><data key="relation">prerequisite_of</data></edge>
+<edge id="e27" source="g-adjacency" target="g-degree"><data key="relation">prerequisite_of</data></edge>
+<edge id="e28" source="g-degree" target="g-laplacian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e29" source="g-laplacian" target="g-dirichlet"><data key="relation">prerequisite_of</data></edge>
+<edge id="e30" source="g-dirichlet" target="g-grounding"><data key="relation">prerequisite_of</data></edge>
+<edge id="e31" source="g-adjacency" target="g-walk"><data key="relation">prerequisite_of</data></edge>
+<edge id="e32" source="g-walk" target="g-pagerank"><data key="relation">prerequisite_of</data></edge>
+<edge id="e33" source="g-pagerank" target="g-convergence"><data key="relation">prerequisite_of</data></edge>
+<edge id="e34" source="g-convergence" target="g-rrf"><data key="relation">prerequisite_of</data></edge>
+<edge id="e35" source="g-laplacian" target="g-diffusion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e36" source="g-diffusion" target="g-frequency-bridge"><data key="relation">prerequisite_of</data></edge>
+<edge id="e37" source="g-graph" target="g-bfs"><data key="relation">prerequisite_of</data></edge>
+<edge id="e38" source="g-bfs" target="g-dag"><data key="relation">prerequisite_of</data></edge>
+<edge id="e39" source="g-dag" target="g-cycle"><data key="relation">prerequisite_of</data></edge>
+<edge id="e40" source="g-cycle" target="g-loop"><data key="relation">prerequisite_of</data></edge>
+<edge id="e41" source="g-loop" target="g-stop"><data key="relation">prerequisite_of</data></edge>
+<edge id="e42" source="g-events" target="g-idempotency"><data key="relation">prerequisite_of</data></edge>
+<edge id="e43" source="g-idempotency" target="g-checkpoint"><data key="relation">prerequisite_of</data></edge>
+<edge id="e44" source="g-baseline" target="g-recall"><data key="relation">prerequisite_of</data></edge>
+<edge id="e45" source="g-recall" target="g-ndcg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e46" source="g-ndcg" target="g-calibration"><data key="relation">prerequisite_of</data></edge>
+<edge id="e47" source="g-baseline" target="g-leakage"><data key="relation">prerequisite_of</data></edge>
+<edge id="e48" source="g-leakage" target="g-reviews"><data key="relation">prerequisite_of</data></edge>
+<edge id="e49" source="g-time" target="g-temporal-eval"><data key="relation">prerequisite_of</data></edge>
+<edge id="e50" source="g-temporal-eval" target="g-abstain"><data key="relation">prerequisite_of</data></edge>
+<edge id="e51" source="g-episodic" target="g-semantic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e52" source="g-semantic" target="g-replay"><data key="relation">prerequisite_of</data></edge>
+<edge id="e53" source="g-hebb" target="g-hopfield"><data key="relation">prerequisite_of</data></edge>
+<edge id="e54" source="g-hopfield" target="g-attention"><data key="relation">prerequisite_of</data></edge>
+<edge id="e55" source="g-cache" target="g-provider-cache"><data key="relation">prerequisite_of</data></edge>
+<edge id="e56" source="g-provider-cache" target="g-cost"><data key="relation">prerequisite_of</data></edge>
+<edge id="e57" source="g-provenance" target="g-repos"><data key="relation">prerequisite_of</data></edge>
+<edge id="e58" source="g-repos" target="g-skills"><data key="relation">prerequisite_of</data></edge>
+<edge id="e59" source="g-skills" target="g-donna"><data key="relation">prerequisite_of</data></edge>
+<edge id="e60" source="g-graphrag" target="g-zero"><data key="relation">prerequisite_of</data></edge>
+<edge id="e61" source="g-pagerank" target="g-hipporag"><data key="relation">prerequisite_of</data></edge>
+<edge id="e62" source="g-time" target="g-graphiti"><data key="relation">prerequisite_of</data></edge>
+<edge id="e63" source="g-semantic" target="g-compression"><data key="relation">prerequisite_of</data></edge>
+<edge id="e64" source="g-entropy" target="g-compression"><data key="relation">prerequisite_of</data></edge>
+<edge id="e65" source="g-reviews" target="g-questions"><data key="relation">prerequisite_of</data></edge>
+<edge id="e66" source="g-questions" target="g-loop"><data key="relation">prerequisite_of</data></edge>
+<edge id="e67" source="g-sqlite" target="g-wal"><data key="relation">prerequisite_of</data></edge>
+<edge id="e68" source="g-obsidian" target="g-foam"><data key="relation">prerequisite_of</data></edge>
+<edge id="e69" source="g-obsidian" target="g-logseq"><data key="relation">prerequisite_of</data></edge>
+<edge id="e70" source="g-dirichlet" target="g-physics-bridge"><data key="relation">analogy</data></edge>
+<edge id="e71" source="g-hopfield" target="g-magnetism-bridge"><data key="relation">analogy</data></edge>
+<edge id="e72" source="g-replay" target="g-loop"><data key="relation">analogy</data></edge>
+<edge id="e73" source="g-frequency-bridge" target="g-physics-bridge"><data key="relation">analogy</data></edge>
+<edge id="e74" source="g-status" target="g-causality"><data key="relation">related</data></edge>
+<edge id="e75" source="g-provenance" target="g-reviews"><data key="relation">related</data></edge>
+<edge id="e76" source="g-rrf" target="g-hindsight"><data key="relation">related</data></edge>
+<edge id="e77" source="g-cache" target="g-memgpt"><data key="relation">related</data></edge>
+<edge id="e78" source="g-time" target="g-mem0"><data key="relation">related</data></edge>
+<edge id="e79" source="g-cache" target="g-kv"><data key="relation">related</data></edge>
+<edge id="e80" source="g-mention" target="g-identity"><data key="relation">related</data></edge>
+<edge id="e81" source="g-graph" target="gf-adjacency"><data key="relation">prerequisite_of</data></edge>
+<edge id="e82" source="g-edge" target="gf-adjacency"><data key="relation">prerequisite_of</data></edge>
+<edge id="e83" source="g-adjacency" target="gf-laplacian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e84" source="g-degree" target="gf-laplacian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e85" source="g-laplacian" target="gf-dirichlet"><data key="relation">prerequisite_of</data></edge>
+<edge id="e86" source="g-dirichlet" target="gf-grounded"><data key="relation">prerequisite_of</data></edge>
+<edge id="e87" source="g-grounding" target="gf-grounded"><data key="relation">prerequisite_of</data></edge>
+<edge id="e88" source="g-laplacian" target="gf-heat"><data key="relation">prerequisite_of</data></edge>
+<edge id="e89" source="g-frequency-bridge" target="gf-graph-wave"><data key="relation">prerequisite_of</data></edge>
+<edge id="e90" source="g-laplacian" target="gf-graph-wave"><data key="relation">prerequisite_of</data></edge>
+<edge id="e91" source="g-adjacency" target="gf-transition"><data key="relation">prerequisite_of</data></edge>
+<edge id="e92" source="g-walk" target="gf-transition"><data key="relation">prerequisite_of</data></edge>
+<edge id="e93" source="g-walk" target="gf-ppr"><data key="relation">prerequisite_of</data></edge>
+<edge id="e94" source="g-pagerank" target="gf-ppr-error"><data key="relation">prerequisite_of</data></edge>
+<edge id="e95" source="g-convergence" target="gf-ppr-error"><data key="relation">prerequisite_of</data></edge>
+<edge id="e96" source="g-tokens" target="gf-idf"><data key="relation">prerequisite_of</data></edge>
+<edge id="e97" source="g-idf" target="gf-idf"><data key="relation">prerequisite_of</data></edge>
+<edge id="e98" source="g-idf" target="gf-bm25"><data key="relation">prerequisite_of</data></edge>
+<edge id="e99" source="g-embedding" target="gf-cosine"><data key="relation">prerequisite_of</data></edge>
+<edge id="e100" source="g-bm25" target="gf-rrf"><data key="relation">prerequisite_of</data></edge>
+<edge id="e101" source="g-pagerank" target="gf-rrf"><data key="relation">prerequisite_of</data></edge>
+<edge id="e102" source="g-rrf" target="gf-mmr"><data key="relation">prerequisite_of</data></edge>
+<edge id="e103" source="g-mmr" target="gf-mmr"><data key="relation">prerequisite_of</data></edge>
+<edge id="e104" source="g-entropy" target="gf-entropy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e105" source="g-cache" target="gf-latency"><data key="relation">prerequisite_of</data></edge>
+<edge id="e106" source="g-cost" target="gf-latency"><data key="relation">prerequisite_of</data></edge>
+<edge id="e107" source="g-cache" target="gf-amat"><data key="relation">prerequisite_of</data></edge>
+<edge id="e108" source="g-memgpt" target="gf-amat"><data key="relation">prerequisite_of</data></edge>
+<edge id="e109" source="g-ttl" target="gf-ttl-probability"><data key="relation">prerequisite_of</data></edge>
+<edge id="e110" source="g-time" target="gf-ttl-probability"><data key="relation">prerequisite_of</data></edge>
+<edge id="e111" source="g-lru" target="gf-lru-distance"><data key="relation">prerequisite_of</data></edge>
+<edge id="e112" source="g-hash" target="gf-cache-key"><data key="relation">prerequisite_of</data></edge>
+<edge id="e113" source="g-invalidate" target="gf-cache-key"><data key="relation">prerequisite_of</data></edge>
+<edge id="e114" source="g-budget" target="gf-budget-knapsack"><data key="relation">prerequisite_of</data></edge>
+<edge id="e115" source="g-bfs" target="gf-bfs"><data key="relation">prerequisite_of</data></edge>
+<edge id="e116" source="g-dag" target="gf-topological"><data key="relation">prerequisite_of</data></edge>
+<edge id="e117" source="g-cycle" target="gf-topological"><data key="relation">prerequisite_of</data></edge>
+<edge id="e118" source="g-hebb" target="gf-hebb"><data key="relation">prerequisite_of</data></edge>
+<edge id="e119" source="g-hebb" target="gf-hopfield-energy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e120" source="g-hopfield" target="gf-hopfield-energy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e121" source="g-attention" target="gf-attention"><data key="relation">prerequisite_of</data></edge>
+<edge id="e122" source="g-forgetting" target="gf-retention"><data key="relation">prerequisite_of</data></edge>
+<edge id="e123" source="g-recall" target="gf-precision"><data key="relation">prerequisite_of</data></edge>
+<edge id="e124" source="g-ndcg" target="gf-ndcg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e125" source="g-calibration" target="gf-brier"><data key="relation">prerequisite_of</data></edge>
+<edge id="e126" source="g-baseline" target="gf-novelty-loop"><data key="relation">prerequisite_of</data></edge>
+<edge id="e127" source="g-loop" target="gf-novelty-loop"><data key="relation">prerequisite_of</data></edge>
+</graph></graphml>

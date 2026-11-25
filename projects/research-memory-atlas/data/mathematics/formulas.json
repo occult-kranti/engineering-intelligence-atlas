@@ -1,0 +1,2309 @@
+[
+  {
+    "id": "mf-quadratic",
+    "label": "Quadratic equation by completing the square",
+    "domain": "mathematics",
+    "latex": "x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}",
+    "variables": [
+      {
+        "symbol": "a,b,c",
+        "meaning": "coefficients of ax²+bx+c",
+        "unit": "compatible powers of x"
+      },
+      {
+        "symbol": "x",
+        "meaning": "unknown",
+        "unit": "chosen variable unit"
+      }
+    ],
+    "assumptions": [
+      "a is nonzero.",
+      "Use real roots only when the discriminant is nonnegative; over complex numbers select both square roots."
+    ],
+    "derivation": "Divide by a and move c/a. Adding (b/2a)² makes (x+b/2a)²=(b²−4ac)/(4a²). Taking both square roots and subtracting b/2a gives the formula. The division step excludes a=0, which must instead be treated as a linear or constant equation.",
+    "example": "For x²−5x+6=0 the discriminant is 1 and the roots are 2 and 3; substitution makes each residual zero.",
+    "limitations": [
+      "Direct evaluation can lose precision when b and the square root nearly cancel; compute one root stably and obtain the other from their product c/a."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-equations",
+      "m-polynomials"
+    ]
+  },
+  {
+    "id": "mf-binomial",
+    "label": "Finite binomial theorem",
+    "domain": "mathematics",
+    "latex": "(a+b)^n=\\sum_{k=0}^{n}\\binom nk a^{n-k}b^k",
+    "variables": [
+      {
+        "symbol": "n",
+        "meaning": "nonnegative integer exponent",
+        "unit": "1"
+      },
+      {
+        "symbol": "a,b",
+        "meaning": "commuting quantities",
+        "unit": "same units"
+      }
+    ],
+    "assumptions": [
+      "n is a nonnegative integer.",
+      "a and b commute."
+    ],
+    "derivation": "Expand the product of n copies of a+b. To obtain a term with k factors b, choose k of the n positions; there are binomial(n,k) choices. Commutation lets these products share one coefficient. This finite counting argument does not establish convergence of a generalized infinite binomial series.",
+    "example": "For n=3 the coefficients 1,3,3,1 give (a+b)³=a³+3a²b+3ab²+b³.",
+    "limitations": [
+      "For noncommuting matrices AB and BA differ; the scalar formula cannot be substituted blindly."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-induction",
+      "m-polynomials"
+    ]
+  },
+  {
+    "id": "mf-euler",
+    "label": "Complex exponential and phase",
+    "domain": "mathematics",
+    "latex": "e^{i\\theta}=\\cos\\theta+i\\sin\\theta",
+    "variables": [
+      {
+        "symbol": "θ",
+        "meaning": "dimensionless phase in radians",
+        "unit": "1"
+      },
+      {
+        "symbol": "i",
+        "meaning": "square root of −1",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "θ is real for the unit-circle interpretation."
+    ],
+    "derivation": "Separate the absolutely convergent power series for exp(iθ) into even and odd powers. The even part is cosine and the odd part is i times sine. Multiplication of exponentials then yields angle-addition rules, showing why complex multiplication represents rotations.",
+    "example": "At θ=π/2, the value is i. Multiplication by i maps the point 1 to i, a quarter turn.",
+    "limitations": [
+      "A physical frequency in hertz must enter θ as 2πft; confusing cycles with radians changes results by 2π."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-complex",
+      "m-polynomials"
+    ]
+  },
+  {
+    "id": "mf-rank",
+    "label": "Rank–nullity and lost directions",
+    "domain": "mathematics",
+    "latex": "\\operatorname{rank}A+\\dim\\ker A=n,\\qquad A:\\mathbb R^n\\to\\mathbb R^m",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "linear observation map",
+        "unit": "output unit / input unit"
+      },
+      {
+        "symbol": "n,m",
+        "meaning": "input and output dimensions",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "A is a finite-dimensional linear map."
+    ],
+    "derivation": "Choose a basis of the nullspace and extend it to a basis of the domain. The images of the additional vectors form a basis of the image. Therefore every input direction is either accounted for by an independent observable direction or contributes to the kernel dimension.",
+    "example": "A=[1 0] maps R² to R. Its rank is 1 and nullspace is {(0,t)}. Its sole returned singular value is positive, yet recovery of the second coordinate is impossible.",
+    "limitations": [
+      "A rectangular SVD can list only positive returned singular values while omitting nullspace directions on the larger side."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-vectors",
+      "m-basis"
+    ]
+  },
+  {
+    "id": "mf-inner",
+    "label": "Cauchy–Schwarz and cosine similarity",
+    "domain": "mathematics",
+    "latex": "|\\langle x,y\\rangle|\\le\\|x\\|\\|y\\|,\\qquad \\cos\\theta=\\frac{x^Ty}{\\|x\\|\\|y\\|}",
+    "variables": [
+      {
+        "symbol": "x,y",
+        "meaning": "vectors in a real inner-product space",
+        "unit": "common coordinate units"
+      },
+      {
+        "symbol": "θ",
+        "meaning": "angle for nonzero vectors",
+        "unit": "rad"
+      }
+    ],
+    "assumptions": [
+      "The angle formula uses real nonzero vectors.",
+      "For complex spaces use the Hermitian inner product for the inequality."
+    ],
+    "derivation": "For y≠0 minimize ||x−αy||² over α. Nonnegativity at the minimizer gives ||x||²−|〈x,y〉|²/||y||²≥0. In real Euclidean geometry the normalized dot product therefore lies in [−1,1] and can define an angle.",
+    "example": "x=(1,0), y=(1,1) have cosine 1/√2. x and 100x have cosine 1 even though their lengths differ by 100.",
+    "limitations": [
+      "Similarity is undefined for a zero vector and is not a probability that two claims are true or equivalent."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-vectors",
+      "m-inner"
+    ]
+  },
+  {
+    "id": "mf-det",
+    "label": "Two-dimensional determinant and inverse",
+    "domain": "mathematics",
+    "latex": "\\det A=ad-bc,\\quad A^{-1}=\\frac1{ad-bc}\\begin{pmatrix}d&-b\\\\-c&a\\end{pmatrix}",
+    "variables": [
+      {
+        "symbol": "a,b,c,d",
+        "meaning": "entries of a 2×2 matrix",
+        "unit": "map-dependent"
+      },
+      {
+        "symbol": "A",
+        "meaning": "square linear map",
+        "unit": "map-dependent"
+      }
+    ],
+    "assumptions": [
+      "ad−bc≠0 for the inverse."
+    ],
+    "derivation": "The signed area of the parallelogram spanned by the columns is ad−bc. Multiplying A by the proposed adjugate gives (ad−bc)I; division is legal exactly when the determinant is nonzero. This direct derivation shows both invertibility and volume scaling.",
+    "example": "For A=[[2,1],[1,1]], det A=1 and inverse [[1,−1],[−1,2]]. Their product is the identity.",
+    "limitations": [
+      "A nonzero determinant can coexist with severe ill-conditioning; determinant magnitude alone is a poor stability test."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-basis",
+      "m-determinant"
+    ]
+  },
+  {
+    "id": "mf-spectral",
+    "label": "Real symmetric spectral decomposition",
+    "domain": "mathematics",
+    "latex": "A=Q\\Lambda Q^T,\\qquad Q^TQ=I",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "real symmetric matrix",
+        "unit": "operator units"
+      },
+      {
+        "symbol": "Q",
+        "meaning": "orthogonal eigenvector matrix",
+        "unit": "1"
+      },
+      {
+        "symbol": "Λ",
+        "meaning": "diagonal eigenvalue matrix",
+        "unit": "operator units"
+      }
+    ],
+    "assumptions": [
+      "A is real and symmetric."
+    ],
+    "derivation": "A continuous Rayleigh quotient reaches an extremum on the unit sphere. Lagrange multipliers give an eigenvector at that extremum. Symmetry leaves its orthogonal complement invariant, so induction produces an orthonormal eigenbasis. Each mode then evolves independently under polynomials in A.",
+    "example": "For [[2,−1],[−1,2]], vectors (1,1)/√2 and (1,−1)/√2 have eigenvalues 1 and 3.",
+    "limitations": [
+      "General real matrices can have complex eigenvalues or defective eigenspaces; the symmetric theorem cannot be assumed for directed adjacency matrices."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-inner",
+      "m-spectral"
+    ]
+  },
+  {
+    "id": "mf-svd",
+    "label": "Singular value decomposition",
+    "domain": "mathematics",
+    "latex": "A=U\\Sigma V^*,\\qquad \\sigma_i^2=\\lambda_i(A^*A)",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "m×n matrix",
+        "unit": "output/input"
+      },
+      {
+        "symbol": "U,V",
+        "meaning": "unitary changes of coordinates",
+        "unit": "1"
+      },
+      {
+        "symbol": "σ_i",
+        "meaning": "nonnegative singular values",
+        "unit": "output/input"
+      }
+    ],
+    "assumptions": [
+      "A is a finite real or complex matrix; * is conjugate transpose."
+    ],
+    "derivation": "The Hermitian positive semidefinite matrix A*A has an orthonormal eigenbasis. For every positive eigenvalue set u_i=Av_i/σ_i; these vectors are orthonormal. Extend the bases to account for left and right nullspaces. This yields rectangular diagonal Σ and the factorization.",
+    "example": "A=diag(3,1) sends a unit circle to an ellipse with semiaxes 3 and 1; an added zero column supplies an invisible input direction.",
+    "limitations": [
+      "SVD does not assign semantic meaning to its axes; signs and bases within repeated singular values are not unique."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-spectral",
+      "m-rank"
+    ]
+  },
+  {
+    "id": "mf-pinv",
+    "label": "Moore–Penrose pseudoinverse",
+    "domain": "mathematics",
+    "latex": "A^+=V\\Sigma^+U^*,\\quad x_*=A^+b",
+    "variables": [
+      {
+        "symbol": "Σ⁺",
+        "meaning": "reciprocal positive singular values and zero otherwise",
+        "unit": "input/output"
+      },
+      {
+        "symbol": "b",
+        "meaning": "observations",
+        "unit": "output unit"
+      },
+      {
+        "symbol": "x_*",
+        "meaning": "minimum-norm least-squares estimate",
+        "unit": "input unit"
+      }
+    ],
+    "assumptions": [
+      "The norm is Euclidean.",
+      "A numerical singular-value cutoff must be declared."
+    ],
+    "derivation": "Rotate b into the U basis. Each nonzero singular coordinate is independently minimized by division by σ_i; zero input coordinates cannot affect the residual. Setting undetermined coordinates to zero selects the minimum-norm member of all least-squares minimizers.",
+    "example": "For A=[1 0], b=3, the pseudoinverse returns (3,0). Every (3,t) gives the same observations; t=0 is a selection convention.",
+    "limitations": [
+      "Tiny singular values amplify noise. Truncation changes the inverse problem by adding a modeling choice."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-svd",
+      "m-pseudoinverse"
+    ]
+  },
+  {
+    "id": "mf-least",
+    "label": "Least squares normal equations",
+    "domain": "mathematics",
+    "latex": "\\min_x\\|Ax-b\\|_2^2\\Rightarrow A^TAx=A^Tb",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "design matrix",
+        "unit": "output/input"
+      },
+      {
+        "symbol": "x",
+        "meaning": "parameters",
+        "unit": "input"
+      },
+      {
+        "symbol": "b",
+        "meaning": "observed outputs",
+        "unit": "output"
+      }
+    ],
+    "assumptions": [
+      "Real finite matrix; full column rank is needed for a unique unconstrained solution."
+    ],
+    "derivation": "Expand the quadratic and differentiate: ∇f=2Aᵀ(Ax−b). Stationarity means the residual is orthogonal to every column of A. With full column rank the Hessian 2AᵀA is positive definite, so the stationary point is the unique global minimizer.",
+    "example": "Fit one constant x to observations 1,2,6. A is a column of ones and the equation is 3x=9, so x=3.",
+    "limitations": [
+      "Computing normal equations squares the condition number. QR or SVD is often numerically preferable."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-gradient",
+      "m-leastsquares"
+    ]
+  },
+  {
+    "id": "mf-pca",
+    "label": "Centered covariance and PCA",
+    "domain": "mathematics",
+    "latex": "C=\\frac{X^TX}{N-1},\\quad Cv_i=\\lambda_i v_i",
+    "variables": [
+      {
+        "symbol": "X",
+        "meaning": "N×d centered observation matrix",
+        "unit": "feature unit after scaling"
+      },
+      {
+        "symbol": "C",
+        "meaning": "sample covariance",
+        "unit": "feature unit²"
+      },
+      {
+        "symbol": "λ_i",
+        "meaning": "variance along eigenvector",
+        "unit": "feature unit²"
+      }
+    ],
+    "assumptions": [
+      "N>1 and columns are centered.",
+      "Scaling is declared when features have different units."
+    ],
+    "derivation": "Variance in a unit direction v is ||Xv||²/(N−1)=vᵀCv. Maximizing this under vᵀv=1 yields Cv=λv. Orthogonal subsequent maximizations choose the remaining eigenvectors, giving a rank-k reconstruction with maximum retained variance.",
+    "example": "For centered points (−1,0),(0,0),(1,0), C=diag(1,0). One component preserves all sample variance.",
+    "limitations": [
+      "High variance can be noise or confounding. PCA compresses second-order structure, not all task-relevant information."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-spectral",
+      "m-svd",
+      "m-covariance"
+    ]
+  },
+  {
+    "id": "mf-cond",
+    "label": "Relative error and matrix condition number",
+    "domain": "mathematics",
+    "latex": "\\kappa_2(A)=\\frac{\\sigma_{\\max}}{\\sigma_{\\min}},\\quad \\frac{\\|\\delta x\\|}{\\|x\\|}\\le\\kappa_2(A)\\frac{\\|\\delta b\\|}{\\|b\\|}",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "invertible square matrix",
+        "unit": "output/input"
+      },
+      {
+        "symbol": "δb,δx",
+        "meaning": "perturbation in data and solution",
+        "unit": "respective units"
+      }
+    ],
+    "assumptions": [
+      "A is fixed and invertible; only b is perturbed.",
+      "The bound is worst-case and uses compatible Euclidean norms.",
+      "b and x are nonzero, so relative error ratios are defined."
+    ],
+    "derivation": "Since δx=A⁻¹δb, ||δx||≤||A⁻¹||||δb||. Also ||b||=||Ax||≤||A||||x||. Combining the two inequalities yields the relative bound and κ=||A||||A⁻¹||.",
+    "example": "diag(1,10⁻⁶) has condition number 10⁶; noise in its second output can be amplified a millionfold.",
+    "limitations": [
+      "Perturbations in A require an additional denominator and a smallness condition; the displayed formula does not cover them."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-svd",
+      "m-conditioning"
+    ]
+  },
+  {
+    "id": "mf-derivative",
+    "label": "Derivative as a controlled limit",
+    "domain": "mathematics",
+    "latex": "f'(x)=\\lim_{h\\to0}\\frac{f(x+h)-f(x)}h",
+    "variables": [
+      {
+        "symbol": "h",
+        "meaning": "input increment",
+        "unit": "input unit"
+      },
+      {
+        "symbol": "f'",
+        "meaning": "local rate",
+        "unit": "output/input"
+      }
+    ],
+    "assumptions": [
+      "The two-sided limit exists for an interior real point."
+    ],
+    "derivation": "The finite quotient measures a secant slope. A derivative exists when these slopes approach the same value from all allowed directions. The defining remainder is f(x+h)=f(x)+f′(x)h+o(h), making the linear approximation's error small relative to h.",
+    "example": "For f(x)=x², the quotient is 2x+h and the limit is 2x. For |x| at zero the one-sided quotients differ, so no derivative exists.",
+    "limitations": [
+      "A small finite-difference residual is not a proof of differentiability; numerical subtraction can also destroy small increments."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-limits",
+      "m-equations"
+    ]
+  },
+  {
+    "id": "mf-taylor",
+    "label": "Taylor theorem with an explicit remainder",
+    "domain": "mathematics",
+    "latex": "f(x+h)=\\sum_{k=0}^{n}\\frac{f^{(k)}(x)}{k!}h^k+\\frac{f^{(n+1)}(\\xi)}{(n+1)!}h^{n+1}",
+    "variables": [
+      {
+        "symbol": "ξ",
+        "meaning": "point between x and x+h",
+        "unit": "input unit"
+      },
+      {
+        "symbol": "n",
+        "meaning": "polynomial degree",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Sufficient differentiability on the interval and continuity assumptions for the Lagrange remainder."
+    ],
+    "derivation": "Repeated integration of the derivative, or the mean-value theorem applied to the error, isolates the next derivative. If its magnitude is bounded by M, the error is at most M|h|^(n+1)/(n+1)!. The bound, not just the polynomial, determines a safe approximation region.",
+    "example": "For exp(h) at zero with |h|≤0.1, 1+h+h²/2 has error at most exp(0.1)|h|³/6.",
+    "limitations": [
+      "Smoothness alone does not guarantee equality to an infinite Taylor series; some smooth functions are not analytic."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-derivative",
+      "m-integral"
+    ]
+  },
+  {
+    "id": "mf-chain",
+    "label": "Multivariable chain rule",
+    "domain": "mathematics",
+    "latex": "D(f\\circ g)(x)=Df(g(x))Dg(x)",
+    "variables": [
+      {
+        "symbol": "g",
+        "meaning": "map Rⁿ→Rᵐ",
+        "unit": "intermediate/input"
+      },
+      {
+        "symbol": "f",
+        "meaning": "map Rᵐ→Rᵏ",
+        "unit": "output/intermediate"
+      },
+      {
+        "symbol": "D",
+        "meaning": "Jacobian derivative",
+        "unit": "map-dependent"
+      }
+    ],
+    "assumptions": [
+      "Both functions are differentiable at the relevant points; matrix shapes must compose."
+    ],
+    "derivation": "Insert the local expansion g(x+h)=g(x)+Dg(x)h+o(||h||) into the local expansion of f. The linear term is Df(g(x))Dg(x)h and the combined remainder stays smaller than ||h||. Reverse-mode differentiation transposes this product when propagating a scalar loss gradient.",
+    "example": "For g(x)=(x,x²), f(u,v)=u+3v, the derivative is [1,3]·[1,2x]ᵀ=1+6x.",
+    "limitations": [
+      "Nondifferentiable branches require subgradient or piecewise reasoning; automatic differentiation follows program semantics, which may differ from an intended model."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-derivative",
+      "m-vectors"
+    ]
+  },
+  {
+    "id": "mf-ftc",
+    "label": "Fundamental theorem of calculus",
+    "domain": "mathematics",
+    "latex": "\\frac d{dx}\\int_a^x f(t)\\,dt=f(x),\\quad \\int_a^b F'(x)\\,dx=F(b)-F(a)",
+    "variables": [
+      {
+        "symbol": "f",
+        "meaning": "integrand",
+        "unit": "quantity/input"
+      },
+      {
+        "symbol": "F",
+        "meaning": "antiderivative",
+        "unit": "quantity"
+      },
+      {
+        "symbol": "a,b",
+        "meaning": "endpoints",
+        "unit": "input"
+      }
+    ],
+    "assumptions": [
+      "Continuity suffices for the first identity; suitable absolute continuity suffices for the integral identity."
+    ],
+    "derivation": "Changing the upper limit by h adds the integral over a short interval. Dividing by h gives its mean value, which tends to f(x) by continuity. Integrating a derivative then telescopes local changes into the total endpoint difference.",
+    "example": "Integrating 2x from 0 to 3 gives [x²]₀³=9.",
+    "limitations": [
+      "Improper endpoints and singular distributions need separate convergence or weak-form arguments."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-limits",
+      "m-integral",
+      "m-derivative"
+    ]
+  },
+  {
+    "id": "mf-jacobian",
+    "label": "Change of variables and volume",
+    "domain": "mathematics",
+    "latex": "\\int_{\\phi(U)}f(x)\\,dx=\\int_U f(\\phi(u))|\\det D\\phi(u)|\\,du",
+    "variables": [
+      {
+        "symbol": "φ",
+        "meaning": "coordinate map",
+        "unit": "physical/coordinate"
+      },
+      {
+        "symbol": "Dφ",
+        "meaning": "Jacobian",
+        "unit": "physical/coordinate"
+      },
+      {
+        "symbol": "f",
+        "meaning": "density",
+        "unit": "quantity/volume"
+      }
+    ],
+    "assumptions": [
+      "φ is a sufficiently regular one-to-one coordinate map except possibly negligible sets.",
+      "Multiplicity must be handled for many-to-one mappings."
+    ],
+    "derivation": "A small coordinate box is sent approximately to a parallelepiped whose volume is multiplied by |det Dφ|. Summing these local contributions and taking a limit produces the integral identity.",
+    "example": "In polar coordinates (r,θ)↦(r cosθ,r sinθ), determinant r yields disk area ∫₀²π∫₀ᴿ r dr dθ=πR².",
+    "limitations": [
+      "Omitting the Jacobian corrupts densities and probabilities; a singular map cannot be inverted by this theorem."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-determinant",
+      "m-chain",
+      "m-integral"
+    ]
+  },
+  {
+    "id": "mf-div",
+    "label": "Divergence theorem",
+    "domain": "mathematics",
+    "latex": "\\int_\\Omega\\nabla\\cdot F\\,dV=\\int_{\\partial\\Omega}F\\cdot n\\,dS",
+    "variables": [
+      {
+        "symbol": "F",
+        "meaning": "vector flux field",
+        "unit": "quantity/(area·time)"
+      },
+      {
+        "symbol": "n",
+        "meaning": "outward unit normal",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Ω has an appropriate piecewise smooth or Lipschitz boundary.",
+      "F has sufficient classical or weak regularity."
+    ],
+    "derivation": "For a small box, opposite-face flux differences equal directional derivatives times volume to leading order. Interior faces cancel when boxes are assembled. Only the exterior boundary remains, producing the global conservation identity.",
+    "example": "For F=(x,y,z) on a radius-R ball, divergence is 3. Both sides equal 4πR³.",
+    "limitations": [
+      "Point singularities require exclusion and limiting or distributional analysis; setting divergence to zero away from a source does not remove the source."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-gradient",
+      "m-integral",
+      "m-jacobian"
+    ]
+  },
+  {
+    "id": "mf-stokes",
+    "label": "Generalized Stokes theorem",
+    "domain": "mathematics",
+    "latex": "\\int_M d\\omega=\\int_{\\partial M}\\omega",
+    "variables": [
+      {
+        "symbol": "ω",
+        "meaning": "differential (k−1)-form",
+        "unit": "observable-dependent"
+      },
+      {
+        "symbol": "M",
+        "meaning": "oriented k-dimensional manifold",
+        "unit": "geometric"
+      }
+    ],
+    "assumptions": [
+      "M is oriented with compatible boundary orientation; forms are sufficiently smooth and integrals converge.",
+      "Take M compact or ω compactly supported; a noncompact decay variant requires explicitly vanishing boundary contributions at infinity, beyond convergence alone."
+    ],
+    "derivation": "On coordinate patches the statement reduces to one-variable integration and cancellation of internal faces. A partition of unity patches local identities into a global one. The identity d²=0 expresses that the boundary of a boundary contributes nothing.",
+    "example": "For a planar disk with 1-form ω=−y dx/2+x dy/2, dω=dx∧dy and the boundary integral equals the disk's area.",
+    "limitations": [
+      "Orientation errors flip signs; local exactness need not extend globally around holes."
+    ],
+    "source_ids": [
+      "ms-tong-stokes"
+    ],
+    "prerequisite_ids": [
+      "m-tangent",
+      "m-integral",
+      "m-topology"
+    ]
+  },
+  {
+    "id": "mf-eulerlagrange",
+    "label": "Euler–Lagrange stationarity",
+    "domain": "mathematics",
+    "latex": "\\frac d{dt}\\frac{\\partial L}{\\partial\\dot q}-\\frac{\\partial L}{\\partial q}=0",
+    "variables": [
+      {
+        "symbol": "L",
+        "meaning": "Lagrangian integrand",
+        "unit": "energy in mechanics"
+      },
+      {
+        "symbol": "q",
+        "meaning": "generalized coordinate",
+        "unit": "coordinate-dependent"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Variations vanish at fixed endpoints; L and q have required regularity."
+    ],
+    "derivation": "Perturb q by εη. Differentiate the action at ε=0: δS=∫(L_qη+L_qdotηdot)dt. Integration by parts moves the derivative from ηdot, leaving a boundary term that vanishes under fixed endpoints. Arbitrary interior η forces the displayed equation.",
+    "example": "L=m qdot²/2−kq²/2 gives mqddot+kq=0.",
+    "limitations": [
+      "Stationarity can be a maximum or saddle; constraints and free endpoints generate additional conditions."
+    ],
+    "source_ids": [
+      "ms-lagrange"
+    ],
+    "prerequisite_ids": [
+      "m-variation",
+      "m-chain",
+      "m-integral"
+    ]
+  },
+  {
+    "id": "mf-bayes",
+    "label": "Bayes rule with dependent evidence awareness",
+    "domain": "mathematics",
+    "latex": "P(H\\mid E)=\\frac{P(E\\mid H)P(H)}{P(E)}",
+    "variables": [
+      {
+        "symbol": "H",
+        "meaning": "hypothesis event",
+        "unit": "1"
+      },
+      {
+        "symbol": "E",
+        "meaning": "observed event",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "P(E)>0.",
+      "Probabilities refer to the same model and experiment."
+    ],
+    "derivation": "The joint probability satisfies P(H∩E)=P(E|H)P(H)=P(H|E)P(E). Dividing by the positive marginal yields Bayes' rule. Sequential updates must use P(E₂|H,E₁), not P(E₂|H), unless conditional independence is justified.",
+    "example": "Prior 0.1, likelihood 0.8 and false-positive likelihood 0.2 give posterior 0.08/(0.08+0.18)=4/13.",
+    "limitations": [
+      "Two sites repeating one press release are dependent evidence; counting them as independent inflates confidence."
+    ],
+    "source_ids": [
+      "ms-bayes-notes"
+    ],
+    "prerequisite_ids": [
+      "m-probability",
+      "m-randomvariable"
+    ]
+  },
+  {
+    "id": "mf-cov",
+    "label": "Covariance and variance propagation",
+    "domain": "mathematics",
+    "latex": "\\operatorname{Cov}(X,Y)=E[(X-EX)(Y-EY)],\\quad \\operatorname{Var}(a^TX)=a^T\\Sigma a",
+    "variables": [
+      {
+        "symbol": "Σ",
+        "meaning": "covariance matrix",
+        "unit": "coordinate units multiplied"
+      },
+      {
+        "symbol": "a",
+        "meaning": "linear combination weights",
+        "unit": "output/input"
+      }
+    ],
+    "assumptions": [
+      "Second moments exist."
+    ],
+    "derivation": "Expand the square of aᵀ(X−EX); linearity of expectation turns pairwise products into covariance entries. Cross terms matter whenever variables are dependent, so adding marginal variances alone is generally wrong.",
+    "example": "If X=Y with variance 1, Var(X+Y)=4. Treating the copies as independent would incorrectly give 2.",
+    "limitations": [
+      "Correlation zero does not imply independence; for a symmetric nonconstant X, X and X² can be uncorrelated but dependent."
+    ],
+    "source_ids": [
+      "ms-probability",
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-probability",
+      "m-vectors"
+    ]
+  },
+  {
+    "id": "mf-gauss",
+    "label": "Multivariate Gaussian density",
+    "domain": "mathematics",
+    "latex": "p(x)=\\frac{e^{-\\frac12(x-\\mu)^T\\Sigma^{-1}(x-\\mu)}}{(2\\pi)^{d/2}\\det(\\Sigma)^{1/2}}",
+    "variables": [
+      {
+        "symbol": "μ",
+        "meaning": "mean vector",
+        "unit": "feature units"
+      },
+      {
+        "symbol": "Σ",
+        "meaning": "positive definite covariance",
+        "unit": "feature-unit products"
+      },
+      {
+        "symbol": "p",
+        "meaning": "density with respect to Lebesgue measure",
+        "unit": "inverse feature-volume"
+      }
+    ],
+    "assumptions": [
+      "Σ is symmetric positive definite; singular Gaussians require a lower-dimensional measure."
+    ],
+    "derivation": "Transform a standard normal z by x=μ+Lz where LLᵀ=Σ. The quadratic form becomes ||z||² and the change-of-variables determinant contributes |det L|⁻¹=det(Σ)⁻¹/².",
+    "example": "With μ=0 and Σ=I, the coordinates are independent standard normals and the density factors.",
+    "limitations": [
+      "A Gaussian is a model assumption; observed covariance does not establish Gaussian tails or independence."
+    ],
+    "source_ids": [
+      "ms-probability"
+    ],
+    "prerequisite_ids": [
+      "m-covariance",
+      "m-jacobian",
+      "m-determinant"
+    ]
+  },
+  {
+    "id": "mf-hoeffding",
+    "label": "Hoeffding bound for bounded independent samples",
+    "domain": "mathematics",
+    "latex": "P(|\\bar X-E\\bar X|\\ge\\epsilon)\\le2e^{-2N\\epsilon^2/(b-a)^2}",
+    "variables": [
+      {
+        "symbol": "N",
+        "meaning": "sample count",
+        "unit": "1"
+      },
+      {
+        "symbol": "a,b",
+        "meaning": "uniform bounds on each sample",
+        "unit": "sample unit"
+      },
+      {
+        "symbol": "ε",
+        "meaning": "deviation threshold",
+        "unit": "sample unit"
+      }
+    ],
+    "assumptions": [
+      "Samples are independent and each lies in [a,b]."
+    ],
+    "derivation": "Bound the moment-generating function of each centered bounded variable, multiply the bounds using independence, and apply the exponential Markov inequality. Optimizing the exponential parameter gives the upper tail; repeat for the lower tail and add them.",
+    "example": "For N=1000 Bernoulli observations, ε=0.1 gives a two-sided bound 2e⁻²⁰, before any multiple-comparison adjustment.",
+    "limitations": [
+      "Adaptive sampling, duplicated sources and temporal dependence invalidate the independent-sample plug-in bound."
+    ],
+    "source_ids": [
+      "ms-hoeffding"
+    ],
+    "prerequisite_ids": [
+      "m-probability",
+      "m-concentration"
+    ]
+  },
+  {
+    "id": "mf-entropy",
+    "label": "Shannon entropy",
+    "domain": "mathematics",
+    "latex": "H(X)=-\\sum_xp(x)\\log_2p(x)",
+    "variables": [
+      {
+        "symbol": "p(x)",
+        "meaning": "probability mass",
+        "unit": "1"
+      },
+      {
+        "symbol": "H",
+        "meaning": "average information under binary coding convention",
+        "unit": "bits"
+      }
+    ],
+    "assumptions": [
+      "A discrete probability distribution is specified; define 0 log 0=0 by continuity."
+    ],
+    "derivation": "The information of an outcome with probability p is −log₂p. Averaging this value gives entropy. Concavity implies a uniform distribution on N outcomes has maximal entropy log₂N, while a certain outcome has entropy zero.",
+    "example": "A fair bit has entropy 1 bit. A deterministic duplicated bit adds no conditional entropy once the original is known.",
+    "limitations": [
+      "Differential entropy for continuous variables is coordinate-dependent and can be negative; it is not the same object."
+    ],
+    "source_ids": [
+      "ms-shannon",
+      "ms-information"
+    ],
+    "prerequisite_ids": [
+      "m-probability",
+      "m-logarithms"
+    ]
+  },
+  {
+    "id": "mf-kl",
+    "label": "Relative entropy",
+    "domain": "mathematics",
+    "latex": "D_{KL}(p\\|q)=\\sum_xp(x)\\log\\frac{p(x)}{q(x)}\\ge0",
+    "variables": [
+      {
+        "symbol": "p,q",
+        "meaning": "probability distributions on one alphabet",
+        "unit": "1"
+      },
+      {
+        "symbol": "D_KL",
+        "meaning": "directional information divergence",
+        "unit": "nats for natural log"
+      }
+    ],
+    "assumptions": [
+      "q(x)>0 wherever p(x)>0 for a finite value."
+    ],
+    "derivation": "Apply convexity of −log to q/p under p, or use log t≤t−1. Equality holds only when the distributions agree on the relevant support. Its asymmetry follows because changing the averaging distribution changes the expression.",
+    "example": "For p=(1,0), q=(1/2,1/2), divergence is log2; reversing them makes the value infinite.",
+    "limitations": [
+      "KL is not a metric: it is asymmetric and does not satisfy a triangle inequality."
+    ],
+    "source_ids": [
+      "ms-information"
+    ],
+    "prerequisite_ids": [
+      "m-entropy",
+      "m-probability"
+    ]
+  },
+  {
+    "id": "mf-mi",
+    "label": "Mutual information",
+    "domain": "mathematics",
+    "latex": "I(X;Y)=D_{KL}(p_{XY}\\|p_Xp_Y)=H(X)-H(X\\mid Y)",
+    "variables": [
+      {
+        "symbol": "X,Y",
+        "meaning": "jointly distributed discrete variables",
+        "unit": "model-dependent"
+      },
+      {
+        "symbol": "I",
+        "meaning": "information shared statistically",
+        "unit": "bits or nats consistently"
+      }
+    ],
+    "assumptions": [
+      "Finite entropies suffice for the entropy difference; KL form extends more generally."
+    ],
+    "derivation": "Expand log[p(x,y)/(p(x)p(y))] into log p(x|y)−log p(x) and average. This measures reduction in uncertainty about X after observing Y. Zero mutual information is equivalent to independence in the probability model.",
+    "example": "If Y is an exact copy of a fair bit X, I=1 bit; two independent fair bits give I=0.",
+    "limitations": [
+      "Shared information does not establish causal direction; common causes can generate it."
+    ],
+    "source_ids": [
+      "ms-information"
+    ],
+    "prerequisite_ids": [
+      "m-kl",
+      "m-entropy",
+      "m-bayes"
+    ]
+  },
+  {
+    "id": "mf-markov",
+    "label": "Markov transition and stationary distribution",
+    "domain": "mathematics",
+    "latex": "p_{t+1}=P^Tp_t,\\quad P\\mathbf1=\\mathbf1,\\quad P^T\\pi=\\pi",
+    "variables": [
+      {
+        "symbol": "P",
+        "meaning": "row-stochastic transition matrix",
+        "unit": "1"
+      },
+      {
+        "symbol": "p_t,π",
+        "meaning": "column probability vectors",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "P has nonnegative entries and rows sum to one.",
+      "Finite irreducibility and aperiodicity ensure convergence to a unique stationary distribution."
+    ],
+    "derivation": "The probability of arriving at j is the sum over departure states i of p_t(i)P_ij. A stationary vector is unchanged by this linear map. Existence alone does not imply convergence: periodic chains can keep oscillating.",
+    "example": "P=[[0,1],[1,0]] has stationary π=(1/2,1/2) but an initial point mass alternates forever.",
+    "limitations": [
+      "A memory process is Markov only relative to its chosen state; omitted history can break the assumption."
+    ],
+    "source_ids": [
+      "ms-probability",
+      "ms-pagerank"
+    ],
+    "prerequisite_ids": [
+      "m-probability",
+      "m-adjacency",
+      "m-spectral"
+    ]
+  },
+  {
+    "id": "mf-walks",
+    "label": "Adjacency powers count walks",
+    "domain": "mathematics",
+    "latex": "(A^k)_{ij}=\\#\\{\\text{length-k walks from }i\\text{ to }j\\}",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "0/1 adjacency matrix of a finite graph",
+        "unit": "1"
+      },
+      {
+        "symbol": "k",
+        "meaning": "number of edges in walk",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Unweighted finite graph; matrix orientation is fixed.",
+      "For weighted graphs the entries sum products of edge weights instead."
+    ],
+    "derivation": "For k=1 the claim is the adjacency definition. Multiplying A^k by A sums over the penultimate vertex, appending one edge to each existing walk. Induction proves the result.",
+    "example": "In a two-vertex graph with one undirected edge, A²=I: each vertex has one two-step return walk.",
+    "limitations": [
+      "Walks may repeat vertices and edges. They are not simple paths or independent lines of evidence."
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "prerequisite_ids": [
+      "m-adjacency",
+      "m-induction"
+    ]
+  },
+  {
+    "id": "mf-lap",
+    "label": "Graph Laplacian energy",
+    "domain": "mathematics",
+    "latex": "L=D-W=B^T C B,\\quad x^TLx=\\sum_{\\{i,j\\}}w_{ij}(x_i-x_j)^2",
+    "variables": [
+      {
+        "symbol": "W",
+        "meaning": "symmetric nonnegative adjacency weights",
+        "unit": "conductance if physical"
+      },
+      {
+        "symbol": "D",
+        "meaning": "weighted degree diagonal",
+        "unit": "same as W"
+      },
+      {
+        "symbol": "B",
+        "meaning": "edge-by-vertex signed incidence matrix",
+        "unit": "1"
+      },
+      {
+        "symbol": "C",
+        "meaning": "edge-weight diagonal",
+        "unit": "same as W"
+      }
+    ],
+    "assumptions": [
+      "Undirected graph with nonnegative weights; sum counts each undirected edge once."
+    ],
+    "derivation": "Expand xᵀDx−xᵀWx and group the symmetric i,j terms. Each pair becomes w_ij(x_i−x_j)². Every summand is nonnegative, and constant signals have zero energy. For a connected graph these are exactly the nullspace directions.",
+    "example": "For a three-vertex unit-weight path and x=(1,0,0), the energy is (1−0)²+(0−0)²=1.",
+    "limitations": [
+      "Signed or directed relations require different operators; mixing contradicts and supports edges as positive diffusion weights erases meaning."
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "prerequisite_ids": [
+      "m-incidence",
+      "m-inner"
+    ]
+  },
+  {
+    "id": "mf-normalized",
+    "label": "Normalized Laplacian",
+    "domain": "mathematics",
+    "latex": "\\mathcal L=I-D^{-1/2}WD^{-1/2}",
+    "variables": [
+      {
+        "symbol": "D",
+        "meaning": "positive weighted degrees",
+        "unit": "weight"
+      },
+      {
+        "symbol": "ℒ",
+        "meaning": "normalized Laplacian",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Undirected nonnegative graph with no isolated vertices, or an explicit isolated-vertex convention."
+    ],
+    "derivation": "Change variables x=D⁻¹/²y in the unnormalized quadratic form. Degree normalization compensates for different total incident weights. Its spectrum lies in [0,2], linking random-walk mixing with normalized cuts.",
+    "example": "For a single edge connecting two vertices, ℒ=[[1,−1],[−1,1]], with eigenvalues 0 and 2.",
+    "limitations": [
+      "Normalization changes which notions of smoothness and importance are emphasized; it is not universally preferable."
+    ],
+    "source_ids": [
+      "ms-cheeger"
+    ],
+    "prerequisite_ids": [
+      "m-laplacian",
+      "m-spectral"
+    ]
+  },
+  {
+    "id": "mf-pagerank",
+    "label": "Personalized PageRank as a convergent recurrence",
+    "domain": "mathematics",
+    "latex": "r=\\alpha P^Tr+(1-\\alpha)v=(1-\\alpha)(I-\\alpha P^T)^{-1}v",
+    "variables": [
+      {
+        "symbol": "α",
+        "meaning": "continuation probability",
+        "unit": "1"
+      },
+      {
+        "symbol": "v",
+        "meaning": "restart probability vector",
+        "unit": "1"
+      },
+      {
+        "symbol": "P",
+        "meaning": "row-stochastic transition including dangling-node repair",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "0≤α<1; v is nonnegative and sums to one; every row of P sums to one."
+    ],
+    "derivation": "The recurrence alternates graph-following with restart. Because αPᵀ contracts the ℓ₁ norm by at most α, the fixed point is unique. Expanding the inverse gives a geometrically damped sum of walk distributions, so long loops cannot add unlimited mass.",
+    "example": "For a two-state swap chain, α=0.8, v=(1,0), solve r₁=.8r₂+.2 and r₂=.8r₁: r=(5/9,4/9).",
+    "limitations": [
+      "High graph rank is not credibility. Typed relations, permissions and source validity must be filtered before ranking."
+    ],
+    "source_ids": [
+      "ms-pagerank"
+    ],
+    "prerequisite_ids": [
+      "m-markov",
+      "m-fixedpoint"
+    ]
+  },
+  {
+    "id": "mf-resistance",
+    "label": "Effective electrical resistance",
+    "domain": "mathematics",
+    "latex": "R_{ij}=(e_i-e_j)^TL^+(e_i-e_j)",
+    "variables": [
+      {
+        "symbol": "L",
+        "meaning": "conductance Laplacian",
+        "unit": "siemens"
+      },
+      {
+        "symbol": "e_i-e_j",
+        "meaning": "unit source/sink vector",
+        "unit": "unit current convention"
+      },
+      {
+        "symbol": "R_ij",
+        "meaning": "effective resistance",
+        "unit": "ohm"
+      }
+    ],
+    "assumptions": [
+      "Connected undirected network with positive conductances; or restrict to one connected component."
+    ],
+    "derivation": "Inject unit current at i and remove it at j. Solve Lv=e_i−e_j in the zero-mean gauge. The potential drop v_i−v_j equals resistance by Ohm's law, giving the pseudoinverse quadratic form.",
+    "example": "Two unit resistors in series have resistance 2; two parallel unit resistors have resistance 1/2.",
+    "limitations": [
+      "A semantic graph only borrows this geometry; edge weights are not electrical conductances unless physically defined."
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "prerequisite_ids": [
+      "m-laplacian",
+      "m-pseudoinverse"
+    ]
+  },
+  {
+    "id": "mf-cheeger",
+    "label": "Cheeger inequality for an undirected weighted graph",
+    "domain": "mathematics",
+    "latex": "\\frac{\\lambda_2(\\mathcal L)}2\\le\\phi(G)\\le\\sqrt{2\\lambda_2(\\mathcal L)}",
+    "variables": [
+      {
+        "symbol": "λ₂",
+        "meaning": "second normalized-Laplacian eigenvalue",
+        "unit": "1"
+      },
+      {
+        "symbol": "φ",
+        "meaning": "minimum edge conductance over nontrivial cuts",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Finite connected undirected graph with nonnegative weights; conductance uses weighted volume."
+    ],
+    "derivation": "Testing the Rayleigh quotient on a centered cut indicator gives the lower relation. Sweeping a second eigenvector and integrating threshold-cut contributions yields a cut with conductance bounded by the square root expression. The two sides connect discrete bottlenecks with continuous energy.",
+    "example": "A graph connected by one very weak bridge has a low-conductance cut and small λ₂, so mixing across the bridge is slow.",
+    "limitations": [
+      "The square-root gap is real; a spectral heuristic is an approximation, not an exact minimum-cut certificate."
+    ],
+    "source_ids": [
+      "ms-cheeger"
+    ],
+    "prerequisite_ids": [
+      "m-normalized",
+      "m-laplacian",
+      "m-spectral"
+    ]
+  },
+  {
+    "id": "mf-diffusion",
+    "label": "Heat diffusion on a graph",
+    "domain": "mathematics",
+    "latex": "\\dot x=-Lx,\\quad x(t)=e^{-tL}x(0)=\\sum_k e^{-t\\lambda_k}\\langle q_k,x(0)\\rangle q_k",
+    "variables": [
+      {
+        "symbol": "t",
+        "meaning": "diffusion parameter",
+        "unit": "inverse weight if dimensional"
+      },
+      {
+        "symbol": "λ_k,q_k",
+        "meaning": "Laplacian eigenpairs",
+        "unit": "weight,1"
+      }
+    ],
+    "assumptions": [
+      "Finite symmetric Laplacian; time and weights use compatible units."
+    ],
+    "derivation": "Diagonalize L and solve each scalar ODE c′_k=−λ_kc_k. Nonnegative eigenvalues ensure all nonconstant modes decay. The zero eigenmode preserves the component-wise mean under the unnormalized model.",
+    "example": "For one unit edge, the difference x₁−x₂ decays as e⁻²ᵗ while the sum stays constant.",
+    "limitations": [
+      "Diffusion smooths contradictions as readily as useful evidence unless edge types and conflict records are preserved."
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "prerequisite_ids": [
+      "m-laplacian",
+      "m-spectral",
+      "m-heat"
+    ]
+  },
+  {
+    "id": "mf-bellman",
+    "label": "Shortest-path Bellman recurrence",
+    "domain": "mathematics",
+    "latex": "d(v)=\\min_{(u,v)\\in E}[d(u)+w(u,v)],\\qquad d(s)=0",
+    "variables": [
+      {
+        "symbol": "w",
+        "meaning": "edge cost",
+        "unit": "cost unit"
+      },
+      {
+        "symbol": "d",
+        "meaning": "minimum path cost from s",
+        "unit": "cost unit"
+      }
+    ],
+    "assumptions": [
+      "No reachable negative cycle when seeking finite unconstrained distances.",
+      "An initialization and update scheme consistent with the graph class is needed."
+    ],
+    "derivation": "Any nonempty shortest route to v ends with an edge u→v; its prefix must be shortest to u, or replacing the prefix would improve the route. This optimal-substructure argument yields the recurrence and underlies dynamic programming.",
+    "example": "Edges s→a cost 2, a→b cost 3, s→b cost 8 produce d(b)=min(8,2+3)=5.",
+    "limitations": [
+      "Dijkstra additionally needs nonnegative edges; the recurrence alone does not authorize it on arbitrary weights."
+    ],
+    "source_ids": [
+      "ms-algorithms"
+    ],
+    "prerequisite_ids": [
+      "m-graph",
+      "m-shortest",
+      "m-induction"
+    ]
+  },
+  {
+    "id": "mf-newton",
+    "label": "Newton root iteration",
+    "domain": "mathematics",
+    "latex": "x_{k+1}=x_k-\\frac{f(x_k)}{f'(x_k)}",
+    "variables": [
+      {
+        "symbol": "x_k",
+        "meaning": "iterate",
+        "unit": "input unit"
+      },
+      {
+        "symbol": "f",
+        "meaning": "residual function",
+        "unit": "output unit"
+      }
+    ],
+    "assumptions": [
+      "Derivative exists and is nonzero at iterates.",
+      "Quadratic local convergence needs a simple root and smoothness near it."
+    ],
+    "derivation": "Approximate f(x_k+h) by f(x_k)+f′(x_k)h and choose the linearized residual to vanish. The resulting correction is −f/f′. Near a simple root, the omitted Taylor term is quadratic, explaining the local rate.",
+    "example": "For f(x)=x²−2 and x₀=1, iterates are 1.5, 1.41666…, 1.414215….",
+    "limitations": [
+      "The iteration can diverge, cycle or cross a domain boundary; damping and bracketing address specific risks."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-derivative",
+      "m-taylor",
+      "m-rootfinding"
+    ]
+  },
+  {
+    "id": "mf-gradient",
+    "label": "Gradient descent descent bound",
+    "domain": "mathematics",
+    "latex": "x^+=x-\\eta\\nabla f(x),\\quad f(x^+)\\le f(x)-\\eta(1-L\\eta/2)\\|\\nabla f(x)\\|^2",
+    "variables": [
+      {
+        "symbol": "η",
+        "meaning": "step size",
+        "unit": "input²/objective"
+      },
+      {
+        "symbol": "L",
+        "meaning": "gradient Lipschitz constant",
+        "unit": "objective/input²"
+      }
+    ],
+    "assumptions": [
+      "f has L-Lipschitz gradient on the relevant region.",
+      "0<η<2/L makes the displayed guaranteed decrease positive."
+    ],
+    "derivation": "The smoothness inequality is f(y)≤f(x)+∇f(x)ᵀ(y−x)+(L/2)||y−x||². Substitute y=x−η∇f(x) and collect the linear and quadratic terms. Convexity is not needed for this one-step decrease, but it matters for global optimality guarantees.",
+    "example": "For f(x)=x²/2, L=1 and η=1, one step takes any x to zero.",
+    "limitations": [
+      "In nonconvex optimization a small gradient can indicate a saddle or poor local optimum; noisy gradients require another analysis."
+    ],
+    "source_ids": [
+      "ms-boyd"
+    ],
+    "prerequisite_ids": [
+      "m-gradient",
+      "m-optimization"
+    ]
+  },
+  {
+    "id": "mf-kkt",
+    "label": "KKT optimality conditions",
+    "domain": "mathematics",
+    "latex": "\\nabla f(x)+\\sum_i\\lambda_i\\nabla g_i(x)+A^T\\nu=0,\\quad \\lambda_i g_i(x)=0",
+    "variables": [
+      {
+        "symbol": "g_i",
+        "meaning": "inequality constraints g_i≤0",
+        "unit": "chosen units"
+      },
+      {
+        "symbol": "λ_i",
+        "meaning": "nonnegative dual multipliers",
+        "unit": "objective/constraint"
+      },
+      {
+        "symbol": "Ax=b",
+        "meaning": "equality constraints",
+        "unit": "chosen units"
+      }
+    ],
+    "assumptions": [
+      "For this gradient form, f and each g_i are differentiable; nonsmooth problems require subgradient conditions. Include primal feasibility, λ_i≥0 and complementary slackness.",
+      "Convexity and a constraint qualification such as Slater's condition give the standard necessity/sufficiency setting."
+    ],
+    "derivation": "Form the Lagrangian f+Σλ_i g_i+νᵀ(Ax−b). At a saddle point, stationarity in x and complementary slackness ensure that inactive constraints exert no dual force. Feasibility then connects the primal optimum with a dual certificate.",
+    "example": "Minimize x² subject to x≥1. Write g=1−x; optimum x=1 has stationarity 2x−λ=0, so λ=2.",
+    "limitations": [
+      "For nonconvex problems KKT conditions can hold at nonglobal points; without a constraint qualification necessity can fail."
+    ],
+    "source_ids": [
+      "ms-boyd"
+    ],
+    "prerequisite_ids": [
+      "m-gradient",
+      "m-duality"
+    ]
+  },
+  {
+    "id": "mf-cg",
+    "label": "Conjugate-gradient condition-number bound",
+    "domain": "mathematics",
+    "latex": "\\|e_k\\|_A\\le2\\left(\\frac{\\sqrt\\kappa-1}{\\sqrt\\kappa+1}\\right)^k\\|e_0\\|_A",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "symmetric positive definite matrix",
+        "unit": "operator unit"
+      },
+      {
+        "symbol": "e_k",
+        "meaning": "solution error",
+        "unit": "input unit"
+      },
+      {
+        "symbol": "κ",
+        "meaning": "spectral condition number",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Exact arithmetic and standard CG on SPD A.",
+      "The A-norm is sqrt(eᵀAe)."
+    ],
+    "derivation": "CG minimizes the energy error over a Krylov subspace. Its error is a polynomial in A applied to the initial error, constrained to equal one at zero. A scaled Chebyshev polynomial controls that polynomial over the eigenvalue interval and gives the bound.",
+    "example": "With κ=9 the ratio is (3−1)/(3+1)=1/2; the bound is 2·2⁻ᵏ times initial A-error.",
+    "limitations": [
+      "Finite precision and indefinite or nonsymmetric matrices require separate methods or analysis; preconditioners must preserve the chosen solver's assumptions."
+    ],
+    "source_ids": [
+      "ms-cg"
+    ],
+    "prerequisite_ids": [
+      "m-conditioning",
+      "m-spectral",
+      "m-cg"
+    ]
+  },
+  {
+    "id": "mf-difference",
+    "label": "Centered second derivative",
+    "domain": "mathematics",
+    "latex": "f''(x)=\\frac{f(x+h)-2f(x)+f(x-h)}{h^2}+O(h^2)",
+    "variables": [
+      {
+        "symbol": "h",
+        "meaning": "grid spacing",
+        "unit": "input unit"
+      },
+      {
+        "symbol": "f''",
+        "meaning": "curvature",
+        "unit": "output/input²"
+      }
+    ],
+    "assumptions": [
+      "Four derivatives exist and are bounded locally."
+    ],
+    "derivation": "Add the Taylor series at x+h and x−h. Odd powers cancel; the leading remaining difference is h²f″(x), with h⁴f⁽⁴⁾/12 as the next term. Division by h² gives second-order truncation error.",
+    "example": "For f(x)=x² the stencil returns exactly 2 at every nonzero h in exact arithmetic.",
+    "limitations": [
+      "Very small h amplifies rounding and measurement noise by h⁻²; smaller spacing is not automatically more accurate."
+    ],
+    "source_ids": [
+      "ms-finite-difference"
+    ],
+    "prerequisite_ids": [
+      "m-taylor",
+      "m-finitedifference"
+    ]
+  },
+  {
+    "id": "mf-weakpoisson",
+    "label": "Weak Poisson formulation",
+    "domain": "mathematics",
+    "latex": "-\\Delta u=f,\\ u|_{\\partial\\Omega}=0\\quad\\Rightarrow\\quad\\int_\\Omega\\nabla u\\cdot\\nabla v=\\int_\\Omega fv\\ \\ \\forall v\\in H_0^1(\\Omega)",
+    "variables": [
+      {
+        "symbol": "u",
+        "meaning": "potential or scalar field",
+        "unit": "field unit"
+      },
+      {
+        "symbol": "f",
+        "meaning": "source",
+        "unit": "field/length²"
+      },
+      {
+        "symbol": "v",
+        "meaning": "test function",
+        "unit": "chosen field unit"
+      }
+    ],
+    "assumptions": [
+      "Domain and source permit a weak solution; homogeneous Dirichlet data.",
+      "The gradient bilinear form is coercive on H₀¹ under a Poincaré inequality."
+    ],
+    "derivation": "Multiply the PDE by v and integrate. Integration by parts moves one derivative from u to v; the boundary term vanishes because the trace of v is zero. This lowers the smoothness required of u and produces the finite-element stiffness matrix after choosing a basis.",
+    "example": "On (0,1), f=2 gives u=x(1−x). Direct differentiation yields −u″=2, and u vanishes at both endpoints.",
+    "limitations": [
+      "Changing to pure Neumann conditions introduces a constant nullspace and a source compatibility condition."
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "prerequisite_ids": [
+      "m-sobolev",
+      "m-divergence",
+      "m-fem"
+    ]
+  },
+  {
+    "id": "mf-cfl",
+    "label": "Explicit heat-scheme stability",
+    "domain": "mathematics",
+    "latex": "u_j^{n+1}=u_j^n+r(u_{j+1}^n-2u_j^n+u_{j-1}^n),\\qquad 0\\le r=\\kappa\\Delta t/\\Delta x^2\\le\\tfrac12",
+    "variables": [
+      {
+        "symbol": "κ",
+        "meaning": "diffusivity",
+        "unit": "m²/s"
+      },
+      {
+        "symbol": "Δt,Δx",
+        "meaning": "time and grid spacing",
+        "unit": "s,m"
+      },
+      {
+        "symbol": "r",
+        "meaning": "dimensionless time step",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "One-dimensional constant-coefficient heat equation on a uniform mesh with compatible boundary handling; κ≥0, Δt>0 and Δx>0.",
+      "The stability statement is for this explicit Euler-centered scheme."
+    ],
+    "derivation": "Insert a discrete Fourier mode e^(ijθ). Its amplification factor is 1−4r sin²(θ/2). Requiring its magnitude not exceed one for every θ gives 0≤r≤1/2. This connects time-step restrictions directly to the highest resolved frequency.",
+    "example": "With κ=1 and Δx=0.1, take Δt≤0.005 for the stated scheme.",
+    "limitations": [
+      "Other dimensions and discretizations have different restrictions; implicit stability does not remove accuracy requirements."
+    ],
+    "source_ids": [
+      "ms-finite-difference"
+    ],
+    "prerequisite_ids": [
+      "m-fourier",
+      "m-finitedifference",
+      "m-heat"
+    ]
+  },
+  {
+    "id": "mf-contraction",
+    "label": "Fixed-point convergence and stopping bound",
+    "domain": "mathematics",
+    "latex": "\\|T(x)-T(y)\\|\\le q\\|x-y\\|,\\ q<1,\\quad \\|x_k-x_*\\|\\le\\frac{q}{1-q}\\|x_k-x_{k-1}\\|",
+    "variables": [
+      {
+        "symbol": "T",
+        "meaning": "self-map on a complete metric space",
+        "unit": "state/state"
+      },
+      {
+        "symbol": "q",
+        "meaning": "contraction factor",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "T maps a nonempty complete space to itself and has a global contraction factor q in [0,1)."
+    ],
+    "derivation": "Successive differences shrink geometrically. The tail distance from x_k to the limiting fixed point is bounded by the geometric sum of future differences, giving q/(1−q) times the last difference. Completeness places the limit inside the space, and contraction proves uniqueness.",
+    "example": "For T(x)=0.5x+1, the unique fixed point is 2 and the last-step error bound equals the size of the previous change.",
+    "limitations": [
+      "Empirical stability over a few steps does not prove contraction; a budget stop is not a convergence certificate."
+    ],
+    "source_ids": [
+      "ms-contraction"
+    ],
+    "prerequisite_ids": [
+      "m-limits",
+      "m-fixedpoint"
+    ]
+  },
+  {
+    "id": "mf-tikhonov",
+    "label": "Ridge/Tikhonov regularization",
+    "domain": "mathematics",
+    "latex": "x_\\lambda=(A^TA+\\lambda I)^{-1}A^Tb,\\qquad \\lambda>0",
+    "variables": [
+      {
+        "symbol": "λ",
+        "meaning": "quadratic penalty coefficient",
+        "unit": "A² units after declared scaling"
+      },
+      {
+        "symbol": "x_λ",
+        "meaning": "regularized estimate",
+        "unit": "input"
+      }
+    ],
+    "assumptions": [
+      "Minimize ||Ax−b||²+λ||x||² with compatible units and finite real A."
+    ],
+    "derivation": "Differentiate the penalized objective to get (AᵀA+λI)x=Aᵀb. In SVD coordinates each inverse gain becomes σ/(σ²+λ), bounded even for small σ. Stability is obtained by shrinking the recovered components toward the zero-centered prior preference.",
+    "example": "For a scalar A=0.001 and λ=0.01, the gain is about 0.1 instead of the unregularized 1000.",
+    "limitations": [
+      "Regularization adds bias and requires a scale-dependent λ; it does not create observations of the nullspace."
+    ],
+    "source_ids": [
+      "ms-boyd",
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-leastsquares",
+      "m-svd",
+      "m-regularization"
+    ]
+  },
+  {
+    "id": "mf-lowrank",
+    "label": "Optimal truncated SVD error",
+    "domain": "mathematics",
+    "latex": "A_k=\\sum_{i=1}^k\\sigma_i u_iv_i^*,\\quad\\|A-A_k\\|_F^2=\\sum_{i>k}\\sigma_i^2",
+    "variables": [
+      {
+        "symbol": "A_k",
+        "meaning": "rank-k approximation",
+        "unit": "A units"
+      },
+      {
+        "symbol": "σ_i",
+        "meaning": "ordered singular values",
+        "unit": "A units"
+      }
+    ],
+    "assumptions": [
+      "Singular values ordered nonincreasingly; the objective is unweighted Frobenius norm."
+    ],
+    "derivation": "Orthogonality of singular components makes squared error add across discarded modes. The min-max characterization of singular values shows no rank-k matrix can remove more of this error under the same norm.",
+    "example": "For diag(5,2,1), the best rank 1 Frobenius error is √(4+1)=√5.",
+    "limitations": [
+      "Frobenius-optimal compression need not preserve rare but important events, permissions, exact facts or downstream decisions."
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "prerequisite_ids": [
+      "m-svd",
+      "m-pca"
+    ]
+  },
+  {
+    "id": "mf-simpson",
+    "label": "Composite Simpson integration error",
+    "domain": "mathematics",
+    "latex": "\\int_a^b f(x)dx\\approx\\frac h3[f_0+f_N+4\\!\\sum_{j\\ odd}f_j+2\\!\\sum_{j\\ even,\\ 0<j<N}f_j]",
+    "variables": [
+      {
+        "symbol": "h",
+        "meaning": "uniform spacing (b−a)/N",
+        "unit": "input"
+      },
+      {
+        "symbol": "N",
+        "meaning": "even number of subintervals",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "N is even; f has bounded fourth derivative for the standard error bound."
+    ],
+    "derivation": "Fit a quadratic across each adjacent pair of subintervals and integrate that interpolant. Symmetry makes the rule exact even for cubic polynomials. Summing local remainders yields absolute error at most (b−a)h⁴ max|f⁽⁴⁾|/180.",
+    "example": "On [0,1], f=x², N=2 gives (0.5/3)(0+4·0.25+1)=1/3 exactly.",
+    "limitations": [
+      "Discontinuities or unresolved oscillation invalidate the smooth-error estimate; blindly refining without checking the function class is insufficient."
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "prerequisite_ids": [
+      "m-taylor",
+      "m-quadrature",
+      "m-integral"
+    ]
+  },
+  {
+    "id": "mf-cauchy",
+    "label": "Cauchy integral formula",
+    "domain": "mathematics",
+    "latex": "f(z_0)=\\frac1{2\\pi i}\\oint_\\gamma\\frac{f(z)}{z-z_0}\\,dz",
+    "variables": [
+      {
+        "symbol": "γ",
+        "meaning": "positively oriented simple closed contour",
+        "unit": "complex length"
+      },
+      {
+        "symbol": "f",
+        "meaning": "holomorphic function inside and on contour",
+        "unit": "value unit"
+      }
+    ],
+    "assumptions": [
+      "f is holomorphic on a neighborhood of the contour and its interior; z₀ lies inside."
+    ],
+    "derivation": "Subtract f(z₀) from f(z) so the apparent singularity at z₀ is removable. The contour integral of the resulting holomorphic quotient vanishes. The remaining integral of 1/(z−z₀) is 2πi by one full winding.",
+    "example": "For f(z)=z² and a unit circle centered at zero, the formula returns f(0)=0.",
+    "limitations": [
+      "Poles inside the contour add residues; real differentiability alone is not sufficient."
+    ],
+    "source_ids": [
+      "ms-siu-complex"
+    ],
+    "prerequisite_ids": [
+      "m-complexanalysis",
+      "m-integral",
+      "m-stokes"
+    ]
+  },
+  {
+    "id": "mf-fourier",
+    "label": "Fourier transform and Plancherel convention",
+    "domain": "mathematics",
+    "latex": "\\hat f(\\omega)=\\int_\\mathbb R f(t)e^{-i\\omega t}dt,\\quad\\int|f|^2dt=\\frac1{2\\pi}\\int|\\hat f|^2d\\omega",
+    "variables": [
+      {
+        "symbol": "t",
+        "meaning": "independent time coordinate",
+        "unit": "s"
+      },
+      {
+        "symbol": "ω",
+        "meaning": "angular frequency",
+        "unit": "rad/s"
+      },
+      {
+        "symbol": "fhat",
+        "meaning": "transform amplitude",
+        "unit": "f unit·s"
+      }
+    ],
+    "assumptions": [
+      "Use L¹∩L² for a classical integral; extend to L² in the norm sense."
+    ],
+    "derivation": "Complex exponentials act as generalized orthogonal modes. The inverse under this convention contains 1/(2π); consistency of the pair forces the same factor in the energy identity. Substituting a Gaussian provides an explicit check of normalization.",
+    "example": "For f(t)=exp(−t²/2), fhat(ω)=√(2π)exp(−ω²/2), and both sides equal √π.",
+    "limitations": [
+      "Frequency in cycles per second uses a different exponent and normalization. A finite window causes leakage and finite resolution.",
+      "Hunter uses an alternative 2π normalization; converting to the notebook's unnormalized forward transform moves the factor 1/(2π) into its one-dimensional Plancherel identity."
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "prerequisite_ids": [
+      "m-complex",
+      "m-integral",
+      "m-functional"
+    ]
+  },
+  {
+    "id": "mf-heatkernel",
+    "label": "Heat equation spectral solution",
+    "domain": "mathematics",
+    "latex": "\\partial_tu=\\kappa\\Delta u,\\quad\\hat u(k,t)=e^{-\\kappa|k|^2t}\\hat u(k,0)",
+    "variables": [
+      {
+        "symbol": "κ",
+        "meaning": "diffusion coefficient",
+        "unit": "m²/s"
+      },
+      {
+        "symbol": "k",
+        "meaning": "spatial wavevector",
+        "unit": "rad/m"
+      },
+      {
+        "symbol": "t",
+        "meaning": "time",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Constant κ>0; whole-space or compatible Fourier basis boundary model."
+    ],
+    "derivation": "A spatial Fourier transform turns Δ into multiplication by −|k|². Each mode obeys an exponential-decay ODE. High-frequency modes decay faster, explaining smoothing and the instability of naively multiplying noisy late data by e^(κ|k|²t) to reverse time.",
+    "example": "On a periodic interval, initial sin(3x) evolves as e^(−9κt)sin(3x).",
+    "limitations": [
+      "A forward heat semigroup is dissipative; numerical reversal is not a physical memory restoration mechanism."
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "prerequisite_ids": [
+      "m-fourier",
+      "m-pde",
+      "m-operators"
+    ]
+  },
+  {
+    "id": "mf-wave",
+    "label": "Wave equation dispersion relation",
+    "domain": "mathematics",
+    "latex": "u_{tt}=c^2\\Delta u,\\quad u=e^{i(k\\cdot x-\\omega t)}\\Rightarrow\\omega^2=c^2|k|^2",
+    "variables": [
+      {
+        "symbol": "c",
+        "meaning": "wave speed",
+        "unit": "m/s"
+      },
+      {
+        "symbol": "k",
+        "meaning": "wavevector",
+        "unit": "rad/m"
+      },
+      {
+        "symbol": "ω",
+        "meaning": "angular frequency",
+        "unit": "rad/s"
+      }
+    ],
+    "assumptions": [
+      "Linear homogeneous isotropic nondispersive medium with constant c."
+    ],
+    "derivation": "Differentiate the plane wave twice in time to get −ω²u and apply the Laplacian to get −|k|²u. Matching coefficients gives the dispersion relation. Superposition holds because the equation is linear.",
+    "example": "A one-dimensional mode with wavelength λ has |k|=2π/λ and ordinary frequency f=c/λ.",
+    "limitations": [
+      "Material dispersion, nonlinearities and boundaries alter the relation or allowed modes; identical frequency does not imply identical physical channel."
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "prerequisite_ids": [
+      "m-fourier",
+      "m-pde",
+      "m-derivative"
+    ]
+  },
+  {
+    "id": "mf-sobolev",
+    "label": "Integer Sobolev norm",
+    "domain": "mathematics",
+    "latex": "\\|u\\|_{H^s(\\Omega)}^2=\\sum_{|\\alpha|\\le s}\\|D^\\alpha u\\|_{L^2(\\Omega)}^2",
+    "variables": [
+      {
+        "symbol": "s",
+        "meaning": "nonnegative integer derivative order",
+        "unit": "1"
+      },
+      {
+        "symbol": "α",
+        "meaning": "multi-index",
+        "unit": "1"
+      },
+      {
+        "symbol": "u",
+        "meaning": "function with weak derivatives",
+        "unit": "field unit"
+      }
+    ],
+    "assumptions": [
+      "s is an integer here; weak derivatives through order s are square integrable.",
+      "For dimensional physical variables introduce reference length scales before adding differently dimensioned derivative norms."
+    ],
+    "derivation": "The norm controls both a function and its derivatives in mean square. A Cauchy sequence in this norm converges with its weak derivatives, giving a Hilbert space useful for existence proofs and variational methods.",
+    "example": "A smooth compactly supported function belongs to every finite-order Hˢ. A jump function in one dimension has a delta derivative and generally is not H¹.",
+    "limitations": [
+      "Hˢ regularity is not pointwise Cˢ regularity; embeddings require dimension-dependent thresholds and domain assumptions."
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "prerequisite_ids": [
+      "m-measure",
+      "m-functional",
+      "m-weak"
+    ]
+  },
+  {
+    "id": "mf-laplacebeltrami",
+    "label": "Metric Laplacian on a manifold",
+    "domain": "mathematics",
+    "latex": "\\Delta_gu=\\frac1{\\sqrt{|g|}}\\partial_i\\left(\\sqrt{|g|}\\,g^{ij}\\partial_ju\\right)",
+    "variables": [
+      {
+        "symbol": "g_ij",
+        "meaning": "metric tensor",
+        "unit": "length² per coordinate²"
+      },
+      {
+        "symbol": "|g|",
+        "meaning": "absolute determinant of metric matrix",
+        "unit": "coordinate-dependent"
+      },
+      {
+        "symbol": "gⁱʲ",
+        "meaning": "inverse metric",
+        "unit": "inverse metric units"
+      }
+    ],
+    "assumptions": [
+      "For the elliptic Laplace–Beltrami operator use a positive-definite Riemannian metric.",
+      "The analogous Lorentzian expression is a wave operator with sign conventions."
+    ],
+    "derivation": "The gradient raises the derivative index with gⁱʲ. Divergence measures flux using the volume density √|g|. Combining the two gives the coordinate expression, ensuring the result is independent of the chosen chart.",
+    "example": "In polar plane coordinates g=diag(1,r²), the formula becomes u_rr+r⁻¹u_r+r⁻²u_θθ.",
+    "limitations": [
+      "Coordinate singularities such as r=0 need regularity conditions; they are not automatically curvature singularities."
+    ],
+    "source_ids": [
+      "ms-tong-geometry"
+    ],
+    "prerequisite_ids": [
+      "m-metric",
+      "m-jacobian",
+      "m-gradient"
+    ]
+  },
+  {
+    "id": "mf-curvature",
+    "label": "Curvature as a covariant-derivative commutator",
+    "domain": "mathematics",
+    "latex": "R(X,Y)Z=\\nabla_X\\nabla_YZ-\\nabla_Y\\nabla_XZ-\\nabla_{[X,Y]}Z",
+    "variables": [
+      {
+        "symbol": "∇",
+        "meaning": "connection",
+        "unit": "inverse length in physical coordinates"
+      },
+      {
+        "symbol": "X,Y,Z",
+        "meaning": "vector fields",
+        "unit": "coordinate-dependent"
+      },
+      {
+        "symbol": "R",
+        "meaning": "curvature operator",
+        "unit": "inverse length² for orthonormal directions"
+      }
+    ],
+    "assumptions": [
+      "Smooth connection and vector fields; this equation declares the sign convention."
+    ],
+    "derivation": "Two successive transports in different directions generally disagree. Subtract the reversed order and remove the discrepancy due merely to the noncommuting coordinate vector fields. The remainder is tensorial, defining curvature independently of the extension of local vectors.",
+    "example": "The standard flat connection in Cartesian Euclidean space has R=0, even when curvilinear coordinates make connection coefficients nonzero.",
+    "limitations": [
+      "Different texts reverse the sign; comparing Ricci or Einstein equations requires a consistent convention throughout."
+    ],
+    "source_ids": [
+      "ms-tong-geometry"
+    ],
+    "prerequisite_ids": [
+      "m-connection",
+      "m-lie",
+      "m-manifold"
+    ]
+  },
+  {
+    "id": "mf-homology",
+    "label": "Homology: cycles modulo boundaries",
+    "domain": "mathematics",
+    "latex": "H_k=\\ker\\partial_k/\\operatorname{im}\\partial_{k+1},\\quad\\partial_k\\partial_{k+1}=0",
+    "variables": [
+      {
+        "symbol": "∂_k",
+        "meaning": "boundary map from k-chains",
+        "unit": "1"
+      },
+      {
+        "symbol": "H_k",
+        "meaning": "kth homology group or vector space",
+        "unit": "algebraic"
+      }
+    ],
+    "assumptions": [
+      "A chain complex with consecutive boundary maps composing to zero.",
+      "Choose coefficient ring or field explicitly."
+    ],
+    "derivation": "A cycle has no boundary, so it lies in ker ∂. Some cycles already bound a higher-dimensional cell and should not count as holes. Since every boundary is a cycle, quotienting by im ∂ is well-defined.",
+    "example": "A triangular wire graph has one independent 1-cycle. Adding its filled triangular face makes that cycle a boundary, so it vanishes in H₁.",
+    "limitations": [
+      "A cycle in a citation graph is not automatically a topological hole in a scientifically meaningful complex."
+    ],
+    "source_ids": [
+      "ms-hatcher"
+    ],
+    "prerequisite_ids": [
+      "m-simplicial",
+      "m-rank",
+      "m-topology"
+    ]
+  },
+  {
+    "id": "mf-eulerchar",
+    "label": "Euler characteristic of a finite complex",
+    "domain": "mathematics",
+    "latex": "\\chi=\\sum_k(-1)^kc_k=\\sum_k(-1)^k\\beta_k",
+    "variables": [
+      {
+        "symbol": "c_k",
+        "meaning": "number of k-cells",
+        "unit": "1"
+      },
+      {
+        "symbol": "β_k",
+        "meaning": "dimension of kth homology over a chosen field",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Finite cell or simplicial complex; Betti numbers use a fixed coefficient field."
+    ],
+    "derivation": "Apply rank–nullity to every boundary matrix. The image-rank terms cancel pairwise in the alternating sum, leaving equality between cell counts and homology dimensions. This is a compact check on a chain-complex implementation.",
+    "example": "A tetrahedron surface has V−E+F=4−6+4=2, matching β₀=1, β₁=0, β₂=1.",
+    "limitations": [
+      "Euler characteristic loses information: spaces with the same value can have different topology."
+    ],
+    "source_ids": [
+      "ms-hatcher"
+    ],
+    "prerequisite_ids": [
+      "m-homology",
+      "m-rank"
+    ]
+  },
+  {
+    "id": "mf-representation",
+    "label": "Group representations preserve composition",
+    "domain": "mathematics",
+    "latex": "\\rho(gh)=\\rho(g)\\rho(h),\\quad\\rho(e)=I",
+    "variables": [
+      {
+        "symbol": "ρ",
+        "meaning": "homomorphism G→GL(V)",
+        "unit": "1"
+      },
+      {
+        "symbol": "g,h",
+        "meaning": "group elements",
+        "unit": "abstract"
+      }
+    ],
+    "assumptions": [
+      "Matrices are invertible and belong to one scalar field and vector space."
+    ],
+    "derivation": "A group action on a vector space is linear when each group element acts by an invertible linear map. Applying h then g must agree with applying gh, so matrix multiplication matches group composition.",
+    "example": "Planar rotations R(θ) satisfy R(θ+φ)=R(θ)R(φ). Their generator at zero is [[0,−1],[1,0]].",
+    "limitations": [
+      "Different representations can describe the same abstract group; matrix dimension is not group order."
+    ],
+    "source_ids": [
+      "ms-milne"
+    ],
+    "prerequisite_ids": [
+      "m-groups",
+      "m-vectors"
+    ]
+  },
+  {
+    "id": "mf-galois",
+    "label": "Finite Galois correspondence",
+    "domain": "mathematics",
+    "latex": "E\\longmapsto\\operatorname{Gal}(L/E),\\qquad H\\longmapsto L^H,\\qquad [L:E]=|\\operatorname{Gal}(L/E)|",
+    "variables": [
+      {
+        "symbol": "L/K",
+        "meaning": "finite Galois field extension",
+        "unit": "abstract"
+      },
+      {
+        "symbol": "E",
+        "meaning": "intermediate field",
+        "unit": "abstract"
+      },
+      {
+        "symbol": "H",
+        "meaning": "automorphism subgroup",
+        "unit": "abstract"
+      }
+    ],
+    "assumptions": [
+      "L/K is finite, normal and separable."
+    ],
+    "derivation": "Automorphisms fixing E form a subgroup. Conversely the elements fixed by a subgroup form a field. Normality and separability ensure enough automorphisms for these constructions to be inverse, reversing inclusion.",
+    "example": "Q(√2)/Q has two automorphisms, fixing or negating √2, and degree 2.",
+    "limitations": [
+      "For a nongalois extension the simple correspondence and cardinality equality need modification."
+    ],
+    "source_ids": [
+      "ms-milne"
+    ],
+    "prerequisite_ids": [
+      "m-fields",
+      "m-groups"
+    ]
+  },
+  {
+    "id": "mf-zeta",
+    "label": "Zeta Dirichlet series and Euler product",
+    "domain": "mathematics",
+    "latex": "\\zeta(s)=\\sum_{n=1}^\\infty n^{-s}=\\prod_{p\\ \\mathrm{prime}}(1-p^{-s})^{-1},\\quad\\Re s>1",
+    "variables": [
+      {
+        "symbol": "s",
+        "meaning": "complex argument",
+        "unit": "1"
+      },
+      {
+        "symbol": "p",
+        "meaning": "prime integer",
+        "unit": "1"
+      }
+    ],
+    "assumptions": [
+      "Absolute convergence for Re(s)>1.",
+      "Values elsewhere use analytic continuation, not this convergent series."
+    ],
+    "derivation": "Expand each prime factor as a geometric series. Unique factorization identifies every finite prime-power product with exactly one positive integer. Absolute convergence justifies regrouping and taking the infinite product limit.",
+    "example": "At s=2, ζ(2)=π²/6; partial sums approach it from below.",
+    "limitations": [
+      "Substituting s=−1 into the divergent series is invalid; analytic continuation does not make ordinary summation of positive integers negative."
+    ],
+    "source_ids": [
+      "ms-dlmf"
+    ],
+    "prerequisite_ids": [
+      "m-primes",
+      "m-complexanalysis",
+      "m-integral"
+    ]
+  },
+  {
+    "id": "mf-elliptic",
+    "label": "Short Weierstrass curve and nonsingularity",
+    "domain": "mathematics",
+    "latex": "y^2=x^3+ax+b,\\qquad\\Delta=-16(4a^3+27b^2)\\ne0",
+    "variables": [
+      {
+        "symbol": "a,b",
+        "meaning": "field coefficients",
+        "unit": "algebraic"
+      },
+      {
+        "symbol": "Δ",
+        "meaning": "curve discriminant",
+        "unit": "algebraic"
+      }
+    ],
+    "assumptions": [
+      "Field characteristic is neither 2 nor 3 for this normal form.",
+      "Include the point at infinity for the projective elliptic curve and group law."
+    ],
+    "derivation": "A singular point must make both partial derivatives of y²−x³−ax−b vanish. Eliminating x and y yields 4a³+27b²=0. Excluding this condition gives a nonsingular cubic with a well-defined geometric group structure after choosing the point at infinity.",
+    "example": "y²=x³−x has Δ=64, so it is nonsingular in characteristic 0.",
+    "limitations": [
+      "A curve equation is not a solution to the full Birch–Swinnerton-Dyer conjecture; arithmetic ranks require additional tools."
+    ],
+    "source_ids": [
+      "ms-elliptic"
+    ],
+    "prerequisite_ids": [
+      "m-polynomials",
+      "m-fields",
+      "m-gradient"
+    ]
+  },
+  {
+    "id": "mf-naturality",
+    "label": "Naturality square",
+    "domain": "mathematics",
+    "latex": "G(f)\\circ\\eta_X=\\eta_Y\\circ F(f)",
+    "variables": [
+      {
+        "symbol": "F,G",
+        "meaning": "functors between fixed categories",
+        "unit": "abstract"
+      },
+      {
+        "symbol": "η_X",
+        "meaning": "component map F(X)→G(X)",
+        "unit": "abstract"
+      },
+      {
+        "symbol": "f",
+        "meaning": "morphism X→Y",
+        "unit": "abstract"
+      }
+    ],
+    "assumptions": [
+      "Composition domains and codomains agree for every f."
+    ],
+    "derivation": "A family of component maps is coherent only if converting before or after applying any source morphism gives the same result. This equation makes that requirement explicit and prevents arbitrary object-by-object correspondences from masquerading as a structure-preserving transformation.",
+    "example": "Double-dual evaluation maps on finite-dimensional vector spaces commute with every linear map, giving a natural transformation to the double-dual functor.",
+    "limitations": [
+      "A diagram that merely looks symmetric does not establish naturality; every relevant morphism must satisfy the condition."
+    ],
+    "source_ids": [
+      "ms-category"
+    ],
+    "prerequisite_ids": [
+      "m-category",
+      "m-functor"
+    ]
+  },
+  {
+    "id": "mf-yoneda",
+    "label": "Yoneda lemma",
+    "domain": "mathematics",
+    "latex": "\\operatorname{Nat}(\\operatorname{Hom}(A,-),F)\\cong F(A)",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "object of a locally small category",
+        "unit": "abstract"
+      },
+      {
+        "symbol": "F",
+        "meaning": "covariant functor to Set",
+        "unit": "abstract"
+      }
+    ],
+    "assumptions": [
+      "Category is locally small and F is covariant for the displayed form."
+    ],
+    "derivation": "Map a natural transformation η to η_A(id_A). Conversely an element x∈F(A) defines η_B(f)=F(f)(x). Functoriality establishes naturality, and evaluating at identity shows these constructions are inverse.",
+    "example": "For vector spaces, natural ways of evaluating maps out of A are determined by the image of a distinguished element under those maps.",
+    "limitations": [
+      "The lemma concerns formal morphism structure, not the claim that every object or memory is completely known from finite observed associations."
+    ],
+    "source_ids": [
+      "ms-category"
+    ],
+    "prerequisite_ids": [
+      "m-natural",
+      "m-universal"
+    ]
+  },
+  {
+    "id": "mf-permanent",
+    "label": "Permanent versus determinant",
+    "domain": "mathematics",
+    "latex": "\\operatorname{per}(A)=\\sum_{\\sigma\\in S_n}\\prod_i a_{i,\\sigma(i)},\\qquad\\det(A)=\\sum_{\\sigma\\in S_n}\\operatorname{sgn}(\\sigma)\\prod_i a_{i,\\sigma(i)}",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "n×n matrix over a field",
+        "unit": "algebraic"
+      },
+      {
+        "symbol": "S_n",
+        "meaning": "permutation group",
+        "unit": "abstract"
+      }
+    ],
+    "assumptions": [
+      "For complexity claims state the arithmetic field and the circuit model."
+    ],
+    "derivation": "Both expressions sum one selected entry from each row and column. The determinant includes cancellation by permutation sign, enabling elimination-based algorithms. The permanent removes that sign and measures weighted perfect matchings of a bipartite graph.",
+    "example": "For a 2×2 matrix, permanent is ad+bc while determinant is ad−bc. In characteristic 2 these coincide.",
+    "limitations": [
+      "An arithmetic VP/VNP separation does not automatically imply Boolean P≠NP; characteristic 2 is a material exception for permanent bounds."
+    ],
+    "source_ids": [
+      "ms-claude-vp"
+    ],
+    "prerequisite_ids": [
+      "m-determinant",
+      "m-combinatorics",
+      "m-complexity"
+    ]
+  },
+  {
+    "id": "mf-dagtime",
+    "label": "Critical path in a dependency DAG",
+    "domain": "mathematics",
+    "latex": "T(v)=c(v)+\\max_{u\\to v}T(u)",
+    "variables": [
+      {
+        "symbol": "c(v)",
+        "meaning": "duration or cost of task v",
+        "unit": "time"
+      },
+      {
+        "symbol": "T(v)",
+        "meaning": "earliest completion with unlimited parallel capacity",
+        "unit": "time"
+      }
+    ],
+    "assumptions": [
+      "Finite DAG; tasks wait for all predecessors; independent tasks can run concurrently without resource contention.",
+      "Use maximum of an empty predecessor set as0."
+    ],
+    "derivation": "A task cannot start before the slowest predecessor finishes. Add its own duration and compute in topological order. The maximum completion among terminal tasks is a lower bound for schedules with limited workers.",
+    "example": "Two independent tasks lasting 2 and 5 followed by a3-unit merge need 8 units, even though total work is10.",
+    "limitations": [
+      "Limited agents, locks, API quotas and shared hardware can make the actual schedule longer; this bound is not a cost or runtime guarantee."
+    ],
+    "source_ids": [
+      "ms-algorithms"
+    ],
+    "prerequisite_ids": [
+      "m-dag",
+      "m-shortest"
+    ]
+  }
+]

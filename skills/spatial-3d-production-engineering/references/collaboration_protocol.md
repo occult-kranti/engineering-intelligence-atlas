@@ -1,6 +1,6 @@
 # Skill Collaboration Protocol
 
-**Status:** shared contract for the 15 repository skills and the 109 role charters. **Date:** 2026-11-24.
+**Status:** shared contract for the 16 repository skills and the 109 role charters. **Date:** 2026-11-25.
 **Scope:** this document is the single collaboration/lifecycle contract used whenever any repository skill or role is composed as a specialist node under the `agent-research-director`. Standalone use of a skill does not require the director, but the waiting, budget, and untrusted-content rules below are still recommended hygiene.
 **Companion documents:** the per-task delegation schema lives in `agent-research-director/references/registry_and_contracts.md`; the server-side runtime design lives in `reports/research_director_runtime_specification.md`. Neither is duplicated here.
 
@@ -104,5 +104,16 @@ Mapping note: the MVP runtime specification (§8.1) uses the finer-grained run s
 - Skill/package checks establish structural properties only. The director's `references/evaluation_protocol.md` and offline receipt gate specify the bounded comparison; neither grants deployment authority or proves general task performance. Keep prior versions and rejected-edit evidence. **[Director today]**
 
 ---
+
+
+## 16. Evidence memory and reusable research
+
+- Use `graph-memory-research` when a task needs connections, prerequisites, repeated retrieval, corrections or a linked-note handoff. The source atlas is `projects/research-memory-atlas`; `company/knowledge-memory/atlas.json` is the generated public snapshot. **[Director today]**
+- The implemented native and hosted Donna integrations retrieve a small public evidence packet. The native worker has a bounded process cache; the CLI has content-addressed snapshots and a persistent result cache. Hosted retrieval does not claim a persistent cache. Source summaries and publisher metadata retain their reading-depth labels. **[Implemented local source; deployed status is recorded separately]**
+- Derive company scopes from the authenticated caller. Filter authorization, time and retraction state before corpus statistics and graph propagation. Organizational hierarchy, graph edges and CLI flags do not grant permission. Private company ingestion remains an explicit adapter operation; it is never copied into the public research snapshot. **[Director today]**
+- Cache identity includes source content, graph/algorithm revision, scope, policy, query bounds and temporal eligibility. Source corrections and revoked scopes invalidate reuse. Local result-cache hits, provider prompt-cache tokens and semantic-answer reuse are different measurements. **[Director today]**
+- A cycle in a knowledge graph may be useful. A prerequisite cycle blocks that schedule. Repeated agent work requires a changed artifact, source or strategy and finite budgets; centrality is neither truth nor permission to continue. **[Director today]**
+- Transfer formulas with symbols, units, assumptions, examples and limitations. A mathematical analogy to electrostatics, spins, waves or neural learning is not an empirical mechanism until the state variables, units, dynamics and tests are defined. **[Director today]**
+- Use the design team's background reference (`projects/design-backgrounds`) as a selection library. Keep content readable, optional motion bounded and reduced-motion honored. A material style is a visual choice; performance claims require measurements on the target device. **[Director today]**
 
 **Disclaimer.** This protocol is a coordination contract for skill composition, not a claim that any distributed runtime exists. Items labeled **[Distributed runtime]** describe recommended future behavior; items labeled **[Director today]** describe requirements of the current director skill. Check the deployed runtime separately for enforcement and supported budget values.

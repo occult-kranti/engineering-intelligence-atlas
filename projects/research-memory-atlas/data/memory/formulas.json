@@ -1,0 +1,1147 @@
+[
+  {
+    "id": "gf-adjacency",
+    "label": "Adjacency and weighted degree",
+    "domain": "memory",
+    "latex": "A_{ij}=w_{ij},\\qquad d_i=\\sum_j A_{ij},\\qquad D=\\operatorname{diag}(d_i)",
+    "variables": [
+      {
+        "symbol": "A",
+        "meaning": "edge-weight matrix",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "d_i",
+        "meaning": "outgoing weighted degree",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Declare whether rows encode outgoing edges.",
+      "Weights are nonnegative for a random-walk interpretation."
+    ],
+    "derivation": "Place each edge weight at its row and column. Summing a row counts outgoing weight; this is bookkeeping, not an inferred relationship.",
+    "example": "A unit-weight path of three vertices has degrees (1,2,1) when represented as an undirected graph.",
+    "limitations": [
+      "A directed graph generally has different incoming and outgoing degree."
+    ],
+    "source_ids": [
+      "gs-pagerank"
+    ],
+    "prerequisite_ids": [
+      "g-graph",
+      "g-edge"
+    ]
+  },
+  {
+    "id": "gf-laplacian",
+    "label": "Combinatorial Laplacian",
+    "domain": "memory",
+    "latex": "L=D-A,\\qquad L\\mathbf 1=0",
+    "variables": [
+      {
+        "symbol": "L",
+        "meaning": "graph difference operator",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "A",
+        "meaning": "symmetric adjacency",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Undirected graph with nonnegative weights."
+    ],
+    "derivation": "Row i acts on x by summing w_ij(x_i-x_j); a constant signal produces zero differences.",
+    "example": "For the three-vertex path, L=[[1,-1,0],[-1,2,-1],[0,-1,1]], with eigenvalues 0,1,3.",
+    "limitations": [
+      "L is singular on each connected component. A directed version needs a separately stated convention."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-adjacency",
+      "g-degree"
+    ]
+  },
+  {
+    "id": "gf-dirichlet",
+    "label": "Dirichlet quadratic form",
+    "domain": "memory",
+    "latex": "x^TLx=\\frac12\\sum_{i,j}w_{ij}(x_i-x_j)^2",
+    "variables": [
+      {
+        "symbol": "x",
+        "meaning": "vertex signal",
+        "unit": "signal unit"
+      },
+      {
+        "symbol": "w_ij",
+        "meaning": "symmetric weight",
+        "unit": "weight unit"
+      }
+    ],
+    "assumptions": [
+      "Symmetric nonnegative weights.",
+      "The double sum counts both orientations."
+    ],
+    "derivation": "Expand the square and collect the two degree terms; symmetry turns both into x^TDx, while cross terms give twice x^TAx.",
+    "example": "For path values (1,0,-1), the two undirected edge differences both equal 1, hence x^TLx=2.",
+    "limitations": [
+      "Units are weight times signal squared. Calling this physical energy requires an additional physical model."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-laplacian"
+    ]
+  },
+  {
+    "id": "gf-grounded",
+    "label": "Grounded Poisson problem",
+    "domain": "memory",
+    "latex": "L_{II}u_I=b_I-L_{IB}u_B",
+    "variables": [
+      {
+        "symbol": "I",
+        "meaning": "interior vertex indices",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "B",
+        "meaning": "fixed boundary indices",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "u",
+        "meaning": "potential-like signal",
+        "unit": "signal unit"
+      },
+      {
+        "symbol": "b",
+        "meaning": "source vector",
+        "unit": "weight × signal"
+      }
+    ],
+    "assumptions": [
+      "Every connected component of interior vertices reaches a fixed boundary.",
+      "Boundary values and compatible source units are specified."
+    ],
+    "derivation": "Partition Lu=b into interior and boundary blocks; move the known boundary term to the right. The grounded interior operator is positive definite under the connectivity assumption.",
+    "example": "For a three-point path with endpoints 1 and 0 and no interior source, 2u_middle=1, so u_middle=0.5.",
+    "limitations": [
+      "Without grounding or compatibility constraints, inversion is not unique or may be inconsistent."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-dirichlet",
+      "g-grounding"
+    ]
+  },
+  {
+    "id": "gf-heat",
+    "label": "Graph heat flow",
+    "domain": "memory",
+    "latex": "\\frac{dx}{dt}=-\\kappa Lx,\\qquad x(t)=e^{-\\kappa Lt}x(0)",
+    "variables": [
+      {
+        "symbol": "t",
+        "meaning": "time or algorithmic diffusion scale",
+        "unit": "s or declared iteration scale"
+      },
+      {
+        "symbol": "kappa",
+        "meaning": "diffusion coefficient",
+        "unit": "inverse time when L is dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Fixed symmetric nonnegative graph.",
+      "Linear dynamics."
+    ],
+    "derivation": "Diagonalize L=UΛUᵀ; each mode obeys a scalar decay equation with solution exp(-κλt).",
+    "example": "A mode with λ=2 and κ=1 s^-1 decays to exp(-2)≈0.1353 of its initial amplitude after 1 s.",
+    "limitations": [
+      "Smoothing can remove a rare but essential distinction. A diffusion parameter is not automatically a biological timescale."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-laplacian"
+    ]
+  },
+  {
+    "id": "gf-graph-wave",
+    "label": "Graph wave modes",
+    "domain": "memory",
+    "latex": "\\ddot x+\\omega_0^2 Lx=0,\\qquad \\omega_k=\\omega_0\\sqrt{\\lambda_k}",
+    "variables": [
+      {
+        "symbol": "omega_0",
+        "meaning": "chosen dynamical scale",
+        "unit": "rad/s"
+      },
+      {
+        "symbol": "lambda_k",
+        "meaning": "Laplacian eigenvalue",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "omega_k",
+        "meaning": "mode angular frequency",
+        "unit": "rad/s"
+      }
+    ],
+    "assumptions": [
+      "A physical or simulated second-order dynamical law is explicitly posited.",
+      "L is positive semidefinite."
+    ],
+    "derivation": "Project onto each eigenvector to obtain an independent harmonic-oscillator equation.",
+    "example": "For path eigenvalue λ=3 and ω0=2 rad/s, the mode has ω=2√3 rad/s.",
+    "limitations": [
+      "A note graph alone has no clock, mass, stiffness, or measured acoustic frequency."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-frequency-bridge",
+      "g-laplacian"
+    ]
+  },
+  {
+    "id": "gf-transition",
+    "label": "Row-stochastic transition",
+    "domain": "memory",
+    "latex": "P_{ij}=A_{ij}/d_i\\quad(d_i>0)",
+    "variables": [
+      {
+        "symbol": "P_ij",
+        "meaning": "one-step transition probability",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "d_i",
+        "meaning": "outgoing weight",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Nonnegative weights.",
+      "A separate redistribution rule is defined for dangling rows."
+    ],
+    "derivation": "Divide each outgoing weight by the row sum, producing total probability one.",
+    "example": "Weights (2,1) yield outgoing probabilities (2/3,1/3).",
+    "limitations": [
+      "Negative relations cannot be inserted as negative probabilities. Keep contradicts as a separate semantic channel."
+    ],
+    "source_ids": [
+      "gs-pagerank"
+    ],
+    "prerequisite_ids": [
+      "g-adjacency",
+      "g-walk"
+    ]
+  },
+  {
+    "id": "gf-ppr",
+    "label": "Personalized PageRank",
+    "domain": "memory",
+    "latex": "p_{t+1}=\\alpha P^Tp_t+(1-\\alpha)s,\\qquad p_*=(1-\\alpha)(I-\\alpha P^T)^{-1}s",
+    "variables": [
+      {
+        "symbol": "s",
+        "meaning": "query seed distribution",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "p",
+        "meaning": "probability mass over eligible vertices",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "alpha",
+        "meaning": "walk probability",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "0≤α<1.",
+      "P is row-stochastic after dangling-node handling.",
+      "s is nonnegative and sums to one."
+    ],
+    "derivation": "At a fixed point, collect terms in p. Invertibility follows because the spectral radius of αPᵀ is below one. The Neumann series sums walks of every length with geometric damping.",
+    "example": "For two alternating vertices, seed (1,0), and α=0.85, p=(1/1.85,0.85/1.85)≈(0.54054,0.45946).",
+    "limitations": [
+      "Stationary mass measures graph affinity. It is not probability that a scientific claim is correct."
+    ],
+    "source_ids": [
+      "gs-hippo1",
+      "gs-pagerank"
+    ],
+    "prerequisite_ids": [
+      "g-walk"
+    ]
+  },
+  {
+    "id": "gf-ppr-error",
+    "label": "PageRank residual bound",
+    "domain": "memory",
+    "latex": "\\lVert p_t-p_*\\rVert_1\\leq\\frac{\\lVert p_{t+1}-p_t\\rVert_1}{1-\\alpha}",
+    "variables": [
+      {
+        "symbol": "p_t",
+        "meaning": "current iterate",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "p_*",
+        "meaning": "unique fixed point",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "alpha",
+        "meaning": "contraction factor bound",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Stochastic transition with 0≤α<1."
+    ],
+    "derivation": "The future increments are bounded by a geometric sequence. Sum their norms to bound the distance from the current iterate to the limit.",
+    "example": "At α=0.85 and residual 10^-10, this bound is at most 6.67×10^-10.",
+    "limitations": [
+      "An iteration cap can stop before this bound is small; record residual and iteration count."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-pagerank",
+      "g-convergence"
+    ]
+  },
+  {
+    "id": "gf-idf",
+    "label": "Positive inverse document frequency",
+    "domain": "memory",
+    "latex": "\\operatorname{idf}(t)=\\log\\left(1+\\frac{N-n_t+0.5}{n_t+0.5}\\right)",
+    "variables": [
+      {
+        "symbol": "N",
+        "meaning": "eligible document count",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "n_t",
+        "meaning": "eligible documents containing term t",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Compute statistics only over authorized active documents.",
+      "Natural logarithm is used."
+    ],
+    "derivation": "The smoothed frequency ratio increases as a term becomes rarer; the outer 1 keeps this common BM25 variant positive.",
+    "example": "With N=100 and n_t=1, idf=ln(1+99.5/1.5)≈4.210.",
+    "limitations": [
+      "Changing the corpus changes IDF. It does not measure the truth or novelty of a claim."
+    ],
+    "source_ids": [
+      "gs-bm25"
+    ],
+    "prerequisite_ids": [
+      "g-tokens",
+      "g-idf"
+    ]
+  },
+  {
+    "id": "gf-bm25",
+    "label": "BM25 retrieval score",
+    "domain": "memory",
+    "latex": "S(q,d)=\\sum_{t\\in q}\\operatorname{idf}(t)\\frac{f_{t,d}(k_1+1)}{f_{t,d}+k_1(1-b+b|d|/\\overline{|d|})}",
+    "variables": [
+      {
+        "symbol": "f_t,d",
+        "meaning": "term count",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "k_1",
+        "meaning": "term saturation parameter",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "b",
+        "meaning": "length-normalization parameter",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "|d|",
+        "meaning": "document token count",
+        "unit": "tokens"
+      }
+    ],
+    "assumptions": [
+      "Chosen tokenizer and document construction are fixed.",
+      "Implementation uses k1=1.2 and b=0.75."
+    ],
+    "derivation": "The fractional term grows with term frequency but saturates. Length normalization changes the denominator according to relative document length.",
+    "example": "If a document has average length and term frequency 1, the fraction equals 1, leaving exactly its IDF contribution.",
+    "limitations": [
+      "These constants are a baseline, not optimized for this corpus. Repeated labels receive deliberate extra weight."
+    ],
+    "source_ids": [
+      "gs-bm25"
+    ],
+    "prerequisite_ids": [
+      "g-idf"
+    ]
+  },
+  {
+    "id": "gf-cosine",
+    "label": "Cosine similarity",
+    "domain": "memory",
+    "latex": "\\operatorname{sim}(x,y)=\\frac{x^Ty}{\\lVert x\\rVert_2\\lVert y\\rVert_2}",
+    "variables": [
+      {
+        "symbol": "x,y",
+        "meaning": "nonzero embedding vectors",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "sim",
+        "meaning": "directional similarity",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Both vectors have nonzero norm.",
+      "Both come from the same compatible embedding space."
+    ],
+    "derivation": "Divide the inner product by magnitudes to isolate the angle between vectors.",
+    "example": "Vectors (1,0) and (1,1) have cosine 1/√2≈0.7071.",
+    "limitations": [
+      "High similarity can link incompatible claims. Embeddings are a documented future adapter, not used in the implemented baseline."
+    ],
+    "source_ids": [
+      "gs-hippo2"
+    ],
+    "prerequisite_ids": [
+      "g-embedding"
+    ]
+  },
+  {
+    "id": "gf-rrf",
+    "label": "Weighted reciprocal rank fusion",
+    "domain": "memory",
+    "latex": "R(d)=\\sum_j\\frac{w_j}{c+r_j(d)}",
+    "variables": [
+      {
+        "symbol": "r_j",
+        "meaning": "one-based rank in retrieval channel j",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "w_j",
+        "meaning": "declared channel weight",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "c",
+        "meaning": "rank damping constant",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Missing items contribute zero.",
+      "Ranks start at one."
+    ],
+    "derivation": "Replace incomparable raw scores with reciprocal rank contributions, then sum channels. The implemented weights are 1 for lexical and 0.7 for graph, with c=60.",
+    "example": "An item ranked first in both channels scores 1.7/61≈0.027869; this is a ranking score, not 2.79% confidence.",
+    "limitations": [
+      "Weights need held-out evaluation; a dense graph can still introduce irrelevant linked items."
+    ],
+    "source_ids": [
+      "gs-rrf"
+    ],
+    "prerequisite_ids": [
+      "g-bm25",
+      "g-pagerank"
+    ]
+  },
+  {
+    "id": "gf-mmr",
+    "label": "Relevance and redundancy tradeoff",
+    "domain": "memory",
+    "latex": "d_* =\\arg\\max_{d\\notin S}\\left[\\lambda\\,r(q,d)-(1-\\lambda)\\max_{s\\in S}\\operatorname{sim}(d,s)\\right]",
+    "variables": [
+      {
+        "symbol": "S",
+        "meaning": "already selected evidence set",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "lambda",
+        "meaning": "relevance-diversity preference",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Comparable, bounded relevance and similarity scales.",
+      "0≤λ≤1."
+    ],
+    "derivation": "A greedy step rewards query relevance and penalizes similarity to selected evidence. This defines an engineering policy rather than a general optimum.",
+    "example": "At λ=0.7, relevance 0.9 and maximum redundancy 0.8 give 0.63-0.24=0.39.",
+    "limitations": [
+      "Not implemented in the initial retrieval core; retained as an evaluable extension."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-rrf",
+      "g-mmr"
+    ]
+  },
+  {
+    "id": "gf-entropy",
+    "label": "Shannon entropy of a declared distribution",
+    "domain": "memory",
+    "latex": "H(X)=-\\sum_x p(x)\\log_2 p(x)",
+    "variables": [
+      {
+        "symbol": "p(x)",
+        "meaning": "probability of outcome x",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "H",
+        "meaning": "uncertainty",
+        "unit": "bits"
+      }
+    ],
+    "assumptions": [
+      "A normalized distribution and outcome space are specified.",
+      "Use 0 log 0=0 by continuity."
+    ],
+    "derivation": "Weight each outcome's self-information by its probability. This measures uncertainty of that distribution, not semantic wisdom.",
+    "example": "A fair binary variable has entropy 1 bit; a deterministic variable has entropy 0.",
+    "limitations": [
+      "Low entropy may reflect unwarranted certainty. It is not evidence quality."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-entropy"
+    ]
+  },
+  {
+    "id": "gf-latency",
+    "label": "Expected local cache latency",
+    "domain": "memory",
+    "latex": "\\mathbb E[T]=hT_{\\rm hit}+(1-h)T_{\\rm miss}",
+    "variables": [
+      {
+        "symbol": "h",
+        "meaning": "observed hit fraction",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "T_hit",
+        "meaning": "complete hit latency",
+        "unit": "ms"
+      },
+      {
+        "symbol": "T_miss",
+        "meaning": "complete miss latency",
+        "unit": "ms"
+      }
+    ],
+    "assumptions": [
+      "Hit and miss latencies include the same measurement boundaries.",
+      "Workload hit fraction is representative."
+    ],
+    "derivation": "Condition total expectation on the two disjoint cases. If miss cost is measured after lookup instead, add the lookup cost separately.",
+    "example": "With h=0.8, a 2 ms hit and a 40 ms complete miss, E[T]=9.6 ms.",
+    "limitations": [
+      "Mean latency does not describe p95 or concurrent queueing. These numbers are an example, not a measured product result."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-cache",
+      "g-cost"
+    ]
+  },
+  {
+    "id": "gf-amat",
+    "label": "Two-level average memory access time",
+    "domain": "memory",
+    "latex": "T_{\\rm avg}=T_1+m_1(T_2+m_2T_3)",
+    "variables": [
+      {
+        "symbol": "T_1,T_2,T_3",
+        "meaning": "incremental tier access costs",
+        "unit": "time"
+      },
+      {
+        "symbol": "m_1",
+        "meaning": "tier-1 miss probability",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "m_2",
+        "meaning": "conditional tier-2 miss probability",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Each lower-tier cost is incurred only after an upper-tier miss.",
+      "Use incremental costs, not complete inclusive timings."
+    ],
+    "derivation": "Expand a decision tree: every request pays T1, m1 of requests pay T2, and m1m2 pay T3.",
+    "example": "T1=1, T2=10, T3=100, m1=0.1, m2=0.2 yield 4 time units.",
+    "limitations": [
+      "Correlated workloads and overlapping asynchronous fetches require a different timing model."
+    ],
+    "source_ids": [
+      "gs-stack"
+    ],
+    "prerequisite_ids": [
+      "g-cache",
+      "g-memgpt"
+    ]
+  },
+  {
+    "id": "gf-ttl-probability",
+    "label": "Poisson-update freshness model",
+    "domain": "memory",
+    "latex": "\\Pr(\\text{at least one update in }t)=1-e^{-\\lambda t}",
+    "variables": [
+      {
+        "symbol": "lambda",
+        "meaning": "assumed update rate",
+        "unit": "updates/s"
+      },
+      {
+        "symbol": "t",
+        "meaning": "cache age",
+        "unit": "s"
+      }
+    ],
+    "assumptions": [
+      "Updates are modeled as a homogeneous Poisson process."
+    ],
+    "derivation": "The no-update probability is the zero-count Poisson mass exp(-λt); subtract from one.",
+    "example": "With λ=1 update/hour and age 0.5 hour, probability of an intervening update is about 0.3935.",
+    "limitations": [
+      "Real source changes are often bursty or adversarial. Versioned invalidation is stronger than this heuristic."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-ttl",
+      "g-time"
+    ]
+  },
+  {
+    "id": "gf-lru-distance",
+    "label": "Fully associative LRU hit condition",
+    "domain": "memory",
+    "latex": "\\text{hit at capacity }C\\iff d_{\\rm reuse}<C",
+    "variables": [
+      {
+        "symbol": "d_reuse",
+        "meaning": "distinct other items since previous access",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "C",
+        "meaning": "capacity",
+        "unit": "uniform-sized items"
+      }
+    ],
+    "assumptions": [
+      "Fully associative LRU.",
+      "Uniform-sized entries and no external invalidation.",
+      "First use has infinite reuse distance."
+    ],
+    "derivation": "Every distinct intervening item moves the reused entry down one position in the recency stack; capacity C retains the first C positions.",
+    "example": "Trace A,B,C,A has reuse distance 2 for the last A: it misses at capacity 2 and hits at capacity 3.",
+    "limitations": [
+      "The supplied persisted cache is FIFO and does not claim this LRU guarantee."
+    ],
+    "source_ids": [
+      "gs-stack"
+    ],
+    "prerequisite_ids": [
+      "g-lru"
+    ]
+  },
+  {
+    "id": "gf-cache-key",
+    "label": "Complete cache dependency key",
+    "domain": "memory",
+    "latex": "K=\\operatorname{SHA256}(\\operatorname{canon}(q,V,A,S,P,T,\\theta))",
+    "variables": [
+      {
+        "symbol": "q",
+        "meaning": "query and result bounds",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "V",
+        "meaning": "source snapshot identity",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "A",
+        "meaning": "algorithm version",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "S",
+        "meaning": "authorized scope set",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "P",
+        "meaning": "policy version",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "T",
+        "meaning": "active temporal subgraph",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "theta",
+        "meaning": "retrieval parameters",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Canonical serialization is deterministic.",
+      "All output-relevant dependencies are included.",
+      "Cryptographic hash collisions are assumed negligible."
+    ],
+    "derivation": "Treat the result as a function of declared inputs. Equal keys justify reuse only insofar as the serialization captures every relevant input.",
+    "example": "A source URL correction changes V and therefore the key even when the node summary text is unchanged.",
+    "limitations": [
+      "A digest does not validate the source, authenticate a caller, or prove semantic equivalence."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-hash",
+      "g-invalidate"
+    ]
+  },
+  {
+    "id": "gf-budget-knapsack",
+    "label": "Evidence selection under a byte budget",
+    "domain": "memory",
+    "latex": "\\max_{z_i\\in\\{0,1\\}}\\sum_i u_i z_i\\quad\\text{s.t.}\\quad\\sum_i b_i z_i\\le B",
+    "variables": [
+      {
+        "symbol": "u_i",
+        "meaning": "declared utility",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "b_i",
+        "meaning": "serialized evidence size",
+        "unit": "bytes"
+      },
+      {
+        "symbol": "B",
+        "meaning": "context allowance",
+        "unit": "bytes"
+      }
+    ],
+    "assumptions": [
+      "Utilities and sizes are specified.",
+      "Independent additive utility is an approximation."
+    ],
+    "derivation": "A constrained subset problem formalizes why not every retrieved item fits. The implementation greedily tries ranked packets and checks actual UTF-8 bytes.",
+    "example": "With sizes 6 and 5 and budget 5, only the second item fits, regardless of the first item's better rank.",
+    "limitations": [
+      "Greedy rank order does not solve general knapsack optimally; correlated evidence requires nonadditive utility."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-budget"
+    ]
+  },
+  {
+    "id": "gf-bfs",
+    "label": "Traversal complexity",
+    "domain": "memory",
+    "latex": "T_{\\rm BFS}=O(|V_r|+|E_r|),\\qquad M=O(|V_r|)",
+    "variables": [
+      {
+        "symbol": "V_r",
+        "meaning": "visited vertices",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "E_r",
+        "meaning": "examined edges",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Adjacency lists and a visited set.",
+      "Constant-time set operations are an average-case assumption."
+    ],
+    "derivation": "Each vertex enters the queue once and each relevant adjacency is examined a bounded number of times.",
+    "example": "In a cycle A→B→C→A, the visited set stops the fourth enqueue of A.",
+    "limitations": [
+      "Building the eligible subgraph and adjacency has its own whole-graph cost; report that in end-to-end benchmarks."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-bfs"
+    ]
+  },
+  {
+    "id": "gf-topological",
+    "label": "DAG topological condition",
+    "domain": "memory",
+    "latex": "|\\operatorname{Kahn}(G)|=|V|\\iff G\\text{ is a DAG}",
+    "variables": [
+      {
+        "symbol": "G",
+        "meaning": "finite directed prerequisite graph",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "V",
+        "meaning": "vertices",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Remove vertices of zero indegree and their outgoing edges."
+    ],
+    "derivation": "A finite acyclic directed graph has a zero-indegree vertex. A cycle leaves each of its vertices with an incoming edge, preventing complete elimination.",
+    "example": "A requires B and B requires A gives no valid topological order; C depending on A can also remain blocked.",
+    "limitations": [
+      "Remaining blocked vertices are not necessarily all members of a cycle."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-dag",
+      "g-cycle"
+    ]
+  },
+  {
+    "id": "gf-hebb",
+    "label": "Simple Hebbian weight construction",
+    "domain": "memory",
+    "latex": "W_{ij}=\\frac1N\\sum_{\\mu=1}^{P}\\xi_i^{(\\mu)}\\xi_j^{(\\mu)},\\qquad W_{ii}=0",
+    "variables": [
+      {
+        "symbol": "xi",
+        "meaning": "stored binary patterns",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "N",
+        "meaning": "number of units",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "P",
+        "meaning": "number of patterns",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "A specified binary-pattern associative model.",
+      "This is a theoretical rule, not a universal synaptic law."
+    ],
+    "derivation": "Correlated components contribute positive weights and opposite components negative weights; summing patterns superposes their associations.",
+    "example": "For one pattern (1,-1), the off-diagonal weights are -1/2 under N=2 normalization.",
+    "limitations": [
+      "Interference and spurious attractors occur. Coactivation does not imply causal evidence."
+    ],
+    "source_ids": [
+      "gs-hopfield"
+    ],
+    "prerequisite_ids": [
+      "g-hebb"
+    ]
+  },
+  {
+    "id": "gf-hopfield-energy",
+    "label": "Binary Hopfield Lyapunov function",
+    "domain": "memory",
+    "latex": "E(s)=-\\frac12s^TWs+\\theta^Ts",
+    "variables": [
+      {
+        "symbol": "s_i",
+        "meaning": "binary unit state, ±1",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "W",
+        "meaning": "symmetric coupling matrix",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "theta",
+        "meaning": "threshold vector",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "W=Wᵀ and diagonal zero.",
+      "Asynchronous single-unit updates align with the local field."
+    ],
+    "derivation": "If only state i changes, ΔE=-(s_i'−s_i)(Σ_j W_ij s_j−θ_i). Choosing the state aligned with the field makes this nonpositive.",
+    "example": "Two positively coupled units lower this function by agreeing rather than disagreeing, for zero thresholds.",
+    "limitations": [
+      "Synchronous updates can oscillate. The function is not automatically a joule-valued physical energy."
+    ],
+    "source_ids": [
+      "gs-hopfield"
+    ],
+    "prerequisite_ids": [
+      "g-hebb",
+      "g-hopfield"
+    ]
+  },
+  {
+    "id": "gf-attention",
+    "label": "Scaled dot-product attention",
+    "domain": "memory",
+    "latex": "\\operatorname{Attention}(Q,K,V)=\\operatorname{softmax}(QK^T/\\sqrt{d_k})V",
+    "variables": [
+      {
+        "symbol": "Q,K,V",
+        "meaning": "query, key, and value matrices",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "d_k",
+        "meaning": "key dimension",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Matrix dimensions are compatible.",
+      "Softmax operates across available keys, with any mask explicitly stated."
+    ],
+    "derivation": "Dot products give compatibility logits; scaling moderates their growth with dimension, softmax normalizes, and the resulting weights mix values.",
+    "example": "For two equal unmasked logits, each value receives weight 1/2.",
+    "limitations": [
+      "A KV cache stores intermediate tensors; it is different from external source-linked memory."
+    ],
+    "source_ids": [
+      "gs-attention",
+      "gs-modern-hopfield"
+    ],
+    "prerequisite_ids": [
+      "g-attention"
+    ]
+  },
+  {
+    "id": "gf-retention",
+    "label": "Exponential retrieval-priority heuristic",
+    "domain": "memory",
+    "latex": "w(t)=w_0e^{-t/\\tau}",
+    "variables": [
+      {
+        "symbol": "w_0",
+        "meaning": "initial priority",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "tau",
+        "meaning": "chosen decay timescale",
+        "unit": "time"
+      },
+      {
+        "symbol": "t",
+        "meaning": "elapsed time",
+        "unit": "time"
+      }
+    ],
+    "assumptions": [
+      "A software prioritization rule is explicitly chosen."
+    ],
+    "derivation": "Solve dw/dt=−w/τ. This defines a convenient recency prior; it is not fitted biological evidence.",
+    "example": "After time τ, weight is w0/e≈0.3679w0.",
+    "limitations": [
+      "Never let an arbitrary decay delete provenance or turn an established theorem false."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-forgetting"
+    ]
+  },
+  {
+    "id": "gf-precision",
+    "label": "Evidence precision and recall",
+    "domain": "memory",
+    "latex": "\\operatorname{Precision}=\\frac{|R\\cap G|}{|R|},\\qquad\\operatorname{Recall}=\\frac{|R\\cap G|}{|G|}",
+    "variables": [
+      {
+        "symbol": "R",
+        "meaning": "retrieved evidence IDs",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "G",
+        "meaning": "judged relevant evidence IDs",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Gold relevance and evidence units are specified.",
+      "Define behavior for empty denominators before evaluation."
+    ],
+    "derivation": "Precision asks how much retrieved evidence is relevant; recall asks how much relevant evidence was found.",
+    "example": "Retrieving 5 items, 3 relevant, from 4 relevant items gives precision 0.6 and recall 0.75.",
+    "limitations": [
+      "Gold labels can be incomplete; duplicate passages must not inflate independent support."
+    ],
+    "source_ids": [
+      "gs-longmemeval",
+      "gs-graphragzero"
+    ],
+    "prerequisite_ids": [
+      "g-recall"
+    ]
+  },
+  {
+    "id": "gf-ndcg",
+    "label": "Discounted cumulative gain",
+    "domain": "memory",
+    "latex": "\\operatorname{DCG}@k=\\sum_{i=1}^k\\frac{2^{rel_i}-1}{\\log_2(i+1)},\\qquad\\operatorname{nDCG}@k=\\operatorname{DCG}@k/\\operatorname{IDCG}@k",
+    "variables": [
+      {
+        "symbol": "rel_i",
+        "meaning": "declared relevance grade",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "IDCG",
+        "meaning": "ideal score under the same labels",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Nonnegative relevance grades.",
+      "Define the all-zero relevance case."
+    ],
+    "derivation": "Higher-ranked relevant items contribute more. Divide by the best available ordering to normalize the score.",
+    "example": "For binary relevance (1,0,1), DCG@3=1+0+1/2=1.5.",
+    "limitations": [
+      "Metric choice does not certify answer correctness or source trustworthiness."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-ndcg"
+    ]
+  },
+  {
+    "id": "gf-brier",
+    "label": "Brier calibration score",
+    "domain": "memory",
+    "latex": "B=\\frac1n\\sum_{i=1}^n(p_i-y_i)^2",
+    "variables": [
+      {
+        "symbol": "p_i",
+        "meaning": "predicted event probability",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "y_i",
+        "meaning": "binary observed outcome",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "n",
+        "meaning": "number of evaluated predictions",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "A well-defined population of binary outcomes.",
+      "Predictions precede observed outcomes."
+    ],
+    "derivation": "Use the squared error of probabilistic predictions and average over evaluated cases.",
+    "example": "Predictions (0.8,0.2) for outcomes (1,0) have Brier score 0.04.",
+    "limitations": [
+      "Graph ranks and RRF scores are not probabilities and must not be inserted directly as calibrated confidence."
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "prerequisite_ids": [
+      "g-calibration"
+    ]
+  },
+  {
+    "id": "gf-novelty-loop",
+    "label": "Measured improvement in a fixed loop",
+    "domain": "memory",
+    "latex": "\\Delta U_k=U(\\text{system}_{k+1};D)-U(\\text{system}_{k};D)",
+    "variables": [
+      {
+        "symbol": "D",
+        "meaning": "frozen evaluation data and criteria",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "U",
+        "meaning": "declared utility metric",
+        "unit": "dimensionless"
+      },
+      {
+        "symbol": "k",
+        "meaning": "revision index",
+        "unit": "dimensionless"
+      }
+    ],
+    "assumptions": [
+      "Hold evaluation data and judging procedure fixed within a comparison.",
+      "Track resource cost and regressions separately."
+    ],
+    "derivation": "Evaluate both revisions on the same criterion, then subtract. This distinguishes observed progress from activity counts.",
+    "example": "Recall increasing from 0.60 to 0.65 is a five-percentage-point change on that evaluation; it is not proof of universal improvement.",
+    "limitations": [
+      "Repeated tuning on the same cases can overfit; retain held-out questions and report uncertainty."
+    ],
+    "source_ids": [
+      "gs-graphragzero"
+    ],
+    "prerequisite_ids": [
+      "g-baseline",
+      "g-loop"
+    ]
+  }
+]

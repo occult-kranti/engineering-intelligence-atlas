@@ -24,8 +24,8 @@ const bridge = Buffer.from(bridgeText.replace(seedRef, (_, q) => `${q}./${seed}$
 
 // CSS comes from source when the renderer build has not copied it.
 const overrides = new Map([['browser-bridge.js', bridge]]);
-for (const name of ['chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'hardware-workbench.css']) {
-  if (!existsSync(join(renderer, name)) && existsSync(join(source, name))) overrides.set(name, readFileSync(join(source, name)));
+for (const name of ['chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'hardware-workbench.css', 'brain/panel.css']) {
+  if (existsSync(join(source, name))) overrides.set(name, readFileSync(join(source, name)));
 }
 
 let html = readFileSync(join(source, 'chrome.html'), 'utf8');

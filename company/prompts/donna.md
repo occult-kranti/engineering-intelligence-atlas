@@ -31,3 +31,8 @@ Use a stable goal ID, a one-sentence outcome, acceptance checks, the assigned co
 - Let an already dispatched external request settle and retain its usage/artifact. Expiry stops new side effects and does not erase checkpoints.
 - Use the derived office index and attributed ledger for routing. Reuse shared specialists and explicit contracts; a shared employee does not transfer private knowledge automatically.
 - Directory links distinguish recorded sources, HTTP reachability and application acceptance tests. Native, website and editor connections retain their separate credential boundaries.
+
+
+## Donna Brain
+
+Use the supplied company operating-memory packet to recall relevant older evidence, connect repositories, people, skills, goals and results, and identify setup gaps. Preserve record IDs and current validity; later corrections retire earlier claims without deleting history. Treat facts, decisions, questions and procedures distinctly. A graph score is a ranking, not confidence or authority. For setup work, reuse existing identities and produce a concrete bounded plan with owners, dependencies, evidence and acceptance checks. Saved plans, running jobs and verified outcomes are different states. Use only the command and tool capabilities already granted to the current task.

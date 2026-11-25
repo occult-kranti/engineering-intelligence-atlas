@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "round": "independent-donna-brain-review",
+  "reviewedAtUtc": "2026-11-25T07:57:31.073209+00:00",
+  "scope": "Source review, synthetic repros and targeted runtime/provider-prompt regressions; no live provider calls or browser acceptance claimed.",
+  "sourceSha256": {
+    "desktop-shell/src/shared/donnaBrain.ts": "eeaafc0c25af21ad02fd1c33cd81bd93f61c2cb345aaf2c812743e715e95eec4",
+    "desktop-shell/src/shared/graphMemory.ts": "e5709abeb26ccfe7174dd4f73e3a870978a50fcc212ba1d0d641c96807cd6f01",
+    "desktop-shell/src/main/officeWorker.ts": "9fb4565712234621349f0a7ab41c682e6ec050822ab885de02a8c319af2deb0b",
+    "desktop-shell/src/main/companyKitKnowledge.ts": "1311e55d1924f243b1d2b5cf8b890ae2a6261bed93acae706e11f6053a207b09",
+    "cloud-workspace/lib/atlas-api.ts": "e912cf388266e2da8593feb580e8d4eb17d4aa8121a5af53a6f14739317712dd",
+    "projects/research-memory-atlas/runtime/donna-brain.mjs": "da22acb98057e2d51746833d09182e437e7b41cc4bc260a1ea585b43c9777f1f"
+  },
+  "findings": [
+    {
+      "id": "DB-R1",
+      "issue": "Expired/corrected brain notes re-entered the same provider prompt through legacy last-six company knowledge.",
+      "repair": "Shared filterBrainKnowledge applied before legacy selector and hosted scopedContext.",
+      "confirmation": "One actual worker prompt regression passed; fake provider fixture, no network."
+    },
+    {
+      "id": "DB-R2",
+      "issue": "A never-active correction retired the previous valid note.",
+      "repair": "Skip expiry-at-or-before-creation correction.",
+      "confirmation": "Independent generated-runtime regression passed."
+    },
+    {
+      "id": "DB-R3",
+      "issue": "supersedes regex accepted numbers and arrays by coercion.",
+      "repair": "Require string or null.",
+      "confirmation": "Independent generated-runtime regression passed."
+    },
+    {
+      "id": "DB-R4",
+      "issue": "Recognized invalid/unsupported brain envelope downgraded to ordinary active knowledge.",
+      "repair": "Quarantine and exclude from active graph/legacy context.",
+      "confirmation": "Passed after JSON.parse-based recognition; invalid expiry, unsupported version/type and Unicode-escaped kind key all remain outside active evidence."
+    }
+  ],
+  "privacyAndScope": [
+    "Company projection filters company identity before graph construction and lexical statistics.",
+    "Parent companies, sibling companies and service contracts do not widen the implicit projection.",
+    "Knowledge transfers stay explicit and granted; current native change also checks their active source evidence.",
+    "Public build reads authored repository research inputs; native private snapshot is not an input.",
+    "Evidence carries saved record references and reading limits; referenced artifact contents are not automatically opened."
+  ],
+  "limits": [
+    "Current-state projection is not a historical reconstruction of every mutable office/job field.",
+    "Source fingerprint identifies display state; not advertised as cryptographic authentication.",
+    "UI browser gate requires actual Playwright Chromium and has not been locally passed."
+  ],
+  "testFiles": [
+    "projects/research-memory-atlas/tests/donna-review-regressions.test.mjs",
+    "desktop-shell/tests/office-worker.test.ts (one appended independent Donna Brain prompt freshness test)"
+  ],
+  "testCommands": [
+    "node --test projects/research-memory-atlas/tests/donna-review-regressions.test.mjs",
+    "cd desktop-shell && ./node_modules/.bin/vitest run tests/office-worker.test.ts -t \"independent Donna Brain prompt freshness regression\""
+  ],
+  "status": "confirmed-passed",
+  "confirmedAtUtc": "2026-11-25T07:58:22.778364+00:00",
+  "finalTargetedConfirmation": {
+    "nodeTests": {
+      "passed": 19,
+      "failed": 0,
+      "skipped": 0,
+      "command": "node --test projects/research-memory-atlas/tests/review-regressions.test.mjs projects/research-memory-atlas/tests/donna-review-regressions.test.mjs projects/research-memory-atlas/tests/donna-brain.test.mjs"
+    },
+    "workerPrompt": {
+      "passed": 1,
+      "failed": 0,
+      "unrelatedSkipped": 61,
+      "command": "cd desktop-shell && ./node_modules/.bin/vitest run tests/office-worker.test.ts -t \"independent Donna Brain prompt freshness regression\""
+    },
+    "providerCalls": "Synthetic generate fixture only; no external provider invoked.",
+    "browserAcceptance": "Not performed by this reviewer; real Chromium gate supplied separately."
+  }
+}

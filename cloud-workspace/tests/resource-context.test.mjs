@@ -34,12 +34,12 @@ test('hosted and native references share one canonical catalog identity and pack
 test('Donna fallback returns curated references for a continuation without exact skill names',()=>{
  const result=hostedResourceContext('Continue');
  assert.equal(result.status,'ready');
- assert.equal(result.matchedSkillCount,1);
+ assert.equal(result.matchedSkillCount,2);
  assert.ok(result.references.some(ref=>ref.reasons.includes('mapped:agent-research-director')));
  assert.deepEqual(result,native.routeResources(RESOURCE_CATALOG,{query:'Continue',skills:[],roleKey:'donna',maxReferences:6,maxBytes:8192}));
 });
 
-test('all 15 exact skill names select their intended route without director references crowding it out',()=>{
+test('all 16 exact skill names select their intended route without director references crowding it out',()=>{
  for(const route of RESOURCE_CATALOG.routes){
   const result=hostedResourceContext(`Use ${route.skill}.`);
   assert.equal(result.status,'ready',route.skill);
@@ -55,7 +55,7 @@ test('only known complete IDs or skill paths count, and duplicate supplied IDs a
  const duplicate=hostedResourceContext('Continue',['physics-research','physics-research','skills/physics-research/SKILL.md']);
  assert.deepEqual(duplicate,exact);
  const suffix=hostedResourceContext('Use not-physics-research and physics-research-extra', ['../private','unregistered-skill']);
- assert.equal(suffix.matchedSkillCount,1);
+ assert.equal(suffix.matchedSkillCount,2);
  assert.ok(suffix.references.some(ref=>ref.reasons.includes('mapped:agent-research-director')));
  assert.ok(!suffix.references.some(ref=>ref.reasons.includes('mapped:physics-research')));
  const late=hostedResourceContext('x'.repeat(2500)+' Use physics-research.');

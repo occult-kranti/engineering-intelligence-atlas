@@ -21,6 +21,26 @@ Use the common result schema. Payload fields: `designEvidence, sourceNodes, toke
 
 Hand the verified token/component mapping and render comparison to frontend engineering; return untested capabilities explicitly.
 
+## Background study handoff
+
+The [Surface Studies collection](../../projects/design-backgrounds/README.md)
+provides fifteen original CSS/SVG treatments. Reuse it through this role's
+existing company scope and authority. A local CSS study does not establish that
+a Figma account was connected or that a component was published.
+
+For a selected study, retain `styleId`, the source revision/hash, target node or
+component, foreground/background token pair, motion policy, responsive bounds
+and observed checks. Use its CSS export as an implementation reference. Preserve
+the approximation label; the Persian-inspired study is an original adaptation.
+Keep live content outside decorative layers and retain opaque readable surfaces.
+
+When an actual Figma source is supplied, map the study to owned nodes and shared
+tokens through the authorized adapter; preserve original IDs and file links.
+When no design-file connection is requested or available, return the local
+component/CSS handoff and name Figma synchronization as unperformed. Give QA
+selection, keyboard, mobile, clipboard-fallback and reduced-motion cases from
+the [style briefs](../../projects/design-backgrounds/style-briefs.md).
+
 ## References and samples
 
 - [Figma MCP remote setup](https://developers.figma.com/docs/figma-mcp-server/remote-server-installation/)

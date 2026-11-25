@@ -1,0 +1,27 @@
+# Selected frontier source index
+
+This is a dated, selective reading index. Exact contributions and limitations are in the source records and field chapters. Access depth is not equivalent to proof verification or experimental replication. Preprints, independent assessments, author perspectives and peer-reviewed papers remain separately typed.
+
+| Domain | Source date | Primary source | Source type / inspected depth |
+|---|---|---|---|
+| electrostatics | 2025-10-01 | [Machine learning of charges and long-range interactions from energies and forces](https://www.nature.com/articles/s41467-025-63852-x) | research_paper; indexed publisher abstract/results/introduction; direct publisher open blocked |
+| electrostatics | 2025-12-19 | [Kim and Cheng: Long-range electrostatics for machine learning interatomic potentials is easier than we thought](https://arxiv.org/html/2512.18029v1) | author_perspective; author full HTML; design principles and limitations read |
+| electrostatics | 2025-12-24 | [Accurate and Scalable Continuum Electrostatics for Large Biomolecular Systems: The pyDelPhi Poisson–Boltzmann Framework](https://pubs.acs.org/doi/10.1021/acs.jcim.5c02818) | research_paper; publisher abstract plus author-university full PDF fetched; abstract and numerical framework sampled |
+| electrostatics | 2025-10-11 | [Neural network Poisson–Boltzmann electrostatics for biomolecular interactions](https://www.sciencedirect.com/science/article/pii/S0021999125007284) | research_paper; indexed publisher and author-affiliated HKU abstract |
+| magnetism | 2024-02-14 | [Krempaský et al.: Altermagnetic lifting of Kramers spin degeneracy](https://www.nature.com/articles/s41586-023-06907-7) | research_paper; indexed publisher PDF abstract and introductory scope |
+| magnetism | 2026-08-20 | [Sprague et al.: Observation of Altermagnetic Spin-Splitting in an Intercalated Transition Metal Dichalcogenide](https://www.nature.com/articles/s41467-026-76784-x) | research_paper; indexed publisher abstract/introduction; direct open blocked |
+| magnetism | 2026-08-24 | [Electrical manipulation and detection of perpendicular altermagnetic order via a proximitized Dirac semimetal](https://www.nature.com/articles/s41563-026-02721-4) | research_paper; indexed publisher abstract; direct open blocked |
+| magnetism | 2024-07-24 | [Yang et al.: Embedded Skyrmion Bags in Thin Films of Chiral Magnets](https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/adma.202403274) | research_paper; publisher HTML abstract, topology definition and selected experimental limitations |
+| magnetism | 2026-11-10 | [Yang–Mills group: Pure Yang–Mills results and verification](https://github.com/yang-mills-group/YM) | independent_assessment_repository; repository README, scope, package structure and reproduction instructions |
+| magnetism | 2026-11-09 | [Shepherding Committee: 3rd Statement about Quantum Yang–Mills Theory](https://www.kitp.ucsb.edu/sites/default/files/3rd-Statement-About-Quantum-YangMills-Theory_Nov-9.pdf) | committee_statement; entire one-page primary statement |
+| gravity | 2026-07-21 | [LIGO–Virgo–KAGRA: GWTC-5.0 — Tests of General Relativity](https://arxiv.org/abs/2607.19293) | collaboration_research_preprint; author abstract and official collaboration summary |
+| gravity | 2026-07-29 | [DESI DR2 Results IV: Alcock–Paczyński Measurements from the Lyman Alpha Forest and Cosmological Constraints](https://arxiv.org/html/2607.27410v3) | collaboration_research_preprint; author HTML abstract, conclusions and model-comparison section |
+| gravity | 2025-10-22 | [Aziz and Howl: Classical theories of gravity produce entanglement](https://arxiv.org/html/2510.19714v3) | research_paper; author abstract and selected discussion; v3 dated 2026-07-01 |
+| gravity | 2026-11-07 | [The Hawking–Page transition at weak coupling](https://hexagonmath.org/2611.00175v1) | research_preprint; author preprint abstract and provenance |
+| gravity | 2026-11-07 | [The spinless modular bootstrap at large central charge](https://hexagonmath.org/2611.00174v1) | research_preprint; author PDF abstract, Theorem 1, admissible-class definition, Section 2.6 scope discussion and provenance; not full proof |
+| frequency | 2025-03-05 | [Qiao et al.: Acoustic phonon phase gates with number-resolving phonon detection](https://arxiv.org/html/2503.03898v1) | research_preprint; author HTML abstract, conclusion and measurement-correction section |
+| frequency | 2026-10-07 | [A thorium-229 optical nuclear clock with feedback loop](https://www.nature.com/articles/s41586-026-11084-4) | research_paper; indexed publisher abstract and methods excerpts; publication date cross-checked with PubMed |
+| frequency | 2026-09-08 | [Xia et al.: Acoustic topological Jackiw–Rebbi states at symmetry broken interfaces](https://www.nature.com/articles/s41467-026-77579-w) | research_paper; publisher full HTML results and experimental section |
+| frequency | 2026-10-15 | [Ding et al.: Absorbing exceptional point of coherent vortex beams](https://www.nature.com/articles/s41467-026-78506-9) | research_paper; indexed publisher abstract; direct open blocked |
+
+The date is the first verified online/submission/statement date; `journal_or_record_year` can differ for a later journal issue. Revised versions are noted in access-depth or limitation fields. For the November physics preprints, provenance is separately linked in the gravity chapter.

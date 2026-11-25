@@ -186,6 +186,27 @@ describe('company-kit task context in actual worker prompts', () => {
  });
 });
 
+describe('independent Donna Brain prompt freshness regression', () => {
+ it('does not reintroduce retired or invalid brain notes through legacy company knowledge', async () => {
+  const f=fixture({jobs:[job({goal:'Review quasarbattery evidence.'})]});
+  f.state.companies.push({id:'company-a',name:'Synthetic company',repoUrl:null,status:'active',assistantId:'donna',createdAt:'2000-01-01T00:00:00Z',source:'fixture',importedAt:null,githubStatus:'unchecked'});
+  const note=(id:string,body:string,extra:Record<string,unknown>={},createdAt='2000-01-01T00:00:00Z')=>({id,companyId:'company-a',title:'Synthetic note '+id,artifactUri:'daftar-brain://company-a/note',createdAt,summary:JSON.stringify({kind:'daftar-brain-note',version:1,type:'fact',body:'quasarbattery '+body,tags:[],supersedes:null,expiresAt:null,...extra})});
+  f.state.knowledge.push(
+   note('old','REVIEW_CORRECTED_SENTINEL'),
+   note('current','REVIEW_CURRENT_SENTINEL',{supersedes:'old'},'2002-01-01T00:00:00Z'),
+   note('expired','REVIEW_EXPIRED_SENTINEL',{expiresAt:'2001-01-01T00:00:00Z'}),
+   note('invalid','REVIEW_INVALID_SENTINEL',{expiresAt:'not-an-instant'}),
+   note('unsupported','REVIEW_UNSUPPORTED_SENTINEL',{version:2}),
+  );
+  await f.worker.runOnce();
+  expect(f.generate).toHaveBeenCalledOnce();
+  const prompt=f.generate.mock.calls[0]![0].prompt;
+  expect(prompt).toContain('REVIEW_CURRENT_SENTINEL');
+  for(const marker of ['REVIEW_CORRECTED_SENTINEL','REVIEW_EXPIRED_SENTINEL','REVIEW_INVALID_SENTINEL','REVIEW_UNSUPPORTED_SENTINEL'])expect(prompt).not.toContain(marker);
+  expect(prompt).toContain('"allowedActions":[]');
+ });
+});
+
 describe('verified dependency evidence for panel synthesis', () => {
  function handoffs(prompt: string): Array<{ id: string; contentSha256: string | null; excerpt: string | null; excerptBytes: number; artifactBytes: number | null; readingStatus: string; redacted: boolean }> {
   const section = prompt.indexOf('\nDependency handoffs (');

@@ -1,0 +1,569 @@
+[
+  {
+    "source": "g-graph",
+    "target": "g-node",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-node",
+    "target": "g-edge",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-edge",
+    "target": "g-backlink",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-backlink",
+    "target": "g-obsidian",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-node",
+    "target": "g-identity",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-identity",
+    "target": "g-provenance",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-provenance",
+    "target": "g-status",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-status",
+    "target": "g-questions",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-provenance",
+    "target": "g-hash",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-hash",
+    "target": "g-snapshot",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-snapshot",
+    "target": "g-events",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-events",
+    "target": "g-checkpoint",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-checkpoint",
+    "target": "g-publication",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-scope",
+    "target": "g-time",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-time",
+    "target": "g-interval",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-interval",
+    "target": "g-invalidate",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-invalidate",
+    "target": "g-cache",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-memo",
+    "target": "g-cache",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-cache",
+    "target": "g-lru",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-lru",
+    "target": "g-fifo",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-fifo",
+    "target": "g-ttl",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-tokens",
+    "target": "g-idf",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-idf",
+    "target": "g-bm25",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-bm25",
+    "target": "g-rrf",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-rrf",
+    "target": "g-budget",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-embedding",
+    "target": "g-cosine",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-cosine",
+    "target": "g-rrf",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-adjacency",
+    "target": "g-degree",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-degree",
+    "target": "g-laplacian",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-laplacian",
+    "target": "g-dirichlet",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-dirichlet",
+    "target": "g-grounding",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-adjacency",
+    "target": "g-walk",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-walk",
+    "target": "g-pagerank",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-pagerank",
+    "target": "g-convergence",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-convergence",
+    "target": "g-rrf",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-laplacian",
+    "target": "g-diffusion",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-diffusion",
+    "target": "g-frequency-bridge",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-graph",
+    "target": "g-bfs",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-bfs",
+    "target": "g-dag",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-dag",
+    "target": "g-cycle",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-cycle",
+    "target": "g-loop",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-loop",
+    "target": "g-stop",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-events",
+    "target": "g-idempotency",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-idempotency",
+    "target": "g-checkpoint",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-baseline",
+    "target": "g-recall",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-recall",
+    "target": "g-ndcg",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-ndcg",
+    "target": "g-calibration",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-baseline",
+    "target": "g-leakage",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-leakage",
+    "target": "g-reviews",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-time",
+    "target": "g-temporal-eval",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-temporal-eval",
+    "target": "g-abstain",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-episodic",
+    "target": "g-semantic",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-semantic",
+    "target": "g-replay",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-hebb",
+    "target": "g-hopfield",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-hopfield",
+    "target": "g-attention",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-cache",
+    "target": "g-provider-cache",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-provider-cache",
+    "target": "g-cost",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-provenance",
+    "target": "g-repos",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-repos",
+    "target": "g-skills",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-skills",
+    "target": "g-donna",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-graphrag",
+    "target": "g-zero",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-pagerank",
+    "target": "g-hipporag",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-time",
+    "target": "g-graphiti",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-semantic",
+    "target": "g-compression",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-entropy",
+    "target": "g-compression",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-reviews",
+    "target": "g-questions",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-questions",
+    "target": "g-loop",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-sqlite",
+    "target": "g-wal",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-obsidian",
+    "target": "g-foam",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-obsidian",
+    "target": "g-logseq",
+    "type": "prerequisite_of",
+    "label": "Learning prerequisite",
+    "source_ids": []
+  },
+  {
+    "source": "g-dirichlet",
+    "target": "g-physics-bridge",
+    "type": "analogy",
+    "label": "Shared variational mathematics; physical interpretation needs units",
+    "source_ids": []
+  },
+  {
+    "source": "g-hopfield",
+    "target": "g-magnetism-bridge",
+    "type": "analogy",
+    "label": "Ising-like interaction form under specific assumptions",
+    "source_ids": []
+  },
+  {
+    "source": "g-replay",
+    "target": "g-loop",
+    "type": "analogy",
+    "label": "Engineering analogy to revisiting observations",
+    "source_ids": []
+  },
+  {
+    "source": "g-frequency-bridge",
+    "target": "g-physics-bridge",
+    "type": "analogy",
+    "label": "Spectral structure alone is not a physical oscillator",
+    "source_ids": []
+  },
+  {
+    "source": "g-status",
+    "target": "g-causality",
+    "type": "related",
+    "label": "Related method; no causal assertion",
+    "source_ids": []
+  },
+  {
+    "source": "g-provenance",
+    "target": "g-reviews",
+    "type": "related",
+    "label": "Related method; no causal assertion",
+    "source_ids": []
+  },
+  {
+    "source": "g-rrf",
+    "target": "g-hindsight",
+    "type": "related",
+    "label": "Related method; no causal assertion",
+    "source_ids": []
+  },
+  {
+    "source": "g-cache",
+    "target": "g-memgpt",
+    "type": "related",
+    "label": "Related method; no causal assertion",
+    "source_ids": []
+  },
+  {
+    "source": "g-time",
+    "target": "g-mem0",
+    "type": "related",
+    "label": "Related method; no causal assertion",
+    "source_ids": []
+  },
+  {
+    "source": "g-cache",
+    "target": "g-kv",
+    "type": "related",
+    "label": "Related method; no causal assertion",
+    "source_ids": []
+  },
+  {
+    "source": "g-mention",
+    "target": "g-identity",
+    "type": "related",
+    "label": "Related method; no causal assertion",
+    "source_ids": []
+  }
+]

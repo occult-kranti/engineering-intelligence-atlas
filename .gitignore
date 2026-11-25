@@ -13,6 +13,7 @@ site-source/node_modules/
 site-source/dist/
 
 # Local logs and caches
+.work/
 *.log
 __pycache__/
 *.pyc

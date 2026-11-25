@@ -123,6 +123,33 @@ Use the [architecture-library task example](examples/architecture-library-task.j
 to draft the handoff and the [production workflow](../../projects/architecture-library/docs/WORKFLOWS.md)
 for exact sample paths and MCP payload shapes. Preserve the common result envelope.
 
+## Surface studies procedure
+
+Use the [fifteen original background studies](../../projects/design-backgrounds/README.md)
+when a task calls for a material, texture or light treatment. The collection
+contains actual selectable CSS/SVG previews and exports; it is a reference for
+this existing role, not another employee or an executable grant.
+
+1. Read `PRODUCT.md`, `DESIGN.md` and the scoped user brief. Choose a treatment
+   that supports the target content and preserves the native operating canvas.
+2. Record the exact study ID and source revision. Carry its illustrative
+   approximation label and implementation limits into the handoff. The
+   Persian-inspired study is an original adaptation, not an authentic
+   traditional or regional textile claim.
+3. Keep foreground content on an opaque readable plate. Verify the actual
+   foreground/background pair, focus, selection and narrow-screen controls.
+4. Start motion off. Respect reduced motion and stop decorative motion on blur
+   or tab hiding. The exported CSS does not implement application lifecycle
+   guards; give Frontend that responsibility explicitly when enabling motion.
+5. Hand the selected study, component target, semantic colors, motion policy and
+   observed checks to Figma Design Systems and Frontend. Give QA the [smoke
+   procedure](../../projects/design-backgrounds/README.md#build-and-verify).
+   Do not claim a company deployment, physical simulation or performance result
+   from the preview alone.
+
+The [style matrix and acceptance limits](../../projects/design-backgrounds/style-briefs.md)
+are the concise task-specific reading route. Preserve the normal result envelope.
+
 ## Handoff to implementation
 
 Give frontend the component/state specification, math-geometry the explicit geometric constraint, and QA the interaction checks.
