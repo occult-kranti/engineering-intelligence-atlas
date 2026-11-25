@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "recordType": "planned-study-template",
+  "id": "replace-with-study-id",
+  "status": "planned",
+  "ownerRole": "game-art",
+  "createdOn": null,
+  "resourceIds": [],
+  "objective": "Describe one observable improvement.",
+  "referenceUse": [
+    {
+      "url": null,
+      "creator": null,
+      "license": null,
+      "use": "visual-reference-only",
+      "downloadSha256": null
+    }
+  ],
+  "toolVersions": {
+    "blender": null,
+    "engine": null,
+    "exporter": null
+  },
+  "task": {
+    "assetType": null,
+    "targetCamera": null,
+    "scaleUnits": null,
+    "triangleBudget": null,
+    "textureBudgetBytes": null,
+    "materialSlotBudget": null,
+    "animationClips": []
+  },
+  "evidence": {
+    "sourceBlend": null,
+    "exportedAsset": null,
+    "frontSideSilhouette": null,
+    "wireframe": null,
+    "engineScreenshot": null,
+    "engineImportReceipt": null,
+    "measuredTriangles": null,
+    "measuredTextureBytes": null,
+    "frameTimeMs": null,
+    "hardware": null,
+    "measurementConditions": null
+  },
+  "review": {
+    "reviewedBy": null,
+    "finding": null,
+    "revision": null,
+    "nextTask": null
+  },
+  "completionRule": "Replace null fields with actual observations; retain planned status until the listed artifact and relevant acceptance evidence exist. Do not invent performance or study completion."
+}

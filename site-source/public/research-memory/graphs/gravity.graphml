@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"><key id="label" for="node" attr.name="label" attr.type="string"/><key id="status" for="node" attr.name="status" attr.type="string"/><key id="relation" for="edge" attr.name="relation" attr.type="string"/><graph id="gravity" edgedefault="directed">
+<node id="p-newton-gravity"><data key="label">Newtonian gravity</data><data key="status">established</data></node>
+<node id="p-grav-potential"><data key="label">Gravitational potential</data><data key="status">established</data></node>
+<node id="p-orbits"><data key="label">Orbital mechanics</data><data key="status">established</data></node>
+<node id="p-tidal"><data key="label">Tidal forces</data><data key="status">established</data></node>
+<node id="p-action"><data key="label">Stationary action</data><data key="status">established</data></node>
+<node id="p-equivalence"><data key="label">Equivalence principle</data><data key="status">established</data></node>
+<node id="p-metric"><data key="label">Metric tensor</data><data key="status">established</data></node>
+<node id="p-connection"><data key="label">Levi-Civita connection</data><data key="status">established</data></node>
+<node id="p-curvature"><data key="label">Riemann curvature</data><data key="status">established</data></node>
+<node id="p-geodesic"><data key="label">Geodesic equation</data><data key="status">established</data></node>
+<node id="p-stress-energy"><data key="label">Stress-energy tensor</data><data key="status">established</data></node>
+<node id="p-einstein-eq"><data key="label">Einstein field equations</data><data key="status">established</data></node>
+<node id="p-schwarzschild"><data key="label">Schwarzschild geometry</data><data key="status">established</data></node>
+<node id="p-kerr"><data key="label">Kerr black holes</data><data key="status">established</data></node>
+<node id="p-horizons"><data key="label">Horizons and causal structure</data><data key="status">established</data></node>
+<node id="p-redshift"><data key="label">Gravitational redshift</data><data key="status">established</data></node>
+<node id="p-lensing"><data key="label">Gravitational lensing</data><data key="status">established</data></node>
+<node id="p-gravitational-waves"><data key="label">Gravitational waves</data><data key="status">established</data></node>
+<node id="p-quadrupole"><data key="label">Quadrupole radiation</data><data key="status">established</data></node>
+<node id="p-numerical-relativity"><data key="label">Numerical relativity</data><data key="status">mapped-for-expansion</data></node>
+<node id="p-gw-tests"><data key="label">Gravitational-wave tests of GR</data><data key="status">active-research</data></node>
+<node id="p-flrw"><data key="label">FLRW cosmology</data><data key="status">established</data></node>
+<node id="p-friedmann"><data key="label">Friedmann equations</data><data key="status">established</data></node>
+<node id="p-structure-formation"><data key="label">Structure formation</data><data key="status">established</data></node>
+<node id="p-dark-matter"><data key="label">Dark matter inference</data><data key="status">open-microphysics</data></node>
+<node id="p-dark-energy"><data key="label">Dark energy inference</data><data key="status">active-research</data></node>
+<node id="p-bao-ap"><data key="label">BAO and Alcock–Paczyński tests</data><data key="status">active-research</data></node>
+<node id="p-bh-thermodynamics"><data key="label">Black-hole thermodynamics</data><data key="status">established</data></node>
+<node id="p-gravity-eft"><data key="label">Gravity as effective field theory</data><data key="status">mapped-for-expansion</data></node>
+<node id="p-holography"><data key="label">Holographic duality</data><data key="status">active-research</data></node>
+<node id="p-hawking-page"><data key="label">Hawking–Page transition</data><data key="status">active-research</data></node>
+<node id="p-modular-bootstrap"><data key="label">Spinless modular bootstrap</data><data key="status">preprint-result-not-replayed</data></node>
+<node id="p-gravity-entanglement"><data key="label">Gravitational entanglement tests</data><data key="status">active-debate</data></node>
+<node id="p-quantum-gravity"><data key="label">Quantum gravity completion</data><data key="status">open</data></node>
+<node id="pf-newton"><data key="label">Newtonian force and potential</data><data key="status">established</data></node>
+<node id="pf-grav-poisson"><data key="label">Gravitational Poisson equation</data><data key="status">established</data></node>
+<node id="pf-kepler"><data key="label">Two-body orbit period and energy</data><data key="status">established</data></node>
+<node id="pf-variational"><data key="label">Euler–Lagrange equation from stationary action</data><data key="status">established</data></node>
+<node id="pf-metric-time"><data key="label">Metric and measured proper time</data><data key="status">established</data></node>
+<node id="pf-connection"><data key="label">Levi-Civita connection</data><data key="status">established</data></node>
+<node id="pf-geodesic"><data key="label">Affinely parameterized geodesic equation</data><data key="status">established</data></node>
+<node id="pf-curvature"><data key="label">Curvature and geodesic deviation</data><data key="status">established</data></node>
+<node id="pf-einstein"><data key="label">Einstein field equations and local conservation</data><data key="status">established</data></node>
+<node id="pf-einstein-action"><data key="label">Einstein–Hilbert action</data><data key="status">established</data></node>
+<node id="pf-schwarzschild"><data key="label">Schwarzschild exterior and horizon scale</data><data key="status">established</data></node>
+<node id="pf-redshift"><data key="label">Static gravitational frequency comparison</data><data key="status">established</data></node>
+<node id="pf-weak-orbit-tests"><data key="label">Weak-field light deflection and perihelion advance</data><data key="status">established</data></node>
+<node id="pf-gw-strain"><data key="label">Leading quadrupole gravitational-wave strain</data><data key="status">established</data></node>
+<node id="pf-gw-power"><data key="label">Quadrupole luminosity and circular binary loss</data><data key="status">established</data></node>
+<node id="pf-friedmann"><data key="label">Friedmann expansion and fluid conservation</data><data key="status">established</data></node>
+<node id="pf-equation-state"><data key="label">Equation-of-state density scaling and acceleration</data><data key="status">established</data></node>
+<node id="pf-hawking"><data key="label">Schwarzschild Hawking temperature and area entropy</data><data key="status">established</data></node>
+<node id="pf-bootstrap"><data key="label">Reported leading spinless modular-bootstrap slope</data><data key="status">preprint-result-not-replayed</data></node>
+<edge id="e0" source="p-newton-gravity" target="p-grav-potential"><data key="relation">prerequisite_of</data></edge>
+<edge id="e1" source="p-grav-potential" target="p-orbits"><data key="relation">prerequisite_of</data></edge>
+<edge id="e2" source="p-orbits" target="p-action"><data key="relation">prerequisite_of</data></edge>
+<edge id="e3" source="p-action" target="p-geodesic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e4" source="p-tidal" target="p-equivalence"><data key="relation">prerequisite_of</data></edge>
+<edge id="e5" source="p-equivalence" target="p-metric"><data key="relation">prerequisite_of</data></edge>
+<edge id="e6" source="p-metric" target="p-connection"><data key="relation">prerequisite_of</data></edge>
+<edge id="e7" source="p-connection" target="p-curvature"><data key="relation">prerequisite_of</data></edge>
+<edge id="e8" source="p-curvature" target="p-einstein-eq"><data key="relation">prerequisite_of</data></edge>
+<edge id="e9" source="p-stress-energy" target="p-einstein-eq"><data key="relation">prerequisite_of</data></edge>
+<edge id="e10" source="p-einstein-eq" target="p-schwarzschild"><data key="relation">prerequisite_of</data></edge>
+<edge id="e11" source="p-schwarzschild" target="p-horizons"><data key="relation">prerequisite_of</data></edge>
+<edge id="e12" source="p-horizons" target="p-bh-thermodynamics"><data key="relation">prerequisite_of</data></edge>
+<edge id="e13" source="p-schwarzschild" target="p-kerr"><data key="relation">prerequisite_of</data></edge>
+<edge id="e14" source="p-metric" target="p-redshift"><data key="relation">prerequisite_of</data></edge>
+<edge id="e15" source="p-geodesic" target="p-lensing"><data key="relation">prerequisite_of</data></edge>
+<edge id="e16" source="p-einstein-eq" target="p-gravitational-waves"><data key="relation">prerequisite_of</data></edge>
+<edge id="e17" source="p-gravitational-waves" target="p-quadrupole"><data key="relation">prerequisite_of</data></edge>
+<edge id="e18" source="p-quadrupole" target="p-gw-tests"><data key="relation">prerequisite_of</data></edge>
+<edge id="e19" source="p-einstein-eq" target="p-numerical-relativity"><data key="relation">prerequisite_of</data></edge>
+<edge id="e20" source="p-numerical-relativity" target="p-gw-tests"><data key="relation">prerequisite_of</data></edge>
+<edge id="e21" source="p-einstein-eq" target="p-flrw"><data key="relation">prerequisite_of</data></edge>
+<edge id="e22" source="p-flrw" target="p-friedmann"><data key="relation">prerequisite_of</data></edge>
+<edge id="e23" source="p-friedmann" target="p-structure-formation"><data key="relation">prerequisite_of</data></edge>
+<edge id="e24" source="p-structure-formation" target="p-bao-ap"><data key="relation">prerequisite_of</data></edge>
+<edge id="e25" source="p-bao-ap" target="p-dark-energy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e26" source="p-structure-formation" target="p-dark-matter"><data key="relation">prerequisite_of</data></edge>
+<edge id="e27" source="p-einstein-eq" target="p-gravity-eft"><data key="relation">prerequisite_of</data></edge>
+<edge id="e28" source="p-gravity-eft" target="p-quantum-gravity"><data key="relation">prerequisite_of</data></edge>
+<edge id="e29" source="p-bh-thermodynamics" target="p-holography"><data key="relation">prerequisite_of</data></edge>
+<edge id="e30" source="p-holography" target="p-hawking-page"><data key="relation">prerequisite_of</data></edge>
+<edge id="e31" source="p-holography" target="p-modular-bootstrap"><data key="relation">prerequisite_of</data></edge>
+<edge id="e32" source="p-gravity-entanglement" target="p-quantum-gravity"><data key="relation">prerequisite_of</data></edge>
+<edge id="e33" source="p-newton-gravity" target="pf-newton"><data key="relation">prerequisite_of</data></edge>
+<edge id="e34" source="p-grav-potential" target="pf-newton"><data key="relation">prerequisite_of</data></edge>
+<edge id="e35" source="p-grav-potential" target="pf-grav-poisson"><data key="relation">prerequisite_of</data></edge>
+<edge id="e36" source="p-newton-gravity" target="pf-kepler"><data key="relation">prerequisite_of</data></edge>
+<edge id="e37" source="p-orbits" target="pf-kepler"><data key="relation">prerequisite_of</data></edge>
+<edge id="e38" source="p-action" target="pf-variational"><data key="relation">prerequisite_of</data></edge>
+<edge id="e39" source="p-metric" target="pf-metric-time"><data key="relation">prerequisite_of</data></edge>
+<edge id="e40" source="p-equivalence" target="pf-metric-time"><data key="relation">prerequisite_of</data></edge>
+<edge id="e41" source="p-metric" target="pf-connection"><data key="relation">prerequisite_of</data></edge>
+<edge id="e42" source="p-connection" target="pf-connection"><data key="relation">prerequisite_of</data></edge>
+<edge id="e43" source="p-action" target="pf-geodesic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e44" source="p-connection" target="pf-geodesic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e45" source="p-geodesic" target="pf-geodesic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e46" source="p-connection" target="pf-curvature"><data key="relation">prerequisite_of</data></edge>
+<edge id="e47" source="p-curvature" target="pf-curvature"><data key="relation">prerequisite_of</data></edge>
+<edge id="e48" source="p-tidal" target="pf-curvature"><data key="relation">prerequisite_of</data></edge>
+<edge id="e49" source="p-curvature" target="pf-einstein"><data key="relation">prerequisite_of</data></edge>
+<edge id="e50" source="p-stress-energy" target="pf-einstein"><data key="relation">prerequisite_of</data></edge>
+<edge id="e51" source="p-einstein-eq" target="pf-einstein"><data key="relation">prerequisite_of</data></edge>
+<edge id="e52" source="p-action" target="pf-einstein-action"><data key="relation">prerequisite_of</data></edge>
+<edge id="e53" source="p-einstein-eq" target="pf-einstein-action"><data key="relation">prerequisite_of</data></edge>
+<edge id="e54" source="p-einstein-eq" target="pf-schwarzschild"><data key="relation">prerequisite_of</data></edge>
+<edge id="e55" source="p-schwarzschild" target="pf-schwarzschild"><data key="relation">prerequisite_of</data></edge>
+<edge id="e56" source="p-horizons" target="pf-schwarzschild"><data key="relation">prerequisite_of</data></edge>
+<edge id="e57" source="p-metric" target="pf-redshift"><data key="relation">prerequisite_of</data></edge>
+<edge id="e58" source="p-redshift" target="pf-redshift"><data key="relation">prerequisite_of</data></edge>
+<edge id="e59" source="p-geodesic" target="pf-weak-orbit-tests"><data key="relation">prerequisite_of</data></edge>
+<edge id="e60" source="p-schwarzschild" target="pf-weak-orbit-tests"><data key="relation">prerequisite_of</data></edge>
+<edge id="e61" source="p-lensing" target="pf-weak-orbit-tests"><data key="relation">prerequisite_of</data></edge>
+<edge id="e62" source="p-orbits" target="pf-weak-orbit-tests"><data key="relation">prerequisite_of</data></edge>
+<edge id="e63" source="p-gravitational-waves" target="pf-gw-strain"><data key="relation">prerequisite_of</data></edge>
+<edge id="e64" source="p-quadrupole" target="pf-gw-strain"><data key="relation">prerequisite_of</data></edge>
+<edge id="e65" source="p-quadrupole" target="pf-gw-power"><data key="relation">prerequisite_of</data></edge>
+<edge id="e66" source="p-orbits" target="pf-gw-power"><data key="relation">prerequisite_of</data></edge>
+<edge id="e67" source="p-flrw" target="pf-friedmann"><data key="relation">prerequisite_of</data></edge>
+<edge id="e68" source="p-friedmann" target="pf-friedmann"><data key="relation">prerequisite_of</data></edge>
+<edge id="e69" source="p-friedmann" target="pf-equation-state"><data key="relation">prerequisite_of</data></edge>
+<edge id="e70" source="p-dark-energy" target="pf-equation-state"><data key="relation">prerequisite_of</data></edge>
+<edge id="e71" source="p-schwarzschild" target="pf-hawking"><data key="relation">prerequisite_of</data></edge>
+<edge id="e72" source="p-bh-thermodynamics" target="pf-hawking"><data key="relation">prerequisite_of</data></edge>
+<edge id="e73" source="p-modular-bootstrap" target="pf-bootstrap"><data key="relation">prerequisite_of</data></edge>
+<edge id="e74" source="p-holography" target="pf-bootstrap"><data key="relation">prerequisite_of</data></edge>
+</graph></graphml>

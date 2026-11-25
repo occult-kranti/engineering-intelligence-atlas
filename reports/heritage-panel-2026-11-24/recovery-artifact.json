@@ -1,0 +1,2843 @@
+{
+  "schemaVersion": 1,
+  "reviewType": "recovery integration snapshot",
+  "baselineCommit": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48",
+  "createdAtUtc": "2026-11-25T06:41:08.469408+00:00",
+  "artifactSha256": "9b8ec94296db32262e229a839c62871cc65bbbf34155fade62c71df1959a7646",
+  "hashDefinition": "SHA256 of UTF-8 JSON(files), sorted object keys, separators comma/colon, files sorted by path; no trailing newline",
+  "scope": "All changed public source, workflows, roles, catalog, tests, generated files and recovery documentation; deleted paths retained with null hashes",
+  "exclusions": [
+    {
+      "path": "reports/heritage-panel-2026-11-24/recovery-artifact.json",
+      "reason": "Self-referential manifest; identity supplied by enclosing Git commit"
+    }
+  ],
+  "files": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "gitStatus": " M",
+      "bytes": 15338,
+      "sha256": "76383133193f08667ef2b13c233289e8db7d88533433b13d4cd24e2374581a0a"
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "gitStatus": " M",
+      "bytes": 2592,
+      "sha256": "8ae7fbd92cbe90d136a8d29f58916484dc204062f8288453d31e13ddeef94ccb"
+    },
+    {
+      "path": ".gitignore",
+      "gitStatus": " M",
+      "bytes": 1208,
+      "sha256": "8a388a1947b31a41efdf8debabbe33aaac9cd4f4d03f1e354330b6440ac5d0fe"
+    },
+    {
+      "path": "HANDOFF.md",
+      "gitStatus": " M",
+      "bytes": 33069,
+      "sha256": "d2cb4a5bc33af58a00c1af68be0eb038c910c8317adfe377c6d2bd17f92adaae"
+    },
+    {
+      "path": "README.md",
+      "gitStatus": " M",
+      "bytes": 28182,
+      "sha256": "55550a17ed144ba436f8d7ae6fe0f2f5f474a34667e4a9f50180735ead411e17"
+    },
+    {
+      "path": "ROADMAP.md",
+      "gitStatus": " M",
+      "bytes": 22372,
+      "sha256": "4736c927115b5ed3fc33bb269231a8df5b2d7a3d1fef736d6a1fab506e7bb13d"
+    },
+    {
+      "path": "cloud-workspace/lib/resource-catalog.ts",
+      "gitStatus": " M",
+      "bytes": 369979,
+      "sha256": "76fe5717d8162630867e4e249634591658e00114f250de9c9292e5c01ca37598"
+    },
+    {
+      "path": "company/role-library/design-architecture.md",
+      "gitStatus": " M",
+      "bytes": 11077,
+      "sha256": "9347d1c0e6696f580910a52fc70b660be23c83fa9c533d49c9294356ad03b2db"
+    },
+    {
+      "path": "company/role-library/engineering.md",
+      "gitStatus": " M",
+      "bytes": 5708,
+      "sha256": "ee2705674335421a09bcfa0d734ffd1ca8987c1b9d25854e7a1e3bc9801a335b"
+    },
+    {
+      "path": "company/role-library/index.json",
+      "gitStatus": " M",
+      "bytes": 54654,
+      "sha256": "a4631d19b97b9d7abd3eb2b5694ca90e337dffa026d2f3634df26ccf88295f1f"
+    },
+    {
+      "path": "company/role-library/qa.md",
+      "gitStatus": " M",
+      "bytes": 5649,
+      "sha256": "6b78b3a3041f4a83886a6f3777c7475d195f41047f8d75649326f4c64fc75335"
+    },
+    {
+      "path": "company/role-library/resource-catalog.json",
+      "gitStatus": " M",
+      "bytes": 468863,
+      "sha256": "abdbcd4a6b061f47a29dfc2caa609de40f4eec9901e18504597a195d126c0c2b"
+    },
+    {
+      "path": "company/skill-briefs.json",
+      "gitStatus": " M",
+      "bytes": 134014,
+      "sha256": "55ff0c4a9e7475cb496d7920f758bc0f68474617f3d2e5951cba856c0d7ead65"
+    },
+    {
+      "path": "desktop-shell/src/renderer/resource-library/catalog.ts",
+      "gitStatus": " M",
+      "bytes": 369979,
+      "sha256": "76fe5717d8162630867e4e249634591658e00114f250de9c9292e5c01ca37598"
+    },
+    {
+      "path": "docs/architecture-library/index.html",
+      "gitStatus": " M",
+      "bytes": 6002,
+      "sha256": "bb47b771b003e5b7aed057248e2f10117fd0d6c322a358a9fa16e7cb8eeed049"
+    },
+    {
+      "path": "docs/architecture-library/library.css",
+      "gitStatus": " M",
+      "bytes": 12672,
+      "sha256": "6fca82c3c6d946e90431b13279746b7fe81fad7fee8cc48d71da2f111cf14d48"
+    },
+    {
+      "path": "docs/architecture-library/site-models/ACCURACY.md",
+      "gitStatus": "??",
+      "bytes": 14748,
+      "sha256": "55ef58a3845984ff9d4070513542a6500ac29e3ecb92e04a180958e4a889b647"
+    },
+    {
+      "path": "docs/architecture-library/site-models/ATTRIBUTION.md",
+      "gitStatus": "??",
+      "bytes": 5974,
+      "sha256": "3b09f7c7fa93cf4cdcf3f6a021ec843f209006c52ac206bea1074c6a795cfcce"
+    },
+    {
+      "path": "docs/architecture-library/site-models/README.md",
+      "gitStatus": "??",
+      "bytes": 10517,
+      "sha256": "3be8af088771a673d693ceefd151fd7968dec87866d1b6bbaec9e6664ffc6661"
+    },
+    {
+      "path": "docs/architecture-library/site-models/assets/kailasa-context.glb",
+      "gitStatus": "??",
+      "bytes": 6594948,
+      "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc"
+    },
+    {
+      "path": "docs/architecture-library/site-models/assets/khafre.glb",
+      "gitStatus": "??",
+      "bytes": 1187380,
+      "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd"
+    },
+    {
+      "path": "docs/architecture-library/site-models/assets/khufu.glb",
+      "gitStatus": "??",
+      "bytes": 1786680,
+      "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1"
+    },
+    {
+      "path": "docs/architecture-library/site-models/assets/menkaure.glb",
+      "gitStatus": "??",
+      "bytes": 3075716,
+      "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70"
+    },
+    {
+      "path": "docs/architecture-library/site-models/capture-requirements.json",
+      "gitStatus": "??",
+      "bytes": 16803,
+      "sha256": "e6b5bbd2b353edb772cc5fb5503ced3280d1d6eb9f1d1eae995e9f0d5f0aebf5"
+    },
+    {
+      "path": "docs/architecture-library/site-models/catalog-core.mjs",
+      "gitStatus": "??",
+      "bytes": 4058,
+      "sha256": "bd0e0020eea0b37c4fd2cdc2a55b0133e3ad6e0ce7c1223376d2cb8376db85a1"
+    },
+    {
+      "path": "docs/architecture-library/site-models/catalog.json",
+      "gitStatus": "??",
+      "bytes": 18130,
+      "sha256": "481ab80f734ab89c834c6ac539156eb356393dbab43ad75c4e42eac72f1b0349"
+    },
+    {
+      "path": "docs/architecture-library/site-models/download-core.mjs",
+      "gitStatus": "??",
+      "bytes": 1517,
+      "sha256": "fe622348cb0208becf322183f535ea99a951994b5cf1d75b92e5204284589c94"
+    },
+    {
+      "path": "docs/architecture-library/site-models/evidence/el-markaz-islami-mosque.json",
+      "gitStatus": "??",
+      "bytes": 14532,
+      "sha256": "c194ea18eefa2c37c6c5a39062015b001e3f74e68f072eb4770423805c01dd1c"
+    },
+    {
+      "path": "docs/architecture-library/site-models/evidence/giza-plateau.json",
+      "gitStatus": "??",
+      "bytes": 28320,
+      "sha256": "3543047c193af0d695df951fe7c3e147c14c51acf71d9d36b395b91121bf2ee6"
+    },
+    {
+      "path": "docs/architecture-library/site-models/evidence/kailasa-context.json",
+      "gitStatus": "??",
+      "bytes": 15692,
+      "sha256": "87bd1f028aeb30e0ad1c87d9b342e2ae2cefe260e316ba6c137c9d5f19d8bb31"
+    },
+    {
+      "path": "docs/architecture-library/site-models/evidence/khafre.json",
+      "gitStatus": "??",
+      "bytes": 8001,
+      "sha256": "5981ce6bb9cd04653fa43c03786723c187c33cb9d44a5b5e73bac8e96beff2d2"
+    },
+    {
+      "path": "docs/architecture-library/site-models/evidence/khufu.json",
+      "gitStatus": "??",
+      "bytes": 8364,
+      "sha256": "3d4c066ee9125e3468ff173835d651db99935227a2b36d04b2e95eebab7ccac0"
+    },
+    {
+      "path": "docs/architecture-library/site-models/evidence/menkaure.json",
+      "gitStatus": "??",
+      "bytes": 8650,
+      "sha256": "1104582832ef78ed539fe7835c39f8dcdd8886d5c6a8197a2b054c022c8c87fa"
+    },
+    {
+      "path": "docs/architecture-library/site-models/evidence/st-george-antiochian-orthodox-church.json",
+      "gitStatus": "??",
+      "bytes": 14609,
+      "sha256": "f7d1e818e0f04859e26f6bd5d1b514600a9b4751692788470f1f29804a242d40"
+    },
+    {
+      "path": "docs/architecture-library/site-models/index.html",
+      "gitStatus": "??",
+      "bytes": 6390,
+      "sha256": "7726eca38e9b88a9488f74b2476959f4695d687ebc3e7cbd9b5bb4d0b0ca804c"
+    },
+    {
+      "path": "docs/architecture-library/site-models/previews/el-markaz-islami-mosque.png",
+      "gitStatus": "??",
+      "bytes": 195369,
+      "sha256": "fdf42f31bb7459ac7f69c8dc64f17f62ac28de1660b71cfb033b2174873a6c24"
+    },
+    {
+      "path": "docs/architecture-library/site-models/previews/giza-plateau.png",
+      "gitStatus": "??",
+      "bytes": 403947,
+      "sha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5"
+    },
+    {
+      "path": "docs/architecture-library/site-models/previews/kailasa-context.png",
+      "gitStatus": "??",
+      "bytes": 384297,
+      "sha256": "085eefea5174c71b86b66d2b0359045b1750d4624a3409fde5039950c2e80c9e"
+    },
+    {
+      "path": "docs/architecture-library/site-models/previews/khafre.png",
+      "gitStatus": "??",
+      "bytes": 235509,
+      "sha256": "f30b127acd935f7d6183e14713a574989662380b1efe289c3e51d9d030dfd448"
+    },
+    {
+      "path": "docs/architecture-library/site-models/previews/khufu.png",
+      "gitStatus": "??",
+      "bytes": 236159,
+      "sha256": "641e416fc1e9c35552db989bc3e4bc0baa052e400c063ce539e8f102ff39fde7"
+    },
+    {
+      "path": "docs/architecture-library/site-models/previews/menkaure.png",
+      "gitStatus": "??",
+      "bytes": 217376,
+      "sha256": "8ac94772b75ad458b0d14ed0ec55e447ce21779be778583052470f5661151bcf"
+    },
+    {
+      "path": "docs/architecture-library/site-models/previews/st-george-antiochian-orthodox-church.png",
+      "gitStatus": "??",
+      "bytes": 216693,
+      "sha256": "30556dacc5fd2b3b9a084fa7ce73bc27477f8da0ae0c616d3f446b48f8e328be"
+    },
+    {
+      "path": "docs/architecture-library/site-models/render_preview.py",
+      "gitStatus": "??",
+      "bytes": 4546,
+      "sha256": "eacc28c3cb887ab92be4e2789173e29ff496d5063bd70b24e39e614dd65a3344"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/giza/README.md",
+      "gitStatus": "??",
+      "bytes": 6800,
+      "sha256": "2acc5d1da78b492f8a14dcef257c759a456f410f3acd140871723cdfa2e1b723"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/giza/assets.json",
+      "gitStatus": "??",
+      "bytes": 10975,
+      "sha256": "4e3b3e09a185e1eee21d10e0d96b1900771073a398e94767555c2c3481f280db"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/giza/blender-inspection.json",
+      "gitStatus": "??",
+      "bytes": 1198,
+      "sha256": "4f843f1c7fe3a54fcf80f569dd490ba6478c6cd3b62eb2770036b379bc17abd6"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/giza/measurements.json",
+      "gitStatus": "??",
+      "bytes": 2525,
+      "sha256": "c0141849ae8d9aafa5657d2b975b05fffd5adfc544e3bc921b91e557e0728428"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/giza/plateau-preview.png",
+      "gitStatus": "??",
+      "bytes": 403947,
+      "sha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/giza/round-1-review.json",
+      "gitStatus": "??",
+      "bytes": 2237,
+      "sha256": "12b96bd0d7a9722a429b4c6b71bb8eeadf129b4aae40c248e47af942cd800c83"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/giza/sources.json",
+      "gitStatus": "??",
+      "bytes": 7983,
+      "sha256": "6655cb633386ff567345bb1144d42b7df70056d0e4aada1d250e6233c361d3a1"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/kailasa/README.md",
+      "gitStatus": "??",
+      "bytes": 9850,
+      "sha256": "caf4106093ad9918b59287f9692db3e40a6d9f6593b1fa741a5c8ec492dffda7"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/kailasa/archive-inventory.json",
+      "gitStatus": "??",
+      "bytes": 18766,
+      "sha256": "9fd9824df459286d0312f05a724a2e7ef15f8f1d9622577658ef951812762dfd"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/kailasa/round-1-evidence.json",
+      "gitStatus": "??",
+      "bytes": 14833,
+      "sha256": "e09558449205000d59b9eeefed1ee80ab98e98b408106af42a01efcebc59bb21"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/kailasa/sources.json",
+      "gitStatus": "??",
+      "bytes": 5955,
+      "sha256": "3cbf5b6815a26b7196984ae291fbe7c17d0b1831e615a5f9f09057956c9e333b"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/README.md",
+      "gitStatus": "??",
+      "bytes": 7307,
+      "sha256": "194b72baadbbe5a68f9ef217a476a1b08087e7812a7994d24bfa80ef7fa63bd9"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/acquire_meshes.py",
+      "gitStatus": "??",
+      "bytes": 4481,
+      "sha256": "10c4a0d8917808651cd279ea1b1224b586cb6647308ca95701ed471f8e8e1e3f"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/acquisition.json",
+      "gitStatus": "??",
+      "bytes": 4759,
+      "sha256": "11f8f9e134d3d95c71bfe6f017da13cac0a2f8ca0951926437033815cf0df7cf"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/el-markaz-islami-mosque-blender-inspection.json",
+      "gitStatus": "??",
+      "bytes": 2272,
+      "sha256": "0155c96aea9e42a884a43ec2aa8c4fb9a85e692e773f2b2559eff722727b8f02"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/el-markaz-islami-mosque-source-inspection.json",
+      "gitStatus": "??",
+      "bytes": 1021,
+      "sha256": "1adcc49585afe4d66ce2b69ea54156cba38b33a23f17cae1e7557e9b5e4553a7"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/inspect_blender.py",
+      "gitStatus": "??",
+      "bytes": 5323,
+      "sha256": "6d097538f7e243e19e50b1cdac1f1bee727d9ad8b55f018233587085ed2c07a6"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/inspect_source_obj.py",
+      "gitStatus": "??",
+      "bytes": 2872,
+      "sha256": "f0dae0584f01776d9dd9cc9df2f5f15e1088a83cd5a5f4f965af6e1df514ffd4"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/sites.json",
+      "gitStatus": "??",
+      "bytes": 11562,
+      "sha256": "0721d6a6d24e756821c46100f675563bb5ab5ce21de6c401dc687b2f0e112596"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/source.json",
+      "gitStatus": "??",
+      "bytes": 1209,
+      "sha256": "4c90f71857e6aa0f3f12e9d69a0a3227f05a265214aa82660d3825c3ff77ca46"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/st-george-antiochian-orthodox-church-blender-inspection.json",
+      "gitStatus": "??",
+      "bytes": 2273,
+      "sha256": "ae9d7452cbacb4200c32643e57d85ef19ddf6937609d818d7284b022b05b96b3"
+    },
+    {
+      "path": "docs/architecture-library/site-models/research/sacred-sites/st-george-antiochian-orthodox-church-source-inspection.json",
+      "gitStatus": "??",
+      "bytes": 1059,
+      "sha256": "29d8aa6c818999448df7e858f81b6c925823519ae09ee96ec70b245e2adf0188"
+    },
+    {
+      "path": "docs/architecture-library/site-models/site-models.css",
+      "gitStatus": "??",
+      "bytes": 8973,
+      "sha256": "b11267b857dbfa090702e80687c7a19c20d84382e901c7f5537d3218129a336b"
+    },
+    {
+      "path": "docs/architecture-library/site-models/site-models.mjs",
+      "gitStatus": "??",
+      "bytes": 10350,
+      "sha256": "780969e20601b68fc99a8c813c583dcf8a052d63865803daa9d3a1f589077c1b"
+    },
+    {
+      "path": "docs/architecture-library/site-models/vendor/BufferGeometryUtils.mjs",
+      "gitStatus": "??",
+      "bytes": 39166,
+      "sha256": "dd7ceffba30bf275369cb1078a267c720e4cbaaceec31f199b7b9a516f4ba6e3"
+    },
+    {
+      "path": "docs/architecture-library/site-models/vendor/GLTFLoader.mjs",
+      "gitStatus": "??",
+      "bytes": 119868,
+      "sha256": "e5c986887a5353d7da8ad42f0a911c85de9bd6d728a0568d5255b03ddcf79bbc"
+    },
+    {
+      "path": "docs/architecture-library/site-models/vendor/MESHOPT-LICENSE.md",
+      "gitStatus": "??",
+      "bytes": 1079,
+      "sha256": "f03037ca7bad1e3eb7f4a63fa6084a8baabd5ba30d3c239a9a7f35705d873e26"
+    },
+    {
+      "path": "docs/architecture-library/site-models/vendor/OrbitControls.mjs",
+      "gitStatus": "??",
+      "bytes": 40931,
+      "sha256": "0b524db46ffcd65359d2efd51827d0b077796f1ee174e2740ae238ddad5ec3af"
+    },
+    {
+      "path": "docs/architecture-library/site-models/vendor/THREE-LICENSE.md",
+      "gitStatus": "??",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "docs/architecture-library/site-models/vendor/manifest.json",
+      "gitStatus": "??",
+      "bytes": 2632,
+      "sha256": "a700c2868c698e1324b70a3c718eb236181583f2652ffddb8d345b6500337908"
+    },
+    {
+      "path": "docs/architecture-library/site-models/vendor/meshopt_decoder.mjs",
+      "gitStatus": "??",
+      "bytes": 29059,
+      "sha256": "cb08bf53ad8ad9693d8bb759b2dbade350eb38bcce63d005385e225b564c5f6a"
+    },
+    {
+      "path": "docs/architecture-library/site-models/vendor/three.core.mjs",
+      "gitStatus": "??",
+      "bytes": 1474799,
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "docs/architecture-library/site-models/vendor/three.module.mjs",
+      "gitStatus": "??",
+      "bytes": 658902,
+      "sha256": "419439a8f5286ac48f1659174497b0845ecc541dcbd3ebcb59efe0b200eb6eef"
+    },
+    {
+      "path": "docs/architecture-library/site-models/viewer.mjs",
+      "gitStatus": "??",
+      "bytes": 6109,
+      "sha256": "77168a4568a81bb57d4c120caf6257d4d0f743a4c0ebe85eb86a9f349d4a6394"
+    },
+    {
+      "path": "docs/assets/DirectorShell-ChQ5jQ_H.js",
+      "gitStatus": "??",
+      "bytes": 414332,
+      "sha256": "837293a1e6e78ced92e7aa16411a5a766a4f732acc9e443efdc7f1997fc7e578"
+    },
+    {
+      "path": "docs/assets/DirectorShell-qe2-vGzq.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Expand-BKN18QAK.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Expand-S4w03Ri6.js",
+      "gitStatus": "??",
+      "bytes": 1009,
+      "sha256": "d1cc52e07beffb5faec9b0e68659566ed70e7952e27d5f98fee977b3ef8239ee"
+    },
+    {
+      "path": "docs/assets/ExtLink-Bdm5bLAc.js",
+      "gitStatus": "??",
+      "bytes": 447,
+      "sha256": "aa04599b67e45a62b0f49fbe0ffc892a841d5cae38ca0701cbb90b7d2cd82ed9"
+    },
+    {
+      "path": "docs/assets/ExtLink-CDMogaHc.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Jobs-BCjqnrrA.js",
+      "gitStatus": "??",
+      "bytes": 17150,
+      "sha256": "c41e57c525a66abf16d2f69e496eb8dc19bd5d1682b860d3f96164204ba2552d"
+    },
+    {
+      "path": "docs/assets/Jobs-BO-Ff6ja.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Library-D0VI-TrZ.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Library-DlQX_t9j.js",
+      "gitStatus": "??",
+      "bytes": 12808,
+      "sha256": "7e70939cfe82f67e197e941f97aab82c9f8f99c5e7a2f5245d73bf9db48bea24"
+    },
+    {
+      "path": "docs/assets/Methodology-CJHBCL7i.js",
+      "gitStatus": "??",
+      "bytes": 12963,
+      "sha256": "ebb4211188f388bd5a6ed096f7212bf76ea5355d2384ede12f3f78fbf48f8efb"
+    },
+    {
+      "path": "docs/assets/Methodology-gRocz8Ha.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Overview-CR-qtc0R.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Overview-CroTm2gM.js",
+      "gitStatus": "??",
+      "bytes": 16685,
+      "sha256": "b0cf6ef023edb2101e4a17acad29ebbdc6bc457ee378def2c16d34aabb11b68b"
+    },
+    {
+      "path": "docs/assets/Research-BusWmOLX.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Research-C03dl-vO.js",
+      "gitStatus": "??",
+      "bytes": 8816,
+      "sha256": "9052fd834c1ce1ba9b1f8d69915ef3c74072d34e2e85f3a133c0c0419dbe4bc7"
+    },
+    {
+      "path": "docs/assets/Reverse-Bl7ESjkg.js",
+      "gitStatus": "??",
+      "bytes": 19060,
+      "sha256": "9f7ce0054db4fbc88dc721eb546da71c845665578edaf446e931ff785b4802e6"
+    },
+    {
+      "path": "docs/assets/Reverse-s-ta_gr_.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Roles-Ck3f4KtL.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/Roles-t-JornL3.js",
+      "gitStatus": "??",
+      "bytes": 5187,
+      "sha256": "fb08df228f662d4ebaf39c21b218b07f964c411abf55feb451b257660c5dffdb"
+    },
+    {
+      "path": "docs/assets/Science-Bd7FwoJd.js",
+      "gitStatus": "??",
+      "bytes": 14898,
+      "sha256": "d9115e77a403d33bf94db989701bed1ef3069f8118bd393ce67468c31ebc6229"
+    },
+    {
+      "path": "docs/assets/Science-C6fdbTAy.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/SearchInput-B9yT1FCm.js",
+      "gitStatus": "??",
+      "bytes": 2512,
+      "sha256": "5a2f3cb29e6090e01a44d424e45a27ed0520fa707fb8bf93c2126beacc5cfce8"
+    },
+    {
+      "path": "docs/assets/SearchInput-DLQrgABh.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/SectionHeader-BnHS8cn0.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/SectionHeader-De1DVqSD.js",
+      "gitStatus": "??",
+      "bytes": 1425,
+      "sha256": "6cebe1fc614d69401ed4b97a04394ac51f8f820844ea701bf4ce18a7da1a6d1f"
+    },
+    {
+      "path": "docs/assets/Stat-CSTFgCOA.js",
+      "gitStatus": "??",
+      "bytes": 845,
+      "sha256": "475e7f23b14dd11eb4b06f3f2389aedef5f907a71cbf573ecfb358dcfd0fd622"
+    },
+    {
+      "path": "docs/assets/Stat-Cj2EhSz8.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/StaticDirector-C9yK0DFX.js",
+      "gitStatus": "??",
+      "bytes": 4378,
+      "sha256": "f62d9d904c9622cd6f68b60527a9985754cfb0a68538c46799741e40ba92049d"
+    },
+    {
+      "path": "docs/assets/StaticDirector-DKSdz0rj.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/index-BiwCjREL.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/assets/index-DoVqamN5.js",
+      "gitStatus": "??",
+      "bytes": 565830,
+      "sha256": "e0fa6599efc61332196bce4f3c51b5e478c653e3550a4992d0a012d6ba341e80"
+    },
+    {
+      "path": "docs/build-info.json",
+      "gitStatus": " M",
+      "bytes": 49042,
+      "sha256": "969534c4e44fe19dc02cbf8de8d28e6c54f9b88a6f8746ffeef0852ad24b35c3"
+    },
+    {
+      "path": "docs/desktop-preview/chrome.35b5726fbb7bd570.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/desktop-preview/chrome.71fa7bd9d32806e6.js",
+      "gitStatus": "??",
+      "bytes": 332853,
+      "sha256": "71fa7bd9d32806e6840756d4adb7c995c8675dc8e1073c47ecd8327a139e2281"
+    },
+    {
+      "path": "docs/desktop-preview/chrome.html",
+      "gitStatus": " M",
+      "bytes": 97588,
+      "sha256": "86630c21118b3e03092fb4d354b6edb1cc3e0bf128413db9753241a8a17dc916"
+    },
+    {
+      "path": "docs/desktop-preview/resource-library/catalog.8d9818a9ece67d4b.js",
+      "gitStatus": "??",
+      "bytes": 390158,
+      "sha256": "8d9818a9ece67d4b83d4354b27b14ba6edf87fd938548adba89d355d54994cf9"
+    },
+    {
+      "path": "docs/desktop-preview/resource-library/catalog.b5294582b676282c.js",
+      "gitStatus": " D",
+      "bytes": null,
+      "sha256": null
+    },
+    {
+      "path": "docs/index.html",
+      "gitStatus": " M",
+      "bytes": 1003,
+      "sha256": "18dc23cd3e028a55aa61bf541d37464f5b44e6a05745a9973b2478711dda7d15"
+    },
+    {
+      "path": "docs/research/skills/game-reconstruction-engineering/SKILL.md",
+      "gitStatus": " M",
+      "bytes": 14560,
+      "sha256": "e9eb39060fc941bf21953f24743255b285f100e1b7b42db3606e4df5d2d673ac"
+    },
+    {
+      "path": "docs/research/skills/game-reconstruction-engineering/references/art_and_game_pipeline.md",
+      "gitStatus": "??",
+      "bytes": 4093,
+      "sha256": "6b9deb110fe7c32b93468e850a87b55da0a8b8a467fed47a0e03ae9bec33c59f"
+    },
+    {
+      "path": "docs/sw.js",
+      "gitStatus": " M",
+      "bytes": 21852,
+      "sha256": "f5b0c2b8ae2efc1d416894a993aef1b28b9048c15b2ad450ba4dd8709faf3972"
+    },
+    {
+      "path": "integrations/godot-heritage-review/.gitignore",
+      "gitStatus": "??",
+      "bytes": 57,
+      "sha256": "1db672278485df1628e15ec7423511f0f326681646a41c5bc242f0326fd7a952"
+    },
+    {
+      "path": "integrations/godot-heritage-review/README.md",
+      "gitStatus": "??",
+      "bytes": 8838,
+      "sha256": "560345f6ec9246d0533ce55825f817a21ff1f136ea6f11f0fb2f6cd8ada699d5"
+    },
+    {
+      "path": "integrations/godot-heritage-review/audit.gd",
+      "gitStatus": "??",
+      "bytes": 6586,
+      "sha256": "47c828d7528823b1dba356357a61e659e91e9b2fdc3b610b8356fbdf637a4a62"
+    },
+    {
+      "path": "integrations/godot-heritage-review/evidence/el-markaz-islami-mosque.json",
+      "gitStatus": "??",
+      "bytes": 7899,
+      "sha256": "d143793d7ca36389e41e8a30d6988a4cfee6f3f2947cad118ac80e9cf8a98924"
+    },
+    {
+      "path": "integrations/godot-heritage-review/evidence/kailasa-context.json",
+      "gitStatus": "??",
+      "bytes": 17405,
+      "sha256": "7bbbcb0fc675c1204e61d57dc295e435c82dfaa488a6b223d3337684a37f5b93"
+    },
+    {
+      "path": "integrations/godot-heritage-review/evidence/st-george-antiochian-orthodox-church.json",
+      "gitStatus": "??",
+      "bytes": 7917,
+      "sha256": "45a999ad92b53e7a51d4692daa4dbe3d0aeecc43a5565ab2e740781c41a69ac7"
+    },
+    {
+      "path": "integrations/godot-heritage-review/evidence/summary.json",
+      "gitStatus": "??",
+      "bytes": 2152,
+      "sha256": "4a101baeef874dde94258ad1ab7c97da0a7ae7b27929580e67f76008280859a9"
+    },
+    {
+      "path": "integrations/godot-heritage-review/glb.mjs",
+      "gitStatus": "??",
+      "bytes": 9409,
+      "sha256": "43ae9f68caa98ba0f227876801bb00c6ebda7379de1d261c26f65ae7b5bb44bd"
+    },
+    {
+      "path": "integrations/godot-heritage-review/project.godot",
+      "gitStatus": "??",
+      "bytes": 310,
+      "sha256": "d0aaf4e32f7caf226edca6fc730127219817c5d55a36878b0fe82c1bf347569b"
+    },
+    {
+      "path": "integrations/godot-heritage-review/run-audit.mjs",
+      "gitStatus": "??",
+      "bytes": 8171,
+      "sha256": "6bca58371e6bf1bad372082c6b4d742f667459ce691b9551d60c1c7f583863d7"
+    },
+    {
+      "path": "integrations/godot-heritage-review/source-use.json",
+      "gitStatus": "??",
+      "bytes": 2016,
+      "sha256": "9cbf742221ebeff6349d49462e46218314757c5fdc99fc599251ab1480843663"
+    },
+    {
+      "path": "integrations/godot-heritage-review/test/audit.test.mjs",
+      "gitStatus": "??",
+      "bytes": 3409,
+      "sha256": "ebc0838ae155f71772eb13df673c2bd2c9658deeb43346d9666370d4d2c6ea4c"
+    },
+    {
+      "path": "integrations/godot-heritage-review/test/fixture.mjs",
+      "gitStatus": "??",
+      "bytes": 1642,
+      "sha256": "feca3fb2fee60f331614dab9f0e94a0510f28d8da5008769f8fc2acb6a92e825"
+    },
+    {
+      "path": "integrations/godot-heritage-review/test/smoke.mjs",
+      "gitStatus": "??",
+      "bytes": 991,
+      "sha256": "929ae757f351cdfb7b45ff3c67c7fe7f32fe929b5ca7c44e26fb5e16905d66da"
+    },
+    {
+      "path": "integrations/heritage-assets/README.md",
+      "gitStatus": "??",
+      "bytes": 11237,
+      "sha256": "bbbcc09be5a121e429e18a1e061b16833635c900ac3cb1476ec0b334373ed522"
+    },
+    {
+      "path": "integrations/heritage-assets/acquisition-manifest.json",
+      "gitStatus": "??",
+      "bytes": 9136,
+      "sha256": "b77ae4966f6b3ebf492c7ad90a1b5dca6efd51fb4d761a997fa37cae77b993c7"
+    },
+    {
+      "path": "integrations/heritage-assets/applied-guidance.json",
+      "gitStatus": "??",
+      "bytes": 1203,
+      "sha256": "747939b3dc9fdfd8b7f6c1e9d16d21b459efea6038ed7ea56c268c85f77677d7"
+    },
+    {
+      "path": "integrations/heritage-assets/blender-helper-acceptance.json",
+      "gitStatus": "??",
+      "bytes": 14780,
+      "sha256": "41ebe9018849509d6e386f950b38de67032132284e61f5df71f1ef95632d930f"
+    },
+    {
+      "path": "integrations/heritage-assets/blender-review.py",
+      "gitStatus": "??",
+      "bytes": 9605,
+      "sha256": "1f57d37c8065814f614759fb867211c9ce33017481ad11579183a85f59ae024b"
+    },
+    {
+      "path": "integrations/heritage-assets/build-receipt.json",
+      "gitStatus": "??",
+      "bytes": 100435,
+      "sha256": "93fd82217e7907b75e5e9f22a9af94cd7bb569430c4357ee9c59422f479d23d1"
+    },
+    {
+      "path": "integrations/heritage-assets/package-lock.json",
+      "gitStatus": "??",
+      "bytes": 2568,
+      "sha256": "c145a358c75ac0bf1de67b3d56e62f6aa42df3968df585f470c85d9143c69768"
+    },
+    {
+      "path": "integrations/heritage-assets/package.json",
+      "gitStatus": "??",
+      "bytes": 502,
+      "sha256": "7dd4360faafd8ae0ad72b68a22426257fe8f193053342d0fc08e10e36414c897"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/el-markaz-islami-mosque.000.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "28912857e0f690a26ab414fc9809fd7c1ea4f5b29b46f4216c66e7028c14287c"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/el-markaz-islami-mosque.001.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "959f943fd38ca9a1108cbe21a378b51da24073ccb50b072753cd9512ce4bba1a"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/el-markaz-islami-mosque.002.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "2d955c65a3913ace4753c8c7bcfe1babb80e61f1ffda30a98cf13ee87b61766f"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/el-markaz-islami-mosque.003.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "54539c430f0223950c0263b5a30a752f9ef7ddb520ae958b4d853e70f1114f91"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/el-markaz-islami-mosque.004.part",
+      "gitStatus": "??",
+      "bytes": 7196984,
+      "sha256": "7b608df8b034f3c5ca00a50260a28377f1f1dcad687893585f64c994c6458e7a"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/giza-plateau.000.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "e21c7fbc32620e82bc7fbe0c0b296307374e99fea0d4f2fbf6b4c69298f7931f"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/giza-plateau.001.part",
+      "gitStatus": "??",
+      "bytes": 10433012,
+      "sha256": "a32baac7d66c627f5d39da34bfe468b332b82516ad8df6173a5a2a30bc575176"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/manifest.json",
+      "gitStatus": "??",
+      "bytes": 3525,
+      "sha256": "6b4b2f3dd796b6e42534b64ad334ccbe81bd41cb9f3db551b051397bd2103a42"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/st-george-antiochian-orthodox-church.000.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "435daebd17f2b9b6f1a0ce9c6efe15ebd56541776129bc3c53ce2b280475ace6"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/st-george-antiochian-orthodox-church.001.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "b2f4f8edb11b4a47a1ef66e02d679e8be60546eb9bcbe1db33457135b921ad1b"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/st-george-antiochian-orthodox-church.002.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "e83cd47d1642dda0bb9ff98ae826cdd57fd62469f4a28e3529a2fcdb88597d85"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/st-george-antiochian-orthodox-church.003.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "88ade03e24de4ea85dad11c4645d90ea47e79de4314601f084aedab608ce3bf1"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/st-george-antiochian-orthodox-church.004.part",
+      "gitStatus": "??",
+      "bytes": 10485760,
+      "sha256": "66c88dbe1f465baf662f167bed4bac699a1a4b15f6cb02bb9c663506fe3fe236"
+    },
+    {
+      "path": "integrations/heritage-assets/packed-models/st-george-antiochian-orthodox-church.005.part",
+      "gitStatus": "??",
+      "bytes": 9041240,
+      "sha256": "5174b3bc8a5661318d040eacbef51a988478ac23f2812497d7c548757975f6ec"
+    },
+    {
+      "path": "integrations/heritage-assets/preserve.mjs",
+      "gitStatus": "??",
+      "bytes": 36246,
+      "sha256": "019b59a1126ccc34c5af6361e7ce2096f238723e9eb3d376193d23d854f831fd"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/el-markaz-islami-mosque.json",
+      "gitStatus": "??",
+      "bytes": 12061,
+      "sha256": "e3e1fde901a569f66b0472e64a7e8ce46ab468552f14ecf83247fa55017a3b26"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/giza-plateau.json",
+      "gitStatus": "??",
+      "bytes": 26985,
+      "sha256": "c979ae310aa744b1c5d11efe637041283df9eaf08aff19e2e2e9192636e92dc3"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/kailasa-context.json",
+      "gitStatus": "??",
+      "bytes": 15002,
+      "sha256": "b2bbff4eb846dfe53dfee399fb87a6370ada04bbf4e8d39b7677eda5aeb83234"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/khafre.json",
+      "gitStatus": "??",
+      "bytes": 6571,
+      "sha256": "b1360136b3d42a992724d642ee93fc430c24d984014f24c19ef38c771e080909"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/khufu.json",
+      "gitStatus": "??",
+      "bytes": 6933,
+      "sha256": "3f3c9f51238a0d932d2f3a884d7e82a505af92d0e6bba7138a40b76034be20b1"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/menkaure.json",
+      "gitStatus": "??",
+      "bytes": 7222,
+      "sha256": "d3a94a5313c33a3623dce1215bd4d28c7356925ec9cea9339a82baafe7e61da0"
+    },
+    {
+      "path": "integrations/heritage-assets/receipts/st-george-antiochian-orthodox-church.json",
+      "gitStatus": "??",
+      "bytes": 12150,
+      "sha256": "7508d54d36ea17175d7941446ae4050aec5ab89130c8145b65f3239fa6a994bc"
+    },
+    {
+      "path": "integrations/heritage-assets/test/preserve.test.mjs",
+      "gitStatus": "??",
+      "bytes": 11046,
+      "sha256": "07c93c49ed3f67b6bf9c4cde367a2f18d7518596734486756b39c041f860a3f4"
+    },
+    {
+      "path": "integrations/heritage-assets/test_blender_review.py",
+      "gitStatus": "??",
+      "bytes": 7031,
+      "sha256": "257f8a1bf7739d8b0ed7b402dc6c0edb543d4f3d9dd10f796a47e61bc47f7ba2"
+    },
+    {
+      "path": "integrations/heritage-assets/verification.json",
+      "gitStatus": "??",
+      "bytes": 4545,
+      "sha256": "7b02100cb73056c943142d978597dd69328e550d5465424255cc77f850d82d8b"
+    },
+    {
+      "path": "integrations/opencode-game-studios/.gitignore",
+      "gitStatus": "??",
+      "bytes": 39,
+      "sha256": "55ee47764ef1451dd34ef9007329b79bd46d58647a954f8eee8c77446c14a853"
+    },
+    {
+      "path": "integrations/opencode-game-studios/HERITAGE_ASSET_CONTRACT.md",
+      "gitStatus": "??",
+      "bytes": 7987,
+      "sha256": "ef4719194dc8782f363fe5810b5bdf3ee46ab5f172326c6a3180114cb6716ab0"
+    },
+    {
+      "path": "integrations/opencode-game-studios/README.md",
+      "gitStatus": "??",
+      "bytes": 7281,
+      "sha256": "19de42ab03b4364720ab741f85a7c76935165f097e7c89ba5e2cfb4c9c1721fd"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/UPSTREAM-LICENSE",
+      "gitStatus": "??",
+      "bytes": 1078,
+      "sha256": "1281ffedda7559df1a4b2c4f64a23920a839bdf4832558c846a2020b937167d5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/agents/lead-programmer.md",
+      "gitStatus": "??",
+      "bytes": 5174,
+      "sha256": "a6da14463b284d7ea9aaf1fec68679468fea746d957f07df63d17f3866bf21d6"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/commands/architecture-review.md",
+      "gitStatus": "??",
+      "bytes": 177,
+      "sha256": "06ce1b1e35045cd58b827b56146103a2ee6c76a614d7df0fa68ceea4f5cad868"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/commands/create-control-manifest.md",
+      "gitStatus": "??",
+      "bytes": 192,
+      "sha256": "5b5ed5aab5205b0ff3331a9cb2cd9407e527577bc692a0dc4857ea8099b09b1f"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/modulefile.yaml",
+      "gitStatus": "??",
+      "bytes": 383,
+      "sha256": "c9fa776d3b9a3dbb2f4f14ac9a6877064bff7be67285447ffee781e44135527d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/rules/design-docs.md",
+      "gitStatus": "??",
+      "bytes": 3101,
+      "sha256": "d29dabb766c871cdae0464e00a9730f655f0de911a05c32465f46949e43da3d9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/skills/architecture-review/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 24716,
+      "sha256": "95a969eca8745f3984b697f7692095c72b9b95b2d65cbf09543deb363e58e6ab"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/skills/create-control-manifest/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 9351,
+      "sha256": "d87bc8d20ad74d34dd2ac969b68448e211082d72a81776285bca972291c73f30"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/architecture/skills/propagate-design-change/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 7826,
+      "sha256": "e0145ee67521eaf89de6be67dee333fef1bf7c276d9085f3b6187738bfd7a067"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/agents/art-director.md",
+      "gitStatus": "??",
+      "bytes": 5699,
+      "sha256": "c5510a0e3614ceb83cff3dcec8b91d98442bd90705d295b97f425bd30ab5e34d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/agents/technical-artist.md",
+      "gitStatus": "??",
+      "bytes": 5109,
+      "sha256": "10243b19da47dc6a030ab9b694b3268458071b994d0ec34182003931b51d213f"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/commands/art-generate.md",
+      "gitStatus": "??",
+      "bytes": 176,
+      "sha256": "c0e8f6b0b6d4374286b196876fcd355a5039c10c449d2167b29a23bb60b901b5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/modulefile.yaml",
+      "gitStatus": "??",
+      "bytes": 357,
+      "sha256": "281201375b99eb1c4b7c194a73b257e672c6fecd51bab4f7e02f912b63298c86"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/skills/art-bible/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 24567,
+      "sha256": "2021b757e407843bcc18c0bcad537684600ec4b25b9e645dac0965a9405f328b"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/skills/art-generate/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 9977,
+      "sha256": "c85faead6bc2bf0bb6c1e6d30680929216dcb1d4b8449fbe2d302c7c2ee9d478"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/skills/asset-audit/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 6997,
+      "sha256": "19bf6cd002beaa5d8ce3e7925ee70d33c7d75eca1d02a57b98b8ef376958cd89"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/art/skills/asset-spec/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 13653,
+      "sha256": "f5b74adcd62302466d5a314066e941b92191e2e596aaa3ea99d4fdbe764e9f55"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/agents/creative-director.md",
+      "gitStatus": "??",
+      "bytes": 16985,
+      "sha256": "3121650db52c814ea46d3eaf4307fd6ce8b875033d8a9e3c935c7d00a5862406"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/agents/producer.md",
+      "gitStatus": "??",
+      "bytes": 6560,
+      "sha256": "95dd7e0eadd68968a27042d7d1c27dda56b83fdc80d6e8422ae521163588f26d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/agents/technical-director.md",
+      "gitStatus": "??",
+      "bytes": 6777,
+      "sha256": "3d7eb127f9cc89b4d4658e3a6ce888670377fb2260248a008bd29358e0bd674a"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/architecture-decision.md",
+      "gitStatus": "??",
+      "bytes": 183,
+      "sha256": "0dd22294859c4c82a398fec5409b6cc31470fdd483e092d71994d4033ade3239"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/concept-brainstorm.md",
+      "gitStatus": "??",
+      "bytes": 158,
+      "sha256": "715bae7e62e938aa307f733f78d10178585619b8fd10f495cd473ad1891d4970"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/create-architecture.md",
+      "gitStatus": "??",
+      "bytes": 178,
+      "sha256": "8dd9198397b13cf3415e1c263d51b8f355626ae82138701f82f0764ed7c713cf"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/help.md",
+      "gitStatus": "??",
+      "bytes": 136,
+      "sha256": "4a8de821a52b463199817739bed378c74028ef90b5d2ae38c0679ea02c763b1e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/init-template.md",
+      "gitStatus": "??",
+      "bytes": 156,
+      "sha256": "84ea7f30dd59b3fde3c96e2dd6a44e92c3727d26e683502b2a3ca2606e4fbb99"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/map-systems.md",
+      "gitStatus": "??",
+      "bytes": 150,
+      "sha256": "4e1ab5df724f2f64071bc1d2a7a11f8b79815a5310eb1e9f16318688e3530205"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/project-stage-detect.md",
+      "gitStatus": "??",
+      "bytes": 182,
+      "sha256": "0dff757deaec6006fe5669c8394c511d6bb93a829244b1600d817d34575b86bf"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/setup-engine.md",
+      "gitStatus": "??",
+      "bytes": 149,
+      "sha256": "009c79d581848e976658fee5cb7d37b8bae7d2c168b2fc0276bccb44db4bcc38"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/commands/start.md",
+      "gitStatus": "??",
+      "bytes": 133,
+      "sha256": "679fb8744fcc42e77f0eac42a2dccf0e58477a6c807e56e60037a5935453e469"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/docs/context-management.md",
+      "gitStatus": "??",
+      "bytes": 4344,
+      "sha256": "35250419e9f093e6eb7861f5c5b6f04118b091ad636d35b49cbef56eee3e6c83"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/docs/coordination-rules.md",
+      "gitStatus": "??",
+      "bytes": 2248,
+      "sha256": "3b7c1bd00fba8c9a0805287fd187747f472decd36cffe700ec1c3fb6b3f5df38"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/docs/director-gates.md",
+      "gitStatus": "??",
+      "bytes": 32289,
+      "sha256": "eb0334f9cf733c12eb973dd0ee1ecc4ce89c343a01e786e6cc76dbe691201495"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/docs/workflow-catalog.yaml",
+      "gitStatus": "??",
+      "bytes": 14622,
+      "sha256": "777b45cb6aff2ad7305c7b0f6fb659677f94fe2477980dc798a82bfcbaeb7d60"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/modulefile.yaml",
+      "gitStatus": "??",
+      "bytes": 856,
+      "sha256": "b7f975e934d5c9bcbebf1f7dc031aaeeb5d6df7a5ea8c7191512484cc7eb7a4c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/architecture-decision/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 19260,
+      "sha256": "348e77693f871a35a54163355a2925b592b5026128b59270c169f800ec970578"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/concept-brainstorm/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 20404,
+      "sha256": "617bedfa38632c99a99b3693eb6fd0c39e872f0f4a92539c9d786e4c8f6e13c1"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/create-architecture/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 15844,
+      "sha256": "6e30d131830e71f795ceddbe6a4074c4a5e271ee77b6c10cf0e51839ec644e6d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/gate-check/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 34409,
+      "sha256": "7515eb279315991a8bc4fe7eed369170249f0a5a6f8d95d188d521ae2f798849"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/help/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 9395,
+      "sha256": "7f574e3f224b74c53520ee020ea3fed029352ae7ffcd3c2ff57844ea64e45f0e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/init-template/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 11929,
+      "sha256": "1d781709ee98ed7e2f7c283326626c4ce16edd45e263a56a60d82269730cb6c4"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/map-systems/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 16136,
+      "sha256": "f3a2902c0ae6e2eeb8d290baa9ff4d0bb6c6c3e62e89fe3a4d3f5d86de8d7798"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/project-stage-detect/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 6400,
+      "sha256": "2c36b8527e43a685a2e99fe7b8234a7ad1f50493df0b07dc2a61a865f43b2e46"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/setup-engine/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 47984,
+      "sha256": "ea07a8840d1cb6bda0b5297172b3b17cc2658328368ffbeb4f2200d4a8b52be9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/core/skills/start/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 15703,
+      "sha256": "002bb54474e0678083d3a1e7bff6c973834336f1ad4c636ac5f88da474d04087"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/agents/economy-designer.md",
+      "gitStatus": "??",
+      "bytes": 6583,
+      "sha256": "1ba7d80363f41f7f364d79c87b516dbbfb96cdc55a18910d8bc03dc9c9ec09ab"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/agents/game-designer.md",
+      "gitStatus": "??",
+      "bytes": 12583,
+      "sha256": "2387edf3d17b7103e57b208b6ee874db8aba44586aaeb6da163f15ac02653bc8"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/agents/systems-designer.md",
+      "gitStatus": "??",
+      "bytes": 7255,
+      "sha256": "812679e88f497fe5a4cc29882f772661445239ef65ac63f83ebe224d88e968d6"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/design-review.md",
+      "gitStatus": "??",
+      "bytes": 156,
+      "sha256": "b44982db7b0600894af92fca8b45c613f93df5aca5072ce2c69f3c2e5e8a85cd"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/design-system.md",
+      "gitStatus": "??",
+      "bytes": 147,
+      "sha256": "142c867ce2180edee4b5602acbf357c6fb150387487429e33513be423e701556"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/quick-design.md",
+      "gitStatus": "??",
+      "bytes": 153,
+      "sha256": "afcbf16f0131f42b8e350bbc1bde69b6176ab0ab9f60108349e5870856027f12"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/review-all-gdds.md",
+      "gitStatus": "??",
+      "bytes": 165,
+      "sha256": "076d4f43898bb5dc15bf279ddd06dc6d908a1efa92888b9d92f87649bcf8d26b"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/commands/team-combat.md",
+      "gitStatus": "??",
+      "bytes": 137,
+      "sha256": "1ed91be63a30afee2e0c8e8d1a4296137b5fb436e074c47dc8c4a4a229271390"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/modulefile.yaml",
+      "gitStatus": "??",
+      "bytes": 517,
+      "sha256": "8a017475339413b54ab7b7190ea27cf61af9b7c158d434ff4434f40257c11fbc"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/balance-check/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 6198,
+      "sha256": "14e11670ef45e6dfc19c0a8c63720a5d0353109c58939ed93464d229a781c79c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/consistency-check/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 9666,
+      "sha256": "e16448cd8ffad47a382e28bcb5f750b47851e754d2bc22ee82946c76703058d0"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/content-audit/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 7159,
+      "sha256": "295891c2603284666c9b41946beecb7c4c20a7ec67c688e1e6dc1adcd4101398"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/design-review/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 13177,
+      "sha256": "a43746bd02112a79cf3c11b7d9a645720e2be07ada01a8a8b228c73635e687e9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/design-system/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 40097,
+      "sha256": "a6ea8c825e5372e6707e13a03512f65efe1300353b8c60b46da0f30364ff7881"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/estimate/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 4257,
+      "sha256": "aeef37d1aa4fa6e99252c57468dbf28df7173d5f1b80a838ff673ac1b78c12ad"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/playtest-report/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 5063,
+      "sha256": "7a984404ab35b3322517b3d5da20139fbe9ceb19a6d3463c64aab93a681b13b4"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/quick-design/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 9513,
+      "sha256": "379d1ab1552c8bc3cabb956becb816a982b31e534a9707116c446abaddd6e22c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/review-all-gdds/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 26165,
+      "sha256": "9594c3f560db12cc541c78ae789230adab3d9fb1cb56acaa8fca681674946ca7"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/scope-check/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 4313,
+      "sha256": "d91631b2b6768a3a7ab17ddfc2499af4289cad58483f9c4d4b62c1aefac9a337"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/design/skills/team-combat/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 6655,
+      "sha256": "ec6a267ffe2813b1d678a9d2f38451783023254851646b437daf8b2b716fec07"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-csharp-specialist.md",
+      "gitStatus": "??",
+      "bytes": 17351,
+      "sha256": "078f5e0e684c4250e0338f9772100151624d7d0d996068ba91f57351798dcc77"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-gdextension-specialist.md",
+      "gitStatus": "??",
+      "bytes": 14079,
+      "sha256": "ea3fde5ede4f461efef07b289706ecb6a41f4da7dde297aa75662df9272f55cf"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-gdscript-specialist.md",
+      "gitStatus": "??",
+      "bytes": 12608,
+      "sha256": "78b697523450063af58101df2896dd46c225af44a8024fd8c6867df596dacc5e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-shader-specialist.md",
+      "gitStatus": "??",
+      "bytes": 12247,
+      "sha256": "011361413d58a2452c0de58d353a0e3c042aaaec84232dbb961713749be326a7"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/agents/godot-specialist.md",
+      "gitStatus": "??",
+      "bytes": 9793,
+      "sha256": "d000db781e5ec56ded7a2c5d761268307496f737fd50644c6043c0dc96fa3715"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/engine-godot/modulefile.yaml",
+      "gitStatus": "??",
+      "bytes": 364,
+      "sha256": "f43182dad6be18b32037ae21c798e70fc04ad9d7e02bd3fad9039f46b5b6967b"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/ai-programmer.md",
+      "gitStatus": "??",
+      "bytes": 13056,
+      "sha256": "99442b7be5d1ce291a8e59344fe1ec1ee0dc5a36f626f9222c1b758b621ad904"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/engine-programmer.md",
+      "gitStatus": "??",
+      "bytes": 14039,
+      "sha256": "e63b37d8ccb7eab6cd315925b6528111a1bde2e984476cce4d71928e25638488"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/gameplay-programmer.md",
+      "gitStatus": "??",
+      "bytes": 14327,
+      "sha256": "6ded85f4fd70811e4ffd38472fd2bc0fb54f2d0ef0e56b9deeb08aa0bf539675"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/network-programmer.md",
+      "gitStatus": "??",
+      "bytes": 4678,
+      "sha256": "ea6145c6620918e0bc136f9c93b3a719bf146ce6c43f8898d4308e983e0cc8a4"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/agents/tools-programmer.md",
+      "gitStatus": "??",
+      "bytes": 4871,
+      "sha256": "ef35370801e353886a7c41b148c5e100804b66851af6b24f0d89054df23c6aa8"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/modulefile.yaml",
+      "gitStatus": "??",
+      "bytes": 390,
+      "sha256": "2956523eaddfd49c1213b589383f17703a7df5dee4edfb196ab2737b1c527000"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/ai-code.md",
+      "gitStatus": "??",
+      "bytes": 2396,
+      "sha256": "b0ec879a4e850e038d9de6c384f26afa600b762f1ffd3278f4effcc19249f703"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/engine-code.md",
+      "gitStatus": "??",
+      "bytes": 2340,
+      "sha256": "99a5dd01fd39b4f70f7784ff3bbd1e7cb58b5ef33dd8f021c85048a288339e51"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/gameplay-code.md",
+      "gitStatus": "??",
+      "bytes": 2038,
+      "sha256": "cc8fcd71a0203e1fda2de2a97ff32b9ddca7f651a5531af687d5f837fe3ce110"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/network-code.md",
+      "gitStatus": "??",
+      "bytes": 2547,
+      "sha256": "8ae8ce995517707e983a5dbd59e37d0d10c3bee9b80e3430519b070eaaf522c5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/programming/rules/shader-code.md",
+      "gitStatus": "??",
+      "bytes": 2777,
+      "sha256": "f4bdb555c0504b8f8d1ec2da2b452380be62c86889bf5946d8d9a77ba39527e9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/agents/performance-analyst.md",
+      "gitStatus": "??",
+      "bytes": 4727,
+      "sha256": "029098df4824ab2d73d1c773d0b3f5d888ab29534a6a4aef56a65f6443c56db0"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/agents/qa-lead.md",
+      "gitStatus": "??",
+      "bytes": 7217,
+      "sha256": "a374790be400eb33afa3d760ff6986f9050eecaf5688419e507eb413a44574e5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/agents/qa-tester.md",
+      "gitStatus": "??",
+      "bytes": 9092,
+      "sha256": "ac9e4aa763fac93d3daf16c1cac3dd88f9f78f32d93e94612e195eb2d18be2c0"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/agents/security-engineer.md",
+      "gitStatus": "??",
+      "bytes": 6498,
+      "sha256": "f6284fa4690d305f6347e13ceb0961d69185159a59b94f8b9a84239dc447042e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/autopilot-playtest.md",
+      "gitStatus": "??",
+      "bytes": 189,
+      "sha256": "43113900c7523130c1d906e2778585d080bcc7fac271eba633fa1b6ab55df61d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/bug-report.md",
+      "gitStatus": "??",
+      "bytes": 131,
+      "sha256": "2a391f5655ce8a2158118e6c113e7b1dd8b7ece3be063866d78ea81c6c39abbd"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/bug-triage.md",
+      "gitStatus": "??",
+      "bytes": 143,
+      "sha256": "1ca4bed2355cf936e643df9d1e21163e5b0249f05bc40079fe364108e5ee2e3b"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/qa-plan.md",
+      "gitStatus": "??",
+      "bytes": 136,
+      "sha256": "cf0570ea7d8e112d7d05ed0fe1d8491170af2c74ecb6009309f3c48286e910b9"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/regression-suite.md",
+      "gitStatus": "??",
+      "bytes": 159,
+      "sha256": "3f915e2188484e3ad16c33210446f3a897ec64771818bf60da2d0d0e497045f5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/security-audit.md",
+      "gitStatus": "??",
+      "bytes": 149,
+      "sha256": "1dbe2096e0d683d4980413eb4ef301ec6eb9d63a2aa2cb9d9b8b16ea8a63f230"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/smoke-check.md",
+      "gitStatus": "??",
+      "bytes": 138,
+      "sha256": "449c9089f009b8a2fccb2f56008eff20bbf20fe99b96167da0d63500691215aa"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/soak-test.md",
+      "gitStatus": "??",
+      "bytes": 126,
+      "sha256": "0226bcc8534a299e16667a871ec109be5780f6a525a92ae1d68249596f757585"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/team-polish.md",
+      "gitStatus": "??",
+      "bytes": 147,
+      "sha256": "59270699008d25e241fa59653bdaa1b84ed8a12f91b9fbbdb4a6eeedfad24abf"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/team-qa.md",
+      "gitStatus": "??",
+      "bytes": 122,
+      "sha256": "f30e1159c001c025899dc6640e17749e4f95235e1c7642f5dfde75334b95755e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/test-evidence-review.md",
+      "gitStatus": "??",
+      "bytes": 160,
+      "sha256": "5b7b1010ec10af7e8c86d85867e373292bc31e28065d9354060114ce7193a31e"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/test-flakiness.md",
+      "gitStatus": "??",
+      "bytes": 144,
+      "sha256": "1490a9d3cb3e983d88c3b6804ceecdef23b660d639cb902594dcd5cf708dc09c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/test-helpers.md",
+      "gitStatus": "??",
+      "bytes": 145,
+      "sha256": "47667e8203b0c59c97bc4b51596b5ca175f8eb700bf2558334884efdfd67905d"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/commands/test-setup.md",
+      "gitStatus": "??",
+      "bytes": 141,
+      "sha256": "13535ebf87d12157da1caf89e02f5a6116e34e02565059ed74da91d79d719aff"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/modulefile.yaml",
+      "gitStatus": "??",
+      "bytes": 819,
+      "sha256": "a2166430208d6f6843c962452bdb165b2e8151c5d7310b7f956d7e687e789e67"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/rules/test-standards.md",
+      "gitStatus": "??",
+      "bytes": 2115,
+      "sha256": "dc1aea7e714578ae66a1469a0c236d24282f15466dcea80ebd366efe0dde07de"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/automated-smoke-test/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 6751,
+      "sha256": "54c6df3e7dd5eda4c8b1ad8a5bb165ee6513cd002a94bb8db457c03f055d1d13"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/autopilot-playtest/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 7321,
+      "sha256": "31129ba065ece32f68e28112a227a380ee3abc083ed8cf5dc070f4adcfbb71e5"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/bug-report/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 5966,
+      "sha256": "05fb5bf33e50709c5a3b65ebac19db6e6f3ce7bded9dacb80dad4a50329f94b8"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/bug-triage/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 7885,
+      "sha256": "e1505648600d1adf9603700ddbff3498339ce454d75025fff907ea996146b259"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/perf-profile/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 4093,
+      "sha256": "2f94c7692c4fa29cc688fbd25eb61c41efbd45671a1476fa5af55ca3dcf6b670"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/qa-plan/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 11143,
+      "sha256": "fea238b6e8e3bd24f90d8ccf03f08fb71c679e91f5d39a04893c059f73ab0bf8"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/regression-suite/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 8775,
+      "sha256": "e5f923ba3224228dc954951d307629d3bc3825b6d0aba504da52eb3257c24eee"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/security-audit/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 8739,
+      "sha256": "3e912b17ea3af31391bf787bd3080492460af68ddb6b5f9456f572f1f4566e0f"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/skill-improve/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 4704,
+      "sha256": "88157514e7ed75b876241085d276f35c743e4fbc98d7836356d1b82441982f5c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/skill-test/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 13145,
+      "sha256": "ef9cf919b22decadc00bee06a88468a5ee29cf6cb3f3c063a3f26b92d2e89079"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/smoke-check/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 15456,
+      "sha256": "29dcaa5034b2fdcf5cc031f74c1926bcf53d2e82c0a6690eade7ce4a170812d1"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/soak-test/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 9479,
+      "sha256": "0b22f710cb9492ea6c75d3a1af5fe0c3d06e104516583453e1a3f99850b94ca4"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/team-polish/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 6678,
+      "sha256": "2bb303ae247855e01f71c8309afef6a987be0ae1d127ab86c8ab1b165c6b00bb"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/team-qa/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 10996,
+      "sha256": "46fccd0aeca759f37025528abd74ba0c810a9489bde9ec98592aa6372dc03ba3"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/test-evidence-review/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 8964,
+      "sha256": "44aedabaf93c7f0176ee34d06e5c67ffdb32ad3c59fb8eae375e4e0adadb495a"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/test-flakiness/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 8149,
+      "sha256": "a4979138c5efe227bf72befa2d16e4c443e40f1b74a55d3b40289468c3656920"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/test-helpers/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 12429,
+      "sha256": "16b40e245edf63aa6317d41959741392ace8beeb46a87f757dac0400ede072b6"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/modules/qa/skills/test-setup/SKILL.md",
+      "gitStatus": "??",
+      "bytes": 12231,
+      "sha256": "8eb7ba9bcf3e164e1dc8df1e336d67f06c7f079bb59fada518d1aa89123f7849"
+    },
+    {
+      "path": "integrations/opencode-game-studios/resources/receipt.json",
+      "gitStatus": "??",
+      "bytes": 287,
+      "sha256": "5c8d1c9a355832a6855da38d8a1e3819c5437de6613622bc682cb4cffefc5504"
+    },
+    {
+      "path": "integrations/opencode-game-studios/role-mapping.json",
+      "gitStatus": "??",
+      "bytes": 3428,
+      "sha256": "4077f56c9451df55ff59679f9fe2fb5289c483f30e8589b1873b23610e1b6d52"
+    },
+    {
+      "path": "integrations/opencode-game-studios/round-1-implementation.json",
+      "gitStatus": "??",
+      "bytes": 28157,
+      "sha256": "8d5819ae5cf235789d229fc626d115e483092fe6044aa6d05e0656ceaf09635c"
+    },
+    {
+      "path": "integrations/opencode-game-studios/round-1-review.json",
+      "gitStatus": "??",
+      "bytes": 17323,
+      "sha256": "874b01d6ce8b1ad92975ea578313ddbb85c47e6fbb11d0dc4b1a6cf9be701835"
+    },
+    {
+      "path": "integrations/opencode-game-studios/sync_resources.py",
+      "gitStatus": "??",
+      "bytes": 13106,
+      "sha256": "31d4a3409b1ab7ce5dde6a82b4fccc427be340685ff2c5263f61b81023a18eab"
+    },
+    {
+      "path": "integrations/opencode-game-studios/test_sync_resources.py",
+      "gitStatus": "??",
+      "bytes": 9493,
+      "sha256": "b1f3b90455f2d7331eb718fbb0e0588e67103ddfaad7f054e7852333e9664fca"
+    },
+    {
+      "path": "integrations/opencode-game-studios/tool-inventory.json",
+      "gitStatus": "??",
+      "bytes": 8794,
+      "sha256": "5b720a7f371b11acbeed6d20893f145d59bfabae5a453880642af7b0d9ce6396"
+    },
+    {
+      "path": "integrations/opencode-game-studios/upstream.lock.json",
+      "gitStatus": "??",
+      "bytes": 31090,
+      "sha256": "ee0afcefe11a903682755c795a2038340146f402b308e71fa797b367593204fb"
+    },
+    {
+      "path": "project/GITHUB_RECOVERY_2026-11-25.md",
+      "gitStatus": "??",
+      "bytes": 5043,
+      "sha256": "e81e7b67f7ee808aa2617fccf876b39f73b939468b5f5004b48f406f2fab15fc"
+    },
+    {
+      "path": "projects/architecture-library/index.html",
+      "gitStatus": " M",
+      "bytes": 6002,
+      "sha256": "bb47b771b003e5b7aed057248e2f10117fd0d6c322a358a9fa16e7cb8eeed049"
+    },
+    {
+      "path": "projects/architecture-library/library.css",
+      "gitStatus": " M",
+      "bytes": 12672,
+      "sha256": "6fca82c3c6d946e90431b13279746b7fe81fad7fee8cc48d71da2f111cf14d48"
+    },
+    {
+      "path": "projects/architecture-library/site-models/ACCURACY.md",
+      "gitStatus": "??",
+      "bytes": 14748,
+      "sha256": "55ef58a3845984ff9d4070513542a6500ac29e3ecb92e04a180958e4a889b647"
+    },
+    {
+      "path": "projects/architecture-library/site-models/ATTRIBUTION.md",
+      "gitStatus": "??",
+      "bytes": 5974,
+      "sha256": "3b09f7c7fa93cf4cdcf3f6a021ec843f209006c52ac206bea1074c6a795cfcce"
+    },
+    {
+      "path": "projects/architecture-library/site-models/README.md",
+      "gitStatus": "??",
+      "bytes": 10517,
+      "sha256": "3be8af088771a673d693ceefd151fd7968dec87866d1b6bbaec9e6664ffc6661"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/kailasa-context.glb",
+      "gitStatus": "??",
+      "bytes": 6594948,
+      "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/khafre.glb",
+      "gitStatus": "??",
+      "bytes": 1187380,
+      "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/khufu.glb",
+      "gitStatus": "??",
+      "bytes": 1786680,
+      "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1"
+    },
+    {
+      "path": "projects/architecture-library/site-models/assets/menkaure.glb",
+      "gitStatus": "??",
+      "bytes": 3075716,
+      "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70"
+    },
+    {
+      "path": "projects/architecture-library/site-models/capture-requirements.json",
+      "gitStatus": "??",
+      "bytes": 16803,
+      "sha256": "e6b5bbd2b353edb772cc5fb5503ced3280d1d6eb9f1d1eae995e9f0d5f0aebf5"
+    },
+    {
+      "path": "projects/architecture-library/site-models/catalog-core.mjs",
+      "gitStatus": "??",
+      "bytes": 4058,
+      "sha256": "bd0e0020eea0b37c4fd2cdc2a55b0133e3ad6e0ce7c1223376d2cb8376db85a1"
+    },
+    {
+      "path": "projects/architecture-library/site-models/catalog.json",
+      "gitStatus": "??",
+      "bytes": 18130,
+      "sha256": "481ab80f734ab89c834c6ac539156eb356393dbab43ad75c4e42eac72f1b0349"
+    },
+    {
+      "path": "projects/architecture-library/site-models/download-core.mjs",
+      "gitStatus": "??",
+      "bytes": 1517,
+      "sha256": "fe622348cb0208becf322183f535ea99a951994b5cf1d75b92e5204284589c94"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/el-markaz-islami-mosque.json",
+      "gitStatus": "??",
+      "bytes": 14532,
+      "sha256": "c194ea18eefa2c37c6c5a39062015b001e3f74e68f072eb4770423805c01dd1c"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/giza-plateau.json",
+      "gitStatus": "??",
+      "bytes": 28320,
+      "sha256": "3543047c193af0d695df951fe7c3e147c14c51acf71d9d36b395b91121bf2ee6"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/kailasa-context.json",
+      "gitStatus": "??",
+      "bytes": 15692,
+      "sha256": "87bd1f028aeb30e0ad1c87d9b342e2ae2cefe260e316ba6c137c9d5f19d8bb31"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/khafre.json",
+      "gitStatus": "??",
+      "bytes": 8001,
+      "sha256": "5981ce6bb9cd04653fa43c03786723c187c33cb9d44a5b5e73bac8e96beff2d2"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/khufu.json",
+      "gitStatus": "??",
+      "bytes": 8364,
+      "sha256": "3d4c066ee9125e3468ff173835d651db99935227a2b36d04b2e95eebab7ccac0"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/menkaure.json",
+      "gitStatus": "??",
+      "bytes": 8650,
+      "sha256": "1104582832ef78ed539fe7835c39f8dcdd8886d5c6a8197a2b054c022c8c87fa"
+    },
+    {
+      "path": "projects/architecture-library/site-models/evidence/st-george-antiochian-orthodox-church.json",
+      "gitStatus": "??",
+      "bytes": 14609,
+      "sha256": "f7d1e818e0f04859e26f6bd5d1b514600a9b4751692788470f1f29804a242d40"
+    },
+    {
+      "path": "projects/architecture-library/site-models/index.html",
+      "gitStatus": "??",
+      "bytes": 6390,
+      "sha256": "7726eca38e9b88a9488f74b2476959f4695d687ebc3e7cbd9b5bb4d0b0ca804c"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/el-markaz-islami-mosque.png",
+      "gitStatus": "??",
+      "bytes": 195369,
+      "sha256": "fdf42f31bb7459ac7f69c8dc64f17f62ac28de1660b71cfb033b2174873a6c24"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/giza-plateau.png",
+      "gitStatus": "??",
+      "bytes": 403947,
+      "sha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/kailasa-context.png",
+      "gitStatus": "??",
+      "bytes": 384297,
+      "sha256": "085eefea5174c71b86b66d2b0359045b1750d4624a3409fde5039950c2e80c9e"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/khafre.png",
+      "gitStatus": "??",
+      "bytes": 235509,
+      "sha256": "f30b127acd935f7d6183e14713a574989662380b1efe289c3e51d9d030dfd448"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/khufu.png",
+      "gitStatus": "??",
+      "bytes": 236159,
+      "sha256": "641e416fc1e9c35552db989bc3e4bc0baa052e400c063ce539e8f102ff39fde7"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/menkaure.png",
+      "gitStatus": "??",
+      "bytes": 217376,
+      "sha256": "8ac94772b75ad458b0d14ed0ec55e447ce21779be778583052470f5661151bcf"
+    },
+    {
+      "path": "projects/architecture-library/site-models/previews/st-george-antiochian-orthodox-church.png",
+      "gitStatus": "??",
+      "bytes": 216693,
+      "sha256": "30556dacc5fd2b3b9a084fa7ce73bc27477f8da0ae0c616d3f446b48f8e328be"
+    },
+    {
+      "path": "projects/architecture-library/site-models/render_preview.py",
+      "gitStatus": "??",
+      "bytes": 4546,
+      "sha256": "eacc28c3cb887ab92be4e2789173e29ff496d5063bd70b24e39e614dd65a3344"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/README.md",
+      "gitStatus": "??",
+      "bytes": 6800,
+      "sha256": "2acc5d1da78b492f8a14dcef257c759a456f410f3acd140871723cdfa2e1b723"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/assets.json",
+      "gitStatus": "??",
+      "bytes": 10975,
+      "sha256": "4e3b3e09a185e1eee21d10e0d96b1900771073a398e94767555c2c3481f280db"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/blender-inspection.json",
+      "gitStatus": "??",
+      "bytes": 1198,
+      "sha256": "4f843f1c7fe3a54fcf80f569dd490ba6478c6cd3b62eb2770036b379bc17abd6"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/measurements.json",
+      "gitStatus": "??",
+      "bytes": 2525,
+      "sha256": "c0141849ae8d9aafa5657d2b975b05fffd5adfc544e3bc921b91e557e0728428"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/plateau-preview.png",
+      "gitStatus": "??",
+      "bytes": 403947,
+      "sha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/round-1-review.json",
+      "gitStatus": "??",
+      "bytes": 2237,
+      "sha256": "12b96bd0d7a9722a429b4c6b71bb8eeadf129b4aae40c248e47af942cd800c83"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/giza/sources.json",
+      "gitStatus": "??",
+      "bytes": 7983,
+      "sha256": "6655cb633386ff567345bb1144d42b7df70056d0e4aada1d250e6233c361d3a1"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/kailasa/README.md",
+      "gitStatus": "??",
+      "bytes": 9850,
+      "sha256": "caf4106093ad9918b59287f9692db3e40a6d9f6593b1fa741a5c8ec492dffda7"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/kailasa/archive-inventory.json",
+      "gitStatus": "??",
+      "bytes": 18766,
+      "sha256": "9fd9824df459286d0312f05a724a2e7ef15f8f1d9622577658ef951812762dfd"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/kailasa/round-1-evidence.json",
+      "gitStatus": "??",
+      "bytes": 14833,
+      "sha256": "e09558449205000d59b9eeefed1ee80ab98e98b408106af42a01efcebc59bb21"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/kailasa/sources.json",
+      "gitStatus": "??",
+      "bytes": 5955,
+      "sha256": "3cbf5b6815a26b7196984ae291fbe7c17d0b1831e615a5f9f09057956c9e333b"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/README.md",
+      "gitStatus": "??",
+      "bytes": 7307,
+      "sha256": "194b72baadbbe5a68f9ef217a476a1b08087e7812a7994d24bfa80ef7fa63bd9"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/acquire_meshes.py",
+      "gitStatus": "??",
+      "bytes": 4481,
+      "sha256": "10c4a0d8917808651cd279ea1b1224b586cb6647308ca95701ed471f8e8e1e3f"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/acquisition.json",
+      "gitStatus": "??",
+      "bytes": 4759,
+      "sha256": "11f8f9e134d3d95c71bfe6f017da13cac0a2f8ca0951926437033815cf0df7cf"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/el-markaz-islami-mosque-blender-inspection.json",
+      "gitStatus": "??",
+      "bytes": 2272,
+      "sha256": "0155c96aea9e42a884a43ec2aa8c4fb9a85e692e773f2b2559eff722727b8f02"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/el-markaz-islami-mosque-source-inspection.json",
+      "gitStatus": "??",
+      "bytes": 1021,
+      "sha256": "1adcc49585afe4d66ce2b69ea54156cba38b33a23f17cae1e7557e9b5e4553a7"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/inspect_blender.py",
+      "gitStatus": "??",
+      "bytes": 5323,
+      "sha256": "6d097538f7e243e19e50b1cdac1f1bee727d9ad8b55f018233587085ed2c07a6"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/inspect_source_obj.py",
+      "gitStatus": "??",
+      "bytes": 2872,
+      "sha256": "f0dae0584f01776d9dd9cc9df2f5f15e1088a83cd5a5f4f965af6e1df514ffd4"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/sites.json",
+      "gitStatus": "??",
+      "bytes": 11562,
+      "sha256": "0721d6a6d24e756821c46100f675563bb5ab5ce21de6c401dc687b2f0e112596"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/source.json",
+      "gitStatus": "??",
+      "bytes": 1209,
+      "sha256": "4c90f71857e6aa0f3f12e9d69a0a3227f05a265214aa82660d3825c3ff77ca46"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/st-george-antiochian-orthodox-church-blender-inspection.json",
+      "gitStatus": "??",
+      "bytes": 2273,
+      "sha256": "ae9d7452cbacb4200c32643e57d85ef19ddf6937609d818d7284b022b05b96b3"
+    },
+    {
+      "path": "projects/architecture-library/site-models/research/sacred-sites/st-george-antiochian-orthodox-church-source-inspection.json",
+      "gitStatus": "??",
+      "bytes": 1059,
+      "sha256": "29d8aa6c818999448df7e858f81b6c925823519ae09ee96ec70b245e2adf0188"
+    },
+    {
+      "path": "projects/architecture-library/site-models/site-models.css",
+      "gitStatus": "??",
+      "bytes": 8973,
+      "sha256": "b11267b857dbfa090702e80687c7a19c20d84382e901c7f5537d3218129a336b"
+    },
+    {
+      "path": "projects/architecture-library/site-models/site-models.mjs",
+      "gitStatus": "??",
+      "bytes": 10350,
+      "sha256": "780969e20601b68fc99a8c813c583dcf8a052d63865803daa9d3a1f589077c1b"
+    },
+    {
+      "path": "projects/architecture-library/site-models/tests/catalog.test.mjs",
+      "gitStatus": "??",
+      "bytes": 6148,
+      "sha256": "dd669a2ae7678b64c90b10ba0ebbe8c3a156842b99dfebea188b7818c16da8bb"
+    },
+    {
+      "path": "projects/architecture-library/site-models/tests/download.test.mjs",
+      "gitStatus": "??",
+      "bytes": 3754,
+      "sha256": "a98c74032db9f417a8549c681b0f783b0a7b52ad83726af84d542ab39eab5bde"
+    },
+    {
+      "path": "projects/architecture-library/site-models/tests/loading-state.test.mjs",
+      "gitStatus": "??",
+      "bytes": 7186,
+      "sha256": "e4bb75a04946d540fd8c5b97684de78160271fe185067c73f2b9066cc0ec3def"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/BufferGeometryUtils.mjs",
+      "gitStatus": "??",
+      "bytes": 39166,
+      "sha256": "dd7ceffba30bf275369cb1078a267c720e4cbaaceec31f199b7b9a516f4ba6e3"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/GLTFLoader.mjs",
+      "gitStatus": "??",
+      "bytes": 119868,
+      "sha256": "e5c986887a5353d7da8ad42f0a911c85de9bd6d728a0568d5255b03ddcf79bbc"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/MESHOPT-LICENSE.md",
+      "gitStatus": "??",
+      "bytes": 1079,
+      "sha256": "f03037ca7bad1e3eb7f4a63fa6084a8baabd5ba30d3c239a9a7f35705d873e26"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/OrbitControls.mjs",
+      "gitStatus": "??",
+      "bytes": 40931,
+      "sha256": "0b524db46ffcd65359d2efd51827d0b077796f1ee174e2740ae238ddad5ec3af"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/THREE-LICENSE.md",
+      "gitStatus": "??",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/manifest.json",
+      "gitStatus": "??",
+      "bytes": 2632,
+      "sha256": "a700c2868c698e1324b70a3c718eb236181583f2652ffddb8d345b6500337908"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/meshopt_decoder.mjs",
+      "gitStatus": "??",
+      "bytes": 29059,
+      "sha256": "cb08bf53ad8ad9693d8bb759b2dbade350eb38bcce63d005385e225b564c5f6a"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/three.core.mjs",
+      "gitStatus": "??",
+      "bytes": 1474799,
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "projects/architecture-library/site-models/vendor/three.module.mjs",
+      "gitStatus": "??",
+      "bytes": 658902,
+      "sha256": "419439a8f5286ac48f1659174497b0845ecc541dcbd3ebcb59efe0b200eb6eef"
+    },
+    {
+      "path": "projects/architecture-library/site-models/viewer.mjs",
+      "gitStatus": "??",
+      "bytes": 6109,
+      "sha256": "77168a4568a81bb57d4c120caf6257d4d0f743a4c0ebe85eb86a9f349d4a6394"
+    },
+    {
+      "path": "projects/architecture-library/static-assets.json",
+      "gitStatus": " M",
+      "bytes": 7558,
+      "sha256": "758ed53b825b9b5997ba4256bbe4afaebf15e2afb29ea43d8841aa410b350d3f"
+    },
+    {
+      "path": "projects/game-development-research/ART_FUNDAMENTALS.md",
+      "gitStatus": "??",
+      "bytes": 14665,
+      "sha256": "f2a10d713c4d4ea2913d63aefacefdd56015439e0093e0d92895d4786e8a0b44"
+    },
+    {
+      "path": "projects/game-development-research/PIPELINE_AND_RENDERING.md",
+      "gitStatus": "??",
+      "bytes": 16346,
+      "sha256": "7d69c055fcd6f95d9340b743059e230a0ff8a0012d837bba4ba6408cfcc9834c"
+    },
+    {
+      "path": "projects/game-development-research/README.md",
+      "gitStatus": "??",
+      "bytes": 11316,
+      "sha256": "1788d04a55c6c0185c7a1baa1da692ee4c75f848425b881d5bef5a9bec87a330"
+    },
+    {
+      "path": "projects/game-development-research/resources/art-and-assets.json",
+      "gitStatus": "??",
+      "bytes": 40847,
+      "sha256": "40d57991ad6a64bade99a1f16541f4924fad137d6d1fa99f3a15905be1c755bf"
+    },
+    {
+      "path": "projects/game-development-research/resources/asset-study-template.json",
+      "gitStatus": "??",
+      "bytes": 1359,
+      "sha256": "1d8d4d2ea84ef3f9f20408f443fb05250e325926fffffe23de514b23f00d85bd"
+    },
+    {
+      "path": "projects/game-development-research/resources/pipeline-and-rendering.json",
+      "gitStatus": "??",
+      "bytes": 20994,
+      "sha256": "a459dd713402f101d3315091aeabfb61802a219abdb9e8f48625ae26d4594ccc"
+    },
+    {
+      "path": "reports/heritage-panel-2026-11-24/README.md",
+      "gitStatus": "??",
+      "bytes": 8563,
+      "sha256": "9105dd7f6ac49ceaac83ddb10f06e99ab5d2208dfa714e1fc76406b66d464eb3"
+    },
+    {
+      "path": "reports/heritage-panel-2026-11-24/expert-1-round-2.json",
+      "gitStatus": "??",
+      "bytes": 18240,
+      "sha256": "3f902175f84d2f750c4a0939d2d390a7609183aae36db36e8a290390053d1e8d"
+    },
+    {
+      "path": "reports/heritage-panel-2026-11-24/expert-2-round-2.json",
+      "gitStatus": "??",
+      "bytes": 26114,
+      "sha256": "9bfff68e8827c9805b6fddb2ce8665fde47d550e4e6c79d53abe258e5709312f"
+    },
+    {
+      "path": "reports/heritage-panel-2026-11-24/expert-3-round-2.json",
+      "gitStatus": "??",
+      "bytes": 33706,
+      "sha256": "6f4fa7cda5e7713e52e486055d1174f129de4be7037297bbea643728cbf81140"
+    },
+    {
+      "path": "reports/heritage-panel-2026-11-24/expert-4-round-2.json",
+      "gitStatus": "??",
+      "bytes": 10109,
+      "sha256": "0d89d95ced9074410bd2ea4fb683d46db1a799e418a2d0b0dc4e51be5db7f114"
+    },
+    {
+      "path": "reports/heritage-panel-2026-11-24/recovery-2026-11-25.json",
+      "gitStatus": "??",
+      "bytes": 3206,
+      "sha256": "cd44404bbf918b57bfa9581bac9256e826b8f77d5d08f23dcbcd315fca5a5c6f"
+    },
+    {
+      "path": "reports/heritage-panel-2026-11-24/round-1-artifact.json",
+      "gitStatus": "??",
+      "bytes": 48688,
+      "sha256": "12fc0e3bb18e100527f258dd8fdf39bd0608620251a8c8dd1493db8dc60f15c6"
+    },
+    {
+      "path": "reports/heritage-panel-2026-11-24/round-1.json",
+      "gitStatus": "??",
+      "bytes": 4155,
+      "sha256": "92194b9c647955e5cba64ed38463ea36e721b53db46a64299cc9ce7e3c8aa02e"
+    },
+    {
+      "path": "roles/blender-3d-designer/README.md",
+      "gitStatus": " M",
+      "bytes": 2741,
+      "sha256": "083b41c51d4a6f48775b56cc72c2d1441ae5584d15b13ede22bbac29e85b01d9"
+    },
+    {
+      "path": "roles/engine-graphics-programmer/README.md",
+      "gitStatus": " M",
+      "bytes": 2751,
+      "sha256": "abeab12c9c9f97626610570d1f16e185549883777ca7072afabd5f487ff124de"
+    },
+    {
+      "path": "roles/game-designer/README.md",
+      "gitStatus": " M",
+      "bytes": 2730,
+      "sha256": "1593a58414b2d6f02ed164f473608e8d6cf5a2184f95175f72309c920149beb4"
+    },
+    {
+      "path": "roles/game-qa-playtest-engineer/README.md",
+      "gitStatus": " M",
+      "bytes": 1795,
+      "sha256": "c1146a85d33e0b5c378c277e4abf56a7384dca6aad8f5b7f48d62dc72e7639df"
+    },
+    {
+      "path": "roles/game-tools-build-engineer/README.md",
+      "gitStatus": " M",
+      "bytes": 2705,
+      "sha256": "788862f1d033ca9b7012a6896c764288e632718ade9cc90660e1f6ffb1adbf31"
+    },
+    {
+      "path": "roles/gameplay-engineer/README.md",
+      "gitStatus": " M",
+      "bytes": 2721,
+      "sha256": "0cc27891b923fb4790410863ed0440addf815b9b812c8339da3e9e1798356871"
+    },
+    {
+      "path": "roles/simulation-animation-pipeline-technical-director/README.md",
+      "gitStatus": " M",
+      "bytes": 1813,
+      "sha256": "14f426cc8a90bcc84c28437287fe5e972689d96733641d72b672c04d14adbc3d"
+    },
+    {
+      "path": "roles/technical-artist/README.md",
+      "gitStatus": " M",
+      "bytes": 1742,
+      "sha256": "d2bf427f56856a27cd59653829ddd0c7d8f1f968a3c813b778d9995457bcbc20"
+    },
+    {
+      "path": "scripts/architecture-library-assets.mjs",
+      "gitStatus": " M",
+      "bytes": 4836,
+      "sha256": "ade0f52c13c1e7c50d547653c3dd2bb622af2e3077def0299023aab8cafabeaf"
+    },
+    {
+      "path": "scripts/architecture-library-assets.test.mjs",
+      "gitStatus": " M",
+      "bytes": 4518,
+      "sha256": "946d616d312bd2d2115978e59da91c1e4978baa44438424ce37d3c55014e019e"
+    },
+    {
+      "path": "scripts/build-static.mjs",
+      "gitStatus": " M",
+      "bytes": 2406,
+      "sha256": "0e87a56169bb4ba6c30e18387d64f0a4d8af61369bdd0e4d9f376b31c199f1c7"
+    },
+    {
+      "path": "scripts/check-game-heritage.mjs",
+      "gitStatus": "??",
+      "bytes": 1457,
+      "sha256": "646099e081b49444c341aad03d002a0c18b06c2bb805b6a521171c8bf0953e65"
+    },
+    {
+      "path": "scripts/materialize-heritage-models.mjs",
+      "gitStatus": "??",
+      "bytes": 9590,
+      "sha256": "3c9b891f72e83554bda3200a122994fb759c69dd03adf22207bf0ee135441886"
+    },
+    {
+      "path": "scripts/materialize-heritage-models.test.mjs",
+      "gitStatus": "??",
+      "bytes": 7428,
+      "sha256": "2c09432ea6e3de07fa6c9f161c8d3b6efc5169054bc44c8c2dd7d5d112dcc906"
+    },
+    {
+      "path": "scripts/prepare-heritage-catalog.py",
+      "gitStatus": "??",
+      "bytes": 12693,
+      "sha256": "641ecfb1cf906b0d2a8565f503de8139b8c97b61e4cd175b51f5ff633cde3137"
+    },
+    {
+      "path": "scripts/resource-router.test.mjs",
+      "gitStatus": " M",
+      "bytes": 17021,
+      "sha256": "1be533d6f76c9e154a5a17eefcfe44c9d356e9d08f0feddc74cb1ba3bbd2c2c8"
+    },
+    {
+      "path": "scripts/smoke-heritage-viewer.mjs",
+      "gitStatus": "??",
+      "bytes": 13639,
+      "sha256": "d13ef4defa8f79a1eaa4ce833d907175ec120dece08fa7356d6f1fadace4be95"
+    },
+    {
+      "path": "scripts/vendor-heritage-viewer.mjs",
+      "gitStatus": "??",
+      "bytes": 2349,
+      "sha256": "b540ce13642857bc4cb7d319d67b56cf4702e49ed365c3b1a2de68a20dd7a305"
+    },
+    {
+      "path": "site-source/public/architecture-library/index.html",
+      "gitStatus": " M",
+      "bytes": 6002,
+      "sha256": "bb47b771b003e5b7aed057248e2f10117fd0d6c322a358a9fa16e7cb8eeed049"
+    },
+    {
+      "path": "site-source/public/architecture-library/library.css",
+      "gitStatus": " M",
+      "bytes": 12672,
+      "sha256": "6fca82c3c6d946e90431b13279746b7fe81fad7fee8cc48d71da2f111cf14d48"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/ACCURACY.md",
+      "gitStatus": "??",
+      "bytes": 14748,
+      "sha256": "55ef58a3845984ff9d4070513542a6500ac29e3ecb92e04a180958e4a889b647"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/ATTRIBUTION.md",
+      "gitStatus": "??",
+      "bytes": 5974,
+      "sha256": "3b09f7c7fa93cf4cdcf3f6a021ec843f209006c52ac206bea1074c6a795cfcce"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/README.md",
+      "gitStatus": "??",
+      "bytes": 10517,
+      "sha256": "3be8af088771a673d693ceefd151fd7968dec87866d1b6bbaec9e6664ffc6661"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/assets/kailasa-context.glb",
+      "gitStatus": "??",
+      "bytes": 6594948,
+      "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/assets/khafre.glb",
+      "gitStatus": "??",
+      "bytes": 1187380,
+      "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/assets/khufu.glb",
+      "gitStatus": "??",
+      "bytes": 1786680,
+      "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/assets/menkaure.glb",
+      "gitStatus": "??",
+      "bytes": 3075716,
+      "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/capture-requirements.json",
+      "gitStatus": "??",
+      "bytes": 16803,
+      "sha256": "e6b5bbd2b353edb772cc5fb5503ced3280d1d6eb9f1d1eae995e9f0d5f0aebf5"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/catalog-core.mjs",
+      "gitStatus": "??",
+      "bytes": 4058,
+      "sha256": "bd0e0020eea0b37c4fd2cdc2a55b0133e3ad6e0ce7c1223376d2cb8376db85a1"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/catalog.json",
+      "gitStatus": "??",
+      "bytes": 18130,
+      "sha256": "481ab80f734ab89c834c6ac539156eb356393dbab43ad75c4e42eac72f1b0349"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/download-core.mjs",
+      "gitStatus": "??",
+      "bytes": 1517,
+      "sha256": "fe622348cb0208becf322183f535ea99a951994b5cf1d75b92e5204284589c94"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/evidence/el-markaz-islami-mosque.json",
+      "gitStatus": "??",
+      "bytes": 14532,
+      "sha256": "c194ea18eefa2c37c6c5a39062015b001e3f74e68f072eb4770423805c01dd1c"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/evidence/giza-plateau.json",
+      "gitStatus": "??",
+      "bytes": 28320,
+      "sha256": "3543047c193af0d695df951fe7c3e147c14c51acf71d9d36b395b91121bf2ee6"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/evidence/kailasa-context.json",
+      "gitStatus": "??",
+      "bytes": 15692,
+      "sha256": "87bd1f028aeb30e0ad1c87d9b342e2ae2cefe260e316ba6c137c9d5f19d8bb31"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/evidence/khafre.json",
+      "gitStatus": "??",
+      "bytes": 8001,
+      "sha256": "5981ce6bb9cd04653fa43c03786723c187c33cb9d44a5b5e73bac8e96beff2d2"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/evidence/khufu.json",
+      "gitStatus": "??",
+      "bytes": 8364,
+      "sha256": "3d4c066ee9125e3468ff173835d651db99935227a2b36d04b2e95eebab7ccac0"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/evidence/menkaure.json",
+      "gitStatus": "??",
+      "bytes": 8650,
+      "sha256": "1104582832ef78ed539fe7835c39f8dcdd8886d5c6a8197a2b054c022c8c87fa"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/evidence/st-george-antiochian-orthodox-church.json",
+      "gitStatus": "??",
+      "bytes": 14609,
+      "sha256": "f7d1e818e0f04859e26f6bd5d1b514600a9b4751692788470f1f29804a242d40"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/index.html",
+      "gitStatus": "??",
+      "bytes": 6390,
+      "sha256": "7726eca38e9b88a9488f74b2476959f4695d687ebc3e7cbd9b5bb4d0b0ca804c"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/previews/el-markaz-islami-mosque.png",
+      "gitStatus": "??",
+      "bytes": 195369,
+      "sha256": "fdf42f31bb7459ac7f69c8dc64f17f62ac28de1660b71cfb033b2174873a6c24"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/previews/giza-plateau.png",
+      "gitStatus": "??",
+      "bytes": 403947,
+      "sha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/previews/kailasa-context.png",
+      "gitStatus": "??",
+      "bytes": 384297,
+      "sha256": "085eefea5174c71b86b66d2b0359045b1750d4624a3409fde5039950c2e80c9e"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/previews/khafre.png",
+      "gitStatus": "??",
+      "bytes": 235509,
+      "sha256": "f30b127acd935f7d6183e14713a574989662380b1efe289c3e51d9d030dfd448"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/previews/khufu.png",
+      "gitStatus": "??",
+      "bytes": 236159,
+      "sha256": "641e416fc1e9c35552db989bc3e4bc0baa052e400c063ce539e8f102ff39fde7"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/previews/menkaure.png",
+      "gitStatus": "??",
+      "bytes": 217376,
+      "sha256": "8ac94772b75ad458b0d14ed0ec55e447ce21779be778583052470f5661151bcf"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/previews/st-george-antiochian-orthodox-church.png",
+      "gitStatus": "??",
+      "bytes": 216693,
+      "sha256": "30556dacc5fd2b3b9a084fa7ce73bc27477f8da0ae0c616d3f446b48f8e328be"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/render_preview.py",
+      "gitStatus": "??",
+      "bytes": 4546,
+      "sha256": "eacc28c3cb887ab92be4e2789173e29ff496d5063bd70b24e39e614dd65a3344"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/giza/README.md",
+      "gitStatus": "??",
+      "bytes": 6800,
+      "sha256": "2acc5d1da78b492f8a14dcef257c759a456f410f3acd140871723cdfa2e1b723"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/giza/assets.json",
+      "gitStatus": "??",
+      "bytes": 10975,
+      "sha256": "4e3b3e09a185e1eee21d10e0d96b1900771073a398e94767555c2c3481f280db"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/giza/blender-inspection.json",
+      "gitStatus": "??",
+      "bytes": 1198,
+      "sha256": "4f843f1c7fe3a54fcf80f569dd490ba6478c6cd3b62eb2770036b379bc17abd6"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/giza/measurements.json",
+      "gitStatus": "??",
+      "bytes": 2525,
+      "sha256": "c0141849ae8d9aafa5657d2b975b05fffd5adfc544e3bc921b91e557e0728428"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/giza/plateau-preview.png",
+      "gitStatus": "??",
+      "bytes": 403947,
+      "sha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/giza/round-1-review.json",
+      "gitStatus": "??",
+      "bytes": 2237,
+      "sha256": "12b96bd0d7a9722a429b4c6b71bb8eeadf129b4aae40c248e47af942cd800c83"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/giza/sources.json",
+      "gitStatus": "??",
+      "bytes": 7983,
+      "sha256": "6655cb633386ff567345bb1144d42b7df70056d0e4aada1d250e6233c361d3a1"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/kailasa/README.md",
+      "gitStatus": "??",
+      "bytes": 9850,
+      "sha256": "caf4106093ad9918b59287f9692db3e40a6d9f6593b1fa741a5c8ec492dffda7"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/kailasa/archive-inventory.json",
+      "gitStatus": "??",
+      "bytes": 18766,
+      "sha256": "9fd9824df459286d0312f05a724a2e7ef15f8f1d9622577658ef951812762dfd"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/kailasa/round-1-evidence.json",
+      "gitStatus": "??",
+      "bytes": 14833,
+      "sha256": "e09558449205000d59b9eeefed1ee80ab98e98b408106af42a01efcebc59bb21"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/kailasa/sources.json",
+      "gitStatus": "??",
+      "bytes": 5955,
+      "sha256": "3cbf5b6815a26b7196984ae291fbe7c17d0b1831e615a5f9f09057956c9e333b"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/README.md",
+      "gitStatus": "??",
+      "bytes": 7307,
+      "sha256": "194b72baadbbe5a68f9ef217a476a1b08087e7812a7994d24bfa80ef7fa63bd9"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/acquire_meshes.py",
+      "gitStatus": "??",
+      "bytes": 4481,
+      "sha256": "10c4a0d8917808651cd279ea1b1224b586cb6647308ca95701ed471f8e8e1e3f"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/acquisition.json",
+      "gitStatus": "??",
+      "bytes": 4759,
+      "sha256": "11f8f9e134d3d95c71bfe6f017da13cac0a2f8ca0951926437033815cf0df7cf"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/el-markaz-islami-mosque-blender-inspection.json",
+      "gitStatus": "??",
+      "bytes": 2272,
+      "sha256": "0155c96aea9e42a884a43ec2aa8c4fb9a85e692e773f2b2559eff722727b8f02"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/el-markaz-islami-mosque-source-inspection.json",
+      "gitStatus": "??",
+      "bytes": 1021,
+      "sha256": "1adcc49585afe4d66ce2b69ea54156cba38b33a23f17cae1e7557e9b5e4553a7"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/inspect_blender.py",
+      "gitStatus": "??",
+      "bytes": 5323,
+      "sha256": "6d097538f7e243e19e50b1cdac1f1bee727d9ad8b55f018233587085ed2c07a6"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/inspect_source_obj.py",
+      "gitStatus": "??",
+      "bytes": 2872,
+      "sha256": "f0dae0584f01776d9dd9cc9df2f5f15e1088a83cd5a5f4f965af6e1df514ffd4"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/sites.json",
+      "gitStatus": "??",
+      "bytes": 11562,
+      "sha256": "0721d6a6d24e756821c46100f675563bb5ab5ce21de6c401dc687b2f0e112596"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/source.json",
+      "gitStatus": "??",
+      "bytes": 1209,
+      "sha256": "4c90f71857e6aa0f3f12e9d69a0a3227f05a265214aa82660d3825c3ff77ca46"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/st-george-antiochian-orthodox-church-blender-inspection.json",
+      "gitStatus": "??",
+      "bytes": 2273,
+      "sha256": "ae9d7452cbacb4200c32643e57d85ef19ddf6937609d818d7284b022b05b96b3"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/research/sacred-sites/st-george-antiochian-orthodox-church-source-inspection.json",
+      "gitStatus": "??",
+      "bytes": 1059,
+      "sha256": "29d8aa6c818999448df7e858f81b6c925823519ae09ee96ec70b245e2adf0188"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/site-models.css",
+      "gitStatus": "??",
+      "bytes": 8973,
+      "sha256": "b11267b857dbfa090702e80687c7a19c20d84382e901c7f5537d3218129a336b"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/site-models.mjs",
+      "gitStatus": "??",
+      "bytes": 10350,
+      "sha256": "780969e20601b68fc99a8c813c583dcf8a052d63865803daa9d3a1f589077c1b"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/vendor/BufferGeometryUtils.mjs",
+      "gitStatus": "??",
+      "bytes": 39166,
+      "sha256": "dd7ceffba30bf275369cb1078a267c720e4cbaaceec31f199b7b9a516f4ba6e3"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/vendor/GLTFLoader.mjs",
+      "gitStatus": "??",
+      "bytes": 119868,
+      "sha256": "e5c986887a5353d7da8ad42f0a911c85de9bd6d728a0568d5255b03ddcf79bbc"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/vendor/MESHOPT-LICENSE.md",
+      "gitStatus": "??",
+      "bytes": 1079,
+      "sha256": "f03037ca7bad1e3eb7f4a63fa6084a8baabd5ba30d3c239a9a7f35705d873e26"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/vendor/OrbitControls.mjs",
+      "gitStatus": "??",
+      "bytes": 40931,
+      "sha256": "0b524db46ffcd65359d2efd51827d0b077796f1ee174e2740ae238ddad5ec3af"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/vendor/THREE-LICENSE.md",
+      "gitStatus": "??",
+      "bytes": 1081,
+      "sha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/vendor/manifest.json",
+      "gitStatus": "??",
+      "bytes": 2632,
+      "sha256": "a700c2868c698e1324b70a3c718eb236181583f2652ffddb8d345b6500337908"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/vendor/meshopt_decoder.mjs",
+      "gitStatus": "??",
+      "bytes": 29059,
+      "sha256": "cb08bf53ad8ad9693d8bb759b2dbade350eb38bcce63d005385e225b564c5f6a"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/vendor/three.core.mjs",
+      "gitStatus": "??",
+      "bytes": 1474799,
+      "sha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/vendor/three.module.mjs",
+      "gitStatus": "??",
+      "bytes": 658902,
+      "sha256": "419439a8f5286ac48f1659174497b0845ecc541dcbd3ebcb59efe0b200eb6eef"
+    },
+    {
+      "path": "site-source/public/architecture-library/site-models/viewer.mjs",
+      "gitStatus": "??",
+      "bytes": 6109,
+      "sha256": "77168a4568a81bb57d4c120caf6257d4d0f743a4c0ebe85eb86a9f349d4a6394"
+    },
+    {
+      "path": "site-source/public/research/skills/game-reconstruction-engineering/SKILL.md",
+      "gitStatus": " M",
+      "bytes": 14560,
+      "sha256": "e9eb39060fc941bf21953f24743255b285f100e1b7b42db3606e4df5d2d673ac"
+    },
+    {
+      "path": "site-source/public/research/skills/game-reconstruction-engineering/references/art_and_game_pipeline.md",
+      "gitStatus": "??",
+      "bytes": 4093,
+      "sha256": "6b9deb110fe7c32b93468e850a87b55da0a8b8a467fed47a0e03ae9bec33c59f"
+    },
+    {
+      "path": "site-source/src/data/resources.ts",
+      "gitStatus": " M",
+      "bytes": 179991,
+      "sha256": "54d483138e4188576a17460a3b360b5670ffbcb60023e3647334bc07490c4432"
+    },
+    {
+      "path": "skills/architecture-and-built-heritage-research.skill",
+      "gitStatus": " M",
+      "bytes": 15313,
+      "sha256": "6e6a34bd8f715fdaf36921a59306ea504af69bc0f5de25816b0cdef9dbca7bc3"
+    },
+    {
+      "path": "skills/architecture-and-built-heritage-research/SKILL.md",
+      "gitStatus": " M",
+      "bytes": 7629,
+      "sha256": "d6fa342e1f610dbe9356a29edbb7074d64b1a8dba8095d9eb220e75da356a456"
+    },
+    {
+      "path": "skills/architecture-and-built-heritage-research/references/game_asset_handoff.md",
+      "gitStatus": "??",
+      "bytes": 1928,
+      "sha256": "5eeec8c9a189007af0dcb96256baf88ba6a3fa9a205b4469ad9269bce90572b1"
+    },
+    {
+      "path": "skills/game-reconstruction-engineering.skill",
+      "gitStatus": " M",
+      "bytes": 31471,
+      "sha256": "62b0ef776459439a6f623d37079fc16299b8f7955315e76dffec57a452dc7baa"
+    },
+    {
+      "path": "skills/game-reconstruction-engineering/SKILL.md",
+      "gitStatus": " M",
+      "bytes": 14560,
+      "sha256": "e9eb39060fc941bf21953f24743255b285f100e1b7b42db3606e4df5d2d673ac"
+    },
+    {
+      "path": "skills/game-reconstruction-engineering/references/art_and_game_pipeline.md",
+      "gitStatus": "??",
+      "bytes": 4093,
+      "sha256": "6b9deb110fe7c32b93468e850a87b55da0a8b8a467fed47a0e03ae9bec33c59f"
+    },
+    {
+      "path": "skills/spatial-3d-production-engineering.skill",
+      "gitStatus": " M",
+      "bytes": 16171,
+      "sha256": "fe650a69dca4cc31483cc75c7dd68127b1d76c5cfc8795d2be1750c60e478190"
+    },
+    {
+      "path": "skills/spatial-3d-production-engineering/SKILL.md",
+      "gitStatus": " M",
+      "bytes": 7795,
+      "sha256": "977eefa759b53833d8f0ba1b01fe2ba6cdb45375dd827e9c11998d74a0352c9f"
+    },
+    {
+      "path": "skills/spatial-3d-production-engineering/references/art_and_game_pipeline.md",
+      "gitStatus": "??",
+      "bytes": 3056,
+      "sha256": "6424771837be99d7d51396a69adb6b3be8c4c25b0f640e75fa47a9f63dadcd01"
+    }
+  ]
+}

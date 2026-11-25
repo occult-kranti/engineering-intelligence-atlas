@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "name": "Authored public-atlas retrieval sanity set, revision 1",
+  "authorship": "Mathematics audit agent, after inspecting atlas node labels, summaries and prerequisite edges, before running either retrieval comparison.",
+  "frozenBeforeComparison": true,
+  "scoring": "Answerable success means at least one predeclared acceptable ID occurs in the first six returned records. Absent-answer success requires zero returned records. These acceptable sets are not exhaustive relevance judgments.",
+  "asOf": "2026-11-25T00:00:00.000Z",
+  "limits": {"maxResults": 6, "maxBytes": 12288, "seedLimit": 8},
+  "questions": [
+    {"id":"q01","category":"memory","question":"Which dependencies must a result cache key include when source evidence or scope policy changes?","acceptableIds":["g-cache","g-invalidate","gf-cache-key"],"rationale":"These records state result reuse dependencies, invalidation, and the dependency-key formula."},
+    {"id":"q02","category":"memory","question":"Why does time-to-live fail to detect revoked scope or a changed source?","acceptableIds":["g-ttl","g-scope","g-invalidate"],"rationale":"These records distinguish TTL from source/version and authorization checks."},
+    {"id":"q03","category":"memory","question":"What is the attention key-value cache, and how is it different from an editable evidence graph?","acceptableIds":["g-kv"],"rationale":"The KV-cache concept explicitly distinguishes inference tensors from an evidence graph."},
+    {"id":"q04","category":"memory","question":"When should a research improvement loop stop instead of repeatedly searching?","acceptableIds":["g-stop","g-loop","gf-novelty-loop"],"rationale":"These nodes cover acceptance bounds, observed improvement, and avoiding repetition as a proxy for progress."},
+    {"id":"q05","category":"prerequisites","question":"Which concept comes before Fourier transforms in the prerequisite graph?","acceptableIds":["m-complex"],"rationale":"The inspected prerequisite edge is m-complex prerequisite_of m-fourier. This is an intentionally relational question rather than an exact-label lookup."},
+    {"id":"q06","category":"prerequisites","question":"Before personalized PageRank, what should I know about random walk transitions and fixed points?","acceptableIds":["g-walk","m-fixedpoint"],"rationale":"Both inspected nodes have direct prerequisite_of edges into g-pagerank."},
+    {"id":"q07","category":"formulas","question":"Give the personalized PageRank recurrence with restart and its convergence or residual error bound.","acceptableIds":["gf-ppr","gf-ppr-error","mf-pagerank"],"rationale":"These formula nodes provide the recurrence or its explicitly requested convergence/error component."},
+    {"id":"q08","category":"formulas","question":"How does Bayes rule update dependent evidence without assuming conditional independence?","acceptableIds":["mf-bayes"],"rationale":"The formula derivation explicitly retains conditioning on the previous evidence."},
+    {"id":"q09","category":"formulas","question":"Why can nonoverlapping Allan variance be zero for a clock with constant frequency bias?","acceptableIds":["pf-allan"],"rationale":"The formula record includes the constant-bias counterexample and stability/accuracy distinction."},
+    {"id":"q10","category":"cross-field","question":"How does the graph Laplacian pseudoinverse give effective electrical resistance from injected unit current?","acceptableIds":["mf-resistance"],"rationale":"The worked derivation explicitly connects graph linear algebra and current/voltage interpretation."},
+    {"id":"q11","category":"cross-field","question":"When can graph eigenvalues become physical frequencies, and what dynamics and units are needed?","acceptableIds":["g-frequency-bridge","gf-graph-wave"],"rationale":"The bridge and graph-wave formula require a dynamical interpretation rather than equating eigenvalues with physical frequencies automatically."},
+    {"id":"q12","category":"cross-field","question":"How do magnetic spin models relate to associative memory without making software weights measured magnetic couplings?","acceptableIds":["g-magnetism-bridge","g-hopfield","gf-hopfield-energy"],"rationale":"These records identify the mathematical analogy and its model/physical-unit boundary."},
+    {"id":"q13","category":"absent-answer","question":"Who approved the private payroll budget for the invented company Aster Quay on 17 November 2026?","acceptableIds":[],"rationale":"No such company approval or private payroll record exists in the public atlas. Shared words may still attract non-answering records; that counts as a failed abstention control."},
+    {"id":"q14","category":"absent-answer","question":"zibberflume thraxomite quuxphenion","acceptableIds":[],"rationale":"An explicit out-of-vocabulary lexical control with no intended answer or concept in the atlas."}
+  ],
+  "additionalEmptyQueryCheck": {"question":"   ","expectedStatus":"no-match","expectedResultCount":0},
+  "timingQuestionId": "q01"
+}

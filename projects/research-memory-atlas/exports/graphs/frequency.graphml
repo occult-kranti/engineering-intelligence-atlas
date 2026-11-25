@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"><key id="label" for="node" attr.name="label" attr.type="string"/><key id="status" for="node" attr.name="status" attr.type="string"/><key id="relation" for="edge" attr.name="relation" attr.type="string"/><graph id="frequency" edgedefault="directed">
+<node id="p-frequency"><data key="label">Frequency and angular frequency</data><data key="status">established</data></node>
+<node id="p-harmonic-oscillator"><data key="label">Harmonic oscillator</data><data key="status">established</data></node>
+<node id="p-damping"><data key="label">Damping and quality factor</data><data key="status">established</data></node>
+<node id="p-forced-response"><data key="label">Forced response</data><data key="status">established</data></node>
+<node id="p-power-budget"><data key="label">Resonant energy accounting</data><data key="status">established</data></node>
+<node id="p-coupled-modes"><data key="label">Coupled normal modes</data><data key="status">established</data></node>
+<node id="p-fourier-series"><data key="label">Fourier series</data><data key="status">established</data></node>
+<node id="p-fourier-transform"><data key="label">Fourier transform</data><data key="status">established</data></node>
+<node id="p-laplace-transform"><data key="label">Laplace transform</data><data key="status">established</data></node>
+<node id="p-convolution"><data key="label">Convolution</data><data key="status">established</data></node>
+<node id="p-sampling"><data key="label">Sampling and aliasing</data><data key="status">established</data></node>
+<node id="p-spectral-estimation"><data key="label">Spectral estimation</data><data key="status">established</data></node>
+<node id="p-wavelet"><data key="label">Wavelet analysis</data><data key="status">established-mathematical-method</data></node>
+<node id="p-allan"><data key="label">Allan deviation</data><data key="status">established</data></node>
+<node id="p-wave-equation"><data key="label">Wave equation</data><data key="status">established</data></node>
+<node id="p-dispersion"><data key="label">Dispersion relation</data><data key="status">established</data></node>
+<node id="p-interference"><data key="label">Interference and beats</data><data key="status">established</data></node>
+<node id="p-helmholtz"><data key="label">Helmholtz equation</data><data key="status">established</data></node>
+<node id="p-acoustic-impedance"><data key="label">Acoustic impedance</data><data key="status">established</data></node>
+<node id="p-membranes"><data key="label">Membrane modes</data><data key="status">established</data></node>
+<node id="p-plates"><data key="label">Plate bending modes</data><data key="status">mapped-for-expansion</data></node>
+<node id="p-cymatics"><data key="label">Cymatic pattern formation</data><data key="status">mapped-for-expansion</data></node>
+<node id="p-nonlinear-oscillations"><data key="label">Nonlinear oscillations</data><data key="status">mapped-for-expansion</data></node>
+<node id="p-solitons"><data key="label">Soliton dynamics</data><data key="status">mapped-for-expansion</data></node>
+<node id="p-wave-crystals"><data key="label">Phononic crystals</data><data key="status">established</data></node>
+<node id="p-metamaterials"><data key="label">Acoustic metamaterials</data><data key="status">active-research</data></node>
+<node id="p-quantum-frequency"><data key="label">Quantum energy-frequency relation</data><data key="status">established</data></node>
+<node id="p-phonons"><data key="label">Phonons</data><data key="status">established</data></node>
+<node id="p-phonon-logic"><data key="label">Phonon gates and memory</data><data key="status">active-research</data></node>
+<node id="p-nuclear-clock"><data key="label">Nuclear optical clocks</data><data key="status">active-research</data></node>
+<node id="p-nonhermitian"><data key="label">Non-Hermitian modes</data><data key="status">active-research</data></node>
+<node id="p-exceptional-points"><data key="label">Exceptional points</data><data key="status">active-research</data></node>
+<node id="p-topological-waves"><data key="label">Topological acoustic interfaces</data><data key="status">active-research</data></node>
+<node id="p-coherent-absorption"><data key="label">Coherent perfect absorption</data><data key="status">active-research</data></node>
+<node id="p-graph-modes"><data key="label">Graph Laplacian modes</data><data key="status">established-mathematical-method</data></node>
+<node id="pf-frequency"><data key="label">Cycles, angular frequency and phase</data><data key="status">established</data></node>
+<node id="pf-oscillator"><data key="label">Small-amplitude harmonic oscillator</data><data key="status">established</data></node>
+<node id="pf-damped"><data key="label">Damped free motion and quality factor</data><data key="status">established</data></node>
+<node id="pf-forced"><data key="label">Driven response and displacement resonance</data><data key="status">established</data></node>
+<node id="pf-resonant-power"><data key="label">Resonant power and storage budget</data><data key="status">established</data></node>
+<node id="pf-normal-modes"><data key="label">Coupled normal-mode eigenproblem</data><data key="status">established</data></node>
+<node id="pf-fourier-series"><data key="label">Fourier series with a declared normalization</data><data key="status">established</data></node>
+<node id="pf-fourier"><data key="label">Continuous Fourier transform and Parseval identity</data><data key="status">established</data></node>
+<node id="pf-convolution"><data key="label">Impulse response and convolution theorem</data><data key="status">established</data></node>
+<node id="pf-laplace"><data key="label">Unilateral Laplace transform and oscillator poles</data><data key="status">established</data></node>
+<node id="pf-dft"><data key="label">Discrete Fourier transform and bin scale</data><data key="status">established</data></node>
+<node id="pf-sampling"><data key="label">Band-limited sampling and alias equivalence</data><data key="status">established</data></node>
+<node id="pf-periodogram"><data key="label">Windowed two-sided power spectral estimate</data><data key="status">established</data></node>
+<node id="pf-wave"><data key="label">Wave and Helmholtz equations</data><data key="status">established</data></node>
+<node id="pf-dispersion"><data key="label">Phase, group velocity and beat structure</data><data key="status">established</data></node>
+<node id="pf-acoustic"><data key="label">Plane-wave acoustic impedance and intensity</data><data key="status">established</data></node>
+<node id="pf-membrane"><data key="label">Rectangular membrane eigenfrequencies</data><data key="status">established</data></node>
+<node id="pf-quantum-oscillator"><data key="label">Quantum mode energies and thermal occupation</data><data key="status">established</data></node>
+<node id="pf-allan"><data key="label">Nonoverlapping Allan variance</data><data key="status">established</data></node>
+<node id="pf-exceptional"><data key="label">A two-mode non-Hermitian exceptional point</data><data key="status">established</data></node>
+<node id="pf-graph-energy"><data key="label">Graph Laplacian energy, diffusion and physical modes</data><data key="status">established</data></node>
+<node id="pf-graph-wavelet"><data key="label">Spectral graph filters and localized wavelets</data><data key="status">established</data></node>
+<edge id="e0" source="p-frequency" target="p-harmonic-oscillator"><data key="relation">prerequisite_of</data></edge>
+<edge id="e1" source="p-harmonic-oscillator" target="p-damping"><data key="relation">prerequisite_of</data></edge>
+<edge id="e2" source="p-damping" target="p-forced-response"><data key="relation">prerequisite_of</data></edge>
+<edge id="e3" source="p-forced-response" target="p-power-budget"><data key="relation">prerequisite_of</data></edge>
+<edge id="e4" source="p-harmonic-oscillator" target="p-coupled-modes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e5" source="p-coupled-modes" target="p-wave-equation"><data key="relation">prerequisite_of</data></edge>
+<edge id="e6" source="p-wave-equation" target="p-helmholtz"><data key="relation">prerequisite_of</data></edge>
+<edge id="e7" source="p-helmholtz" target="p-membranes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e8" source="p-membranes" target="p-cymatics"><data key="relation">prerequisite_of</data></edge>
+<edge id="e9" source="p-membranes" target="p-plates"><data key="relation">prerequisite_of</data></edge>
+<edge id="e10" source="p-fourier-series" target="p-fourier-transform"><data key="relation">prerequisite_of</data></edge>
+<edge id="e11" source="p-fourier-transform" target="p-spectral-estimation"><data key="relation">prerequisite_of</data></edge>
+<edge id="e12" source="p-harmonic-oscillator" target="p-laplace-transform"><data key="relation">prerequisite_of</data></edge>
+<edge id="e13" source="p-laplace-transform" target="p-convolution"><data key="relation">prerequisite_of</data></edge>
+<edge id="e14" source="p-sampling" target="p-spectral-estimation"><data key="relation">prerequisite_of</data></edge>
+<edge id="e15" source="p-spectral-estimation" target="p-allan"><data key="relation">prerequisite_of</data></edge>
+<edge id="e16" source="p-spectral-estimation" target="p-wavelet"><data key="relation">prerequisite_of</data></edge>
+<edge id="e17" source="p-wave-equation" target="p-dispersion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e18" source="p-dispersion" target="p-interference"><data key="relation">prerequisite_of</data></edge>
+<edge id="e19" source="p-wave-equation" target="p-acoustic-impedance"><data key="relation">prerequisite_of</data></edge>
+<edge id="e20" source="p-acoustic-impedance" target="p-metamaterials"><data key="relation">prerequisite_of</data></edge>
+<edge id="e21" source="p-harmonic-oscillator" target="p-nonlinear-oscillations"><data key="relation">prerequisite_of</data></edge>
+<edge id="e22" source="p-nonlinear-oscillations" target="p-solitons"><data key="relation">prerequisite_of</data></edge>
+<edge id="e23" source="p-coupled-modes" target="p-wave-crystals"><data key="relation">prerequisite_of</data></edge>
+<edge id="e24" source="p-wave-crystals" target="p-topological-waves"><data key="relation">prerequisite_of</data></edge>
+<edge id="e25" source="p-quantum-frequency" target="p-phonons"><data key="relation">prerequisite_of</data></edge>
+<edge id="e26" source="p-phonons" target="p-phonon-logic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e27" source="p-allan" target="p-nuclear-clock"><data key="relation">prerequisite_of</data></edge>
+<edge id="e28" source="p-metamaterials" target="p-nonhermitian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e29" source="p-nonhermitian" target="p-exceptional-points"><data key="relation">prerequisite_of</data></edge>
+<edge id="e30" source="p-exceptional-points" target="p-topological-waves"><data key="relation">prerequisite_of</data></edge>
+<edge id="e31" source="p-nonhermitian" target="p-coherent-absorption"><data key="relation">prerequisite_of</data></edge>
+<edge id="e32" source="p-coupled-modes" target="p-graph-modes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e33" source="p-frequency" target="pf-frequency"><data key="relation">prerequisite_of</data></edge>
+<edge id="e34" source="p-harmonic-oscillator" target="pf-oscillator"><data key="relation">prerequisite_of</data></edge>
+<edge id="e35" source="p-frequency" target="pf-oscillator"><data key="relation">prerequisite_of</data></edge>
+<edge id="e36" source="p-damping" target="pf-damped"><data key="relation">prerequisite_of</data></edge>
+<edge id="e37" source="p-harmonic-oscillator" target="pf-damped"><data key="relation">prerequisite_of</data></edge>
+<edge id="e38" source="p-forced-response" target="pf-forced"><data key="relation">prerequisite_of</data></edge>
+<edge id="e39" source="p-damping" target="pf-forced"><data key="relation">prerequisite_of</data></edge>
+<edge id="e40" source="p-forced-response" target="pf-resonant-power"><data key="relation">prerequisite_of</data></edge>
+<edge id="e41" source="p-power-budget" target="pf-resonant-power"><data key="relation">prerequisite_of</data></edge>
+<edge id="e42" source="p-coupled-modes" target="pf-normal-modes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e43" source="p-harmonic-oscillator" target="pf-normal-modes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e44" source="p-fourier-series" target="pf-fourier-series"><data key="relation">prerequisite_of</data></edge>
+<edge id="e45" source="p-frequency" target="pf-fourier-series"><data key="relation">prerequisite_of</data></edge>
+<edge id="e46" source="p-fourier-transform" target="pf-fourier"><data key="relation">prerequisite_of</data></edge>
+<edge id="e47" source="p-fourier-series" target="pf-fourier"><data key="relation">prerequisite_of</data></edge>
+<edge id="e48" source="p-convolution" target="pf-convolution"><data key="relation">prerequisite_of</data></edge>
+<edge id="e49" source="p-fourier-transform" target="pf-convolution"><data key="relation">prerequisite_of</data></edge>
+<edge id="e50" source="p-laplace-transform" target="pf-laplace"><data key="relation">prerequisite_of</data></edge>
+<edge id="e51" source="p-damping" target="pf-laplace"><data key="relation">prerequisite_of</data></edge>
+<edge id="e52" source="p-fourier-transform" target="pf-dft"><data key="relation">prerequisite_of</data></edge>
+<edge id="e53" source="p-sampling" target="pf-dft"><data key="relation">prerequisite_of</data></edge>
+<edge id="e54" source="p-spectral-estimation" target="pf-dft"><data key="relation">prerequisite_of</data></edge>
+<edge id="e55" source="p-sampling" target="pf-sampling"><data key="relation">prerequisite_of</data></edge>
+<edge id="e56" source="p-fourier-transform" target="pf-sampling"><data key="relation">prerequisite_of</data></edge>
+<edge id="e57" source="p-spectral-estimation" target="pf-periodogram"><data key="relation">prerequisite_of</data></edge>
+<edge id="e58" source="p-sampling" target="pf-periodogram"><data key="relation">prerequisite_of</data></edge>
+<edge id="e59" source="p-wave-equation" target="pf-wave"><data key="relation">prerequisite_of</data></edge>
+<edge id="e60" source="p-helmholtz" target="pf-wave"><data key="relation">prerequisite_of</data></edge>
+<edge id="e61" source="p-dispersion" target="pf-dispersion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e62" source="p-interference" target="pf-dispersion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e63" source="p-frequency" target="pf-dispersion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e64" source="p-acoustic-impedance" target="pf-acoustic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e65" source="p-power-budget" target="pf-acoustic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e66" source="p-membranes" target="pf-membrane"><data key="relation">prerequisite_of</data></edge>
+<edge id="e67" source="p-helmholtz" target="pf-membrane"><data key="relation">prerequisite_of</data></edge>
+<edge id="e68" source="p-cymatics" target="pf-membrane"><data key="relation">prerequisite_of</data></edge>
+<edge id="e69" source="p-quantum-frequency" target="pf-quantum-oscillator"><data key="relation">prerequisite_of</data></edge>
+<edge id="e70" source="p-phonons" target="pf-quantum-oscillator"><data key="relation">prerequisite_of</data></edge>
+<edge id="e71" source="p-allan" target="pf-allan"><data key="relation">prerequisite_of</data></edge>
+<edge id="e72" source="p-spectral-estimation" target="pf-allan"><data key="relation">prerequisite_of</data></edge>
+<edge id="e73" source="p-frequency" target="pf-allan"><data key="relation">prerequisite_of</data></edge>
+<edge id="e74" source="p-nonhermitian" target="pf-exceptional"><data key="relation">prerequisite_of</data></edge>
+<edge id="e75" source="p-exceptional-points" target="pf-exceptional"><data key="relation">prerequisite_of</data></edge>
+<edge id="e76" source="p-graph-modes" target="pf-graph-energy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e77" source="p-coupled-modes" target="pf-graph-energy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e78" source="p-graph-modes" target="pf-graph-wavelet"><data key="relation">prerequisite_of</data></edge>
+<edge id="e79" source="p-wavelet" target="pf-graph-wavelet"><data key="relation">prerequisite_of</data></edge>
+<edge id="e80" source="p-fourier-transform" target="pf-graph-wavelet"><data key="relation">prerequisite_of</data></edge>
+</graph></graphml>

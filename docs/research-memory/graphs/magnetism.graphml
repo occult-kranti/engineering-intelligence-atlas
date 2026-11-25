@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"><key id="label" for="node" attr.name="label" attr.type="string"/><key id="status" for="node" attr.name="status" attr.type="string"/><key id="relation" for="edge" attr.name="relation" attr.type="string"/><graph id="magnetism" edgedefault="directed">
+<node id="p-current"><data key="label">Electric current density</data><data key="status">established</data></node>
+<node id="p-lorentz"><data key="label">Lorentz force</data><data key="status">established</data></node>
+<node id="p-magnetic-flux"><data key="label">Magnetic flux</data><data key="status">established</data></node>
+<node id="p-biot-savart"><data key="label">Biot–Savart law</data><data key="status">established</data></node>
+<node id="p-ampere"><data key="label">Ampère law</data><data key="status">established</data></node>
+<node id="p-vector-potential"><data key="label">Magnetic vector potential</data><data key="status">established</data></node>
+<node id="p-gauge"><data key="label">Gauge redundancy</data><data key="status">established</data></node>
+<node id="p-magnetic-dipole"><data key="label">Magnetic dipole</data><data key="status">established</data></node>
+<node id="p-faraday"><data key="label">Faraday induction</data><data key="status">established</data></node>
+<node id="p-inductance"><data key="label">Inductance</data><data key="status">established</data></node>
+<node id="p-maxwell"><data key="label">Maxwell system</data><data key="status">established</data></node>
+<node id="p-poynting"><data key="label">Poynting theorem</data><data key="status">established</data></node>
+<node id="p-magnetization"><data key="label">Magnetization</data><data key="status">established</data></node>
+<node id="p-susceptibility"><data key="label">Magnetic susceptibility</data><data key="status">established</data></node>
+<node id="p-diamagnetism"><data key="label">Diamagnetism</data><data key="status">established</data></node>
+<node id="p-paramagnetism"><data key="label">Paramagnetism</data><data key="status">established</data></node>
+<node id="p-spin"><data key="label">Spin and Zeeman splitting</data><data key="status">established</data></node>
+<node id="p-larmor"><data key="label">Larmor precession</data><data key="status">established</data></node>
+<node id="p-exchange"><data key="label">Exchange interaction</data><data key="status">established</data></node>
+<node id="p-ising"><data key="label">Ising model</data><data key="status">established</data></node>
+<node id="p-heisenberg"><data key="label">Heisenberg model</data><data key="status">established</data></node>
+<node id="p-ferro"><data key="label">Ferromagnetic order</data><data key="status">established</data></node>
+<node id="p-antiferro"><data key="label">Antiferromagnetic order</data><data key="status">established</data></node>
+<node id="p-llg"><data key="label">Landau–Lifshitz–Gilbert dynamics</data><data key="status">established</data></node>
+<node id="p-magnons"><data key="label">Magnons</data><data key="status">established</data></node>
+<node id="p-superconductivity"><data key="label">Meissner screening</data><data key="status">established</data></node>
+<node id="p-plasma-gyro"><data key="label">Charged-particle gyration</data><data key="status">established</data></node>
+<node id="p-mhd"><data key="label">Magnetohydrodynamics</data><data key="status">established</data></node>
+<node id="p-alfven"><data key="label">Alfvén waves</data><data key="status">established</data></node>
+<node id="p-reconnection"><data key="label">Magnetic reconnection</data><data key="status">mapped-for-expansion</data></node>
+<node id="p-skyrmion"><data key="label">Magnetic skyrmions</data><data key="status">active-research</data></node>
+<node id="p-berry-phase"><data key="label">Berry geometric phase</data><data key="status">established</data></node>
+<node id="p-vortex-unbinding"><data key="label">Two-dimensional vortex unbinding</data><data key="status">established</data></node>
+<node id="p-spintronics"><data key="label">Spintronics</data><data key="status">active-research</data></node>
+<node id="p-altermagnetism"><data key="label">Altermagnetism</data><data key="status">active-research</data></node>
+<node id="p-altermagnetic-memory"><data key="label">Altermagnetic read/write</data><data key="status">active-research</data></node>
+<node id="p-nonabelian"><data key="label">Non-Abelian gauge curvature</data><data key="status">established</data></node>
+<node id="p-wilson-loop"><data key="label">Wilson loops</data><data key="status">established</data></node>
+<node id="p-ym-existence"><data key="label">Four-dimensional Yang–Mills existence</data><data key="status">endorsed-construction-not-replayed</data></node>
+<node id="p-ym-mass-gap"><data key="label">Yang–Mills mass gap</data><data key="status">open-in-cited-assessment</data></node>
+<node id="pf-continuity"><data key="label">Charge continuity</data><data key="status">established</data></node>
+<node id="pf-lorentz"><data key="label">Lorentz force and magnetic work</data><data key="status">established</data></node>
+<node id="pf-biot-savart"><data key="label">Biot–Savart magnetic field</data><data key="status">established</data></node>
+<node id="pf-ampere"><data key="label">Ampère and Maxwell–Ampère laws</data><data key="status">established</data></node>
+<node id="pf-vector-potential"><data key="label">Vector potential and gauge change</data><data key="status">established</data></node>
+<node id="pf-dipole-torque"><data key="label">Magnetic dipole moment, torque and interaction</data><data key="status">established</data></node>
+<node id="pf-faraday"><data key="label">Faraday induction including moving circuits</data><data key="status">established</data></node>
+<node id="pf-inductor"><data key="label">Inductance and stored energy</data><data key="status">established</data></node>
+<node id="pf-maxwell"><data key="label">Vacuum Maxwell equations</data><data key="status">established</data></node>
+<node id="pf-poynting"><data key="label">Poynting energy balance</data><data key="status">established</data></node>
+<node id="pf-magnetization"><data key="label">Magnetization and bound currents</data><data key="status">established</data></node>
+<node id="pf-paramagnet"><data key="label">Independent spin-half paramagnet</data><data key="status">established</data></node>
+<node id="pf-spin-model"><data key="label">Ising and Heisenberg model Hamiltonians</data><data key="status">established</data></node>
+<node id="pf-larmor"><data key="label">Larmor and cyclotron frequencies</data><data key="status">established</data></node>
+<node id="pf-llg"><data key="label">Gilbert dynamics in an effective-B convention</data><data key="status">established</data></node>
+<node id="pf-skyrmion"><data key="label">Skyrmion topological charge</data><data key="status">established</data></node>
+<node id="pf-mhd-induction"><data key="label">Resistive MHD induction equation</data><data key="status">established</data></node>
+<node id="pf-alfven"><data key="label">Shear Alfvén dispersion</data><data key="status">established</data></node>
+<node id="pf-josephson"><data key="label">Josephson phase-voltage and current relations</data><data key="status">established</data></node>
+<node id="pf-nonabelian"><data key="label">Non-Abelian curvature and Wilson loop</data><data key="status">established</data></node>
+<node id="pf-berry-phase"><data key="label">Adiabatic geometric phase</data><data key="status">established</data></node>
+<node id="pf-vortex-energy"><data key="label">Two-dimensional vortex energy–entropy estimate</data><data key="status">established</data></node>
+<edge id="e0" source="p-spin" target="p-berry-phase"><data key="relation">prerequisite_of</data></edge>
+<edge id="e1" source="p-exchange" target="p-vortex-unbinding"><data key="relation">prerequisite_of</data></edge>
+<edge id="e2" source="p-current" target="p-biot-savart"><data key="relation">prerequisite_of</data></edge>
+<edge id="e3" source="p-biot-savart" target="p-vector-potential"><data key="relation">prerequisite_of</data></edge>
+<edge id="e4" source="p-vector-potential" target="p-gauge"><data key="relation">prerequisite_of</data></edge>
+<edge id="e5" source="p-gauge" target="p-nonabelian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e6" source="p-nonabelian" target="p-wilson-loop"><data key="relation">prerequisite_of</data></edge>
+<edge id="e7" source="p-wilson-loop" target="p-ym-existence"><data key="relation">prerequisite_of</data></edge>
+<edge id="e8" source="p-current" target="p-ampere"><data key="relation">prerequisite_of</data></edge>
+<edge id="e9" source="p-ampere" target="p-maxwell"><data key="relation">prerequisite_of</data></edge>
+<edge id="e10" source="p-maxwell" target="p-poynting"><data key="relation">prerequisite_of</data></edge>
+<edge id="e11" source="p-lorentz" target="p-magnetic-dipole"><data key="relation">prerequisite_of</data></edge>
+<edge id="e12" source="p-magnetic-dipole" target="p-magnetization"><data key="relation">prerequisite_of</data></edge>
+<edge id="e13" source="p-magnetization" target="p-susceptibility"><data key="relation">prerequisite_of</data></edge>
+<edge id="e14" source="p-magnetic-flux" target="p-faraday"><data key="relation">prerequisite_of</data></edge>
+<edge id="e15" source="p-faraday" target="p-inductance"><data key="relation">prerequisite_of</data></edge>
+<edge id="e16" source="p-inductance" target="p-maxwell"><data key="relation">prerequisite_of</data></edge>
+<edge id="e17" source="p-spin" target="p-larmor"><data key="relation">prerequisite_of</data></edge>
+<edge id="e18" source="p-larmor" target="p-llg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e19" source="p-spin" target="p-paramagnetism"><data key="relation">prerequisite_of</data></edge>
+<edge id="e20" source="p-paramagnetism" target="p-exchange"><data key="relation">prerequisite_of</data></edge>
+<edge id="e21" source="p-exchange" target="p-ising"><data key="relation">prerequisite_of</data></edge>
+<edge id="e22" source="p-ising" target="p-ferro"><data key="relation">prerequisite_of</data></edge>
+<edge id="e23" source="p-exchange" target="p-heisenberg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e24" source="p-heisenberg" target="p-magnons"><data key="relation">prerequisite_of</data></edge>
+<edge id="e25" source="p-susceptibility" target="p-diamagnetism"><data key="relation">prerequisite_of</data></edge>
+<edge id="e26" source="p-diamagnetism" target="p-superconductivity"><data key="relation">prerequisite_of</data></edge>
+<edge id="e27" source="p-exchange" target="p-antiferro"><data key="relation">prerequisite_of</data></edge>
+<edge id="e28" source="p-antiferro" target="p-altermagnetism"><data key="relation">prerequisite_of</data></edge>
+<edge id="e29" source="p-altermagnetism" target="p-altermagnetic-memory"><data key="relation">prerequisite_of</data></edge>
+<edge id="e30" source="p-lorentz" target="p-plasma-gyro"><data key="relation">prerequisite_of</data></edge>
+<edge id="e31" source="p-plasma-gyro" target="p-mhd"><data key="relation">prerequisite_of</data></edge>
+<edge id="e32" source="p-mhd" target="p-alfven"><data key="relation">prerequisite_of</data></edge>
+<edge id="e33" source="p-mhd" target="p-reconnection"><data key="relation">prerequisite_of</data></edge>
+<edge id="e34" source="p-llg" target="p-skyrmion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e35" source="p-skyrmion" target="p-spintronics"><data key="relation">prerequisite_of</data></edge>
+<edge id="e36" source="p-wilson-loop" target="p-gauge"><data key="relation">related</data></edge>
+<edge id="e37" source="p-ym-existence" target="p-ym-mass-gap"><data key="relation">related</data></edge>
+<edge id="e38" source="p-current" target="pf-continuity"><data key="relation">prerequisite_of</data></edge>
+<edge id="e39" source="p-lorentz" target="pf-lorentz"><data key="relation">prerequisite_of</data></edge>
+<edge id="e40" source="p-current" target="pf-biot-savart"><data key="relation">prerequisite_of</data></edge>
+<edge id="e41" source="p-biot-savart" target="pf-biot-savart"><data key="relation">prerequisite_of</data></edge>
+<edge id="e42" source="p-ampere" target="pf-ampere"><data key="relation">prerequisite_of</data></edge>
+<edge id="e43" source="p-current" target="pf-ampere"><data key="relation">prerequisite_of</data></edge>
+<edge id="e44" source="p-vector-potential" target="pf-vector-potential"><data key="relation">prerequisite_of</data></edge>
+<edge id="e45" source="p-gauge" target="pf-vector-potential"><data key="relation">prerequisite_of</data></edge>
+<edge id="e46" source="p-magnetic-dipole" target="pf-dipole-torque"><data key="relation">prerequisite_of</data></edge>
+<edge id="e47" source="p-lorentz" target="pf-dipole-torque"><data key="relation">prerequisite_of</data></edge>
+<edge id="e48" source="p-faraday" target="pf-faraday"><data key="relation">prerequisite_of</data></edge>
+<edge id="e49" source="p-magnetic-flux" target="pf-faraday"><data key="relation">prerequisite_of</data></edge>
+<edge id="e50" source="p-inductance" target="pf-inductor"><data key="relation">prerequisite_of</data></edge>
+<edge id="e51" source="p-faraday" target="pf-inductor"><data key="relation">prerequisite_of</data></edge>
+<edge id="e52" source="p-maxwell" target="pf-maxwell"><data key="relation">prerequisite_of</data></edge>
+<edge id="e53" source="p-faraday" target="pf-maxwell"><data key="relation">prerequisite_of</data></edge>
+<edge id="e54" source="p-maxwell" target="pf-poynting"><data key="relation">prerequisite_of</data></edge>
+<edge id="e55" source="p-poynting" target="pf-poynting"><data key="relation">prerequisite_of</data></edge>
+<edge id="e56" source="p-magnetization" target="pf-magnetization"><data key="relation">prerequisite_of</data></edge>
+<edge id="e57" source="p-spin" target="pf-paramagnet"><data key="relation">prerequisite_of</data></edge>
+<edge id="e58" source="p-paramagnetism" target="pf-paramagnet"><data key="relation">prerequisite_of</data></edge>
+<edge id="e59" source="p-ising" target="pf-spin-model"><data key="relation">prerequisite_of</data></edge>
+<edge id="e60" source="p-heisenberg" target="pf-spin-model"><data key="relation">prerequisite_of</data></edge>
+<edge id="e61" source="p-exchange" target="pf-spin-model"><data key="relation">prerequisite_of</data></edge>
+<edge id="e62" source="p-larmor" target="pf-larmor"><data key="relation">prerequisite_of</data></edge>
+<edge id="e63" source="p-plasma-gyro" target="pf-larmor"><data key="relation">prerequisite_of</data></edge>
+<edge id="e64" source="p-llg" target="pf-llg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e65" source="p-larmor" target="pf-llg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e66" source="p-skyrmion" target="pf-skyrmion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e67" source="p-mhd" target="pf-mhd-induction"><data key="relation">prerequisite_of</data></edge>
+<edge id="e68" source="p-faraday" target="pf-mhd-induction"><data key="relation">prerequisite_of</data></edge>
+<edge id="e69" source="p-alfven" target="pf-alfven"><data key="relation">prerequisite_of</data></edge>
+<edge id="e70" source="p-mhd" target="pf-alfven"><data key="relation">prerequisite_of</data></edge>
+<edge id="e71" source="p-superconductivity" target="pf-josephson"><data key="relation">prerequisite_of</data></edge>
+<edge id="e72" source="p-gauge" target="pf-josephson"><data key="relation">prerequisite_of</data></edge>
+<edge id="e73" source="p-nonabelian" target="pf-nonabelian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e74" source="p-wilson-loop" target="pf-nonabelian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e75" source="p-berry-phase" target="pf-berry-phase"><data key="relation">prerequisite_of</data></edge>
+<edge id="e76" source="p-spin" target="pf-berry-phase"><data key="relation">prerequisite_of</data></edge>
+<edge id="e77" source="p-gauge" target="pf-berry-phase"><data key="relation">prerequisite_of</data></edge>
+<edge id="e78" source="p-vortex-unbinding" target="pf-vortex-energy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e79" source="p-exchange" target="pf-vortex-energy"><data key="relation">prerequisite_of</data></edge>
+</graph></graphml>

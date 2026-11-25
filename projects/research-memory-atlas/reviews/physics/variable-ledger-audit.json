@@ -1,0 +1,260 @@
+{
+  "date_utc": "2026-11-25",
+  "cards_inspected": 82,
+  "review": "Every displayed equation was compared with its variable list; per-card supplements add omitted physical quantities, constants, domains, measures and indices.",
+  "common_mathematical_conventions": "Common mathematical notation: pi is dimensionless; i in a complex exponential or matrix entry is sqrt(-1), while indexed i,j,k,m,n label coordinates, nodes or modes as the card states. Bold symbols are vectors or matrices; superscript T is transpose. An overdot denotes differentiation in the stated time/affine parameter. d, partial, nabla and Delta are differential operators, with inverse-coordinate units; delta_ij is a dimensionless Kronecker delta unless explicitly identified as a Dirac distribution. Integration measures carry the indicated length/time powers. Partial Omega is the domain boundary. O and o denote large- or small-parameter asymptotic order, not new observables. Natural-unit cards explicitly replace SI. Repeated tensor indices are summed under the displayed tensor convention; ordinary mode labels do not imply a sum unless one is written.",
+  "additions": {
+    "pf-grav-poisson": [
+      "G",
+      "M_enc"
+    ],
+    "pf-kepler": [
+      "G",
+      "M,m"
+    ],
+    "pf-einstein": [
+      "G",
+      "g_munu",
+      "R_munu"
+    ],
+    "pf-einstein-action": [
+      "G",
+      "c",
+      "x^mu",
+      "t"
+    ],
+    "pf-schwarzschild": [
+      "G",
+      "c",
+      "ds^2"
+    ],
+    "pf-weak-orbit-tests": [
+      "G",
+      "c",
+      "M"
+    ],
+    "pf-gw-strain": [
+      "G",
+      "c",
+      "t",
+      "x_i,r",
+      "delta_ij",
+      "TT"
+    ],
+    "pf-gw-power": [
+      "G",
+      "c",
+      "t",
+      "m_1,m_2",
+      "P_circ"
+    ],
+    "pf-friedmann": [
+      "G",
+      "c",
+      "t",
+      "Lambda"
+    ],
+    "pf-equation-state": [
+      "G",
+      "c",
+      "t",
+      "Lambda"
+    ],
+    "pf-hawking": [
+      "G",
+      "c",
+      "M",
+      "A",
+      "r_s"
+    ],
+    "pf-metric-time": [
+      "c",
+      "ds^2",
+      "x^mu"
+    ],
+    "pf-redshift": [
+      "c",
+      "r_s",
+      "Delta_nu,nu"
+    ],
+    "pf-vortex-energy": [
+      "k_B",
+      "r"
+    ],
+    "pf-quantum-oscillator": [
+      "k_B",
+      "Delta E",
+      "f"
+    ],
+    "pf-poynting": [
+      "t"
+    ],
+    "pf-josephson": [
+      "t"
+    ],
+    "pf-frequency": [
+      "t",
+      "theta_0",
+      "x",
+      "t_prime"
+    ],
+    "pf-oscillator": [
+      "t",
+      "phi"
+    ],
+    "pf-damped": [
+      "t",
+      "A",
+      "phi"
+    ],
+    "pf-forced": [
+      "t",
+      "m",
+      "k",
+      "x"
+    ],
+    "pf-resonant-power": [
+      "t",
+      "omega",
+      "x"
+    ],
+    "pf-normal-modes": [
+      "t",
+      "x",
+      "delta_mn",
+      "m,n"
+    ],
+    "pf-fourier-series": [
+      "t",
+      "omega_0"
+    ],
+    "pf-convolution": [
+      "t",
+      "tau",
+      "f",
+      "x_tilde,y_tilde"
+    ],
+    "pf-laplace": [
+      "t",
+      "x",
+      "H(s)"
+    ],
+    "pf-sampling": [
+      "t",
+      "x",
+      "n",
+      "u"
+    ],
+    "pf-wave": [
+      "t",
+      "x"
+    ],
+    "pf-dispersion": [
+      "t"
+    ],
+    "pf-membrane": [
+      "t",
+      "m,n"
+    ],
+    "pf-allan": [
+      "t",
+      "k"
+    ],
+    "pf-graph-energy": [
+      "t",
+      "w_ij",
+      "i,j"
+    ],
+    "pf-potential-gradient": [
+      "a,b"
+    ],
+    "pf-gauss": [
+      "V, partial V"
+    ],
+    "pf-dirichlet-uniqueness": [
+      "phi_1,phi_2",
+      "dV"
+    ],
+    "pf-green": [
+      "r,r_prime",
+      "Omega",
+      "dV_prime"
+    ],
+    "pf-multipoles": [
+      "r_prime",
+      "hat_r",
+      "dV_prime"
+    ],
+    "pf-field-energy": [
+      "dV"
+    ],
+    "pf-weak-form": [
+      "dV"
+    ],
+    "pf-fd-poisson": [
+      "i,j"
+    ],
+    "pf-qeq": [
+      "1"
+    ],
+    "pf-lorentz": [
+      "F_B"
+    ],
+    "pf-ampere": [
+      "dl"
+    ],
+    "pf-vector-potential": [
+      "A_prime",
+      "phi_prime"
+    ],
+    "pf-faraday": [
+      "C(t)",
+      "S(t)",
+      "dl"
+    ],
+    "pf-spin-model": [
+      "i,j"
+    ],
+    "pf-nonabelian": [
+      "C",
+      "R"
+    ],
+    "pf-berry-phase": [
+      "n"
+    ],
+    "pf-newton": [
+      "F"
+    ],
+    "pf-variational": [
+      "t_0,t_1"
+    ],
+    "pf-connection": [
+      "g_munu"
+    ],
+    "pf-curvature": [
+      "Gamma",
+      "D/dtau"
+    ],
+    "pf-dft": [
+      "n,k"
+    ],
+    "pf-periodogram": [
+      "N",
+      "n,k",
+      "f_k"
+    ],
+    "pf-acoustic": [
+      "c_w",
+      "Z_1,Z_2"
+    ],
+    "pf-exceptional": [
+      "I"
+    ],
+    "pf-graph-wavelet": [
+      "g",
+      "psi_s,n",
+      "x,x_hat",
+      "n"
+    ]
+  }
+}

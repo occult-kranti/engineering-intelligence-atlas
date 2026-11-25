@@ -1,5 +1,35 @@
 # Daftar — personal agent office
 
+## Donna Brain, research atlas and design backgrounds
+
+The built-in **Brain** surface connects company records, repositories, people, skills, decisions, questions and setup drafts. [Implementation and study guide](projects/research-memory-atlas/README.md) · [177 formula cards](projects/research-memory-atlas/FORMULA_NOTEBOOK.md) · [AI mathematics audit](projects/research-memory-atlas/AI_MATHEMATICS.md) · [15 design backgrounds](projects/design-backgrounds/README.md) · [Delivery evidence](project/RESEARCH_MEMORY_DELIVERY.md).
+
+
+## Captured places and game-art research — 2026-11-25
+
+The [captured-place viewer](https://occult-kranti.github.io/engineering-intelligence-atlas/architecture-library/site-models/index.html)
+adds seven source-derived models totaling **8,584,116 triangles**: Giza plateau,
+Khufu, Khafre, Menkaure, Kailasa exterior context, St. George Church and El Markaz
+Islami Mosque. Preserving conversion receipts, separate Blender previews, and
+three actual Godot import records retain geometry and evidence limits. Physical
+scale and complete fine-detail coverage remain unverified. See the
+[collection and accuracy guide](projects/architecture-library/site-models/README.md).
+
+The [game-art research plan](projects/game-development-research/README.md) adds
+**29 audited reference records** covering drawing practice, Blender modeling,
+procedural art, animation, engine interchange and rendering. The shared catalog
+now has **333 records**; three existing skill packages and the game/graphics/QA
+roles route to the new procedures. The [art guide](projects/game-development-research/ART_FUNDAMENTALS.md)
+and [pipeline guide](projects/game-development-research/PIPELINE_AND_RENDERING.md)
+retain corrections to unverified repository, tutorial, licensing and format claims.
+
+The [OpenCodeGameStudios pack](integrations/opencode-game-studios/README.md)
+contains pinned project references: **23 agent definitions, 46 skills and 31 commands**.
+These support existing teams rather than starting additional agents. The
+[release review](reports/heritage-panel-2026-11-24/README.md) records changes and
+actual verification. Large model sources are stored as verified parts and
+materialized by the build without changing their decoded or original file bytes.
+
 ## Architecture and built heritage library — 2026-11-24
 
 The [interactive architecture library](https://occult-kranti.github.io/engineering-intelligence-atlas/architecture-library/index.html)
@@ -9,7 +39,7 @@ Its **150 primary sources** distinguish observed construction phases, uncertaint
 source-data rights and conceptual geometry. The [project guide](projects/architecture-library/README.md)
 includes local/VPS serving, a bounded synthetic GeoJSON importer, source records,
 sample generation, real Blender inspection and existing Donna/graphics/MCP workflows.
-The models are original teaching studies; no Google tiles or third-party scans are bundled.
+Those fourteen earlier models are original teaching studies. The subsequent captured-place collection above has its own source licenses and preserving-conversion evidence; no Google tiles are bundled.
 
 ## Creative tools and VPS connection — 2026-11-24
 
@@ -50,7 +80,7 @@ dependency graphs with queues, checkpoints, budgets and evidence.
 
 ## Reference room and company studios — 2026-11-24 continuation
 
-The shared desktop and website renderer adds a searchable **Reference room** with 303 public sources: books, papers, repositories, software and documentation. Source details retain access, license, version, reading depth and evidence limitations. Pins store only public IDs; **Draft with Donna** appends bounded context without sending it. Native OfficeWorker and hosted Donna select up to six relevant public references using the same canonical catalog and pure routing core. All 15 packaged skills include a self-contained resource-use procedure.
+The shared desktop and website renderer adds a searchable **Reference room** with 333 public sources: books, papers, repositories, software and documentation. Source details retain access, license, version, reading depth and evidence limitations. Pins store only public IDs; **Draft with Donna** appends bounded context without sending it. Native OfficeWorker and hosted Donna select up to six relevant public references using the same canonical catalog and pure routing core. All 15 packaged skills include a self-contained resource-use procedure.
 
 The **3D studio** opens as a movable element of the same office canvas. Its original Three.js reference, source editor, review record and optional bounded local Ollama adapter are in [the game company project](projects/threejs-game-studio/README.md). The [hardware company project](projects/atech-hardware-studio/README.md) retains the imported Atech SDK and adds a deterministic button/NeoPixel example. Both company creation requests are queued for native sync; a website surface is not evidence that employees or model jobs are running.
 

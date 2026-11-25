@@ -13,6 +13,7 @@ site-source/node_modules/
 site-source/dist/
 
 # Local logs and caches
+.work/
 *.log
 __pycache__/
 *.pyc
@@ -31,3 +32,14 @@ local.properties
 *.aab
 *.keystore
 *.jks
+
+# Exact large heritage GLBs are restored from Git-tracked packed-models byte parts.
+/projects/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb
+/projects/architecture-library/site-models/assets/el-markaz-islami-mosque.glb
+/projects/architecture-library/site-models/assets/giza-plateau.glb
+/docs/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb
+/docs/architecture-library/site-models/assets/el-markaz-islami-mosque.glb
+/docs/architecture-library/site-models/assets/giza-plateau.glb
+/site-source/public/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb
+/site-source/public/architecture-library/site-models/assets/el-markaz-islami-mosque.glb
+/site-source/public/architecture-library/site-models/assets/giza-plateau.glb

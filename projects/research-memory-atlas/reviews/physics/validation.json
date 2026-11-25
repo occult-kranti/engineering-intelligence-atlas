@@ -1,0 +1,143 @@
+{
+  "date_utc": "2026-11-25",
+  "purpose": "Structural consistency and selected original worked examples; no source-paper replication or proof-package replay.",
+  "counts": {
+    "sources": 62,
+    "nodes": 141,
+    "formulas": 82,
+    "edges": 147
+  },
+  "formulas_by_domain": {
+    "electrostatics": 19,
+    "magnetism": 22,
+    "gravity": 19,
+    "frequency": 22
+  },
+  "source_types": {
+    "official_reference_data": 1,
+    "author_educational_source": 30,
+    "official_technical_handbook": 1,
+    "research_paper": 20,
+    "author_perspective": 1,
+    "collaboration_research_preprint": 2,
+    "research_preprint": 3,
+    "independent_assessment_repository": 1,
+    "committee_statement": 1,
+    "provider_announcement": 1,
+    "official_software_documentation": 1
+  },
+  "checks": [
+    {
+      "name": "unique-record-ids",
+      "passed": true,
+      "detail": "All source, concept and formula IDs are unique within their registry."
+    },
+    {
+      "name": "resolved-references",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "formula-card-completeness",
+      "passed": true,
+      "detail": "Required explanatory fields are nonempty; this does not certify every algebraic statement."
+    },
+    {
+      "name": "four-level-taxonomy",
+      "passed": true,
+      "detail": "All concept records have an explicit four-part navigation path."
+    },
+    {
+      "name": "typed-analogies",
+      "passed": true,
+      "detail": "Labels identifying analogies are not typed as support or prerequisite relations."
+    },
+    {
+      "name": "prerequisite-graph-acyclic",
+      "passed": true,
+      "detail": "Only prerequisite_of edges are checked; related/analogy links may intentionally form cycles."
+    },
+    {
+      "name": "chapter-formula-links",
+      "passed": true,
+      "detail": {
+        "missing": []
+      }
+    },
+    {
+      "name": "grounded-image-plane",
+      "passed": true,
+      "detail": "Image pair cancels on a sampled grounded plane point."
+    },
+    {
+      "name": "poisson-stencil-polynomial",
+      "passed": true,
+      "detail": "The discrete Laplacian exactly reproduces the quadratic polynomial up to roundoff."
+    },
+    {
+      "name": "poisson-stencil-refinement",
+      "passed": true,
+      "detail": {
+        "error_ratio_h_over_h2": 3.9990001402624276,
+        "expected_order": 2
+      }
+    },
+    {
+      "name": "charge-equilibration-conservation",
+      "passed": true,
+      "detail": {
+        "q1": 1.0,
+        "q2": -1.0,
+        "multiplier": -5.0
+      }
+    },
+    {
+      "name": "resonant-energy-budget",
+      "passed": true,
+      "detail": {
+        "input_W": 0.024999999999999963,
+        "loss_W": 0.024999999999999963
+      }
+    },
+    {
+      "name": "graph-dirichlet-identity",
+      "passed": true,
+      "detail": {
+        "quadratic_energy": 2.0,
+        "edge_energy": 2.0,
+        "mode_eigenvalue": 1
+      }
+    },
+    {
+      "name": "sampling-alias",
+      "passed": true,
+      "detail": "700 Hz and 300 Hz real cosines alias at a 1000 Hz sample rate."
+    },
+    {
+      "name": "allan-bias-distinction",
+      "passed": true,
+      "detail": "Constant frequency bias has zero Allan deviation; alternating averages do not."
+    },
+    {
+      "name": "schwarzschild-and-temperature-scales",
+      "passed": true,
+      "detail": {
+        "solar_mass_radius_m": 2953.3393820668784,
+        "solar_mass_Hawking_K": 6.170073828591918e-08,
+        "solar_mass_used_kg": 1.98847e+30
+      }
+    },
+    {
+      "name": "bootstrap-constant-arithmetic",
+      "passed": true,
+      "detail": {
+        "Lambda_V": 9.126634025564686,
+        "leading_slope": 0.1095694203579208,
+        "scope": "Arithmetic only; theorem not verified."
+      }
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,120 @@
+{
+  "as_of_utc": "2026-11-25",
+  "checks": [
+    {
+      "name": "Unique concept/source/formula/claim identifiers",
+      "status": "pass",
+      "scope": "All supplied structured records"
+    },
+    {
+      "name": "No dangling graph endpoints or formula prerequisites",
+      "status": "pass",
+      "scope": "Graph and formula references"
+    },
+    {
+      "name": "All source references resolve",
+      "status": "pass",
+      "scope": "Registry link integrity, not source truth"
+    },
+    {
+      "name": "Explicit edge direction",
+      "status": "pass",
+      "scope": "No ambiguous prerequisite edge type"
+    },
+    {
+      "name": "Complete formula records",
+      "status": "pass",
+      "scope": "Required formula fields are nonempty"
+    },
+    {
+      "name": "Learning prerequisite subgraph is acyclic",
+      "status": "pass",
+      "scope": "Association edges may cycle; prerequisite edges must admit a study order"
+    },
+    {
+      "name": "Catalogue counts and paths",
+      "status": "pass",
+      "scope": "Exact captured metadata snapshot; manuscript counts are not verified theorem counts"
+    },
+    {
+      "name": "Catalogue default review state",
+      "status": "pass",
+      "scope": "No automatic promotion of manuscript metadata to accepted proof"
+    },
+    {
+      "name": "No claimed local giant-proof replay",
+      "status": "pass",
+      "scope": "Honest separation of source audit from formal proof execution"
+    },
+    {
+      "name": "Bayesian base-rate example",
+      "status": "pass",
+      "scope": "Exact rational arithmetic"
+    },
+    {
+      "name": "Column-stochastic PageRank example",
+      "status": "pass",
+      "scope": "Two-state restart system; linear solve and normalization"
+    },
+    {
+      "name": "Rectangular pseudoinverse does not imply uniqueness",
+      "status": "pass",
+      "scope": "Rank-deficient inverse example and Moore–Penrose identities"
+    },
+    {
+      "name": "Laplacian energy and resistance",
+      "status": "pass",
+      "scope": "Three-vertex path; PSD, constant nullspace and two series unit resistors"
+    },
+    {
+      "name": "Normalized Cheeger factors",
+      "status": "pass",
+      "scope": "Weighted graph; exhaustive cuts guard normalization convention"
+    },
+    {
+      "name": "Fourier normalization for Gaussian",
+      "status": "pass",
+      "scope": "Analytic Gaussian integral for unnormalized forward angular-frequency transform"
+    },
+    {
+      "name": "Explicit heat stability boundary",
+      "status": "pass",
+      "scope": "Highest-frequency FTCS mode is marginal at r=1/2 and grows at r=0.6"
+    },
+    {
+      "name": "Simpson polynomial example",
+      "status": "pass",
+      "scope": "Exact quadratic integral with two subintervals"
+    },
+    {
+      "name": "Low-rank Frobenius residual",
+      "status": "pass",
+      "scope": "Rank-one truncation example"
+    },
+    {
+      "name": "Contraction stopping bound",
+      "status": "pass",
+      "scope": "Affine map T(x)=x/2+1 with known fixed point"
+    },
+    {
+      "name": "Homology changes when a face is filled",
+      "status": "pass",
+      "scope": "Chain-complex boundary relation and Betti number"
+    },
+    {
+      "name": "Local Markdown links resolve",
+      "status": "pass",
+      "scope": "File references in the mathematics deliverable"
+    }
+  ],
+  "counts": {
+    "sources": 58,
+    "concepts": 140,
+    "formulas": 64,
+    "edges": 176,
+    "claims": 24,
+    "catalogue_manuscripts": 730,
+    "catalogue_families": 375
+  },
+  "scope_limit": "These checks verify data integrity and selected classical examples. They do not verify current research proofs or all formulas symbolically."
+}

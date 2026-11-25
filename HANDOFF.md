@@ -1,5 +1,24 @@
 # Daftar maintainer handoff
 
+## Heritage and game-art continuation — 2026-11-25
+
+Read `reports/heritage-panel-2026-11-24/README.md` for the exact review and validation
+record, and `projects/game-development-research/README.md` for planned production
+work. The two resource audit JSONs preserve source URLs, access/license limits and
+corrections; tutorials were researched, not reported completed.
+
+After checkout, run `node scripts/materialize-heritage-models.mjs` before standalone
+capture tests. The three largest GLBs are stored in hash-verified parts under
+`integrations/heritage-assets/packed-models/`; this restores their original bytes.
+`node scripts/build-static.mjs` runs materialization automatically and generates
+the complete static payload. Never replace a mismatched output silently.
+
+After skill/catalog changes, use the existing synchronization commands below.
+The shared `node scripts/check-game-heritage.mjs` gate runs before both PR and
+Pages acceptance. Browser evidence is retained under `site-source/.work/heritage-ui`.
+Unreal/VPS execution and target-device gameplay performance still require their
+own configured environments and acceptance records.
+
 ## Creative VPS continuation — 2026-11-24
 
 Start with `project/CREATIVE_VPS_VALIDATION_2026-11-24.md`,

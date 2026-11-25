@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10251e">
+  <meta name="description" content="Explore source-linked physics, mathematics and graph memory. Inspect formulas, prerequisites, research claims and the limits of each source.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'none'">
+  <title>Donna Brain · Research memory · Daftar</title>
+  <link rel="stylesheet" href="./atlas.css">
+  <script type="module" src="./app.mjs"></script>
+</head>
+<body>
+  <a class="skip-link" href="#workspace">Skip to research workspace</a>
+  <header class="masthead">
+    <a class="brand" href="../index.html" aria-label="Daftar atlas home"><span class="brand-mark" aria-hidden="true">D</span><span>DAFTAR<span class="brand-sub">Research office</span></span></a>
+    <div class="masthead-title"><p class="eyebrow">Public research memory</p><h1>Donna Brain</h1></div>
+    <nav class="document-nav" aria-label="Study documents and brain exports"><a href="./study-guide.html">Study guide</a><a href="./formula-notebook.html">Formula notebook</a><a href="./ai-mathematics.html">AI mathematics</a><a href="./atlas.json" download>Brain snapshot</a><a href="https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas" target="_blank" rel="noopener noreferrer">Source ↗</a></nav>
+  </header>
+
+  <section class="introduction" aria-label="About this atlas">
+    <p>Follow the mathematics. Inspect the evidence.<span> From field equations to the systems that remember them.</span></p>
+    <div id="atlas-summary" class="atlas-summary"><span id="load-state" role="status">Loading the research atlas…</span></div>
+  </section>
+  <div id="load-error" class="load-error" role="alert" hidden><h2>The atlas could not be opened</h2><p id="error-message"></p><button id="retry-load" type="button">Try again</button></div>
+
+  <main id="workspace" class="workspace" aria-busy="true">
+    <aside class="filters-panel" aria-label="Research filters">
+      <div class="section-heading"><h2>Find a starting point</h2><button id="reset-filters" class="text-button" type="button">Reset</button></div>
+      <form id="filters" role="search">
+        <label for="search">Search the atlas</label>
+        <input id="search" name="q" type="search" maxlength="240" placeholder="Laplacian, memory, Maxwell…" autocomplete="off" aria-describedby="search-help">
+        <p id="search-help" class="field-help">Search labels, explanations and study paths.</p>
+        <button id="linked-search" class="primary-button" type="submit">Follow linked evidence <span aria-hidden="true">↗</span></button>
+        <label for="domain-select">Field of study</label>
+        <select id="domain-select" name="domain"><option value="all">All fields</option><option value="memory" selected>Memory &amp; graphs</option><option value="electrostatics">Electrostatics</option><option value="magnetism">Magnetism</option><option value="gravity">Gravity</option><option value="frequency">Frequency &amp; waves</option><option value="mathematics">Mathematics</option><option value="ai-mathematics">AI mathematics</option></select>
+        <label for="type-select">Record type</label><select id="type-select" name="type"><option value="all">All record types</option></select>
+        <label class="check-label" for="catalogue-toggle"><input id="catalogue-toggle" type="checkbox"><span>Include manuscript catalogue<span class="field-help">Metadata entries have not been individually proof-reviewed.</span></span></label>
+        <label for="node-cap">Records per view</label><select id="node-cap"><option value="40">40 · compact</option><option value="80" selected>80 · balanced</option><option value="160">160 · expanded</option></select>
+      </form>
+      <div class="sidebar-note"><span class="small-label">Reading the map</span><p>A connection is a typed relationship. It may be a prerequisite, a reference or an analogy. It does not establish that a claim is true.</p><p>Source reading depth and unresolved limits stay attached to each record.</p></div>
+      <div class="domain-key" aria-label="Field colors"><span class="domain-memory">Memory</span><span class="domain-mathematics">Mathematics</span><span class="domain-electrostatics">Electricity</span><span class="domain-magnetism">Magnetism</span><span class="domain-gravity">Gravity</span><span class="domain-frequency">Waves</span><span class="domain-ai-mathematics">AI claims</span></div>
+      <p id="revision" class="revision"></p>
+    </aside>
+
+    <section class="research-panel" aria-label="Research explorer">
+      <div class="view-header"><div><p class="eyebrow" id="view-kicker">Memory &amp; graphs</p><h2 id="view-title">A map of ideas</h2></div><div class="view-tabs" role="tablist" aria-label="Atlas view"><button id="tab-graph" data-view="graph" type="button" role="tab" aria-selected="true" aria-controls="graph-panel">Graph</button><button id="tab-list" data-view="list" type="button" role="tab" aria-selected="false" aria-controls="list-panel" tabindex="-1">List</button><button id="tab-formulas" data-view="formulas" type="button" role="tab" aria-selected="false" aria-controls="formulas-panel" tabindex="-1">Formulas</button><button id="tab-sources" data-view="sources" type="button" role="tab" aria-selected="false" aria-controls="sources-panel" tabindex="-1">Sources</button></div></div>
+      <div class="results-bar"><p id="results-count" role="status">Waiting for the dataset</p><button id="clear-focus" class="text-button" type="button" hidden>Leave neighborhood</button></div>
+      <p id="retrieval-note" class="retrieval-note" hidden></p>
+
+      <div id="graph-panel" role="tabpanel" aria-labelledby="tab-graph">
+        <div class="map-stage">
+          <svg id="graph-svg" viewBox="0 0 1200 860" role="group" aria-label="Interactive research graph. Drag to pan. Use plus, minus and arrow keys, or use the List view." tabindex="0"><defs><marker id="edge-arrow" viewBox="0 0 10 10" refX="20" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker></defs><g id="graph-world"></g></svg>
+          <div id="graph-empty" class="map-empty" hidden><h3>No records in this view</h3><p>Try a broader term, another field or the manuscript catalogue.</p></div>
+          <div class="map-topline"><span id="graph-count">0 nodes</span><span id="edge-count">0 links</span><span class="map-status">Bounded layout</span></div>
+          <div class="map-controls" aria-label="Graph controls"><button type="button" id="zoom-out" aria-label="Zoom out">−</button><output id="zoom-value" aria-label="Zoom level">100%</output><button type="button" id="zoom-in" aria-label="Zoom in">+</button><button type="button" id="fit-view">Fit</button><span class="control-divider"></span><button type="button" data-pan="left" aria-label="Pan left">←</button><button type="button" data-pan="right" aria-label="Pan right">→</button><button type="button" data-pan="up" aria-label="Pan up">↑</button><button type="button" data-pan="down" aria-label="Pan down">↓</button></div>
+        </div>
+        <p class="map-caption">Drag to pan · scroll to zoom · select a record to inspect it. Labels appear on selection, hover or keyboard focus; the List view keeps every full name available. <strong>Position and distance are visual layout choices, not physical forces, evidence strength or measured similarity.</strong></p>
+      </div>
+      <div id="list-panel" role="tabpanel" aria-labelledby="tab-list" hidden><p class="list-intro">The same visible records, arranged for reading and keyboard navigation. Select one to inspect its sources and connections.</p><div id="node-list" class="node-list"></div></div>
+      <div id="formulas-panel" role="tabpanel" aria-labelledby="tab-formulas" hidden><p class="list-intro">Each formula keeps its variables, assumptions, derivation, example and limitations. Equations use local MathML where available, with selectable LaTeX retained. No external rendering service is used.</p><div id="formula-list" class="formula-list"></div></div>
+      <div id="sources-panel" role="tabpanel" aria-labelledby="tab-sources" hidden><p class="list-intro">References used by the selected field. Reading depth describes this atlas's inspection, not a paper's validity. Opening an original source leaves this page.</p><div id="source-list" class="source-list"></div></div>
+      <div class="pagination"><button id="previous-page" type="button">← Previous</button><span id="page-description"></span><button id="next-page" type="button">Next →</button></div>
+    </section>
+
+    <aside id="details-panel" class="details-panel" aria-label="Selected record"><div class="details-heading"><span class="small-label">Evidence inspector</span><span id="selection-kind"></span></div><div id="details-content"><h2>Select an idea</h2><p>Its definition, study path, source reading depth and limits will appear here.</p></div></aside>
+  </main>
+  <footer class="page-footer"><p>Donna Brain · public research partition · local retrieval</p><p>Catalogue entries, research claims and established results retain their own statuses. Company memory stays in the native workspace.</p></footer>
+</body>
+</html>

@@ -1,13 +1,25 @@
 import type { SkillPackage } from './types';
 
 /**
- * The fifteen agent skill packages developed alongside this atlas: the
+ * The sixteen agent skill packages developed alongside this atlas: the
  * original eight engineering packages plus the seven science/model-library
- * packages (game reconstruction, mathematics, physics, chemistry, biology,
+ * packages plus graph-memory research (game reconstruction, mathematics, physics, chemistry, biology,
  * science history, AI open-model research). Descriptions are distilled from
  * each package's SKILL.md.
  */
 export const SKILL_PACKAGES: SkillPackage[] = [
+  {
+    id: 'graph-memory-research',
+    name: 'Graph Memory Research',
+    shortName: 'Graph Memory',
+    accent: 'sage',
+    tagline: 'Source-linked knowledge, bounded retrieval and correct cache reuse',
+    description: 'Builds typed concept and formula graphs, records provenance and time, retrieves evidence with explicit scope, audits cache invalidation, and exports linked portable notes. Connects mathematical foundations to carefully qualified current research.',
+    domains: ['Knowledge graphs', 'Memory and caching', 'Evidence research'],
+    outputs: ['Typed graph and formula notebook', 'Scoped retrieval and invalidation evidence', 'portable note backup and portable graph exports'],
+    gates: ['Authority is checked before retrieval', 'Scores and graph connections are not proof', 'Provider cache telemetry is separate from local cache hits'],
+  },
+
   {
     id: 'engineering-organization-architect',
     name: 'Engineering Organization Architect',

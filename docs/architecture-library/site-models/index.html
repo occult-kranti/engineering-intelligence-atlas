@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Inspect source-attributed 3D captures of actual pyramids, Kailasa Temple, a church and a mosque. See the geometry, coverage, rights and limits of each source.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>Captured places · Daftar Architecture Library</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23274c43'/%3E%3Cpath d='M7 25L16 6L25 25M11 18H21' fill='none' stroke='%23fffcf5' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./site-models.css">
+  <script type="module" src="./site-models.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#collection">Skip to captured places</a>
+  <header class="topbar"><a class="brand" href="../index.html">DAFTAR <span>/ ARCHITECTURE LIBRARY</span></a><nav aria-label="Library navigation"><a href="../index.html">Timeline &amp; elements</a><a href="./README.md">Capture guide</a><a href="https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/architecture-library/site-models">Source &amp; evidence ↗</a></nav></header>
+  <main>
+    <section class="intro" aria-labelledby="title"><div><p class="eyebrow">FIELD COLLECTION 02 / CAPTURED PLACES</p><h1 id="title">The detail is<br>in the evidence.</h1></div><div class="intro-copy"><p>Explore geometry captured from actual buildings and landscapes. Each model keeps its source, its coverage gaps, and its limits.</p><p class="small">Dense geometry can reveal a surface. Verified dimensions require survey control. These are separate qualities.</p><div class="counts" id="counts" aria-label="Collection counts">Loading the collection…</div></div></section>
+    <section id="workspace" class="workspace" aria-label="3D inspection workspace">
+      <div class="viewport-wrap">
+        <div class="viewport-heading"><span id="viewer-kind">SELECT A CAPTURE</span><span id="viewer-scale">PHYSICAL SCALE UNVERIFIED</span></div>
+        <div id="viewport" class="viewport" aria-label="Interactive model viewport" tabindex="0">
+          <img id="viewer-preview" alt="" width="512" height="512">
+          <div id="viewer-overlay" class="viewer-overlay"><p id="preview-description">Choose a source-attributed model below.</p><button type="button" id="load-model" disabled>Load 3D model</button><p class="small" id="load-note">Models load only when requested.</p></div>
+        </div>
+        <div class="controls" aria-label="Model controls"><button type="button" data-action="reset" disabled>Reset view</button><button type="button" data-action="left" disabled aria-label="Rotate model left">Rotate left</button><button type="button" data-action="right" disabled aria-label="Rotate model right">Rotate right</button><button type="button" data-action="in" disabled aria-label="Zoom in">Zoom +</button><button type="button" data-action="out" disabled aria-label="Zoom out">Zoom −</button><label>Surface<select id="surface-mode" disabled><option value="source">Captured appearance</option><option value="neutral">Neutral geometry</option><option value="wire">Wireframe</option></select></label><button type="button" id="unload-model" disabled>Unload</button></div>
+        <p id="viewer-status" class="viewer-status" role="status" aria-live="polite">No 3D data loaded. Previews are renders of the acquired geometry.</p>
+        <p class="gesture-help">Drag to orbit · wheel or pinch to zoom · right-drag to pan. Use the buttons or arrow keys and +/− when the viewport has focus.</p>
+      </div>
+      <aside id="record" class="record" aria-labelledby="record-title"><p>Loading source records…</p></aside>
+    </section>
+    <section id="collection" tabindex="-1" aria-labelledby="collection-title"><div class="section-heading"><div><p class="eyebrow">CHOOSE A PLACE</p><h2 id="collection-title">Captured geometry</h2></div><p>One model at a time. Full source geometry and processed context models are identified separately.</p></div><div id="asset-list" class="asset-list"></div></section>
+    <section aria-labelledby="detail-title" class="detail-section"><div class="section-heading"><div><p class="eyebrow">KAILASA / CAVE 16</p><h2 id="detail-title">Closer to the carving</h2></div><p>The more detailed sources have different reuse conditions. Open their original records to examine the available captures.</p></div><div id="reference-list" class="reference-list"></div></section>
+    <section class="method" aria-labelledby="method-title"><p class="eyebrow">HOW TO READ THIS COLLECTION</p><h2 id="method-title">Four questions for every model.</h2><div class="method-grid"><article><h3>01 / What was captured?</h3><p>Exterior surfaces, terrain, or a small relief fragment. Missing interiors and hidden surfaces stay missing.</p></article><article><h3>02 / What was changed?</h3><p>Source bytes, conversion and compression are recorded. Camera framing changes the view; it does not establish physical dimensions.</p></article><article><h3>03 / What is measured?</h3><p>Triangle counts describe mesh density. No model here has an independently verified metric error bound. Measurement tools remain disabled.</p></article><article><h3>04 / What can be reused?</h3><p>Attribution, source rights and technical game suitability are separate checks. Research-only and view-only references are not in the game asset bundle.</p></article></div></section>
+    <noscript><p class="notice">JavaScript is needed for the interactive viewer. Read <a href="./README.md">the capture guide</a> and <a href="./catalog.json">the asset records</a> directly.</p></noscript>
+  </main>
+  <footer><p>DAFTAR / CAPTURED PLACES</p><p><a href="./ATTRIBUTION.md">Credits &amp; licenses</a> · <a href="./ACCURACY.md">Accuracy requirements</a> · <a href="./catalog.json">Machine-readable catalog</a> · <a href="../index.html#samples">Original teaching studies</a></p><p>Source geometry retains its own license. No AI-generated ornament is presented as a captured surface.</p></footer>
+</body>
+</html>

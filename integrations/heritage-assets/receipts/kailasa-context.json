@@ -1,0 +1,626 @@
+{
+  "schemaVersion": 1,
+  "id": "kailasa-context",
+  "source": {
+    "id": "kailasa-context",
+    "format": "glb",
+    "path": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/ellora-caves-1a5ec1e.glb",
+    "bytes": 11670764,
+    "sha256": "bde3cb75d9fd68a355d5452d55b92b54b52d5aa7c15ba9c61a034392e59db807",
+    "license": "CC-BY-4.0",
+    "creator": "GSXNet (embedded original credit); Graphic solutions (current listing); source mirrored by 3DBigDataSpace from Objaverse/Sketchfab",
+    "url": "https://zenodo.org/records/10269303",
+    "rightsReviewed": true,
+    "rightsNote": "License is present in repository API, original listing and file. Acquisition provenance/third-party rights not independently established. Preserve credits and limitations.",
+    "acquisitionRecord": "projects/architecture-library/site-models/research/kailasa/round-1-evidence.json",
+    "reviewedWebLimitBytes": 26214400,
+    "budgetReview": "Original 25 MiB target retained.",
+    "downloadUrl": "https://zenodo.org/api/records/10269303/files/1a5ec1e212f9451e80dc051e97164d17.glb/content"
+  },
+  "conversion": null,
+  "compression": {
+    "extension": "EXT_meshopt_compression",
+    "encoderMethod": "QUANTIZE",
+    "quantizeTransformApplied": false,
+    "indices": "Uint32 triangle triples: ATTRIBUTES/12-byte grouping; Uint16: INDICES sequence; exact order retained",
+    "filters": "NONE",
+    "encoderVersion": "1.2.0",
+    "gltfTransformVersion": "4.5.1"
+  },
+  "preservation": {
+    "accessorBytesEqual": true,
+    "indexBytesAndCountsEqual": true,
+    "textureBytesEqual": true,
+    "materialPropertiesEqual": true,
+    "nodeTransformsEqual": true,
+    "hierarchyEqual": true,
+    "primitiveModesEqual": true,
+    "noDecimation": true,
+    "noQuantizeTransform": true,
+    "noLossyFilters": true,
+    "rawJSONTransformEquality": true
+  },
+  "sourceSnapshot": {
+    "accessors": [
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65534,
+        "bytes": 786408,
+        "sha256": "608f89a555736edc70dcea896096d033b0be69a83203ece2e06ad18d160cc137"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65534,
+        "bytes": 786408,
+        "sha256": "5d4455692ccafe256f4ebaa85ee1ab20abd1adc2e5444ae05b67d6e6d75cddd0"
+      },
+      {
+        "name": "",
+        "type": "VEC2",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65534,
+        "bytes": 524272,
+        "sha256": "89fe751e50c626e7171d019ccc15ec3ed06a0c7da4a43cb74e450d3e3b430f07"
+      },
+      {
+        "name": "",
+        "type": "SCALAR",
+        "componentType": 5125,
+        "normalized": false,
+        "count": 98301,
+        "bytes": 393204,
+        "sha256": "fa8a0e1171c18e94abe1a3867073379813448128994c2689c978e71a24d4cca3"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65534,
+        "bytes": 786408,
+        "sha256": "0df0ba67981b2d59f8023698195652db0afc36a81b4c89bc9a72fa3c340785f4"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65534,
+        "bytes": 786408,
+        "sha256": "68d0025e3402d521fbc2189ca980a34e77e6aad69814dfcb85bf8739445d6e4d"
+      },
+      {
+        "name": "",
+        "type": "VEC2",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65534,
+        "bytes": 524272,
+        "sha256": "9bd19eba04ae97cee098f3c7dc487f9b4f18f2e2e3a7ef48a1cba8d7b748c571"
+      },
+      {
+        "name": "",
+        "type": "SCALAR",
+        "componentType": 5125,
+        "normalized": false,
+        "count": 97722,
+        "bytes": 390888,
+        "sha256": "f5686a7ec13200a677e100fcd123fa553f6cf3281c0b3643a94f81ba9819824d"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65533,
+        "bytes": 786396,
+        "sha256": "1692ed282849ed17f8204a81110397625e62df7158754033d00805f1ca7702e5"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65533,
+        "bytes": 786396,
+        "sha256": "3950f8afee449afb63241f6da4d443289cc5372f8758e9926de51d78665fb4b1"
+      },
+      {
+        "name": "",
+        "type": "VEC2",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65533,
+        "bytes": 524264,
+        "sha256": "3d63b22b519905c1a7f9bf795e9d1557b4cb049f0f8f980d05fe9ae695ea524d"
+      },
+      {
+        "name": "",
+        "type": "SCALAR",
+        "componentType": 5125,
+        "normalized": false,
+        "count": 98295,
+        "bytes": 393180,
+        "sha256": "6654eba5393fa2762115e752d85eddf21b2fd40cd55f287b92228af14a5ec8c7"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65534,
+        "bytes": 786408,
+        "sha256": "39e112b8406b232cf6fb5760cd86f66b02e6c673ffe37f76b1e70a1be4d39fbb"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65534,
+        "bytes": 786408,
+        "sha256": "450616af47cddbab95c4384183d12101495120ecac13eede0bcaed6abdb1b572"
+      },
+      {
+        "name": "",
+        "type": "VEC2",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 65534,
+        "bytes": 524272,
+        "sha256": "a803fafdb0c3b2a68def302ce1b84cd4cb8bc2523f849802409917e69018425c"
+      },
+      {
+        "name": "",
+        "type": "SCALAR",
+        "componentType": 5125,
+        "normalized": false,
+        "count": 98298,
+        "bytes": 393192,
+        "sha256": "ea3dc70b31745b41a5860acc9ca9836a40a4ee82b6d7e74be6ed5c2980cbdfed"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 11255,
+        "bytes": 135060,
+        "sha256": "d6736a2363276ae06f16a4a6f7a1b5e68e20c4934f235a4549adfb533b091b90"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 11255,
+        "bytes": 135060,
+        "sha256": "a5cd3abd9269c31d8f45bd38008e3609280776a1a3ef73cc7a66d643a4eb6327"
+      },
+      {
+        "name": "",
+        "type": "VEC2",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 11255,
+        "bytes": 90040,
+        "sha256": "16fc42c62f6c88751a6418c76d0ed85b542545ca9267b9fc20871ac68853d757"
+      },
+      {
+        "name": "",
+        "type": "SCALAR",
+        "componentType": 5125,
+        "normalized": false,
+        "count": 16881,
+        "bytes": 67524,
+        "sha256": "b80415bc5f42267e684ff0f169fbc5d1ec39c8967b8b57b234cafa41f04327bb"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "Retopo_Model_Tex_0",
+        "primitives": [
+          {
+            "mode": 4,
+            "indices": 3,
+            "attributes": {
+              "NORMAL": 0,
+              "POSITION": 1,
+              "TEXCOORD_0": 2
+            },
+            "material": 0,
+            "targets": 0
+          }
+        ]
+      },
+      {
+        "name": "Retopo_Model_Tex_0",
+        "primitives": [
+          {
+            "mode": 4,
+            "indices": 7,
+            "attributes": {
+              "NORMAL": 4,
+              "POSITION": 5,
+              "TEXCOORD_0": 6
+            },
+            "material": 0,
+            "targets": 0
+          }
+        ]
+      },
+      {
+        "name": "Retopo_Model_Tex_0",
+        "primitives": [
+          {
+            "mode": 4,
+            "indices": 11,
+            "attributes": {
+              "NORMAL": 8,
+              "POSITION": 9,
+              "TEXCOORD_0": 10
+            },
+            "material": 0,
+            "targets": 0
+          }
+        ]
+      },
+      {
+        "name": "Retopo_Model_Tex_0",
+        "primitives": [
+          {
+            "mode": 4,
+            "indices": 15,
+            "attributes": {
+              "NORMAL": 12,
+              "POSITION": 13,
+              "TEXCOORD_0": 14
+            },
+            "material": 0,
+            "targets": 0
+          }
+        ]
+      },
+      {
+        "name": "Retopo_Model_Tex_0",
+        "primitives": [
+          {
+            "mode": 4,
+            "indices": 19,
+            "attributes": {
+              "NORMAL": 16,
+              "POSITION": 17,
+              "TEXCOORD_0": 18
+            },
+            "material": 0,
+            "targets": 0
+          }
+        ]
+      }
+    ],
+    "textures": [
+      {
+        "name": "",
+        "mimeType": "image/jpeg",
+        "bytes": 1278205,
+        "sha256": "68b08e637b28303c5477d6fbf0296b9b9b8c8bcc4ea08294ff7190bda137f67e"
+      }
+    ],
+    "materials": [
+      {
+        "name": "material",
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "emissiveFactor": [
+          0,
+          0,
+          0
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1,
+        "alphaMode": "OPAQUE",
+        "alphaCutoff": 0.5,
+        "doubleSided": true,
+        "baseColorTexture": 0,
+        "emissiveTexture": null,
+        "normalTexture": null,
+        "occlusionTexture": null,
+        "metallicRoughnessTexture": null,
+        "extensions": [
+          "KHR_materials_unlit"
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "name": "Sketchfab_model",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          2.220446049250313e-16,
+          -1,
+          0,
+          0,
+          1,
+          2.220446049250313e-16,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [
+          1
+        ],
+        "mesh": null
+      },
+      {
+        "name": "ellora.fbx",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          2.220446049250313e-16,
+          1,
+          0,
+          0,
+          -1,
+          2.220446049250313e-16,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [
+          2
+        ],
+        "mesh": null
+      },
+      {
+        "name": "RootNode",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [
+          3
+        ],
+        "mesh": null
+      },
+      {
+        "name": "Retopo_Model",
+        "matrix": [
+          100,
+          0,
+          0,
+          0,
+          0,
+          -1.6292067939183145e-05,
+          -99.99999999999869,
+          0,
+          0,
+          99.99999999999869,
+          -1.6292067939183145e-05,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [
+          4,
+          5,
+          6,
+          7,
+          8
+        ],
+        "mesh": null
+      },
+      {
+        "name": "Retopo_Model_Tex_0",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [],
+        "mesh": 0
+      },
+      {
+        "name": "Retopo_Model_Tex_0",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [],
+        "mesh": 1
+      },
+      {
+        "name": "Retopo_Model_Tex_0",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [],
+        "mesh": 2
+      },
+      {
+        "name": "Retopo_Model_Tex_0",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [],
+        "mesh": 3
+      },
+      {
+        "name": "Retopo_Model_Tex_0",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [],
+        "mesh": 4
+      }
+    ],
+    "scenes": [
+      {
+        "name": "Sketchfab_Scene",
+        "children": [
+          0
+        ]
+      }
+    ],
+    "totals": {
+      "meshCount": 5,
+      "nodeCount": 9,
+      "vertexEntries": 273390,
+      "triangles": 136499,
+      "indices": 409497,
+      "repeatedIndexTriangles": 0
+    }
+  },
+  "output": {
+    "web": {
+      "file": "kailasa-context.glb",
+      "bytes": 6594948,
+      "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc"
+    },
+    "blenderReady": {
+      "file": "kailasa-context.decompressed.glb",
+      "bytes": 11669704,
+      "sha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+      "note": "Meshopt removed and decoded accessors verified. Editor import may change topology; consult separate actual editor receipts. No face-removal cause inferred."
+    }
+  },
+  "sizeTarget": {
+    "bytes": 26214400,
+    "met": true
+  },
+  "assetAudit": {
+    "guidance": [
+      "OpenCodeGameStudios asset-audit",
+      "OpenCodeGameStudios asset-spec"
+    ],
+    "scope": "Applied checks, not the entire upstream workflow or an imported permission grant.",
+    "naming": "Stable lowercase hyphenated site IDs from the approved brief.",
+    "specification": "Preserve all source positions, vertex RGB, indices, texture bytes and transforms; no simplification or invented detail.",
+    "formatChecked": true,
+    "sourceHashMatched": true,
+    "missingReferences": [],
+    "generatedFilesReferencedByReceipt": true,
+    "sizeBudgetBytes": 26214400,
+    "artBible": "No upstream project art bible exists; the approved source-preservation brief governs.",
+    "shaderNotice": "Source material properties retained."
+  },
+  "scaleVerified": false,
+  "coordinateUnits": "unverified source units; no rescaling performed",
+  "generatedAt": "2026-11-25T04:11:58.614Z",
+  "releaseBudget": {
+    "bytes": 26214400,
+    "met": true,
+    "review": "Original 25 MiB target retained."
+  },
+  "implementationSourceSha256": "019b59a1126ccc34c5af6361e7ce2096f238723e9eb3d376193d23d854f831fd",
+  "guidanceRecord": "../applied-guidance.json"
+}

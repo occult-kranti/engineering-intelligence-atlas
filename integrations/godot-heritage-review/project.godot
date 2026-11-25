@@ -1,0 +1,9 @@
+; Isolated batch import audit. No autoload, editor plugin, network or game scripts.
+config_version=5
+[application]
+config/name="Heritage GLB import review"
+[rendering]
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+[debug]
+gdscript/warnings/integer_division=0

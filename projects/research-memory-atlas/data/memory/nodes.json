@@ -1,0 +1,1635 @@
+[
+  {
+    "id": "g-graph",
+    "label": "Typed knowledge graph",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Represent objects as stable vertices and relationships as named, directed edges. A graph stores assertions, not automatic truth.",
+    "level": 3,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Representation",
+      "Graphs"
+    ],
+    "source_ids": [
+      "gs-obsidian-graph"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-node",
+    "label": "Atomic concept and claim nodes",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Keep concepts, claims, formulas, sources, tasks, and artifacts distinguishable. Their identities must survive renaming.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Representation",
+      "Graphs",
+      "Vertices"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-edge",
+    "label": "Typed directed relations",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "requires, supports, contradicts, derived_from, implements, and analogy have different semantics. Preserve direction and evidence.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Representation",
+      "Graphs",
+      "Edges"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-backlink",
+    "label": "Backlinks",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "An incoming link is a reverse lookup of an existing edge, not a second independent source.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Representation",
+      "Links",
+      "Incoming edges"
+    ],
+    "source_ids": [
+      "gs-obsidian-backlinks"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-mention",
+    "label": "Unlinked mentions",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A matching name offers a link candidate. Resolve entity identity and meaning before treating it as a relation.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Representation",
+      "Links",
+      "Lexical mentions"
+    ],
+    "source_ids": [
+      "gs-obsidian-backlinks"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-identity",
+    "label": "Entity identity and disambiguation",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Same label can denote different things; same object can have many labels. Stable IDs and explicit aliases reduce accidental merging.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Representation",
+      "Identity",
+      "Resolution"
+    ],
+    "source_ids": [
+      "gs-zep"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-provenance",
+    "label": "Evidence provenance",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Keep source URL, exact version, date, section, access depth, and claim relationship separate from a summary.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Evidence",
+      "Provenance",
+      "Locators"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-status",
+    "label": "Claim status and uncertainty",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Established theorem, approximation, measured result, preprint claim, disputed result, and open question must not share one undifferentiated confidence flag.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Evidence",
+      "Assessment",
+      "Status"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-hash",
+    "label": "Content addressing",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Hash permitted source bytes or a canonical structured snapshot; a digest proves byte identity and does not prove truth.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Identity",
+      "Content hashes",
+      "Dependency identity"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-scope",
+    "label": "Scope-first retrieval",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Select authorized observations before computing lexical statistics, graph propagation, and cache keys. The caller owns authentication.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Access",
+      "Company scopes",
+      "Eligibility"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-time",
+    "label": "Bitemporal evidence",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Separate when a fact applied from when it was recorded. Corrections append evidence rather than silently rewriting history.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "History",
+      "Time",
+      "Valid and recorded time"
+    ],
+    "source_ids": [
+      "gs-zep"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-interval",
+    "label": "Temporal validity intervals",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "An observation is active when valid_from ≤ query_time < valid_until. Boundaries affect both graph edges and cached answers.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "History",
+      "Time",
+      "Half-open intervals"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-snapshot",
+    "label": "Immutable snapshots",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Write a content-addressed graph snapshot and then update its scope pointer. Keep original source identity with every derived artifact.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "History",
+      "Versions",
+      "Atomic pointers"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-events",
+    "label": "Event and decision ledger",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Record actual work, receipts, failures, owners, and next actions. An event is evidence of an operation, not a substitute for its artifact.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "History",
+      "Events",
+      "Append records"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-wal",
+    "label": "Write-ahead logs",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A transactional database can record changes before checkpointing state; its durability depends on the configured implementation.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Transactions",
+      "Recovery",
+      "WAL"
+    ],
+    "source_ids": [
+      "gs-wal"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-sqlite",
+    "label": "SQLite transaction isolation",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Serialized writers and read snapshots are a possible next storage backend when filesystem snapshots become insufficient.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Transactions",
+      "Concurrency",
+      "Snapshots"
+    ],
+    "source_ids": [
+      "gs-sqlite"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-cache",
+    "label": "Result cache",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Reuse a derived result only when its query, snapshot, scope policy, algorithm, and time-dependent eligibility still match.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Caching",
+      "Derived state",
+      "Results"
+    ],
+    "source_ids": [
+      "gs-pythoncache"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-memo",
+    "label": "Memoization",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A cache is sound only when its key represents all output-relevant dependencies. Hidden mutable inputs break argument-only memoization.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Caching",
+      "Functions",
+      "Referential transparency"
+    ],
+    "source_ids": [
+      "gs-pythoncache"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-lru",
+    "label": "Least recently used eviction",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Retain recently accessed entries subject to a capacity. Recency is a policy, not evidence quality or correctness.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Caching",
+      "Replacement",
+      "LRU"
+    ],
+    "source_ids": [
+      "gs-stack"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-fifo",
+    "label": "Bounded FIFO eviction",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "The supplied persistent result cache removes the oldest-written entries after 128 records. It is explicitly FIFO rather than LRU.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Caching",
+      "Replacement",
+      "FIFO"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-ttl",
+    "label": "Time-to-live",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "TTL limits reuse duration but cannot by itself detect a changed source or revoked scope. Version and validity checks are still required.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Caching",
+      "Freshness",
+      "Expiry"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-invalidate",
+    "label": "Dependency invalidation",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Include every semantically relevant dependency in the key, including source-only changes and policy versions.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Caching",
+      "Correctness",
+      "Invalidation"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-provider-cache",
+    "label": "Provider prompt cache",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Model-service prefix reuse is different from knowledge retrieval and local result caching; actual provider telemetry is required.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Caching",
+      "Model runtime",
+      "Prompt prefixes"
+    ],
+    "source_ids": [
+      "gs-promptcache"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-kv",
+    "label": "Attention key-value cache",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Cached intermediate key/value tensors reduce repeated attention computation during inference; they are not an editable evidence graph.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Caching",
+      "Model runtime",
+      "Attention state"
+    ],
+    "source_ids": [
+      "gs-attention"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-tokens",
+    "label": "Tokenization",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Normalize text, choose word boundaries, handle domain symbols, and record stopword policy. These choices change ranking.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Lexical",
+      "Representation",
+      "Tokens"
+    ],
+    "source_ids": [
+      "gs-bm25"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-idf",
+    "label": "Inverse document frequency",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Rare query terms receive greater discriminating weight in a chosen eligible corpus. Compute counts after scope filtering.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Lexical",
+      "Statistics",
+      "IDF"
+    ],
+    "source_ids": [
+      "gs-bm25"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-bm25",
+    "label": "BM25 lexical ranking",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Combine term saturation, document length normalization, and corpus frequency into an interpretable lexical baseline.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Lexical",
+      "Ranking",
+      "BM25"
+    ],
+    "source_ids": [
+      "gs-bm25"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-embedding",
+    "label": "Embedding similarity",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A learned vector can place semantically similar passages near each other; closeness alone does not certify a claim or authorization.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Semantic",
+      "Representation",
+      "Vectors"
+    ],
+    "source_ids": [
+      "gs-hippo2"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-cosine",
+    "label": "Cosine similarity",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Compare vector directions after accounting for nonzero norms. Different embedding models create different geometries.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Semantic",
+      "Ranking",
+      "Cosine"
+    ],
+    "source_ids": [
+      "gs-hippo2"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-adjacency",
+    "label": "Adjacency matrix",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Matrix A encodes weighted vertex relations; its orientation convention must match transition equations.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Graph",
+      "Linear algebra",
+      "Adjacency"
+    ],
+    "source_ids": [
+      "gs-pagerank"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-degree",
+    "label": "Degree and hub effects",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A high-degree node can dominate navigation even when it is generic. Source references and analogy links need deliberate treatment.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Graph",
+      "Linear algebra",
+      "Degree"
+    ],
+    "source_ids": [
+      "gs-graphrag"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-laplacian",
+    "label": "Graph Laplacian",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "L=D-A encodes local differences for an undirected nonnegative weighted graph. It has a constant-vector nullspace on each component.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Graph",
+      "Spectral operators",
+      "Laplacian"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-dirichlet",
+    "label": "Discrete Dirichlet energy",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "The quadratic form sums weighted differences between linked vertices. Interpreting it as physical energy needs physical units and a calibrated model.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Graph",
+      "Spectral operators",
+      "Energy"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-grounding",
+    "label": "Grounding and boundary conditions",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Pin boundary values or impose a compatible gauge before inverting a singular Laplacian. Uniqueness depends on connectedness and boundary placement.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Graph",
+      "Spectral operators",
+      "Poisson solve"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-diffusion",
+    "label": "Heat diffusion on graphs",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Matrix exponentials smooth an initial signal according to graph connectivity. Smoothing can erase distinctions that evidence needs.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Graph",
+      "Dynamics",
+      "Diffusion"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-walk",
+    "label": "Random walk transition",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Normalize outgoing nonnegative weights. A vertex with no outgoing weight needs an explicit dangling-node rule.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Graph",
+      "Dynamics",
+      "Markov chain"
+    ],
+    "source_ids": [
+      "gs-pagerank"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-pagerank",
+    "label": "Personalized PageRank",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Restart toward query seeds while traversing the eligible graph. The stationary mass is a retrieval affinity, not truth probability.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Graph",
+      "Dynamics",
+      "Restart diffusion"
+    ],
+    "source_ids": [
+      "gs-hippo1"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-convergence",
+    "label": "Contraction and convergence",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "For restart probability above zero, the transition update contracts in L1. A reported iteration limit does not imply convergence.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Graph",
+      "Dynamics",
+      "Residual bounds"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-rrf",
+    "label": "Reciprocal rank fusion",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Combine lexical and graph rankings without pretending their raw scores have the same scale. Report the chosen constants.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Fusion",
+      "Ranking",
+      "Reciprocal ranks"
+    ],
+    "source_ids": [
+      "gs-rrf"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-mmr",
+    "label": "Diversity-aware selection",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Balance query relevance against repetition; this is an optimization choice whose effects need a task benchmark.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Fusion",
+      "Selection",
+      "Redundancy penalty"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-budget",
+    "label": "Bounded evidence packets",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Limit the evidence sent to a model while preserving source locators and caveats. Track omitted items rather than silently implying full coverage.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Context",
+      "Selection",
+      "Byte budget"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-path",
+    "label": "Explanation paths",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Show why a node was retrieved and the typed relations linking it to direct matches. A path explains selection, not causation.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Retrieval",
+      "Context",
+      "Traceability",
+      "Paths"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-bfs",
+    "label": "Bounded breadth-first traversal",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Visited identities and depth/node caps let cyclic knowledge graphs be explored without infinite traversal.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Algorithms",
+      "Traversal",
+      "Queue",
+      "BFS"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-dag",
+    "label": "Prerequisite DAG",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A learning plan uses only prerequisite relations. General knowledge graphs may cycle even when the execution plan must not.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Algorithms",
+      "Planning",
+      "Dependencies",
+      "Topological order"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-cycle",
+    "label": "Cycle detection",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Kahn's algorithm reports a failed topological ordering; its remaining vertices can include descendants of cycles.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Algorithms",
+      "Planning",
+      "Dependencies",
+      "Blocked nodes"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-idempotency",
+    "label": "Idempotent operations",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Repeating the same snapshot ingest has no new state effect. A repeated external action still needs a provider-supported idempotency contract.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Algorithms",
+      "Execution",
+      "Retries",
+      "Operation identity"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-checkpoint",
+    "label": "Durable checkpoints",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Save an artifact and its identity at a meaningful boundary. A claimed checkpoint without a readable artifact is incomplete.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Algorithms",
+      "Execution",
+      "Recovery",
+      "Checkpoints"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-loop",
+    "label": "Research improvement loops",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Each round changes a model or implementation in response to a specific observed weakness. Repeating a search is not automatically progress.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Algorithms",
+      "Control",
+      "Iteration",
+      "Question-driven loops"
+    ],
+    "source_ids": [
+      "gs-graphragzero"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-stop",
+    "label": "Stopping criteria",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Stop when acceptance is met, a bound is reached, or a decisive missing record blocks further progress; preserve the remaining question.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Algorithms",
+      "Control",
+      "Iteration",
+      "Bounded termination"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-baseline",
+    "label": "Retrieval baselines",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Compare lexical-only, graph-only, and fused retrieval on fixed questions and relevance labels before claiming a gain.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Evaluation",
+      "Experimental design",
+      "Comparisons",
+      "Baselines"
+    ],
+    "source_ids": [
+      "gs-longmemeval"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-recall",
+    "label": "Recall and precision",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Count supported relevant evidence, not just generated answer fluency. Explicitly define the denominator and judging procedure.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Evaluation",
+      "Metrics",
+      "Evidence",
+      "Coverage"
+    ],
+    "source_ids": [
+      "gs-graphragzero"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-ndcg",
+    "label": "Ranking quality",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Discount lower-ranked relevant items and normalize by an ideal order when relevance grades are well defined.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Evaluation",
+      "Metrics",
+      "Evidence",
+      "nDCG"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-abstain",
+    "label": "Abstention",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Return a gap when the available evidence cannot answer the question. A populated graph is not a reason to fabricate a match.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Evaluation",
+      "Metrics",
+      "Reliability",
+      "Unknown answers"
+    ],
+    "source_ids": [
+      "gs-longmemeval"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-temporal-eval",
+    "label": "Temporal update tests",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Test future facts, expiry boundaries, corrections, and historical queries rather than only static fact lookup.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Evaluation",
+      "Metrics",
+      "Reliability",
+      "Changing knowledge"
+    ],
+    "source_ids": [
+      "gs-longmemeval"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-calibration",
+    "label": "Calibration versus confidence",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A probability is calibrated only against outcomes with a defined evaluation population. Retrieval scores are not calibrated confidence.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Evaluation",
+      "Metrics",
+      "Reliability",
+      "Calibration"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-leakage",
+    "label": "Evaluation leakage",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Separate corpus preparation, answer labels, parameter tuning, and final evaluation. Duplicated sources are not independent confirmation.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Evaluation",
+      "Experimental design",
+      "Independence",
+      "Held-out questions"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-episodic",
+    "label": "Episodic memory",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "In software, an episode can be an immutable observation or completed action; the biological notion involves richer behavioral and neural phenomena.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Neuroscience analogies",
+      "Memory systems",
+      "Rapid learning",
+      "Episodes"
+    ],
+    "source_ids": [
+      "gs-cls"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-semantic",
+    "label": "Semantic memory",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Curated concepts compress experience into reusable knowledge. Preserve links back to observations to detect errors introduced by compression.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Neuroscience analogies",
+      "Memory systems",
+      "Structured knowledge",
+      "Concepts"
+    ],
+    "source_ids": [
+      "gs-cls"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-replay",
+    "label": "Replay and consolidation",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Software can revisit cases and regression tests to consolidate a rule. This is a design analogy, not a demonstration of neural replay.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Neuroscience analogies",
+      "Memory systems",
+      "Learning",
+      "Replay"
+    ],
+    "source_ids": [
+      "gs-cls"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-hebb",
+    "label": "Hebbian associations",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Coactivation can strengthen a model connection, but cooccurrence alone is not evidence of cause, agreement, or truth.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Neuroscience analogies",
+      "Associative models",
+      "Learning",
+      "Coactivation"
+    ],
+    "source_ids": [
+      "gs-hopfield"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-hopfield",
+    "label": "Hopfield associative memory",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Under symmetric weights and asynchronous binary updates, a Lyapunov function can decrease toward stable states.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Neuroscience analogies",
+      "Associative models",
+      "Attractors",
+      "Energy descent"
+    ],
+    "source_ids": [
+      "gs-hopfield"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-attention",
+    "label": "Attention-based association",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Attention mixes value vectors using query-key compatibility; particular modern Hopfield models establish a precise mathematical connection.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Neuroscience analogies",
+      "Associative models",
+      "Continuous states",
+      "Attention"
+    ],
+    "source_ids": [
+      "gs-modern-hopfield"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-forgetting",
+    "label": "Forgetting and retention",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A decaying retrieval priority is a software policy. It must not delete durable evidence or imitate a universal human forgetting law.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Neuroscience analogies",
+      "Memory systems",
+      "Forgetting",
+      "Retention"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-obsidian",
+    "label": "Obsidian-compatible notes",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Export stable concept notes with typed link descriptions, sources, status, and formulas. Native links alone carry no theorem-verification status.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Tools",
+      "Knowledge authoring",
+      "Markdown",
+      "Obsidian"
+    ],
+    "source_ids": [
+      "gs-obsidian-graph"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-foam",
+    "label": "Foam in VS Code",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "An editor-centered knowledge workflow can reuse portable Markdown notes and backlinks.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Tools",
+      "Knowledge authoring",
+      "Markdown",
+      "Foam"
+    ],
+    "source_ids": [
+      "gs-foam"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-logseq",
+    "label": "Logseq linked blocks",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Block-focused navigation provides another authoring granularity; retain explicit IDs during interchange.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Tools",
+      "Knowledge authoring",
+      "Blocks",
+      "Logseq"
+    ],
+    "source_ids": [
+      "gs-logseq"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-graphiti",
+    "label": "Graphiti temporal graph",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A candidate external implementation for evolving relational memories, requiring its own deployment, licenses, and benchmark checks.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Tools",
+      "Agent infrastructure",
+      "Temporal graphs",
+      "Graphiti"
+    ],
+    "source_ids": [
+      "gs-graphiti"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-graphrag",
+    "label": "GraphRAG and global synthesis",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Community-level organization can help corpus-wide questions, but synthesis must remain auditable against original passages.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Research frontiers",
+      "Structured retrieval",
+      "Global questions",
+      "GraphRAG"
+    ],
+    "source_ids": [
+      "gs-graphrag"
+    ],
+    "status": "representative-frontier"
+  },
+  {
+    "id": "g-hipporag",
+    "label": "HippoRAG associative retrieval",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Personalized diffusion retrieves connected passages seeded by the question; the atlas uses a smaller deterministic graph baseline.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Research frontiers",
+      "Structured retrieval",
+      "Associative questions",
+      "HippoRAG"
+    ],
+    "source_ids": [
+      "gs-hippo2"
+    ],
+    "status": "representative-frontier"
+  },
+  {
+    "id": "g-zero",
+    "label": "GraphRAG Zero",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A November 2026 provider research announcement describes retrieval built from embedding geometry with optional reasoning extensions.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Research frontiers",
+      "Structured retrieval",
+      "Cost-aware retrieval",
+      "GraphRAG Zero"
+    ],
+    "source_ids": [
+      "gs-graphragzero"
+    ],
+    "status": "representative-frontier"
+  },
+  {
+    "id": "g-hindsight",
+    "label": "Hindsight memory operations",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Study separation of retaining observations, recalling evidence, and reflecting; test each operation independently.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Research frontiers",
+      "Memory architectures",
+      "Retention and reflection",
+      "Hindsight"
+    ],
+    "source_ids": [
+      "gs-hindsight"
+    ],
+    "status": "representative-frontier"
+  },
+  {
+    "id": "g-mem0",
+    "label": "Mem0 consolidation",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Study selective memory extraction with revision and benchmark controls; product claims require exact configurations.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Research frontiers",
+      "Memory architectures",
+      "Extraction and updates",
+      "Mem0"
+    ],
+    "source_ids": [
+      "gs-mem0"
+    ],
+    "status": "representative-frontier"
+  },
+  {
+    "id": "g-memgpt",
+    "label": "MemGPT memory tiers",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Treat active context as a scarce resource and durable evidence as an external store with explicit read/write operations.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Research frontiers",
+      "Memory architectures",
+      "Context management",
+      "MemGPT"
+    ],
+    "source_ids": [
+      "gs-memgpt"
+    ],
+    "status": "representative-frontier"
+  },
+  {
+    "id": "g-donna",
+    "label": "Donna evidence handoff",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Give the assistant a bounded public evidence packet alongside separately authorized company knowledge. Do not infer a new access grant.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Organization",
+      "Companies",
+      "Assistants",
+      "Donna"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-skills",
+    "label": "Skill memory workflow",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Before revisiting a problem, inspect relevant source-linked concepts, past decisions, unresolved objections, and versioned artifacts.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Organization",
+      "Companies",
+      "Skills",
+      "Retrieval protocol"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-repos",
+    "label": "Repository knowledge graph",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Connect repo, commit, code path, test, source claim, and artifact with exact typed edges and distinct publication states.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Organization",
+      "Repositories",
+      "Provenance",
+      "Code and evidence"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-reviews",
+    "label": "Independent criticism",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A critic checks original evidence and assumptions, then identifies a concrete falsifier or repair. Agent agreement is not source independence.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Organization",
+      "Research",
+      "Review",
+      "Disconfirmation"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-publication",
+    "label": "Publication receipts",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "A local commit, remote tree, workflow result, and live page are separate observations. Record each accurately.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Organization",
+      "Repositories",
+      "Release",
+      "Remote verification"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-physics-bridge",
+    "label": "Physics-to-memory operator bridges",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Laplacians, diffusion, oscillation, and energy functions can share mathematics while representing different physical or computational systems.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Cross-field bridges",
+      "Mathematical structure",
+      "Operators",
+      "Analogy limits"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-frequency-bridge",
+    "label": "Spectral graph modes",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Eigenvectors form graph signal modes; eigenvalues become physical frequencies only after an explicit dynamical model and units.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Cross-field bridges",
+      "Mathematical structure",
+      "Spectra",
+      "Graph modes"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-magnetism-bridge",
+    "label": "Spin models and associative networks",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Some associative models resemble spin Hamiltonians mathematically; a software weight is not a measured magnetic coupling.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Cross-field bridges",
+      "Mathematical structure",
+      "Interactions",
+      "Spin analogy"
+    ],
+    "source_ids": [
+      "gs-hopfield"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-causality",
+    "label": "Association versus causation",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Graph adjacency is not a causal inference. Intervention, design assumptions, and competing explanations determine causal claims.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Evidence",
+      "Interpretation",
+      "Causal limits"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-compression",
+    "label": "Lossy summary compression",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Summaries discard detail; preserve originals by pointer and maintain the ability to reopen source sections.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Storage",
+      "Representation",
+      "Compression",
+      "Evidence preservation"
+    ],
+    "source_ids": [
+      "gs-graphrag"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-entropy",
+    "label": "Information entropy",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Quantify uncertainty of a specified probability distribution. Entropy is not a substitute for epistemic quality or semantic understanding.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Foundations",
+      "Information",
+      "Uncertainty",
+      "Entropy"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-cost",
+    "label": "Cost and latency accounting",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Separate wall-clock time, local compute, provider tokens, and billable money. Report measured receipts, not inferred savings.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Evaluation",
+      "Metrics",
+      "Resources",
+      "Actual telemetry"
+    ],
+    "source_ids": [
+      "gs-promptcache"
+    ],
+    "status": "established-method"
+  },
+  {
+    "id": "g-questions",
+    "label": "Question-led knowledge growth",
+    "type": "concept",
+    "domain": "memory",
+    "summary": "Store what would change the conclusion, prerequisites for answering it, and the next decisive source or experiment.",
+    "level": 4,
+    "taxonomy_path": [
+      "Memory and knowledge systems",
+      "Organization",
+      "Research",
+      "Inquiry",
+      "Question ledger"
+    ],
+    "source_ids": [
+      "gs-implementation"
+    ],
+    "status": "established-method"
+  }
+]

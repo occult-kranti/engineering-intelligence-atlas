@@ -1,0 +1,660 @@
+{
+  "schemaVersion": 1,
+  "round": 2,
+  "expert": {
+    "id": "expert-3",
+    "agent": "/root/engine_review",
+    "lens": "Game engine import, Blender interchange and performance evidence"
+  },
+  "reviewedAtUtc": "2026-11-25T06:07:16.732011+00:00",
+  "reviewType": "Independent source and evidence review; new bounded Godot smoke and Blender regression reproduction",
+  "artifactIdentity": {
+    "baselineCommit": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48",
+    "round1Manifest": "reports/heritage-panel-2026-11-24/round-1-artifact.json",
+    "round1ArtifactSha256": "5aa26c9d8361b786bfdf272bb80bb80ab11090275355c71a973b7f5f2070aeca",
+    "scopeQualification": "Frozen model bytes and recorded Godot evidence reviewed against Round 1. Separate viewer/documentation fixes were already in progress; each exact current reviewed file hash is recorded, including any difference from the Round 1 manifest. This report predates the expert-3 helper/documentation fix.",
+    "files": [
+      {
+        "path": "integrations/godot-heritage-review/glb.mjs",
+        "bytes": 9409,
+        "sha256": "43ae9f68caa98ba0f227876801bb00c6ebda7379de1d261c26f65ae7b5bb44bd",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "43ae9f68caa98ba0f227876801bb00c6ebda7379de1d261c26f65ae7b5bb44bd",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/run-audit.mjs",
+        "bytes": 8171,
+        "sha256": "6bca58371e6bf1bad372082c6b4d742f667459ce691b9551d60c1c7f583863d7",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "6bca58371e6bf1bad372082c6b4d742f667459ce691b9551d60c1c7f583863d7",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/audit.gd",
+        "bytes": 6586,
+        "sha256": "47c828d7528823b1dba356357a61e659e91e9b2fdc3b610b8356fbdf637a4a62",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "47c828d7528823b1dba356357a61e659e91e9b2fdc3b610b8356fbdf637a4a62",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/project.godot",
+        "bytes": 310,
+        "sha256": "d0aaf4e32f7caf226edca6fc730127219817c5d55a36878b0fe82c1bf347569b",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "d0aaf4e32f7caf226edca6fc730127219817c5d55a36878b0fe82c1bf347569b",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/README.md",
+        "bytes": 6883,
+        "sha256": "66e77645cd29e4c206da614a482b60aeac72eb86aa8f4a2e0dc28750393278e1",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "66e77645cd29e4c206da614a482b60aeac72eb86aa8f4a2e0dc28750393278e1",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/test/audit.test.mjs",
+        "bytes": 3409,
+        "sha256": "ebc0838ae155f71772eb13df673c2bd2c9658deeb43346d9666370d4d2c6ea4c",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "ebc0838ae155f71772eb13df673c2bd2c9658deeb43346d9666370d4d2c6ea4c",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/test/fixture.mjs",
+        "bytes": 1642,
+        "sha256": "feca3fb2fee60f331614dab9f0e94a0510f28d8da5008769f8fc2acb6a92e825",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "feca3fb2fee60f331614dab9f0e94a0510f28d8da5008769f8fc2acb6a92e825",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/test/smoke.mjs",
+        "bytes": 991,
+        "sha256": "929ae757f351cdfb7b45ff3c67c7fe7f32fe929b5ca7c44e26fb5e16905d66da",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "929ae757f351cdfb7b45ff3c67c7fe7f32fe929b5ca7c44e26fb5e16905d66da",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/blender-review.py",
+        "bytes": 5077,
+        "sha256": "751414e799ada48c585abc2df35fc2f2dc82c72008ac37030e343060c6b9efb5",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "751414e799ada48c585abc2df35fc2f2dc82c72008ac37030e343060c6b9efb5",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/README.md",
+        "bytes": 10007,
+        "sha256": "1f90ddf8f37253267adff12fb8dd08848c2848317c1c276947156d74c8e7a8bf",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "1f90ddf8f37253267adff12fb8dd08848c2848317c1c276947156d74c8e7a8bf",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/package.json",
+        "bytes": 502,
+        "sha256": "7dd4360faafd8ae0ad72b68a22426257fe8f193053342d0fc08e10e36414c897",
+        "reviewMethod": "record fields reviewed",
+        "round1Sha256": "7dd4360faafd8ae0ad72b68a22426257fe8f193053342d0fc08e10e36414c897",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/verification.json",
+        "bytes": 2937,
+        "sha256": "72502313c6d457a1b4eed19a33987f3e8da05f6ee5323bf842cad022d2d65595",
+        "reviewMethod": "record fields reviewed",
+        "round1Sha256": "72502313c6d457a1b4eed19a33987f3e8da05f6ee5323bf842cad022d2d65595",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/viewer.mjs",
+        "bytes": 6109,
+        "sha256": "77168a4568a81bb57d4c120caf6257d4d0f743a4c0ebe85eb86a9f349d4a6394",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "6526eba8287f30aa49614086de42b9a958a2a7eafc0201272b378666ec19ce5d",
+        "matchesRound1": false
+      },
+      {
+        "path": "projects/architecture-library/site-models/site-models.mjs",
+        "bytes": 10350,
+        "sha256": "780969e20601b68fc99a8c813c583dcf8a052d63865803daa9d3a1f589077c1b",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "a854defdfec5943efd6ddaa1ec6fd5d1392297d5e75083b79029ca39fb94e1e8",
+        "matchesRound1": false
+      },
+      {
+        "path": "projects/architecture-library/site-models/catalog-core.mjs",
+        "bytes": 4058,
+        "sha256": "bd0e0020eea0b37c4fd2cdc2a55b0133e3ad6e0ce7c1223376d2cb8376db85a1",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "bd0e0020eea0b37c4fd2cdc2a55b0133e3ad6e0ce7c1223376d2cb8376db85a1",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/catalog.json",
+        "bytes": 18130,
+        "sha256": "481ab80f734ab89c834c6ac539156eb356393dbab43ad75c4e42eac72f1b0349",
+        "reviewMethod": "record fields reviewed",
+        "round1Sha256": "a96bc01e9df22619e0ff8a9aa0f450846403637babf67d79d0942fe1da5116ed",
+        "matchesRound1": false
+      },
+      {
+        "path": "projects/architecture-library/site-models/README.md",
+        "bytes": 9262,
+        "sha256": "881ccebba10d32f7d85a7959b9ea9703d31cd3e99c07e87311151c6048623c7e",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "17e2f17cebd9cbf64fd02f345634d8b17bc58644781c0d2722bc960100cca1d8",
+        "matchesRound1": false
+      },
+      {
+        "path": "projects/architecture-library/site-models/ACCURACY.md",
+        "bytes": 14748,
+        "sha256": "55ef58a3845984ff9d4070513542a6500ac29e3ecb92e04a180958e4a889b647",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "0f4006ea92f8979c71945a65bf9ecfc79096dc40d3939907ce866a18dab56b73",
+        "matchesRound1": false
+      },
+      {
+        "path": "projects/architecture-library/site-models/index.html",
+        "bytes": 6390,
+        "sha256": "7726eca38e9b88a9488f74b2476959f4695d687ebc3e7cbd9b5bb4d0b0ca804c",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "7726eca38e9b88a9488f74b2476959f4695d687ebc3e7cbd9b5bb4d0b0ca804c",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/vendor/manifest.json",
+        "bytes": 2632,
+        "sha256": "a700c2868c698e1324b70a3c718eb236181583f2652ffddb8d345b6500337908",
+        "reviewMethod": "record fields reviewed",
+        "round1Sha256": "a700c2868c698e1324b70a3c718eb236181583f2652ffddb8d345b6500337908",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/vendor/GLTFLoader.mjs",
+        "bytes": 119868,
+        "sha256": "e5c986887a5353d7da8ad42f0a911c85de9bd6d728a0568d5255b03ddcf79bbc",
+        "reviewMethod": "meshopt extension registration and buffer-view decode implementation reviewed; full file hash checked",
+        "round1Sha256": "e5c986887a5353d7da8ad42f0a911c85de9bd6d728a0568d5255b03ddcf79bbc",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/vendor/meshopt_decoder.mjs",
+        "bytes": 29059,
+        "sha256": "cb08bf53ad8ad9693d8bb759b2dbade350eb38bcce63d005385e225b564c5f6a",
+        "reviewMethod": "vendored SHA256 checked against manifest; call contract reviewed through GLTFLoader",
+        "round1Sha256": "cb08bf53ad8ad9693d8bb759b2dbade350eb38bcce63d005385e225b564c5f6a",
+        "matchesRound1": true
+      },
+      {
+        "path": "scripts/smoke-heritage-viewer.mjs",
+        "bytes": 13639,
+        "sha256": "d13ef4defa8f79a1eaa4ce833d907175ec120dece08fa7356d6f1fadace4be95",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "70897e3c574fc09970dd67912b7058aa52ff51e6bf31236da747bed3e299f7f8",
+        "matchesRound1": false
+      },
+      {
+        "path": "scripts/vendor-heritage-viewer.mjs",
+        "bytes": 2349,
+        "sha256": "b540ce13642857bc4cb7d319d67b56cf4702e49ed365c3b1a2de68a20dd7a305",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": "b540ce13642857bc4cb7d319d67b56cf4702e49ed365c3b1a2de68a20dd7a305",
+        "matchesRound1": true
+      },
+      {
+        "path": "scripts/check-game-heritage.mjs",
+        "bytes": 1228,
+        "sha256": "8d36f9d5ae46f8f632af6c0e19888adc2e8df09440280bccc61eae4c32169541",
+        "reviewMethod": "source reviewed",
+        "round1Sha256": null,
+        "matchesRound1": null
+      },
+      {
+        "path": "integrations/godot-heritage-review/evidence/summary.json",
+        "bytes": 2152,
+        "sha256": "4a101baeef874dde94258ad1ab7c97da0a7ae7b27929580e67f76008280859a9",
+        "reviewMethod": "record fields reviewed",
+        "round1Sha256": "4a101baeef874dde94258ad1ab7c97da0a7ae7b27929580e67f76008280859a9",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/evidence/kailasa-context.json",
+        "bytes": 17405,
+        "sha256": "7bbbcb0fc675c1204e61d57dc295e435c82dfaa488a6b223d3337684a37f5b93",
+        "reviewMethod": "record fields reviewed",
+        "round1Sha256": "7bbbcb0fc675c1204e61d57dc295e435c82dfaa488a6b223d3337684a37f5b93",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/evidence/st-george-antiochian-orthodox-church.json",
+        "bytes": 7917,
+        "sha256": "45a999ad92b53e7a51d4692daa4dbe3d0aeecc43a5565ab2e740781c41a69ac7",
+        "reviewMethod": "record fields reviewed",
+        "round1Sha256": "45a999ad92b53e7a51d4692daa4dbe3d0aeecc43a5565ab2e740781c41a69ac7",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/godot-heritage-review/evidence/el-markaz-islami-mosque.json",
+        "bytes": 7899,
+        "sha256": "d143793d7ca36389e41e8a30d6988a4cfee6f3f2947cad118ac80e9cf8a98924",
+        "reviewMethod": "record fields reviewed",
+        "round1Sha256": "d143793d7ca36389e41e8a30d6988a4cfee6f3f2947cad118ac80e9cf8a98924",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/test/preserve.test.mjs",
+        "bytes": 11046,
+        "sha256": "07c93c49ed3f67b6bf9c4cde367a2f18d7518596734486756b39c041f860a3f4",
+        "reviewMethod": "independent Three.js exact decode fixture reviewed; test not reexecuted in this review",
+        "round1Sha256": "07c93c49ed3f67b6bf9c4cde367a2f18d7518596734486756b39c041f860a3f4",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb",
+        "bytes": 61470040,
+        "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6",
+        "reviewMethod": "actual published GLB hash, size, JSON accessors, extension requirements and active-scene mesh multiplicity checked; no render claimed",
+        "round1Sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/st-george-antiochian-orthodox-church.json",
+        "bytes": 12150,
+        "sha256": "7508d54d36ea17175d7941446ae4050aec5ab89130c8145b65f3239fa6a994bc",
+        "reviewMethod": "web/decompressed output hashes and count bindings inspected",
+        "round1Sha256": "7508d54d36ea17175d7941446ae4050aec5ab89130c8145b65f3239fa6a994bc",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/el-markaz-islami-mosque.glb",
+        "bytes": 49140024,
+        "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67",
+        "reviewMethod": "actual published GLB hash, size, JSON accessors, extension requirements and active-scene mesh multiplicity checked; no render claimed",
+        "round1Sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/el-markaz-islami-mosque.json",
+        "bytes": 12061,
+        "sha256": "e3e1fde901a569f66b0472e64a7e8ce46ab468552f14ecf83247fa55017a3b26",
+        "reviewMethod": "web/decompressed output hashes and count bindings inspected",
+        "round1Sha256": "e3e1fde901a569f66b0472e64a7e8ce46ab468552f14ecf83247fa55017a3b26",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/kailasa-context.glb",
+        "bytes": 6594948,
+        "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc",
+        "reviewMethod": "actual published GLB hash, size, JSON accessors, extension requirements and active-scene mesh multiplicity checked; no render claimed",
+        "round1Sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/kailasa-context.json",
+        "bytes": 15002,
+        "sha256": "b2bbff4eb846dfe53dfee399fb87a6370ada04bbf4e8d39b7677eda5aeb83234",
+        "reviewMethod": "web/decompressed output hashes and count bindings inspected",
+        "round1Sha256": "b2bbff4eb846dfe53dfee399fb87a6370ada04bbf4e8d39b7677eda5aeb83234",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/khufu.glb",
+        "bytes": 1786680,
+        "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1",
+        "reviewMethod": "actual published GLB hash, size, JSON accessors, extension requirements and active-scene mesh multiplicity checked; no render claimed",
+        "round1Sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/khufu.json",
+        "bytes": 6933,
+        "sha256": "3f3c9f51238a0d932d2f3a884d7e82a505af92d0e6bba7138a40b76034be20b1",
+        "reviewMethod": "web/decompressed output hashes and count bindings inspected",
+        "round1Sha256": "3f3c9f51238a0d932d2f3a884d7e82a505af92d0e6bba7138a40b76034be20b1",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/khafre.glb",
+        "bytes": 1187380,
+        "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+        "reviewMethod": "actual published GLB hash, size, JSON accessors, extension requirements and active-scene mesh multiplicity checked; no render claimed",
+        "round1Sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/khafre.json",
+        "bytes": 6571,
+        "sha256": "b1360136b3d42a992724d642ee93fc430c24d984014f24c19ef38c771e080909",
+        "reviewMethod": "web/decompressed output hashes and count bindings inspected",
+        "round1Sha256": "b1360136b3d42a992724d642ee93fc430c24d984014f24c19ef38c771e080909",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/menkaure.glb",
+        "bytes": 3075716,
+        "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70",
+        "reviewMethod": "actual published GLB hash, size, JSON accessors, extension requirements and active-scene mesh multiplicity checked; no render claimed",
+        "round1Sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/menkaure.json",
+        "bytes": 7222,
+        "sha256": "d3a94a5313c33a3623dce1215bd4d28c7356925ec9cea9339a82baafe7e61da0",
+        "reviewMethod": "web/decompressed output hashes and count bindings inspected",
+        "round1Sha256": "d3a94a5313c33a3623dce1215bd4d28c7356925ec9cea9339a82baafe7e61da0",
+        "matchesRound1": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/giza-plateau.glb",
+        "bytes": 20918772,
+        "sha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564",
+        "reviewMethod": "actual published GLB hash, size, JSON accessors, extension requirements and active-scene mesh multiplicity checked; no render claimed",
+        "round1Sha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564",
+        "matchesRound1": true
+      },
+      {
+        "path": "integrations/heritage-assets/receipts/giza-plateau.json",
+        "bytes": 26985,
+        "sha256": "c979ae310aa744b1c5d11efe637041283df9eaf08aff19e2e2e9192636e92dc3",
+        "reviewMethod": "web/decompressed output hashes and count bindings inspected",
+        "round1Sha256": "c979ae310aa744b1c5d11efe637041283df9eaf08aff19e2e2e9192636e92dc3",
+        "matchesRound1": true
+      }
+    ]
+  },
+  "outcome": "bounded-helper-fix-and-documentation-clarification-required; existing-three-model-Godot-evidence-supported",
+  "summary": "The recorded church, mosque and Kailasa Godot audits are hash-bound actual runtime imports with unchanged expected triangle counts and 14 passing gates each. No rendering or game-performance result is established. The reusable Blender helper confuses mesh-declaration totals with scene-instance totals; the current seven models do not trigger it. The three quantized pyramid derivatives are outside the Godot preflight POSITION format and must be explicitly identified as unaudited.",
+  "findings": [
+    {
+      "id": "E3-R2-01",
+      "severity": "medium",
+      "status": "fix-required",
+      "finding": "Blender comparison uses different counting bases for source and imported geometry.",
+      "evidence": [
+        {
+          "path": "integrations/heritage-assets/blender-review.py",
+          "observation": "Source totals sum all meshes/primitives once, without traversing the active scene; imported totals sum each Blender mesh object in the scene."
+        },
+        {
+          "path": "integrations/godot-heritage-review/test/fixture.mjs",
+          "observation": "An actual fresh Blender 4.3.2 run of triangleGlb({instances:2}) produced sourceTriangles=1, importedTriangles=2, triangleCountDifference=1, sourceVertexEntries=3 and importedVertexEntries=6. The two instances are correct; no extra triangle was created by import.",
+          "fixtureSha256": "c8a4bf2571fcecfee61b257eb237b7603aa75a3b34504dbbe6bcc183d3849b28"
+        }
+      ],
+      "impact": "A correct instanced input appears to change topology; an unused mesh can cause the reverse false discrepancy. A reused/unused mesh declaration must not be mistaken for a face-removal event. All seven current published models have each declared mesh referenced exactly once by the active scene, so their existing count comparisons are unaffected.",
+      "fix": "Compute source expectations by active-scene traversal, counting each referenced mesh for each valid node instance; ignore unused declarations and explicitly reject malformed, cyclic or multiply-parented active graphs. Keep declaration totals separately if useful.",
+      "acceptance": "Actual Blender tests for two instances and unused mesh/node declarations produce matching active-scene expected/imported totals; valid nested roots work; graph errors fail before output creation. Preserve all published model bytes and previous execution evidence."
+    },
+    {
+      "id": "E3-R2-02",
+      "severity": "low",
+      "status": "documentation-fix-required",
+      "finding": "Current Godot audit input eligibility omits an important Float32 position limitation.",
+      "evidence": [
+        {
+          "path": "integrations/godot-heritage-review/glb.mjs",
+          "observation": "POSITION is required to use componentType5126 and normalized=false; accessor reader does not accept signed Int16 positions."
+        },
+        {
+          "path": "projects/architecture-library/site-models/assets/{khufu,khafre,menkaure}.glb",
+          "observation": "All three have POSITION componentType5122 with normalized=true and KHR_mesh_quantization. The preservation decoder retains these supplied component types; removal of EXT_meshopt_compression does not convert them to Float32."
+        }
+      ],
+      "impact": "A reader following the generic decompression-to-Godot-audit guidance can obtain a valid decompressed derivative that this audit rejects. This is an audit scope limitation and says nothing about whether Godot itself can import the asset.",
+      "fix": "Document the current Float32 POSITION restriction, name the three unaudited quantized pyramid derivatives, and retain the three actual Godot-result scope. Do not transform frozen models to broaden a review claim.",
+      "acceptance": "Godot and public import instructions clearly distinguish meshopt decoding, quantized input eligibility and engine compatibility; existing evidence and assets remain unchanged."
+    }
+  ],
+  "passes": [
+    {
+      "finding": "Recorded engine evidence has a complete source-to-input binding.",
+      "evidence": "All four audit source SHA256 entries match current code; each of the three engine input hashes matches its preservation receipt decompressed output; web output hashes match actual published GLBs. Each full report records 14 passing gates.",
+      "limit": "These are previously recorded production-asset runs, not fresh full-asset runs by this reviewer."
+    },
+    {
+      "finding": "Godot harness performs a real engine import/pack/instantiate path and preserves original input bytes.",
+      "evidence": "Source code uses GLTFDocument.append_from_file, generate_scene, PackedScene.pack, instantiate and scene-tree inspection. New dependency-free tests pass11/11 and actual installed Godot fixture passes14/14.",
+      "limit": "Aggregate counts, bounds and finite values do not prove imported per-vertex, index-order, colour-byte or material equivalence. Index hashes are observations."
+    },
+    {
+      "finding": "Public meshopt route is explicit and hash-bound.",
+      "evidence": "Viewer validates expected length and SHA256 before parsing; GLTFLoader is supplied MeshoptDecoder after its ready promise; decoder extension handles buffer views; all eight vendored artifacts match manifest hashes. Actual seven GLB hashes match both public projections and preservation receipts.",
+      "limit": "This review did not execute Chromium/WebGL; the browser gate remains separate. Source and neutral/wire materials are presentation modes; missing normals may be computed for display without rewriting downloads."
+    },
+    {
+      "finding": "Game-performance limits are stated correctly in reviewed documentation.",
+      "evidence": "Godot receipts have fpsMeasured=false and targetDeviceProfiled=false. The summary states that three imports ran concurrently. Timing is described as host import/instantiation cost, RSS as sampled process memory, and Godot allocation tracking as a different measurement. Browser smoke labels SwiftShader functional rendering as distinct from device FPS.",
+      "limit": "No shipping FPS, frame time, GPU-memory, collision/navigation/lightmap, Unreal or target-device result is established."
+    },
+    {
+      "finding": "Blender observations preserve uncertainty rather than inventing a loss cause.",
+      "evidence": "Prior church/mosque inspection paths disclose11/12 missing faces; preserving GLBs retain full source counts. Recorded Kailasa helper acceptance reports136499 source triangles and136498 imported triangles, with cause not established.",
+      "limit": "Those production Blender results are prior receipts. The only fresh Blender execution in this review was the two-instance fixture on4.3.2; it does not replace prior4.5.17LTS evidence."
+    },
+    {
+      "finding": "Delivery byte budgets are not presented as game-performance certification.",
+      "evidence": {
+        "totalModelBytes": 144173560,
+        "totalTriangles": 8584116,
+        "perModelReviewedLimitBytes": 67108864,
+        "collectionReviewedLimitBytes": 167772160
+      },
+      "limit": "Dense church/mosque assets miss the original25MiB goal. The64MiB/model and160MiB/collection bounds are transfer/publication decisions, not a resident-memory budget."
+    }
+  ],
+  "assetChecks": [
+    {
+      "id": "st-george-antiochian-orthodox-church",
+      "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6",
+      "bytes": 61470040,
+      "triangles": 3757768,
+      "allDeclaredMeshesUsedExactlyOnce": true,
+      "webReceiptHashMatches": true,
+      "publicCopies": [
+        {
+          "path": "docs/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb",
+          "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6",
+          "matchesPrimary": true
+        },
+        {
+          "path": "site-source/public/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb",
+          "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6",
+          "matchesPrimary": true
+        }
+      ],
+      "priorGodotEvidence": {
+        "inputSha256": "56a214714c1740aec8e831947b4260a380ecc48fa664ae9aea609a28e6b3fd38",
+        "decompressedReceiptHashMatches": true,
+        "triangles": 3757768,
+        "passedChecks": 14,
+        "totalChecks": 14,
+        "fpsMeasured": false,
+        "targetDeviceProfiled": false
+      }
+    },
+    {
+      "id": "el-markaz-islami-mosque",
+      "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67",
+      "bytes": 49140024,
+      "triangles": 3104134,
+      "allDeclaredMeshesUsedExactlyOnce": true,
+      "webReceiptHashMatches": true,
+      "publicCopies": [
+        {
+          "path": "docs/architecture-library/site-models/assets/el-markaz-islami-mosque.glb",
+          "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67",
+          "matchesPrimary": true
+        },
+        {
+          "path": "site-source/public/architecture-library/site-models/assets/el-markaz-islami-mosque.glb",
+          "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67",
+          "matchesPrimary": true
+        }
+      ],
+      "priorGodotEvidence": {
+        "inputSha256": "cc52e71806e8b50292bd63b72993daef0f812649522fea5ed4236963f6891be6",
+        "decompressedReceiptHashMatches": true,
+        "triangles": 3104134,
+        "passedChecks": 14,
+        "totalChecks": 14,
+        "fpsMeasured": false,
+        "targetDeviceProfiled": false
+      }
+    },
+    {
+      "id": "kailasa-context",
+      "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc",
+      "bytes": 6594948,
+      "triangles": 136499,
+      "allDeclaredMeshesUsedExactlyOnce": true,
+      "webReceiptHashMatches": true,
+      "publicCopies": [
+        {
+          "path": "docs/architecture-library/site-models/assets/kailasa-context.glb",
+          "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc",
+          "matchesPrimary": true
+        },
+        {
+          "path": "site-source/public/architecture-library/site-models/assets/kailasa-context.glb",
+          "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc",
+          "matchesPrimary": true
+        }
+      ],
+      "priorGodotEvidence": {
+        "inputSha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+        "decompressedReceiptHashMatches": true,
+        "triangles": 136499,
+        "passedChecks": 14,
+        "totalChecks": 14,
+        "fpsMeasured": false,
+        "targetDeviceProfiled": false
+      }
+    },
+    {
+      "id": "khufu",
+      "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1",
+      "bytes": 1786680,
+      "triangles": 180160,
+      "allDeclaredMeshesUsedExactlyOnce": true,
+      "webReceiptHashMatches": true,
+      "publicCopies": [
+        {
+          "path": "docs/architecture-library/site-models/assets/khufu.glb",
+          "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1",
+          "matchesPrimary": true
+        },
+        {
+          "path": "site-source/public/architecture-library/site-models/assets/khufu.glb",
+          "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1",
+          "matchesPrimary": true
+        }
+      ]
+    },
+    {
+      "id": "khafre",
+      "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+      "bytes": 1187380,
+      "triangles": 96181,
+      "allDeclaredMeshesUsedExactlyOnce": true,
+      "webReceiptHashMatches": true,
+      "publicCopies": [
+        {
+          "path": "docs/architecture-library/site-models/assets/khafre.glb",
+          "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+          "matchesPrimary": true
+        },
+        {
+          "path": "site-source/public/architecture-library/site-models/assets/khafre.glb",
+          "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+          "matchesPrimary": true
+        }
+      ]
+    },
+    {
+      "id": "menkaure",
+      "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70",
+      "bytes": 3075716,
+      "triangles": 146089,
+      "allDeclaredMeshesUsedExactlyOnce": true,
+      "webReceiptHashMatches": true,
+      "publicCopies": [
+        {
+          "path": "docs/architecture-library/site-models/assets/menkaure.glb",
+          "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70",
+          "matchesPrimary": true
+        },
+        {
+          "path": "site-source/public/architecture-library/site-models/assets/menkaure.glb",
+          "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70",
+          "matchesPrimary": true
+        }
+      ]
+    },
+    {
+      "id": "giza-plateau",
+      "sha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564",
+      "bytes": 20918772,
+      "triangles": 1163285,
+      "allDeclaredMeshesUsedExactlyOnce": true,
+      "webReceiptHashMatches": true,
+      "publicCopies": [
+        {
+          "path": "docs/architecture-library/site-models/assets/giza-plateau.glb",
+          "sha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564",
+          "matchesPrimary": true
+        },
+        {
+          "path": "site-source/public/architecture-library/site-models/assets/giza-plateau.glb",
+          "sha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564",
+          "matchesPrimary": true
+        }
+      ]
+    }
+  ],
+  "auditSourceHashesMatch": {
+    "audit.gd": true,
+    "run-audit.mjs": true,
+    "glb.mjs": true,
+    "project.godot": true
+  },
+  "executedThisReview": [
+    {
+      "command": "node --test integrations/godot-heritage-review/test/audit.test.mjs",
+      "exitCode": 0,
+      "tests": 11,
+      "passed": 11,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node integrations/godot-heritage-review/test/smoke.mjs",
+      "exitCode": 0,
+      "actualEngine": "4.7.2-stable (official)",
+      "checks": 14,
+      "triangles": 2,
+      "sourceUnchanged": true
+    },
+    {
+      "command": "blender --background --factory-startup --disable-autoexec --python integrations/heritage-assets/blender-review.py -- [temporary two-instance triangle fixture]",
+      "exitCode": 0,
+      "blenderVersion": "4.3.2",
+      "result": "E3-R2-01 reproduced; temporary files removed"
+    }
+  ],
+  "notExecutedThisReview": [
+    "New production church/mosque/Kailasa Godot imports",
+    "New production-asset Blender imports",
+    "Chromium/WebGL rendering",
+    "Target-device performance profiling",
+    "Unreal import",
+    "Install, external provider, credentials, publication or deployment"
+  ],
+  "implementationChangedByReview": false,
+  "nextStep": "Save finding report before a separately recorded bounded Blender-helper fix and engine-input documentation clarification; review final frozen Round2 artifact independently in Round3."
+}

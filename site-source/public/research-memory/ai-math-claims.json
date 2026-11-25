@@ -1,0 +1,1078 @@
+[
+  {
+    "id": "m-claim-universal",
+    "title": "All mathematical problems have been solved",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11-25",
+    "category": "universal claim audit",
+    "provider_or_author": "No identified primary source asserts a defensible universal result",
+    "model_or_version": "Not applicable",
+    "statement": "No. A catalogue or benchmark cannot establish universal mathematical solvability.",
+    "scope_and_assumptions": [
+      "A finite release contains selected statements; mathematical domains and problem formulations remain distinct."
+    ],
+    "human_contribution": "This is the atlas interpretation, not an attribution to either company.",
+    "publisher_status": "Not an established publisher claim",
+    "audit_verdict": "unsupported_universal_premise",
+    "evidence": [
+      {
+        "source_id": "ms-oai-history",
+        "url": "https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md",
+        "access_depth": "full history file inspected",
+        "locator": "Withdrawal and correction entries"
+      },
+      {
+        "source_id": "ms-clay-ym",
+        "url": "https://www.claymath.org/millennium/yang-mills-the-maths-gap/",
+        "access_depth": "current label and problem summary inspected",
+        "locator": "Current problem status"
+      }
+    ],
+    "artifacts": [],
+    "external_verification": "No universal certification identified.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Even verified headline theorems do not settle all related conjectures."
+    ],
+    "prerequisite_ids": [
+      "m-logic",
+      "m-proof"
+    ]
+  },
+  {
+    "id": "m-claim-imo",
+    "title": "Gemini Deep Think: IMO 2025 gold-standard performance",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2025-07",
+    "category": "competition benchmark",
+    "provider_or_author": "Google DeepMind",
+    "model_or_version": "Advanced Gemini Deep Think experimental version",
+    "statement": "Five of six competition problems, 35 points, reported gold-medal standard.",
+    "scope_and_assumptions": [
+      "2025 IMO problem set; an evaluation of proof tasks with known assessment criteria."
+    ],
+    "human_contribution": "Human olympiad assessment is distinct from authoring a new research theorem.",
+    "publisher_status": "Official provider score report",
+    "audit_verdict": "benchmark_result_with_bounded_scope",
+    "evidence": [
+      {
+        "source_id": "ms-gemini-imo",
+        "url": "https://deepmind.google/blog/advanced-version-of-gemini-with-deep-think-officially-achieves-gold-medal-standard-at-the-international-mathematical-olympiad/",
+        "access_depth": "announcement and score inspected",
+        "locator": "Score and evaluation description"
+      }
+    ],
+    "artifacts": [],
+    "external_verification": "Provider describes the olympiad assessment; not independently rerun here.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Not proof that arbitrary open conjectures can be solved."
+    ],
+    "prerequisite_ids": [
+      "m-proof",
+      "m-combinatorics"
+    ]
+  },
+  {
+    "id": "m-claim-unitdistance",
+    "title": "Planar unit distances: polynomial construction improvement",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-05-20",
+    "category": "new research theorem",
+    "provider_or_author": "OpenAI",
+    "model_or_version": "Research model; no commercial model identifier inferred",
+    "statement": "There is δ>0 and infinitely many n for which ν(n)≥n^(1+δ).",
+    "scope_and_assumptions": [
+      "ν(n) counts the largest number of unordered Euclidean unit-distance pairs among n planar points."
+    ],
+    "human_contribution": "Human-edited exposition; external mathematicians reviewed and strengthened parts.",
+    "publisher_status": "Research theorem announced",
+    "audit_verdict": "theorem_statement_and_external_review_report_read",
+    "evidence": [
+      {
+        "source_id": "ms-oai-unit-paper",
+        "url": "https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf",
+        "access_depth": "18-page PDF; Theorem 1.1 and construction outline inspected",
+        "locator": "Theorem 1.1"
+      },
+      {
+        "source_id": "ms-oai-unit",
+        "url": "https://openai.com/index/model-disproves-discrete-geometry-conjecture/",
+        "access_depth": "announcement and external-review attribution inspected",
+        "locator": "External-review attribution"
+      }
+    ],
+    "artifacts": [
+      {
+        "url": "https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf",
+        "locator": "Theorem 1.1",
+        "kind": "manuscript"
+      }
+    ],
+    "external_verification": "Expert confirmation is described by the manuscript and announcement; no independent local derivation of the full construction.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Disproves the old near-linear conjectural scale; does not find the exact extremal function."
+    ],
+    "prerequisite_ids": [
+      "m-graph",
+      "m-fields",
+      "m-primes"
+    ]
+  },
+  {
+    "id": "m-claim-ten",
+    "title": "OpenAI ten-advance collection",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-08",
+    "category": "research collection",
+    "provider_or_author": "OpenAI",
+    "model_or_version": "Research model(s); exact commercial version not inferred",
+    "statement": "A collection covers discrete geometry, coding, group/operator problems and complexity.",
+    "scope_and_assumptions": [
+      "Each of ten results has a separate theorem and assumptions."
+    ],
+    "human_contribution": "The release describes interactions with specialist reviewers and formalization.",
+    "publisher_status": "Ten-result collection released",
+    "audit_verdict": "introductory_result_map_read_not_all_proofs_audited",
+    "evidence": [
+      {
+        "source_id": "ms-oai-ten",
+        "url": "https://openai.com/index/ten-advances-in-mathematics/",
+        "access_depth": "dated announcement and result list inspected",
+        "locator": "Result list"
+      },
+      {
+        "source_id": "ms-oai-ten-paper",
+        "url": "https://cdn.openai.com/pdf/ten-proofs-oai.pdf",
+        "access_depth": "PDF metadata and introductory result map inspected",
+        "locator": "Introduction and theorem map"
+      }
+    ],
+    "artifacts": [
+      {
+        "url": "https://github.com/openai/ten-proofs",
+        "kind": "formalization repository",
+        "locator": "Public release; not replayed"
+      }
+    ],
+    "external_verification": "No blanket independent acceptance is assigned to the collection.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "253 manuscript pages not checked line by line; catalogue depth differs from proof depth."
+    ],
+    "prerequisite_ids": [
+      "m-proof",
+      "m-graph",
+      "m-complexity"
+    ]
+  },
+  {
+    "id": "m-claim-zeta",
+    "title": "Claude-assisted simple critical-line zeta-zero proportion",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-08-19",
+    "category": "new research theorem",
+    "provider_or_author": "Levent Alpöge and Ralph Furman; Anthropic",
+    "model_or_version": "Claude; exact version not inferred",
+    "statement": "The paper gives a simple critical-line zero proportion exceeding two thirds; a window calculation gives 0.6725.",
+    "scope_and_assumptions": [
+      "Unconditional zeta-zero counting statement; paper also treats primitive Dirichlet L-functions."
+    ],
+    "human_contribution": "Authors verified and communicated the model-generated research.",
+    "publisher_status": "Version 2 research preprint",
+    "audit_verdict": "primary_abstract_and_provenance_read",
+    "evidence": [
+      {
+        "source_id": "ms-claude-zeta",
+        "url": "https://arxiv.org/abs/2608.13637v2",
+        "access_depth": "abstract, version and provenance note inspected",
+        "locator": "Abstract and provenance; arXiv v2"
+      }
+    ],
+    "artifacts": [],
+    "external_verification": "Formalization is reported; no local replay.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "A positive proportion is not RH; do not merge the August theorem with November RH."
+    ],
+    "prerequisite_ids": [
+      "m-zeta",
+      "m-complexanalysis"
+    ]
+  },
+  {
+    "id": "m-claim-flt",
+    "title": "Fermat’s Last Theorem: large Lean formalization",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-09-04",
+    "category": "formalization of an existing theorem",
+    "provider_or_author": "Anthropic and human mathematical contributors",
+    "model_or_version": "Claude; exact version not inferred",
+    "statement": "For natural n≥3 and positive natural a,b,c, a^n+b^n≠c^n.",
+    "scope_and_assumptions": [
+      "Positive integers; n≥3; formal theorem matched to Mathlib."
+    ],
+    "human_contribution": "Depends on the human Frey–Serre–Ribet–Wiles–Taylor–Wiles development; experts advised and inspected.",
+    "publisher_status": "Formalization released",
+    "audit_verdict": "formalization_artifact_and_reported_second_kernel_check_read",
+    "evidence": [
+      {
+        "source_id": "ms-claude-flt",
+        "url": "https://www.anthropic.com/research/formalizing-fermats-last-theorem",
+        "access_depth": "dated announcement and human expert attribution inspected",
+        "locator": "Announcement"
+      },
+      {
+        "source_id": "ms-flt-code",
+        "url": "https://github.com/anthropics/fermats-last-theorem/tree/6e837e75355538c7f80bab5b956861e86c4eacc2",
+        "access_depth": "README, theorem text and verification description inspected",
+        "locator": "README, final check and Mathlib bridge"
+      }
+    ],
+    "artifacts": [
+      {
+        "repository": "anthropics/fermats-last-theorem",
+        "commit": "6e837e75355538c7f80bab5b956861e86c4eacc2",
+        "toolchain": "Lean 4.33.1; Mathlib v4.33.0",
+        "locator": "FinalCheck / Mathlib bridge"
+      }
+    ],
+    "external_verification": "README reports comparator and nanoda checks, with disclosed checker patches.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "A new formalization, not the first proof of FLT; atlas did not build it."
+    ],
+    "prerequisite_ids": [
+      "m-elliptic",
+      "m-modular",
+      "m-types",
+      "m-axioms"
+    ]
+  },
+  {
+    "id": "m-claim-nsforced",
+    "title": "Forced three-dimensional Navier–Stokes breakdown",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-09-08",
+    "category": "new theorem with formal artifact",
+    "provider_or_author": "OpenAI",
+    "model_or_version": "Research model; commercial version not inferred",
+    "statement": "For every ν>0, smooth compact forcing produces zero-initial-data smooth flow on [0,1) with bounded L² energy and unbounded L∞ near time 1.",
+    "scope_and_assumptions": [
+      "R³; divergence-free velocity; prescribed smooth forcing; Clay forced C/D formulations."
+    ],
+    "human_contribution": "Human theorem-statement assessment and independent formal audits are documented.",
+    "publisher_status": "Forced breakdown announced",
+    "audit_verdict": "formal_theorem_evidence_strong_but_prose_translation_disputed",
+    "evidence": [
+      {
+        "source_id": "ms-ns-paper",
+        "url": "https://cdn.openai.com/pdf/32d9f210-8b73-45e0-91bc-82a30aef8a9a/navier-stokes.pdf",
+        "access_depth": "Theorem 1.1 and proof-outline introduction inspected",
+        "locator": "Theorem 1.1"
+      },
+      {
+        "source_id": "ms-ns-code",
+        "url": "https://github.com/openai/NavierStokesAndEuler/tree/f9e8bc5b38b6e212696e8a30e3e91517af887bbd",
+        "access_depth": "README and formalization metadata inspected",
+        "locator": "Comparator theorem declarations"
+      },
+      {
+        "source_id": "ms-ns-audit",
+        "url": "https://github.com/francescoantoniodeluca/navier-stokes-formal-audit/tree/c2e4f438f7af8bbf222a59801696aca2c3c15b6f",
+        "access_depth": "README, exact upstream revision and scope inspected",
+        "locator": "Pinned upstream and ClaySpec bridge"
+      },
+      {
+        "source_id": "ms-clay-ns",
+        "url": "https://www.claymath.org/millennium/navier-stokes-equation/",
+        "access_depth": "current status label inspected",
+        "locator": "Active status"
+      },
+      {
+        "source_id": "ms-ns-translation",
+        "url": "https://arxiv.org/abs/2610.08144",
+        "access_depth": "abstract and documented comparison scope inspected",
+        "locator": "Natural-language/formal correspondence critique"
+      }
+    ],
+    "artifacts": [
+      {
+        "repository": "openai/NavierStokesAndEuler",
+        "commit": "f9e8bc5b38b6e212696e8a30e3e91517af887bbd",
+        "toolchain": "Lean 4.34.0-rc2",
+        "declarations": [
+          "NavierStokes.Comparator.navier_stokes_breakdown_R3",
+          "NavierStokes.Comparator.navier_stokes_breakdown_periodic"
+        ]
+      },
+      {
+        "repository": "francescoantoniodeluca/navier-stokes-formal-audit",
+        "commit": "c2e4f438f7af8bbf222a59801696aca2c3c15b6f",
+        "audited_upstream": "8937a8f4cbc7abaab5e9e97d1cc7f5d2319d9538",
+        "locator": "semantic-gap-audit/ClaySpec.lean"
+      }
+    ],
+    "external_verification": "Independent repository reports kernels/comparator and a Mathlib-only statement bridge for the explicitly older upstream revision.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Forced theorem does not settle unforced Navier–Stokes.",
+      "Prose correspondence requires separate evaluation.",
+      "Clay Active is not a prize award."
+    ],
+    "prerequisite_ids": [
+      "m-pde",
+      "m-sobolev",
+      "m-weak",
+      "m-types"
+    ]
+  },
+  {
+    "id": "m-claim-euler",
+    "title": "Separate unforced Euler singularity artifact",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-09",
+    "category": "new theorem with formal artifact",
+    "provider_or_author": "OpenAI",
+    "model_or_version": "Research model; commercial version not inferred",
+    "statement": "The repository separately formalizes finite-time breakdown for unforced three-dimensional Euler.",
+    "scope_and_assumptions": [
+      "Euler has ν=0; do not transfer its conclusion to viscous unforced Navier–Stokes."
+    ],
+    "human_contribution": "Human statement and checker work is described in release metadata.",
+    "publisher_status": "Formal theorem released",
+    "audit_verdict": "theorem_entry_points_inspected",
+    "evidence": [
+      {
+        "source_id": "ms-ns-code",
+        "url": "https://github.com/openai/NavierStokesAndEuler/tree/f9e8bc5b38b6e212696e8a30e3e91517af887bbd",
+        "access_depth": "README and formalization metadata inspected",
+        "locator": "Euler theorem declaration list"
+      }
+    ],
+    "artifacts": [
+      {
+        "repository": "openai/NavierStokesAndEuler",
+        "commit": "f9e8bc5b38b6e212696e8a30e3e91517af887bbd",
+        "declarations": [
+          "Euler.euler_breakdown_R3",
+          "Euler.exists_compact_smooth_euler_singularity"
+        ]
+      }
+    ],
+    "external_verification": "No separate local replay.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Viscosity and norm of breakdown are mathematically material."
+    ],
+    "prerequisite_ids": [
+      "m-pde",
+      "m-gradient"
+    ]
+  },
+  {
+    "id": "m-claim-ns-translation",
+    "title": "Navier–Stokes prose/formal translation criticism",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-10-06",
+    "category": "critical research audit",
+    "provider_or_author": "Bastounis, Circelli and Hansen",
+    "model_or_version": "Not applicable",
+    "statement": "The critique identifies differences between prose and formalized intermediate estimates.",
+    "scope_and_assumptions": [
+      "Examples include derivative order in Lemma 8.6 and a uniqueness inequality."
+    ],
+    "human_contribution": "Independent mathematical comparison by the named authors.",
+    "publisher_status": "Critical preprint",
+    "audit_verdict": "documented_translation_issue_not_refutation_of_final_formal_statement",
+    "evidence": [
+      {
+        "source_id": "ms-ns-translation",
+        "url": "https://arxiv.org/abs/2610.08144",
+        "access_depth": "abstract and documented comparison scope inspected",
+        "locator": "Lemma 8.6 discussion and explicit scope disclaimer"
+      }
+    ],
+    "artifacts": [],
+    "external_verification": "This is itself a preprint; no independent adjudication of every objection performed.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Authors do not claim the natural-language proof is necessarily incorrect."
+    ],
+    "prerequisite_ids": [
+      "m-proof",
+      "m-types",
+      "m-pde"
+    ]
+  },
+  {
+    "id": "m-claim-catalogue",
+    "title": "OpenAI mathematics catalogue: exact metadata census",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11-24",
+    "category": "research catalogue",
+    "provider_or_author": "OpenAI",
+    "model_or_version": "Multiple research outputs; do not assign a single version",
+    "statement": "The pinned CONTENTS file yields 730 manuscript links grouped into 375 result families.",
+    "scope_and_assumptions": [
+      "Non-contiguous family IDs reach 380. Count manuscripts, families and verified theorems separately."
+    ],
+    "human_contribution": "Publisher maintains releases and corrections; atlas parsed metadata.",
+    "publisher_status": "Released collection",
+    "audit_verdict": "metadata_count_verified_proofs_not_individually_reviewed",
+    "evidence": [
+      {
+        "source_id": "ms-oai-catalogue",
+        "url": "https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/CONTENTS.md",
+        "access_depth": "entire catalogue parsed for metadata",
+        "locator": "Entire metadata catalogue"
+      },
+      {
+        "source_id": "ms-oai-history",
+        "url": "https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md",
+        "access_depth": "full history file inspected",
+        "locator": "Revision record"
+      }
+    ],
+    "artifacts": [
+      {
+        "repository": "openai/math",
+        "commit": "3344da59991ed94f9ba711217b29c1d760badfa6",
+        "contents_blob": "7d4a8770643439016a70f23a4524d0ebacc78900",
+        "license_blob": "261eeb9e9f8b2b4b0d119366dda99c6fd7d35c64"
+      }
+    ],
+    "external_verification": "Count checked programmatically; no universal proof validation.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "All catalogue entries ≠ all open mathematics solved.",
+      "All entries default to not individually reviewed."
+    ],
+    "prerequisite_ids": [
+      "m-sets",
+      "m-proof"
+    ]
+  },
+  {
+    "id": "m-claim-withdrawals",
+    "title": "OpenAI October Hodge-related withdrawals",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-10-07",
+    "category": "withdrawal/correction record",
+    "provider_or_author": "OpenAI",
+    "model_or_version": "Not applicable",
+    "statement": "The release history withdraws three Hodge-related manuscripts after a stabilization-trace sign error.",
+    "scope_and_assumptions": [
+      "Split abelian eightfold Weil classes; Kuga–Satake for K3; rational Hodge products of K3 surfaces."
+    ],
+    "human_contribution": "Publisher records errors and dependent repairs.",
+    "publisher_status": "Withdrawn as dated in history",
+    "audit_verdict": "withdrawal_record_confirmed",
+    "evidence": [
+      {
+        "source_id": "ms-oai-history",
+        "url": "https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md",
+        "access_depth": "full history file inspected",
+        "locator": "October 7 withdrawal entry"
+      }
+    ],
+    "artifacts": [],
+    "external_verification": "No substitute proof is inferred from a later catalogue title.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Keep withdrawn statements in provenance, excluded from accepted theorem retrieval."
+    ],
+    "prerequisite_ids": [
+      "m-proof",
+      "m-schemes"
+    ]
+  },
+  {
+    "id": "m-claim-3sum",
+    "title": "Truly subquadratic 3SUM and subcubic APSP",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-10-05",
+    "category": "AI-assisted human research theorem",
+    "provider_or_author": "Josh Alman and Virginia Vassilevska Williams; Anthropic",
+    "model_or_version": "Claude; exact version not inferred",
+    "statement": "The paper states bounded-integer 3SUM in O(n^1.9992) and APSP in O(n^2.9995), rounded exponents.",
+    "scope_and_assumptions": [
+      "Retain integer-size bounds and computational model; formal scope differs for some real-input results."
+    ],
+    "human_contribution": "Authors understood, simplified, strengthened and extended Claude’s algorithm and accepted responsibility.",
+    "publisher_status": "Paper and formal artifacts released",
+    "audit_verdict": "primary_paper_scope_and_formal_limitations_read",
+    "evidence": [
+      {
+        "source_id": "ms-claude-3sum",
+        "url": "https://arxiv.org/abs/2610.06783v1",
+        "access_depth": "abstract and theorem scope inspected",
+        "locator": "Abstract, introduction and provenance"
+      },
+      {
+        "source_id": "ms-claude-formal",
+        "url": "https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5",
+        "access_depth": "README and 3SUM/APSP, ETH, VP/VNP project notes inspected",
+        "locator": "3sum-apsp README and EndStatement.lean description"
+      }
+    ],
+    "artifacts": [
+      {
+        "repository": "anthropics/formal-math",
+        "commit": "11b6c7e3c927df2658f513b6b68ea7f8929c62c5",
+        "path": "3sum-apsp",
+        "locator": "EndStatement.lean"
+      }
+    ],
+    "external_verification": "Original researchers are human coauthors, not an institutional endorsement by their universities.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "An exponent improvement is asymptotic, not an established practical speedup."
+    ],
+    "prerequisite_ids": [
+      "m-graph",
+      "m-complexity"
+    ]
+  },
+  {
+    "id": "m-claim-claudeeth",
+    "title": "Claude ETH refutation artifact",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11",
+    "category": "formal research artifact",
+    "provider_or_author": "Anthropic",
+    "model_or_version": "Internal research Claude; README separately names Claude Opus 5.5 at high effort for rederivation, not executed here",
+    "statement": "A deterministic counting 3-SAT algorithm is claimed with time 2^{O(n log log n / sqrt(log n))}.",
+    "scope_and_assumptions": [
+      "Asymptotic Turing-machine model; variable-count interpretation must match the formal statement."
+    ],
+    "human_contribution": "No additional independent expert acceptance established in this audit.",
+    "publisher_status": "Formal research release",
+    "audit_verdict": "artifact_statement_read_independent_acceptance_not_established",
+    "evidence": [
+      {
+        "source_id": "ms-claude-eth",
+        "url": "https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/eth",
+        "access_depth": "README, machine model and theorem-entry descriptions inspected",
+        "locator": "README; MainResults.lean and ETHIsFalse/MainTheorem entry descriptions"
+      }
+    ],
+    "artifacts": [
+      {
+        "repository": "anthropics/formal-math",
+        "commit": "11b6c7e3c927df2658f513b6b68ea7f8929c62c5",
+        "path": "eth",
+        "toolchain": "Lean 4.33.1",
+        "locator": "MainResults.lean"
+      }
+    ],
+    "external_verification": "Formal checks are publisher-reported; atlas did not replay.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Subexponential is not polynomial time and does not establish P=NP."
+    ],
+    "prerequisite_ids": [
+      "m-complexity",
+      "m-logarithms"
+    ]
+  },
+  {
+    "id": "m-claim-oaieth",
+    "title": "OpenAI fixed-width counting-SAT subexponential claim",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-10-26",
+    "category": "research claim under expert review",
+    "provider_or_author": "OpenAI",
+    "model_or_version": "Research model; exact version not inferred",
+    "statement": "Reports deterministic subexponential-time, polynomial-space counting of k-CNF assignments for fixed k.",
+    "scope_and_assumptions": [
+      "Fixed k; asymptotic complexity and exact machine assumptions belong to the original theorem."
+    ],
+    "human_contribution": "Announcement names an external research review group.",
+    "publisher_status": "Released for academic review",
+    "audit_verdict": "announcement_and_catalogue_locator_read",
+    "evidence": [
+      {
+        "source_id": "ms-oai-community",
+        "url": "https://openai.com/index/building-scientific-understanding-with-academic-communities/",
+        "access_depth": "dated page inspected",
+        "locator": "ETH section"
+      },
+      {
+        "source_id": "ms-oai-catalogue",
+        "url": "https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/CONTENTS.md",
+        "access_depth": "entire catalogue parsed for metadata",
+        "locator": "Family 378; oai-paper-0721"
+      }
+    ],
+    "artifacts": [
+      {
+        "catalogue_id": "oai-paper-0721",
+        "locator": "The Exponential Time Hypothesis is False; October 25 manuscript"
+      }
+    ],
+    "external_verification": "Review described as ongoing; independent final certification not established here.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Paper proof not read line by line; no practical SAT solver result inferred."
+    ],
+    "prerequisite_ids": [
+      "m-complexity"
+    ]
+  },
+  {
+    "id": "m-claim-smoothing",
+    "title": "OpenAI local smoothing for the Euclidean wave equation",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-10-26",
+    "category": "frontier research claim",
+    "provider_or_author": "OpenAI",
+    "model_or_version": "Research model; exact version not inferred",
+    "statement": "Announces local smoothing in spatial dimensions at least two with harmonic-analysis consequences.",
+    "scope_and_assumptions": [
+      "Exact integrability, derivative gain and endpoint restrictions require the original theorem."
+    ],
+    "human_contribution": "Academic engagement described in the announcement.",
+    "publisher_status": "Research artifact released",
+    "audit_verdict": "announcement_scope_read_exact_proof_not_replayed",
+    "evidence": [
+      {
+        "source_id": "ms-oai-community",
+        "url": "https://openai.com/index/building-scientific-understanding-with-academic-communities/",
+        "access_depth": "dated page inspected",
+        "locator": "Local smoothing section"
+      },
+      {
+        "source_id": "ms-oai-catalogue",
+        "url": "https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/CONTENTS.md",
+        "access_depth": "entire catalogue parsed for metadata",
+        "locator": "Family 079; oai-paper-0159"
+      }
+    ],
+    "artifacts": [
+      {
+        "catalogue_id": "oai-paper-0159",
+        "locator": "Local smoothing for the Euclidean wave equation; October 25 manuscript"
+      }
+    ],
+    "external_verification": "No independent blanket certification established by this atlas.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Do not turn interior restriction-range consequences into all endpoint statements."
+    ],
+    "prerequisite_ids": [
+      "m-fourier",
+      "m-wave",
+      "m-sobolev"
+    ]
+  },
+  {
+    "id": "m-claim-ymexistence",
+    "title": "Four-dimensional Yang–Mills existence assessment",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11-10",
+    "category": "independent expert assessment of research artifact",
+    "provider_or_author": "OpenAI and Yang–Mills working group",
+    "model_or_version": "Research model; exact version not inferred",
+    "statement": "The working group reports a Wilson-lattice scaling-limit construction satisfying Wightman axioms.",
+    "scope_and_assumptions": [
+      "Four dimensions; simple compact gauge groups; retain the group’s exact existence specification."
+    ],
+    "human_contribution": "Independent specialists assessed the construction.",
+    "publisher_status": "Existence result assessed",
+    "audit_verdict": "expert_assessment_read_existence_only",
+    "evidence": [
+      {
+        "source_id": "ms-ym-checks",
+        "url": "https://github.com/yang-mills-group/YM",
+        "access_depth": "assessment scope in README inspected",
+        "locator": "November 10 assessment"
+      },
+      {
+        "source_id": "ms-oai-community",
+        "url": "https://openai.com/index/building-scientific-understanding-with-academic-communities/",
+        "access_depth": "dated page inspected",
+        "locator": "Yang–Mills section"
+      }
+    ],
+    "artifacts": [],
+    "external_verification": "A group assessment is stronger than an unreviewed provider headline; no local proof replay.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "No mass gap or uniqueness of infinite-volume limit established by that assessment."
+    ],
+    "prerequisite_ids": [
+      "m-lie",
+      "m-operators",
+      "m-pde"
+    ]
+  },
+  {
+    "id": "m-claim-ymgap",
+    "title": "Complete Yang–Mills existence and mass-gap problem",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11-25",
+    "category": "open-problem status",
+    "provider_or_author": "Clay Mathematics Institute",
+    "model_or_version": "Not applicable",
+    "statement": "The complete Clay problem remains labelled Unsolved in the retrieved record.",
+    "scope_and_assumptions": [
+      "Existence progress and strictly positive mass gap are distinct obligations."
+    ],
+    "human_contribution": "Status comes from the official problem owner and scoped working-group statement.",
+    "publisher_status": "Unsolved",
+    "audit_verdict": "no_decisive_mass_gap_proof_identified",
+    "evidence": [
+      {
+        "source_id": "ms-clay-ym",
+        "url": "https://www.claymath.org/millennium/yang-mills-the-maths-gap/",
+        "access_depth": "current label and problem summary inspected",
+        "locator": "Current status"
+      },
+      {
+        "source_id": "ms-ym-checks",
+        "url": "https://github.com/yang-mills-group/YM",
+        "access_depth": "assessment scope in README inspected",
+        "locator": "Mass-gap exclusion"
+      }
+    ],
+    "artifacts": [],
+    "external_verification": "No decisive primary proof of the full mass-gap conclusion found in this audit.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "This is a dated status observation, not a forecast about future proof."
+    ],
+    "prerequisite_ids": [
+      "m-operators",
+      "m-pde"
+    ]
+  },
+  {
+    "id": "m-claim-vpvnp",
+    "title": "Anthropic VP≠VNP artifact",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11-23",
+    "category": "formal research claim without human proof review",
+    "provider_or_author": "Anthropic",
+    "model_or_version": "Internal research Claude; exact discovery version undisclosed",
+    "statement": "Claims VP≠VNP over all fields, with Hamiltonian-cycle lower bounds and permanent bounds outside characteristic two.",
+    "scope_and_assumptions": [
+      "Arithmetic circuits; growth m^{c(log m)^(1/3)}; characteristic is material."
+    ],
+    "human_contribution": "README explicitly says no human mathematician has checked the proof.",
+    "publisher_status": "Formal research release",
+    "audit_verdict": "statement_inspected_independent_acceptance_not_established",
+    "evidence": [
+      {
+        "source_id": "ms-claude-vp",
+        "url": "https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/vp-vnp",
+        "access_depth": "README and Statement.lean inspected",
+        "locator": "README and Statement.lean arithmetic-circuit definitions"
+      }
+    ],
+    "artifacts": [
+      {
+        "repository": "anthropics/formal-math",
+        "commit": "11b6c7e3c927df2658f513b6b68ea7f8929c62c5",
+        "path": "vp-vnp/Statement.lean"
+      }
+    ],
+    "external_verification": "No independent proof replay or semantic certification by this atlas.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Arithmetic VP/VNP is not Boolean P/NP."
+    ],
+    "prerequisite_ids": [
+      "m-fields",
+      "m-determinant",
+      "m-complexity"
+    ]
+  },
+  {
+    "id": "m-claim-oai-newnine",
+    "title": "OpenAI November 24 complexity and polytope additions",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11-24",
+    "category": "catalogued research claims",
+    "provider_or_author": "OpenAI",
+    "model_or_version": "Research model(s); exact version not inferred",
+    "statement": "Nine new manuscripts in families 379–380 include tensor/circuit claims, multiplication exponents, sunflowers and linear programming.",
+    "scope_and_assumptions": [
+      "Exact theorem/model assumptions not individually reviewed in this atlas."
+    ],
+    "human_contribution": "Human independent acceptance not established here.",
+    "publisher_status": "Released in pinned catalogue",
+    "audit_verdict": "metadata_only_no_theorem_adjudication",
+    "evidence": [
+      {
+        "source_id": "ms-oai-catalogue",
+        "url": "https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/CONTENTS.md",
+        "access_depth": "entire catalogue parsed for metadata",
+        "locator": "Families 379–380"
+      },
+      {
+        "source_id": "ms-oai-history",
+        "url": "https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md",
+        "access_depth": "full history file inspected",
+        "locator": "November 24 update"
+      }
+    ],
+    "artifacts": [
+      {
+        "catalogue_ids": [
+          "oai-paper-0722",
+          "oai-paper-0723",
+          "oai-paper-0724",
+          "oai-paper-0725",
+          "oai-paper-0726",
+          "oai-paper-0727",
+          "oai-paper-0728",
+          "oai-paper-0729",
+          "oai-paper-0730"
+        ],
+        "commit": "3344da59991ed94f9ba711217b29c1d760badfa6"
+      }
+    ],
+    "external_verification": "No independent validation assigned from the manuscript titles.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Do not present the 9/4 matrix-multiplication title as an atlas-verified theorem."
+    ],
+    "prerequisite_ids": [
+      "m-complexity",
+      "m-linearprogram"
+    ]
+  },
+  {
+    "id": "m-claim-rh",
+    "title": "Riemann Hypothesis: November formal proof and independent checks",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11-20",
+    "category": "AI-assisted research with independently checked formal proof",
+    "provider_or_author": "Levent Alpöge with Claude",
+    "model_or_version": "Claude; exact version not inferred",
+    "statement": "The released formal proof is certified to match Mathlib’s RiemannHypothesis proposition.",
+    "scope_and_assumptions": [
+      "The usual nontrivial-zero critical-line assertion; standard Lean foundational axioms."
+    ],
+    "human_contribution": "Alpöge supplied mathematical direction; independent formal-methods teams and Andrew Sutherland audited statements and proof exports.",
+    "publisher_status": "Author proof release",
+    "audit_verdict": "strong_independent_formal_verification_evidence",
+    "evidence": [
+      {
+        "source_id": "ms-rh-author",
+        "url": "https://alpo.ge/remark.pdf",
+        "access_depth": "four-page PDF inspected",
+        "locator": "November 20 announcement"
+      },
+      {
+        "source_id": "ms-rh-community",
+        "url": "https://leanprover-community.github.io/blog/posts/riemann-hypothesis/",
+        "access_depth": "full statement inspected",
+        "locator": "November 21 joint verification statement"
+      },
+      {
+        "source_id": "ms-rh-mit",
+        "url": "https://math.mit.edu/~drew/grh/",
+        "access_depth": "summary, theorem/axiom checklist and dated checker status inspected",
+        "locator": "November 24 verifier status and axiom lists"
+      },
+      {
+        "source_id": "ms-clay-rh",
+        "url": "https://www.claymath.org/millennium/riemann-hypothesis/",
+        "access_depth": "current label inspected",
+        "locator": "Active status"
+      }
+    ],
+    "artifacts": [
+      {
+        "url": "https://math.mit.edu/~drew/grh/",
+        "toolchain": "Lean 4.33.1 / Mathlib 4.33.1",
+        "locator": "Exact proof export, theorem/axiom checklist, independent checker logs"
+      },
+      {
+        "url": "https://leanprover-community.github.io/blog/posts/riemann-hypothesis/",
+        "locator": "Comparator and independent kernel verification of RiemannHypothesis"
+      }
+    ],
+    "external_verification": "Joint Lean FRO/Mathlib statement plus MIT reproduction record report matched theorem, restricted axioms and independent kernel checks.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Atlas did not execute the large proof.",
+      "Conventional exposition and Clay prize process are separate; no prize award established."
+    ],
+    "prerequisite_ids": [
+      "m-zeta",
+      "m-types",
+      "m-axioms"
+    ]
+  },
+  {
+    "id": "m-claim-grh",
+    "title": "Dirichlet generalized RH: independently checked scope",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11-20",
+    "category": "generalization scope audit",
+    "provider_or_author": "Levent Alpöge with Claude",
+    "model_or_version": "Claude; exact version not inferred",
+    "statement": "MIT reports independently checked critical-strip zero statements for Dirichlet L-functions across all positive moduli and all characters, including the primitive-character formulation.",
+    "scope_and_assumptions": [
+      "Zeros in 0<Re(s)<1 have real part 1/2. The additional nonvanishing theorem for Re(s)>1/2 excludes the trivial-character pole at s=1."
+    ],
+    "human_contribution": "Author supplied formal proofs; Sutherland and independent proof-checker teams checked named declarations.",
+    "publisher_status": "Dirichlet generalizations reported",
+    "audit_verdict": "strong_independent_formal_verification_for_dirichlet_scope",
+    "evidence": [
+      {
+        "source_id": "ms-rh-author",
+        "url": "https://alpo.ge/remark.pdf",
+        "access_depth": "four-page PDF inspected",
+        "locator": "Generalization discussion"
+      },
+      {
+        "source_id": "ms-rh-mit",
+        "url": "https://math.mit.edu/~drew/grh/",
+        "access_depth": "summary, theorem/axiom checklist and dated checker status inspected",
+        "locator": "What was verified: declarations 3–5 and Scope paragraph"
+      }
+    ],
+    "artifacts": [
+      {
+        "url": "https://math.mit.edu/~drew/grh/",
+        "locator": "LFunction_ne_zero_of_half_lt_re; LFunction_eq_zero_re; LFunction_eq_zero_re_of_isPrimitive"
+      }
+    ],
+    "external_verification": "Independent checks reported by MIT; this atlas reopened the exact scope and theorem declarations, without executing the proof.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "These checked declarations do not establish general Dedekind, Hecke, automorphic or Artin L-function variants."
+    ],
+    "prerequisite_ids": [
+      "m-zeta",
+      "m-representations"
+    ]
+  },
+  {
+    "id": "m-claim-unforcedns",
+    "title": "Alpöge–Buckmaster unforced Navier–Stokes package",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2026-11-20",
+    "category": "conditional formal artifact with external numerical dependency",
+    "provider_or_author": "Levent Alpöge and Tristan Buckmaster",
+    "model_or_version": "No exact model version established from inspected artifact",
+    "statement": "The available challenge declarations derive breakdown conditional on a bounded periodic similarity profile/certificate.",
+    "scope_and_assumptions": [
+      "Numerical certificate/data are not included; interval arithmetic is outside the formalization."
+    ],
+    "human_contribution": "Authors provide a prose argument, conditional Lean statements and numerical-certification description.",
+    "publisher_status": "Unforced blowup claimed",
+    "audit_verdict": "conditional_artifact_inspected_unconditional_validation_incomplete",
+    "evidence": [
+      {
+        "source_id": "ms-unforced-ns",
+        "url": "https://github.com/tristanbuckmaster/navier-stokes/tree/ad53419de079eb8f95f60313473374624a348546",
+        "access_depth": "root and Lean READMEs inspected",
+        "locator": "Root README and lean/README; certificate and rebuild caveats"
+      }
+    ],
+    "artifacts": [
+      {
+        "repository": "tristanbuckmaster/navier-stokes",
+        "commit": "ad53419de079eb8f95f60313473374624a348546",
+        "declarations": [
+          "breakdown_on_space",
+          "breakdown_on_torus"
+        ],
+        "hypothesis": "PeriodicSimilarityProfileExists with stated bounds"
+      }
+    ],
+    "external_verification": "README says corrected package not rebuilt; no local reconstruction or external unconditional validation established.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Do not represent conditional implications as an unconditional unforced-NS resolution."
+    ],
+    "prerequisite_ids": [
+      "m-pde",
+      "m-sobolev",
+      "m-types",
+      "m-floating"
+    ]
+  },
+  {
+    "id": "m-claim-kakeya",
+    "title": "Wang–Zahl three-dimensional Kakeya theorem",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2025-02-24",
+    "category": "human research frontier",
+    "provider_or_author": "Hong Wang and Joshua Zahl",
+    "model_or_version": "Not an AI attribution",
+    "statement": "Every Kakeya set in R³ has full Hausdorff and Minkowski dimension.",
+    "scope_and_assumptions": [
+      "Dimension three; definitions of Kakeya sets and both dimensions retained."
+    ],
+    "human_contribution": "Named human authors.",
+    "publisher_status": "Research preprint",
+    "audit_verdict": "primary_abstract_read",
+    "evidence": [
+      {
+        "source_id": "ms-kakeya",
+        "url": "https://arxiv.org/abs/2502.17655v1",
+        "access_depth": "abstract and version record inspected",
+        "locator": "arXiv v1 abstract"
+      }
+    ],
+    "artifacts": [],
+    "external_verification": "Full proof not independently checked here.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Do not infer all-dimensional Kakeya from this source."
+    ],
+    "prerequisite_ids": [
+      "m-measure",
+      "m-fourier",
+      "m-metric"
+    ]
+  },
+  {
+    "id": "m-claim-langlands",
+    "title": "Categorical unramified geometric Langlands project",
+    "checked_as_of_utc": "2026-11-25",
+    "event_date": "2024-2025",
+    "category": "human research frontier",
+    "provider_or_author": "Gaitsgory and coauthors",
+    "model_or_version": "Not an AI attribution",
+    "statement": "A five-paper project proves the categorical unramified geometric Langlands conjecture in its stated setting.",
+    "scope_and_assumptions": [
+      "Characteristic-zero de Rham and Betti settings in inspected Part I."
+    ],
+    "human_contribution": "Multi-author human research program.",
+    "publisher_status": "Research proof project",
+    "audit_verdict": "project_scope_and_part_one_abstract_read",
+    "evidence": [
+      {
+        "source_id": "ms-langlands",
+        "url": "https://people.mpim-bonn.mpg.de/gaitsgde/GLC/",
+        "access_depth": "authors' project page inspected",
+        "locator": "Authors’ five-paper project"
+      },
+      {
+        "source_id": "ms-langlands1",
+        "url": "https://arxiv.org/abs/2405.03599v3",
+        "access_depth": "abstract and version history inspected",
+        "locator": "Part I v3 abstract"
+      }
+    ],
+    "artifacts": [],
+    "external_verification": "Atlas did not verify every component.",
+    "local_proof_replay_performed": false,
+    "limitations": [
+      "Not every ramified, arithmetic or quantum Langlands conjecture."
+    ],
+    "prerequisite_ids": [
+      "m-schemes",
+      "m-category",
+      "m-representations"
+    ]
+  }
+]

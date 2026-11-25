@@ -1,0 +1,4 @@
+interface:
+  display_name: "Graph Memory Research"
+  short_description: "Build source-linked memory and research graphs"
+  default_prompt: "Use $graph-memory-research to connect research, formulas, decisions, and repository evidence in a scoped knowledge graph."

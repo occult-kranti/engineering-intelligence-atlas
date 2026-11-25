@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"><key id="label" for="node" attr.name="label" attr.type="string"/><key id="status" for="node" attr.name="status" attr.type="string"/><key id="relation" for="edge" attr.name="relation" attr.type="string"/><graph id="mathematics" edgedefault="directed">
+<node id="m-logic"><data key="label">Propositions and quantifiers</data><data key="status">established</data></node>
+<node id="m-sets"><data key="label">Sets, relations and functions</data><data key="status">established</data></node>
+<node id="m-induction"><data key="label">Induction and recursion</data><data key="status">established</data></node>
+<node id="m-proof"><data key="label">Proof obligations and counterexamples</data><data key="status">established</data></node>
+<node id="m-types"><data key="label">Dependent types and proof terms</data><data key="status">established</data></node>
+<node id="m-axioms"><data key="label">Axiom and dependency audit</data><data key="status">established</data></node>
+<node id="m-equations"><data key="label">Equations and reversible transformations</data><data key="status">established</data></node>
+<node id="m-polynomials"><data key="label">Polynomials and factorization</data><data key="status">established</data></node>
+<node id="m-complex"><data key="label">Complex numbers and phase</data><data key="status">established</data></node>
+<node id="m-logarithms"><data key="label">Exponentials and logarithms</data><data key="status">established</data></node>
+<node id="m-dimensional"><data key="label">Dimensions and nondimensionalization</data><data key="status">established</data></node>
+<node id="m-groups"><data key="label">Groups and symmetry</data><data key="status">established</data></node>
+<node id="m-rings"><data key="label">Rings, ideals and quotients</data><data key="status">established</data></node>
+<node id="m-fields"><data key="label">Fields and extensions</data><data key="status">established</data></node>
+<node id="m-galois"><data key="label">Galois correspondence</data><data key="status">established</data></node>
+<node id="m-representations"><data key="label">Linear representations</data><data key="status">established</data></node>
+<node id="m-lie"><data key="label">Lie groups and Lie algebras</data><data key="status">established</data></node>
+<node id="m-commutative"><data key="label">Commutative algebra</data><data key="status">established</data></node>
+<node id="m-vectors"><data key="label">Vector spaces and linear maps</data><data key="status">established</data></node>
+<node id="m-basis"><data key="label">Basis and dimension</data><data key="status">established</data></node>
+<node id="m-rank"><data key="label">Rank and nullspace</data><data key="status">established</data></node>
+<node id="m-inner"><data key="label">Inner products and norms</data><data key="status">established</data></node>
+<node id="m-determinant"><data key="label">Determinants and orientation</data><data key="status">established</data></node>
+<node id="m-spectral"><data key="label">Eigenvalues and spectral theorem</data><data key="status">established</data></node>
+<node id="m-svd"><data key="label">Singular value decomposition</data><data key="status">established</data></node>
+<node id="m-pseudoinverse"><data key="label">Pseudoinverse and identifiable subspaces</data><data key="status">established</data></node>
+<node id="m-leastsquares"><data key="label">Least squares and projection</data><data key="status">established</data></node>
+<node id="m-pca"><data key="label">PCA and low-rank compression</data><data key="status">established</data></node>
+<node id="m-tensor"><data key="label">Tensors and multilinear maps</data><data key="status">established</data></node>
+<node id="m-conditioning"><data key="label">Condition numbers</data><data key="status">established</data></node>
+<node id="m-limits"><data key="label">Limits and continuity</data><data key="status">established</data></node>
+<node id="m-derivative"><data key="label">Derivatives and linearization</data><data key="status">established</data></node>
+<node id="m-taylor"><data key="label">Taylor approximation and remainder</data><data key="status">established</data></node>
+<node id="m-integral"><data key="label">Integration and accumulation</data><data key="status">established</data></node>
+<node id="m-chain"><data key="label">Chain rule and automatic differentiation</data><data key="status">established</data></node>
+<node id="m-jacobian"><data key="label">Jacobians and changes of variables</data><data key="status">established</data></node>
+<node id="m-gradient"><data key="label">Gradient, divergence and curl</data><data key="status">established</data></node>
+<node id="m-divergence"><data key="label">Divergence theorem</data><data key="status">established</data></node>
+<node id="m-stokes"><data key="label">Stokes theorem</data><data key="status">established</data></node>
+<node id="m-variation"><data key="label">Calculus of variations</data><data key="status">established</data></node>
+<node id="m-measure"><data key="label">Measure and integration</data><data key="status">established</data></node>
+<node id="m-functional"><data key="label">Banach and Hilbert spaces</data><data key="status">established</data></node>
+<node id="m-operators"><data key="label">Bounded and unbounded operators</data><data key="status">established</data></node>
+<node id="m-complexanalysis"><data key="label">Holomorphic functions</data><data key="status">established</data></node>
+<node id="m-fourier"><data key="label">Fourier transforms and distributions</data><data key="status">established</data></node>
+<node id="m-sobolev"><data key="label">Sobolev spaces and weak derivatives</data><data key="status">established</data></node>
+<node id="m-pde"><data key="label">Boundary and initial value problems</data><data key="status">established</data></node>
+<node id="m-heat"><data key="label">Heat flow and smoothing</data><data key="status">established</data></node>
+<node id="m-wave"><data key="label">Wave propagation</data><data key="status">established</data></node>
+<node id="m-weak"><data key="label">Weak solutions and variational formulations</data><data key="status">established</data></node>
+<node id="m-distribution"><data key="label">Distributions and Green functions</data><data key="status">established</data></node>
+<node id="m-euclidean"><data key="label">Euclidean geometry and metric</data><data key="status">established</data></node>
+<node id="m-manifold"><data key="label">Manifolds and charts</data><data key="status">established</data></node>
+<node id="m-tangent"><data key="label">Tangent spaces and differential forms</data><data key="status">established</data></node>
+<node id="m-metric"><data key="label">Riemannian and Lorentzian metrics</data><data key="status">established</data></node>
+<node id="m-connection"><data key="label">Connections and covariant derivatives</data><data key="status">established</data></node>
+<node id="m-curvature"><data key="label">Curvature and holonomy</data><data key="status">established</data></node>
+<node id="m-laplacebeltrami"><data key="label">Laplace–Beltrami operator</data><data key="status">established</data></node>
+<node id="m-geodesic"><data key="label">Geodesics and variational paths</data><data key="status">established</data></node>
+<node id="m-topology"><data key="label">Topological spaces and continuity</data><data key="status">established</data></node>
+<node id="m-homotopy"><data key="label">Homotopy and fundamental group</data><data key="status">established</data></node>
+<node id="m-simplicial"><data key="label">Simplicial and cell complexes</data><data key="status">established</data></node>
+<node id="m-homology"><data key="label">Homology and boundary maps</data><data key="status">established</data></node>
+<node id="m-cohomology"><data key="label">Cohomology and dual observables</data><data key="status">established</data></node>
+<node id="m-persistent"><data key="label">Persistent homology</data><data key="status">established</data></node>
+<node id="m-hodge"><data key="label">Hodge theory</data><data key="status">established</data></node>
+<node id="m-graph"><data key="label">Graphs, multigraphs and typed edges</data><data key="status">established</data></node>
+<node id="m-adjacency"><data key="label">Adjacency and walk counts</data><data key="status">established</data></node>
+<node id="m-incidence"><data key="label">Incidence matrices and conservation</data><data key="status">established</data></node>
+<node id="m-laplacian"><data key="label">Graph Laplacians</data><data key="status">established</data></node>
+<node id="m-normalized"><data key="label">Normalized graph Laplacian</data><data key="status">established</data></node>
+<node id="m-graphdiffusion"><data key="label">Graph diffusion and heat kernels</data><data key="status">established</data></node>
+<node id="m-resistance"><data key="label">Effective resistance</data><data key="status">established</data></node>
+<node id="m-cheeger"><data key="label">Conductance and spectral gaps</data><data key="status">established</data></node>
+<node id="m-shortest"><data key="label">Shortest paths and dynamic programming</data><data key="status">established</data></node>
+<node id="m-dag"><data key="label">DAGs and topological ordering</data><data key="status">established</data></node>
+<node id="m-scc"><data key="label">Strongly connected components</data><data key="status">established</data></node>
+<node id="m-combinatorics"><data key="label">Counting, extremal sets and Ramsey theory</data><data key="status">established</data></node>
+<node id="m-probability"><data key="label">Probability spaces and events</data><data key="status">established</data></node>
+<node id="m-randomvariable"><data key="label">Random variables and distributions</data><data key="status">established</data></node>
+<node id="m-bayes"><data key="label">Bayesian conditioning</data><data key="status">established</data></node>
+<node id="m-covariance"><data key="label">Covariance and correlation</data><data key="status">established</data></node>
+<node id="m-gaussian"><data key="label">Gaussian models</data><data key="status">established</data></node>
+<node id="m-concentration"><data key="label">Concentration inequalities</data><data key="status">established</data></node>
+<node id="m-markov"><data key="label">Markov chains and stationarity</data><data key="status">established</data></node>
+<node id="m-montecarlo"><data key="label">Monte Carlo and sampling error</data><data key="status">established</data></node>
+<node id="m-causal"><data key="label">Causal models and interventions</data><data key="status">established</data></node>
+<node id="m-entropy"><data key="label">Shannon entropy</data><data key="status">established</data></node>
+<node id="m-kl"><data key="label">Relative entropy and information gain</data><data key="status">established</data></node>
+<node id="m-mutual"><data key="label">Mutual information</data><data key="status">established</data></node>
+<node id="m-regularization"><data key="label">Regularization and inverse problems</data><data key="status">established</data></node>
+<node id="m-generalization"><data key="label">Generalization and evaluation</data><data key="status">established</data></node>
+<node id="m-embedding"><data key="label">Embeddings and metric learning</data><data key="status">established</data></node>
+<node id="m-floating"><data key="label">Floating-point arithmetic</data><data key="status">established</data></node>
+<node id="m-rootfinding"><data key="label">Root finding and Newton iteration</data><data key="status">established</data></node>
+<node id="m-optimization"><data key="label">Convex and nonconvex optimization</data><data key="status">established</data></node>
+<node id="m-gradientdescent"><data key="label">Gradient descent and step sizes</data><data key="status">established</data></node>
+<node id="m-duality"><data key="label">Lagrange duality and KKT conditions</data><data key="status">established</data></node>
+<node id="m-cg"><data key="label">Conjugate gradients and preconditioning</data><data key="status">established</data></node>
+<node id="m-finitedifference"><data key="label">Finite differences</data><data key="status">established</data></node>
+<node id="m-fem"><data key="label">Finite elements and weak forms</data><data key="status">established</data></node>
+<node id="m-quadrature"><data key="label">Numerical quadrature</data><data key="status">established</data></node>
+<node id="m-fixedpoint"><data key="label">Contractions and fixed points</data><data key="status">established</data></node>
+<node id="m-complexity"><data key="label">Computational complexity and reductions</data><data key="status">established</data></node>
+<node id="m-linearprogram"><data key="label">Linear programming</data><data key="status">established</data></node>
+<node id="m-primes"><data key="label">Primes and unique factorization</data><data key="status">established</data></node>
+<node id="m-zeta"><data key="label">Zeta and L-functions</data><data key="status">established</data></node>
+<node id="m-elliptic"><data key="label">Elliptic curves</data><data key="status">established</data></node>
+<node id="m-modular"><data key="label">Modular and automorphic forms</data><data key="status">established</data></node>
+<node id="m-schemes"><data key="label">Schemes and sheaves</data><data key="status">established</data></node>
+<node id="m-langlands"><data key="label">Langlands correspondences</data><data key="status">established</data></node>
+<node id="m-category"><data key="label">Categories and composition</data><data key="status">established</data></node>
+<node id="m-functor"><data key="label">Functors and structure preservation</data><data key="status">established</data></node>
+<node id="m-natural"><data key="label">Natural transformations</data><data key="status">established</data></node>
+<node id="m-universal"><data key="label">Universal properties and limits</data><data key="status">established</data></node>
+<node id="m-yoneda"><data key="label">Yoneda and representability</data><data key="status">established</data></node>
+<node id="m-ai-kakeya"><data key="label">Wang–Zahl three-dimensional Kakeya theorem</data><data key="status">primary_abstract_read</data></node>
+<node id="m-ai-langlands"><data key="label">Categorical unramified geometric Langlands project</data><data key="status">project_scope_and_part_one_abstract_read</data></node>
+<node id="mf-quadratic"><data key="label">Quadratic equation by completing the square</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-binomial"><data key="label">Finite binomial theorem</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-euler"><data key="label">Complex exponential and phase</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-rank"><data key="label">Rank–nullity and lost directions</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-inner"><data key="label">Cauchy–Schwarz and cosine similarity</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-det"><data key="label">Two-dimensional determinant and inverse</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-spectral"><data key="label">Real symmetric spectral decomposition</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-svd"><data key="label">Singular value decomposition</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-pinv"><data key="label">Moore–Penrose pseudoinverse</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-least"><data key="label">Least squares normal equations</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-pca"><data key="label">Centered covariance and PCA</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-cond"><data key="label">Relative error and matrix condition number</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-derivative"><data key="label">Derivative as a controlled limit</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-taylor"><data key="label">Taylor theorem with an explicit remainder</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-chain"><data key="label">Multivariable chain rule</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-ftc"><data key="label">Fundamental theorem of calculus</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-jacobian"><data key="label">Change of variables and volume</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-div"><data key="label">Divergence theorem</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-stokes"><data key="label">Generalized Stokes theorem</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-eulerlagrange"><data key="label">Euler–Lagrange stationarity</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-bayes"><data key="label">Bayes rule with dependent evidence awareness</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-cov"><data key="label">Covariance and variance propagation</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-gauss"><data key="label">Multivariate Gaussian density</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-hoeffding"><data key="label">Hoeffding bound for bounded independent samples</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-entropy"><data key="label">Shannon entropy</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-kl"><data key="label">Relative entropy</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-mi"><data key="label">Mutual information</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-markov"><data key="label">Markov transition and stationary distribution</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-walks"><data key="label">Adjacency powers count walks</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-lap"><data key="label">Graph Laplacian energy</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-normalized"><data key="label">Normalized Laplacian</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-pagerank"><data key="label">Personalized PageRank as a convergent recurrence</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-resistance"><data key="label">Effective electrical resistance</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-cheeger"><data key="label">Cheeger inequality for an undirected weighted graph</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-diffusion"><data key="label">Heat diffusion on a graph</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-bellman"><data key="label">Shortest-path Bellman recurrence</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-newton"><data key="label">Newton root iteration</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-gradient"><data key="label">Gradient descent descent bound</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-kkt"><data key="label">KKT optimality conditions</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-cg"><data key="label">Conjugate-gradient condition-number bound</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-difference"><data key="label">Centered second derivative</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-weakpoisson"><data key="label">Weak Poisson formulation</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-cfl"><data key="label">Explicit heat-scheme stability</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-contraction"><data key="label">Fixed-point convergence and stopping bound</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-tikhonov"><data key="label">Ridge/Tikhonov regularization</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-lowrank"><data key="label">Optimal truncated SVD error</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-simpson"><data key="label">Composite Simpson integration error</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-cauchy"><data key="label">Cauchy integral formula</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-fourier"><data key="label">Fourier transform and Plancherel convention</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-heatkernel"><data key="label">Heat equation spectral solution</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-wave"><data key="label">Wave equation dispersion relation</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-sobolev"><data key="label">Integer Sobolev norm</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-laplacebeltrami"><data key="label">Metric Laplacian on a manifold</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-curvature"><data key="label">Curvature as a covariant-derivative commutator</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-homology"><data key="label">Homology: cycles modulo boundaries</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-eulerchar"><data key="label">Euler characteristic of a finite complex</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-representation"><data key="label">Group representations preserve composition</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-galois"><data key="label">Finite Galois correspondence</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-zeta"><data key="label">Zeta Dirichlet series and Euler product</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-elliptic"><data key="label">Short Weierstrass curve and nonsingularity</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-naturality"><data key="label">Naturality square</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-yoneda"><data key="label">Yoneda lemma</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-permanent"><data key="label">Permanent versus determinant</data><data key="status">formula-with-stated-assumptions</data></node>
+<node id="mf-dagtime"><data key="label">Critical path in a dependency DAG</data><data key="status">formula-with-stated-assumptions</data></node>
+<edge id="e0" source="m-logic" target="m-sets"><data key="relation">prerequisite_of</data></edge>
+<edge id="e1" source="m-sets" target="m-equations"><data key="relation">prerequisite_of</data></edge>
+<edge id="e2" source="m-equations" target="m-polynomials"><data key="relation">prerequisite_of</data></edge>
+<edge id="e3" source="m-polynomials" target="m-complex"><data key="relation">prerequisite_of</data></edge>
+<edge id="e4" source="m-complex" target="m-complexanalysis"><data key="relation">prerequisite_of</data></edge>
+<edge id="e5" source="m-complexanalysis" target="m-zeta"><data key="relation">prerequisite_of</data></edge>
+<edge id="e6" source="m-logic" target="m-induction"><data key="relation">prerequisite_of</data></edge>
+<edge id="e7" source="m-induction" target="m-proof"><data key="relation">prerequisite_of</data></edge>
+<edge id="e8" source="m-proof" target="m-types"><data key="relation">prerequisite_of</data></edge>
+<edge id="e9" source="m-types" target="m-axioms"><data key="relation">prerequisite_of</data></edge>
+<edge id="e10" source="m-sets" target="m-groups"><data key="relation">prerequisite_of</data></edge>
+<edge id="e11" source="m-groups" target="m-rings"><data key="relation">prerequisite_of</data></edge>
+<edge id="e12" source="m-rings" target="m-fields"><data key="relation">prerequisite_of</data></edge>
+<edge id="e13" source="m-fields" target="m-galois"><data key="relation">prerequisite_of</data></edge>
+<edge id="e14" source="m-groups" target="m-representations"><data key="relation">prerequisite_of</data></edge>
+<edge id="e15" source="m-representations" target="m-lie"><data key="relation">prerequisite_of</data></edge>
+<edge id="e16" source="m-lie" target="m-connection"><data key="relation">prerequisite_of</data></edge>
+<edge id="e17" source="m-connection" target="m-curvature"><data key="relation">prerequisite_of</data></edge>
+<edge id="e18" source="m-equations" target="m-vectors"><data key="relation">prerequisite_of</data></edge>
+<edge id="e19" source="m-vectors" target="m-basis"><data key="relation">prerequisite_of</data></edge>
+<edge id="e20" source="m-basis" target="m-rank"><data key="relation">prerequisite_of</data></edge>
+<edge id="e21" source="m-rank" target="m-pseudoinverse"><data key="relation">prerequisite_of</data></edge>
+<edge id="e22" source="m-pseudoinverse" target="m-regularization"><data key="relation">prerequisite_of</data></edge>
+<edge id="e23" source="m-vectors" target="m-inner"><data key="relation">prerequisite_of</data></edge>
+<edge id="e24" source="m-inner" target="m-spectral"><data key="relation">prerequisite_of</data></edge>
+<edge id="e25" source="m-spectral" target="m-svd"><data key="relation">prerequisite_of</data></edge>
+<edge id="e26" source="m-svd" target="m-pca"><data key="relation">prerequisite_of</data></edge>
+<edge id="e27" source="m-pca" target="m-embedding"><data key="relation">prerequisite_of</data></edge>
+<edge id="e28" source="m-inner" target="m-leastsquares"><data key="relation">prerequisite_of</data></edge>
+<edge id="e29" source="m-leastsquares" target="m-conditioning"><data key="relation">prerequisite_of</data></edge>
+<edge id="e30" source="m-conditioning" target="m-floating"><data key="relation">prerequisite_of</data></edge>
+<edge id="e31" source="m-floating" target="m-cg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e32" source="m-limits" target="m-derivative"><data key="relation">prerequisite_of</data></edge>
+<edge id="e33" source="m-derivative" target="m-taylor"><data key="relation">prerequisite_of</data></edge>
+<edge id="e34" source="m-taylor" target="m-rootfinding"><data key="relation">prerequisite_of</data></edge>
+<edge id="e35" source="m-rootfinding" target="m-fixedpoint"><data key="relation">prerequisite_of</data></edge>
+<edge id="e36" source="m-derivative" target="m-chain"><data key="relation">prerequisite_of</data></edge>
+<edge id="e37" source="m-chain" target="m-gradient"><data key="relation">prerequisite_of</data></edge>
+<edge id="e38" source="m-gradient" target="m-variation"><data key="relation">prerequisite_of</data></edge>
+<edge id="e39" source="m-variation" target="m-pde"><data key="relation">prerequisite_of</data></edge>
+<edge id="e40" source="m-integral" target="m-jacobian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e41" source="m-jacobian" target="m-divergence"><data key="relation">prerequisite_of</data></edge>
+<edge id="e42" source="m-divergence" target="m-weak"><data key="relation">prerequisite_of</data></edge>
+<edge id="e43" source="m-weak" target="m-fem"><data key="relation">prerequisite_of</data></edge>
+<edge id="e44" source="m-integral" target="m-measure"><data key="relation">prerequisite_of</data></edge>
+<edge id="e45" source="m-measure" target="m-functional"><data key="relation">prerequisite_of</data></edge>
+<edge id="e46" source="m-functional" target="m-operators"><data key="relation">prerequisite_of</data></edge>
+<edge id="e47" source="m-operators" target="m-sobolev"><data key="relation">prerequisite_of</data></edge>
+<edge id="e48" source="m-sobolev" target="m-pde"><data key="relation">prerequisite_of</data></edge>
+<edge id="e49" source="m-complex" target="m-fourier"><data key="relation">prerequisite_of</data></edge>
+<edge id="e50" source="m-fourier" target="m-distribution"><data key="relation">prerequisite_of</data></edge>
+<edge id="e51" source="m-distribution" target="m-heat"><data key="relation">prerequisite_of</data></edge>
+<edge id="e52" source="m-heat" target="m-graphdiffusion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e53" source="m-euclidean" target="m-manifold"><data key="relation">prerequisite_of</data></edge>
+<edge id="e54" source="m-manifold" target="m-tangent"><data key="relation">prerequisite_of</data></edge>
+<edge id="e55" source="m-tangent" target="m-metric"><data key="relation">prerequisite_of</data></edge>
+<edge id="e56" source="m-metric" target="m-connection"><data key="relation">prerequisite_of</data></edge>
+<edge id="e57" source="m-topology" target="m-homotopy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e58" source="m-homotopy" target="m-simplicial"><data key="relation">prerequisite_of</data></edge>
+<edge id="e59" source="m-simplicial" target="m-homology"><data key="relation">prerequisite_of</data></edge>
+<edge id="e60" source="m-homology" target="m-cohomology"><data key="relation">prerequisite_of</data></edge>
+<edge id="e61" source="m-cohomology" target="m-hodge"><data key="relation">prerequisite_of</data></edge>
+<edge id="e62" source="m-homology" target="m-persistent"><data key="relation">prerequisite_of</data></edge>
+<edge id="e63" source="m-sets" target="m-graph"><data key="relation">prerequisite_of</data></edge>
+<edge id="e64" source="m-graph" target="m-adjacency"><data key="relation">prerequisite_of</data></edge>
+<edge id="e65" source="m-adjacency" target="m-incidence"><data key="relation">prerequisite_of</data></edge>
+<edge id="e66" source="m-incidence" target="m-laplacian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e67" source="m-laplacian" target="m-resistance"><data key="relation">prerequisite_of</data></edge>
+<edge id="e68" source="m-laplacian" target="m-spectral"><data key="relation">prerequisite_of</data></edge>
+<edge id="e69" source="m-spectral" target="m-graphdiffusion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e70" source="m-graph" target="m-shortest"><data key="relation">prerequisite_of</data></edge>
+<edge id="e71" source="m-shortest" target="m-dag"><data key="relation">prerequisite_of</data></edge>
+<edge id="e72" source="m-dag" target="m-scc"><data key="relation">prerequisite_of</data></edge>
+<edge id="e73" source="m-probability" target="m-randomvariable"><data key="relation">prerequisite_of</data></edge>
+<edge id="e74" source="m-randomvariable" target="m-bayes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e75" source="m-bayes" target="m-entropy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e76" source="m-entropy" target="m-kl"><data key="relation">prerequisite_of</data></edge>
+<edge id="e77" source="m-kl" target="m-mutual"><data key="relation">prerequisite_of</data></edge>
+<edge id="e78" source="m-randomvariable" target="m-covariance"><data key="relation">prerequisite_of</data></edge>
+<edge id="e79" source="m-covariance" target="m-gaussian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e80" source="m-gaussian" target="m-montecarlo"><data key="relation">prerequisite_of</data></edge>
+<edge id="e81" source="m-montecarlo" target="m-concentration"><data key="relation">prerequisite_of</data></edge>
+<edge id="e82" source="m-probability" target="m-markov"><data key="relation">prerequisite_of</data></edge>
+<edge id="e83" source="m-markov" target="m-cheeger"><data key="relation">prerequisite_of</data></edge>
+<edge id="e84" source="m-gradient" target="m-optimization"><data key="relation">prerequisite_of</data></edge>
+<edge id="e85" source="m-optimization" target="m-gradientdescent"><data key="relation">prerequisite_of</data></edge>
+<edge id="e86" source="m-gradientdescent" target="m-duality"><data key="relation">prerequisite_of</data></edge>
+<edge id="e87" source="m-duality" target="m-linearprogram"><data key="relation">prerequisite_of</data></edge>
+<edge id="e88" source="m-taylor" target="m-finitedifference"><data key="relation">prerequisite_of</data></edge>
+<edge id="e89" source="m-finitedifference" target="m-quadrature"><data key="relation">prerequisite_of</data></edge>
+<edge id="e90" source="m-fields" target="m-primes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e91" source="m-primes" target="m-elliptic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e92" source="m-elliptic" target="m-modular"><data key="relation">prerequisite_of</data></edge>
+<edge id="e93" source="m-modular" target="m-langlands"><data key="relation">prerequisite_of</data></edge>
+<edge id="e94" source="m-rings" target="m-commutative"><data key="relation">prerequisite_of</data></edge>
+<edge id="e95" source="m-commutative" target="m-schemes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e96" source="m-schemes" target="m-langlands"><data key="relation">prerequisite_of</data></edge>
+<edge id="e97" source="m-sets" target="m-category"><data key="relation">prerequisite_of</data></edge>
+<edge id="e98" source="m-category" target="m-functor"><data key="relation">prerequisite_of</data></edge>
+<edge id="e99" source="m-functor" target="m-natural"><data key="relation">prerequisite_of</data></edge>
+<edge id="e100" source="m-natural" target="m-universal"><data key="relation">prerequisite_of</data></edge>
+<edge id="e101" source="m-universal" target="m-yoneda"><data key="relation">prerequisite_of</data></edge>
+<edge id="e102" source="m-tensor" target="m-complexity"><data key="relation">prerequisite_of</data></edge>
+<edge id="e103" source="m-spectral" target="m-laplacian"><data key="relation">related</data></edge>
+<edge id="e104" source="m-inner" target="m-resistance"><data key="relation">related</data></edge>
+<edge id="e105" source="m-bayes" target="m-causal"><data key="relation">related</data></edge>
+<edge id="e106" source="m-conditioning" target="m-regularization"><data key="relation">related</data></edge>
+<edge id="e107" source="m-category" target="m-schemes"><data key="relation">related</data></edge>
+<edge id="e108" source="m-measure" target="m-probability"><data key="relation">related</data></edge>
+<edge id="e109" source="m-stokes" target="m-curvature"><data key="relation">related</data></edge>
+<edge id="e110" source="m-variation" target="m-geodesic"><data key="relation">related</data></edge>
+<edge id="e111" source="m-metric" target="m-laplacebeltrami"><data key="relation">related</data></edge>
+<edge id="e112" source="m-laplacian" target="m-heat"><data key="relation">related</data></edge>
+<edge id="e113" source="m-measure" target="m-ai-kakeya"><data key="relation">prerequisite_of</data></edge>
+<edge id="e114" source="m-fourier" target="m-ai-kakeya"><data key="relation">prerequisite_of</data></edge>
+<edge id="e115" source="m-metric" target="m-ai-kakeya"><data key="relation">prerequisite_of</data></edge>
+<edge id="e116" source="m-schemes" target="m-ai-langlands"><data key="relation">prerequisite_of</data></edge>
+<edge id="e117" source="m-category" target="m-ai-langlands"><data key="relation">prerequisite_of</data></edge>
+<edge id="e118" source="m-representations" target="m-ai-langlands"><data key="relation">prerequisite_of</data></edge>
+<edge id="e119" source="m-equations" target="mf-quadratic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e120" source="m-polynomials" target="mf-quadratic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e121" source="m-induction" target="mf-binomial"><data key="relation">prerequisite_of</data></edge>
+<edge id="e122" source="m-polynomials" target="mf-binomial"><data key="relation">prerequisite_of</data></edge>
+<edge id="e123" source="m-complex" target="mf-euler"><data key="relation">prerequisite_of</data></edge>
+<edge id="e124" source="m-polynomials" target="mf-euler"><data key="relation">prerequisite_of</data></edge>
+<edge id="e125" source="m-vectors" target="mf-rank"><data key="relation">prerequisite_of</data></edge>
+<edge id="e126" source="m-basis" target="mf-rank"><data key="relation">prerequisite_of</data></edge>
+<edge id="e127" source="m-vectors" target="mf-inner"><data key="relation">prerequisite_of</data></edge>
+<edge id="e128" source="m-inner" target="mf-inner"><data key="relation">prerequisite_of</data></edge>
+<edge id="e129" source="m-basis" target="mf-det"><data key="relation">prerequisite_of</data></edge>
+<edge id="e130" source="m-determinant" target="mf-det"><data key="relation">prerequisite_of</data></edge>
+<edge id="e131" source="m-inner" target="mf-spectral"><data key="relation">prerequisite_of</data></edge>
+<edge id="e132" source="m-spectral" target="mf-spectral"><data key="relation">prerequisite_of</data></edge>
+<edge id="e133" source="m-spectral" target="mf-svd"><data key="relation">prerequisite_of</data></edge>
+<edge id="e134" source="m-rank" target="mf-svd"><data key="relation">prerequisite_of</data></edge>
+<edge id="e135" source="m-svd" target="mf-pinv"><data key="relation">prerequisite_of</data></edge>
+<edge id="e136" source="m-pseudoinverse" target="mf-pinv"><data key="relation">prerequisite_of</data></edge>
+<edge id="e137" source="m-gradient" target="mf-least"><data key="relation">prerequisite_of</data></edge>
+<edge id="e138" source="m-leastsquares" target="mf-least"><data key="relation">prerequisite_of</data></edge>
+<edge id="e139" source="m-spectral" target="mf-pca"><data key="relation">prerequisite_of</data></edge>
+<edge id="e140" source="m-svd" target="mf-pca"><data key="relation">prerequisite_of</data></edge>
+<edge id="e141" source="m-covariance" target="mf-pca"><data key="relation">prerequisite_of</data></edge>
+<edge id="e142" source="m-svd" target="mf-cond"><data key="relation">prerequisite_of</data></edge>
+<edge id="e143" source="m-conditioning" target="mf-cond"><data key="relation">prerequisite_of</data></edge>
+<edge id="e144" source="m-limits" target="mf-derivative"><data key="relation">prerequisite_of</data></edge>
+<edge id="e145" source="m-equations" target="mf-derivative"><data key="relation">prerequisite_of</data></edge>
+<edge id="e146" source="m-derivative" target="mf-taylor"><data key="relation">prerequisite_of</data></edge>
+<edge id="e147" source="m-integral" target="mf-taylor"><data key="relation">prerequisite_of</data></edge>
+<edge id="e148" source="m-derivative" target="mf-chain"><data key="relation">prerequisite_of</data></edge>
+<edge id="e149" source="m-vectors" target="mf-chain"><data key="relation">prerequisite_of</data></edge>
+<edge id="e150" source="m-limits" target="mf-ftc"><data key="relation">prerequisite_of</data></edge>
+<edge id="e151" source="m-integral" target="mf-ftc"><data key="relation">prerequisite_of</data></edge>
+<edge id="e152" source="m-derivative" target="mf-ftc"><data key="relation">prerequisite_of</data></edge>
+<edge id="e153" source="m-determinant" target="mf-jacobian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e154" source="m-chain" target="mf-jacobian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e155" source="m-integral" target="mf-jacobian"><data key="relation">prerequisite_of</data></edge>
+<edge id="e156" source="m-gradient" target="mf-div"><data key="relation">prerequisite_of</data></edge>
+<edge id="e157" source="m-integral" target="mf-div"><data key="relation">prerequisite_of</data></edge>
+<edge id="e158" source="m-jacobian" target="mf-div"><data key="relation">prerequisite_of</data></edge>
+<edge id="e159" source="m-tangent" target="mf-stokes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e160" source="m-integral" target="mf-stokes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e161" source="m-topology" target="mf-stokes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e162" source="m-variation" target="mf-eulerlagrange"><data key="relation">prerequisite_of</data></edge>
+<edge id="e163" source="m-chain" target="mf-eulerlagrange"><data key="relation">prerequisite_of</data></edge>
+<edge id="e164" source="m-integral" target="mf-eulerlagrange"><data key="relation">prerequisite_of</data></edge>
+<edge id="e165" source="m-probability" target="mf-bayes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e166" source="m-randomvariable" target="mf-bayes"><data key="relation">prerequisite_of</data></edge>
+<edge id="e167" source="m-probability" target="mf-cov"><data key="relation">prerequisite_of</data></edge>
+<edge id="e168" source="m-vectors" target="mf-cov"><data key="relation">prerequisite_of</data></edge>
+<edge id="e169" source="m-covariance" target="mf-gauss"><data key="relation">prerequisite_of</data></edge>
+<edge id="e170" source="m-jacobian" target="mf-gauss"><data key="relation">prerequisite_of</data></edge>
+<edge id="e171" source="m-determinant" target="mf-gauss"><data key="relation">prerequisite_of</data></edge>
+<edge id="e172" source="m-probability" target="mf-hoeffding"><data key="relation">prerequisite_of</data></edge>
+<edge id="e173" source="m-concentration" target="mf-hoeffding"><data key="relation">prerequisite_of</data></edge>
+<edge id="e174" source="m-probability" target="mf-entropy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e175" source="m-logarithms" target="mf-entropy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e176" source="m-entropy" target="mf-kl"><data key="relation">prerequisite_of</data></edge>
+<edge id="e177" source="m-probability" target="mf-kl"><data key="relation">prerequisite_of</data></edge>
+<edge id="e178" source="m-kl" target="mf-mi"><data key="relation">prerequisite_of</data></edge>
+<edge id="e179" source="m-entropy" target="mf-mi"><data key="relation">prerequisite_of</data></edge>
+<edge id="e180" source="m-bayes" target="mf-mi"><data key="relation">prerequisite_of</data></edge>
+<edge id="e181" source="m-probability" target="mf-markov"><data key="relation">prerequisite_of</data></edge>
+<edge id="e182" source="m-adjacency" target="mf-markov"><data key="relation">prerequisite_of</data></edge>
+<edge id="e183" source="m-spectral" target="mf-markov"><data key="relation">prerequisite_of</data></edge>
+<edge id="e184" source="m-adjacency" target="mf-walks"><data key="relation">prerequisite_of</data></edge>
+<edge id="e185" source="m-induction" target="mf-walks"><data key="relation">prerequisite_of</data></edge>
+<edge id="e186" source="m-incidence" target="mf-lap"><data key="relation">prerequisite_of</data></edge>
+<edge id="e187" source="m-inner" target="mf-lap"><data key="relation">prerequisite_of</data></edge>
+<edge id="e188" source="m-laplacian" target="mf-normalized"><data key="relation">prerequisite_of</data></edge>
+<edge id="e189" source="m-spectral" target="mf-normalized"><data key="relation">prerequisite_of</data></edge>
+<edge id="e190" source="m-markov" target="mf-pagerank"><data key="relation">prerequisite_of</data></edge>
+<edge id="e191" source="m-fixedpoint" target="mf-pagerank"><data key="relation">prerequisite_of</data></edge>
+<edge id="e192" source="m-laplacian" target="mf-resistance"><data key="relation">prerequisite_of</data></edge>
+<edge id="e193" source="m-pseudoinverse" target="mf-resistance"><data key="relation">prerequisite_of</data></edge>
+<edge id="e194" source="m-normalized" target="mf-cheeger"><data key="relation">prerequisite_of</data></edge>
+<edge id="e195" source="m-laplacian" target="mf-cheeger"><data key="relation">prerequisite_of</data></edge>
+<edge id="e196" source="m-spectral" target="mf-cheeger"><data key="relation">prerequisite_of</data></edge>
+<edge id="e197" source="m-laplacian" target="mf-diffusion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e198" source="m-spectral" target="mf-diffusion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e199" source="m-heat" target="mf-diffusion"><data key="relation">prerequisite_of</data></edge>
+<edge id="e200" source="m-graph" target="mf-bellman"><data key="relation">prerequisite_of</data></edge>
+<edge id="e201" source="m-shortest" target="mf-bellman"><data key="relation">prerequisite_of</data></edge>
+<edge id="e202" source="m-induction" target="mf-bellman"><data key="relation">prerequisite_of</data></edge>
+<edge id="e203" source="m-derivative" target="mf-newton"><data key="relation">prerequisite_of</data></edge>
+<edge id="e204" source="m-taylor" target="mf-newton"><data key="relation">prerequisite_of</data></edge>
+<edge id="e205" source="m-rootfinding" target="mf-newton"><data key="relation">prerequisite_of</data></edge>
+<edge id="e206" source="m-gradient" target="mf-gradient"><data key="relation">prerequisite_of</data></edge>
+<edge id="e207" source="m-optimization" target="mf-gradient"><data key="relation">prerequisite_of</data></edge>
+<edge id="e208" source="m-gradient" target="mf-kkt"><data key="relation">prerequisite_of</data></edge>
+<edge id="e209" source="m-duality" target="mf-kkt"><data key="relation">prerequisite_of</data></edge>
+<edge id="e210" source="m-conditioning" target="mf-cg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e211" source="m-spectral" target="mf-cg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e212" source="m-cg" target="mf-cg"><data key="relation">prerequisite_of</data></edge>
+<edge id="e213" source="m-taylor" target="mf-difference"><data key="relation">prerequisite_of</data></edge>
+<edge id="e214" source="m-finitedifference" target="mf-difference"><data key="relation">prerequisite_of</data></edge>
+<edge id="e215" source="m-sobolev" target="mf-weakpoisson"><data key="relation">prerequisite_of</data></edge>
+<edge id="e216" source="m-divergence" target="mf-weakpoisson"><data key="relation">prerequisite_of</data></edge>
+<edge id="e217" source="m-fem" target="mf-weakpoisson"><data key="relation">prerequisite_of</data></edge>
+<edge id="e218" source="m-fourier" target="mf-cfl"><data key="relation">prerequisite_of</data></edge>
+<edge id="e219" source="m-finitedifference" target="mf-cfl"><data key="relation">prerequisite_of</data></edge>
+<edge id="e220" source="m-heat" target="mf-cfl"><data key="relation">prerequisite_of</data></edge>
+<edge id="e221" source="m-limits" target="mf-contraction"><data key="relation">prerequisite_of</data></edge>
+<edge id="e222" source="m-fixedpoint" target="mf-contraction"><data key="relation">prerequisite_of</data></edge>
+<edge id="e223" source="m-leastsquares" target="mf-tikhonov"><data key="relation">prerequisite_of</data></edge>
+<edge id="e224" source="m-svd" target="mf-tikhonov"><data key="relation">prerequisite_of</data></edge>
+<edge id="e225" source="m-regularization" target="mf-tikhonov"><data key="relation">prerequisite_of</data></edge>
+<edge id="e226" source="m-svd" target="mf-lowrank"><data key="relation">prerequisite_of</data></edge>
+<edge id="e227" source="m-pca" target="mf-lowrank"><data key="relation">prerequisite_of</data></edge>
+<edge id="e228" source="m-taylor" target="mf-simpson"><data key="relation">prerequisite_of</data></edge>
+<edge id="e229" source="m-quadrature" target="mf-simpson"><data key="relation">prerequisite_of</data></edge>
+<edge id="e230" source="m-integral" target="mf-simpson"><data key="relation">prerequisite_of</data></edge>
+<edge id="e231" source="m-complexanalysis" target="mf-cauchy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e232" source="m-integral" target="mf-cauchy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e233" source="m-stokes" target="mf-cauchy"><data key="relation">prerequisite_of</data></edge>
+<edge id="e234" source="m-complex" target="mf-fourier"><data key="relation">prerequisite_of</data></edge>
+<edge id="e235" source="m-integral" target="mf-fourier"><data key="relation">prerequisite_of</data></edge>
+<edge id="e236" source="m-functional" target="mf-fourier"><data key="relation">prerequisite_of</data></edge>
+<edge id="e237" source="m-fourier" target="mf-heatkernel"><data key="relation">prerequisite_of</data></edge>
+<edge id="e238" source="m-pde" target="mf-heatkernel"><data key="relation">prerequisite_of</data></edge>
+<edge id="e239" source="m-operators" target="mf-heatkernel"><data key="relation">prerequisite_of</data></edge>
+<edge id="e240" source="m-fourier" target="mf-wave"><data key="relation">prerequisite_of</data></edge>
+<edge id="e241" source="m-pde" target="mf-wave"><data key="relation">prerequisite_of</data></edge>
+<edge id="e242" source="m-derivative" target="mf-wave"><data key="relation">prerequisite_of</data></edge>
+<edge id="e243" source="m-measure" target="mf-sobolev"><data key="relation">prerequisite_of</data></edge>
+<edge id="e244" source="m-functional" target="mf-sobolev"><data key="relation">prerequisite_of</data></edge>
+<edge id="e245" source="m-weak" target="mf-sobolev"><data key="relation">prerequisite_of</data></edge>
+<edge id="e246" source="m-metric" target="mf-laplacebeltrami"><data key="relation">prerequisite_of</data></edge>
+<edge id="e247" source="m-jacobian" target="mf-laplacebeltrami"><data key="relation">prerequisite_of</data></edge>
+<edge id="e248" source="m-gradient" target="mf-laplacebeltrami"><data key="relation">prerequisite_of</data></edge>
+<edge id="e249" source="m-connection" target="mf-curvature"><data key="relation">prerequisite_of</data></edge>
+<edge id="e250" source="m-lie" target="mf-curvature"><data key="relation">prerequisite_of</data></edge>
+<edge id="e251" source="m-manifold" target="mf-curvature"><data key="relation">prerequisite_of</data></edge>
+<edge id="e252" source="m-simplicial" target="mf-homology"><data key="relation">prerequisite_of</data></edge>
+<edge id="e253" source="m-rank" target="mf-homology"><data key="relation">prerequisite_of</data></edge>
+<edge id="e254" source="m-topology" target="mf-homology"><data key="relation">prerequisite_of</data></edge>
+<edge id="e255" source="m-homology" target="mf-eulerchar"><data key="relation">prerequisite_of</data></edge>
+<edge id="e256" source="m-rank" target="mf-eulerchar"><data key="relation">prerequisite_of</data></edge>
+<edge id="e257" source="m-groups" target="mf-representation"><data key="relation">prerequisite_of</data></edge>
+<edge id="e258" source="m-vectors" target="mf-representation"><data key="relation">prerequisite_of</data></edge>
+<edge id="e259" source="m-fields" target="mf-galois"><data key="relation">prerequisite_of</data></edge>
+<edge id="e260" source="m-groups" target="mf-galois"><data key="relation">prerequisite_of</data></edge>
+<edge id="e261" source="m-primes" target="mf-zeta"><data key="relation">prerequisite_of</data></edge>
+<edge id="e262" source="m-complexanalysis" target="mf-zeta"><data key="relation">prerequisite_of</data></edge>
+<edge id="e263" source="m-integral" target="mf-zeta"><data key="relation">prerequisite_of</data></edge>
+<edge id="e264" source="m-polynomials" target="mf-elliptic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e265" source="m-fields" target="mf-elliptic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e266" source="m-gradient" target="mf-elliptic"><data key="relation">prerequisite_of</data></edge>
+<edge id="e267" source="m-category" target="mf-naturality"><data key="relation">prerequisite_of</data></edge>
+<edge id="e268" source="m-functor" target="mf-naturality"><data key="relation">prerequisite_of</data></edge>
+<edge id="e269" source="m-natural" target="mf-yoneda"><data key="relation">prerequisite_of</data></edge>
+<edge id="e270" source="m-universal" target="mf-yoneda"><data key="relation">prerequisite_of</data></edge>
+<edge id="e271" source="m-determinant" target="mf-permanent"><data key="relation">prerequisite_of</data></edge>
+<edge id="e272" source="m-combinatorics" target="mf-permanent"><data key="relation">prerequisite_of</data></edge>
+<edge id="e273" source="m-complexity" target="mf-permanent"><data key="relation">prerequisite_of</data></edge>
+<edge id="e274" source="m-dag" target="mf-dagtime"><data key="relation">prerequisite_of</data></edge>
+<edge id="e275" source="m-shortest" target="mf-dagtime"><data key="relation">prerequisite_of</data></edge>
+</graph></graphml>

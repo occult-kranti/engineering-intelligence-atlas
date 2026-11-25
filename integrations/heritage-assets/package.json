@@ -1,0 +1,18 @@
+{
+  "name": "daftar-heritage-assets",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pinned local interchange tools for source-attributed heritage geometry.",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "build:local": "node preserve.mjs build --manifest"
+  },
+  "dependencies": {
+    "@gltf-transform/core": "4.5.1",
+    "@gltf-transform/extensions": "4.5.1",
+    "meshoptimizer": "1.2.0",
+    "three": "0.187.0"
+  }
+}

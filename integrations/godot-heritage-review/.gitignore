@@ -1,0 +1,7 @@
+.godot/
+.cache/
+assets/
+*.glb
+*.scn
+*.godot.uid
+*.gd.uid

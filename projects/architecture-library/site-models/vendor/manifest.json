@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "packages": {
+    "three": "0.187.0",
+    "meshoptimizer": "1.2.0"
+  },
+  "changes": "Relative ESM import paths and .mjs extensions only; no runtime logic edits.",
+  "files": [
+    {
+      "source": "three/build/three.module.js",
+      "target": "three.module.mjs",
+      "sourceSha256": "104f56145899722094556490d787aae0617cc2fc3382f31df02d724ea1aee341",
+      "outputSha256": "419439a8f5286ac48f1659174497b0845ecc541dcbd3ebcb59efe0b200eb6eef",
+      "bytes": 658902
+    },
+    {
+      "source": "three/build/three.core.js",
+      "target": "three.core.mjs",
+      "sourceSha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578",
+      "outputSha256": "613e370f76638fdef83926642bf256dc9615684922de1ce1f63a8583e5d78578",
+      "bytes": 1474799
+    },
+    {
+      "source": "three/examples/jsm/loaders/GLTFLoader.js",
+      "target": "GLTFLoader.mjs",
+      "sourceSha256": "532ac726e120039acbcd6cf54328c57acbf7b438176afaa6951257126d11bff1",
+      "outputSha256": "5898efee48c9f061da3e003f251b976fe105954402687e58b9f999ef7606ec8c",
+      "bytes": 119862
+    },
+    {
+      "source": "three/examples/jsm/controls/OrbitControls.js",
+      "target": "OrbitControls.mjs",
+      "sourceSha256": "e7fca2fe9e7670a828af9b28084669a5909445b7f36f1f26cee9bf8f2961c32c",
+      "outputSha256": "0b524db46ffcd65359d2efd51827d0b077796f1ee174e2740ae238ddad5ec3af",
+      "bytes": 40931
+    },
+    {
+      "source": "three/examples/jsm/utils/BufferGeometryUtils.js",
+      "target": "BufferGeometryUtils.mjs",
+      "sourceSha256": "7bda2a8ba836b2bcf67cb938d4b9e1bb5d1b1bc616817103ed858c0b58296ce7",
+      "outputSha256": "dd7ceffba30bf275369cb1078a267c720e4cbaaceec31f199b7b9a516f4ba6e3",
+      "bytes": 39166
+    },
+    {
+      "source": "three/examples/jsm/utils/SkeletonUtils.js",
+      "target": "SkeletonUtils.mjs",
+      "sourceSha256": "b1632a703206c3d830de9fcbe515696770d04b71a15ee6b50afa6d2c3298c86f",
+      "outputSha256": "b12869145e22a25f79449a584fcb8cec8abadf3dca6fcceb727cbc1663525bd9",
+      "bytes": 11548
+    },
+    {
+      "source": "three/LICENSE",
+      "target": "THREE-LICENSE.md",
+      "sourceSha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "outputSha256": "8b378ebe60e2fe500158cb0ac71cb5e8b7d92953c2abcc63a0eb90499653b5bc",
+      "bytes": 1081
+    },
+    {
+      "source": "meshoptimizer/meshopt_decoder.mjs",
+      "target": "meshopt_decoder.mjs",
+      "sourceSha256": "cb08bf53ad8ad9693d8bb759b2dbade350eb38bcce63d005385e225b564c5f6a",
+      "outputSha256": "cb08bf53ad8ad9693d8bb759b2dbade350eb38bcce63d005385e225b564c5f6a",
+      "bytes": 29059
+    },
+    {
+      "source": "meshoptimizer/LICENSE.md",
+      "target": "MESHOPT-LICENSE.md",
+      "sourceSha256": "f03037ca7bad1e3eb7f4a63fa6084a8baabd5ba30d3c239a9a7f35705d873e26",
+      "outputSha256": "f03037ca7bad1e3eb7f4a63fa6084a8baabd5ba30d3c239a9a7f35705d873e26",
+      "bytes": 1079
+    }
+  ]
+}

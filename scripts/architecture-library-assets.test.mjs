@@ -44,6 +44,17 @@ test('publication preflights source and destination symlinks before any writes',
   assert.equal(fs.readFileSync(path.join(external, 'private.json'), 'utf8'), 'secret fixture');
 });
 
+test('large capture exception is limited to named models and a finite per-file budget', t => {
+  const { root, source, write, manifest } = fixture(t);
+  const reviewed = 'site-models/assets/st-george-antiochian-orthodox-church.glb';
+  write(reviewed, 'fixture'); fs.truncateSync(path.join(source, reviewed), 5 * 1024 * 1024);
+  manifest([reviewed]); assert.equal(architectureLibraryInputs(root).bytes, 5 * 1024 * 1024);
+  fs.truncateSync(path.join(source, reviewed), 64 * 1024 * 1024 + 1);
+  assert.throws(() => architectureLibraryInputs(root), /bounded/);
+  const unreviewed='site-models/assets/unreviewed.glb'; write(unreviewed,'fixture'); fs.truncateSync(path.join(source,unreviewed),5*1024*1024);
+  manifest([unreviewed]); assert.throws(()=>architectureLibraryInputs(root),/bounded/);
+});
+
 test('removed or unexpected derived files stop publication instead of leaking into the next build', t => {
   const { root, write, manifest } = fixture(t);
   write('retired.json', '{}'); manifest(['index.html', 'retired.json']);

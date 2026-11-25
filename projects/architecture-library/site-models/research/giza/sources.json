@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-25",
+  "sources": [
+    {
+      "id": "giza-github-distribution",
+      "title": "Inside Ancient Egypt: asset credits",
+      "url": "https://github.com/GeorgePhilippou/inside-the-pyramids/blob/e89853b4351de608e908e30004d8c5860a0d83b5/README.md",
+      "publisher": "GeorgePhilippou",
+      "accessed": "2026-11-25",
+      "readingDepth": "3D asset-credit section and public repository file metadata",
+      "decision": "Derivative distribution, attribution, and declared processing; app code not adopted."
+    },
+    {
+      "id": "giza-sketchfab-khufu",
+      "title": "The Great Pyramid of Giza",
+      "url": "https://sketchfab.com/3d-models/the-great-pyramid-of-giza-4a251113722f4d969b6cf2ca5f35c502",
+      "publisher": "ianicolo",
+      "accessed": "2026-11-25",
+      "readingDepth": "Creator public model metadata; public Data API independently read",
+      "decision": "CC BY 4.0 and downloadable=true confirmed; capture description is creator-reported.",
+      "metadataUrl": "https://api.sketchfab.com/v3/models/4a251113722f4d969b6cf2ca5f35c502",
+      "metadataSha256": "baf5969b1d5b934b591be817ce7e0e66dd3aaee9dd0a658e403bc9a220ac569b"
+    },
+    {
+      "id": "giza-sketchfab-khafre",
+      "title": "Plateau de Gizeh",
+      "url": "https://sketchfab.com/3d-models/plateau-de-gizeh-b30a5047bd1e4b28a10e438df2bc1428",
+      "publisher": "pierre391",
+      "accessed": "2026-11-25",
+      "readingDepth": "Creator public model metadata; public Data API independently read",
+      "decision": "CC BY 4.0 and downloadable=true confirmed; capture description is creator-reported.",
+      "metadataUrl": "https://api.sketchfab.com/v3/models/b30a5047bd1e4b28a10e438df2bc1428",
+      "metadataSha256": "95058b7c94cf97ea0279d34260e19c3f568a4b46810a3192fbde5ad0a17d6c30"
+    },
+    {
+      "id": "giza-sketchfab-menkaure",
+      "title": "Pyramid of Menkaure, Giza pyramid complex, Egypt",
+      "url": "https://sketchfab.com/3d-models/pyramid-of-menkaure-giza-pyramid-complex-egypt-b03835b1723c4395a50d0a8c54861c6b",
+      "publisher": "PolarNick239",
+      "accessed": "2026-11-25",
+      "readingDepth": "Creator public model metadata; public Data API independently read",
+      "decision": "CC BY 4.0 and downloadable=true confirmed; capture description is creator-reported.",
+      "metadataUrl": "https://api.sketchfab.com/v3/models/b03835b1723c4395a50d0a8c54861c6b",
+      "metadataSha256": "3feedd2828260aa04e5ca0ba01faf6e0f13910be7002cba95968a60b5c9ff1fb"
+    },
+    {
+      "id": "giza-zenodo-plateau",
+      "title": "Plateau de Gizeh, record 10313356",
+      "url": "https://zenodo.org/records/10313356",
+      "publisher": "3DBigDataSpace / Zenodo; creator pierre391",
+      "accessed": "2026-11-25",
+      "readingDepth": "Record, original-UUID file, byte count and MD5",
+      "decision": "Public Objaverse/Sketchfab derivative mirror. CC BY evidence comes from the matching original creator API, not a blanket Zenodo license."
+    },
+    {
+      "id": "giza-dash-2015",
+      "title": "The Great Pyramid’s Footprint: Results from Our 2015 Survey",
+      "url": "https://irp.cdn-website.com/ef20729f/files/uploaded/AERAGRAM16_2_GDash.pdf",
+      "publisher": "Glen Dash / AERA, AERAGRAM 16-2 (2015), pp. 8–14",
+      "accessed": "2026-11-25",
+      "readingDepth": "Methods and Table 1 (p. 11)",
+      "decision": "Casing baseline estimates and confidence bounds; original corner positions are inferred, not surviving scan landmarks.",
+      "canonicalPublisherUrl": "https://dashfoundation.com/downloads/archaeology/as-published/AERAGRAM16_2_GDash.pdf"
+    },
+    {
+      "id": "giza-dash-georeference",
+      "title": "Surveys at Giza on Google Earth",
+      "url": "https://www.dashfoundation.org/Surveys-at-Giza.htm",
+      "publisher": "Glen Dash Foundation / AERA",
+      "accessed": "2026-11-25",
+      "readingDepth": "Indexed publisher text; direct fetch returned 502",
+      "decision": "Public corner/control-point dataset is described; model reuse license not established, so no KMZ acquired."
+    },
+    {
+      "id": "giza-aera-baselines",
+      "title": "GPMP Full Circle: survey discussion",
+      "url": "https://aeraweb.org/wp-content/uploads/2022/08/aeragram13_1.pdf",
+      "publisher": "AERA, AERAGRAM 13-1 (2012)",
+      "accessed": "2026-11-25",
+      "readingDepth": "Indexed survey excerpt only; full PDF exceeded browser fetch limit",
+      "decision": "Khafre baseline is interpreted from surviving stone settings; Menkaure baseline was unfinished."
+    },
+    {
+      "id": "giza-aera-survey",
+      "title": "Archaeological Survey",
+      "url": "https://aeraweb.org/projects/gpmp/",
+      "publisher": "Ancient Egypt Research Associates",
+      "accessed": "2026-11-25",
+      "readingDepth": "Project methods and bibliography",
+      "decision": "Documents GPMP control and later laser/photogrammetric work; no open raw full-pyramid survey download established."
+    },
+    {
+      "id": "giza-aera-2024",
+      "title": "Annual Report 2023–2024",
+      "url": "https://aeraweb.org/wp-content/uploads/2025/03/AERA_2024.pdf",
+      "publisher": "Ancient Egypt Research Associates",
+      "accessed": "2026-11-25",
+      "readingDepth": "Presidential report and project overview",
+      "decision": "Published laser-scanning work concerns the Great Pyramid southern floor; do not imply a licensed complete exterior/interior scan was acquired."
+    },
+    {
+      "id": "giza-harvard-project",
+      "title": "Giza Project",
+      "url": "https://digitalhumanities.fas.harvard.edu/projects/giza-project/",
+      "publisher": "Harvard University",
+      "accessed": "2026-11-25",
+      "readingDepth": "Project description",
+      "decision": "Scholarly reconstruction and documentation; interactive access does not establish asset redistribution rights."
+    },
+    {
+      "id": "giza-mota-khufu",
+      "title": "The Great Pyramid",
+      "url": "https://egymonuments.gov.eg/monuments/the-great-pyramid/",
+      "publisher": "Egypt Ministry of Tourism and Antiquities",
+      "accessed": "2026-11-25",
+      "readingDepth": "Monument description",
+      "decision": "Original-height and material overview, not a survey-error specification."
+    },
+    {
+      "id": "giza-mota-khafre",
+      "title": "Pyramid Complex of Khafre (Khefren)",
+      "url": "https://egymonuments.gov.eg/monuments/pyramid-complex-of-khafre-khefren/",
+      "publisher": "Egypt Ministry of Tourism and Antiquities",
+      "accessed": "2026-11-25",
+      "readingDepth": "Monument description",
+      "decision": "Nominal height, surviving summit casing, and monument identity."
+    },
+    {
+      "id": "giza-mota-menkaure",
+      "title": "Pyramid Complex of Menkaure",
+      "url": "https://egymonuments.gov.eg/monuments/pyramid-complex-of-menkaure/",
+      "publisher": "Egypt Ministry of Tourism and Antiquities",
+      "accessed": "2026-11-25",
+      "readingDepth": "Monument description",
+      "decision": "Original-height overview and unfinished lower granite casing."
+    },
+    {
+      "id": "giza-scidep-2025",
+      "title": "The ScIDEP muon radiography project at the Egyptian Pyramid of Khafre",
+      "url": "https://doi.org/10.1063/5.0273135",
+      "publisher": "ScIDEP Collaboration / Journal of Applied Physics 138, 044901 (2025)",
+      "accessed": "2026-11-25",
+      "readingDepth": "Abstract and introductory dimensional context",
+      "decision": "Reported present-height/base references; not a released surface survey dataset or independent verification of these meshes."
+    },
+    {
+      "id": "giza-cc-by",
+      "title": "CC BY 4.0 license",
+      "url": "https://creativecommons.org/licenses/by/4.0/",
+      "publisher": "Creative Commons",
+      "accessed": "2026-11-25",
+      "readingDepth": "License URL supplied by original creator APIs",
+      "decision": "Retain creator attribution, source, license, and adaptation notice; no endorsement implied."
+    }
+  ]
+}

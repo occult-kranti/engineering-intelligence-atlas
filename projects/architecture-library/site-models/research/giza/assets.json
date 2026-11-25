@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-11-25",
+  "acquisitionDirectoryName": "giza-acquisition-2026-11-25",
+  "rawAssetsCommitted": false,
+  "downloadedAssetBytes": 45128724,
+  "downloadBudgetBytes": 500000000,
+  "externalSpendUsd": 0,
+  "accuracyAcceptance": "not-met",
+  "assets": [
+    {
+      "id": "giza-khufu-visual-derivative",
+      "subject": "Khufu pyramid",
+      "localAcquisitionFile": "khufu.glb",
+      "downloadUrl": "https://raw.githubusercontent.com/GeorgePhilippou/inside-the-pyramids/e89853b4351de608e908e30004d8c5860a0d83b5/models/khufu.glb",
+      "sourceUrl": "https://sketchfab.com/3d-models/the-great-pyramid-of-giza-4a251113722f4d969b6cf2ca5f35c502",
+      "sourceMetadataUrl": "https://api.sketchfab.com/v3/models/4a251113722f4d969b6cf2ca5f35c502",
+      "sourcePublishedAt": "2019-12-17T19:48:11.648254",
+      "captureDate": null,
+      "creator": "ianicolo",
+      "distributor": "GeorgePhilippou",
+      "distributionRevision": "e89853b4351de608e908e30004d8c5860a0d83b5",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseVerifiedAt": "2026-11-25",
+      "licenseEvidenceSourceId": "giza-sketchfab-khufu",
+      "classification": "uncontrolled-photogrammetry-visual-reference",
+      "captureMethodReported": "Photogrammetry from YouTube video; footage provenance not supplied",
+      "sourceCaptureRightsIndependentlyVerified": false,
+      "processingReported": [
+        "simplification",
+        "texture-resize",
+        "planar-levelling",
+        "rescaling"
+      ],
+      "scaleStatus": "repository-author rescaling; not independently survey-validated",
+      "crs": null,
+      "groundControlPoints": null,
+      "independentCheckpoints": null,
+      "registrationRmseMetres": null,
+      "surfaceAccuracyMetres": null,
+      "interiorsVerified": false,
+      "completenessVerified": false,
+      "bytes": 1786680,
+      "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1",
+      "publishedMd5Verified": null,
+      "geometry": {
+        "format": "GLB 2.0",
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 117818,
+        "triangles": 180160,
+        "requiredExtensions": [
+          "EXT_meshopt_compression",
+          "EXT_texture_webp",
+          "KHR_mesh_quantization"
+        ],
+        "externalResourceUris": []
+      },
+      "validation": "GLB header, JSON, declared primitive counts and hash checked; meshopt payload not decoded in this research pass",
+      "sourceIds": [
+        "giza-sketchfab-khufu",
+        "giza-github-distribution"
+      ],
+      "permittedClaim": "Reusable visual photogrammetry reference with stated provenance and gaps",
+      "blockedClaims": [
+        "survey-certified geometry",
+        "exact scale",
+        "complete interiors",
+        "complete site coverage",
+        "extreme stone-by-stone detail"
+      ]
+    },
+    {
+      "id": "giza-khafre-visual-derivative",
+      "subject": "Khafre pyramid",
+      "localAcquisitionFile": "khafre.glb",
+      "downloadUrl": "https://raw.githubusercontent.com/GeorgePhilippou/inside-the-pyramids/e89853b4351de608e908e30004d8c5860a0d83b5/models/khafre.glb",
+      "sourceUrl": "https://sketchfab.com/3d-models/plateau-de-gizeh-b30a5047bd1e4b28a10e438df2bc1428",
+      "sourceMetadataUrl": "https://api.sketchfab.com/v3/models/b30a5047bd1e4b28a10e438df2bc1428",
+      "sourcePublishedAt": "2021-04-07T16:43:12.507252",
+      "captureDate": null,
+      "creator": "pierre391",
+      "distributor": "GeorgePhilippou",
+      "distributionRevision": "e89853b4351de608e908e30004d8c5860a0d83b5",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseVerifiedAt": "2026-11-25",
+      "licenseEvidenceSourceId": "giza-sketchfab-khafre",
+      "classification": "uncontrolled-photogrammetry-visual-reference",
+      "captureMethodReported": "Photogrammetry from YouTube video; footage provenance not supplied",
+      "sourceCaptureRightsIndependentlyVerified": false,
+      "processingReported": [
+        "simplification",
+        "texture-resize",
+        "planar-levelling",
+        "rescaling"
+      ],
+      "scaleStatus": "repository-author rescaling; not independently survey-validated",
+      "crs": null,
+      "groundControlPoints": null,
+      "independentCheckpoints": null,
+      "registrationRmseMetres": null,
+      "surfaceAccuracyMetres": null,
+      "interiorsVerified": false,
+      "completenessVerified": false,
+      "bytes": 1187380,
+      "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+      "publishedMd5Verified": null,
+      "geometry": {
+        "format": "GLB 2.0",
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 69826,
+        "triangles": 96181,
+        "requiredExtensions": [
+          "EXT_meshopt_compression",
+          "EXT_texture_webp",
+          "KHR_mesh_quantization"
+        ],
+        "externalResourceUris": []
+      },
+      "validation": "GLB header, JSON, declared primitive counts and hash checked; meshopt payload not decoded in this research pass",
+      "sourceIds": [
+        "giza-sketchfab-khafre",
+        "giza-github-distribution"
+      ],
+      "permittedClaim": "Reusable visual photogrammetry reference with stated provenance and gaps",
+      "blockedClaims": [
+        "survey-certified geometry",
+        "exact scale",
+        "complete interiors",
+        "complete site coverage",
+        "extreme stone-by-stone detail"
+      ]
+    },
+    {
+      "id": "giza-menkaure-visual-derivative",
+      "subject": "Menkaure pyramid",
+      "localAcquisitionFile": "menkaure.glb",
+      "downloadUrl": "https://raw.githubusercontent.com/GeorgePhilippou/inside-the-pyramids/e89853b4351de608e908e30004d8c5860a0d83b5/models/menkaure.glb",
+      "sourceUrl": "https://sketchfab.com/3d-models/pyramid-of-menkaure-giza-pyramid-complex-egypt-b03835b1723c4395a50d0a8c54861c6b",
+      "sourceMetadataUrl": "https://api.sketchfab.com/v3/models/b03835b1723c4395a50d0a8c54861c6b",
+      "sourcePublishedAt": "2023-09-11T18:19:17.862861",
+      "captureDate": null,
+      "creator": "PolarNick239",
+      "distributor": "GeorgePhilippou",
+      "distributionRevision": "e89853b4351de608e908e30004d8c5860a0d83b5",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseVerifiedAt": "2026-11-25",
+      "licenseEvidenceSourceId": "giza-sketchfab-menkaure",
+      "classification": "uncontrolled-photogrammetry-visual-reference",
+      "captureMethodReported": "Realme XT 16 MP perimeter photographs",
+      "sourceCaptureRightsIndependentlyVerified": false,
+      "processingReported": [
+        "simplification",
+        "texture-resize",
+        "planar-levelling",
+        "rescaling"
+      ],
+      "scaleStatus": "repository-author rescaling; not independently survey-validated",
+      "crs": null,
+      "groundControlPoints": null,
+      "independentCheckpoints": null,
+      "registrationRmseMetres": null,
+      "surfaceAccuracyMetres": null,
+      "interiorsVerified": false,
+      "completenessVerified": false,
+      "bytes": 3075716,
+      "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70",
+      "publishedMd5Verified": null,
+      "geometry": {
+        "format": "GLB 2.0",
+        "meshes": 1,
+        "primitives": 1,
+        "vertices": 125284,
+        "triangles": 146089,
+        "requiredExtensions": [
+          "EXT_meshopt_compression",
+          "EXT_texture_webp",
+          "KHR_mesh_quantization"
+        ],
+        "externalResourceUris": []
+      },
+      "validation": "GLB header, JSON, declared primitive counts and hash checked; meshopt payload not decoded in this research pass",
+      "sourceIds": [
+        "giza-sketchfab-menkaure",
+        "giza-github-distribution"
+      ],
+      "permittedClaim": "Reusable visual photogrammetry reference with stated provenance and gaps",
+      "blockedClaims": [
+        "survey-certified geometry",
+        "exact scale",
+        "complete interiors",
+        "complete site coverage",
+        "extreme stone-by-stone detail"
+      ]
+    },
+    {
+      "id": "giza-plateau-pierre391",
+      "subject": "Giza plateau (partial coverage)",
+      "localAcquisitionFile": "giza-plateau-pierre391-original.glb",
+      "downloadUrl": "https://zenodo.org/records/10313356/files/b30a5047bd1e4b28a10e438df2bc1428.glb?download=1",
+      "sourceUrl": "https://sketchfab.com/3d-models/plateau-de-gizeh-b30a5047bd1e4b28a10e438df2bc1428",
+      "sourceMetadataUrl": "https://api.sketchfab.com/v3/models/b30a5047bd1e4b28a10e438df2bc1428",
+      "sourcePublishedAt": "2021-04-07T16:43:12.507252",
+      "captureDate": null,
+      "creator": "pierre391",
+      "distributor": "Zenodo / Objaverse",
+      "distributionRevision": "10313356",
+      "license": "CC-BY-4.0",
+      "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+      "licenseVerifiedAt": "2026-11-25",
+      "licenseEvidenceSourceId": "giza-sketchfab-khafre",
+      "classification": "uncontrolled-photogrammetry-visual-reference",
+      "captureMethodReported": "Photogrammetry from YouTube video; footage provenance not supplied",
+      "sourceCaptureRightsIndependentlyVerified": false,
+      "processingReported": [
+        "Objaverse glTF conversion/mirror"
+      ],
+      "scaleStatus": "unverified source units",
+      "crs": null,
+      "groundControlPoints": null,
+      "independentCheckpoints": null,
+      "registrationRmseMetres": null,
+      "surfaceAccuracyMetres": null,
+      "interiorsVerified": false,
+      "completenessVerified": false,
+      "bytes": 39078948,
+      "sha256": "7ba058be251b6c3e24c476e1386fd4defb21b626c4093e981a38723dd4e73c1e",
+      "publishedMd5Verified": "49b48465f20b6becc5e5895ff531bafe",
+      "geometry": {
+        "format": "GLB 2.0",
+        "meshes": 12,
+        "primitives": 12,
+        "vertices": 763436,
+        "triangles": 1163285,
+        "requiredExtensions": [],
+        "externalResourceUris": []
+      },
+      "validation": "Actual Blender import and CPU preview passed",
+      "sourceIds": [
+        "giza-sketchfab-khafre",
+        "giza-zenodo-plateau"
+      ],
+      "permittedClaim": "Reusable visual photogrammetry reference with stated provenance and gaps",
+      "blockedClaims": [
+        "survey-certified geometry",
+        "exact scale",
+        "complete interiors",
+        "complete site coverage",
+        "extreme stone-by-stone detail"
+      ],
+      "observedTextureResolution": [
+        1024,
+        1024
+      ],
+      "observedCoverage": "Two main pyramids visible; peripheral terrain clipped and holed; apparent Menkaure coverage cut at the boundary. Full feature mapping not performed.",
+      "filenameCaution": "The local filename contains original, but this is a public Objaverse-converted GLB, not original photographs, raw survey observations, or a field master."
+    }
+  ]
+}

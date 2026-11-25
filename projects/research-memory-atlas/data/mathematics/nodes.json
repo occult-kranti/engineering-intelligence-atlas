@@ -1,0 +1,2646 @@
+[
+  {
+    "id": "m-logic",
+    "label": "Propositions and quantifiers",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A quantifier fixes the universe and the order in which choices may depend on one another.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Foundations",
+      "Logic",
+      "Statements"
+    ],
+    "source_ids": [
+      "ms-lean"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-sets",
+    "label": "Sets, relations and functions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Functions require a domain, codomain and unambiguous output; relations need not be functions.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Foundations",
+      "Logic",
+      "Objects"
+    ],
+    "source_ids": [
+      "ms-lean"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-induction",
+    "label": "Induction and recursion",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A base case and a justified successor step establish an infinite family without checking every case.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Foundations",
+      "Logic",
+      "Proof methods"
+    ],
+    "source_ids": [
+      "ms-lean"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-proof",
+    "label": "Proof obligations and counterexamples",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A theorem combines hypotheses, conclusion and a derivation; a single admissible counterexample defeats a universal claim.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Foundations",
+      "Logic",
+      "Verification"
+    ],
+    "source_ids": [
+      "ms-lean"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-types",
+    "label": "Dependent types and proof terms",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Propositions can be represented as types and proofs as terms checked by a small kernel.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Foundations",
+      "Logic",
+      "Formal methods"
+    ],
+    "source_ids": [
+      "ms-lean"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-axioms",
+    "label": "Axiom and dependency audit",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A proved proposition remains conditional on its actual axioms and dependency statements.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Foundations",
+      "Logic",
+      "Formal methods",
+      "Trust"
+    ],
+    "source_ids": [
+      "ms-lean"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-equations",
+    "label": "Equations and reversible transformations",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Division and squaring require domain checks to avoid dropping or adding solutions.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Elementary",
+      "Equivalence"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-polynomials",
+    "label": "Polynomials and factorization",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Polynomial structure permits identities, roots and exact arithmetic independent of floating-point approximations.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Elementary",
+      "Finite expressions"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-complex",
+    "label": "Complex numbers and phase",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A complex number combines two real coordinates; multiplication combines scale and angle.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Elementary",
+      "Number systems"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-logarithms",
+    "label": "Exponentials and logarithms",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Logarithms turn multiplication into addition only on the selected domain and branch.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Elementary",
+      "Transcendental functions"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-dimensional",
+    "label": "Dimensions and nondimensionalization",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Every additive term must share dimensions; a nondimensional variable is a ratio to a declared scale.",
+    "level": 1,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Elementary",
+      "Physical interpretation"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-groups",
+    "label": "Groups and symmetry",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A group records reversible composition, identity and inverses without assuming commutativity.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Abstract",
+      "Structures"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-rings",
+    "label": "Rings, ideals and quotients",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Rings combine addition and multiplication; ideals specify which expressions become equal in a quotient.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Abstract",
+      "Structures"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-fields",
+    "label": "Fields and extensions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A field permits division by nonzero elements; extensions add algebraic or transcendental elements.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Abstract",
+      "Structures"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-galois",
+    "label": "Galois correspondence",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "For finite Galois extensions, subfields and symmetry subgroups correspond in reverse inclusion.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Abstract",
+      "Field theory",
+      "Automorphisms"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-representations",
+    "label": "Linear representations",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A representation turns group composition into matrix multiplication.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Abstract",
+      "Symmetry",
+      "Actions"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-lie",
+    "label": "Lie groups and Lie algebras",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Infinitesimal generators organize local continuous symmetries and gauge theory.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Abstract",
+      "Continuous symmetry"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-commutative",
+    "label": "Commutative algebra",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Localization and prime ideals connect polynomial equations with geometric spaces.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Abstract",
+      "Ideals",
+      "Localization"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-vectors",
+    "label": "Vector spaces and linear maps",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Linearity means preserving addition and scalar multiplication; coordinates are a choice, not the object.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Spaces"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-basis",
+    "label": "Basis and dimension",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A basis gives unique finite coordinate expansions; dimension counts independent directions.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Coordinates"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-rank",
+    "label": "Rank and nullspace",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "The nullspace identifies invisible directions and prevents unjustified inversion.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Solvability"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-inner",
+    "label": "Inner products and norms",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "An inner product defines lengths and angles, with a conjugate transpose over complex scalars.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Geometry"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-determinant",
+    "label": "Determinants and orientation",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "The determinant measures signed volume scaling of a square linear map.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Volume"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-spectral",
+    "label": "Eigenvalues and spectral theorem",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Self-adjoint operators have orthogonal modes; arbitrary matrices need not diagonalize.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Operators"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-svd",
+    "label": "Singular value decomposition",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "SVD separates input directions, gains and output directions for rectangular matrices.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Factorization"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-pseudoinverse",
+    "label": "Pseudoinverse and identifiable subspaces",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "The pseudoinverse chooses a least-squares solution; it cannot recover an unobserved nullspace.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Inverse problems"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-leastsquares",
+    "label": "Least squares and projection",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Projection minimizes squared error under an explicitly chosen norm.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Approximation"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-pca",
+    "label": "PCA and low-rank compression",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "PCA captures variance directions, which need not be semantic or causal directions.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Data geometry"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-tensor",
+    "label": "Tensors and multilinear maps",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Tensor rank, matrix rank and the number of stored entries describe different properties.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Multilinear algebra"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-conditioning",
+    "label": "Condition numbers",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A stable algorithm cannot remove poor conditioning inherent in the mathematical problem.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Algebra",
+      "Linear",
+      "Numerical sensitivity"
+    ],
+    "source_ids": [
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-limits",
+    "label": "Limits and continuity",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A limit describes controlled approach; sampled agreement does not establish continuity.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Local behavior"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-derivative",
+    "label": "Derivatives and linearization",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "The derivative is the local best linear approximation where it exists.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Differential calculus"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-taylor",
+    "label": "Taylor approximation and remainder",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A polynomial approximation becomes informative only with a bound on its remainder.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Approximation"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-integral",
+    "label": "Integration and accumulation",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Integration accumulates quantities under a declared measure, domain and convergence condition.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Integral calculus"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-chain",
+    "label": "Chain rule and automatic differentiation",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Derivative information propagates through function composition; branch behavior matters.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Composition"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-jacobian",
+    "label": "Jacobians and changes of variables",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "The determinant of a coordinate derivative converts local volume elements.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Multivariable calculus"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-gradient",
+    "label": "Gradient, divergence and curl",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "These operators depend on geometry and encode local change, flux and circulation.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Vector calculus"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-divergence",
+    "label": "Divergence theorem",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Boundary flux equals integrated interior divergence under regularity and orientation conditions.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Integral identities",
+      "Flux"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-stokes",
+    "label": "Stokes theorem",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "The differential-form theorem unifies several boundary-to-interior identities.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Integral identities",
+      "Circulation"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-variation",
+    "label": "Calculus of variations",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Stationarity of a functional produces equations plus boundary conditions, not automatically a minimum.",
+    "level": 2,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Calculus",
+      "Function-space optimization"
+    ],
+    "source_ids": [
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-measure",
+    "label": "Measure and integration",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A measure assigns consistent sizes; null sets and almost-everywhere statements differ from pointwise claims.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "Measure theory"
+    ],
+    "source_ids": [
+      "ms-measure"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-functional",
+    "label": "Banach and Hilbert spaces",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Completeness permits limits of approximations; Hilbert structure also supplies orthogonal projections.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "Functional analysis"
+    ],
+    "source_ids": [
+      "ms-category",
+      "ms-dlmf",
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-operators",
+    "label": "Bounded and unbounded operators",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "An unbounded operator is specified by its domain as well as its algebraic expression.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "Functional analysis",
+      "Domains"
+    ],
+    "source_ids": [
+      "ms-category",
+      "ms-dlmf",
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-complexanalysis",
+    "label": "Holomorphic functions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Complex differentiability imposes stronger constraints than real differentiability.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "Complex analysis"
+    ],
+    "source_ids": [
+      "ms-siu-complex"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-fourier",
+    "label": "Fourier transforms and distributions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Global frequency coordinates require a convention and a function or distribution class.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "Harmonic analysis"
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-sobolev",
+    "label": "Sobolev spaces and weak derivatives",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Weak derivatives extend differential equations to functions without classical smoothness.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "PDE",
+      "Regularity"
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-pde",
+    "label": "Boundary and initial value problems",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A differential equation needs data, solution class and a uniqueness/stability question.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "PDE",
+      "Well-posedness"
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-heat",
+    "label": "Heat flow and smoothing",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Diffusion damps high-frequency modes, while backward reconstruction can be ill-conditioned.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "PDE",
+      "Parabolic"
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-wave",
+    "label": "Wave propagation",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Wave equations carry finite-speed propagation under appropriate local coefficients.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "PDE",
+      "Hyperbolic"
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-weak",
+    "label": "Weak solutions and variational formulations",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Testing against smooth functions changes the solution class and requires explicit energy and uniqueness conditions.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "PDE",
+      "Solution concepts"
+    ],
+    "source_ids": [
+      "ms-hunter-pde"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-distribution",
+    "label": "Distributions and Green functions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A delta is a linear functional on test functions, not an ordinary infinitely high function.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Analysis",
+      "Advanced",
+      "Generalized functions"
+    ],
+    "source_ids": [
+      "ms-category",
+      "ms-dlmf",
+      "ms-mit-calc"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-euclidean",
+    "label": "Euclidean geometry and metric",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Metric information must be distinguished from a coordinate drawing.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Geometry",
+      "Differential",
+      "Distance"
+    ],
+    "source_ids": [
+      "ms-mit-calc",
+      "ms-langlands1"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-manifold",
+    "label": "Manifolds and charts",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A manifold is locally Euclidean; one chart rarely describes its entire topology.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Geometry",
+      "Differential",
+      "Local models"
+    ],
+    "source_ids": [
+      "ms-tong-geometry"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-tangent",
+    "label": "Tangent spaces and differential forms",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Tangents represent velocities; cotangents act on them to give scalar measurements.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Geometry",
+      "Differential",
+      "Local linear structures"
+    ],
+    "source_ids": [
+      "ms-tong-geometry"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-metric",
+    "label": "Riemannian and Lorentzian metrics",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A metric measures lengths or intervals and controls index raising and lowering.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Geometry",
+      "Differential",
+      "Geometry",
+      "Measurement"
+    ],
+    "source_ids": [
+      "ms-tong-geometry"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-connection",
+    "label": "Connections and covariant derivatives",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A connection compares vectors at nearby points; coordinate derivatives alone do not transform correctly.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Geometry",
+      "Differential",
+      "Geometry",
+      "Transport"
+    ],
+    "source_ids": [
+      "ms-tong-geometry"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-curvature",
+    "label": "Curvature and holonomy",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Curvature measures failure of local transport around infinitesimal loops to commute.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Geometry",
+      "Differential",
+      "Geometry",
+      "Transport",
+      "Obstruction"
+    ],
+    "source_ids": [
+      "ms-tong-geometry"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-laplacebeltrami",
+    "label": "Laplace–Beltrami operator",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "The Laplacian changes with the metric and volume element.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Geometry",
+      "Differential",
+      "Geometric analysis"
+    ],
+    "source_ids": [
+      "ms-mit-calc",
+      "ms-langlands1"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-geodesic",
+    "label": "Geodesics and variational paths",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A geodesic is locally stationary for geometric length or energy and need not be globally shortest.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Geometry",
+      "Differential",
+      "Geometric analysis",
+      "Trajectories"
+    ],
+    "source_ids": [
+      "ms-mit-calc",
+      "ms-langlands1"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-topology",
+    "label": "Topological spaces and continuity",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Topology records neighborhoods and continuity without requiring lengths.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Topology",
+      "Algebraic",
+      "Structures"
+    ],
+    "source_ids": [
+      "ms-hatcher"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-homotopy",
+    "label": "Homotopy and fundamental group",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Continuous loop deformation is stronger than mere connectivity in a drawing.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Topology",
+      "Algebraic",
+      "Deformation",
+      "Loops"
+    ],
+    "source_ids": [
+      "ms-hatcher"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-simplicial",
+    "label": "Simplicial and cell complexes",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Higher-dimensional cells fill some graph cycles, changing which loops represent holes.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Topology",
+      "Algebraic",
+      "Combinatorial models"
+    ],
+    "source_ids": [
+      "ms-hatcher"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-homology",
+    "label": "Homology and boundary maps",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Cycles modulo boundaries distinguish persistent holes from locally filled cycles.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Topology",
+      "Algebraic",
+      "Algebraic invariants"
+    ],
+    "source_ids": [
+      "ms-hatcher"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-cohomology",
+    "label": "Cohomology and dual observables",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Cohomology evaluates and combines global information carried by local data.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Topology",
+      "Algebraic",
+      "Algebraic invariants"
+    ],
+    "source_ids": [
+      "ms-hatcher"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-persistent",
+    "label": "Persistent homology",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Persistence tracks features across a scale parameter, not proof of their physical meaning.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Topology",
+      "Algebraic",
+      "Data analysis",
+      "Filtrations"
+    ],
+    "source_ids": [
+      "ms-hatcher"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-hodge",
+    "label": "Hodge theory",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "On suitable manifolds harmonic representatives connect PDEs with topological classes.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Topology",
+      "Algebraic",
+      "Geometry",
+      "Analysis",
+      "Topology"
+    ],
+    "source_ids": [
+      "ms-tong-geometry"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-graph",
+    "label": "Graphs, multigraphs and typed edges",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Edge direction and type are part of the model; spatial proximity is not an edge.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Representation"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-adjacency",
+    "label": "Adjacency and walk counts",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Matrix powers count walks with multiplicity, including repeats.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Matrices"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-incidence",
+    "label": "Incidence matrices and conservation",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A signed incidence matrix expresses how edge flows enter and leave vertices.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Matrices",
+      "Orientation"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-laplacian",
+    "label": "Graph Laplacians",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A Laplacian is a positive semidefinite quadratic energy on an undirected weighted graph.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Spectral graphs",
+      "Energy"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-normalized",
+    "label": "Normalized graph Laplacian",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Degree normalization controls the geometry used to compare cuts and random-walk mixing.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Spectral graphs",
+      "Degree weighting"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-graphdiffusion",
+    "label": "Graph diffusion and heat kernels",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Diffusion smooths a signal across encoded edges and loses high-frequency distinctions.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Spectral graphs",
+      "Dynamics"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-resistance",
+    "label": "Effective resistance",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Resistance measures redundancy of paths under conductance assumptions.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Electrical networks",
+      "Geometry"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-cheeger",
+    "label": "Conductance and spectral gaps",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A small bottleneck limits mixing and connects combinatorial cuts to eigenvalues.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Cuts",
+      "Mixing"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-shortest",
+    "label": "Shortest paths and dynamic programming",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Shortest cost depends on edge weights and constraints; it is not strongest evidence.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Optimization",
+      "Paths"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-dag",
+    "label": "DAGs and topological ordering",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A DAG permits prerequisite order; detected cycles need interpretation, not silent truncation.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Dependencies",
+      "Scheduling"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-scc",
+    "label": "Strongly connected components",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Collapsing directed feedback components produces a DAG without pretending the loops disappeared.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Directed graphs",
+      "Feedback"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-combinatorics",
+    "label": "Counting, extremal sets and Ramsey theory",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Existence, constructive algorithms and optimal bounds are distinct questions.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Discrete mathematics",
+      "Graphs",
+      "Structures",
+      "Bounds"
+    ],
+    "source_ids": [
+      "ms-spectral"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-probability",
+    "label": "Probability spaces and events",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Probabilities are conditional on a chosen experiment and model, not inherent truth scores.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Probability",
+      "Inference",
+      "Models"
+    ],
+    "source_ids": [
+      "ms-probability"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-randomvariable",
+    "label": "Random variables and distributions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A random variable is a measurable function, not a sample or a probability density itself.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Probability",
+      "Inference",
+      "Models",
+      "Observables"
+    ],
+    "source_ids": [
+      "ms-probability"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-bayes",
+    "label": "Bayesian conditioning",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Updating needs likelihoods and a denominator that can be nonzero; repeated evidence may be dependent.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Probability",
+      "Inference",
+      "Inference",
+      "Updates"
+    ],
+    "source_ids": [
+      "ms-probability"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-covariance",
+    "label": "Covariance and correlation",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Zero covariance alone does not imply independence.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Probability",
+      "Inference",
+      "Dependence"
+    ],
+    "source_ids": [
+      "ms-probability"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-gaussian",
+    "label": "Gaussian models",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A covariance matrix must be positive semidefinite; a density needs nonsingular covariance.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Probability",
+      "Inference",
+      "Distributions",
+      "Multivariate"
+    ],
+    "source_ids": [
+      "ms-probability"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-concentration",
+    "label": "Concentration inequalities",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Bounds depend on independence or other assumptions and cannot be reused after arbitrary selection.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Probability",
+      "Inference",
+      "Finite-sample control"
+    ],
+    "source_ids": [
+      "ms-hoeffding"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-markov",
+    "label": "Markov chains and stationarity",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "The Markov property discards history only after choosing a sufficient state.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Probability",
+      "Inference",
+      "Stochastic processes"
+    ],
+    "source_ids": [
+      "ms-probability"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-montecarlo",
+    "label": "Monte Carlo and sampling error",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Variance and dependence determine effective precision; more repeated samples need not mean more independent information.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Probability",
+      "Inference",
+      "Computation"
+    ],
+    "source_ids": [
+      "ms-probability"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-causal",
+    "label": "Causal models and interventions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Association graphs do not establish intervention effects without identification assumptions.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Probability",
+      "Inference",
+      "Inference",
+      "Identification"
+    ],
+    "source_ids": [
+      "ms-probability"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-entropy",
+    "label": "Shannon entropy",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Entropy quantifies a distribution's uncertainty in specified log units.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Information theory",
+      "Statistical learning",
+      "Uncertainty",
+      "Encoding"
+    ],
+    "source_ids": [
+      "ms-information"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-kl",
+    "label": "Relative entropy and information gain",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "KL is directional and can be infinite when support is missing.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Information theory",
+      "Statistical learning",
+      "Divergence"
+    ],
+    "source_ids": [
+      "ms-information"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-mutual",
+    "label": "Mutual information",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Information shared statistically is not the same as a causal mechanism.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Information theory",
+      "Statistical learning",
+      "Dependence",
+      "Compression"
+    ],
+    "source_ids": [
+      "ms-information"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-regularization",
+    "label": "Regularization and inverse problems",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A penalty stabilizes solutions by introducing a modeling preference.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Information theory",
+      "Statistical learning",
+      "Estimation",
+      "Bias–variance"
+    ],
+    "source_ids": [
+      "ms-boyd",
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-generalization",
+    "label": "Generalization and evaluation",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Performance must be measured on the intended distribution with contamination controls.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Information theory",
+      "Statistical learning",
+      "Learning",
+      "Validation"
+    ],
+    "source_ids": [
+      "ms-boyd",
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-embedding",
+    "label": "Embeddings and metric learning",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A learned vector geometry is an approximation tied to model, objective and training data.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Information theory",
+      "Statistical learning",
+      "Representation",
+      "Geometry"
+    ],
+    "source_ids": [
+      "ms-boyd",
+      "ms-mit-linear"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-floating",
+    "label": "Floating-point arithmetic",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Finite precision makes operation order important and can destroy naive cancellation.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Error",
+      "Rounding"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-rootfinding",
+    "label": "Root finding and Newton iteration",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Newton is locally powerful but can diverge or converge to an unintended root.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Nonlinear equations"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-optimization",
+    "label": "Convex and nonconvex optimization",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "The feasible domain and curvature determine whether a stationary point is globally optimal.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Objectives"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-gradientdescent",
+    "label": "Gradient descent and step sizes",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Step size and smoothness control descent; a large learning rate can cause oscillation.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Optimization",
+      "First-order methods"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-duality",
+    "label": "Lagrange duality and KKT conditions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Dual variables can certify bounds, with constraint qualifications needed for equality of optima.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Optimization",
+      "Certificates"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-cg",
+    "label": "Conjugate gradients and preconditioning",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "CG exploits SPD structure; preconditioning changes the geometry of convergence.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Linear solvers"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-finitedifference",
+    "label": "Finite differences",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Consistency must be paired with stability and boundary treatment.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Discretization",
+      "Grid methods"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-fem",
+    "label": "Finite elements and weak forms",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Basis functions approximate a variational solution while respecting boundary constraints.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Discretization",
+      "Variational methods"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-quadrature",
+    "label": "Numerical quadrature",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Smoothness and sampling placement determine error; highly oscillatory integrands need specialized treatment.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Integration",
+      "Error estimates"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-fixedpoint",
+    "label": "Contractions and fixed points",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A contraction supplies existence, uniqueness and a quantitative stopping certificate.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Iteration",
+      "Convergence"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-complexity",
+    "label": "Computational complexity and reductions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A theorem about Turing machines, word RAM or arithmetic circuits must retain that model.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Asymptotics",
+      "Models"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-linearprogram",
+    "label": "Linear programming",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "LP optimality and algorithmic complexity are separate properties.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Numerical mathematics",
+      "Algorithms",
+      "Optimization",
+      "Polyhedra"
+    ],
+    "source_ids": [
+      "ms-mit-linear",
+      "ms-boyd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-primes",
+    "label": "Primes and unique factorization",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Prime factorization translates multiplication into exponents, while computation can remain hard.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Number theory",
+      "Arithmetic geometry",
+      "Integers"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-dlmf",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-zeta",
+    "label": "Zeta and L-functions",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Analytic continuation and zero locations connect complex analysis with arithmetic.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Number theory",
+      "Arithmetic geometry",
+      "Analytic number theory"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-dlmf",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-elliptic",
+    "label": "Elliptic curves",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A nonsingular genus-one curve with a chosen point admits a geometric group law.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Number theory",
+      "Arithmetic geometry",
+      "Algebraic curves",
+      "Group law"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-dlmf",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-modular",
+    "label": "Modular and automorphic forms",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Automorphy constrains analytic functions under arithmetic group actions.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Number theory",
+      "Arithmetic geometry",
+      "Symmetry",
+      "Analysis"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-dlmf",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-schemes",
+    "label": "Schemes and sheaves",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Local rings and gluing preserve algebraic structure that point sets alone lose.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Number theory",
+      "Arithmetic geometry",
+      "Algebraic geometry",
+      "Local-to-global"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-dlmf",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-langlands",
+    "label": "Langlands correspondences",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Different Langlands programs require different precise statements and are not interchangeable.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Number theory",
+      "Arithmetic geometry",
+      "Representation theory",
+      "Arithmetic"
+    ],
+    "source_ids": [
+      "ms-milne",
+      "ms-dlmf",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-category",
+    "label": "Categories and composition",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Objects, morphisms and their lawful composition give a language for comparisons across subjects.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Structural mathematics",
+      "Categories",
+      "Structures"
+    ],
+    "source_ids": [
+      "ms-category",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-functor",
+    "label": "Functors and structure preservation",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A functor must preserve identities and composition, not merely pair similar-looking objects.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Structural mathematics",
+      "Categories",
+      "Mappings"
+    ],
+    "source_ids": [
+      "ms-category",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-natural",
+    "label": "Natural transformations",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Naturality requires a commuting relation for every relevant morphism.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Structural mathematics",
+      "Categories",
+      "Mappings",
+      "Coherence"
+    ],
+    "source_ids": [
+      "ms-category",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-universal",
+    "label": "Universal properties and limits",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A construction is characterized by how all admissible maps factor through it.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Structural mathematics",
+      "Categories",
+      "Constructions",
+      "Uniqueness"
+    ],
+    "source_ids": [
+      "ms-category",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-yoneda",
+    "label": "Yoneda and representability",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "An object is characterized, up to isomorphism, by its relationships expressed through hom-functors.",
+    "level": 3,
+    "taxonomy_path": [
+      "Mathematics",
+      "Structural mathematics",
+      "Categories",
+      "Structures",
+      "Observation"
+    ],
+    "source_ids": [
+      "ms-category",
+      "ms-stacks"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "m-ai-universal",
+    "label": "All mathematical problems have been solved",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "No. A catalogue or benchmark cannot establish universal mathematical solvability.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "universal claim audit"
+    ],
+    "source_ids": [
+      "ms-oai-history",
+      "ms-clay-ym"
+    ],
+    "status": "unsupported_universal_premise",
+    "claim_id": "m-claim-universal"
+  },
+  {
+    "id": "m-ai-imo",
+    "label": "Gemini Deep Think: IMO 2025 gold-standard performance",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "Five of six competition problems, 35 points, reported gold-medal standard.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "competition benchmark"
+    ],
+    "source_ids": [
+      "ms-gemini-imo"
+    ],
+    "status": "benchmark_result_with_bounded_scope",
+    "claim_id": "m-claim-imo"
+  },
+  {
+    "id": "m-ai-unitdistance",
+    "label": "Planar unit distances: polynomial construction improvement",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "There is δ>0 and infinitely many n for which ν(n)≥n^(1+δ).",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "new research theorem"
+    ],
+    "source_ids": [
+      "ms-oai-unit-paper",
+      "ms-oai-unit"
+    ],
+    "status": "theorem_statement_and_external_review_report_read",
+    "claim_id": "m-claim-unitdistance"
+  },
+  {
+    "id": "m-ai-ten",
+    "label": "OpenAI ten-advance collection",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "A collection covers discrete geometry, coding, group/operator problems and complexity.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "research collection"
+    ],
+    "source_ids": [
+      "ms-oai-ten",
+      "ms-oai-ten-paper"
+    ],
+    "status": "introductory_result_map_read_not_all_proofs_audited",
+    "claim_id": "m-claim-ten"
+  },
+  {
+    "id": "m-ai-zeta",
+    "label": "Claude-assisted simple critical-line zeta-zero proportion",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The paper gives a simple critical-line zero proportion exceeding two thirds; a window calculation gives 0.6725.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "new research theorem"
+    ],
+    "source_ids": [
+      "ms-claude-zeta"
+    ],
+    "status": "primary_abstract_and_provenance_read",
+    "claim_id": "m-claim-zeta"
+  },
+  {
+    "id": "m-ai-flt",
+    "label": "Fermat’s Last Theorem: large Lean formalization",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "For natural n≥3 and positive natural a,b,c, a^n+b^n≠c^n.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "formalization of an existing theorem"
+    ],
+    "source_ids": [
+      "ms-claude-flt",
+      "ms-flt-code"
+    ],
+    "status": "formalization_artifact_and_reported_second_kernel_check_read",
+    "claim_id": "m-claim-flt"
+  },
+  {
+    "id": "m-ai-nsforced",
+    "label": "Forced three-dimensional Navier–Stokes breakdown",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "For every ν>0, smooth compact forcing produces zero-initial-data smooth flow on [0,1) with bounded L² energy and unbounded L∞ near time 1.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "new theorem with formal artifact"
+    ],
+    "source_ids": [
+      "ms-ns-paper",
+      "ms-ns-code",
+      "ms-ns-audit",
+      "ms-clay-ns",
+      "ms-ns-translation"
+    ],
+    "status": "formal_theorem_evidence_strong_but_prose_translation_disputed",
+    "claim_id": "m-claim-nsforced"
+  },
+  {
+    "id": "m-ai-euler",
+    "label": "Separate unforced Euler singularity artifact",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The repository separately formalizes finite-time breakdown for unforced three-dimensional Euler.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "new theorem with formal artifact"
+    ],
+    "source_ids": [
+      "ms-ns-code"
+    ],
+    "status": "theorem_entry_points_inspected",
+    "claim_id": "m-claim-euler"
+  },
+  {
+    "id": "m-ai-ns-translation",
+    "label": "Navier–Stokes prose/formal translation criticism",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The critique identifies differences between prose and formalized intermediate estimates.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "critical research audit"
+    ],
+    "source_ids": [
+      "ms-ns-translation"
+    ],
+    "status": "documented_translation_issue_not_refutation_of_final_formal_statement",
+    "claim_id": "m-claim-ns-translation"
+  },
+  {
+    "id": "m-ai-catalogue",
+    "label": "OpenAI mathematics catalogue: exact metadata census",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The pinned CONTENTS file yields 730 manuscript links grouped into 375 result families.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "research catalogue"
+    ],
+    "source_ids": [
+      "ms-oai-catalogue",
+      "ms-oai-history"
+    ],
+    "status": "metadata_count_verified_proofs_not_individually_reviewed",
+    "claim_id": "m-claim-catalogue"
+  },
+  {
+    "id": "m-ai-withdrawals",
+    "label": "OpenAI October Hodge-related withdrawals",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The release history withdraws three Hodge-related manuscripts after a stabilization-trace sign error.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "withdrawal/correction record"
+    ],
+    "source_ids": [
+      "ms-oai-history"
+    ],
+    "status": "withdrawal_record_confirmed",
+    "claim_id": "m-claim-withdrawals"
+  },
+  {
+    "id": "m-ai-3sum",
+    "label": "Truly subquadratic 3SUM and subcubic APSP",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The paper states bounded-integer 3SUM in O(n^1.9992) and APSP in O(n^2.9995), rounded exponents.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "AI-assisted human research theorem"
+    ],
+    "source_ids": [
+      "ms-claude-3sum",
+      "ms-claude-formal"
+    ],
+    "status": "primary_paper_scope_and_formal_limitations_read",
+    "claim_id": "m-claim-3sum"
+  },
+  {
+    "id": "m-ai-claudeeth",
+    "label": "Claude ETH refutation artifact",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "A deterministic counting 3-SAT algorithm is claimed with time 2^{O(n log log n / sqrt(log n))}.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "formal research artifact"
+    ],
+    "source_ids": [
+      "ms-claude-eth"
+    ],
+    "status": "artifact_statement_read_independent_acceptance_not_established",
+    "claim_id": "m-claim-claudeeth"
+  },
+  {
+    "id": "m-ai-oaieth",
+    "label": "OpenAI fixed-width counting-SAT subexponential claim",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "Reports deterministic subexponential-time, polynomial-space counting of k-CNF assignments for fixed k.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "research claim under expert review"
+    ],
+    "source_ids": [
+      "ms-oai-community",
+      "ms-oai-catalogue"
+    ],
+    "status": "announcement_and_catalogue_locator_read",
+    "claim_id": "m-claim-oaieth"
+  },
+  {
+    "id": "m-ai-smoothing",
+    "label": "OpenAI local smoothing for the Euclidean wave equation",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "Announces local smoothing in spatial dimensions at least two with harmonic-analysis consequences.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "frontier research claim"
+    ],
+    "source_ids": [
+      "ms-oai-community",
+      "ms-oai-catalogue"
+    ],
+    "status": "announcement_scope_read_exact_proof_not_replayed",
+    "claim_id": "m-claim-smoothing"
+  },
+  {
+    "id": "m-ai-ymexistence",
+    "label": "Four-dimensional Yang–Mills existence assessment",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The working group reports a Wilson-lattice scaling-limit construction satisfying Wightman axioms.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "independent expert assessment of research artifact"
+    ],
+    "source_ids": [
+      "ms-ym-checks",
+      "ms-oai-community"
+    ],
+    "status": "expert_assessment_read_existence_only",
+    "claim_id": "m-claim-ymexistence"
+  },
+  {
+    "id": "m-ai-ymgap",
+    "label": "Complete Yang–Mills existence and mass-gap problem",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The complete Clay problem remains labelled Unsolved in the retrieved record.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "open-problem status"
+    ],
+    "source_ids": [
+      "ms-clay-ym",
+      "ms-ym-checks"
+    ],
+    "status": "no_decisive_mass_gap_proof_identified",
+    "claim_id": "m-claim-ymgap"
+  },
+  {
+    "id": "m-ai-vpvnp",
+    "label": "Anthropic VP≠VNP artifact",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "Claims VP≠VNP over all fields, with Hamiltonian-cycle lower bounds and permanent bounds outside characteristic two.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "formal research claim without human proof review"
+    ],
+    "source_ids": [
+      "ms-claude-vp"
+    ],
+    "status": "statement_inspected_independent_acceptance_not_established",
+    "claim_id": "m-claim-vpvnp"
+  },
+  {
+    "id": "m-ai-oai-newnine",
+    "label": "OpenAI November 24 complexity and polytope additions",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "Nine new manuscripts in families 379–380 include tensor/circuit claims, multiplication exponents, sunflowers and linear programming.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "catalogued research claims"
+    ],
+    "source_ids": [
+      "ms-oai-catalogue",
+      "ms-oai-history"
+    ],
+    "status": "metadata_only_no_theorem_adjudication",
+    "claim_id": "m-claim-oai-newnine"
+  },
+  {
+    "id": "m-ai-rh",
+    "label": "Riemann Hypothesis: November formal proof and independent checks",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The released formal proof is certified to match Mathlib’s RiemannHypothesis proposition.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "AI-assisted research with independently checked formal proof"
+    ],
+    "source_ids": [
+      "ms-rh-author",
+      "ms-rh-community",
+      "ms-rh-mit",
+      "ms-clay-rh"
+    ],
+    "status": "strong_independent_formal_verification_evidence",
+    "claim_id": "m-claim-rh"
+  },
+  {
+    "id": "m-ai-grh",
+    "label": "Dirichlet generalized RH: independently checked scope",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "MIT reports independently checked critical-strip zero statements for Dirichlet L-functions across all positive moduli and all characters, including the primitive-character formulation.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "generalization scope audit"
+    ],
+    "source_ids": [
+      "ms-rh-author",
+      "ms-rh-mit"
+    ],
+    "status": "strong_independent_formal_verification_for_dirichlet_scope",
+    "claim_id": "m-claim-grh"
+  },
+  {
+    "id": "m-ai-unforcedns",
+    "label": "Alpöge–Buckmaster unforced Navier–Stokes package",
+    "type": "concept",
+    "domain": "ai-mathematics",
+    "summary": "The available challenge declarations derive breakdown conditional on a bounded periodic similarity profile/certificate.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "conditional formal artifact with external numerical dependency"
+    ],
+    "source_ids": [
+      "ms-unforced-ns"
+    ],
+    "status": "conditional_artifact_inspected_unconditional_validation_incomplete",
+    "claim_id": "m-claim-unforcedns"
+  },
+  {
+    "id": "m-ai-kakeya",
+    "label": "Wang–Zahl three-dimensional Kakeya theorem",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "Every Kakeya set in R³ has full Hausdorff and Minkowski dimension.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "human research frontier"
+    ],
+    "source_ids": [
+      "ms-kakeya"
+    ],
+    "status": "primary_abstract_read",
+    "claim_id": "m-claim-kakeya"
+  },
+  {
+    "id": "m-ai-langlands",
+    "label": "Categorical unramified geometric Langlands project",
+    "type": "concept",
+    "domain": "mathematics",
+    "summary": "A five-paper project proves the categorical unramified geometric Langlands conjecture in its stated setting.",
+    "level": 4,
+    "taxonomy_path": [
+      "Mathematics",
+      "Research evidence",
+      "human research frontier"
+    ],
+    "source_ids": [
+      "ms-langlands",
+      "ms-langlands1"
+    ],
+    "status": "project_scope_and_part_one_abstract_read",
+    "claim_id": "m-claim-langlands"
+  }
+]

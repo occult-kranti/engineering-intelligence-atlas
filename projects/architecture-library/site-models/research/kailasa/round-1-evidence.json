@@ -1,0 +1,410 @@
+{
+  "schemaVersion": 1,
+  "runId": "architecture-reality-round1-2026-11-25",
+  "nodeId": "reality-capture-kailasa",
+  "attempt": 1,
+  "expert": "Expert2 \u2014 Reality capture and 3D geometry",
+  "round": 1,
+  "status": "baseline-delivered",
+  "terminationOwner": "/root",
+  "createdAt": "2026-11-25T03:51:20.396569+00:00",
+  "budget": {
+    "toolCallCeiling": 35,
+    "minutesCeiling": 35,
+    "downloadByteCeiling": 500000000,
+    "externalSpendUSD": 0,
+    "modelAndThumbnailDownloadBytes": 178052986,
+    "largeRawArchivesDownloaded": false
+  },
+  "assets": [
+    {
+      "id": "kailasa-gsxn-context",
+      "classification": "source-published photogrammetric context mesh",
+      "sourceIds": [
+        "gsxn-record",
+        "gsxn-api",
+        "gsxn-original",
+        "cc-by"
+      ],
+      "license": "CC-BY-4.0",
+      "rightsReview": "License is present in repository API, original listing and file. Acquisition provenance/third-party rights not independently established. Preserve credits and limitations.",
+      "creatorCredit": "GSXNet (embedded original credit); Graphic solutions (current listing); source mirrored by 3DBigDataSpace from Objaverse/Sketchfab",
+      "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/ellora-caves-1a5ec1e.glb",
+      "bytes": 11670764,
+      "sha256": "bde3cb75d9fd68a355d5452d55b92b54b52d5aa7c15ba9c61a034392e59db807",
+      "sourceMd5": "147006f1462c22962387cf40460d73ba",
+      "md5Matched": true,
+      "coverage": "Exterior site context centered on Kailasa courtyard/temple, observed in creator thumbnail and local render; interior completeness and unseen sides not established.",
+      "captureDate": null,
+      "captureMethod": "Photogrammetry/3D scan tags in creator listing; camera and processing report not supplied.",
+      "accuracy": {
+        "scaleVerified": false,
+        "surveyControlPoints": null,
+        "coordinateReferenceSystem": null,
+        "metricErrorReport": null,
+        "capturePermitVerified": false
+      },
+      "actualInspection": {
+        "blenderVersion": "4.5.17 LTS",
+        "meshObjects": 5,
+        "vertices": 273390,
+        "triangles": 136498,
+        "boundsRawSceneUnits": {
+          "min": [
+            -1128.1693115234375,
+            -1304.4208984375,
+            -296.8750305175781
+          ],
+          "max": [
+            1458.0472412109375,
+            1279.2979736328125,
+            565.2213134765625
+          ],
+          "dimensions": [
+            2586.216552734375,
+            2583.71875,
+            862.0963134765625
+          ]
+        },
+        "scaleVerified": false,
+        "coordinateReferenceSystem": null,
+        "images": [
+          {
+            "name": "Image_0",
+            "size": [
+              1024,
+              1024
+            ]
+          }
+        ]
+      },
+      "localPreview": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/ellora-local-preview.png",
+      "suitableFor": [
+        "context visualization with unknown scale"
+      ],
+      "notEstablished": [
+        "extreme-detail carving fidelity",
+        "complete interior coverage",
+        "survey accuracy",
+        "registered alignment to other models"
+      ]
+    },
+    {
+      "id": "ellora-klein-features",
+      "classification": "source-owner photogrammetry feature archive",
+      "sourceIds": [
+        "klein-models",
+        "klein-api"
+      ],
+      "license": "CC-BY-NC-4.0",
+      "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-glb-cc-by-nc-4.zip",
+      "bytes": 165806576,
+      "sha256": "b196ed85582a99e954de71f45ea28ddf9d2d0aceea33f0ef4ce501ce21e50d35",
+      "sourceMd5": "51ab926b50155058fe696bb2d9c40047",
+      "md5Matched": true,
+      "memberCount": 21,
+      "captureYearAsTitled": 2023,
+      "publicationDate": "2025-04-15",
+      "depositCreated": "2026-08-29",
+      "coverage": "21 feature files from several Ellora caves; four unambiguous c16_ filenames. Not a whole-temple model.",
+      "accuracy": {
+        "scaleVerified": false,
+        "surveyControlPoints": null,
+        "coordinateReferenceSystem": null,
+        "metricErrorReport": null,
+        "capturePermitVerified": false
+      },
+      "commercialUse": "Not permitted by this license; no commercial permission obtained.",
+      "automaticPublicationAllowed": false,
+      "selectedCave16Features": [
+        {
+          "archiveMember": "glb/c16_floor2_saptamatrika.glb",
+          "bytes": 7646656,
+          "sha256": "93d4a5ea29dcbbcf140df2193e2d12f9301d99423d4d66547fc51e772dea977e",
+          "meshes": 1,
+          "triangles": 52735,
+          "positionEntries": 32041,
+          "externalReferences": [],
+          "images": [
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            },
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            },
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            }
+          ],
+          "asset": {
+            "version": "2.0"
+          },
+          "extensionsUsed": [],
+          "scaleVerified": false,
+          "registrationVerified": false,
+          "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-cave16-research-only/c16_floor2_saptamatrika.glb",
+          "caveIdentityBasis": "Author archive filename explicitly starts c16_; feature coverage only, not complete temple."
+        },
+        {
+          "archiveMember": "glb/c16_floor2_figures-right-of-saptamatrika.glb",
+          "bytes": 8627996,
+          "sha256": "068e542006a1c3ba84ea8ce57f856002c3a1f8b1a391b88fb56f43d8a90ff5b4",
+          "meshes": 1,
+          "triangles": 92218,
+          "positionEntries": 56072,
+          "externalReferences": [],
+          "images": [
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            },
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            },
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            }
+          ],
+          "asset": {
+            "version": "2.0"
+          },
+          "extensionsUsed": [],
+          "scaleVerified": false,
+          "registrationVerified": false,
+          "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-cave16-research-only/c16_floor2_figures-right-of-saptamatrika.glb",
+          "caveIdentityBasis": "Author archive filename explicitly starts c16_; feature coverage only, not complete temple."
+        },
+        {
+          "archiveMember": "glb/c16_creature.glb",
+          "bytes": 8770464,
+          "sha256": "f183d9195d1cab64b4d6eb682963b86bc3c8afa45e80e001513f7a4ff2bc0ee4",
+          "meshes": 1,
+          "triangles": 63446,
+          "positionEntries": 36927,
+          "externalReferences": [],
+          "images": [
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            },
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            },
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            }
+          ],
+          "asset": {
+            "version": "2.0"
+          },
+          "extensionsUsed": [],
+          "scaleVerified": false,
+          "registrationVerified": false,
+          "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-cave16-research-only/c16_creature.glb",
+          "caveIdentityBasis": "Author archive filename explicitly starts c16_; feature coverage only, not complete temple."
+        },
+        {
+          "archiveMember": "glb/c16_floor2_figures-left-of-saptamatrika.glb",
+          "bytes": 8602080,
+          "sha256": "8e0f7ba2f363fda29eebecfab1f0a7e3ab00b2273e89975ec7d0f34c475ea409",
+          "meshes": 1,
+          "triangles": 74372,
+          "positionEntries": 45391,
+          "externalReferences": [],
+          "images": [
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            },
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            },
+            {
+              "dimensions": [
+                4096,
+                4096
+              ],
+              "format": "JPEG"
+            }
+          ],
+          "asset": {
+            "version": "2.0"
+          },
+          "extensionsUsed": [],
+          "scaleVerified": false,
+          "registrationVerified": false,
+          "localPath": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-cave16-research-only/c16_floor2_figures-left-of-saptamatrika.glb",
+          "caveIdentityBasis": "Author archive filename explicitly starts c16_; feature coverage only, not complete temple."
+        }
+      ],
+      "ambiguousMembers": [
+        "glb/c2016_floor2_little-dwarapala.glb",
+        "glb/c1016_floor2_dancing-shiva.glb"
+      ],
+      "saptamatrikaBlenderInspection": {
+        "blenderVersion": "4.5.17 LTS",
+        "meshObjects": 1,
+        "vertices": 32041,
+        "triangles": 52735,
+        "boundsRawSceneUnits": {
+          "min": [
+            -0.9531259536743164,
+            -0.9724550843238831,
+            -1.1338121891021729
+          ],
+          "max": [
+            0.9884870052337646,
+            1.1487802267074585,
+            0.5174928903579712
+          ],
+          "dimensions": [
+            1.941612958908081,
+            2.1212353706359863,
+            1.651305079460144
+          ]
+        },
+        "scaleVerified": false,
+        "coordinateReferenceSystem": null,
+        "images": [
+          {
+            "name": "7f7c121f0cfd85e7b609abe7f32dcb6f",
+            "size": [
+              4096,
+              4096
+            ]
+          },
+          {
+            "name": "82b785e738ce50b57944022ad20d19ed",
+            "size": [
+              4096,
+              4096
+            ]
+          },
+          {
+            "name": "f6f01fd7d2831992fa2dc57fb5b1de66",
+            "size": [
+              4096,
+              4096
+            ]
+          }
+        ]
+      },
+      "localPreview": "/workspace/scratch/4a07ba7b19a1/architecture-acquisition/kailasa-2026-11-25/klein-saptamatrika-preview.png"
+    }
+  ],
+  "findings": [
+    {
+      "id": "K1",
+      "finding": "Actual site-specific exterior geometry is available, with coarse surface detail.",
+      "evidence": [
+        "gsxn-record",
+        "gsxn-api",
+        "local Blender inspection"
+      ],
+      "impact": "Can replace a generic symbolic temple silhouette as context, but cannot satisfy extreme detail or reliable dimensions.",
+      "change": "Offer as a separately labeled optional context asset; preserve original bytes and provenance, disclose unknown scale and incomplete coverage.",
+      "acceptance": "Correct model SHA256;136498triangles;1024x1024texture;visible attribution;no surveyed/extreme-detail label;measurement UI disabled."
+    },
+    {
+      "id": "K2",
+      "finding": "Four clearly named Cave16 carvings are available from source-owner photogrammetry, under a noncommercial license.",
+      "evidence": [
+        "klein-models",
+        "klein-api",
+        "archive inventory and feature inspection"
+      ],
+      "impact": "Provides captured ornament without inventing geometry; cannot be bundled automatically in a commercial game or assumed registered to the context mesh.",
+      "change": "Add separate reference-only records for each carving, retaining source title,license,hash,coverage and scale unknown. Keep bytes out of public build pending intended-use review.",
+      "acceptance": "Four c16_ files only;exact hashes;CC-BY-NC-4.0 visible;other-cave/ambiguous files excluded;no generated repair/fill presented as capture;no automatic scene registration."
+    },
+    {
+      "id": "K3",
+      "finding": "The high-density Sidhu and iTek sources are view-only for this task.",
+      "evidence": [
+        "sidhu-api",
+        "itek-rights"
+      ],
+      "impact": "Triangle/splat counts cannot override download restrictions or create reuse rights.",
+      "change": "Link source-owner viewers, display rights-unavailable status, do not scrape or rehost their scenes.",
+      "acceptance": "No Sidhu/iTek asset bytes in static output;no download action or claim of an open license;external viewing clearly identified."
+    },
+    {
+      "id": "K4",
+      "finding": "None of the acquired candidates supplies independently verified metric scale, registration or an error budget.",
+      "evidence": [
+        "local asset inspection",
+        "source record metadata"
+      ],
+      "impact": "A visual reconstruction cannot serve as surveyed architecture or a guaranteed collision/engineering mesh.",
+      "change": "Store accuracy fields as unknown and add explicit coverage/fidelity labels; compare landmarks and plan references before any later alignment.",
+      "acceptance": "No inferred millimeter accuracy;raw model bounds are not labeled metres;LOD preserves source-derived geometry and records any simplification;no fabricated carvings fill gaps."
+    }
+  ],
+  "unresolved": [
+    "A complete high-detail Kailasa model with commercial redistribution permission has not been acquired.",
+    "No metric survey accuracy, capture access rights or whole-site completeness independently verified.",
+    "No registration between the exterior mesh and sculpture details.",
+    "External viewers linked but not browser-interacted or rendered in this environment."
+  ],
+  "notPerformed": [
+    "paid purchase",
+    "account setup",
+    "contact",
+    "download bypass",
+    "Gaussian splat extraction",
+    "conjectural ornament generation",
+    "on-site survey",
+    "public asset redistribution"
+  ],
+  "skillChecksums": [
+    {
+      "path": "skills/architecture-and-built-heritage-research/SKILL.md",
+      "sha256": "468f636f9b26b2af3ad2af48c523b81e5582236f790eec5a54a9b62c54683f61"
+    },
+    {
+      "path": "skills/spatial-3d-production-engineering/SKILL.md",
+      "sha256": "df2b4a14b2099c8f0b216f898b77aa7d04fde99f9237f78df4edb05a3a95d8cb"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "status": "passed",
+  "scope": "Isolated DOM behavior, source/public parity and declared-color calculations; no layout claim",
+  "checks": 48,
+  "check_names": [
+    "Exactly the fifteen requested studies in their declared order",
+    "All fifteen effects have distinct authored CSS",
+    "Every study declares its technique and limitations",
+    "Only six explicitly declared studies can enable motion",
+    "Studio initializes without a data fetch",
+    "Fifteen real selection buttons render",
+    "Unknown hash falls back to the first declared study",
+    "Default motion is off",
+    "Opaque content plate is present by default",
+    "thermal-gradients: selection updates exact CSS and description",
+    "3d-particles: selection updates exact CSS and description",
+    "fluted-glass: selection updates exact CSS and description",
+    "persian-rugs: selection updates exact CSS and description",
+    "ascii-pixels: selection updates exact CSS and description",
+    "marbled-paper: selection updates exact CSS and description",
+    "crt-scanlines: selection updates exact CSS and description",
+    "crushed-velvet: selection updates exact CSS and description",
+    "pressed-flowers: selection updates exact CSS and description",
+    "damaged-film: selection updates exact CSS and description",
+    "water-ripples: selection updates exact CSS and description",
+    "wasp-nest: selection updates exact CSS and description",
+    "iridescent-shapes: selection updates exact CSS and description",
+    "foggy-windows: selection updates exact CSS and description",
+    "liquid-metal: selection updates exact CSS and description",
+    "Exactly one selection is announced",
+    "Next wraps from the final study",
+    "Previous wraps from the first study",
+    "Explicit motion toggle works on an eligible effect",
+    "Blur stops motion",
+    "Hidden tab stops motion",
+    "Device reduced motion disables and stops animation",
+    "Static CRT cannot enable flicker or motion",
+    "Persian-inspired approximation label follows selection",
+    "Clipboard receives the selected study exactly",
+    "Clipboard failure exposes and selects a manual-copy fallback",
+    "Download uses a CSS Blob",
+    "Content plate can be hidden intentionally",
+    "Source/public parity: index.html",
+    "Source/public parity: studio.css",
+    "Source/public parity: effects.css",
+    "Source/public parity: studio.mjs",
+    "Source/public parity: effects.mjs",
+    "Source/public parity: README.md",
+    "Source/public parity: style-briefs.md",
+    "Source/public parity: sources.json",
+    "Source/public parity: styles.json",
+    "Styles contain reduced-motion and forced-color handling",
+    "Declared primary text pairs exceed 4.5:1 calculated sRGB contrast"
+  ],
+  "contrast_pairs": [
+    {
+      "label": "plate",
+      "foreground": "#243329",
+      "background": "#faf8f2",
+      "ratio": 12.510679468554963
+    },
+    {
+      "label": "body",
+      "foreground": "#243329",
+      "background": "#f4f1e8",
+      "ratio": 11.764146108943088
+    },
+    {
+      "label": "muted",
+      "foreground": "#596356",
+      "background": "#f4f1e8",
+      "ratio": 5.560595059466436
+    },
+    {
+      "label": "action",
+      "foreground": "#faf8ef",
+      "background": "#394e3e",
+      "ratio": 8.459377883724203
+    }
+  ],
+  "source_sha256": {
+    "index.html": "cf515e0fe387bcff6cce668d6b8f5a8100fc869b7bd369351b5bbafc269ce49b",
+    "studio.css": "ba1a5b695409193da13a7d35d07ad9d8dd9777ce6e995f360d645f3351a2bbd0",
+    "effects.css": "2ce9c089836e04ce97cf3b0b307b1c1a2269063c4f38cb14e7aba8c69a47cd18",
+    "studio.mjs": "1f8f118a9b1fed0c8ee45eac0e1e0cf0bf02d0b062226f44762e648d43c37dca",
+    "effects.mjs": "1d4f036376f265b4299081a21997974d432474aa8e3e08ca7b10ce3d901c89bd"
+  },
+  "provider_calls": 0
+}

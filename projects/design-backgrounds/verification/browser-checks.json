@@ -1,0 +1,12 @@
+{
+  "status": "blocked",
+  "date_utc": "2026-11-25",
+  "attempted_command": "node scripts/smoke-design-backgrounds.mjs --browser",
+  "attempts": [
+    {"browser": "Playwright bundled Chromium", "result": "Required browser executable is absent."},
+    {"browser": "/usr/bin/chromium", "result": "Exited before page load: socket() failed: Operation not permitted."}
+  ],
+  "real_browser_checks_executed": 0,
+  "screenshots_created": [],
+  "limits": "No real browser rendering, layout, visual acceptance or browser accessibility result is established. No further browser retries or sandbox bypass were attempted. Strict browser mode remains ready for CI."
+}

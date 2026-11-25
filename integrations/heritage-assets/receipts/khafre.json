@@ -1,0 +1,221 @@
+{
+  "schemaVersion": 1,
+  "id": "khafre",
+  "source": {
+    "id": "khafre",
+    "format": "inspect-glb",
+    "path": "/workspace/scratch/4a07ba7b19a1/giza-acquisition-2026-11-25/khafre.glb",
+    "bytes": 1187380,
+    "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+    "license": "CC-BY-4.0",
+    "creator": "pierre391",
+    "url": "https://sketchfab.com/3d-models/plateau-de-gizeh-b30a5047bd1e4b28a10e438df2bc1428",
+    "rightsReviewed": true,
+    "rightsNote": "Advertised CC BY 4.0 verified by source research; underlying capture rights not independently verified. Existing simplified, texture-resized, levelled/rescaled derivative: preserve supplied bytes, not a raw survey master.",
+    "acquisitionRecord": "projects/architecture-library/site-models/research/giza/assets.json",
+    "processingReported": [
+      "simplification",
+      "texture-resize",
+      "planar-levelling",
+      "rescaling"
+    ],
+    "scaleStatus": "repository-author rescaling; not independently survey-validated",
+    "reviewedWebLimitBytes": 26214400,
+    "budgetReview": "Original 25 MiB target retained.",
+    "downloadUrl": "https://raw.githubusercontent.com/GeorgePhilippou/inside-the-pyramids/e89853b4351de608e908e30004d8c5860a0d83b5/models/khafre.glb"
+  },
+  "conversion": null,
+  "compression": {
+    "existingBytesPreserved": true,
+    "processing": "Existing meshopt/WebP/quantization preserved; decoded data compared only to supplied processed derivative, not to an unavailable pre-quantization source."
+  },
+  "preservation": {
+    "accessorBytesEqual": true,
+    "indexBytesAndCountsEqual": true,
+    "textureBytesEqual": true,
+    "materialPropertiesEqual": true,
+    "nodeTransformsEqual": true,
+    "hierarchyEqual": true,
+    "primitiveModesEqual": true,
+    "noDecimation": true,
+    "noQuantizeTransform": true,
+    "noLossyFilters": true
+  },
+  "sourceSnapshot": {
+    "accessors": [
+      {
+        "name": "",
+        "type": "SCALAR",
+        "componentType": 5125,
+        "normalized": false,
+        "count": 288543,
+        "bytes": 1154172,
+        "sha256": "5d5b239dac94b44bae907b4e92eccea1ce9dbf5796d5bde8f4975c29f7904b5b"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5120,
+        "normalized": true,
+        "count": 69826,
+        "bytes": 209478,
+        "sha256": "5cbb506446495cdb43733b9daaf86189039686f282739e6e0417b047d71d438f"
+      },
+      {
+        "name": "",
+        "type": "VEC3",
+        "componentType": 5122,
+        "normalized": true,
+        "count": 69826,
+        "bytes": 418956,
+        "sha256": "0f336ad4450265600e51dbb9f9be6ffb5e0433f70d2290f23bbf5c081278d5b7"
+      },
+      {
+        "name": "",
+        "type": "VEC2",
+        "componentType": 5123,
+        "normalized": true,
+        "count": 69826,
+        "bytes": 279304,
+        "sha256": "ceb8de2e2912bace2393975c3497ff5f79c382e6d1d3a6465775ad5ae9ea223f"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "",
+        "primitives": [
+          {
+            "mode": 4,
+            "indices": 0,
+            "attributes": {
+              "NORMAL": 1,
+              "POSITION": 2,
+              "TEXCOORD_0": 3
+            },
+            "material": 0,
+            "targets": 0
+          }
+        ]
+      }
+    ],
+    "textures": [
+      {
+        "name": "",
+        "mimeType": "image/webp",
+        "bytes": 465688,
+        "sha256": "e09a48b1279d19324a2ab79e3eb43eb5a759a9e08a1a97b1857187b75d1689d3"
+      }
+    ],
+    "materials": [
+      {
+        "name": "",
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "emissiveFactor": [
+          0,
+          0,
+          0
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 1,
+        "alphaMode": "OPAQUE",
+        "alphaCutoff": 0.5,
+        "doubleSided": true,
+        "baseColorTexture": 0,
+        "emissiveTexture": null,
+        "normalTexture": null,
+        "occlusionTexture": null,
+        "metallicRoughnessTexture": null,
+        "extensions": []
+      }
+    ],
+    "nodes": [
+      {
+        "name": "",
+        "matrix": [
+          1.2999396845698357,
+          0,
+          0,
+          0,
+          0,
+          1.2999396845698357,
+          0,
+          0,
+          0,
+          0,
+          1.2999396845698357,
+          0,
+          -1.0999943017959595,
+          1.6126881837844849,
+          1.4999772980809212,
+          1
+        ],
+        "children": [],
+        "mesh": 0
+      }
+    ],
+    "scenes": [
+      {
+        "name": "",
+        "children": [
+          0
+        ]
+      }
+    ],
+    "totals": {
+      "meshCount": 1,
+      "nodeCount": 1,
+      "vertexEntries": 69826,
+      "triangles": 96181,
+      "indices": 288543,
+      "repeatedIndexTriangles": 0
+    }
+  },
+  "output": {
+    "web": {
+      "file": "khafre.glb",
+      "bytes": 1187380,
+      "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd"
+    },
+    "blenderReady": {
+      "file": "khafre.decompressed.glb",
+      "bytes": 2738636,
+      "sha256": "a750b15588136ad9e1a8bbff46057f8e1d1c940566e55dd44e737d1ad1b11702",
+      "note": "Meshopt removed and decoded accessors verified. Editor import may change topology; consult separate actual editor receipts. No face-removal cause inferred."
+    }
+  },
+  "sizeTarget": {
+    "bytes": 26214400,
+    "met": true
+  },
+  "assetAudit": {
+    "guidance": [
+      "OpenCodeGameStudios asset-audit",
+      "OpenCodeGameStudios asset-spec"
+    ],
+    "scope": "Applied checks, not the entire upstream workflow or an imported permission grant.",
+    "naming": "Stable lowercase hyphenated site IDs from the approved brief.",
+    "specification": "Preserve all source positions, vertex RGB, indices, texture bytes and transforms; no simplification or invented detail.",
+    "formatChecked": true,
+    "sourceHashMatched": true,
+    "missingReferences": [],
+    "generatedFilesReferencedByReceipt": true,
+    "sizeBudgetBytes": 26214400,
+    "artBible": "No upstream project art bible exists; the approved source-preservation brief governs.",
+    "shaderNotice": "Source material properties retained."
+  },
+  "scaleVerified": false,
+  "coordinateUnits": "unverified source units; no rescaling performed",
+  "generatedAt": "2026-11-25T04:08:25.257Z",
+  "releaseBudget": {
+    "bytes": 26214400,
+    "met": true,
+    "review": "Original 25 MiB target retained."
+  },
+  "implementationSourceSha256": "019b59a1126ccc34c5af6361e7ce2096f238723e9eb3d376193d23d854f831fd",
+  "guidanceRecord": "../applied-guidance.json"
+}

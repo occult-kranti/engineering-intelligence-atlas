@@ -1,0 +1,53 @@
+{
+  "file": "mesh_metashape.obj",
+  "bytes": 362642838,
+  "sha256": "02014fbc7e830c331330a454726a8e0f0af541d89eb7de8c1e56f319830dd64c",
+  "counts": {
+    "vertices": 1881698,
+    "colouredVertices": 1881698,
+    "normals": 1881698,
+    "faces": 3757768,
+    "trianglesAfterFanTriangulation": 3757768,
+    "facesWithRepeatedVertexIndex": 0
+  },
+  "faceSizes": {
+    "3": 3757768
+  },
+  "sourceBounds": {
+    "minimum": [
+      -7.970556,
+      -5.534198,
+      -18.36702
+    ],
+    "maximum": [
+      5.807343,
+      2.63398,
+      -6.070714
+    ],
+    "extent": [
+      13.777899000000001,
+      8.168178000000001,
+      12.296306000000001
+    ],
+    "units": "source units; metres not established"
+  },
+  "colourRange": {
+    "minimum": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "maximum": [
+      0.996078,
+      0.996078,
+      0.996078
+    ]
+  },
+  "materialReferences": [
+    "st-george-church-model.mtl"
+  ],
+  "presentMaterialFiles": [],
+  "allPositionsAndColoursFinite": true,
+  "positivePositionIndicesInBounds": true,
+  "elapsedSeconds": 12.41
+}

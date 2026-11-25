@@ -1,0 +1,561 @@
+{
+  "schemaVersion": 1,
+  "reviewedAtUtc": "2026-11-25T06:31:26.185436+00:00",
+  "kind": "actual background Blender import acceptance",
+  "helperSha256": "1f57d37c8065814f614759fb867211c9ce33017481ad11579183a85f59ae024b",
+  "fixtureGenerator": {
+    "file": "test_blender_review.py",
+    "sha256": "257f8a1bf7739d8b0ed7b402dc6c0edb543d4f3d9dd10f796a47e61bc47f7ba2",
+    "function": "triangle_glb(document)"
+  },
+  "blenderVersion": "4.5.17 LTS",
+  "commandPattern": [
+    "blender",
+    "--background",
+    "--factory-startup",
+    "--disable-autoexec",
+    "--threads",
+    "1",
+    "--python-exit-code",
+    "1",
+    "--python",
+    "integrations/heritage-assets/blender-review.py",
+    "--",
+    "--input",
+    "<decompressed GLB or triangle_glb(fixtureDocument)>",
+    "--sha256",
+    "<inputSha256>",
+    "--output",
+    "<new output directory>"
+  ],
+  "regressionObservedBeforeFix": {
+    "helperSha256": "1421f9fb84656c38d8ad02da36eb57e25076d0e3766421544c5b65066f106938",
+    "fixtureId": "inactive-scene-and-unused-meshes",
+    "inputSha256": "cd884bb9826de8282ed265efcd24f5f9730776ef3487f29a89f7b2638495b66e",
+    "sourceTriangles": 2,
+    "importedTriangles": 3,
+    "cause": "scene.objects included a mesh in an excluded nondefault scene collection; active view-layer counting removes that counting error"
+  },
+  "runs": [
+    {
+      "id": "shared-mesh-two-instances",
+      "exitCode": 0,
+      "elapsedSeconds": 0.812,
+      "inputSha256": "e67bf4b2d62f78c3f856b52d74ada9f83e99b7744d482e8063e4fd0ace279e0d",
+      "stdoutStderrSha256": "eb8a1b702c1eb1d6dcb7819aa94bf3e7d3f1b049e4bbe1dc04a68f5b9b7d610b",
+      "receipt": {
+        "schemaVersion": 1,
+        "blenderVersion": "4.5.17 LTS",
+        "sourceSha256": "e67bf4b2d62f78c3f856b52d74ada9f83e99b7744d482e8063e4fd0ace279e0d",
+        "sourceBytes": 788,
+        "sourceGeometryCountBasis": "active-scene node instances",
+        "sourceActiveScene": 0,
+        "sourceMeshInstances": 2,
+        "sourceMeshReferences": [
+          {
+            "nodeIndex": 0,
+            "meshIndex": 0,
+            "vertexEntries": 3,
+            "indexCount": 3,
+            "triangles": 1
+          },
+          {
+            "nodeIndex": 1,
+            "meshIndex": 0,
+            "vertexEntries": 3,
+            "indexCount": 3,
+            "triangles": 1
+          }
+        ],
+        "sourceVertexEntries": 6,
+        "sourceIndexCount": 6,
+        "sourceTriangles": 2,
+        "importedGeometryCountBasis": "active-view-layer mesh objects",
+        "importedMeshObjects": 2,
+        "importedVertexEntries": 6,
+        "excludedSceneMeshObjects": 0,
+        "importedTriangles": 2,
+        "triangleCountDifference": 0,
+        "faceRemovalCause": null,
+        "vertexColors": [
+          {
+            "object": "triangle-0",
+            "attributes": [
+              {
+                "name": "Color",
+                "domain": "CORNER",
+                "dataType": "BYTE_COLOR"
+              }
+            ]
+          },
+          {
+            "object": "triangle-1",
+            "attributes": [
+              {
+                "name": "Color",
+                "domain": "CORNER",
+                "dataType": "BYTE_COLOR"
+              }
+            ]
+          }
+        ],
+        "worldBounds": {
+          "min": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max": [
+            11.0,
+            0.0,
+            1.0
+          ],
+          "dimensions": [
+            11.0,
+            0.0,
+            1.0
+          ],
+          "units": "unverified source units; Blender glTF axis convention applied by importer"
+        },
+        "surveyScaleVerified": false,
+        "blend": {
+          "file": "scene.blend",
+          "bytes": 85877,
+          "sha256": "87cc3aff323cc98067696d128d25f3d94a5c308a88ce85f7bb341259b1cd3e1a"
+        }
+      },
+      "fixtureDocument": {
+        "asset": {
+          "version": "2.0"
+        },
+        "buffers": [
+          {
+            "byteLength": 84
+          }
+        ],
+        "bufferViews": [
+          {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 36
+          },
+          {
+            "buffer": 0,
+            "byteOffset": 36,
+            "byteLength": 36
+          },
+          {
+            "buffer": 0,
+            "byteOffset": 72,
+            "byteLength": 12
+          }
+        ],
+        "accessors": [
+          {
+            "bufferView": 0,
+            "componentType": 5126,
+            "count": 3,
+            "type": "VEC3",
+            "min": [
+              0,
+              0,
+              0
+            ],
+            "max": [
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "bufferView": 1,
+            "componentType": 5126,
+            "count": 3,
+            "type": "VEC3"
+          },
+          {
+            "bufferView": 2,
+            "componentType": 5125,
+            "count": 3,
+            "type": "SCALAR"
+          }
+        ],
+        "meshes": [
+          {
+            "primitives": [
+              {
+                "attributes": {
+                  "POSITION": 0,
+                  "COLOR_0": 1
+                },
+                "indices": 2
+              }
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "mesh": 0,
+            "name": "triangle-0",
+            "translation": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "mesh": 0,
+            "name": "triangle-1",
+            "translation": [
+              10,
+              0,
+              0
+            ]
+          }
+        ],
+        "scenes": [
+          {
+            "nodes": [
+              0,
+              1
+            ]
+          }
+        ],
+        "scene": 0
+      }
+    },
+    {
+      "id": "inactive-scene-and-unused-meshes",
+      "exitCode": 0,
+      "elapsedSeconds": 0.475,
+      "inputSha256": "cd884bb9826de8282ed265efcd24f5f9730776ef3487f29a89f7b2638495b66e",
+      "stdoutStderrSha256": "7488aec798174b76ead727de555adffb048a6f087aadbb6ba61abdd208afcf45",
+      "receipt": {
+        "schemaVersion": 1,
+        "blenderVersion": "4.5.17 LTS",
+        "sourceSha256": "cd884bb9826de8282ed265efcd24f5f9730776ef3487f29a89f7b2638495b66e",
+        "sourceBytes": 976,
+        "sourceGeometryCountBasis": "active-scene node instances",
+        "sourceActiveScene": 1,
+        "sourceMeshInstances": 2,
+        "sourceMeshReferences": [
+          {
+            "nodeIndex": 0,
+            "meshIndex": 0,
+            "vertexEntries": 3,
+            "indexCount": 3,
+            "triangles": 1
+          },
+          {
+            "nodeIndex": 1,
+            "meshIndex": 0,
+            "vertexEntries": 3,
+            "indexCount": 3,
+            "triangles": 1
+          }
+        ],
+        "sourceVertexEntries": 6,
+        "sourceIndexCount": 6,
+        "sourceTriangles": 2,
+        "importedGeometryCountBasis": "active-view-layer mesh objects",
+        "importedMeshObjects": 2,
+        "importedVertexEntries": 6,
+        "excludedSceneMeshObjects": 1,
+        "importedTriangles": 2,
+        "triangleCountDifference": 0,
+        "faceRemovalCause": null,
+        "vertexColors": [
+          {
+            "object": "triangle-0",
+            "attributes": [
+              {
+                "name": "Color",
+                "domain": "CORNER",
+                "dataType": "BYTE_COLOR"
+              }
+            ]
+          },
+          {
+            "object": "triangle-1",
+            "attributes": [
+              {
+                "name": "Color",
+                "domain": "CORNER",
+                "dataType": "BYTE_COLOR"
+              }
+            ]
+          }
+        ],
+        "worldBounds": {
+          "min": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "max": [
+            11.0,
+            0.0,
+            1.0
+          ],
+          "dimensions": [
+            11.0,
+            0.0,
+            1.0
+          ],
+          "units": "unverified source units; Blender glTF axis convention applied by importer"
+        },
+        "surveyScaleVerified": false,
+        "blend": {
+          "file": "scene.blend",
+          "bytes": 87806,
+          "sha256": "35266848a1a77401dd76b016a0128c6acbe7a22022eae8f7feee78a9b34b4766"
+        }
+      },
+      "fixtureDocument": {
+        "asset": {
+          "version": "2.0"
+        },
+        "buffers": [
+          {
+            "byteLength": 84
+          }
+        ],
+        "bufferViews": [
+          {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 36
+          },
+          {
+            "buffer": 0,
+            "byteOffset": 36,
+            "byteLength": 36
+          },
+          {
+            "buffer": 0,
+            "byteOffset": 72,
+            "byteLength": 12
+          }
+        ],
+        "accessors": [
+          {
+            "bufferView": 0,
+            "componentType": 5126,
+            "count": 3,
+            "type": "VEC3",
+            "min": [
+              0,
+              0,
+              0
+            ],
+            "max": [
+              1,
+              1,
+              0
+            ]
+          },
+          {
+            "bufferView": 1,
+            "componentType": 5126,
+            "count": 3,
+            "type": "VEC3"
+          },
+          {
+            "bufferView": 2,
+            "componentType": 5125,
+            "count": 3,
+            "type": "SCALAR"
+          }
+        ],
+        "meshes": [
+          {
+            "primitives": [
+              {
+                "attributes": {
+                  "POSITION": 0,
+                  "COLOR_0": 1
+                },
+                "indices": 2
+              }
+            ]
+          },
+          {
+            "primitives": [
+              {
+                "attributes": {
+                  "POSITION": 0,
+                  "COLOR_0": 1
+                },
+                "indices": 2
+              }
+            ]
+          },
+          {
+            "primitives": [
+              {
+                "attributes": {
+                  "POSITION": 0,
+                  "COLOR_0": 1
+                },
+                "indices": 2
+              }
+            ]
+          }
+        ],
+        "nodes": [
+          {
+            "mesh": 0,
+            "name": "triangle-0",
+            "translation": [
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "mesh": 0,
+            "name": "triangle-1",
+            "translation": [
+              10,
+              0,
+              0
+            ]
+          },
+          {
+            "mesh": 1,
+            "name": "inactive-mesh"
+          }
+        ],
+        "scenes": [
+          {
+            "nodes": [
+              2
+            ]
+          },
+          {
+            "nodes": [
+              0,
+              1
+            ]
+          }
+        ],
+        "scene": 1
+      }
+    },
+    {
+      "id": "kailasa-existing-capture",
+      "exitCode": 0,
+      "elapsedSeconds": 1.349,
+      "inputSha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+      "stdoutStderrSha256": "8aeee5e7f828fcd37c00be2013cba3c25df7818b222b783665f980d4dc9c0d7c",
+      "receipt": {
+        "schemaVersion": 1,
+        "blenderVersion": "4.5.17 LTS",
+        "sourceSha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+        "sourceBytes": 11669704,
+        "sourceGeometryCountBasis": "active-scene node instances",
+        "sourceActiveScene": 0,
+        "sourceMeshInstances": 5,
+        "sourceMeshReferences": [
+          {
+            "nodeIndex": 4,
+            "meshIndex": 0,
+            "vertexEntries": 65534,
+            "indexCount": 98301,
+            "triangles": 32767
+          },
+          {
+            "nodeIndex": 5,
+            "meshIndex": 1,
+            "vertexEntries": 65534,
+            "indexCount": 97722,
+            "triangles": 32574
+          },
+          {
+            "nodeIndex": 6,
+            "meshIndex": 2,
+            "vertexEntries": 65533,
+            "indexCount": 98295,
+            "triangles": 32765
+          },
+          {
+            "nodeIndex": 7,
+            "meshIndex": 3,
+            "vertexEntries": 65534,
+            "indexCount": 98298,
+            "triangles": 32766
+          },
+          {
+            "nodeIndex": 8,
+            "meshIndex": 4,
+            "vertexEntries": 11255,
+            "indexCount": 16881,
+            "triangles": 5627
+          }
+        ],
+        "sourceVertexEntries": 273390,
+        "sourceIndexCount": 409497,
+        "sourceTriangles": 136499,
+        "importedGeometryCountBasis": "active-view-layer mesh objects",
+        "importedMeshObjects": 5,
+        "importedVertexEntries": 273390,
+        "excludedSceneMeshObjects": 0,
+        "importedTriangles": 136498,
+        "triangleCountDifference": -1,
+        "faceRemovalCause": "not established",
+        "vertexColors": [
+          {
+            "object": "Retopo_Model_Tex_0",
+            "attributes": []
+          },
+          {
+            "object": "Retopo_Model_Tex_0.001",
+            "attributes": []
+          },
+          {
+            "object": "Retopo_Model_Tex_0.002",
+            "attributes": []
+          },
+          {
+            "object": "Retopo_Model_Tex_0.003",
+            "attributes": []
+          },
+          {
+            "object": "Retopo_Model_Tex_0.004",
+            "attributes": []
+          }
+        ],
+        "worldBounds": {
+          "min": [
+            -1128.1693115234375,
+            -1304.4208984375,
+            -296.8750305175781
+          ],
+          "max": [
+            1458.0472412109375,
+            1279.2979736328125,
+            565.2213134765625
+          ],
+          "dimensions": [
+            2586.216552734375,
+            2583.7188720703125,
+            862.0963439941406
+          ],
+          "units": "unverified source units; Blender glTF axis convention applied by importer"
+        },
+        "surveyScaleVerified": false,
+        "blend": {
+          "file": "scene.blend",
+          "bytes": 7522596,
+          "sha256": "e776c3d1334694518c260b18008fc8b3a484f85840c494437961883de743bcf9"
+        }
+      }
+    }
+  ],
+  "limits": [
+    "The synthetic fixtures establish scene-instance and active-view-layer counting, not arbitrary glTF importer correctness.",
+    "Multiple scenes without an explicit default are rejected; older importers without scene-collection support reject multiple scenes.",
+    "The existing Kailasa capture still loses one triangle during this Blender import; cause is not established. The preserving GLB remains unchanged.",
+    "No survey-scale, rendering-quality or gameplay-performance acceptance is implied."
+  ]
+}

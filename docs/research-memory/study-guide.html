@@ -1,0 +1,2690 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Physics, Mathematics &amp; Graph Memory</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="document.css" />
+</head>
+<body><nav class="document-nav"><a href="./index.html">← Research graph</a><a href="./study-guide.html">Study guide</a><a href="./formula-notebook.html">Formulas</a><a href="./ai-mathematics.html">AI results</a></nav>
+<header id="title-block-header">
+<h1 class="title">Physics, Mathematics &amp; Graph Memory</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#physics-mathematics-graph-memory"
+id="toc-physics-mathematics-graph-memory">Physics, Mathematics &amp;
+Graph Memory</a></li>
+<li><a href="#the-study-map-and-donnas-internal-brain"
+id="toc-the-study-map-and-donnas-internal-brain">The study map and
+Donna’s internal brain</a>
+<ul>
+<li><a href="#a-coherent-order-of-study"
+id="toc-a-coherent-order-of-study">A coherent order of study</a></li>
+<li><a href="#what-to-ask-of-every-formula"
+id="toc-what-to-ask-of-every-formula">What to ask of every
+formula</a></li>
+<li><a href="#what-the-internal-brain-adds"
+id="toc-what-the-internal-brain-adds">What the internal brain
+adds</a></li>
+<li><a href="#scope-of-the-evidence-snapshot"
+id="toc-scope-of-the-evidence-snapshot">Scope of the evidence
+snapshot</a></li>
+</ul></li>
+<li><a
+href="#graph-memory-from-a-linked-note-to-an-auditable-research-system"
+id="toc-graph-memory-from-a-linked-note-to-an-auditable-research-system">Graph
+memory: from a linked note to an auditable research system</a>
+<ul>
+<li><a href="#what-exactly-is-being-remembered"
+id="toc-what-exactly-is-being-remembered">1. What exactly is being
+remembered?</a></li>
+<li><a href="#what-obsidians-graph-does-and-what-has-to-be-added"
+id="toc-what-obsidians-graph-does-and-what-has-to-be-added">2. What
+Obsidian’s graph does, and what has to be added</a></li>
+<li><a href="#biological-inspiration-has-a-precise-boundary"
+id="toc-biological-inspiration-has-a-precise-boundary">3. Biological
+inspiration has a precise boundary</a></li>
+<li><a href="#the-smallest-mathematical-graph-model"
+id="toc-the-smallest-mathematical-graph-model">4. The smallest
+mathematical graph model</a></li>
+<li><a href="#how-graph-traversal-differs-from-graph-reasoning"
+id="toc-how-graph-traversal-differs-from-graph-reasoning">5. How graph
+traversal differs from graph reasoning</a></li>
+<li><a href="#lexical-retrieval-is-a-useful-baseline"
+id="toc-lexical-retrieval-is-a-useful-baseline">6. Lexical retrieval is
+a useful baseline</a></li>
+<li><a href="#personalized-diffusion-adds-connected-evidence"
+id="toc-personalized-diffusion-adds-connected-evidence">7. Personalized
+diffusion adds connected evidence</a></li>
+<li><a href="#why-combine-rankings-instead-of-adding-raw-scores"
+id="toc-why-combine-rankings-instead-of-adding-raw-scores">8. Why
+combine rankings instead of adding raw scores?</a></li>
+<li><a href="#five-different-things-are-often-called-a-cache"
+id="toc-five-different-things-are-often-called-a-cache">9. Five
+different things are often called a cache</a></li>
+<li><a href="#the-mathematics-of-a-correct-cache-key"
+id="toc-the-mathematics-of-a-correct-cache-key">10. The mathematics of a
+correct cache key</a></li>
+<li><a href="#time-corrections-and-memory-that-can-change-its-mind"
+id="toc-time-corrections-and-memory-that-can-change-its-mind">11. Time,
+corrections, and memory that can change its mind</a></li>
+<li><a href="#looping-should-improve-an-artifact-not-just-repeat-work"
+id="toc-looping-should-improve-an-artifact-not-just-repeat-work">12.
+Looping should improve an artifact, not just repeat work</a></li>
+<li><a href="#how-the-company-and-skill-integration-works"
+id="toc-how-the-company-and-skill-integration-works">13. How the company
+and skill integration works</a></li>
+<li><a href="#how-to-test-whether-the-memory-is-useful"
+id="toc-how-to-test-whether-the-memory-is-useful">14. How to test
+whether the memory is useful</a></li>
+<li><a href="#the-questions-that-should-drive-the-next-rounds"
+id="toc-the-questions-that-should-drive-the-next-rounds">15. The
+questions that should drive the next rounds</a></li>
+</ul></li>
+<li><a
+href="#mathematics-for-physical-fields-graph-memory-and-research-reasoning"
+id="toc-mathematics-for-physical-fields-graph-memory-and-research-reasoning">Mathematics
+for physical fields, graph memory and research reasoning</a>
+<ul>
+<li><a href="#how-to-use-this-volume"
+id="toc-how-to-use-this-volume">How to use this volume</a></li>
+<li><a href="#algebra-preserve-the-question-while-transforming-it"
+id="toc-algebra-preserve-the-question-while-transforming-it">1. Algebra:
+preserve the question while transforming it</a></li>
+<li><a href="#linear-algebra-identify-what-can-and-cannot-be-recovered"
+id="toc-linear-algebra-identify-what-can-and-cannot-be-recovered">2.
+Linear algebra: identify what can and cannot be recovered</a></li>
+<li><a href="#calculus-local-changes-global-constraints-and-error"
+id="toc-calculus-local-changes-global-constraints-and-error">3.
+Calculus: local changes, global constraints and error</a></li>
+<li><a
+href="#probability-evidence-is-conditional-and-duplicates-are-dependent"
+id="toc-probability-evidence-is-conditional-and-duplicates-are-dependent">4.
+Probability: evidence is conditional, and duplicates are
+dependent</a></li>
+<li><a
+href="#graphs-distinguish-topology-geometry-semantics-and-evidence"
+id="toc-graphs-distinguish-topology-geometry-semantics-and-evidence">5.
+Graphs: distinguish topology, geometry, semantics and evidence</a></li>
+<li><a href="#caching-and-loops-define-the-quantity-being-optimized"
+id="toc-caching-and-loops-define-the-quantity-being-optimized">6.
+Caching and loops: define the quantity being optimized</a></li>
+<li><a href="#geometry-and-topology-what-the-connections-preserve"
+id="toc-geometry-and-topology-what-the-connections-preserve">7. Geometry
+and topology: what the connections preserve</a></li>
+<li><a href="#question-led-research-routes"
+id="toc-question-led-research-routes">8. Question-led research
+routes</a></li>
+<li><a href="#representative-current-frontier-map"
+id="toc-representative-current-frontier-map">9. Representative current
+frontier map</a></li>
+<li><a href="#a-research-record-that-can-survive-review"
+id="toc-a-research-record-that-can-survive-review">10. A research record
+that can survive review</a></li>
+</ul></li>
+<li><a
+href="#electrostatics-sources-constraints-computation-and-learned-long-range-structure"
+id="toc-electrostatics-sources-constraints-computation-and-learned-long-range-structure">Electrostatics:
+sources, constraints, computation and learned long-range structure</a>
+<ul>
+<li><a href="#what-this-chapter-establishes"
+id="toc-what-this-chapter-establishes">What this chapter
+establishes</a></li>
+<li><a href="#from-force-to-potential"
+id="toc-from-force-to-potential">1. From force to potential</a></li>
+<li><a href="#why-boundaries-belong-in-the-theorem"
+id="toc-why-boundaries-belong-in-the-theorem">2. Why boundaries belong
+in the theorem</a></li>
+<li><a href="#matter-changes-the-closure"
+id="toc-matter-changes-the-closure">3. Matter changes the
+closure</a></li>
+<li><a href="#screening-is-a-model-of-responsive-particles"
+id="toc-screening-is-a-model-of-responsive-particles">4. Screening is a
+model of responsive particles</a></li>
+<li><a href="#numerical-operators-compression-and-invalidation"
+id="toc-numerical-operators-compression-and-invalidation">5. Numerical
+operators, compression and invalidation</a></li>
+<li><a
+href="#selected-frontier-learned-charges-and-physical-inductive-structure"
+id="toc-selected-frontier-learned-charges-and-physical-inductive-structure">6.
+Selected frontier: learned charges and physical inductive
+structure</a></li>
+<li><a href="#questions-that-test-understanding"
+id="toc-questions-that-test-understanding">Questions that test
+understanding</a></li>
+</ul></li>
+<li><a
+href="#magnetism-currents-quantum-order-topology-and-controlled-memory-states"
+id="toc-magnetism-currents-quantum-order-topology-and-controlled-memory-states">Magnetism:
+currents, quantum order, topology and controlled memory states</a>
+<ul>
+<li><a href="#the-organizing-distinction"
+id="toc-the-organizing-distinction">The organizing distinction</a></li>
+<li><a href="#currents-continuity-and-force"
+id="toc-currents-continuity-and-force">1. Currents, continuity and
+force</a></li>
+<li><a href="#magnetostatic-solutions-and-gauge-freedom"
+id="toc-magnetostatic-solutions-and-gauge-freedom">2. Magnetostatic
+solutions and gauge freedom</a></li>
+<li><a href="#time-dependence-closes-the-conservation-laws"
+id="toc-time-dependence-closes-the-conservation-laws">3. Time dependence
+closes the conservation laws</a></li>
+<li><a href="#from-moments-to-statistical-order"
+id="toc-from-moments-to-statistical-order">4. From moments to
+statistical order</a></li>
+<li><a href="#dynamics-defects-and-protected-quantities"
+id="toc-dynamics-defects-and-protected-quantities">5. Dynamics, defects
+and protected quantities</a></li>
+<li><a href="#plasma-and-superconducting-bridges"
+id="toc-plasma-and-superconducting-bridges">6. Plasma and
+superconducting bridges</a></li>
+<li><a href="#selected-20242026-frontier-and-proof-status-boundaries"
+id="toc-selected-20242026-frontier-and-proof-status-boundaries">7.
+Selected 2024–2026 frontier and proof-status boundaries</a></li>
+<li><a href="#questions-that-test-understanding-1"
+id="toc-questions-that-test-understanding-1">Questions that test
+understanding</a></li>
+</ul></li>
+<li><a
+href="#gravity-inverse-square-dynamics-spacetime-geometry-and-bounded-frontier-claims"
+id="toc-gravity-inverse-square-dynamics-spacetime-geometry-and-bounded-frontier-claims">Gravity:
+inverse-square dynamics, spacetime geometry and bounded frontier
+claims</a>
+<ul>
+<li><a href="#conventions-and-scope"
+id="toc-conventions-and-scope">Conventions and scope</a></li>
+<li><a href="#the-newtonian-model-is-already-a-boundary-problem"
+id="toc-the-newtonian-model-is-already-a-boundary-problem">1. The
+Newtonian model is already a boundary problem</a></li>
+<li><a href="#variational-mechanics-is-the-bridge-to-geometry"
+id="toc-variational-mechanics-is-the-bridge-to-geometry">2. Variational
+mechanics is the bridge to geometry</a></li>
+<li><a href="#einsteins-equations-are-a-constrained-dynamical-system"
+id="toc-einsteins-equations-are-a-constrained-dynamical-system">3.
+Einstein’s equations are a constrained dynamical system</a></li>
+<li><a href="#exact-solutions-and-observable-effects"
+id="toc-exact-solutions-and-observable-effects">4. Exact solutions and
+observable effects</a></li>
+<li><a href="#gravitational-waves-connect-derivatives-to-data"
+id="toc-gravitational-waves-connect-derivatives-to-data">5.
+Gravitational waves connect derivatives to data</a></li>
+<li><a href="#cosmology-expansion-inference-and-model-dependence"
+id="toc-cosmology-expansion-inference-and-model-dependence">6.
+Cosmology: expansion, inference and model dependence</a></li>
+<li><a
+href="#quantum-and-ai-assisted-frontier-what-is-and-is-not-established"
+id="toc-quantum-and-ai-assisted-frontier-what-is-and-is-not-established">7.
+Quantum and AI-assisted frontier: what is and is not
+established</a></li>
+</ul></li>
+<li><a
+href="#frequency-and-waves-oscillation-spectra-geometry-and-quantum-control"
+id="toc-frequency-and-waves-oscillation-spectra-geometry-and-quantum-control">Frequency
+and waves: oscillation, spectra, geometry and quantum control</a>
+<ul>
+<li><a href="#frequency-is-a-property-of-a-defined-observable"
+id="toc-frequency-is-a-property-of-a-defined-observable">Frequency is a
+property of a defined observable</a></li>
+<li><a href="#why-harmonic-motion-appears-so-widely"
+id="toc-why-harmonic-motion-appears-so-widely">1. Why harmonic motion
+appears so widely</a></li>
+<li><a href="#resonance-is-a-driven-response-with-an-energy-budget"
+id="toc-resonance-is-a-driven-response-with-an-energy-budget">2.
+Resonance is a driven response with an energy budget</a></li>
+<li><a href="#many-oscillators-introduce-linear-algebra"
+id="toc-many-oscillators-introduce-linear-algebra">3. Many oscillators
+introduce linear algebra</a></li>
+<li><a href="#fourier-and-laplace-transforms-solve-different-questions"
+id="toc-fourier-and-laplace-transforms-solve-different-questions">4.
+Fourier and Laplace transforms solve different questions</a></li>
+<li><a href="#digital-spectra-require-an-observation-model"
+id="toc-digital-spectra-require-an-observation-model">5. Digital spectra
+require an observation model</a></li>
+<li><a href="#waves-couple-space-to-time"
+id="toc-waves-couple-space-to-time">6. Waves couple space to
+time</a></li>
+<li><a href="#quantum-frequency-and-current-devices"
+id="toc-quantum-frequency-and-current-devices">7. Quantum frequency and
+current devices</a></li>
+<li><a href="#metamaterials-topology-and-exceptional-points"
+id="toc-metamaterials-topology-and-exceptional-points">8. Metamaterials,
+topology and exceptional points</a></li>
+<li><a href="#the-exact-graph-bridge" id="toc-the-exact-graph-bridge">9.
+The exact graph bridge</a></li>
+</ul></li>
+<li><a
+href="#which-physics-structures-transfer-to-graph-memoryand-what-does-not-follow"
+id="toc-which-physics-structures-transfer-to-graph-memoryand-what-does-not-follow">Which
+physics structures transfer to graph memory—and what does not follow</a>
+<ul>
+<li><a href="#three-distinct-kinds-of-connection"
+id="toc-three-distinct-kinds-of-connection">Three distinct kinds of
+connection</a></li>
+<li><a href="#a-worked-example-one-operator-three-meanings"
+id="toc-a-worked-example-one-operator-three-meanings">A worked example:
+one operator, three meanings</a></li>
+<li><a href="#caching-operator-reuse-is-conditional"
+id="toc-caching-operator-reuse-is-conditional">Caching: operator reuse
+is conditional</a></li>
+<li><a
+href="#looping-distinguish-termination-recurrence-and-independent-evidence"
+id="toc-looping-distinguish-termination-recurrence-and-independent-evidence">Looping:
+distinguish termination, recurrence and independent evidence</a></li>
+<li><a href="#a-productive-implementation-contract"
+id="toc-a-productive-implementation-contract">A productive
+implementation contract</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1 id="physics-mathematics-graph-memory">Physics, Mathematics &amp;
+Graph Memory</h1>
+<p>Evidence snapshot: 25 November 2026.</p>
+<h1 id="the-study-map-and-donnas-internal-brain">The study map and
+Donna’s internal brain</h1>
+<p>This work has two linked purposes: understand the mathematics of
+memory and physical models, and turn that understanding into a working
+internal memory for Donna. The application is Daftar’s own system. Its
+durable company records, typed graph, evidence retrieval, corrections
+and setup planning work without an external notes application.</p>
+<p>The public study graph contains 367 concepts and 177 formulas.
+Concepts are organized through four nested levels within the fields,
+with prerequisite and cross-field edges. The formula cards state
+symbols, units, assumptions, a derivation summary, a worked check and
+limitations. The newest paper in a topic is not automatically the best
+starting point; a reliable path builds the prerequisites required to
+understand what its result actually says.</p>
+<h2 id="a-coherent-order-of-study">A coherent order of study</h2>
+<ol type="1">
+<li><strong>Algebra and functions.</strong> Learn equality,
+inequalities, dimensions, vectors, matrices, eigenvalues and
+conditioning. Translate a physical or software question into state
+variables and relations before choosing a formula.</li>
+<li><strong>Geometry and calculus.</strong> Understand distances,
+coordinate systems, derivatives, gradients, integration, divergence,
+curl, manifolds and boundary conditions. Track which quantities are
+invariant and which depend on coordinates.</li>
+<li><strong>Probability and computation.</strong> Study distributions,
+Bayes’ rule, entropy, numerical error, optimization, graphs and
+algorithmic bounds. Separate uncertainty about a claim from a retrieval
+score.</li>
+<li><strong>Memory and graph operators.</strong> Derive adjacency, the
+Laplacian, harmonic extension, random walks and restart diffusion.
+Compare exact caches with retrieval indexes and durable records. Test
+source changes, expiry, and repeated tasks.</li>
+<li><strong>Electrostatics and magnetism.</strong> Derive field and
+potential relations, constitutive assumptions, energy, interfaces,
+Poisson problems, microscopic models and dynamics. Learn when a
+continuum or mean-field approximation breaks down.</li>
+<li><strong>Waves and gravity.</strong> Connect modes, spectra,
+resonance, damping and inference to wave equations. Progress from
+Newtonian gravity through curvature, geodesics, gravitational radiation
+and carefully stated research frontiers.</li>
+<li><strong>Current mathematics and AI results.</strong> Read the exact
+proposition, hypotheses, proof artifact, checking status and independent
+assessment. Distinguish a formalization of a known theorem, a new
+restricted theorem, a numerical certificate, a translation dispute and a
+full problem resolution.</li>
+</ol>
+<p>The branches need not be studied strictly in order. The graph gives
+local prerequisite paths so a question about caching can lead back to
+probability or linear algebra, and a question about a new physics result
+can lead back to the governing equation and its regime.</p>
+<h2 id="what-to-ask-of-every-formula">What to ask of every formula</h2>
+<p>What are the state variables? What has units? Which sign and
+normalization convention is used? What is assumed about smoothness,
+boundaries, noise and approximation scale? Which quantities are
+observable? Can a simple limiting case falsify my interpretation? Is
+this an identity, a model, a bound, an estimator or a reported research
+theorem? What would I need to measure or prove before using it in a
+decision?</p>
+<p>A worked numerical check establishes a narrow fact about that
+example. It is not a substitute for a theorem’s hypotheses, a proof, an
+experiment or an uncertainty budget. The cards deliberately carry
+limitations alongside equations so retrieval cannot present an
+attractive formula without its regime.</p>
+<h2 id="what-the-internal-brain-adds">What the internal brain adds</h2>
+<p>Donna’s operating memory links repositories, people, skills, goals,
+job outcomes and saved knowledge. It can retrieve an older relevant
+decision, inspect its provenance, preserve a later correction, identify
+a missing setup component and turn those observations into a saved plan.
+Public research can supply methods and source leads without gaining
+access to private company records.</p>
+<p>Typed links describe different relations: prerequisite, membership,
+support, implementation, correction, contradiction or analogy. The graph
+is therefore more than a display of backlinks. A link still does not
+prove causation, scientific truth or permission. These distinctions are
+part of the implemented record and retrieval contract.</p>
+<h2 id="scope-of-the-evidence-snapshot">Scope of the evidence
+snapshot</h2>
+<p>The snapshot date is 25 November 2026. Frontier reading is
+representative and explicitly labeled by access depth. Some sources were
+read in selected full-text sections, some through abstracts or
+repository assessments, and catalogue-only entries were not
+proof-reviewed. All 730 manuscript entries in the pinned OpenAI
+catalogue are included as metadata in 375 families; 24 selected recent
+AI claims receive a more detailed qualification audit. These counts must
+not be interpreted as 730 newly solved or independently certified
+problems.</p>
+<p>The field coverage reports identify specific gaps, including deeper
+numerical-relativity formulations, nonlinear-wave systems, correlated
+matter, advanced geometry and many uninspected papers. They form an
+expansion queue for later bounded research. The present deliverable
+provides a substantive foundation-to-frontier map and working memory
+implementation; it does not assert that all of mathematics or physics
+has been exhaustively completed.</p>
+<h1
+id="graph-memory-from-a-linked-note-to-an-auditable-research-system">Graph
+memory: from a linked note to an auditable research system</h1>
+<p><strong>Evidence snapshot: 25 November 2026.</strong> This chapter
+explains the mathematics and engineering behind the implemented Daftar
+memory layer. It connects to the four physics chapters and the
+mathematics notebook through explicit prerequisite and analogy edges.
+The numerical examples below are original teaching calculations. They
+are not measurements of a human brain, a commercial memory product, or a
+deployed Daftar installation.</p>
+<h2 id="what-exactly-is-being-remembered">1. What exactly is being
+remembered?</h2>
+<p>Before selecting a database or drawing a network, distinguish the
+objects that need to survive a session. A source is a document or
+observation that can be reopened. A claim is a statement about
+something. A concept is an organizing idea. A formula is a mathematical
+relation with a domain and assumptions. A decision records what was
+chosen, why, and under which constraints. A task records work still to
+do. An artifact is a concrete output. A receipt records an observed
+execution or publication event.</p>
+<p>These objects can be connected, but they are not interchangeable. A
+note called “Yang–Mills solved” is too coarse to retain what matters. An
+adequate record distinguishes existence, uniqueness, mass gap, the exact
+formal statement, proof artifact, independent checks, criticisms, and
+the date of each assessment. A source can support one part while saying
+nothing about another. Similarly, a source saying a game asset was
+imported does not establish physical accuracy, engine performance, or
+publication.</p>
+<p>The first useful graph therefore contains relationships such as
+<em>source supports claim</em>, <em>formula assumes condition</em>,
+<em>concept is prerequisite of concept</em>, <em>test checks
+implementation</em>, <em>artifact was produced by task</em>, and
+<em>remote tree contains artifact</em>. An edge labeled merely “related”
+is still useful for discovery, but it carries much less evidential
+meaning. Keep an explicit <em>analogy</em> edge when two domains share
+mathematical structure without an established physical identity.</p>
+<p>This separation is an engineering decision embodied in the <a
+href="https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas">Daftar
+implementation</a>. It lets a future worker ask a precise question:
+“Which assumption was used here?” or “What changed after the source was
+corrected?” The answer should be a traceable set of records, rather than
+a confident paraphrase of an old conversation.</p>
+<h2 id="what-obsidians-graph-does-and-what-has-to-be-added">2. What
+Obsidian’s graph does, and what has to be added</h2>
+<p>Obsidian’s documented graph represents notes as vertices and internal
+links as edges. Its local view exposes neighborhoods at a chosen depth.
+Backlinks are incoming links, while unlinked mentions are a separate
+feature that finds textual occurrences of a name. These are useful
+navigation primitives; they do not automatically infer a scientific
+mechanism or verify a claim. See the official <a
+href="https://obsidian.md/help/plugins/graph">graph</a> and <a
+href="https://obsidian.md/help/plugins/backlinks">backlink</a>
+documentation.</p>
+<p>Consider three notes: <em>Matrix algebra</em>, <em>Graph
+Laplacian</em>, and <em>Electrostatic potential</em>. Linking them makes
+a learning path visible. Yet a bare link does not tell a reader whether
+algebra proves the electrostatic model, whether the Laplacian is only a
+numerical approximation, or whether the author merely noticed a
+resemblance. The atlas adds edge types and formula cards to answer those
+questions.</p>
+<p>A stable identity is also essential. Renaming a note should not make
+its scientific result a new object. Conversely, two things called
+“potential” should not be merged simply because their labels match.
+Electric potential is measured in volts; gravitational potential has
+units of energy per unit mass; a Hopfield objective may be
+dimensionless. The words overlap while the models differ. Keep immutable
+IDs, human-readable aliases, and a domain field.</p>
+<p>Portable Markdown remains useful. Each exported note contains its
+stable ID, domain, status, source links, formulas where applicable, and
+typed descriptions beside wikilinks. The export can be opened as an
+Obsidian vault without installing a custom plugin. Editor-centered tools
+such as <a href="https://github.com/foambubble/foam">Foam</a> and
+block-centered systems such as <a
+href="https://github.com/logseq/logseq">Logseq</a> provide adjacent
+authoring approaches. Their project documentation was inspected as
+discovery material; compatibility with every current extension and
+migration format was not tested.</p>
+<h2 id="biological-inspiration-has-a-precise-boundary">3. Biological
+inspiration has a precise boundary</h2>
+<p>The complementary-learning-systems literature distinguishes rapid
+acquisition of particular experiences from slower acquisition of
+structured knowledge. For software, this suggests preserving an event
+ledger alongside a curated concept layer. The connection is a design
+analogy. A JSON record is not a hippocampal neuron, and a batch of
+regression tests is not an observed replay mechanism in a brain. The
+author manuscript of <a
+href="https://web.stanford.edu/~jlmcc/papers/KumaranHassabisMcClelland16FinalMS.pdf">Kumaran,
+Hassabis, and McClelland</a> is the reference for that distinction.</p>
+<p>The analogy becomes useful when it generates a falsifiable software
+requirement. For example: an episodic record should preserve the
+original observation; a semantic summary should retain pointers to those
+episodes; and a correction should be able to invalidate a summary that
+depended on the mistaken observation. These requirements can be tested
+without making any neurological claim.</p>
+<p>Associative models provide a different mathematical bridge. A
+classical Hopfield network can retrieve stable patterns by descending a
+scalar function under specified update rules. The original <a
+href="https://pmc.ncbi.nlm.nih.gov/articles/PMC346238/">Hopfield
+paper</a> motivates this model family. The formula notebook derives the
+energy change for a single asynchronous binary update, states the
+symmetric-weight assumption, and warns that synchronous updates can
+cycle. This is more informative than saying that a note graph “works
+like a brain.”</p>
+<p>Modern Hopfield work establishes particular connections between
+continuous associative updates and attention. Those results have their
+own assumptions and capacity statements. They do not imply unlimited
+factual memory in a language-model application. See <a
+href="https://arxiv.org/abs/2008.02217">Ramsauer and colleagues</a> and
+the original <a
+href="https://papers.neurips.cc/paper_files/paper/2017/hash/3f5ee243547dee91fbd053c1c4a845aa-Abstract.html">Transformer
+paper</a>.</p>
+<h2 id="the-smallest-mathematical-graph-model">4. The smallest
+mathematical graph model</h2>
+<p>Let a graph have vertices indexed by integers. Under the convention
+used here, the adjacency entry
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><annotation encoding="application/x-tex">A_{ij}</annotation></semantics></math>
+is the weight of an edge from vertex
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
+to vertex
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>j</mi><annotation encoding="application/x-tex">j</annotation></semantics></math>.
+For an undirected graph,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+is symmetric. Define the degree
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mi>i</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>j</mi></msub><msub><mi>A</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub></mrow><annotation encoding="application/x-tex">d_i=\sum_j A_{ij}</annotation></semantics></math>
+and diagonal matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi><mo>=</mo><mo>diag</mo><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>d</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">D=\operatorname{diag}(d_i)</annotation></semantics></math>.
+The combinatorial Laplacian is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mi>D</mi><mo>−</mo><mi>A</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">L=D-A.</annotation></semantics></math></p>
+<p>Applied to a vertex signal
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>,
+it gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>L</mi><mi>x</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>i</mi></msub><mo>=</mo><msub><mo>∑</mo><mi>j</mi></msub><msub><mi>w</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">(Lx)_i=\sum_jw_{ij}(x_i-x_j)</annotation></semantics></math>.
+A constant signal has no differences, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mn>𝟏</mn><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">L\mathbf1=0</annotation></semantics></math>.
+This immediately explains why the full connected Laplacian is singular:
+adding a constant to a potential leaves every difference unchanged.</p>
+<p>For a three-vertex path with unit weights,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">L=\begin{pmatrix}1&amp;-1&amp;0\\-1&amp;2&amp;-1\\0&amp;-1&amp;1\end{pmatrix}.</annotation></semantics></math></p>
+<p>Its eigenvalues are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">0,1,3</annotation></semantics></math>.
+The zero eigenvalue is the constant mode, not a numerical bug. To solve
+for a unique potential, fix a boundary value or impose a compatible
+gauge. If the endpoints are fixed at 1 and 0 with no interior source,
+the middle equation is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2</mn><msub><mi>u</mi><mn>2</mn></msub><mo>−</mo><msub><mi>u</mi><mn>1</mn></msub><mo>−</mo><msub><mi>u</mi><mn>3</mn></msub><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">2u_2-u_1-u_3=0</annotation></semantics></math>,
+hence
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>u</mi><mn>2</mn></msub><mo>=</mo><mn>1</mn><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">u_2=1/2</annotation></semantics></math>.</p>
+<p>The same algebra appears in resistor networks, finite-difference
+approximations, harmonic extension, graph regularization, and parts of
+field theory. Its interpretation changes with units and assumptions.
+With electrical conductances and voltages, a quadratic expression may
+describe power. With arbitrary link weights and note scores, the
+expression is an abstract smoothness penalty. Shared algebra does not
+supply a missing physical apparatus or measurement.</p>
+<p>The identity</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>x</mi><mi>T</mi></msup><mi>L</mi><mi>x</mi><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><munder><mo>∑</mo><mrow><mi>i</mi><mo>,</mo><mi>j</mi></mrow></munder><msub><mi>w</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">x^TLx=\frac12\sum_{i,j}w_{ij}(x_i-x_j)^2</annotation></semantics></math></p>
+<p>also shows why nonnegative symmetric weights make
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>L</mi><annotation encoding="application/x-tex">L</annotation></semantics></math>
+positive semidefinite. Every term is a nonnegative weighted square. A
+negative “contradicts” edge cannot be inserted into a random-walk
+transition as though it were a negative probability. Keep contradiction
+as its own semantic relation; use a signed-graph model only after
+specifying the different mathematics it requires.</p>
+<h2 id="how-graph-traversal-differs-from-graph-reasoning">5. How graph
+traversal differs from graph reasoning</h2>
+<p>A breadth-first search explores neighbors with a queue. A visited set
+prevents cycling through the same vertex forever. Depth and node limits
+bound the work. If A links to B, B links to C, and C links to A, the
+traversal can still finish after visiting three vertices.</p>
+<p>That is a computational guarantee, not a reasoning guarantee.
+Discovering a path from a source to a conclusion does not prove the
+conclusion. The path may include an analogy, a disputed assertion, or an
+irrelevant high-degree hub. An evidence inspector must preserve the
+relation types and original sources so the reader can assess the
+path.</p>
+<p>Learning plans require a narrower graph. Include only prerequisite
+relations and attempt a topological ordering. The implementation uses
+Kahn’s algorithm. If vertices remain after removing all zero-indegree
+vertices, the prerequisite graph is not acyclic. The remainder may
+include both cycle members and their descendants; labeling every
+remainder a cycle member would be incorrect.</p>
+<p>A conceptual graph can legitimately contain cycles. An execution plan
+may need a DAG to avoid circular waiting. These two graphs serve
+different purposes and should not be forced into the same
+representation. A research loop can be represented as a sequence of
+versioned execution DAGs, each producing a new knowledge snapshot.</p>
+<h2 id="lexical-retrieval-is-a-useful-baseline">6. Lexical retrieval is
+a useful baseline</h2>
+<p>The implementation starts with words. It normalizes text, tokenizes
+labels and summaries, removes a declared stopword set, and computes BM25
+over the eligible documents. The important phrase is <em>eligible
+documents</em>: company scope and temporal validity are applied before
+corpus statistics are calculated.</p>
+<p>Why does ordering matter? Suppose a private company has ten thousand
+documents repeating a particular term. If those documents contribute to
+inverse document frequency before being filtered out of the results,
+they can still change the public ranking. Even without exposing their
+text, the private corpus has influenced a supposedly public answer.
+Computing statistics after scope filtering removes that pathway in this
+implementation.</p>
+<p>The chosen positive-IDF variant is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>idf</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>t</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mo>log</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>+</mo><mfrac><mrow><mi>N</mi><mo>−</mo><msub><mi>n</mi><mi>t</mi></msub><mo>+</mo><mn>0.5</mn></mrow><mrow><msub><mi>n</mi><mi>t</mi></msub><mo>+</mo><mn>0.5</mn></mrow></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">\operatorname{idf}(t)=\log\left(1+\frac{N-n_t+0.5}{n_t+0.5}\right).</annotation></semantics></math></p>
+<p>BM25 then combines term frequency saturation and document-length
+normalization. The exact variant, tokenization, repeated label
+weighting, and parameters are recorded; they are not presented as an
+optimized universal choice. The original framework is documented by <a
+href="https://doi.org/10.1561/1500000019">Robertson and
+Zaragoza</a>.</p>
+<p>This baseline has a valuable failure mode: a query with no matching
+terms returns no evidence. It does not wander through an unrelated
+populated graph merely to produce an answer. The lack of embedding-based
+paraphrase matching is a known limitation and an explicit future
+experiment, rather than a capability quietly implied by the word
+“semantic.”</p>
+<h2 id="personalized-diffusion-adds-connected-evidence">7. Personalized
+diffusion adds connected evidence</h2>
+<p>Normalize outgoing graph weights into a row-stochastic transition
+matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>P</mi><annotation encoding="application/x-tex">P</annotation></semantics></math>.
+Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
+be a probability distribution over query-relevant seed vertices.
+Personalized PageRank iterates</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>p</mi><mrow><mi>t</mi><mo>+</mo><mn>1</mn></mrow></msub><mo>=</mo><mi>α</mi><msup><mi>P</mi><mi>T</mi></msup><msub><mi>p</mi><mi>t</mi></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><mi>α</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>s</mi><mo>,</mo><mspace width="2.0em"></mspace><mn>0</mn><mo>≤</mo><mi>α</mi><mo>&lt;</mo><mn>1</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">p_{t+1}=\alpha P^Tp_t+(1-\alpha)s,\qquad0\le\alpha&lt;1.</annotation></semantics></math></p>
+<p>The restart term repeatedly returns probability mass toward the
+question. Dangling vertices redistribute through the seed distribution.
+For two alternating vertices seeded entirely at the first and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>0.85</mn></mrow><annotation encoding="application/x-tex">\alpha=0.85</annotation></semantics></math>,
+the stationary mass is approximately
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="true" form="prefix">(</mo><mn>0.54054</mn><mo>,</mo><mn>0.45946</mn><mo stretchy="true" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0.54054,0.45946)</annotation></semantics></math>.
+A related item can therefore receive substantial mass even without
+directly repeating the query term.</p>
+<p>That mass means graph affinity under the declared walk. It is not a
+54% probability that the first claim is scientifically true. Nor does a
+retrieved path automatically establish causality. The paper family <a
+href="https://arxiv.org/abs/2405.14831">HippoRAG</a> and <a
+href="https://arxiv.org/html/2502.14802v2">HippoRAG 2</a> is relevant
+because it uses graph-assisted retrieval for associative questions. Our
+code is a smaller deterministic baseline; it does not implement those
+papers’ full extraction, embedding, and recognition pipelines.</p>
+<p>The implementation gives reverse navigation half the raw forward
+weight while preserving the original logical direction in the evidence
+packet. This helps discovery through backlinks without rewriting “A
+requires B” as a claim that B requires A. Analogy and contradiction
+links remain inspectable but are excluded from default propagation.</p>
+<p>Convergence is also explicit. A stochastic transition with restart is
+a contraction in the appropriate norm. An iteration residual can bound
+distance to the fixed point; an iteration cap merely bounds computation.
+The packet reports both iteration count and residual so these are not
+confused.</p>
+<h2 id="why-combine-rankings-instead-of-adding-raw-scores">8. Why
+combine rankings instead of adding raw scores?</h2>
+<p>BM25 scores and stationary graph masses have different scales. Adding
+them directly makes an arbitrary unit mismatch look like a principled
+decision. Reciprocal rank fusion combines ordering information
+instead:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>R</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>d</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><munder><mo>∑</mo><mi>j</mi></munder><mfrac><msub><mi>w</mi><mi>j</mi></msub><mrow><mi>c</mi><mo>+</mo><msub><mi>r</mi><mi>j</mi></msub><mrow><mo stretchy="true" form="prefix">(</mo><mi>d</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">R(d)=\sum_j\frac{w_j}{c+r_j(d)}.</annotation></semantics></math></p>
+<p>The baseline uses one-based ranks,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>=</mo><mn>60</mn></mrow><annotation encoding="application/x-tex">c=60</annotation></semantics></math>,
+lexical weight 1, and graph weight 0.7. An item ranked first in both
+scores
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1.7</mn><mi>/</mi><mn>61</mn><mo>≈</mo><mn>0.027869</mn></mrow><annotation encoding="application/x-tex">1.7/61\approx0.027869</annotation></semantics></math>.
+That is a ranking value, not 2.79% confidence. The underlying fusion
+method is described in the original <a
+href="https://cormack.uwaterloo.ca/cormack/cormacksigir09-rrf.pdf">Cormack–Clarke–Büttcher
+paper</a>; the particular weights in Daftar are implementation choices
+awaiting broader evaluation.</p>
+<p>Graph expansion can help multi-step questions and harm precise ones.
+A highly connected general concept may crowd out a narrow source. A
+related claim may be historically interesting but not answer the current
+question. The correct response is to measure retrieval quality on a
+fixed set of tasks, not to assume more edges always improve memory.</p>
+<p>Evidence packets therefore include direct lexical rank, graph rank,
+matched terms, typed connections, source locators, status, and omission
+counts. Their serialized UTF-8 byte size is checked after metadata
+settles. When all useful content does not fit, the packet remains honest
+about what was omitted.</p>
+<h2 id="five-different-things-are-often-called-a-cache">9. Five
+different things are often called a cache</h2>
+<p>First, a source cache retains permitted document bytes or metadata so
+a source can be reopened reproducibly. Second, an index cache retains
+derived lexical or graph structures. Third, a result cache reuses the
+answer to a particular retrieval query. Fourth, a provider’s prompt
+cache may reuse matching prefixes of model input. Fifth, an attention KV
+cache holds intermediate tensors during inference.</p>
+<p>Only the third is implemented as the persistent local cache in this
+project. The native worker additionally has a bounded in-process
+evidence cache. Hosted Donna uses the public retrieval code but does not
+claim a persistent retrieval cache. The atlas does not silently install
+an embedding service, alter model weights, or assert a provider cache
+hit.</p>
+<p>The local OpenAI SDK exposes cached-token fields, and current <a
+href="https://developers.openai.com/api/docs/guides/prompt-caching">OpenAI
+documentation</a> describes model-dependent provider caching and
+telemetry. Those are a separate observation surface. A local cache hit
+does not show that an API charged fewer tokens. Actual token, write,
+latency, and cost receipts would be needed before making that claim.</p>
+<p>Python’s <a
+href="https://docs.python.org/3/library/functools.html">memoization
+documentation</a> is a useful conceptual starting point: a cache returns
+a prior function result. The central correctness question is whether the
+key identifies every input that can change that result. If the function
+reads a file but the key includes only the query string, changing the
+file can leave the cached answer stale.</p>
+<h2 id="the-mathematics-of-a-correct-cache-key">10. The mathematics of a
+correct cache key</h2>
+<p>Treat retrieval as a function of the question, source snapshot,
+algorithm, allowed scope, policy, temporal eligibility, and retrieval
+parameters. The cache key is a cryptographic digest of a deterministic
+encoding of these dependencies. A source-only correction must invalidate
+the key even when the summary text is unchanged.</p>
+<p>The implementation stores immutable snapshots by content hash and
+updates a per-scope pointer. A repeated identical import is idempotent.
+Each retrieval loads the selected snapshots, derives the eligible
+temporal graph, and uses those identities in the result-cache key. A
+cache envelope also records its own payload digest and checks returned
+records against authorized active graph nodes. Malformed or inconsistent
+derived caches are discarded and recomputed.</p>
+<p>This is not authentication against a malicious owner of the
+filesystem. The local store assumes a trusted process with access to its
+directory. It is not exposed as a multi-user service, and its
+command-line scope flags do not authenticate a company member.
+Production company access stays in Daftar’s existing authorization
+path.</p>
+<p>Time-to-live provides an additional reuse limit. It does not replace
+invalidation. Under an illustrative homogeneous Poisson update model,
+the chance of at least one update during age
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><msup><mi>e</mi><mrow><mi>−</mi><mi>λ</mi><mi>t</mi></mrow></msup></mrow><annotation encoding="application/x-tex">1-e^{-\lambda t}</annotation></semantics></math>.
+Real research updates can be bursty, so this formula is a planning model
+rather than a source-freshness guarantee. An exact version change is
+stronger evidence than a low estimated update probability.</p>
+<p>The implemented persistent eviction policy is bounded FIFO by last
+write. It is deliberately not labeled LRU. Under fully associative LRU
+with uniform-sized entries, reuse distance gives a hit condition: fewer
+than capacity many distinct other items have been accessed since the
+prior access. The stack-distance literature, including <a
+href="https://research.ibm.com/publications/efficient-stack-distance-computation-for-priority-replacement-policies">IBM’s
+author-hosted record</a>, explains why replacement policy matters.</p>
+<h2 id="time-corrections-and-memory-that-can-change-its-mind">11. Time,
+corrections, and memory that can change its mind</h2>
+<p>A source can be published on one date, describe an earlier event, be
+retrieved later, and be corrected later still. These are different
+times. Record document time, valid time, retrieval time, and observation
+time where they matter.</p>
+<p>The implementation’s validity intervals are half-open: a record
+applies when <code>valid_from &lt;= as_of &lt; valid_until</code>. A
+fact expiring exactly at noon must be absent from a noon query. The same
+rule applies to edges. Otherwise an expired relationship could still let
+evidence propagate between active vertices.</p>
+<p>Temporal graph systems such as <a
+href="https://arxiv.org/html/2501.13956v1">Zep</a> motivate preserving
+changing relationships, while <a
+href="https://github.com/getzep/graphiti">Graphiti</a> is a relevant
+implementation project. This release uses a smaller
+snapshot-and-interval design. Old snapshots persist locally, but the CLI
+currently queries selected current snapshots; it does not expose a full
+historical “what the system knew at every past time” service.</p>
+<p>A useful future extension is explicit bitemporal querying: “What was
+true at time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>
+according to evidence recorded by time
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>r</mi><annotation encoding="application/x-tex">r</annotation></semantics></math>?”
+That needs retained versions, clear correction relationships, and
+queries over both clocks. Merely adding a <code>date</code> field does
+not solve it.</p>
+<h2 id="looping-should-improve-an-artifact-not-just-repeat-work">12.
+Looping should improve an artifact, not just repeat work</h2>
+<p>A productive research round starts with a question and an input
+version. It produces a concrete artifact and exposes an unresolved
+weakness. A reviewer examines the evidence or implementation, identifies
+a defect or decisive uncertainty, and the next round changes something
+because of that finding. A final check tests the changed result.</p>
+<p>In this work, independent review found concrete implementation
+faults: a parseable but inconsistent cached payload could be reused,
+final packet metadata could exceed a small byte limit, an unchecked
+optional field could crash retrieval, and source namespacing could
+exceed an identifier bound. Those observations led to code changes and
+regression cases. They are genuine adaptive rounds because the next
+action depended on an observed result.</p>
+<p>The improvement quantity should be defined against fixed criteria:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>U</mi><mo>=</mo><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">new</mtext><mo>;</mo><mi>D</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>U</mi><mrow><mo stretchy="true" form="prefix">(</mo><mtext mathvariant="normal">old</mtext><mo>;</mo><mi>D</mi><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Delta U=U(\text{new};D)-U(\text{old};D)</annotation></semantics></math>.
+A larger file, more agents, more searches, or a larger graph is not
+itself a gain. Repeated tuning can also overfit an evaluation set, so
+later phases need held-out questions and adversarial updates.</p>
+<p>Microsoft’s November 2026 <a
+href="https://www.microsoft.com/en-us/research/story/the-evolution-of-graphrag-advancing-systems-and-evaluation-together/">GraphRAG
+research account</a> discusses evolving systems alongside their
+evaluation. This is relevant context, but the release does not claim to
+reproduce that product or its benchmark. A small deterministic suite
+establishes specific local behavior; it is not a general SOTA
+result.</p>
+<p>Stop conditions are part of the design. Preserve the result when
+acceptance is met, a real allowance is exhausted, a decisive input is
+unavailable, or repeated work adds no information. A scheduled future
+run would require a separately created task. Nothing in this repository
+implies agents continue running after this session ends.</p>
+<h2 id="how-the-company-and-skill-integration-works">13. How the company
+and skill integration works</h2>
+<p>The native OfficeWorker receives a bounded public research packet
+selected for its current goal. The hosted Donna path receives the same
+kind of public evidence through the shared retrieval core. Existing
+company-scoped conversation, knowledge, dependency artifacts, and
+permissions remain in their established paths.</p>
+<p>This improves continuity in a concrete way: a physics job can find a
+formula and its assumptions; a memory job can find cache invalidation
+and temporal validity; a repository job can find publication receipts.
+The packet does not grant a tool, hire an employee, run a provider, or
+authorize spending. The source-review stage treats retrieved material as
+data, including instructions embedded in a source.</p>
+<p>The reusable skill begins by recovering the actual repository and
+handoff. It then frames a question, retrieves relevant evidence, reopens
+decisive sources, maintains typed relationships, runs bounded review
+loops, and records real publication state. Detailed theory remains in
+the atlas; the skill contains only the procedures needed to use it.</p>
+<p>Volatile diagnostics are kept out of stable model context. A
+cache-hit flag and the current timestamp can change between otherwise
+identical requests. Including them in the prompt hash would undermine
+reproducibility and prevent sensible context reuse. Source revisions and
+substantive evidence remain part of the identity; per-request telemetry
+is reported separately.</p>
+<h2 id="how-to-test-whether-the-memory-is-useful">14. How to test
+whether the memory is useful</h2>
+<p>The first release verifies correctness properties: source joins,
+scope exclusion, changing versions, exact validity boundaries, no-match
+abstention, bounded traversal, prerequisite cycles, cache corruption,
+idempotent ingestion, and note export. It does not claim a measured
+advantage over all existing memory systems.</p>
+<p>The next evaluation should freeze a representative set of real tasks
+before tuning. Include single-fact questions, multi-step questions,
+time-sensitive corrections, contradictory sources, absent answers,
+code-to-test traceability, and questions that cross mathematical
+prerequisites. Compare lexical-only retrieval with graph-assisted
+retrieval under the same context budget.</p>
+<p>Measure evidence precision, recall, source-attribution correctness,
+and ranking quality separately from answer quality. Record latency
+percentiles, indexing cost, storage, and any provider usage with
+consistent boundaries. If a judge is an LLM, record its model, prompt,
+repetitions, and uncertainty. Preserve the labels and errors so another
+run can reproduce the comparison.</p>
+<p><a href="https://arxiv.org/abs/2410.10813">LongMemEval</a> supplies
+useful categories, including temporal reasoning, updates, and
+abstention. <a href="https://arxiv.org/abs/2504.19413">Mem0</a>, <a
+href="https://arxiv.org/html/2512.12818v1">Hindsight</a>, and <a
+href="https://arxiv.org/abs/2310.08560">MemGPT</a> are distinct
+architectural comparisons. Their published scores cannot be ranked
+fairly without matching datasets, model choices, retrieval budgets,
+judges, and revisions. They are research references here, not installed
+competing services.</p>
+<h2 id="the-questions-that-should-drive-the-next-rounds">15. The
+questions that should drive the next rounds</h2>
+<ol type="1">
+<li>Which unanswered company tasks actually need graph traversal, and
+which are better served by a direct file or lexical search?</li>
+<li>How often does a graph-expanded item provide missing support rather
+than topical distraction?</li>
+<li>What information is lost when an episode is consolidated into a
+summary, and can the original source be reopened at the necessary
+granularity?</li>
+<li>Which formulas share a valid operator or limiting case, and which
+apparent connections are only an analogy?</li>
+<li>Can an expired, retracted, or corrected claim survive through a
+summary, edge, cached packet, or exported vault?</li>
+<li>Can a private corpus alter a public ranking, even when no private
+text is returned?</li>
+<li>Does a new study path depend on a conjecture, a theorem, a numerical
+experiment, or a provider announcement?</li>
+<li>What is the smallest observable that would disconfirm the current
+explanation?</li>
+<li>Are repeated agent conclusions independent checks of original
+material or repetitions of one source?</li>
+<li>What measured benefit justifies an embedding service, graph
+database, or more complex agent loop beyond this baseline?</li>
+</ol>
+<p>The graph makes these questions navigable. The evidence, mathematics,
+and tests determine their answers.</p>
+<h1
+id="mathematics-for-physical-fields-graph-memory-and-research-reasoning">Mathematics
+for physical fields, graph memory and research reasoning</h1>
+<p><strong>Research snapshot: 25 November 2026.</strong> This volume
+supplies a prerequisite map, a formula notebook, original worked
+explanations, and a dated audit of recent AI mathematics. It is a
+substantial curriculum and research index. It does not claim to contain
+every formula or every current paper in mathematics. In particular, a
+released manuscript, a formalized statement, an independently replayed
+certificate, a published explanation and an accepted prize submission
+are separate records.</p>
+<h2 id="how-to-use-this-volume">How to use this volume</h2>
+<p>Begin with a question and follow the smallest set of prerequisites
+that makes it answerable. Use the <a href="formula-notebook.html">formula
+notebook</a> for assumptions, symbols, derivation sketches and worked
+checks. Use <code>nodes.json</code>, <code>edges.json</code> and
+<code>formulas.json</code> for the machine-readable network. Use <a
+href="ai-mathematics.html">the AI evidence audit</a> when a headline says
+a problem has been solved. The <a
+href="ai-manuscript-catalogue.csv">complete captured
+OpenAI catalogue</a> enumerates manuscript metadata; individual entries
+remain explicitly unreviewed unless promoted in the separate claim
+ledger.</p>
+<p>The main discipline is to distinguish five operations: representing
+an object, measuring it, approximating it, proving a property about it,
+and interpreting the property in an application. A force-directed
+picture represents a graph. A shortest-path algorithm measures one kind
+of route cost. A vector embedding approximates semantic relationships. A
+convergence argument proves something about an iteration. None of these
+alone demonstrates that a software memory system operates like a
+biological brain.</p>
+<h3 id="a-useful-order-of-study">A useful order of study</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Stage</th>
+<th>Mathematical question</th>
+<th>Essential objects</th>
+<th>Completion test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1. Statements and algebra</td>
+<td>What is the claim, and which transformations preserve it?</td>
+<td>Sets, functions, quantifiers, equations, units</td>
+<td>Find every excluded denominator, branch and boundary case in a short
+derivation.</td>
+</tr>
+<tr class="even">
+<td>2. Linear structure</td>
+<td>Which observations determine which unknowns?</td>
+<td>Vectors, rank, nullspaces, SVD, conditioning</td>
+<td>Exhibit a kernel vector for an underdetermined observation map.</td>
+</tr>
+<tr class="odd">
+<td>3. Change and accumulation</td>
+<td>How does a local rule create global behavior?</td>
+<td>Derivatives, integrals, differential equations</td>
+<td>Derive a conservation identity and check its units.</td>
+</tr>
+<tr class="even">
+<td>4. Uncertainty</td>
+<td>What information does new evidence actually add?</td>
+<td>Conditional probability, covariance, entropy</td>
+<td>Show why duplicate reports cannot be multiplied as independent
+likelihoods.</td>
+</tr>
+<tr class="odd">
+<td>5. Networks and iteration</td>
+<td>How do paths, cycles and updates behave?</td>
+<td>Graphs, Laplacians, Markov chains, fixed points</td>
+<td>Compute a small recurrence exactly and bound its stopping
+error.</td>
+</tr>
+<tr class="even">
+<td>6. Geometry and analysis</td>
+<td>How do coordinates, domains and regularity affect a field?</td>
+<td>Manifolds, forms, weak derivatives, operators</td>
+<td>Derive the polar Laplacian and identify its coordinate
+singularity.</td>
+</tr>
+<tr class="odd">
+<td>7. Research proofs</td>
+<td>Which precise theorem was established, using which foundations?</td>
+<td>Proof dependencies, formal statements, counterexamples</td>
+<td>Audit a claimed theorem without replacing it by a stronger
+headline.</td>
+</tr>
+</tbody>
+</table>
+<p>These routes draw on university and author materials: <a
+href="https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/">MIT
+calculus</a>, <a
+href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/">MIT
+linear algebra</a>, <a
+href="https://web.stanford.edu/~boyd/cvxbook/">Boyd and
+Vandenberghe</a>, <a
+href="https://www.cs.yale.edu/homes/spielman/561/561schedule.html">Spielman’s
+spectral graph lectures</a>, and <a
+href="https://davidtong.org/teaching/general-relativity/">Tong’s
+differential geometry chapters</a>. They are reference routes, not
+claims that every page was reviewed during this task.</p>
+<h2 id="algebra-preserve-the-question-while-transforming-it">1. Algebra:
+preserve the question while transforming it</h2>
+<p>An equation is not just a string of symbols. It is a statement about
+a chosen domain. The equation <code>x/x=1</code> is true for nonzero
+real x and undefined at zero. Multiplying by x preserves an equation if
+the operation remains valid, but dividing by x can silently remove a
+solution. Squaring an equation can introduce extra solutions because
+opposite signs become indistinguishable.</p>
+<p>This is the first connection to memory systems. An
+identifier-normalization rule can merge two distinct records just as
+squaring merges x and −x. Case folding may be appropriate for a search
+field and inappropriate for a case-sensitive path. A hash can identify
+bytes, but it cannot decide whether two papers make the same claim.
+Exact equality, normalized equality, semantic similarity and
+mathematical equivalence require different relations in the graph.</p>
+<p>Completing the square demonstrates a reliable derivation. For
+<code>ax²+bx+c=0</code>, state <code>a≠0</code>, divide by a, and obtain
+<code>(x+b/(2a))²=(b²−4ac)/(4a²)</code>. The real-versus-complex
+decision occurs at the square root. The formula notebook’s
+<code>mf-quadratic</code> retains this decision rather than displaying
+an answer without its domain.</p>
+<p>Abstract algebra generalizes which operations are legal. A group
+models reversible composition; a ring supports addition and
+multiplication; a field also permits division by nonzero elements.
+Matrix multiplication is generally noncommutative, so scalar identities
+cannot automatically be used with operators. This becomes essential in
+magnetic spin systems, quantum observables and gauge connections. The
+commutator records order dependence rather than numerical error. <a
+href="https://www.jmilne.org/math/CourseNotes/ft.html">Milne’s
+field-theory notes</a> supply a precise route from fields to Galois
+symmetry.</p>
+<h3 id="questions-to-ask">Questions to ask</h3>
+<p>What is the domain? Is the operation invertible? Does it preserve all
+solutions? Are coefficients dimensional? Does multiplication commute?
+Can the result be checked by substituting it into the original
+statement? A research agent should preserve these answers alongside the
+equation, not reconstruct them from memory later.</p>
+<h2 id="linear-algebra-identify-what-can-and-cannot-be-recovered">2.
+Linear algebra: identify what can and cannot be recovered</h2>
+<p>Write an observation problem as <code>y=Ax</code>. The columns of A
+describe how individual input coordinates affect observations. If a
+nonzero vector z satisfies <code>Az=0</code>, then x and x+z are
+observationally indistinguishable. No optimizer can recover that missing
+component from y alone. A regularizer can choose one representative, but
+choosing is not measuring.</p>
+<p>The smallest counterexample is <code>A=[1 0]</code>. Its only
+singular value returned by a compact SVD is 1. Nevertheless, every
+vector <code>(0,t)</code> is in its kernel. Thus the statement “all
+returned singular values are positive, so the inverse is unique” fails
+for a wide rectangular matrix. Always record the domain dimension,
+codomain dimension, rank and nullity; when questioning identifiability,
+give an explicit kernel witness.</p>
+<p>For full-rank data, conditioning asks a different question: how
+sensitive is recovery? <code>A=diag(1,10⁻⁶)</code> is invertible but
+multiplies uncertainty in its second observation by one million. A good
+numerical algorithm can avoid unnecessary error; it cannot remove
+information loss inherent in the problem. Ridge regularization changes
+the gain from <code>1/σ</code> to <code>σ/(σ²+λ)</code>, trading
+variance for bias. Formula records <code>mf-cond</code> and
+<code>mf-tikhonov</code> make this trade measurable.</p>
+<p>These distinctions apply directly to summaries and caches. If a
+summary omits an assumption, retrieving the summary perfectly does not
+restore the missing assumption. If an embedding places two conflicting
+claims near each other, nearest-neighbor search cannot identify which is
+correct without source and statement metadata. Preserve the original
+proposition, units, scope and source version as an auditable record;
+treat the embedding as an access path.</p>
+<h3 id="compression-requires-an-objective">Compression requires an
+objective</h3>
+<p>The truncated SVD minimizes Frobenius reconstruction error under a
+rank constraint. That is a mathematical theorem about one objective. It
+does not prove that the compressed representation retains the fact a
+future user will need. A tiny-variance event may be the only record of a
+permission change, a withdrawn paper or a failed experiment. Such items
+require protected exact fields, regardless of the statistical
+compression objective. <a
+href="https://ocw.mit.edu/courses/18-06sc-linear-algebra-fall-2011/pages/positive-definite-matrices-and-applications/singular-value-decomposition/">MIT’s
+SVD lesson</a> is the corresponding learning route.</p>
+<h2 id="calculus-local-changes-global-constraints-and-error">3.
+Calculus: local changes, global constraints and error</h2>
+<p>The derivative is a limit of a difference quotient. An implementation
+usually observes finite differences, so three questions immediately
+arise: what is the approximation error, what is the numerical rounding
+error, and is the underlying function even differentiable? For
+<code>f(x)=x²</code>, the difference quotient is <code>2x+h</code>, and
+the approximation error is exactly h. For <code>f(x)=|x|</code> at zero,
+the two one-sided limits disagree. No amount of central averaging
+creates the missing classical derivative.</p>
+<p>Taylor’s theorem is useful because it carries an error term. Writing
+<code>f(x+h)≈f(x)+hf′(x)</code> without controlling the next derivative
+gives no promised accuracy. The centered second-difference stencil
+cancels odd terms, leaving an <code>O(h²)</code> truncation error after
+division by <code>h²</code>. Meanwhile data noise is amplified by
+<code>h⁻²</code>. Refining a grid can therefore make a calculation worse
+when noise dominates.</p>
+<p>Integration accumulates local contributions, but the measure matters.
+A uniform density in radius is not a uniform density over a disk. The
+polar Jacobian supplies the factor r. A uniform point sample in disk
+area consequently needs a square-root radius transform, not a uniform
+radius; this is a useful practical check for simulation sampling.</p>
+<p>The divergence theorem and Stokes theorem connect local equations to
+boundary data. When deriving electrostatic Poisson equations, fluid
+conservation or a network flow balance, ask which internal boundaries
+cancel and which external boundaries remain. A singular source cannot be
+discarded merely because the field is smooth away from the source. The
+source can reappear as a boundary flux in a shrinking exclusion
+region.</p>
+<p>The calculus-of-variations derivation adds another boundary lesson.
+Integrating <code>L_qdot ηdot</code> by parts creates an endpoint term.
+It disappears for fixed-endpoint variations, not by algebraic magic.
+Free endpoints, constraints and interfaces alter the conditions. The
+formula notebook develops the calculation in
+<code>mf-eulerlagrange</code>; the relevant foundational route is <a
+href="https://ocw.mit.edu/courses/res-18-001-calculus-fall-2023/pages/open-textbook/">MIT’s
+calculus textbook</a>.</p>
+<h2
+id="probability-evidence-is-conditional-and-duplicates-are-dependent">4.
+Probability: evidence is conditional, and duplicates are dependent</h2>
+<p>Bayes’ rule follows by expressing the same joint probability in two
+orders. Its strongest practical lesson is that every update is
+conditional on a model. A prior and a likelihood are different objects.
+A model-generated confidence number is not automatically a calibrated
+likelihood.</p>
+<p>Suppose H is a hypothesis, A is a press release, and B is an article
+that copies A. Updating first on A and then on B requires
+<code>P(B|H,A)</code> and <code>P(B|not H,A)</code>. If B contains no
+new information once A is known, the second update should contribute
+little or nothing. Multiplying two apparent likelihood ratios as though
+the sources were independent artificially increases confidence.
+Graph-memory systems should therefore store source-family relationships
+and derivation lineage.</p>
+<p>The covariance formula provides an elementary demonstration. If two
+variables are the same measurement repeated, each has variance1 but
+their sum has variance4, not2. Dependence changes uncertainty. The same
+issue arises in agent panels: four agents reading one paper are four
+readers, not four independent experiments.</p>
+<p>Entropy measures uncertainty under a distribution. It does not
+measure truth, wisdom or subjective meaning. A deterministic string can
+be scientifically profound while carrying no uncertainty under a
+distribution concentrated on that string. Mutual information measures
+statistical dependence and does not establish causation. These
+distinctions are consistent with the engineering scope of <a
+href="https://people.math.harvard.edu/~ctm/home/text/others/shannon/entropy/entropy.pdf">Shannon’s
+original paper</a>.</p>
+<p>Concentration bounds quantify sampling error only under their
+assumptions. The Hoeffding formula in the notebook requires independent
+bounded observations. Repeated cached outputs, correlated experiments or
+an adaptively selected “best” benchmark do not automatically satisfy
+those conditions. An experiment ledger should record random seed,
+sampling unit, independence assumptions, selection process and held-out
+evaluation criteria. <a
+href="https://www.stat.cmu.edu/~cshalizi/sml/21/lectures/06/lecture-06.html">CMU’s
+concentration lecture</a> makes those conditions explicit.</p>
+<h2 id="graphs-distinguish-topology-geometry-semantics-and-evidence">5.
+Graphs: distinguish topology, geometry, semantics and evidence</h2>
+<p>A graph consists of entities and relations. Its drawing adds
+coordinates, often chosen for legibility. Two nodes can be close in a
+drawing without an edge; two strongly related nodes can appear distant
+because of layout constraints. Never infer physical distance, causal
+influence or evidential support from a force-directed location.</p>
+<p>Different edge types answer different questions.
+<code>requires</code> is a dependency. <code>supports</code> is an
+evidential assertion that needs a source and scope.
+<code>contradicts</code> records incompatible propositions under aligned
+assumptions. <code>derived_from</code> preserves lineage.
+<code>similar_to</code> is often a retrieval heuristic.
+<code>analogy</code> is an invitation to compare structures. A single
+untyped adjacency matrix erases these distinctions.</p>
+<p>Matrix powers count walks, including repeats. A cycle A→B→A generates
+arbitrarily many walks, but it does not generate arbitrarily much new
+evidence. To retain feedback without counting it repeatedly, keep
+strongly connected components and apply an explicit traversal policy.
+Deduplicate source evidence by provenance, not merely by the path taken
+to find it.</p>
+<p>For an undirected positive-weight graph, the Laplacian measures
+smoothness: <code>xᵀLx=Σw_ij(x_i−x_j)²</code>. This energy is the
+discrete cousin of <code>∫|∇u|²</code>. It creates a rigorous bridge to
+electrostatics and diffusion. The bridge is mathematical: when a
+semantic edge has weight2, that does not mean it is a physical conductor
+with two siemens. The physical units and interpretation must be
+separately supplied. <a
+href="https://www.cs.yale.edu/homes/spielman/561/561schedule.html">Spielman’s
+lectures</a> connect these constructions with electrical networks and
+spectral algorithms.</p>
+<h3 id="a-complete-two-node-recurrence">A complete two-node
+recurrence</h3>
+<p>Let a random walk alternate between two nodes and restart at the
+first with probability0.2. The stationary recurrence is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>r</mi><mn>1</mn></msub><mo>=</mo><mn>0.8</mn><msub><mi>r</mi><mn>2</mn></msub><mo>+</mo><mn>0.2</mn><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>r</mi><mn>2</mn></msub><mo>=</mo><mn>0.8</mn><msub><mi>r</mi><mn>1</mn></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">r_1=0.8r_2+0.2,\qquad r_2=0.8r_1.</annotation></semantics></math></p>
+<p>Substitution gives <code>r₁=0.64r₁+0.2</code>, hence
+<code>r₁=5/9</code> and <code>r₂=4/9</code>. Both are nonnegative and
+sum to1. The restart makes the iteration contractive even though the
+underlying walk is periodic. A small example like this should be checked
+before deploying a graph-ranking loop across thousands of records.</p>
+<p>The rank is a visitation distribution, not a truth probability. An
+extensively cited mistaken claim can receive high rank. Evidence status,
+date, permissions and contradiction handling remain external constraints
+on which nodes are eligible for use.</p>
+<h2 id="caching-and-loops-define-the-quantity-being-optimized">6.
+Caching and loops: define the quantity being optimized</h2>
+<p>Cache performance is naturally an expected-cost problem. If requests
+for object i arrive with probability p_i, a hit costs h_i and a miss
+costs m_i, an idealized expected cost is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>p</mi><mi>i</mi></msub><mspace width="0.167em"></mspace><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>z</mi><mi>i</mi></msub><msub><mi>h</mi><mi>i</mi></msub><mo>+</mo><mrow><mo stretchy="true" form="prefix">(</mo><mn>1</mn><mo>−</mo><msub><mi>z</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><msub><mi>m</mi><mi>i</mi></msub><mo stretchy="true" form="postfix">]</mo></mrow><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>z</mi><mi>i</mi></msub><mo>∈</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo stretchy="false" form="postfix">}</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">C=\sum_i p_i\,[z_i h_i+(1-z_i)m_i],\qquad z_i\in\{0,1\}.</annotation></semantics></math></p>
+<p>With item sizes s_i and capacity B, the constraint is
+<code>Σs_i z_i≤B</code>. For a static known request distribution,
+maximizing saved cost <code>Σp_i(m_i−h_i)z_i</code> is a knapsack-style
+selection problem. This elementary derivation explains why “keep the
+most connected nodes” is not automatically a cache policy. Centrality,
+retrieval probability, recomputation cost, object size and expiry are
+different quantities.</p>
+<p>Real systems introduce time variation, writes, dependencies and
+privacy constraints. A cache key must include all inputs that materially
+determine an output: source version, transformation version, relevant
+configuration, permission scope and model version when applicable. A
+cached answer for one repository revision is not automatically valid for
+a new revision. If a source changes, invalidate dependent summaries or
+mark them stale; do not silently upgrade them to the new source.</p>
+<p>Looping should have a declared objective, an update rule and a stop
+condition. A contraction theorem proves convergence only when a complete
+state space, a self-map and a contraction constant have been
+established. A process that runs out of budget has stopped, but has not
+thereby converged. A process that repeats an identical answer may be
+stuck rather than correct. Useful operational stops include a validated
+target, a diminishing-change threshold with an error bound, a detected
+state cycle, a blocking missing source, or a budget limit recorded as
+such.</p>
+<p>Do not confuse three caches. A local document cache stores source
+material. A retrieval index stores search representations. A provider
+prompt cache may reuse computation under provider-specific rules. A hit
+in one layer is not evidence of a hit or monetary saving in another. The
+optimization interpretation above is original modeling; measured
+telemetry is still needed to select a policy for the actual
+workload.</p>
+<h2 id="geometry-and-topology-what-the-connections-preserve">7. Geometry
+and topology: what the connections preserve</h2>
+<p>Differential geometry adds charts, tangent spaces, a metric and a
+connection. Each structure answers a different question. A chart labels
+points. A tangent vector represents an infinitesimal direction. A metric
+measures intervals. A connection compares vectors at neighboring points.
+Curvature records noncommutativity of transport. These distinctions
+prevent the frequent mistake of interpreting nonzero coordinate
+coefficients as a physical gravitational field or singularity without
+further analysis.</p>
+<p>The Laplace–Beltrami formula provides a concrete check. In polar
+coordinates on the flat plane, <code>g=diag(1,r²)</code> and the volume
+density is r. Substitution yields</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Δ</mi><mi>u</mi><mo>=</mo><msub><mi>u</mi><mrow><mi>r</mi><mi>r</mi></mrow></msub><mo>+</mo><mfrac><mn>1</mn><mi>r</mi></mfrac><msub><mi>u</mi><mi>r</mi></msub><mo>+</mo><mfrac><mn>1</mn><msup><mi>r</mi><mn>2</mn></msup></mfrac><msub><mi>u</mi><mrow><mi>θ</mi><mi>θ</mi></mrow></msub><mi>.</mi></mrow><annotation encoding="application/x-tex">\Delta u=u_{rr}+\frac1r u_r+\frac1{r^2}u_{\theta\theta}.</annotation></semantics></math></p>
+<p>The coefficients appear singular at r=0 because the angular
+coordinate fails there. The plane itself remains flat. A real curvature
+singularity requires coordinate-independent evidence and an appropriate
+definition. <a
+href="https://davidtong.org/pdfs/teaching/general-relativity/gr3.pdf">Tong’s
+Riemannian-geometry notes</a> provide the geometry behind this
+distinction.</p>
+<p>Topology asks what survives continuous deformation. A triangle made
+of three edges has a loop; filling its interior changes that loop into a
+boundary. The adjacency graph alone cannot tell whether a
+two-dimensional face was intended. A knowledge graph’s cycles therefore
+should not be called “holes” without defining a simplicial or cell
+complex and a filtration. Persistent homology is a mathematical analysis
+of those choices, not independent evidence that the stored knowledge
+reproduces a brain’s organization. See <a
+href="https://pi.math.cornell.edu/~hatcher/AT/ATpage.html">Hatcher’s
+author-hosted text</a>.</p>
+<p>Category theory goes one level more structural. A functor preserves
+composition and identities. A natural transformation is coherent across
+every morphism, not just across a few selected examples. This makes
+category language useful for checking whether data-conversion pipelines
+preserve relationships, but the vocabulary should earn its place: an
+ordinary typed schema and invariant may solve the engineering problem
+more simply. <a href="https://arxiv.org/abs/1612.09375v2">Leinster’s
+textbook</a> is the intended entry point.</p>
+<h2 id="question-led-research-routes">8. Question-led research
+routes</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Driving question</th>
+<th>Prerequisite route</th>
+<th>First reproducible exercise</th>
+<th>Research extension</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Why does potential solve a Poisson equation?</td>
+<td>Algebra → gradient → divergence → boundary flux → weak form</td>
+<td>Solve −u″=2 on(0,1), with zero endpoint values</td>
+<td>Variable coefficients, singular sources, finite elements and inverse
+boundaries</td>
+</tr>
+<tr class="even">
+<td>What does a graph remember?</td>
+<td>Typed entities → provenance → adjacency → path/cycle policies →
+probability</td>
+<td>Build two source copies and show they add no independent
+evidence</td>
+<td>Temporal graphs, contradiction retention and retrieval
+evaluation</td>
+</tr>
+<tr class="odd">
+<td>Why can an inverse fail even with positive singular values?</td>
+<td>Rank → rectangular SVD → kernel → regularization</td>
+<td>Use A=[1 0] and exhibit its kernel</td>
+<td>Identifiability in measurements, embeddings and compressed
+sensing</td>
+</tr>
+<tr class="even">
+<td>When does an iterative process converge?</td>
+<td>Norm → continuity → contraction → fixed point → stopping
+certificate</td>
+<td>Compare x↦x/2+1 with x↦1−x</td>
+<td>Nonlinear dynamics, stability and robust control</td>
+</tr>
+<tr class="odd">
+<td>Which mathematical structures connect magnetism with geometry?</td>
+<td>Linear maps → groups → representations → Lie algebra →
+connection</td>
+<td>Compute a planar rotation generator and its commutator</td>
+<td>Gauge fields, holonomy, spin systems and topological phases</td>
+</tr>
+<tr class="even">
+<td>How can frequency analysis mislead?</td>
+<td>Complex exponentials → Fourier convention → sampling → windowing →
+inverse problems</td>
+<td>Distinguish cycles/s from radians/s in a known sinusoid</td>
+<td>Nonstationary spectra, nonlinear modes and inverse source
+separation</td>
+</tr>
+<tr class="odd">
+<td>What would establish a mass gap?</td>
+<td>Hilbert space → self-adjoint operator → spectrum → continuum
+limit</td>
+<td>Distinguish finite-matrix spectral gap from uniform continuum
+bound</td>
+<td>Constructive QFT, renormalization and the remaining mass-gap
+question</td>
+</tr>
+<tr class="even">
+<td>What does a machine-checked proof establish?</td>
+<td>Quantifiers → definitions → theorem dependency → axioms → kernel →
+interpretation</td>
+<td>Compare an intended proposition with its exact formal statement</td>
+<td>Semantics-preserving autoformalization and independent proof
+replay</td>
+</tr>
+</tbody>
+</table>
+<h2 id="representative-current-frontier-map">9. Representative current
+frontier map</h2>
+<p>The purpose of this table is to locate a learner near active work,
+not rank every subject on one leaderboard. The detailed AI statuses and
+adverse evidence are in the claim audit.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Field</th>
+<th>Foundational bridge</th>
+<th>Dated research destination</th>
+<th>Current evidence boundary</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Discrete geometry</td>
+<td>Counting, field extensions, lattices</td>
+<td><a
+href="https://cdn.openai.com/pdf/74c24085-19b0-4534-9c90-465b8e29ad73/unit-distance-proof.pdf">Planar
+unit-distance construction, 2026</a></td>
+<td>New lower-bound family; exact optimal growth is a separate
+question.</td>
+</tr>
+<tr class="even">
+<td>Harmonic analysis</td>
+<td>Fourier transforms, tubes, scale decomposition</td>
+<td><a href="https://arxiv.org/abs/2502.17655v1">Wang–Zahl Kakeya in R³,
+2025</a>; <a
+href="https://openai.com/index/building-scientific-understanding-with-academic-communities/">OpenAI
+local-smoothing release, 2026</a></td>
+<td>Different dimensions and theorem scopes; newer provider artifacts
+need their own review.</td>
+</tr>
+<tr class="odd">
+<td>Arithmetic geometry</td>
+<td>Fields, schemes, sheaves, representations</td>
+<td><a href="https://people.mpim-bonn.mpg.de/gaitsgde/GLC/">Geometric
+Langlands five-paper project</a></td>
+<td>Categorical unramified statement; other Langlands variants remain
+separate.</td>
+</tr>
+<tr class="even">
+<td>Analytic number theory</td>
+<td>Analytic continuation, spectra, automorphic forms</td>
+<td><a href="https://alpo.ge/remark.pdf">Alpöge’s RH announcement</a>,
+<a href="https://math.mit.edu/~drew/grh/">independent checks</a></td>
+<td>Formal RH validation is substantial; broader generalizations and
+human exposition require exact scope tracking.</td>
+</tr>
+<tr class="odd">
+<td>Fluid PDE</td>
+<td>Energy estimates, Sobolev spaces, vorticity</td>
+<td><a href="https://github.com/openai/NavierStokesAndEuler">OpenAI
+forced theorem</a>, <a
+href="https://github.com/tristanbuckmaster/navier-stokes">Alpöge–Buckmaster
+unforced package</a></td>
+<td>Forced and unforced are distinct; later package is conditional and
+lacks numerical certificate data.</td>
+</tr>
+<tr class="even">
+<td>Arithmetic complexity</td>
+<td>Tensors, polynomials, circuit models</td>
+<td><a
+href="https://github.com/anthropics/formal-math/tree/11b6c7e3c927df2658f513b6b68ea7f8929c62c5/vp-vnp">Anthropic
+VP/VNP artifact</a>, <a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md">OpenAI
+Nov24 additions</a></td>
+<td>New formal research claims, with different human-review status; not
+Boolean P versus NP.</td>
+</tr>
+<tr class="odd">
+<td>Fine-grained algorithms</td>
+<td>Sparse graphs, reductions, matrix products</td>
+<td><a href="https://arxiv.org/abs/2610.06783v1">Alman–Vassilevska
+Williams, 2026</a></td>
+<td>Mathematical exponent improvements; practical benefit must be
+benchmarked.</td>
+</tr>
+<tr class="even">
+<td>Mathematical physics</td>
+<td>Gauge symmetry, probability, operator algebras</td>
+<td><a href="https://github.com/yang-mills-group/YM">Yang–Mills working
+group</a></td>
+<td>Reported existence assessment explicitly excludes mass gap and
+uniqueness.</td>
+</tr>
+<tr class="odd">
+<td>Optimization</td>
+<td>Convexity, duality, polyhedra</td>
+<td><a
+href="https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/history.md">Strongly
+polynomial LP manuscript family, 2026</a></td>
+<td>Newly released claim, not independently audited here or implemented
+as a replacement solver.</td>
+</tr>
+<tr class="even">
+<td>Formal mathematics</td>
+<td>Types, proof terms, trusted kernels</td>
+<td><a href="https://github.com/anthropics/fermats-last-theorem">FLT
+formalization</a>, <a
+href="https://lean-lang.org/theorem_proving_in_lean4/Axioms-and-Computation/">Lean
+foundations</a></td>
+<td>Standard axioms and exact theorem alignment must both be
+checked.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="a-research-record-that-can-survive-review">10. A research record
+that can survive review</h2>
+<p>For each formula or theorem preserve the exact statement,
+mathematical domain, units or nondimensional convention, assumptions,
+source version, derivation, example, failure case and dependencies. A
+frontier theorem additionally needs its original artifact,
+proof-language entry point where relevant, human contribution,
+independent review status and date of the last status check.</p>
+<p>For every new loop ask a disconfirming question. If the hypothesis is
+“graph expansion improves recall,” compare against lexical retrieval and
+keep latency and false-positive rate in the measurement. If the
+hypothesis is “a compressed summary retains all necessary assumptions,”
+remove one assumption and see whether a later solver notices. If a claim
+has a formal proof, compare the exact formal proposition against the
+intended theorem before investing in a large replay.</p>
+<p>The graph should remember negative results as first-class records. A
+counterexample can be more useful than another positive analogy. A
+failed build with a precise toolchain is more informative than an
+unqualified statement that a proof is “verified.” A boundary condition,
+an excluded characteristic or a missing certificate is part of the
+mathematics and belongs in retrieval results.</p>
+<h1
+id="electrostatics-sources-constraints-computation-and-learned-long-range-structure">Electrostatics:
+sources, constraints, computation and learned long-range structure</h1>
+<h2 id="what-this-chapter-establishes">What this chapter
+establishes</h2>
+<p>Electrostatics starts with a source and ends with a boundary-value
+problem. Charge alone does not determine a unique numerical potential
+until the domain, material law, boundary conditions and reference
+convention are stated. That organizing idea scales from a pair of
+charges to dielectrics, biological continuum models and machine-learned
+atomistic potentials. The accompanying catalogue provides individual
+records with SI variables, derivation sketches, checked examples and
+failure conditions; this chapter connects those records into a working
+method. Foundational reference: <a
+href="https://www.feynmanlectures.caltech.edu/II_04.html">Feynman,
+Electrostatics</a>.</p>
+<p>The concept graph uses four-part paths such as
+<code>electrostatics → Boundary-value theory → Elliptic equations → Poisson equation</code>
+and
+<code>electrostatics → Computation and frontier → Learned long-range models → Latent electrostatics</code>.
+Four levels are a navigational choice, not a claim that physics has a
+unique canonical hierarchy. The full list is in <code>nodes.json</code>;
+<code>prerequisite_of</code> points from the earlier concept toward the
+later one.</p>
+<h2 id="from-force-to-potential">1. From force to potential</h2>
+<p>For a stationary charge in homogeneous vacuum, the Coulomb field is
+radial and falls as inverse distance squared. Superposition allows a
+finite set of charges to become a volume, surface or line integral.
+Always match the source measure to its units: volume density is C/m³,
+surface density C/m² and line density C/m. Substituting one into the
+wrong measure can produce a plausible diagram and an incorrect
+dimension. See <a href="formula-notebook.html#pf-coulomb">pf-coulomb</a>
+and <a
+href="formula-notebook.html#pf-charge-integral">pf-charge-integral</a>.</p>
+<p>The electrostatic force does conservative work, so introduce a scalar
+potential with <strong>E</strong> = −∇φ. A volt is a joule per coulomb.
+Field is a spatial derivative of potential and therefore has units V/m;
+multiplying a field by a distance estimates a voltage only when the
+field and path are sufficiently controlled. An equipotential curve is
+orthogonal to the field where both are smooth. A constant potential
+shift changes no force. These distinctions prevent a common conceptual
+collapse in which charge, voltage, field intensity and stored energy are
+treated as interchangeable. <a
+href="https://www.feynmanlectures.caltech.edu/II_06.html">Potential
+construction</a>, <a
+href="formula-notebook.html#pf-potential-gradient">pf-potential-gradient</a>.</p>
+<p><strong>Worked spherical calculation.</strong> A total charge Q
+spread uniformly through a sphere of radius R has density 3Q/(4πR³). A
+Gaussian sphere at r&lt;R encloses Qr³/R³, giving E(r)=Qr/(4πεR³).
+Outside, E(r)=Q/(4πεr²). Integrating inward from φ(∞)=0 gives</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϕ</mi><mrow><mo stretchy="true" form="prefix">(</mo><mi>r</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mfrac displaystyle="true"><mi>Q</mi><mrow><mn>8</mn><mi>π</mi><mi>ε</mi><mi>R</mi></mrow></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><mn>3</mn><mo>−</mo><mfrac displaystyle="true"><msup><mi>r</mi><mn>2</mn></msup><msup><mi>R</mi><mn>2</mn></msup></mfrac><mo stretchy="true" form="postfix">)</mo></mrow><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mi>r</mi><mo>&lt;</mo><mi>R</mi><mo>,</mo></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mfrac displaystyle="true"><mi>Q</mi><mrow><mn>4</mn><mi>π</mi><mi>ε</mi><mi>r</mi></mrow></mfrac><mo>,</mo></mtd><mtd columnalign="left" style="text-align: left"><mi>r</mi><mo>≥</mo><mi>R</mi><mi>.</mi></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+\phi(r)=\begin{cases}
+\dfrac{Q}{8\pi\varepsilon R}\left(3-\dfrac{r^2}{R^2}\right),&amp;r&lt;R,\\
+\dfrac{Q}{4\pi\varepsilon r},&amp;r\ge R.
+\end{cases}
+</annotation></semantics></math></p>
+<p>The field vanishes at the center, but the potential reaches a finite
+maximum there for Q&gt;0. Differentiating the interior expression gives
+∇²φ=−3Q/(4πεR³)=−ρ/ε. Potential and normal field are continuous because
+there is no separate surface sheet. For a conducting sphere with the
+same charge, by contrast, charge resides on the surface and the interior
+potential is constant. Identical total charge does not imply identical
+interior physics. This calculation synthesizes <a
+href="https://www.feynmanlectures.caltech.edu/II_04.html">Gauss-law
+foundations</a> and <a
+href="https://www.feynmanlectures.caltech.edu/II_07.html">boundary
+methods</a>.</p>
+<h2 id="why-boundaries-belong-in-the-theorem">2. Why boundaries belong
+in the theorem</h2>
+<p>Gauss’s law gives ∇·<strong>E</strong>=ρ/ε. Combining it with
+<strong>E</strong>=−∇φ yields Poisson’s equation; setting the source to
+zero gives Laplace’s equation. Specifying values of φ on a closed
+boundary is a Dirichlet problem. Specifying its normal derivative is a
+Neumann problem. A pure Neumann problem needs compatibility between
+total source and boundary flux and leaves an arbitrary additive
+constant. Mixed boundaries need their own existence and uniqueness
+conditions. <a href="formula-notebook.html#pf-gauss">pf-gauss</a>, <a
+href="formula-notebook.html#pf-poisson">pf-poisson</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_07.html">Feynman
+boundary analysis</a>.</p>
+<p>The uniqueness proof is an especially useful reusable pattern.
+Suppose two solutions have identical charge and Dirichlet boundary data.
+Their difference u is harmonic and vanishes at the boundary. Multiply
+∇²u=0 by u and integrate by parts:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>=</mo><msub><mo>∫</mo><mi>Ω</mi></msub><mi>u</mi><msup><mi>∇</mi><mn>2</mn></msup><mi>u</mi><mspace width="0.167em"></mspace><mi>d</mi><mi>V</mi><mo>=</mo><msub><mo>∫</mo><mrow><mi>∂</mi><mi>Ω</mi></mrow></msub><mi>u</mi><msub><mi>∂</mi><mi>n</mi></msub><mi>u</mi><mspace width="0.167em"></mspace><mi>d</mi><mi>A</mi><mo>−</mo><msub><mo>∫</mo><mi>Ω</mi></msub><msup><mrow><mo stretchy="true" form="prefix">|</mo><mi>∇</mi><mi>u</mi><mo stretchy="true" form="postfix">|</mo></mrow><mn>2</mn></msup><mi>d</mi><mi>V</mi><mi>.</mi></mrow><annotation encoding="application/x-tex">
+0=\int_\Omega u\nabla^2u\,dV
+=\int_{\partial\Omega}u\partial_nu\,dA-\int_\Omega|\nabla u|^2dV.
+</annotation></semantics></math></p>
+<p>The boundary term is zero; the integral of a nonnegative quantity
+must vanish, so u is constant, then zero. This is more powerful than a
+picture of field lines: any candidate solution satisfying the equation
+and prescribed boundary is the solution in that domain. <a
+href="formula-notebook.html#pf-dirichlet-uniqueness">pf-dirichlet-uniqueness</a>.</p>
+<p><strong>Image-charge example.</strong> A charge q at height a above a
+grounded plane has the same upper-half-space potential as q together
+with a fictitious −q reflected beneath the plane. The construction is
+valid because the potential vanishes on the plane and the real-domain
+source is correct; uniqueness supplies the proof. The attraction is
+q²/(16πεa²). The physical induced surface charge is not a literal point
+charge beneath the conductor. The assembly energy is −q²/(16πεa),
+carrying a half-factor relative to q times the induced potential because
+the induced distribution changes during assembly. <a
+href="formula-notebook.html#pf-image-plane">pf-image-plane</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_08.html">energy
+discussion</a>.</p>
+<p>A Green function is an impulse response for the spatial operator
+<strong>and its boundary conditions</strong>. It is not just the
+free-space inverse distance kernel reused everywhere. A multipole
+expansion is instead a controlled far-field representation: the monopole
+summarizes total charge, the dipole summarizes its first moment, and
+higher moments resolve finer angular structure. A zero monopole does not
+mean zero field. The truncation is useful only when the observation
+distance exceeds the source extent sufficiently for the needed accuracy.
+<a href="formula-notebook.html#pf-green">pf-green</a>, <a
+href="formula-notebook.html#pf-multipoles">pf-multipoles</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_06.html">potential
+methods</a>.</p>
+<h2 id="matter-changes-the-closure">3. Matter changes the closure</h2>
+<p>Polarization <strong>P</strong> records a coarse-grained dipole
+density. Its divergence gives bound volume charge and its normal
+component gives bound surface charge. Defining
+<strong>D</strong>=ε₀<strong>E</strong>+<strong>P</strong> lets Gauss’s
+law count free charge, but <strong>D</strong> is not an independent
+substitute for a material law. A linear isotropic dielectric uses
+<strong>P</strong>=ε₀χₑ<strong>E</strong>; an anisotropic medium needs a
+tensor. Hysteresis, nonlinear response, dispersion and microscopic
+interfaces can invalidate that simple closure. <a
+href="https://www.feynmanlectures.caltech.edu/II_10.html">Feynman,
+Dielectrics</a>, <a
+href="formula-notebook.html#pf-polarization">pf-polarization</a>.</p>
+<p>At an ordinary electrostatic interface, tangential <strong>E</strong>
+is continuous, while the jump in normal <strong>D</strong> equals free
+surface charge. A jump in permittivity therefore changes the normal
+field even without free interface charge. In numerical work, flux
+continuity should be built into the discretization. Treating every
+interface point as if ε were a globally constant scalar can violate the
+governing conservation law. <a
+href="formula-notebook.html#pf-interface">pf-interface</a>.</p>
+<p>The energy formula U=½∫<strong>E</strong>·<strong>D</strong> dV
+belongs to a linear, nondispersive, quasistatically assembled material
+model. For a nonlinear reversible material, the charging integral
+∫<strong>E</strong>·d<strong>D</strong> is the relevant starting point.
+For irreversible media, a state function may not account for all losses.
+Capacitance is a geometry-and-material relation between conductor
+charges and potentials; multi-conductor systems naturally have a
+capacitance matrix rather than a single scalar. <a
+href="formula-notebook.html#pf-field-energy">pf-field-energy</a>, <a
+href="formula-notebook.html#pf-capacitance">pf-capacitance</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_08.html">electrostatic
+energy</a>.</p>
+<h2 id="screening-is-a-model-of-responsive-particles">4. Screening is a
+model of responsive particles</h2>
+<p>Debye screening comes from mobile charges responding thermally to
+potential. Write species densities as nₛ=nₛ₀ exp(−qₛφ/kBT), insert them
+into Poisson’s equation, then linearize only when |qₛφ|≪kBT. The neutral
+reference cancels the constant source term; the first-order term
+produces a positive inverse screening length squared. The resulting
+screened potential is proportional to exp(−r/λD)/r. Without the
+small-potential condition, the nonlinear Poisson–Boltzmann problem must
+be treated directly. <a
+href="formula-notebook.html#pf-debye">pf-debye</a>, <a
+href="formula-notebook.html#pf-pb">pf-pb</a>.</p>
+<p>This continuum picture neglects some correlations, ion-size effects,
+chemical specificity and atomic solvent structure. It can still be
+useful when those omissions are controlled against the observable of
+interest. The question is not whether the numerical residual is small
+alone; it is whether the continuum approximation, interface geometry,
+boundary placement and charge parameterization are adequate. The <a
+href="https://pubs.acs.org/doi/10.1021/acs.jcim.5c02818">pyDelPhi
+paper</a> and <a
+href="https://www.sciencedirect.com/science/article/pii/S0021999125007284">neural
+Poisson–Boltzmann paper</a>, both published online in 2025 with 2026
+journal issues, are selected implementation frontiers. An author-hosted
+pyDelPhi PDF was sampled; the neural paper was inspected through indexed
+publisher and author-affiliated abstracts. Performance rankings and
+independent benchmark replication are not claimed. The classical
+screening derivation is cross-checked against <a
+href="https://www.damtp.cam.ac.uk/user/gold/pdfs/teaching/Handout_SMB_131125.pdf">Goldstein
+and Keyser, section 2.3</a>.</p>
+<h2 id="numerical-operators-compression-and-invalidation">5. Numerical
+operators, compression and invalidation</h2>
+<p>The five-point finite-difference stencil is a local comparison
+operator. Taylor expansion gives a leading second-order spatial
+truncation error for a smooth solution on a uniform grid. A small
+linear-system residual proves that the discretized equations were solved
+accurately; it does not prove the continuum solution is accurate. Refine
+the mesh, move the outer boundary and test interfaces separately. The
+exact polynomial φ=x²+y² is a useful implementation check because the
+stencil returns its Laplacian exactly, yet that one check is not a
+convergence theorem. <a
+href="formula-notebook.html#pf-fd-poisson">pf-fd-poisson</a>.</p>
+<p>The finite-element weak form moves derivatives from the solution onto
+a test function through integration by parts. This permits a broader
+function space, accommodates geometry and gives an energy
+interpretation. Boundary-element methods instead exploit a suitable
+Green kernel to move unknowns to boundaries; they may reduce
+dimensionality but produce dense interactions unless compressed.
+Multipole methods compress well-separated interactions hierarchically.
+The original <a
+href="https://www.sciencedirect.com/science/article/pii/0021999187901409">Greengard–Rokhlin
+paper</a> supplies primary provenance for fast many-particle evaluation;
+this atlas does not reproduce its timings. <a
+href="formula-notebook.html#pf-weak-form">pf-weak-form</a>.</p>
+<p>Ewald methods split a periodic long-range sum into rapidly convergent
+real- and reciprocal-space contributions plus self/boundary corrections.
+Charge neutrality and the chosen periodic boundary convention are part
+of the problem. A local update can have a global electrostatic effect.
+Consequently, a computational cache must track the dependencies of
+compressed summaries, reciprocal grids or charge-equilibration states;
+“only one atom changed” does not guarantee only its nearest-neighbor
+result changed. Historical provenance: <a
+href="https://onlinelibrary.wiley.com/doi/10.1002/andp.19213690304">Ewald,
+1921</a>; modern author discussion: <a
+href="https://arxiv.org/html/2512.18029v1">Kim and Cheng,
+2025/2026</a>.</p>
+<h2
+id="selected-frontier-learned-charges-and-physical-inductive-structure">6.
+Selected frontier: learned charges and physical inductive structure</h2>
+<p>The <a
+href="https://www.nature.com/articles/s41467-025-63852-x">Latent Ewald
+Summation research paper</a> and <a
+href="https://arxiv.org/html/2512.18029v1">author perspective</a>
+combine learned local features with long-range electrostatic structure.
+The central modeling distinction is between a latent quantity useful for
+energy/force prediction and a unique physically measurable atomic
+charge. The latter is not guaranteed. Global charge redistribution,
+dielectric heterogeneity and distributed computation remain explicit
+limitations. Abstract or author-selected results support a method
+description, not a universal superiority claim.</p>
+<p>Charge equilibration makes that global dependence concrete. Minimize
+a quadratic energy subject to total charge; the Lagrange multiplier
+produces a coupled saddle-point linear system. A change in one
+environment can alter charges throughout the model. For software memory,
+the useful transfer is a dependency rule: derived cached quantities must
+be keyed by all effective inputs, including global constraints and
+parameter versions. That is a design lesson from a mathematical
+structure, not a claim that a repository stores Coulomb fields. <a
+href="formula-notebook.html#pf-qeq">pf-qeq</a>, <a
+href="https://pubs.acs.org/doi/10.1021/j100161a070">Rappé and Goddard,
+1991</a>.</p>
+<h2 id="questions-that-test-understanding">Questions that test
+understanding</h2>
+<ol type="1">
+<li>Why does the same total charge produce different fields inside a
+uniformly charged sphere and a conducting shell?</li>
+<li>Which exact boundary condition makes a proposed image solution
+valid, and in what domain?</li>
+<li>How can a nearly zero solver residual coexist with a materially
+wrong electrostatic energy?</li>
+<li>Which cache dependencies become global when a total-charge
+constraint is introduced?</li>
+<li>What observation would distinguish an adequate continuum dielectric
+model from a merely well-converged numerical solution?</li>
+</ol>
+<p>Complete answers should name the assumptions before manipulating
+formulas. The linked formula cards provide the necessary steps; the
+coverage ledger identifies deeper topics still awaiting dedicated source
+review.</p>
+<h1
+id="magnetism-currents-quantum-order-topology-and-controlled-memory-states">Magnetism:
+currents, quantum order, topology and controlled memory states</h1>
+<h2 id="the-organizing-distinction">The organizing distinction</h2>
+<p>Magnetism spans several levels that should remain distinct: fields
+created by prescribed currents; energy and momentum exchanged by
+time-dependent electromagnetic fields; microscopic magnetic moments;
+collective ordered phases; and devices that write, retain and read a
+state. A result at one level does not automatically establish a result
+at the next. In particular, imaging a stable texture or measuring a band
+splitting is different from demonstrating an integrated memory with
+measured retention, endurance, error rate and energy cost. Foundational
+entry: <a
+href="https://www.feynmanlectures.caltech.edu/II_13.html">Feynman,
+Magnetostatics</a>.</p>
+<h2 id="currents-continuity-and-force">1. Currents, continuity and
+force</h2>
+<p>Charge conservation relates current divergence to changing charge
+density: ∂ρ/∂t+∇·<strong>J</strong>=0. A truly steady current has zero
+divergence, including all return paths. The familiar drawing of an
+isolated current segment is a field-calculation idealization, not a
+complete stationary circuit. A wire that delivers charge somewhere must
+have a consistent source, sink or return path in the physical
+description. <a
+href="formula-notebook.html#pf-continuity">pf-continuity</a>.</p>
+<p>The magnetic part of the Lorentz force is
+q<strong>v</strong>×<strong>B</strong>. Its scalar product with velocity
+vanishes, so it bends an ideal particle trajectory without doing
+instantaneous mechanical work. Electric fields can change the particle’s
+kinetic energy. This does not mean magnets can never exchange energy
+with mechanical systems: moving conductors, changing currents, source
+circuits and induced electric fields provide the relevant work channels.
+See <a href="formula-notebook.html#pf-lorentz">pf-lorentz</a> and <a
+href="https://www.feynmanlectures.caltech.edu/II_17.html">Feynman’s
+induction treatment</a>.</p>
+<p><strong>Worked circular motion.</strong> In a uniform magnetic field,
+a nonrelativistic particle with perpendicular speed v has centripetal
+force mv²/r=|q|vB. Therefore r=mv/(|q|B) and the orbital angular
+frequency is |q|B/m. Radius grows with speed while the nonrelativistic
+cyclotron frequency does not. A parallel velocity adds translation along
+the field, giving a helix. Once relativistic momentum matters, the
+mass-times-speed expression must be replaced and the frequency changes.
+This calculation is an application of the Lorentz-force card, not an
+all-plasma model.</p>
+<h2 id="magnetostatic-solutions-and-gauge-freedom">2. Magnetostatic
+solutions and gauge freedom</h2>
+<p>Biot–Savart integrates the contribution of a localized steady current
+distribution. Ampère’s law converts circulation of <strong>B</strong>
+around a loop into enclosed current, but it gives the field
+algebraically only when symmetry controls the integrand. For a long
+straight wire, cylindrical symmetry gives B=μ₀I/(2πr). For a finite
+arbitrary conductor, choosing a convenient loop does not manufacture
+symmetry. <a
+href="formula-notebook.html#pf-biot-savart">pf-biot-savart</a>, <a
+href="formula-notebook.html#pf-ampere">pf-ampere</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_13.html">magnetostatic
+source</a>.</p>
+<p>Because ∇·<strong>B</strong>=0, a vector potential can locally
+represent <strong>B</strong>=∇×<strong>A</strong>. Adding ∇χ to
+<strong>A</strong> leaves <strong>B</strong> unchanged. A gauge
+condition removes redundant representation degrees of freedom when
+solving equations, but gauge choice does not change the observable
+field. Multiply connected domains and quantum phase experiments require
+care beyond an elementary local argument. <a
+href="formula-notebook.html#pf-vector-potential">pf-vector-potential</a>,
+<a href="https://www.feynmanlectures.caltech.edu/II_15.html">Feynman,
+The Vector Potential</a>.</p>
+<p>For a small current loop, the magnetic moment is current times
+oriented area. In a prescribed external field its torque is
+<strong>m</strong>×<strong>B</strong> and an appropriate orientation
+energy is −<strong>m</strong>·<strong>B</strong>. If currents and
+positions are allowed to change together, the power supplies must be
+included in energy bookkeeping. Differentiating a field-energy
+expression while silently holding the wrong control variable fixed can
+predict the wrong mechanical force. <a
+href="formula-notebook.html#pf-dipole-torque">pf-dipole-torque</a>.</p>
+<h2 id="time-dependence-closes-the-conservation-laws">3. Time dependence
+closes the conservation laws</h2>
+<p>Faraday’s law connects changing magnetic flux with electric
+circulation. For a moving loop, the motional term
+<strong>v</strong>×<strong>B</strong> participates in electromotive
+force. Inductance summarizes a quasistatic flux-current relation; an
+ideal linear inductor stores ½LI² and opposes changes through a voltage
+L dI/dt. These relations are not license to ignore radiation,
+resistance, saturation or changing geometry. <a
+href="formula-notebook.html#pf-faraday">pf-faraday</a>, <a
+href="formula-notebook.html#pf-inductor">pf-inductor</a>.</p>
+<p>Ampère’s original steady-current form cannot be the full
+time-dependent law because its divergence would force
+∇·<strong>J</strong>=0 at all times. Adding ε₀∂<strong>E</strong>/∂t in
+vacuum and using Gauss’s law restores charge continuity. This is an
+example of a constraint selecting the required structure of an equation.
+The complete vacuum Maxwell system then yields waves with c=1/√(μ₀ε₀).
+The constants must be interpreted under modern SI: c is exact, while μ₀
+and ε₀ are connected to measured electromagnetic constants rather than
+both separately exact. <a
+href="formula-notebook.html#pf-maxwell">pf-maxwell</a>, <a
+href="https://physics.nist.gov/cuu/Constants/">NIST constants</a>.</p>
+<p><strong>Deriving the energy budget.</strong> Dot the Ampère–Maxwell
+equation with <strong>E</strong>, dot Faraday’s law with
+<strong>B</strong>/μ₀, and subtract using</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>∇</mi><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>𝐄</mi><mo>×</mo><mi>𝐁</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>=</mo><mi>𝐁</mi><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>∇</mi><mo>×</mo><mi>𝐄</mi><mo stretchy="true" form="postfix">)</mo></mrow><mo>−</mo><mi>𝐄</mi><mo>⋅</mo><mrow><mo stretchy="true" form="prefix">(</mo><mi>∇</mi><mo>×</mo><mi>𝐁</mi><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">\nabla\cdot(\mathbf E\times\mathbf B)=\mathbf B\cdot(\nabla\times\mathbf E)-\mathbf E\cdot(\nabla\times\mathbf B).</annotation></semantics></math></p>
+<p>The result is
+∂u/∂t+∇·<strong>S</strong>=−<strong>J</strong>·<strong>E</strong>, with
+vacuum u=(ε₀E²+B²/μ₀)/2 and
+<strong>S</strong>=<strong>E</strong>×<strong>B</strong>/μ₀. The
+equation specifies storage, transport and transfer to matter. A
+resonator can concentrate energy spatially while obeying this budget. An
+apparent gain must be assessed across a closed boundary and a full time
+interval, including sources and stored-energy changes. <a
+href="formula-notebook.html#pf-poynting">pf-poynting</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_27.html">Feynman, Field
+Energy and Field Momentum</a>.</p>
+<h2 id="from-moments-to-statistical-order">4. From moments to
+statistical order</h2>
+<p>Magnetization <strong>M</strong> is magnetic moment per volume. Its
+curl and boundary cross-product act as equivalent bound currents in a
+macroscopic description. Defining
+<strong>H</strong>=<strong>B</strong>/μ₀−<strong>M</strong> separates
+free-current bookkeeping from magnetization, but a constitutive law is
+still required. Linear isotropic susceptibility is useful only within
+its domain; hysteresis and domain rearrangement cannot be reconstructed
+from one constant χ. <a
+href="formula-notebook.html#pf-magnetization">pf-magnetization</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_36.html">Feynman,
+Ferromagnetism</a>.</p>
+<p>For independent two-state magnetic moments, the partition function is
+Z=2cosh(μB/kBT). Differentiating its logarithm gives M=nμtanh(μB/kBT).
+At weak field this is nμ²B/(kBT), while at high field it saturates. The
+factor for a classical continuously oriented moment differs; importing
+the classical 1/3 into a two-state model mixes models. <a
+href="formula-notebook.html#pf-paramagnet">pf-paramagnet</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_35.html">Feynman,
+Paramagnetism and Magnetic Resonance</a>.</p>
+<p>Collective magnetism requires interactions. Ising variables retain a
+discrete component, whereas a Heisenberg model uses vector or
+spin-operator couplings. Exchange sign, lattice geometry,
+dimensionality, anisotropy, disorder and competing couplings determine
+possible phases. Frustration means local interaction preferences cannot
+all be simultaneously satisfied; it does not simply mean “complex
+network.” A finite graph with an energy function also differs from an
+infinite system with a thermodynamic phase transition. <a
+href="formula-notebook.html#pf-spin-model">pf-spin-model</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_37.html">Feynman,
+Magnetic Materials</a>.</p>
+<p>The computational connection to associative memory is specific:
+pairwise interaction energies can produce many attracting configurations
+under a chosen dynamics. Whether those configurations encode intended
+memories, retain capacity under noise, or correspond to a biological
+circuit must be established separately. The physics graph therefore
+marks the Ising-to-graph comparison as an <strong>analogy</strong>,
+preventing it from acting as evidence for a brain-level identity.</p>
+<h2 id="dynamics-defects-and-protected-quantities">5. Dynamics, defects
+and protected quantities</h2>
+<p>Landau–Lifshitz–Gilbert dynamics combines precession with dissipative
+relaxation of magnetization. Its effective field derives from an energy
+functional containing exchange, anisotropy, applied-field and
+demagnetizing terms as needed. Unit-length dynamics should preserve
+|<strong>m</strong>|; damping should decrease the stated energy when no
+drive supplies work. Those provide useful numerical checks. The γ
+convention must specify whether the effective field is
+<strong>H</strong> in A/m or <strong>B</strong> in tesla. <a
+href="formula-notebook.html#pf-llg">pf-llg</a>, <a
+href="https://math.nist.gov/oommf/doc/userguide21a0/userguidexml/sec_oxsEvolvers.html">NIST
+OOMMF evolvers</a>.</p>
+<p>A skyrmion charge integrates how a two-dimensional magnetization
+texture wraps the sphere of directions. Integer quantization needs
+smoothness and boundary conditions that compactify or appropriately fix
+the domain. A topology label therefore does not imply immunity to
+boundary escape, singular configurations, heating or destructive drive.
+The <a
+href="https://advanced.onlinelibrary.wiley.com/doi/full/10.1002/adma.202403274">2024
+skyrmion-bag experiment</a> supplies a material-specific example;
+geometry, field and temperature limit its stability. <a
+href="formula-notebook.html#pf-skyrmion">pf-skyrmion</a>.</p>
+<p>Two other topological ideas deserve separate nodes. A Berry phase is
+acquired by a quantum state transported adiabatically around a parameter
+loop; it requires eigenstates and a transport law, not merely a drawn
+cycle. A two-dimensional vortex has winding of an angular order
+parameter around a defect. Its energy grows logarithmically with size,
+as does its placement entropy, motivating a vortex-unbinding mechanism.
+Neither winding construction is identical to skyrmion charge. <a
+href="formula-notebook.html#pf-berry-phase">pf-berry-phase</a>, <a
+href="https://doi.org/10.1098/rspa.1984.0023">Berry, 1984</a>; <a
+href="formula-notebook.html#pf-vortex-energy">pf-vortex-energy</a>, <a
+href="https://doi.org/10.1088/0022-3719/6/7/010">Kosterlitz and
+Thouless, 1973</a>.</p>
+<h2 id="plasma-and-superconducting-bridges">6. Plasma and
+superconducting bridges</h2>
+<p>MHD couples fluid inertia to electromagnetic stress under a continuum
+closure. Combining resistive Ohm’s law with induction produces
+advection/stretching of <strong>B</strong> plus magnetic diffusion.
+Setting fluid velocity to zero leaves exponential decay of each spatial
+Fourier component; it does not create an oscillation. Adding fluid
+inertia and magnetic tension produces Alfvén waves. The fluid
+approximation must be reconsidered near kinetic scales or when predicted
+speeds approach c. <a
+href="formula-notebook.html#pf-mhd-induction">pf-mhd-induction</a>, <a
+href="formula-notebook.html#pf-alfven">pf-alfven</a>, <a
+href="https://farside.ph.utexas.edu/teaching/plasma/Plasmahtml/node107.html">Fitzpatrick’s
+MHD-wave notes</a>.</p>
+<p>Superconductivity introduces a coherent quantum phase. The Josephson
+phase rate relates voltage to an energy difference for charge 2e,
+providing a precise frequency-voltage conversion. An ideal zero-voltage
+supercurrent has zero electrical power IV; it is not an energy source.
+Circuit resistance, capacitance, magnetic flux and quasiparticle
+channels determine actual device dynamics. <a
+href="formula-notebook.html#pf-josephson">pf-josephson</a>, <a
+href="https://www.feynmanlectures.caltech.edu/III_21.html">Feynman, A
+Seminar on Superconductivity</a>.</p>
+<h2 id="selected-20242026-frontier-and-proof-status-boundaries">7.
+Selected 2024–2026 frontier and proof-status boundaries</h2>
+<p><a href="https://www.nature.com/articles/s41586-023-06907-7">MnTe
+evidence in 2024</a> and <a
+href="https://www.nature.com/articles/s41467-026-76784-x">Co₁/₄TaSe₂ in
+2026</a> study altermagnetic spin splitting. <a
+href="https://www.nature.com/articles/s41563-026-02721-4">Electrical
+reading and switching in PtTe₂/CrSb</a> advances the device-control
+question. Those source records are indexed publisher coverage in this
+pass; they establish specific reported demonstrations, not audited
+production-memory metrics. Compensated magnetization alone does not
+identify an altermagnet because the symmetry and momentum dependence
+matter.</p>
+<p>Non-Abelian gauge theory generalizes an electromagnetic connection to
+matrix-valued fields. The commutator term makes curvature nonlinear. A
+Wilson loop traces group-valued transport around a closed path,
+cancelling endpoint gauge transformations. A software graph cycle is not
+a Wilson loop without this additional structure. <a
+href="formula-notebook.html#pf-nonabelian">pf-nonabelian</a>, <a
+href="https://www.tpi.uni-jena.de/~floerchinger/qft2/lecture15/">gauge-theory
+lecture</a>.</p>
+<p>The current 2026 status must be stated narrowly. The <a
+href="https://github.com/yang-mills-group/YM">Yang–Mills assessment
+repository</a> and <a
+href="https://www.kitp.ucsb.edu/sites/default/files/3rd-Statement-About-Quantum-YangMills-Theory_Nov-9.pdf">November
+9 committee statement</a> endorse the described four-dimensional
+scaling-limit existence construction. The repository explicitly excludes
+a mass-gap proof and uniqueness of the infinite-volume limit. This atlas
+inspected the assessment and reproduction instructions but did not
+rebuild the proof package. “Existence,” “mass gap,” “formalized
+component,” “independent assessment” and “locally replayed verification”
+remain separate graph attributes.</p>
+<h2 id="questions-that-test-understanding-1">Questions that test
+understanding</h2>
+<ol type="1">
+<li>Where does energy enter when a moving magnetic system performs
+mechanical work?</li>
+<li>Which γ and field-unit convention does a micromagnetic simulation
+use?</li>
+<li>What boundary or smoothness assumption protects a stated topological
+charge?</li>
+<li>Which extra measurements turn a switching demonstration into a
+useful memory specification?</li>
+<li>What exact statement remains unproved when an existence construction
+excludes the mass gap?</li>
+</ol>
+<h1
+id="gravity-inverse-square-dynamics-spacetime-geometry-and-bounded-frontier-claims">Gravity:
+inverse-square dynamics, spacetime geometry and bounded frontier
+claims</h1>
+<h2 id="conventions-and-scope">Conventions and scope</h2>
+<p>This chapter uses metric signature (−,+,+,+), takes x⁰=ct when all
+coordinates are given in length units, and declares a Riemann convention
+in the formula catalogue. Newtonian density is mass per volume;
+cosmological density is energy density divided by c² unless explicitly
+stated. These choices eliminate many apparent disagreements caused by a
+missing c², a different scale-factor normalization or a curvature-sign
+reversal. The foundational route follows <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/">Tong’s
+general-relativity course</a> with SI restored explicitly.</p>
+<p>The chapter develops a path to current research, not a complete
+classification of every gravity theory. Strong-field numerics,
+cosmological inference and quantum gravity each require their own
+statistical or mathematical machinery. A compact formula can define an
+entire research program without solving it.</p>
+<h2 id="the-newtonian-model-is-already-a-boundary-problem">1. The
+Newtonian model is already a boundary problem</h2>
+<p>Newtonian gravity shares an inverse-distance Green kernel with
+electrostatics, but the force is attractive for positive masses and the
+potential obeys ∇²Φ=+4πGρₘ. The acceleration is −∇Φ. This is an exact
+correspondence between mathematical operator forms under different
+source conventions; it does not identify mass with electric charge. <a
+href="formula-notebook.html#pf-newton">pf-newton</a>, <a
+href="formula-notebook.html#pf-grav-poisson">pf-grav-poisson</a>, <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html">Tong,
+weak gravity</a>.</p>
+<p><strong>Worked tidal calculation.</strong> For Φ=−GM/r, the Hessian
+is</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>∂</mi><mi>i</mi></msub><msub><mi>∂</mi><mi>j</mi></msub><mi>Φ</mi><mo>=</mo><mfrac><mrow><mi>G</mi><mi>M</mi></mrow><msup><mi>r</mi><mn>3</mn></msup></mfrac><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>δ</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>−</mo><mn>3</mn><msub><mover><mi>r</mi><mo accent="true">̂</mo></mover><mi>i</mi></msub><msub><mover><mi>r</mi><mo accent="true">̂</mo></mover><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\partial_i\partial_j\Phi=\frac{GM}{r^3}(\delta_{ij}-3\hat r_i\hat r_j).
+</annotation></semantics></math></p>
+<p>Two nearby falling particles have relative acceleration −(Hessian
+Φ)<strong>ξ</strong>. Radial separation therefore stretches with
+coefficient 2GM/r³, while either transverse separation compresses with
+coefficient −GM/r³. The trace vanishes outside the source, agreeing with
+the vacuum Poisson equation. Transforming into a frame falling with one
+particle removes its local acceleration but cannot remove this relative
+effect across the pair. That is the Newtonian precursor of curvature. <a
+href="formula-notebook.html#pf-curvature">pf-curvature</a>, <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S3.html">Tong,
+Riemannian geometry</a>.</p>
+<p>For two bodies, relative and center-of-mass coordinates separate the
+dynamics. The reduced mass handles relative kinetic energy; the total
+mass enters the relative orbital frequency. Energy and angular momentum
+reduce the central-force problem to one radial degree of freedom.
+Confusing one body’s barycentric radius with the relative semimajor axis
+creates a mass-ratio error even when Kepler’s formula looks familiar. <a
+href="formula-notebook.html#pf-kepler">pf-kepler</a>, <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html">Tong,
+geodesics and orbital limits</a>.</p>
+<h2 id="variational-mechanics-is-the-bridge-to-geometry">2. Variational
+mechanics is the bridge to geometry</h2>
+<p>Stationary action provides a reusable derivation method. Perturb a
+path, integrate its velocity-variation term by parts, impose endpoint
+conditions and use the arbitrariness of the remaining variation. This
+gives Euler–Lagrange equations. The word stationary matters: some
+physical paths are saddle points, so “nature always minimizes action” is
+too strong. <a
+href="formula-notebook.html#pf-variational">pf-variational</a>.</p>
+<p>In relativity, the metric converts coordinate displacements into
+invariant intervals. For a timelike worldline, dτ²=−ds²/c² gives the
+proper time a comoving ideal clock measures. Coordinate time is a label
+attached to a chart; it need not coincide with every clock. In flat
+inertial coordinates the metric produces familiar special-relativistic
+time dilation. In curved geometry, the full metric and observer path
+must be used. <a
+href="formula-notebook.html#pf-metric-time">pf-metric-time</a>, <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S2.html">Tong,
+differential geometry</a>.</p>
+<p>To differentiate a vector field while retaining its geometric
+meaning, introduce a connection. Metric compatibility and zero torsion
+determine the Levi-Civita connection. A geodesic has tangent vector
+transported parallel to itself, giving an acceleration term plus a
+connection term. Connection components can be nonzero in flat polar
+coordinates; curvature is the tensorial obstruction that remains after
+coordinate effects are separated. <a
+href="formula-notebook.html#pf-connection">pf-connection</a>, <a
+href="formula-notebook.html#pf-geodesic">pf-geodesic</a>.</p>
+<p><strong>A useful invariance check.</strong> In a flat plane, a
+straight path written in Cartesian coordinates has zero coordinate
+acceleration. In polar coordinates the radial coordinate generally
+accelerates and the angular coordinate generally changes nonuniformly.
+The polar connection terms cancel those coordinate accelerations.
+Therefore “nonzero coordinate acceleration” is not a sufficient detector
+of a physical force. Likewise, a complicated graph layout does not
+establish curved physical space; a metric and operational interpretation
+would first be required.</p>
+<h2 id="einsteins-equations-are-a-constrained-dynamical-system">3.
+Einstein’s equations are a constrained dynamical system</h2>
+<p>The stress-energy tensor contains energy density, momentum density
+and stresses. Einstein’s equations relate those quantities to curvature,
+with a possible cosmological constant. In length coordinates, curvature
+has units m⁻² and the factor G/c⁴ turns energy density into the same
+units. The contracted Bianchi identity makes the geometric side
+covariantly divergence free, demanding compatible matter conservation.
+<a href="formula-notebook.html#pf-einstein">pf-einstein</a>, <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S4.html">Tong,
+Einstein equations</a>.</p>
+<p>The Einstein–Hilbert action packages this structure. Varying the
+metric produces both bulk terms and boundary terms; a well-posed
+variation requires the correct boundary data and corresponding boundary
+action. It is not legitimate to drop a boundary divergence merely
+because the final equation is familiar. The chosen matter action
+determines its own equations and stress tensor. <a
+href="formula-notebook.html#pf-einstein-action">pf-einstein-action</a>.</p>
+<p>The Newtonian limit is a nontrivial consistency check. A weak, static
+metric has g₀₀≈−(1+2Φ/c²). For slowly moving particles, the geodesic
+equation recovers acceleration −∇Φ, while the field equations recover
+Poisson’s equation. Thus Newtonian theory appears as a controlled regime
+rather than an unrelated rule. Conversely, a solution outside that
+regime cannot be justified by extrapolating one weak-field formula
+indefinitely. <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html">Tong’s
+weak-field derivation</a>.</p>
+<p>Numerical relativity adds initial constraints, gauge conditions,
+stable evolution formulations, mesh control and waveform extraction. The
+existence of a numerical plot is insufficient: constraint violations and
+resolution convergence must be assessed. This atlas maps that branch and
+explains why it is needed, while leaving a full
+formulation-by-formulation derivation to the expansion queue.</p>
+<h2 id="exact-solutions-and-observable-effects">4. Exact solutions and
+observable effects</h2>
+<p>The Schwarzschild metric describes the spherically symmetric vacuum
+exterior with zero cosmological constant. It also describes the exterior
+of a suitable spherical star, so it is not synonymous with a black hole
+at every radius. Its mass parameter sets rₛ=2GM/c². The coefficient
+singularity at rₛ is removable by a suitable chart, whereas the central
+curvature singularity is a different issue. Rotating objects require
+additional structure such as the Kerr solution. <a
+href="formula-notebook.html#pf-schwarzschild">pf-schwarzschild</a>, <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S6.html">Tong,
+black holes</a>.</p>
+<p>The redshift calculation illustrates the role of observers. A
+stationary spacetime conserves an energy associated with its time
+symmetry. A static observer’s locally measured frequency divides that
+conserved quantity by a position-dependent normalization. Emitter and
+receiver therefore obtain a frequency ratio depending on their locations
+and motions. In the weak stationary limit, light climbing through a
+potential difference ΔΦ loses a fraction ΔΦ/c² of its frequency. A
+one-metre height difference near Earth’s surface is an illustrative
+fractional scale near 10⁻¹⁶; interpreting clock data at that scale
+requires systematic control as well as stability. <a
+href="formula-notebook.html#pf-redshift">pf-redshift</a>, <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S1.html">Tong,
+geodesics</a>.</p>
+<p>Light deflection and perihelion advance follow from null and timelike
+geodesics. The leading formulas have explicit weak-field conditions and
+depend on impact parameter or orbital eccentricity. Strong lensing, spin
+and finite-source effects require extensions. A formula with a small
+expansion parameter should carry the parameter’s estimated size whenever
+used for a numerical claim. <a
+href="formula-notebook.html#pf-weak-orbit-tests">pf-weak-orbit-tests</a>.</p>
+<h2 id="gravitational-waves-connect-derivatives-to-data">5.
+Gravitational waves connect derivatives to data</h2>
+<p>Linearizing the metric around a background produces a wave equation
+after gauge control. Conservation laws remove monopole radiation and
+constrain dipole behavior, leaving a changing mass quadrupole as the
+leading slow-motion source. The radiative strain is proportional to its
+second time derivative; emitted power depends on the squared third
+derivative. The exact definition of the trace-free quadrupole fixes the
+prefactor. <a href="formula-notebook.html#pf-gw-strain">pf-gw-strain</a>,
+<a href="formula-notebook.html#pf-gw-power">pf-gw-power</a>, <a
+href="https://www.damtp.cam.ac.uk/user/tong/gr/grhtml/S5.html">Tong,
+weak gravity</a>.</p>
+<p>For a circular binary, the leading luminosity grows as separation to
+the power −5. Combining negative orbital-energy loss with the Kepler
+relation produces increasing orbital frequency: a chirp. The
+approximation explains the mechanism, but late inspiral, merger and
+ringdown need more accurate relativistic waveforms and calibrated
+detector response. A catalogue’s conclusion depends on its likelihood,
+event selection, waveform assumptions and noise treatment.</p>
+<p>The selected current paper <a
+href="https://arxiv.org/abs/2607.19293">GWTC-5.0: Tests of General
+Relativity, July 2026</a> reports seven test families across 168
+cumulative events and overall agreement with GR within stated limits.
+The source was inspected at abstract and collaboration-summary depth,
+not independently reanalysed. This constrains tested deviations; it is
+not a theorem excluding every alternative theory or a proof that the
+low-energy theory remains exact at arbitrary scales.</p>
+<h2 id="cosmology-expansion-inference-and-model-dependence">6.
+Cosmology: expansion, inference and model dependence</h2>
+<p>Homogeneity and isotropy reduce the background geometry to a scale
+factor and curvature sign. The Friedmann equation describes its rate;
+stress-energy conservation describes dilution and pressure work. A
+length-valued scale factor with k=−1,0,+1 is used in the catalogue. A
+dimensionless scale factor is equally legitimate if the curvature
+parameter’s units change consistently. <a
+href="formula-notebook.html#pf-friedmann">pf-friedmann</a>, <a
+href="https://davidtong.org/teaching/cosmology/cosmohtml/S1.html">Tong,
+The Expanding Universe</a>.</p>
+<p>For a separately conserved component with constant p=wρc²,
+integration gives ρ∝a⁻³⁽¹⁺ʷ⁾. Matter dilution comes from growing volume;
+radiation has an additional redshift factor; a vacuum-like component has
+constant density. Acceleration depends on ρ+3p/c², so negative enough
+pressure can accelerate expansion without a local repulsive force law
+between ordinary masses. <a
+href="formula-notebook.html#pf-equation-state">pf-equation-state</a>.</p>
+<p>Distances, redshifts, clustering and growth constrain these models
+statistically. The <a href="https://arxiv.org/html/2607.27410v3">DESI
+DR2 Lyα full-shape analysis, July/August 2026</a> adds Alcock–Paczyński
+information near effective redshift 2.33. Its individual Lyα constraint
+moves toward ΛCDM, while combined-model preferences depend on dataset
+combinations. This is why a current atlas must retain dates and
+inference context rather than preserve only an earlier “dark energy
+evolves” headline. Neither microscopic dark-matter identity nor a
+fundamental dark-energy mechanism follows from the background formula
+alone.</p>
+<h2
+id="quantum-and-ai-assisted-frontier-what-is-and-is-not-established">7.
+Quantum and AI-assisted frontier: what is and is not established</h2>
+<p>Hawking’s semiclassical calculation assigns temperature to an
+approximately stationary black hole. Together with the first-law
+relation it yields area entropy. A solar-mass Schwarzschild example has
+a very low predicted temperature; inverse mass scaling and negative heat
+capacity follow algebraically. These relations do not determine the
+final evaporation state or resolve the information problem. <a
+href="formula-notebook.html#pf-hawking">pf-hawking</a>, <a
+href="https://authors.library.caltech.edu/records/2wsvj-qrt68">Hawking,
+1975</a>.</p>
+<p>Entanglement experiments are often proposed to probe gravitational
+mediation. The inference depends on assumptions about the mediator,
+locality and how matter is represented. <a
+href="https://arxiv.org/html/2510.19714v3">Aziz and Howl’s paper,
+including its 2026 revision</a>, argues that specified
+classical-gravity/QFT constructions can generate entanglement. This is a
+theoretical challenge to a class of interpretations, not an observed
+discovery that gravity is classical or a settled universal impossibility
+result for quantum-gravity tests.</p>
+<p>Two November 2026 preprints require equally precise scope. <a
+href="https://hexagonmath.org/2611.00175v1">The Hawking–Page transition
+at weak coupling</a> reports a negative weak-coupling quartic
+coefficient in a specified large-N supersymmetric thermal gauge theory,
+supporting a first-order transition there. It does not establish the
+same behavior at every coupling. <a
+href="https://hexagonmath.org/2611.00174v1">The spinless modular
+bootstrap at large central charge</a> reports a computer-assisted
+optimal leading slope in its admissible class Ā for the lightest
+non-vacuum Virasoro-primary dimension. “Spinless” sums primaries of all
+spins by dimension. Equality with the infinite-order finite-derivative
+optimum remains conjectural; <a
+href="formula-notebook.html#pf-bootstrap">pf-bootstrap</a> records this
+distinction and computes the constant. Both are preprints with disclosed
+AI provenance and partial human-understanding status; their proofs were
+not independently replayed here. The <a
+href="https://www.anthropic.com/research/claude-black-hole-physics">provider
+announcement</a> is provenance, not a substitute for the mathematical
+statements.</p>
+<p>The open research branches remain substantial: ultraviolet
+completion, black-hole information, singularity resolution,
+observational discriminants, quantum measurement interpretation,
+dark-matter microphysics and dark-energy mechanism. A network should
+keep these as explicit open questions with prerequisite paths and
+conflicting evidence where appropriate. It should not turn a highly
+connected node into a solved problem.</p>
+<h1
+id="frequency-and-waves-oscillation-spectra-geometry-and-quantum-control">Frequency
+and waves: oscillation, spectra, geometry and quantum control</h1>
+<h2 id="frequency-is-a-property-of-a-defined-observable">Frequency is a
+property of a defined observable</h2>
+<p>Frequency describes how a phase or repetitive observable changes with
+time. It is not an independent universal substance. A physical statement
+needs the observable, its units, an amplitude, a coupling mechanism, a
+measurement procedure and a dynamical model. Cycles per second and
+radians per second differ by 2π. An energy, a graph eigenvalue or a
+visual pattern cannot acquire units of hertz merely by being labelled a
+frequency. <a href="formula-notebook.html#pf-frequency">pf-frequency</a>,
+<a href="https://www.feynmanlectures.caltech.edu/I_21.html">Feynman, The
+Harmonic Oscillator</a>.</p>
+<p>This chapter follows a progression from one degree of freedom to
+many, from time records to spectral estimates, from spatial PDEs to
+boundary modes, and finally to quantum devices and open-system
+frontiers. The formula catalogue gives the assumptions and units for
+every step.</p>
+<h2 id="why-harmonic-motion-appears-so-widely">1. Why harmonic motion
+appears so widely</h2>
+<p>Near a stable smooth equilibrium, the first nonzero potential term is
+often quadratic. Its derivative is a linear restoring force. Mass
+provides inertia, so the equation becomes mẍ+kx=0 and the natural
+angular frequency is √(k/m). This is a local approximation, not an
+assertion that every system is globally sinusoidal. Higher-order terms
+can shift frequency with amplitude, couple harmonics or create
+bifurcations. <a
+href="formula-notebook.html#pf-oscillator">pf-oscillator</a>.</p>
+<p><strong>Worked energy cycle.</strong> For m=1 kg, k=100 N/m and
+amplitude 0.02 m, the total oscillator energy is 0.02 J. At an extreme,
+velocity is zero and the energy is elastic. At equilibrium, displacement
+is zero and the speed is 0.2 m/s, giving the same kinetic energy. The
+oscillation frequency is approximately 1.59 Hz. Increasing amplitude by
+two increases energy by four while leaving this linear-model frequency
+unchanged. The frequency-energy relation therefore cannot be interpreted
+without saying whether the system is a classical mode or a single
+quantum transition.</p>
+<p>Damping introduces a decay timescale. In the viscous model, amplitude
+decays as exp(−γt), while cycle-averaged energy decays approximately
+twice as fast in the weakly damped regime. Critical and overdamped
+motion have different solution forms. A quality factor Q quantifies
+storage relative to loss under a stated convention; it does not specify
+stored energy without amplitude or input. <a
+href="formula-notebook.html#pf-damped">pf-damped</a>, <a
+href="https://www.feynmanlectures.caltech.edu/I_23.html">Feynman,
+Resonance</a>.</p>
+<h2 id="resonance-is-a-driven-response-with-an-energy-budget">2.
+Resonance is a driven response with an energy budget</h2>
+<p>A sinusoidal ansatz transforms the driven oscillator equation into an
+algebraic complex response. The real and imaginary terms encode
+stiffness/inertia mismatch and dissipative lag. The measured variable
+matters: displacement, velocity and dissipated-power peaks can occur at
+different frequencies. At zero damping and exact resonance, the finite
+steady-response formula breaks down; the transient amplitude grows
+instead. <a href="formula-notebook.html#pf-forced">pf-forced</a>.</p>
+<p>Multiply the motion equation by velocity to obtain dE/dt=Fv−bv². The
+average energy change over a steady cycle is zero, so input power
+balances dissipation plus any extracted load power. A high amplitude in
+a low-loss resonator is compatible with small power input because energy
+circulates between storage forms. Connecting a load changes both the
+budget and the response. <a
+href="formula-notebook.html#pf-resonant-power">pf-resonant-power</a>, <a
+href="https://www.feynmanlectures.caltech.edu/II_27.html">electromagnetic
+conservation counterpart</a>.</p>
+<p><strong>A useful experimental question set.</strong> What is driving
+the system? What is stored? What is dissipated? What crosses the
+measurement boundary? How long was the transient? Was voltage, pressure
+or displacement mistaken for power? These questions should precede a
+claim of unusual amplification. A local amplitude enhancement can
+reflect focusing, impedance transformation or standing-wave
+interference, while total energy remains conserved. No healing,
+consciousness or free-energy conclusion follows from the resonance
+equations alone.</p>
+<h2 id="many-oscillators-introduce-linear-algebra">3. Many oscillators
+introduce linear algebra</h2>
+<p>For coupled conservative coordinates, write
+<strong>M</strong>ẍ+<strong>K</strong>x=0. A normal-mode ansatz gives
+<strong>K</strong>φ=ω²<strong>M</strong>φ. Positive mass and nonnegative
+stiffness ensure real nonnegative squared frequencies. Different mode
+shapes are orthogonal in the mass-weighted inner product, not
+necessarily under an arbitrary Euclidean normalization. A zero mode can
+express a symmetry, such as translation of an unconstrained system. <a
+href="formula-notebook.html#pf-normal-modes">pf-normal-modes</a>, <a
+href="https://www.feynmanlectures.caltech.edu/I_49.html">Feynman,
+Modes</a>.</p>
+<p>Two equal masses joined by one spring already illustrate the
+essential distinction. Their common displacement mode has no restoring
+force; their difference mode stretches the spring and oscillates at
+√(2k/m). Add boundary springs and the spectrum changes. Geometry,
+coupling and constraints all enter the eigenproblem. A frequency list
+without the matrices and boundary conditions is therefore not a full
+mode specification.</p>
+<p>This also explains degeneracy. A square membrane can have distinct
+mode shapes sharing one frequency because of symmetry. Arbitrary linear
+combinations within that eigenspace are also modes in the ideal model.
+Small asymmetry can split the degeneracy. A photograph of one driven
+pattern does not uniquely reconstruct the underlying mode basis.</p>
+<h2 id="fourier-and-laplace-transforms-solve-different-questions">4.
+Fourier and Laplace transforms solve different questions</h2>
+<p>Fourier series expand periodic signals in orthogonal harmonics.
+Fourier transforms extend the idea to a continuum of frequencies with a
+declared normalization. Parseval’s identity preserves the squared norm
+between time and spectral representations. An infinite sinusoid is
+represented by delta distributions, not a finite-energy spectral bump.
+Finite measurement duration supplies a different object: a windowed
+record. <a
+href="formula-notebook.html#pf-fourier-series">pf-fourier-series</a>, <a
+href="formula-notebook.html#pf-fourier">pf-fourier</a>, <a
+href="https://www.feynmanlectures.caltech.edu/I_50.html">Feynman,
+Harmonics</a>.</p>
+<p>The Laplace transform adds a complex growth/decay parameter and
+retains initial-condition terms. Its poles organize transients and
+stability of a linear time-invariant system. A transfer function alone
+describes the zero-initial-state response; a system with stored initial
+energy has an additional response. The frequency response on an
+imaginary-axis slice must respect the region of convergence. <a
+href="formula-notebook.html#pf-laplace">pf-laplace</a>, <a
+href="https://www.feynmanlectures.caltech.edu/I_25.html">Feynman, Linear
+Systems</a>.</p>
+<p>Convolution represents a linear time-invariant system as a sum of
+shifted impulse responses. It is a mathematical memory kernel: output
+depends on past input through a prescribed weighting. A document cache
+is a different kind of memory unless a specific kernel model is being
+implemented. For an exponential kernel, the same equation describes an
+ordinary low-pass filter or a designed smoothing rule. Similar algebra
+does not establish common empirical mechanism. <a
+href="formula-notebook.html#pf-convolution">pf-convolution</a>.</p>
+<h2 id="digital-spectra-require-an-observation-model">5. Digital spectra
+require an observation model</h2>
+<p>Uniform sampling identifies frequencies that differ by an integer
+multiple of the sample rate. A 700 Hz cosine sampled at 1000 samples per
+second is indistinguishable from a suitable 300 Hz cosine. No digital
+filter can recover which one existed before sampling without additional
+information. Analog anti-alias filtering and a bandwidth assumption are
+therefore part of the measurement. <a
+href="formula-notebook.html#pf-sampling">pf-sampling</a>, <a
+href="https://ieeexplore.ieee.org/abstract/document/1697831/authors">Shannon’s
+original communication paper</a>.</p>
+<p>The discrete Fourier transform maps N samples to N coefficients. Its
+spacing fₛ/N follows from record duration. Zero-padding provides denser
+interpolation of the same finite-record spectrum; it does not create new
+observation time. Windowing trades sidelobe leakage against effective
+main-lobe width. A single periodogram is noisy, and averaging changes
+variance and resolution. <a
+href="formula-notebook.html#pf-dft">pf-dft</a>, <a
+href="formula-notebook.html#pf-periodogram">pf-periodogram</a>.</p>
+<p><strong>Worked normalization check.</strong> With an unscaled DFT, a
+perfectly bin-centered real cosine of amplitude A has two coefficients
+of magnitude NA/2. Dividing each magnitude by N yields A/2 in the
+two-sided amplitude spectrum. A one-sided convention combines the
+symmetric pair to report A, except at DC and a possible Nyquist bin.
+Squared amplitudes must be converted using the appropriate power-density
+normalization; they cannot simply inherit every amplitude convention.
+The formula catalogue states one coherent two-sided PSD definition.</p>
+<p>Spectral uncertainty is not one number. Finite record length, window
+shape, sample-clock error, noise statistics, missing samples and model
+mismatch all contribute. A narrow-looking plot is not sufficient
+evidence of a stable oscillator or two resolvable tones. For clock work,
+Allan deviation compares adjacent averaged fractional frequencies across
+an averaging timescale. It cancels constant bias, so a biased clock can
+have excellent stability. <a
+href="formula-notebook.html#pf-allan">pf-allan</a>, <a
+href="https://nvlpubs.nist.gov/nistpubs/Legacy/SP/nistspecialpublication1065.pdf">NIST
+Handbook of Frequency Stability Analysis</a>.</p>
+<h2 id="waves-couple-space-to-time">6. Waves couple space to time</h2>
+<p>The simplest wave equation balances inertia against a spatial
+restoring operator. A plane-wave substitution defines a dispersion
+relation ω(k). Phase velocity ω/k describes moving phase fronts; group
+velocity dω/dk describes a narrow envelope under suitable conditions. In
+strongly dispersive or absorptive systems, that envelope can reshape, so
+a group-velocity number is not automatically signal or energy speed. <a
+href="formula-notebook.html#pf-wave">pf-wave</a>, <a
+href="formula-notebook.html#pf-dispersion">pf-dispersion</a>, <a
+href="https://www.feynmanlectures.caltech.edu/I_48.html">Feynman,
+Beats</a>.</p>
+<p>Two nearby sinusoidal frequencies factor into a carrier and a signed
+envelope. Two tones at 440 and 442 Hz produce two amplitude maxima per
+second. The signed envelope cosine has half the difference frequency but
+flips carrier phase, making its absolute amplitude repeat at the full
+difference. This resolves a common factor-of-two ambiguity. In a
+strictly linear spectral decomposition, the low beat rate is a property
+of the envelope, not a newly generated low-frequency carrier with
+independent energy.</p>
+<p>At one fixed temporal frequency the wave equation becomes a Helmholtz
+boundary problem. Fixed strings, membranes and cavities select spatial
+eigenfunctions. A rectangular membrane adds squared wavenumbers in two
+directions, producing frequencies that generally are not integer
+multiples of one fundamental. A bending plate involves a fourth-order
+spatial operator, so its spectrum cannot be obtained by reusing a
+membrane formula without justification. <a
+href="formula-notebook.html#pf-membrane">pf-membrane</a>, <a
+href="https://www.feynmanlectures.caltech.edu/I_49.html">Feynman,
+Modes</a>.</p>
+<p>In acoustics, plane-wave pressure and particle velocity are related
+by specific impedance ρc. Interface continuity yields reflection and
+transmission. A transmitted pressure amplitude can exceed the incident
+amplitude while transmitted power remains below incident power because
+the impedances differ. This is a practical example of why amplitude and
+energy must not be conflated. <a
+href="formula-notebook.html#pf-acoustic">pf-acoustic</a>, <a
+href="https://www.feynmanlectures.caltech.edu/I_47.html">Feynman, Sound
+and the Wave Equation</a>.</p>
+<h2 id="quantum-frequency-and-current-devices">7. Quantum frequency and
+current devices</h2>
+<p>Quantizing a harmonic mode yields discrete energies ℏω(n+½). The
+energy spacing is hf, but the total energy depends on occupation. For
+thermal equilibrium the mean occupation is Bose distributed; a
+low-frequency mode can have many thermal quanta even at temperatures
+that sound cold in everyday language. Coherent control requires adequate
+preparation, coupling, isolation and measurement. <a
+href="formula-notebook.html#pf-quantum-oscillator">pf-quantum-oscillator</a>.</p>
+<p>The <a href="https://arxiv.org/html/2503.03898v1">2025
+acoustic-phonon phase-gate preprint</a> demonstrates phase control and
+number-resolving detection in a circuit-coupled acoustic setting. Its
+reported 98.1% noise-floor-limited interference visibility is not
+automatically a logical gate fidelity; measurement correction and
+conditioning matter. The result connects mode dynamics to quantum
+information while leaving scalability and complete error budgets as
+distinct questions.</p>
+<p>The <a href="https://www.nature.com/articles/s41586-026-11084-4">2026
+thorium-229 nuclear clock paper</a> reports feedback-loop operation on a
+nuclear optical transition. The source was inspected through indexed
+publisher abstract/method excerpts. The achievement concerns a
+controlled frequency reference; it does not, by its title alone,
+establish the best accuracy, stability or reproducibility across all
+clock technologies. Those metrics need separate numerical evidence and
+uncertainty budgets.</p>
+<h2 id="metamaterials-topology-and-exceptional-points">8. Metamaterials,
+topology and exceptional points</h2>
+<p>Engineered periodic or subwavelength structures modify effective wave
+response. Band gaps, interface states, loss and symmetry can be
+designed, but effective models have bandwidth and homogenization limits.
+The <a
+href="https://www.nature.com/articles/s41467-026-77579-w">September 2026
+acoustic Jackiw–Rebbi-interface paper</a> supplies a specific
+experimental/model example. The <a
+href="https://www.nature.com/articles/s41467-026-78506-9">October 2026
+absorbing-exceptional-point paper</a> studies coherent absorption under
+controlled illumination. Directional intensity or absorption is not
+energy creation.</p>
+<p>An elementary non-Hermitian 2×2 model makes an exceptional point
+concrete. At a nonzero parameter combination, two eigenvalues and their
+eigenvectors coalesce. A zero matrix with two equal eigenvalues does not
+qualify because it still has a complete eigenbasis. Spectral sensitivity
+near a degeneracy does not automatically improve measurement
+signal-to-noise after noise, loss and coupling are accounted for. <a
+href="formula-notebook.html#pf-exceptional">pf-exceptional</a>.</p>
+<h2 id="the-exact-graph-bridge">9. The exact graph bridge</h2>
+<p>For a symmetric nonnegative weighted graph,
+<strong>L</strong>=<strong>D</strong>−<strong>W</strong> satisfies</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>𝐱</mi><mi>T</mi></msup><mi>𝐋</mi><mi>𝐱</mi><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><munder><mo>∑</mo><mrow><mi>i</mi><mi>j</mi></mrow></munder><msub><mi>w</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><msup><mrow><mo stretchy="true" form="prefix">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo>−</mo><msub><mi>x</mi><mi>j</mi></msub><mo stretchy="true" form="postfix">)</mo></mrow><mn>2</mn></msup><mo>≥</mo><mn>0</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">\mathbf x^T\mathbf L\mathbf x=\frac12\sum_{ij}w_{ij}(x_i-x_j)^2\ge0.</annotation></semantics></math></p>
+<p>This is an exact algebraic identity. Its eigenvectors describe smooth
+and rapidly varying node signals relative to the chosen edges. If the
+time law is diffusion, each nonconstant component decays. If the time
+law is an inertial spring model, it oscillates. The operator alone does
+not choose between those dynamics and has no intrinsic SI frequency. <a
+href="formula-notebook.html#pf-graph-energy">pf-graph-energy</a>.</p>
+<p>Graph wavelets apply spectral kernels to localized node indicators.
+Their scale parameter is a graph spectral scale, not a biological
+rhythm. Polynomial approximations make sparse filtering possible without
+full diagonalization. <a
+href="formula-notebook.html#pf-graph-wavelet">pf-graph-wavelet</a>, <a
+href="https://arxiv.org/abs/0912.3848">Hammond, Vandergheynst and
+Gribonval</a>.</p>
+<p>For a knowledge system, this can help find neighborhoods, multiscale
+context or smooth signals over a deliberately constructed affinity
+graph. Semantic edges such as “contradicts,” “supersedes” and “is an
+analogy for” cannot all be treated as attractive physical couplings. The
+memory implementation must preserve those meanings, even if a
+force-directed visualization places their nodes close together.</p>
+<h1
+id="which-physics-structures-transfer-to-graph-memoryand-what-does-not-follow">Which
+physics structures transfer to graph memory—and what does not
+follow</h1>
+<h2 id="three-distinct-kinds-of-connection">Three distinct kinds of
+connection</h2>
+<p>The atlas separates an exact mathematical identity, a shared
+computational method and a speculative physical analogy. The first can
+be proved from stated definitions. The second can be engineered and
+evaluated for a new application. The third remains a hypothesis until an
+empirical mechanism and measurements support it. Graph proximity,
+repeated terminology or a visually similar diagram cannot replace those
+distinctions.</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Structure</th>
+<th>Exact content</th>
+<th>Useful memory-system consequence</th>
+<th>What it does not establish</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Poisson operator and graph Laplacian</td>
+<td>Both can arise from quadratic penalties on differences under
+suitable discretization</td>
+<td>Use sparse operators, boundary constraints and residual checks</td>
+<td>A knowledge graph has electric charge</td>
+</tr>
+<tr class="even">
+<td>Normal modes and graph spectra</td>
+<td>A symmetric operator has an orthogonal eigenbasis</td>
+<td>Explore smooth versus localized graph signals</td>
+<td>An eigenvalue is a biological oscillation frequency</td>
+</tr>
+<tr class="odd">
+<td>Green function and impulse response</td>
+<td>Linear response is an inverse-operator or convolution problem with
+specified conditions</td>
+<td>Cache reusable responses when inputs and operator versions
+match</td>
+<td>Arbitrary retrieval is linear and time invariant</td>
+</tr>
+<tr class="even">
+<td>Multipole compression</td>
+<td>Well-separated interactions permit controlled summaries</td>
+<td>Build hierarchical summaries with explicit error and invalidation
+rules</td>
+<td>Every semantic summary has a multipole error bound</td>
+</tr>
+<tr class="odd">
+<td>Spin interactions and attracting states</td>
+<td>A designed energy and update law can select stable
+configurations</td>
+<td>Test associative retrieval under noise and distractors</td>
+<td>A notes graph reproduces a human brain</td>
+</tr>
+<tr class="even">
+<td>Gauge transport and loops</td>
+<td>A closed transport trace can be invariant under local representation
+changes</td>
+<td>Distinguish representation from invariant content</td>
+<td>Any dependency cycle is a Wilson or Berry loop</td>
+</tr>
+<tr class="odd">
+<td>Thermodynamic or resonant energy budget</td>
+<td>Storage, input, output and dissipation must balance in the
+model</td>
+<td>Measure retrieval cost, latency and refresh work explicitly</td>
+<td>Computational efficiency creates physical energy</td>
+</tr>
+</tbody>
+</table>
+<p>The mathematical foundations are documented in <a
+href="https://arxiv.org/abs/0912.3848">graph wavelets</a>, <a
+href="https://www.sciencedirect.com/science/article/pii/0021999187901409">fast
+multipole methods</a>, <a
+href="https://www.feynmanlectures.caltech.edu/I_25.html">linear
+systems</a>, <a
+href="https://www.feynmanlectures.caltech.edu/I_49.html">normal
+modes</a> and <a
+href="https://www.tpi.uni-jena.de/~floerchinger/qft2/lecture15/">gauge
+transport</a>. The software consequences in this table are design
+recommendations derived from those structures, not claims that those
+sources studied this repository.</p>
+<h2 id="a-worked-example-one-operator-three-meanings">A worked example:
+one operator, three meanings</h2>
+<p>Take a path of three nodes with equal nonnegative edge weights:</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+L=\begin{pmatrix}1&amp;-1&amp;0\\-1&amp;2&amp;-1\\0&amp;-1&amp;1\end{pmatrix}.
+</annotation></semantics></math></p>
+<p>Its eigenvalues are 0, 1 and 3. The zero mode is constant. The other
+two represent increasing variation across adjacent nodes. For a node
+vector x=(1,0,−1), Lx=x and xᵀLx=2. Directly summing the squared edge
+differences gives (1−0)²+(0+1)²=2, confirming the Dirichlet-energy
+identity. <a
+href="formula-notebook.html#pf-graph-energy">pf-graph-energy</a>.</p>
+<p>Now choose a time law. In diffusion, dx/dt=−αLx, that vector decays
+as exp(−αt). In a spring system with equal masses m, d²x/dt²=−(k/m)Lx,
+it oscillates at √(k/m). In a graph regularizer, minimize ‖x−y‖²+λxᵀLx;
+then x=(I+λL)⁻¹y and there is no physical time at all. The same
+eigenvalue enters three different equations, with three different
+interpretations and units. Calling all three “frequency memory” would
+hide the crucial model choice.</p>
+<p>For knowledge retrieval, edge meaning must be chosen before
+filtering. A nonnegative similarity edge is compatible with a smoothing
+penalty. A contradiction edge is not: averaging opposing propositions
+can erase the disagreement. A prerequisite edge has direction and should
+not be silently symmetrized into similarity. An analogy edge can guide
+exploration but must not supply evidence that a physical claim is true.
+The implementation should let the reader inspect the relation type and
+originating sources.</p>
+<h2 id="caching-operator-reuse-is-conditional">Caching: operator reuse
+is conditional</h2>
+<p>A linear solve b↦A⁻¹b admits reusable factorizations when A is
+unchanged. Change geometry, boundary conditions, material coefficients
+or discretization and the operator can change. Charge equilibration
+shows a second dependency: even if one local descriptor changes, a
+global conservation constraint can alter the entire solved state. <a
+href="formula-notebook.html#pf-qeq">pf-qeq</a>, <a
+href="https://pubs.acs.org/doi/10.1021/j100161a070">Rappé and
+Goddard</a>.</p>
+<p>The analogous software rule is precise: a cached answer should depend
+on the content/version of its evidence, query normalization, scope,
+retrieval parameters and model or schema version. A time-to-live alone
+is not enough when a dependency is edited before expiry. An answer
+citing a withdrawn paper or an obsolete repository state should be
+invalidated by that change. A cached summary should not survive merely
+because its title remained unchanged.</p>
+<p>Hierarchical compression adds another issue. A multipole summary is
+designed to preserve a controlled set of moments, with a truncation
+error in a geometric regime. A language summary does not automatically
+enjoy that theorem. It can still be useful if it retains claim IDs,
+assumptions, source links, uncertainty and a route back to the
+underlying material. The design should treat summary expansion as
+retrieval of evidence, not amplification of unsupported confidence. <a
+href="https://www.sciencedirect.com/science/article/pii/0021999187901409">Multipole-method
+provenance</a>.</p>
+<h2
+id="looping-distinguish-termination-recurrence-and-independent-evidence">Looping:
+distinguish termination, recurrence and independent evidence</h2>
+<p>A graph traversal needs a visited set or another termination rule. A
+dependency cycle can require a fixed-point method, a strongly connected
+component treatment, or a schema correction. A recurrent dynamical
+system can instead intentionally revisit states; convergence then needs
+a separate stability argument. These are different uses of a loop.</p>
+<p>In research, a more subtle loop occurs when article A cites B, B
+summarizes C and C ultimately cites A. Three URLs do not equal three
+independent measurements. Evidence provenance should preserve this
+dependency. Likewise, several agent passes do not become independent
+experimental replications simply because their wording differs. A round
+can add a source, identify an error, challenge a derivation or reproduce
+a calculation; its value should be recorded as that concrete action.</p>
+<h2 id="a-productive-implementation-contract">A productive
+implementation contract</h2>
+<p>The physics module supplies concepts, formulas, typed edges, sources,
+source-access depth and epistemic status. The wider memory engine can
+index those records, expose provenance, avoid propagating support along
+analogy links, and retain an expansion queue for incompletely researched
+branches. Repository and company memories should add their own scope and
+ownership metadata rather than reinterpret all entities as
+interchangeable physics nodes.</p>
+<p>An effective review question is: <strong>What changes in the output
+when an assumption is removed?</strong> Remove positive graph weights
+and the quadratic energy need not be nonnegative. Remove an affine
+parameter and the geodesic equation gains a term. Remove a band limit
+and sampling no longer guarantees reconstruction. Remove source
+freshness and a recent-paper claim can become stale. Making these
+dependencies explicit is the strongest transferable lesson from the
+physics atlas.</p>
+</body>
+</html>

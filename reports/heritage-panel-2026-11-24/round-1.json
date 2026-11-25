@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-24",
+  "timezone": "America/New_York",
+  "moderator": "/root",
+  "panelKind": "Four distinct AI expert agents and one AI moderator, not human professional certification",
+  "round": 1,
+  "artifactSha256": "5aa26c9d8361b786bfdf272bb80bb80ab11090275355c71a973b7f5f2070aeca",
+  "baselineCommit": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48",
+  "experts": [
+    {
+      "agent": "/root/native_ownership",
+      "lens": "Heritage survey and architectural accuracy",
+      "report": "projects/architecture-library/site-models/research/giza/round-1-review.json"
+    },
+    {
+      "agent": "/root/mcp_vscode",
+      "lens": "Reality capture and geometry preservation",
+      "report": "projects/architecture-library/site-models/research/kailasa/round-1-evidence.json"
+    },
+    {
+      "agent": "/root/pipeline_stress",
+      "lens": "Game engine import and performance evidence",
+      "report": "projects/architecture-library/site-models/research/sacred-sites/README.md"
+    },
+    {
+      "agent": "/root/game_toolchain_expert",
+      "lens": "Coding and toolchain integration",
+      "report": "integrations/opencode-game-studios/round-1-review.json"
+    }
+  ],
+  "decisions": [
+    {
+      "id": "R1-accuracy",
+      "finding": "Original teaching geometry does not satisfy site-specific fidelity; available captures lack survey control.",
+      "decision": "Add actual source-derived geometry and feature-level accuracy contract; retain unknowns and disable physical measurements.",
+      "owner": "moderator and heritage expert",
+      "acceptance": "Seven exact-hash models, zero unsupported metric claims; restricted sources stay source references.",
+      "result": "implemented; catalog/policy checks pass"
+    },
+    {
+      "id": "R1-topology",
+      "finding": "Blender silently removed 11/12 dense-source faces; generic meshopt triangle encoding may rotate index triples.",
+      "decision": "Direct OBJ preservation with exact index sequence codec and decoded accessor equality; record Float32 conversion error.",
+      "owner": "reality-capture expert",
+      "acceptance": "All source triangles, RGB and supplied normals retained; independent decoder and adversarial cases pass.",
+      "result": "implemented; 24 tests and seven preservation receipts"
+    },
+    {
+      "id": "R1-engine",
+      "finding": "Successful file creation alone does not establish engine import.",
+      "decision": "Actual Godot import, pack, instantiation, bounds and source integrity audit.",
+      "owner": "game-engine expert",
+      "acceptance": "Original church/mosque/Kailasa counts survive actual engine path.",
+      "result": "three actual inputs pass 14 checks each; FPS remains untested"
+    },
+    {
+      "id": "R1-resources",
+      "finding": "Upstream installer can exit zero after failure, enables optional MCP fragments and mutates hooks.",
+      "decision": "Pinned project-scoped text pack and independent staged synchronizer, within existing role authority.",
+      "owner": "toolchain expert",
+      "acceptance": "119 upstream files hashed; no native grants or hook activation; integrity failures stop safely.",
+      "result": "17 integrity tests; 23 agent definitions, 46 skills and31commands materialized"
+    },
+    {
+      "id": "R1-size",
+      "finding": "Complete dense geometry exceeds original25MiB transfer goal; lossless codec/gzip trials do not meet32MiB.",
+      "decision": "Retain exact geometry; adopt explicit64MiB perreviewedmodel and160MiBcollection bound; load one model on request.",
+      "owner": "moderator",
+      "acceptance": "Visible file sizes, no automatic heavy GLB request, bounded viewer publication.",
+      "result": "144173560 model bytes; policy tests pass; real browser gate pending CI"
+    }
+  ],
+  "verification": [
+    "11 capture/publication tests",
+    "18 existing pure-DOM library checks",
+    "16 resource/role-example tests",
+    "site typecheck",
+    "static integrity build:377 files,heavyGLBs excludedfromprecache"
+  ],
+  "nextRound": "Independent review of this changed artifact by the same four experts; implement accepted fixes before Round3."
+}

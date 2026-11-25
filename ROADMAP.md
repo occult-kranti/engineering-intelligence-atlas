@@ -1,5 +1,21 @@
 # Daftar product roadmap
 
+## Captured heritage and game-art research — 2026-11-25
+
+- Implemented seven preserved source-derived models, an on-demand viewer,
+  cancellable/limited downloads, source attribution and explicit accuracy limits.
+- Integrated the pinned OpenCodeGameStudios resource pack with existing game,
+  graphics and QA roles; definitions remain guidance, not executing employees.
+- Added 29 audited art/tutorial/tool/engine references and updated three project
+  skill packages. Source corrections are retained in the research audit.
+- Added a staged [game-development research plan](projects/game-development-research/README.md)
+  with original drawing practice, a prop, modular kit, rig/animation, engine import,
+  compositing and target-device profiling. These production exercises remain
+  planned until their artifacts and acceptance evidence exist.
+- Remaining heritage fidelity work: permitted high-detail Giza/Kailasa data,
+  independently verified scale/checkpoints, fragment registration and missing
+  coverage. Triangle count alone does not close those gaps.
+
 ## Backend and workflow continuation — implemented 2026-11-24
 
 - Delivered native definition editing, scoped renames, restored ownership
@@ -25,7 +41,7 @@ with the sequence indexed in [TIMELINE.md](TIMELINE.md).
 
 | Outcome | Implemented behavior | Remaining acceptance |
 | --- | --- | --- |
-| One public source catalog | 303 records, 15 skill routes, bounded native/hosted context, reading and rights provenance | Task quality remains separate from structural routing tests |
+| One public source catalog | 333 records, 15 skill routes, bounded native/hosted context, reading and rights provenance | Task quality remains separate from structural routing tests |
 | Reference room on the canvas | Search, kind/skill filters, pins, paged detail and draft-only Donna handoff | See the continuation validation receipt for actual browser coverage |
 | Hardware company | Imported SDK fixes and reproducible button/NeoPixel source example | Native company sync, physical assembly, compilation and flashing |
 | 3D game company | Original interactive reference, isolated imported-scene review, pinned model metadata and bounded local adapter | Native company sync, actual model inference and held-out evaluation |

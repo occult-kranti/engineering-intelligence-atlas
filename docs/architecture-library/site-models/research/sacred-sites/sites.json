@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 1,
+  "sites": [
+    {
+      "id": "st-george-antiochian-orthodox-church",
+      "name": "St. George Antiochian Orthodox Church, Montreal",
+      "type": "church",
+      "sourceId": "heritage3dmtl-17063337",
+      "sourceRecord": "https://zenodo.org/records/17063337",
+      "sourceKind": "captured-site photogrammetric reconstruction",
+      "preferredMaster": "mesh_metashape.obj",
+      "sourceMasterSha256": "02014fbc7e830c331330a454726a8e0f0af541d89eb7de8c1e56f319830dd64c",
+      "sourceBytes": 362642838,
+      "vertices": 1881698,
+      "triangles": 3757768,
+      "colourEncoding": "RGB per vertex, no external image texture maps supplied",
+      "coverage": "exterior capture; no complete interior coverage established",
+      "units": "native source coordinates, physical unit unverified",
+      "origin": "unchanged source coordinates",
+      "axisConvention": "not established by source metadata",
+      "surveyAccuracy": "not established; no verified ground control/checkpoint residual supplied in acquired metadata",
+      "license": "CC-BY-4.0",
+      "commercialReuse": "permitted under source licence terms with credit, licence link and change disclosure; technical game readiness is separate",
+      "attribution": "Rucha Shende, Sudhir Mudur, Tiberiu Popa and Kaustubha Mendhurwar, Heritage3DMtl, DOI 10.5281/zenodo.17063337, CC BY 4.0.",
+      "sourceBounds": {
+        "minimum": [
+          -7.970556,
+          -5.534198,
+          -18.36702
+        ],
+        "maximum": [
+          5.807343,
+          2.63398,
+          -6.070714
+        ],
+        "extent": [
+          13.777899000000001,
+          8.168178000000001,
+          12.296306000000001
+        ],
+        "units": "source units; metres not established"
+      },
+      "limitations": [
+        "Exterior scan coverage only; no complete interior or concealed construction claimed.",
+        "Source units, gravity orientation, north and georeference remain unverified.",
+        "Vertex colour is captured appearance, not calibrated albedo/PBR texture.",
+        "Referenced MTL absent from source ZIP; raw RGB data remain available in OBJ.",
+        "Acquired master has not been decimated or scaled; colour-binding/format conversion is a derivative.",
+        "No target-device frame rate, collision, navigation, lightmap or shipping-game readiness assertion."
+      ],
+      "blender": {
+        "schemaVersion": 1,
+        "blenderVersion": "4.5.17 LTS",
+        "blenderBuildHash": "2f5ec98689b8",
+        "sourceFile": "mesh_metashape.obj",
+        "sourceSha256": "02014fbc7e830c331330a454726a8e0f0af541d89eb7de8c1e56f319830dd64c",
+        "sourceUnits": "unverified; no metric rescale or normalization applied",
+        "sourceAxisConvention": "unverified; XYZ imported unchanged using Y-forward/Z-up setting",
+        "displayMaterial": "captured per-vertex colour via emission; no image textures synthesized",
+        "glTFConvention": "standard Y-up conversion by Blender exporter",
+        "meshes": [
+          {
+            "name": "mesh_metashape",
+            "vertices": 1881698,
+            "polygons": 3757757,
+            "triangles": 3757757,
+            "colourAttributes": [
+              {
+                "name": "Color",
+                "domain": "POINT",
+                "type": "FLOAT_COLOR",
+                "elements": 1881698
+              }
+            ],
+            "uvLayers": 0,
+            "sourceBounds": {
+              "minimum": [
+                -7.970555782318115,
+                -5.534197807312012,
+                -18.367019653320312
+              ],
+              "maximum": [
+                5.807343006134033,
+                2.6339800357818604,
+                -6.070713996887207
+              ]
+            },
+            "matrixWorld": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        ],
+        "meshCount": 1,
+        "vertices": 1881698,
+        "triangles": 3757757,
+        "importAndExportSeconds": 20.175,
+        "lodReductionApplied": false,
+        "elapsedSeconds": 35.237,
+        "outputs": [
+          {
+            "file": "converted.glb",
+            "bytes": 105309688,
+            "sha256": "568dbe78af5084444d9cb72e0b8fc70eb675b35e6f12509566f3d50056eae84b"
+          },
+          {
+            "file": "preview.png",
+            "bytes": 216693,
+            "sha256": "30556dacc5fd2b3b9a084fa7ce73bc27477f8da0ae0c616d3f446b48f8e328be"
+          }
+        ],
+        "sourceTriangles": 3757768,
+        "sourceFacesWithRepeatedVertexIndex": 0,
+        "removedFacesOnImport": 11,
+        "strictSourceTriangleEquality": false,
+        "removedFaceCountMatchesSourceRepeatedIndexFaces": false,
+        "assetRole": "inspection derivative; raw OBJ is the source master"
+      },
+      "strictMasterPreservationPassed": false,
+      "sourceFacesWithRepeatedVertexIndex": 0,
+      "glbValidation": {
+        "validContainer": true,
+        "triangles": 3757757,
+        "allPrimitivesHaveColour0": true,
+        "images": 0,
+        "externalUris": [],
+        "lodReductionApplied": false,
+        "sourceTopologyIdentical": false,
+        "removedFaces": 11,
+        "vertexPositionPrecision": "glTF float32; original ASCII OBJ retained"
+      },
+      "importRemovedFaces": 11,
+      "importRemovalCause": "unverified; repeated vertex indices within a face were ruled out"
+    },
+    {
+      "id": "el-markaz-islami-mosque",
+      "name": "Islamic Center of Quebec \u2014 El Markaz Islami, Montreal",
+      "type": "mosque",
+      "sourceId": "heritage3dmtl-17063337",
+      "sourceRecord": "https://zenodo.org/records/17063337",
+      "sourceKind": "captured-site photogrammetric reconstruction",
+      "preferredMaster": "mesh_metashape.obj",
+      "sourceMasterSha256": "b216639cae63edbbe429f435bbf3eca181d10deceea756594acbc2a00e207a9c",
+      "sourceBytes": 296868910,
+      "vertices": 1554546,
+      "triangles": 3104134,
+      "colourEncoding": "RGB per vertex, no external image texture maps supplied",
+      "coverage": "exterior capture; no complete interior coverage established",
+      "units": "native source coordinates, physical unit unverified",
+      "origin": "unchanged source coordinates",
+      "axisConvention": "not established by source metadata",
+      "surveyAccuracy": "not established; no verified ground control/checkpoint residual supplied in acquired metadata",
+      "license": "CC-BY-4.0",
+      "commercialReuse": "permitted under source licence terms with credit, licence link and change disclosure; technical game readiness is separate",
+      "attribution": "Rucha Shende, Sudhir Mudur, Tiberiu Popa and Kaustubha Mendhurwar, Heritage3DMtl, DOI 10.5281/zenodo.17063337, CC BY 4.0.",
+      "sourceBounds": {
+        "minimum": [
+          -4.929494,
+          -4.524787,
+          -16.672556
+        ],
+        "maximum": [
+          7.263009,
+          4.981806,
+          -6.782788
+        ],
+        "extent": [
+          12.192503,
+          9.506592999999999,
+          9.889768
+        ],
+        "units": "source units; metres not established"
+      },
+      "limitations": [
+        "Exterior scan coverage only; no complete interior or concealed construction claimed.",
+        "Source units, gravity orientation, north and georeference remain unverified.",
+        "Vertex colour is captured appearance, not calibrated albedo/PBR texture.",
+        "Referenced MTL absent from source ZIP; raw RGB data remain available in OBJ.",
+        "Acquired master has not been decimated or scaled; colour-binding/format conversion is a derivative.",
+        "No target-device frame rate, collision, navigation, lightmap or shipping-game readiness assertion."
+      ],
+      "blender": {
+        "schemaVersion": 1,
+        "blenderVersion": "4.5.17 LTS",
+        "blenderBuildHash": "2f5ec98689b8",
+        "sourceFile": "mesh_metashape.obj",
+        "sourceSha256": "b216639cae63edbbe429f435bbf3eca181d10deceea756594acbc2a00e207a9c",
+        "sourceUnits": "unverified; no metric rescale or normalization applied",
+        "sourceAxisConvention": "unverified; XYZ imported unchanged using Y-forward/Z-up setting",
+        "displayMaterial": "captured per-vertex colour via emission; no image textures synthesized",
+        "glTFConvention": "standard Y-up conversion by Blender exporter",
+        "meshes": [
+          {
+            "name": "mesh_metashape",
+            "vertices": 1554546,
+            "polygons": 3104122,
+            "triangles": 3104122,
+            "colourAttributes": [
+              {
+                "name": "Color",
+                "domain": "POINT",
+                "type": "FLOAT_COLOR",
+                "elements": 1554546
+              }
+            ],
+            "uvLayers": 0,
+            "sourceBounds": {
+              "minimum": [
+                -4.9294939041137695,
+                -4.524786949157715,
+                -16.672555923461914
+              ],
+              "maximum": [
+                7.263009071350098,
+                4.981805801391602,
+                -6.782787799835205
+              ]
+            },
+            "matrixWorld": [
+              [
+                1.0,
+                0.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                1.0,
+                0.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                1.0,
+                0.0
+              ],
+              [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+              ]
+            ]
+          }
+        ],
+        "meshCount": 1,
+        "vertices": 1554546,
+        "triangles": 3104122,
+        "importAndExportSeconds": 13.665,
+        "lodReductionApplied": false,
+        "elapsedSeconds": 25.131,
+        "outputs": [
+          {
+            "file": "converted.glb",
+            "bytes": 86996500,
+            "sha256": "d60954718f3a7bb0b0acd5faeee078d36222151def3b287c1c1b9d8e8aa1f35a"
+          },
+          {
+            "file": "preview.png",
+            "bytes": 195369,
+            "sha256": "fdf42f31bb7459ac7f69c8dc64f17f62ac28de1660b71cfb033b2174873a6c24"
+          }
+        ],
+        "sourceTriangles": 3104134,
+        "sourceFacesWithRepeatedVertexIndex": 0,
+        "removedFacesOnImport": 12,
+        "strictSourceTriangleEquality": false,
+        "removedFaceCountMatchesSourceRepeatedIndexFaces": false,
+        "assetRole": "inspection derivative; raw OBJ is the source master"
+      },
+      "strictMasterPreservationPassed": false,
+      "sourceFacesWithRepeatedVertexIndex": 0,
+      "glbValidation": {
+        "validContainer": true,
+        "triangles": 3104122,
+        "allPrimitivesHaveColour0": true,
+        "images": 0,
+        "externalUris": [],
+        "lodReductionApplied": false,
+        "sourceTopologyIdentical": false,
+        "removedFaces": 12,
+        "vertexPositionPrecision": "glTF float32; original ASCII OBJ retained"
+      },
+      "importRemovedFaces": 12,
+      "importRemovalCause": "unverified; repeated vertex indices within a face were ruled out"
+    }
+  ]
+}

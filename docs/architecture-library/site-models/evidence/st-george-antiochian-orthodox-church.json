@@ -1,0 +1,473 @@
+{
+  "schemaVersion": 1,
+  "id": "st-george-antiochian-orthodox-church",
+  "source": {
+    "id": "st-george-antiochian-orthodox-church",
+    "format": "obj",
+    "path": "mesh_metashape.obj",
+    "bytes": 362642838,
+    "sha256": "02014fbc7e830c331330a454726a8e0f0af541d89eb7de8c1e56f319830dd64c",
+    "license": "CC-BY-4.0",
+    "creator": "Rucha Shende, Sudhir Mudur, Tiberiu Popa, Kaustubha Mendhurwar — Concordia University",
+    "url": "https://zenodo.org/records/17063337",
+    "rightsReviewed": true,
+    "rightsNote": "Source-owner academic dataset publishes CC BY 4.0. Selected member byte size and CRC32 verified; entire ZIP MD5 was not verified. No surveyed units or capture-permit verification inferred.",
+    "sourceArchive": "11-St-George-Church.zip",
+    "sourceMember": "11-St-George-Church/6_metashape/mesh_metashape.obj",
+    "sourceCrc32": "b89cd343",
+    "acquisitionRecord": "projects/architecture-library/site-models/research/sacred-sites/acquisition.json",
+    "priorBlenderOBJImport": {
+      "removedFaces": 11,
+      "cause": "not established; source repeated-index count is zero"
+    },
+    "reviewedWebLimitBytes": 67108864,
+    "budgetReview": "Moderator approved 64 MiB dense-asset / 160 MiB collection exception to retain every source normal, color, position and face.",
+    "acquisitionScript": "projects/architecture-library/site-models/research/sacred-sites/acquire_meshes.py"
+  },
+  "conversion": {
+    "sourceSha256": "02014fbc7e830c331330a454726a8e0f0af541d89eb7de8c1e56f319830dd64c",
+    "sourceBytes": 362642838,
+    "vertices": 1881698,
+    "triangles": 3757768,
+    "indexCount": 11273304,
+    "repeatedIndexTriangles": 0,
+    "zeroAreaFloat32Triangles": 4,
+    "allFacesRetained": true,
+    "sourceBounds": {
+      "min": [
+        -7.970556,
+        -5.534198,
+        -18.36702
+      ],
+      "max": [
+        5.807343,
+        2.63398,
+        -6.070714
+      ],
+      "dimensions": [
+        13.777899000000001,
+        8.168178000000001,
+        12.296306000000001
+      ],
+      "units": "unverified source coordinate units"
+    },
+    "precision": {
+      "position": {
+        "storage": "IEEE754 Float32",
+        "comparison": "Source decimal parsed as nearest IEEE754 Float64, then Math.fround; parsing bound retained separately.",
+        "decimalToFloat32IsLossless": false,
+        "sampleCount": 1881698,
+        "maxAbsoluteErrorPerAxis": [
+          2.3840332019631205e-07,
+          2.3840332019631205e-07,
+          4.999999987376214e-07
+        ],
+        "rmsErrorPerAxis": [
+          7.54893416984399e-08,
+          4.3896053999427064e-08,
+          2.7285364048195686e-07
+        ],
+        "conservativeFloat64ParsingBound": 4.0782976995501486e-15,
+        "worstExamples": [
+          {
+            "decimal": "-4.177809",
+            "parsedFloat64": -4.177809,
+            "float32": -4.17780876159668,
+            "absoluteError": 2.3840332019631205e-07
+          },
+          {
+            "decimal": "-5.052809",
+            "parsedFloat64": -5.052809,
+            "float32": -5.05280876159668,
+            "absoluteError": 2.3840332019631205e-07
+          },
+          {
+            "decimal": "-16.320312",
+            "parsedFloat64": -16.320312,
+            "float32": -16.3203125,
+            "absoluteError": 4.999999987376214e-07
+          }
+        ]
+      },
+      "color": {
+        "storage": "IEEE754 Float32",
+        "comparison": "Source decimal parsed as nearest IEEE754 Float64, then Math.fround; parsing bound retained separately.",
+        "decimalToFloat32IsLossless": false,
+        "sampleCount": 1881698,
+        "maxAbsoluteErrorPerAxis": [
+          2.964401246696724e-08,
+          2.964401246696724e-08,
+          2.964401246696724e-08
+        ],
+        "rmsErrorPerAxis": [
+          1.2600172014979325e-08,
+          1.2565096997272458e-08,
+          1.176173720589976e-08
+        ],
+        "conservativeFloat64ParsingBound": 2.2117374598451534e-16,
+        "worstExamples": [
+          {
+            "decimal": "0.760784",
+            "parsedFloat64": 0.760784,
+            "float32": 0.7607839703559875,
+            "absoluteError": 2.964401246696724e-08
+          },
+          {
+            "decimal": "0.760784",
+            "parsedFloat64": 0.760784,
+            "float32": 0.7607839703559875,
+            "absoluteError": 2.964401246696724e-08
+          },
+          {
+            "decimal": "0.760784",
+            "parsedFloat64": 0.760784,
+            "float32": 0.7607839703559875,
+            "absoluteError": 2.964401246696724e-08
+          }
+        ]
+      },
+      "normal": {
+        "storage": "IEEE754 Float32",
+        "comparison": "Source decimal parsed as nearest IEEE754 Float64, then Math.fround; parsing bound retained separately.",
+        "decimalToFloat32IsLossless": false,
+        "sampleCount": 1881698,
+        "maxAbsoluteErrorPerAxis": [
+          2.9800415024539006e-08,
+          2.9800415024539006e-08,
+          2.9800415024539006e-08
+        ],
+        "rmsErrorPerAxis": [
+          1.2937736310305855e-08,
+          1.327628453232549e-08,
+          1.4518178429850593e-08
+        ],
+        "conservativeFloat64ParsingBound": 2.220446049250313e-16,
+        "worstExamples": [
+          {
+            "decimal": "0.604727",
+            "parsedFloat64": 0.604727,
+            "float32": 0.604727029800415,
+            "absoluteError": 2.9800415024539006e-08
+          },
+          {
+            "decimal": "0.620352",
+            "parsedFloat64": 0.620352,
+            "float32": 0.620352029800415,
+            "absoluteError": 2.9800415024539006e-08
+          },
+          {
+            "decimal": "-0.645273",
+            "parsedFloat64": -0.645273,
+            "float32": -0.645272970199585,
+            "absoluteError": 2.9800415024539006e-08
+          }
+        ]
+      }
+    },
+    "coordinateRescale": false,
+    "axisConversion": false,
+    "vertexReordering": false,
+    "indexReordering": false,
+    "uvPresent": false,
+    "normalsPresent": true,
+    "normalsRegenerated": false,
+    "materialLibraries": [
+      "st-george-church-model.mtl"
+    ],
+    "materialNames": [
+      "Solid"
+    ],
+    "materialFilesLoaded": false,
+    "materialNotice": "Referenced MTL files are not loaded; no UV records or textures are supplied. RGB numbers are retained without a color-space conversion; source color space is unverified."
+  },
+  "compression": {
+    "extension": "EXT_meshopt_compression",
+    "encoderMethod": "QUANTIZE",
+    "quantizeTransformApplied": false,
+    "indices": "Uint32 triangle triples: ATTRIBUTES/12-byte grouping; Uint16: INDICES sequence; exact order retained",
+    "filters": "NONE",
+    "encoderVersion": "1.2.0",
+    "gltfTransformVersion": "4.5.1"
+  },
+  "preservation": {
+    "accessorBytesEqual": true,
+    "indexBytesAndCountsEqual": true,
+    "textureBytesEqual": true,
+    "materialPropertiesEqual": true,
+    "nodeTransformsEqual": true,
+    "hierarchyEqual": true,
+    "primitiveModesEqual": true,
+    "noDecimation": true,
+    "noQuantizeTransform": true,
+    "noLossyFilters": true,
+    "rawJSONTransformEquality": null
+  },
+  "sourceSnapshot": {
+    "accessors": [
+      {
+        "name": "source-color",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 1881698,
+        "bytes": 22580376,
+        "sha256": "1ae97daacd11f424c8119d503947cb8fedd3757487873f391baeb59fc476330b"
+      },
+      {
+        "name": "source-normal",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 1881698,
+        "bytes": 22580376,
+        "sha256": "dacb138645739d789ede57447d26fc3358963f0de9361934e516ad807d917c0b"
+      },
+      {
+        "name": "source-position",
+        "type": "VEC3",
+        "componentType": 5126,
+        "normalized": false,
+        "count": 1881698,
+        "bytes": 22580376,
+        "sha256": "db812ac394991c366ea428269926c6bfab5cc5ba94b7ed5071f9558d536797f6"
+      },
+      {
+        "name": "source-indices",
+        "type": "SCALAR",
+        "componentType": 5125,
+        "normalized": false,
+        "count": 11273304,
+        "bytes": 45093216,
+        "sha256": "fe50155a77d007e16e3bff41db618be90541e65682724b9f7e32dbdba1a9e1ac"
+      }
+    ],
+    "meshes": [
+      {
+        "name": "st-george-antiochian-orthodox-church",
+        "primitives": [
+          {
+            "mode": 4,
+            "indices": 3,
+            "attributes": {
+              "COLOR_0": 0,
+              "NORMAL": 1,
+              "POSITION": 2
+            },
+            "material": 0,
+            "targets": 0
+          }
+        ]
+      }
+    ],
+    "textures": [],
+    "materials": [
+      {
+        "name": "source-vertex-rgb",
+        "baseColorFactor": [
+          1,
+          1,
+          1,
+          1
+        ],
+        "emissiveFactor": [
+          0,
+          0,
+          0
+        ],
+        "metallicFactor": 1,
+        "roughnessFactor": 1,
+        "alphaMode": "OPAQUE",
+        "alphaCutoff": 0.5,
+        "doubleSided": true,
+        "baseColorTexture": null,
+        "emissiveTexture": null,
+        "normalTexture": null,
+        "occlusionTexture": null,
+        "metallicRoughnessTexture": null,
+        "extensions": [
+          "KHR_materials_unlit"
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "name": "source-coordinates-unchanged",
+        "matrix": [
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          1
+        ],
+        "children": [],
+        "mesh": 0
+      }
+    ],
+    "scenes": [
+      {
+        "name": "source-scene",
+        "children": [
+          0
+        ]
+      }
+    ],
+    "totals": {
+      "meshCount": 1,
+      "nodeCount": 1,
+      "vertexEntries": 1881698,
+      "triangles": 3757768,
+      "indices": 11273304,
+      "repeatedIndexTriangles": 0
+    }
+  },
+  "output": {
+    "web": {
+      "file": "st-george-antiochian-orthodox-church.glb",
+      "bytes": 61470040,
+      "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6"
+    },
+    "blenderReady": {
+      "file": "st-george-antiochian-orthodox-church.decompressed.glb",
+      "bytes": 112836116,
+      "sha256": "56a214714c1740aec8e831947b4260a380ecc48fa664ae9aea609a28e6b3fd38",
+      "note": "Meshopt removed and decoded accessors verified. Editor import may change topology; consult separate actual editor receipts. No face-removal cause inferred."
+    }
+  },
+  "sizeTarget": {
+    "bytes": 26214400,
+    "met": false
+  },
+  "assetAudit": {
+    "guidance": [
+      "OpenCodeGameStudios asset-audit",
+      "OpenCodeGameStudios asset-spec"
+    ],
+    "scope": "Applied checks, not the entire upstream workflow or an imported permission grant.",
+    "naming": "Stable lowercase hyphenated site IDs from the approved brief.",
+    "specification": "Preserve all source positions, vertex RGB, indices, texture bytes and transforms; no simplification or invented detail.",
+    "formatChecked": true,
+    "sourceHashMatched": true,
+    "missingReferences": [
+      {
+        "name": "st-george-church-model.mtl",
+        "status": "referenced MTL not supplied or loaded"
+      }
+    ],
+    "generatedFilesReferencedByReceipt": true,
+    "sizeBudgetBytes": 26214400,
+    "artBible": "No upstream project art bible exists; the approved source-preservation brief governs.",
+    "shaderNotice": "Unlit vertex-color material; no inferred source color-space conversion."
+  },
+  "scaleVerified": false,
+  "coordinateUnits": "unverified source units; no rescaling performed",
+  "generatedAt": "2026-11-25T04:12:22.868Z",
+  "releaseBudget": {
+    "bytes": 67108864,
+    "met": true,
+    "review": "Moderator approved 64 MiB dense-asset / 160 MiB collection exception to retain every source normal, color, position and face."
+  },
+  "implementationSourceSha256": "019b59a1126ccc34c5af6361e7ce2096f238723e9eb3d376193d23d854f831fd",
+  "guidanceRecord": "../applied-guidance.json",
+  "previewInspection": {
+    "schemaVersion": 1,
+    "blenderVersion": "4.5.17 LTS",
+    "blenderBuildHash": "2f5ec98689b8",
+    "sourceFile": "mesh_metashape.obj",
+    "sourceSha256": "02014fbc7e830c331330a454726a8e0f0af541d89eb7de8c1e56f319830dd64c",
+    "sourceUnits": "unverified; no metric rescale or normalization applied",
+    "sourceAxisConvention": "unverified; XYZ imported unchanged using Y-forward/Z-up setting",
+    "displayMaterial": "captured per-vertex colour via emission; no image textures synthesized",
+    "glTFConvention": "standard Y-up conversion by Blender exporter",
+    "meshes": [
+      {
+        "name": "mesh_metashape",
+        "vertices": 1881698,
+        "polygons": 3757757,
+        "triangles": 3757757,
+        "colourAttributes": [
+          {
+            "name": "Color",
+            "domain": "POINT",
+            "type": "FLOAT_COLOR",
+            "elements": 1881698
+          }
+        ],
+        "uvLayers": 0,
+        "sourceBounds": {
+          "minimum": [
+            -7.970555782318115,
+            -5.534197807312012,
+            -18.367019653320312
+          ],
+          "maximum": [
+            5.807343006134033,
+            2.6339800357818604,
+            -6.070713996887207
+          ]
+        },
+        "matrixWorld": [
+          [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ]
+      }
+    ],
+    "meshCount": 1,
+    "vertices": 1881698,
+    "triangles": 3757757,
+    "importAndExportSeconds": 20.175,
+    "lodReductionApplied": false,
+    "elapsedSeconds": 35.237,
+    "outputs": [
+      {
+        "file": "converted.glb",
+        "bytes": 105309688,
+        "sha256": "568dbe78af5084444d9cb72e0b8fc70eb675b35e6f12509566f3d50056eae84b"
+      },
+      {
+        "file": "preview.png",
+        "bytes": 216693,
+        "sha256": "30556dacc5fd2b3b9a084fa7ce73bc27477f8da0ae0c616d3f446b48f8e328be"
+      }
+    ],
+    "sourceTriangles": 3757768,
+    "sourceFacesWithRepeatedVertexIndex": 0,
+    "removedFacesOnImport": 11,
+    "strictSourceTriangleEquality": false,
+    "removedFaceCountMatchesSourceRepeatedIndexFaces": false,
+    "assetRole": "inspection derivative; raw OBJ is the source master"
+  },
+  "previewSha256": "30556dacc5fd2b3b9a084fa7ce73bc27477f8da0ae0c616d3f446b48f8e328be"
+}

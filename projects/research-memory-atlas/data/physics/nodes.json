@@ -1,0 +1,2559 @@
+[
+  {
+    "id": "p-charge",
+    "label": "Electric charge",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Signed conserved source quantity; distributions require specifying point, surface or volume idealization.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Foundations",
+      "Sources",
+      "Electric charge"
+    ],
+    "source_ids": [
+      "ps-flp-electro"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-electric-field",
+    "label": "Electric field",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Force per test charge; a vector field with units V/m, not an energy or voltage.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Foundations",
+      "Force and work",
+      "Electric field"
+    ],
+    "source_ids": [
+      "ps-flp-electro"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-coulomb",
+    "label": "Coulomb interaction",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Inverse-square static interaction in homogeneous vacuum with a point-charge idealization.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Foundations",
+      "Point-source models",
+      "Coulomb interaction"
+    ],
+    "source_ids": [
+      "ps-flp-electro"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-superposition",
+    "label": "Electrostatic superposition",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Linear source-to-field mapping for prescribed charge and linear media; material self-consistency can be nonlinear.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Foundations",
+      "Linear structure",
+      "Electrostatic superposition"
+    ],
+    "source_ids": [
+      "ps-flp-electro"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-potential",
+    "label": "Scalar potential",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "A potential difference measures work per charge; adding a constant leaves the field unchanged.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Foundations",
+      "Conservative structure",
+      "Scalar potential"
+    ],
+    "source_ids": [
+      "ps-flp-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-gauss",
+    "label": "Gauss law",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Relates total electric flux to charge and supports differential or integral formulations.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Foundations",
+      "Flux and divergence",
+      "Gauss law"
+    ],
+    "source_ids": [
+      "ps-flp-electro"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-poisson",
+    "label": "Poisson equation",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Boundary conditions and charge determine an electrostatic potential through a Laplace-type operator.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Foundations",
+      "Elliptic equations",
+      "Poisson equation"
+    ],
+    "source_ids": [
+      "ps-flp-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-laplace",
+    "label": "Laplace equation",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Harmonic functions describe charge-free electrostatic regions; extrema depend on boundary conditions.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Foundations",
+      "Source-free regions",
+      "Laplace equation"
+    ],
+    "source_ids": [
+      "ps-flp-boundary"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-electric-energy",
+    "label": "Electric energy",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Assembly work and field-energy integrals require consistent self-energy and boundary bookkeeping.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Foundations",
+      "Energy functionals",
+      "Electric energy"
+    ],
+    "source_ids": [
+      "ps-flp-energy"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-conductors",
+    "label": "Conductor equilibrium",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Connected ideal conductors are equipotential in electrostatic equilibrium.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Boundary constraints",
+      "Conductor equilibrium"
+    ],
+    "source_ids": [
+      "ps-flp-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-dirichlet",
+    "label": "Dirichlet data",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Specified potential on a boundary fixes a unique solution under standard elliptic hypotheses.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Well-posed problems",
+      "Dirichlet data"
+    ],
+    "source_ids": [
+      "ps-flp-boundary"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-neumann",
+    "label": "Neumann data",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Specified normal flux must satisfy compatibility; the potential remains free up to a constant.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Well-posed problems",
+      "Neumann data"
+    ],
+    "source_ids": [
+      "ps-flp-boundary"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-images",
+    "label": "Image charges",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Auxiliary charges enforce a boundary condition only in the chosen physical domain.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Symmetry methods",
+      "Image charges"
+    ],
+    "source_ids": [
+      "ps-flp-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-greens",
+    "label": "Green functions",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Inverse kernels encode operator and boundary conditions; free-space kernels cannot silently replace bounded ones.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Integral methods",
+      "Green functions"
+    ],
+    "source_ids": [
+      "ps-flp-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-multipoles",
+    "label": "Multipole expansion",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Organizes a localized charge distribution by total charge, dipole and higher moments.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Far-field approximations",
+      "Multipole expansion"
+    ],
+    "source_ids": [
+      "ps-flp-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-capacitance",
+    "label": "Capacitance",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Geometry and permittivity define charge-voltage response with stated reference conductors.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Circuit reductions",
+      "Capacitance"
+    ],
+    "source_ids": [
+      "ps-flp-dielectric"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-polarization",
+    "label": "Electric polarization",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Dipole moment per volume represents bound-charge response at a coarse-grained scale.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Continuum media",
+      "Electric polarization"
+    ],
+    "source_ids": [
+      "ps-flp-dielectric"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-displacement",
+    "label": "Displacement field",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "D separates free sources from polarization; constitutive closure still has to be supplied.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Continuum media",
+      "Displacement field"
+    ],
+    "source_ids": [
+      "ps-flp-dielectric"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-dielectric-interface",
+    "label": "Dielectric interfaces",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Normal D jumps with free surface charge while tangential electrostatic E is continuous.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Jump conditions",
+      "Dielectric interfaces"
+    ],
+    "source_ids": [
+      "ps-flp-dielectric"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-anisotropic-dielectric",
+    "label": "Anisotropic permittivity",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Tensor dielectric response distinguishes directions and requires positivity for stable static energy.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Constitutive tensors",
+      "Anisotropic permittivity"
+    ],
+    "source_ids": [
+      "ps-flp-dielectric"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-debye",
+    "label": "Debye screening",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Weak-potential mean-field screening replaces a bare Coulomb tail by an exponentially screened one.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Thermal charge response",
+      "Debye screening"
+    ],
+    "source_ids": [
+      "ps-pb-foundations"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-poisson-boltzmann",
+    "label": "Poisson–Boltzmann theory",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Boltzmann ion densities coupled to Poisson electrostatics form a nonlinear mean-field model.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Boundary and material problems",
+      "Thermal charge response",
+      "Poisson–Boltzmann theory"
+    ],
+    "source_ids": [
+      "ps-pb-foundations",
+      "ps-neural-pb"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-finite-difference",
+    "label": "Finite difference electrostatics",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Grid stencils approximate elliptic operators; convergence concerns observables and boundary flux as well as residuals.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Discretization",
+      "Finite difference electrostatics"
+    ],
+    "source_ids": [
+      "ps-flp-boundary"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-finite-element",
+    "label": "Finite element electrostatics",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Weak forms turn gradient energy into sparse stiffness matrices with explicit boundary treatment.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Variational discretization",
+      "Finite element electrostatics"
+    ],
+    "source_ids": [
+      "ps-flp-boundary"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-boundary-element",
+    "label": "Boundary element electrostatics",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Surface unknowns reduce a homogeneous-domain problem at the cost of dense/singular kernels.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Integral discretization",
+      "Boundary element electrostatics"
+    ],
+    "source_ids": [
+      "ps-flp-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-ewald",
+    "label": "Ewald and particle-mesh methods",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Real and reciprocal contributions handle periodic electrostatics with neutrality and boundary conventions.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Periodic long-range sums",
+      "Ewald and particle-mesh methods"
+    ],
+    "source_ids": [
+      "ps-les-perspective",
+      "ps-ewald-original"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-fmm",
+    "label": "Fast multipole methods",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Separated particle clusters admit reusable multipole/local expansions with controlled truncation.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Hierarchical interaction compression",
+      "Fast multipole methods"
+    ],
+    "source_ids": [
+      "ps-fmm"
+    ],
+    "status": "established-mathematical-method"
+  },
+  {
+    "id": "p-charge-equilibration",
+    "label": "Charge equilibration",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Global charge allocation minimizes a model energy subject to total-charge constraints.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Constrained optimization",
+      "Charge equilibration"
+    ],
+    "source_ids": [
+      "ps-les-perspective",
+      "ps-qeq-original"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-latent-electrostatics",
+    "label": "Learned long-range electrostatics",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Coulomb-form latent-charge models are an active route beyond local interatomic cutoffs.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Physics-informed atomistics",
+      "Learned long-range electrostatics"
+    ],
+    "source_ids": [
+      "ps-les-results",
+      "ps-les-perspective"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-electrochemical-interfaces",
+    "label": "Electrochemical interfaces",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "Electrode response and electrolyte charge require compatible potentials and global constraints.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Coupled materials",
+      "Electrochemical interfaces"
+    ],
+    "source_ids": [
+      "ps-les-perspective"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-continuum-biomolecular",
+    "label": "Biomolecular continuum electrostatics",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "PB approximations depend on molecular surface, dielectric model, ions, mesh and validation target.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Solver engineering",
+      "Biomolecular continuum electrostatics"
+    ],
+    "source_ids": [
+      "ps-pydelphi",
+      "ps-neural-pb"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-log-potential",
+    "label": "Logarithmic potential of analytic zeros",
+    "type": "concept",
+    "domain": "electrostatics",
+    "summary": "In two dimensions, log modulus of an analytic function has distributional Laplacian supported on its zeros.",
+    "level": 4,
+    "taxonomy_path": [
+      "electrostatics",
+      "Computation and frontier",
+      "Complex-analysis bridge",
+      "Logarithmic potential of analytic zeros"
+    ],
+    "source_ids": [
+      "ps-bootstrap-ai"
+    ],
+    "status": "established-mathematics"
+  },
+  {
+    "id": "p-current",
+    "label": "Electric current density",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Current is charge transport, with continuity relating it to changing charge density.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Sources",
+      "Electric current density"
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-lorentz",
+    "label": "Lorentz force",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Magnetic force changes direction of a point charge's motion; electric fields can do work.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Particle dynamics",
+      "Lorentz force"
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-magnetic-flux",
+    "label": "Magnetic flux",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Flux is a surface integral of B; ordinary Maxwell theory has no magnetic monopole source.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Divergence structure",
+      "Magnetic flux"
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-biot-savart",
+    "label": "Biot–Savart law",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "The magnetostatic kernel gives B for divergence-free stationary currents.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Steady-source kernels",
+      "Biot–Savart law"
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-ampere",
+    "label": "Ampère law",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Steady-current circulation generalizes to Maxwell–Ampère with displacement current.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Circulation",
+      "Ampère law"
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-vector-potential",
+    "label": "Magnetic vector potential",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "B is a curl of A locally, with topology and gauge redundancy requiring care.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Gauge structure",
+      "Magnetic vector potential"
+    ],
+    "source_ids": [
+      "ps-flp-vector-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-gauge",
+    "label": "Gauge redundancy",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Distinct potentials can produce the same observables; a computational gauge fixes representation.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Equivalent descriptions",
+      "Gauge redundancy"
+    ],
+    "source_ids": [
+      "ps-flp-vector-potential",
+      "ps-gauge"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-magnetic-dipole",
+    "label": "Magnetic dipole",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Small current loops have moments, torques and interaction energies with external fields.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Multipoles and torque",
+      "Magnetic dipole"
+    ],
+    "source_ids": [
+      "ps-flp-vector-potential"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-faraday",
+    "label": "Faraday induction",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Time-varying magnetic fields and circuit motion can induce electromotive force.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Changing flux",
+      "Faraday induction"
+    ],
+    "source_ids": [
+      "ps-flp-induction"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-inductance",
+    "label": "Inductance",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Flux linkage and current define inductance in an explicitly linear geometry.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Circuit reductions",
+      "Inductance"
+    ],
+    "source_ids": [
+      "ps-flp-induction"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-maxwell",
+    "label": "Maxwell system",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Four field equations coupled to charge continuity and constitutive relations describe classical EM.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Unified electrodynamics",
+      "Maxwell system"
+    ],
+    "source_ids": [
+      "ps-flp-electro",
+      "ps-flp-induction"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-poynting",
+    "label": "Poynting theorem",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Field-energy change, energy flow and work on charges must balance locally.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Fields and induction",
+      "Energy transport",
+      "Poynting theorem"
+    ],
+    "source_ids": [
+      "ps-flp-poynting"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-magnetization",
+    "label": "Magnetization",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Magnetic moment per volume contributes equivalent bound currents and couples to demagnetization fields.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Continuum media",
+      "Magnetization"
+    ],
+    "source_ids": [
+      "ps-flp-ferromagnetism"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-susceptibility",
+    "label": "Magnetic susceptibility",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "A response coefficient may depend on direction, frequency, temperature and history.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Linear response",
+      "Magnetic susceptibility"
+    ],
+    "source_ids": [
+      "ps-flp-magnetic-materials"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-diamagnetism",
+    "label": "Diamagnetism",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Induced orbital response opposes applied fields in the simple diamagnetic regime.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Induced response",
+      "Diamagnetism"
+    ],
+    "source_ids": [
+      "ps-flp-magnetic-materials"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-paramagnetism",
+    "label": "Paramagnetism",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Thermal competition with Zeeman alignment leads to weak-field Curie behavior in a simple independent-spin model.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Thermal moments",
+      "Paramagnetism"
+    ],
+    "source_ids": [
+      "ps-flp-paramagnetism"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-spin",
+    "label": "Spin and Zeeman splitting",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Intrinsic angular momentum and magnetic moments require quantum states and operator algebra.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Quantum mechanics",
+      "Spin and Zeeman splitting"
+    ],
+    "source_ids": [
+      "ps-flp-paramagnetism"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-larmor",
+    "label": "Larmor precession",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "A moment precesses around a field; resonance frequency depends on its gyromagnetic ratio.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Spin dynamics",
+      "Larmor precession"
+    ],
+    "source_ids": [
+      "ps-flp-paramagnetism"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-exchange",
+    "label": "Exchange interaction",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Quantum exchange produces ordering interactions not reducible to classical dipole forces alone.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Many-body Hamiltonians",
+      "Exchange interaction"
+    ],
+    "source_ids": [
+      "ps-flp-ferromagnetism"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-ising",
+    "label": "Ising model",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Binary local degrees of freedom with couplings provide a precise model of collective order.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Statistical mechanics",
+      "Ising model"
+    ],
+    "source_ids": [
+      "ps-flp-ferromagnetism"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-heisenberg",
+    "label": "Heisenberg model",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Vector-spin couplings support rotational structure and magnon excitations.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Statistical mechanics",
+      "Heisenberg model"
+    ],
+    "source_ids": [
+      "ps-flp-magnetic-materials"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-ferro",
+    "label": "Ferromagnetic order",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Aligned order, domains and hysteresis depend on interactions, anisotropy and kinetics.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Broken symmetry",
+      "Ferromagnetic order"
+    ],
+    "source_ids": [
+      "ps-flp-ferromagnetism"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-antiferro",
+    "label": "Antiferromagnetic order",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Opposite sublattices can cancel net magnetization while preserving local order.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Compensated order",
+      "Antiferromagnetic order"
+    ],
+    "source_ids": [
+      "ps-altermagnet-2024"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-llg",
+    "label": "Landau–Lifshitz–Gilbert dynamics",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Precession plus damping evolves a magnetization field with effective-energy forces.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Micromagnetics",
+      "Landau–Lifshitz–Gilbert dynamics"
+    ],
+    "source_ids": [
+      "ps-oommf",
+      "ps-ll-original"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-magnons",
+    "label": "Magnons",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Quantized spin waves connect magnetic order to dispersion and frequency-selective transport.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Collective excitations",
+      "Magnons"
+    ],
+    "source_ids": [
+      "ps-flp-magnetic-materials"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-superconductivity",
+    "label": "Meissner screening",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Magnetic screening in superconductors is distinct from ideal conductivity and requires condensate electrodynamics.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Matter and quantum ordering",
+      "Quantum macroscopic order",
+      "Meissner screening"
+    ],
+    "source_ids": [
+      "ps-superconductivity"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-plasma-gyro",
+    "label": "Charged-particle gyration",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Cyclotron motion provides a scale for magnetized plasmas before collisions and collective effects are included.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Kinetic plasma",
+      "Charged-particle gyration"
+    ],
+    "source_ids": [
+      "ps-flp-magnetostatics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-mhd",
+    "label": "Magnetohydrodynamics",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Fluid momentum and magnetic induction couple when fluid-scale approximations are valid.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Continuum plasma",
+      "Magnetohydrodynamics"
+    ],
+    "source_ids": [
+      "ps-mhd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-alfven",
+    "label": "Alfvén waves",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Field-line tension and plasma inertia set a characteristic wave speed in ideal MHD.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Magnetic tension waves",
+      "Alfvén waves"
+    ],
+    "source_ids": [
+      "ps-mhd"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-reconnection",
+    "label": "Magnetic reconnection",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Topology changes require departures from simple flux-freezing; rates remain regime dependent.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Nonideal plasma",
+      "Magnetic reconnection"
+    ],
+    "source_ids": [
+      "ps-flp-induction"
+    ],
+    "status": "mapped-for-expansion"
+  },
+  {
+    "id": "p-skyrmion",
+    "label": "Magnetic skyrmions",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Integer winding can protect a texture under restricted smooth deformations and boundary assumptions.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Topological textures",
+      "Magnetic skyrmions"
+    ],
+    "source_ids": [
+      "ps-skyrmion-bags"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-berry-phase",
+    "label": "Berry geometric phase",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "A cyclic parameter path can generate an observable phase beyond dynamical phase.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Adiabatic transport",
+      "Berry geometric phase"
+    ],
+    "source_ids": [
+      "ps-berry"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-vortex-unbinding",
+    "label": "Two-dimensional vortex unbinding",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Defect energy, entropy and interaction screening organize transitions in selected two-dimensional models.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Topological phase transitions",
+      "Two-dimensional vortex unbinding"
+    ],
+    "source_ids": [
+      "ps-kt"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-spintronics",
+    "label": "Spintronics",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Devices use spin and magnetic order as controllable state variables, with read/write and energy metrics.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Devices",
+      "Spintronics"
+    ],
+    "source_ids": [
+      "ps-altermagnet-switching"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-altermagnetism",
+    "label": "Altermagnetism",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Compensated collinear order can admit momentum-dependent spin splitting through crystal/spin symmetry.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Symmetry and bands",
+      "Altermagnetism"
+    ],
+    "source_ids": [
+      "ps-altermagnet-2024",
+      "ps-altermagnet-2026"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-altermagnetic-memory",
+    "label": "Altermagnetic read/write",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Electrical switching/readout demonstrations must be separated from production-memory performance claims.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Device demonstrations",
+      "Altermagnetic read/write"
+    ],
+    "source_ids": [
+      "ps-altermagnet-switching"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-nonabelian",
+    "label": "Non-Abelian gauge curvature",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Matrix-valued connections include commutator curvature and nonlinear self-interaction.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Field-theory bridge",
+      "Non-Abelian gauge curvature"
+    ],
+    "source_ids": [
+      "ps-gauge",
+      "ps-tong-riemann"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-wilson-loop",
+    "label": "Wilson loops",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Closed parallel transport traces are gauge invariant and probe static-source physics.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Lattice field theory",
+      "Wilson loops"
+    ],
+    "source_ids": [
+      "ps-gauge"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-ym-existence",
+    "label": "Four-dimensional Yang–Mills existence",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "2026 assessment endorses a stated scaling-limit existence construction; stronger conclusions need separate theorems.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Constructive field theory",
+      "Four-dimensional Yang–Mills existence"
+    ],
+    "source_ids": [
+      "ps-ym-assessment",
+      "ps-ym-committee"
+    ],
+    "status": "endorsed-construction-not-replayed"
+  },
+  {
+    "id": "p-ym-mass-gap",
+    "label": "Yang–Mills mass gap",
+    "type": "concept",
+    "domain": "magnetism",
+    "summary": "Positive infinite-volume excitation gap is expressly not supplied by the cited existence assessment.",
+    "level": 4,
+    "taxonomy_path": [
+      "magnetism",
+      "Plasma, topology and frontier",
+      "Open spectral question",
+      "Yang–Mills mass gap"
+    ],
+    "source_ids": [
+      "ps-ym-assessment"
+    ],
+    "status": "open-in-cited-assessment"
+  },
+  {
+    "id": "p-newton-gravity",
+    "label": "Newtonian gravity",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Attraction between masses is a controlled weak-field, slow-motion approximation.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Inverse-square models",
+      "Newtonian gravity"
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-grav-potential",
+    "label": "Gravitational potential",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Potential per unit mass obeys Poisson's equation with a different source sign from electrostatics.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Elliptic fields",
+      "Gravitational potential"
+    ],
+    "source_ids": [
+      "ps-tong-weak-gravity"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-orbits",
+    "label": "Orbital mechanics",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Conserved energy and angular momentum reduce the two-body problem to radial dynamics.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Central forces",
+      "Orbital mechanics"
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-tidal",
+    "label": "Tidal forces",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Relative accelerations measure field gradients and survive transformation into free-fall coordinates.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Spatial derivatives",
+      "Tidal forces"
+    ],
+    "source_ids": [
+      "ps-tong-riemann"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-action",
+    "label": "Stationary action",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Physical trajectories obey variational equations; stationary need not mean global minimum.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Variational mechanics",
+      "Stationary action"
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-equivalence",
+    "label": "Equivalence principle",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Local free fall removes leading gravitational acceleration but not tidal curvature over extended regions.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Local experiments",
+      "Equivalence principle"
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-metric",
+    "label": "Metric tensor",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "The metric defines proper times, lengths and causal character with declared signature.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Lorentzian geometry",
+      "Metric tensor"
+    ],
+    "source_ids": [
+      "ps-tong-differential-geometry"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-connection",
+    "label": "Levi-Civita connection",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Metric compatibility and zero torsion select a connection; components are coordinate dependent.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Covariant derivatives",
+      "Levi-Civita connection"
+    ],
+    "source_ids": [
+      "ps-tong-riemann"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-curvature",
+    "label": "Riemann curvature",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Curvature measures failure of parallel transport to commute and distinguishes geometry from coordinates.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Tidal geometry",
+      "Riemann curvature"
+    ],
+    "source_ids": [
+      "ps-tong-riemann"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-geodesic",
+    "label": "Geodesic equation",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Affinely parameterized geodesics extremize proper interval subject to causal and endpoint assumptions.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Newtonian and variational foundations",
+      "Free-fall motion",
+      "Geodesic equation"
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-stress-energy",
+    "label": "Stress-energy tensor",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Energy density, momentum flux and stress enter relativistic gravitation together.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Matter sources",
+      "Stress-energy tensor"
+    ],
+    "source_ids": [
+      "ps-tong-einstein"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-einstein-eq",
+    "label": "Einstein field equations",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Curvature and cosmological constant balance stress energy with geometric conservation constraints.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Dynamical geometry",
+      "Einstein field equations"
+    ],
+    "source_ids": [
+      "ps-tong-einstein"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-schwarzschild",
+    "label": "Schwarzschild geometry",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Spherical vacuum exterior with zero angular momentum and zero cosmological constant.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Exact solutions",
+      "Schwarzschild geometry"
+    ],
+    "source_ids": [
+      "ps-tong-black-holes"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-kerr",
+    "label": "Kerr black holes",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Stationary rotating vacuum geometry describes spin-dependent horizon and orbit structure.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Rotating solutions",
+      "Kerr black holes"
+    ],
+    "source_ids": [
+      "ps-tong-black-holes"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-horizons",
+    "label": "Horizons and causal structure",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Coordinate singularities, event horizons and trapped surfaces are distinct notions.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Global geometry",
+      "Horizons and causal structure"
+    ],
+    "source_ids": [
+      "ps-tong-black-holes"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-redshift",
+    "label": "Gravitational redshift",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Frequency ratios depend on observer four-velocities and spacetime geometry.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Clock observables",
+      "Gravitational redshift"
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-lensing",
+    "label": "Gravitational lensing",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Light-path deflection probes geometry and matter distribution, with thin-lens assumptions when used.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Null propagation",
+      "Gravitational lensing"
+    ],
+    "source_ids": [
+      "ps-tong-geodesics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-gravitational-waves",
+    "label": "Gravitational waves",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Transverse tidal waves arise in linearized GR and require gauge-invariant observational interpretation.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Radiative solutions",
+      "Gravitational waves"
+    ],
+    "source_ids": [
+      "ps-tong-weak-gravity"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-quadrupole",
+    "label": "Quadrupole radiation",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Leading weak-field gravitational radiation is governed by changing trace-free mass quadrupole.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Slow-motion sources",
+      "Quadrupole radiation"
+    ],
+    "source_ids": [
+      "ps-tong-weak-gravity"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-numerical-relativity",
+    "label": "Numerical relativity",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Constraint-preserving formulations and convergent wave extraction handle nonlinear mergers.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Strong-field simulation",
+      "Numerical relativity"
+    ],
+    "source_ids": [
+      "ps-gwtc5"
+    ],
+    "status": "mapped-for-expansion"
+  },
+  {
+    "id": "p-gw-tests",
+    "label": "Gravitational-wave tests of GR",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Catalog consistency tests constrain specified deviations under waveform and noise models.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "General relativity and observation",
+      "Data inference",
+      "Gravitational-wave tests of GR"
+    ],
+    "source_ids": [
+      "ps-gwtc5"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-flrw",
+    "label": "FLRW cosmology",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Homogeneity and isotropy reduce expansion to a scale factor and curvature parameter.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Background geometry",
+      "FLRW cosmology"
+    ],
+    "source_ids": [
+      "ps-tong-cosmology"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-friedmann",
+    "label": "Friedmann equations",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Stress-energy and spatial curvature determine background expansion within GR.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Expansion dynamics",
+      "Friedmann equations"
+    ],
+    "source_ids": [
+      "ps-tong-einstein",
+      "ps-tong-cosmology"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-structure-formation",
+    "label": "Structure formation",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Gravity amplifies perturbations while pressure, expansion and free streaming compete.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Cosmological perturbations",
+      "Structure formation"
+    ],
+    "source_ids": [
+      "ps-tong-cosmology"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-dark-matter",
+    "label": "Dark matter inference",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Gravitational evidence constrains missing clustering mass; microscopic identity is not fixed by a graph label.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Cosmological components",
+      "Dark matter inference"
+    ],
+    "source_ids": [
+      "ps-tong-cosmology"
+    ],
+    "status": "open-microphysics"
+  },
+  {
+    "id": "p-dark-energy",
+    "label": "Dark energy inference",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Expansion constraints compare cosmological-constant and evolving models with dataset dependence.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Cosmological components",
+      "Dark energy inference"
+    ],
+    "source_ids": [
+      "ps-desi2026"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-bao-ap",
+    "label": "BAO and Alcock–Paczyński tests",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Statistical clustering geometry constrains distance combinations and expansion history.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Distance measurements",
+      "BAO and Alcock–Paczyński tests"
+    ],
+    "source_ids": [
+      "ps-desi2026"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-bh-thermodynamics",
+    "label": "Black-hole thermodynamics",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Temperature and area entropy join gravity, quantum theory and statistical mechanics.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Semiclassical physics",
+      "Black-hole thermodynamics"
+    ],
+    "source_ids": [
+      "ps-tong-black-holes",
+      "ps-hawking-page-ai"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-gravity-eft",
+    "label": "Gravity as effective field theory",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Higher-curvature operators organize low-energy corrections without claiming a complete ultraviolet theory.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Low-energy quantum treatment",
+      "Gravity as effective field theory"
+    ],
+    "source_ids": [
+      "ps-tong-einstein"
+    ],
+    "status": "mapped-for-expansion"
+  },
+  {
+    "id": "p-holography",
+    "label": "Holographic duality",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Special boundary field theories constrain gravitational model systems; they are not a measured map of the entire universe.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Quantum-gravity models",
+      "Holographic duality"
+    ],
+    "source_ids": [
+      "ps-hawking-page-ai",
+      "ps-bootstrap-ai"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-hawking-page",
+    "label": "Hawking–Page transition",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Competing thermal saddles motivate a field-theory deconfinement calculation.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "AdS thermodynamics",
+      "Hawking–Page transition"
+    ],
+    "source_ids": [
+      "ps-hawking-page-ai"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-modular-bootstrap",
+    "label": "Spinless modular bootstrap",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "Zero-angular-potential modular data bound non-vacuum Virasoro-primary dimensions across all spins. The reported optimum is for admissible class A-bar; equality with the infinite-order finite-derivative optimum is conjectural.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "CFT consistency bounds",
+      "Spinless modular bootstrap"
+    ],
+    "source_ids": [
+      "ps-bootstrap-ai"
+    ],
+    "status": "preprint-result-not-replayed"
+  },
+  {
+    "id": "p-gravity-entanglement",
+    "label": "Gravitational entanglement tests",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "An entanglement witness requires explicit assumptions on mediator, locality and matter couplings.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Quantum mediator inference",
+      "Gravitational entanglement tests"
+    ],
+    "source_ids": [
+      "ps-gravity-entanglement"
+    ],
+    "status": "active-debate"
+  },
+  {
+    "id": "p-quantum-gravity",
+    "label": "Quantum gravity completion",
+    "type": "concept",
+    "domain": "gravity",
+    "summary": "No verified universal completion is inferred from the selected partial constructions or tests.",
+    "level": 4,
+    "taxonomy_path": [
+      "gravity",
+      "Cosmology and quantum frontier",
+      "Unresolved framework",
+      "Quantum gravity completion"
+    ],
+    "source_ids": [
+      "ps-gravity-entanglement",
+      "ps-bootstrap-ai"
+    ],
+    "status": "open"
+  },
+  {
+    "id": "p-frequency",
+    "label": "Frequency and angular frequency",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Cycles per second and radians per second differ by 2 pi; phase needs an observable and clock.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Measurement definitions",
+      "Frequency and angular frequency"
+    ],
+    "source_ids": [
+      "ps-flp-oscillator"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-harmonic-oscillator",
+    "label": "Harmonic oscillator",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Quadratic restoring energy yields sinusoidal motion within a small-amplitude regime.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Linear dynamics",
+      "Harmonic oscillator"
+    ],
+    "source_ids": [
+      "ps-flp-oscillator"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-damping",
+    "label": "Damping and quality factor",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Decay rate, linewidth and quality factor describe losses with convention-dependent factors.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Dissipation",
+      "Damping and quality factor"
+    ],
+    "source_ids": [
+      "ps-flp-resonance"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-forced-response",
+    "label": "Forced response",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "A response peak depends on forcing, damping and the measured variable.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Transfer functions",
+      "Forced response"
+    ],
+    "source_ids": [
+      "ps-flp-resonance"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-power-budget",
+    "label": "Resonant energy accounting",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Large amplitude can reflect storage and impedance matching; supplied power must balance loss and load.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Passivity",
+      "Resonant energy accounting"
+    ],
+    "source_ids": [
+      "ps-flp-poynting",
+      "ps-flp-resonance"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-coupled-modes",
+    "label": "Coupled normal modes",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "A stiffness/mass generalized eigenproblem determines collective frequencies and shapes.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Matrix eigenproblems",
+      "Coupled normal modes"
+    ],
+    "source_ids": [
+      "ps-flp-modes"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-fourier-series",
+    "label": "Fourier series",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Orthogonal harmonics represent suitable periodic signals with declared convergence notion.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Periodic analysis",
+      "Fourier series"
+    ],
+    "source_ids": [
+      "ps-flp-harmonics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-fourier-transform",
+    "label": "Fourier transform",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Continuous frequency representation depends on normalization and integration domain.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Aperiodic analysis",
+      "Fourier transform"
+    ],
+    "source_ids": [
+      "ps-flp-harmonics"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-laplace-transform",
+    "label": "Laplace transform",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Complex frequency represents transients and transfer poles as well as steady sinusoids.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Causal systems",
+      "Laplace transform"
+    ],
+    "source_ids": [
+      "ps-flp-linear-systems"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-convolution",
+    "label": "Convolution",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Impulse response determines output only when linearity, time invariance and initial-condition treatment apply.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Linear time-invariant systems",
+      "Convolution"
+    ],
+    "source_ids": [
+      "ps-flp-linear-systems"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-sampling",
+    "label": "Sampling and aliasing",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Sampling folds frequency unless analog bandwidth and filtering meet reconstruction assumptions.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Digital observation",
+      "Sampling and aliasing"
+    ],
+    "source_ids": [
+      "ps-allan"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-spectral-estimation",
+    "label": "Spectral estimation",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Windowing, leakage and variance determine what a measured spectrum can support.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Finite records",
+      "Spectral estimation"
+    ],
+    "source_ids": [
+      "ps-allan"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-wavelet",
+    "label": "Wavelet analysis",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Scale and localization trade resolution; graph wavelets apply spectral kernels to node indicators.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Time-frequency localization",
+      "Wavelet analysis"
+    ],
+    "source_ids": [
+      "ps-graph-wavelets"
+    ],
+    "status": "established-mathematical-method"
+  },
+  {
+    "id": "p-allan",
+    "label": "Allan deviation",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Adjacent averaged fractional-frequency differences quantify stability as averaging time changes.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Oscillations and signal foundations",
+      "Clock metrology",
+      "Allan deviation"
+    ],
+    "source_ids": [
+      "ps-allan"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-wave-equation",
+    "label": "Wave equation",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Space and time derivatives couple propagating disturbances under a specified linear medium model.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Continuum PDE",
+      "Wave equation"
+    ],
+    "source_ids": [
+      "ps-flp-wave"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-dispersion",
+    "label": "Dispersion relation",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "The omega-k relation determines phase and group velocities within a wave-packet approximation.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Plane-wave structure",
+      "Dispersion relation"
+    ],
+    "source_ids": [
+      "ps-flp-beats"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-interference",
+    "label": "Interference and beats",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Coherent phase determines addition and cancellation; a beat envelope is not a new carrier field.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Superposition",
+      "Interference and beats"
+    ],
+    "source_ids": [
+      "ps-flp-beats"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-helmholtz",
+    "label": "Helmholtz equation",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "A fixed-frequency ansatz transforms a wave equation into a spatial boundary problem.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Time-harmonic PDE",
+      "Helmholtz equation"
+    ],
+    "source_ids": [
+      "ps-flp-modes"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-acoustic-impedance",
+    "label": "Acoustic impedance",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Pressure/particle-velocity ratio governs reflection under plane-wave conditions.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Wave interfaces",
+      "Acoustic impedance"
+    ],
+    "source_ids": [
+      "ps-flp-wave"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-membranes",
+    "label": "Membrane modes",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Tension, density, shape and boundary fixing determine vibration eigenfunctions.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Two-dimensional geometry",
+      "Membrane modes"
+    ],
+    "source_ids": [
+      "ps-flp-modes"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-plates",
+    "label": "Plate bending modes",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Flexural rigidity introduces a biharmonic operator and different dispersion from a membrane.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Fourth-order elasticity",
+      "Plate bending modes"
+    ],
+    "source_ids": [
+      "ps-flp-modes"
+    ],
+    "status": "mapped-for-expansion"
+  },
+  {
+    "id": "p-cymatics",
+    "label": "Cymatic pattern formation",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Visible particle patterns depend on forcing and grain transport as well as underlying modes.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Driven granular/acoustic response",
+      "Cymatic pattern formation"
+    ],
+    "source_ids": [
+      "ps-flp-modes"
+    ],
+    "status": "mapped-for-expansion"
+  },
+  {
+    "id": "p-nonlinear-oscillations",
+    "label": "Nonlinear oscillations",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Amplitude-dependent frequency, harmonics and bifurcations invalidate linear response shortcuts.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Beyond superposition",
+      "Nonlinear oscillations"
+    ],
+    "source_ids": [
+      "ps-flp-oscillator"
+    ],
+    "status": "mapped-for-expansion"
+  },
+  {
+    "id": "p-solitons",
+    "label": "Soliton dynamics",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Certain equations balance dispersion and nonlinearity; not every localized pulse is a soliton.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Nonlinear dispersive PDE",
+      "Soliton dynamics"
+    ],
+    "source_ids": [
+      "ps-flp-wave"
+    ],
+    "status": "mapped-for-expansion"
+  },
+  {
+    "id": "p-wave-crystals",
+    "label": "Phononic crystals",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Periodic structure yields Bloch bands, gaps and dispersion engineering.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Periodic media",
+      "Phononic crystals"
+    ],
+    "source_ids": [
+      "ps-topological-acoustic"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-metamaterials",
+    "label": "Acoustic metamaterials",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Subwavelength structure produces effective responses subject to loss, bandwidth and homogenization limits.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Continuum waves and geometry",
+      "Engineered response",
+      "Acoustic metamaterials"
+    ],
+    "source_ids": [
+      "ps-topological-acoustic",
+      "ps-cpa-vortex"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-quantum-frequency",
+    "label": "Quantum energy-frequency relation",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Transition energies correspond to frequencies; occupancy sets total oscillator energy.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Quantum, topology and frontier",
+      "Quantized excitations",
+      "Quantum energy-frequency relation"
+    ],
+    "source_ids": [
+      "ps-phonon-gates"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-phonons",
+    "label": "Phonons",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Quanta of normal modes require coherent state preparation and calibrated detection.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Quantum, topology and frontier",
+      "Quantum acoustics",
+      "Phonons"
+    ],
+    "source_ids": [
+      "ps-phonon-gates"
+    ],
+    "status": "established"
+  },
+  {
+    "id": "p-phonon-logic",
+    "label": "Phonon gates and memory",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Acoustic modes can route/store quantum states in circuit-coupled systems under coherence limits.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Quantum, topology and frontier",
+      "Hybrid quantum devices",
+      "Phonon gates and memory"
+    ],
+    "source_ids": [
+      "ps-phonon-gates"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-nuclear-clock",
+    "label": "Nuclear optical clocks",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Feedback locks a laser to a nuclear transition; stability, accuracy and reproducibility are distinct.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Quantum, topology and frontier",
+      "Frequency metrology",
+      "Nuclear optical clocks"
+    ],
+    "source_ids": [
+      "ps-nuclear-clock"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-nonhermitian",
+    "label": "Non-Hermitian modes",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Loss, gain and radiation produce effective operators that are not self-adjoint.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Quantum, topology and frontier",
+      "Open-system spectra",
+      "Non-Hermitian modes"
+    ],
+    "source_ids": [
+      "ps-topological-acoustic",
+      "ps-cpa-vortex"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-exceptional-points",
+    "label": "Exceptional points",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Eigenvalues and eigenvectors can coalesce, making ordinary eigenbasis assumptions fail.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Quantum, topology and frontier",
+      "Spectral degeneracies",
+      "Exceptional points"
+    ],
+    "source_ids": [
+      "ps-topological-acoustic"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-topological-waves",
+    "label": "Topological acoustic interfaces",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Specific invariants and gaps protect selected responses under restricted perturbations.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Quantum, topology and frontier",
+      "Symmetry and transport",
+      "Topological acoustic interfaces"
+    ],
+    "source_ids": [
+      "ps-topological-acoustic"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-coherent-absorption",
+    "label": "Coherent perfect absorption",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Selected coherent illumination can match a lossy scatterer's absorption eigenchannel.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Quantum, topology and frontier",
+      "Scattering control",
+      "Coherent perfect absorption"
+    ],
+    "source_ids": [
+      "ps-cpa-vortex"
+    ],
+    "status": "active-research"
+  },
+  {
+    "id": "p-graph-modes",
+    "label": "Graph Laplacian modes",
+    "type": "concept",
+    "domain": "frequency",
+    "summary": "Graph eigenvectors are spatial variation patterns; physical Hz requires a time evolution and calibrated scale.",
+    "level": 4,
+    "taxonomy_path": [
+      "frequency",
+      "Quantum, topology and frontier",
+      "Discrete geometry bridge",
+      "Graph Laplacian modes"
+    ],
+    "source_ids": [
+      "ps-graph-wavelets",
+      "ps-flp-modes"
+    ],
+    "status": "established-mathematical-method"
+  }
+]

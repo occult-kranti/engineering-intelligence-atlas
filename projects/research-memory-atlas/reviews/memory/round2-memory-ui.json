@@ -1,0 +1,80 @@
+{
+  "round": 2,
+  "reviewer": "/root/github_audit",
+  "reviewType": "independent code, source-semantics and public-interface review",
+  "originalFilesRead": [
+    "desktop-shell/src/shared/graphMemory.ts",
+    "desktop-shell/src/main/knowledgeMemory.ts",
+    "projects/research-memory-atlas/runtime/store.mjs",
+    "projects/research-memory-atlas/tests/memory.test.mjs"
+  ],
+  "findings": [
+    {
+      "id": "MEM-R2-1",
+      "severity": "high",
+      "finding": "A valid-JSON edited cache packet was returned without packet validation. A synthetic unrelated private-scope result was reproduced with cache.hit=true.",
+      "scope": "Disposable local-cache correctness. This is not evidence of defeating a multi-user authentication service.",
+      "resolution": "Root added payload-integrity/contract checks. Independent regression passes."
+    },
+    {
+      "id": "MEM-R2-2",
+      "severity": "medium",
+      "finding": "Final retrieval metadata could produce a 1025-byte packet under a 1024-byte limit after status/counters changed.",
+      "resolution": "Root enforced final budget. Independent UTF-8 boundary-range regression passes."
+    },
+    {
+      "id": "MEM-R2-3",
+      "severity": "medium",
+      "finding": "An object-valued taxonomy_path passed validation then crashed .join during retrieval; status and source access_depth types were also unchecked.",
+      "resolution": "Root added optional-field validation. Independent regression passes."
+    },
+    {
+      "id": "MEM-R2-4",
+      "severity": "medium",
+      "finding": "A valid 160-character source ID became invalid after scope text was prepended in MemoryStore.load.",
+      "resolution": "Root changed source namespacing. Independent maximum-length citation regression passes."
+    }
+  ],
+  "testFile": "projects/research-memory-atlas/tests/review-regressions.test.mjs",
+  "testCommand": "node --test projects/research-memory-atlas/tests/review-regressions.test.mjs",
+  "testResult": "4 passed, 0 failed against rebuilt shared runtime",
+  "originalSourcesRead": [
+    {
+      "url": "https://obsidian.md/help/plugins/graph",
+      "depth": "official graph-view documentation",
+      "conclusion": "Notes and authored internal links form the graph; visual force settings and local graph depth are presentation/navigation controls, not measured brain dynamics."
+    },
+    {
+      "url": "https://arxiv.org/abs/2405.14831",
+      "depth": "primary abstract and version metadata",
+      "conclusion": "HippoRAG explicitly combines LLMs, knowledge graphs and personalized PageRank. The atlas appropriately treats brain inspiration as an analogy and avoids transferring its benchmark claims to this implementation."
+    },
+    {
+      "url": "https://arxiv.org/abs/2008.02217",
+      "depth": "primary abstract and version metadata",
+      "conclusion": "Modern Hopfield/attention equivalence is a mathematical model result; it does not establish that an Obsidian vault or this local source graph reproduces biological memory."
+    }
+  ],
+  "scopeAndTermination": "Authorized eligible subgraph precedes IDF/ranking; BFS uses visited IDs and finite depth/node caps; PageRank has a finite iteration cap; prerequisite ordering reports blocked descendants without calling all of them cycle members. Scores remain rankings, not truth probabilities.",
+  "publicationPrivacy": "The UI reads only the generated public dataset, rejects nonpublic node/edge scopes, uses text nodes for source content, restricts external URLs, and sanitizes a small MathML vocabulary. No private company store, credentials or provider invocation is connected through this surface.",
+  "uiFiles": [
+    "projects/research-memory-atlas/web/index.html",
+    "projects/research-memory-atlas/web/atlas.css",
+    "projects/research-memory-atlas/web/app.mjs",
+    "projects/research-memory-atlas/web/README.md",
+    "scripts/smoke-research-memory.mjs"
+  ],
+  "browserAcceptance": "not run locally; strict real-Chromium CI gate provided",
+  "limits": "This is not a complete source-by-source mathematical proof audit, production authentication audit, biological validation or target-device performance benchmark. Local cache digests are integrity checks, not hostile-host authentication.",
+  "finalUiFraming": "Donna Brain \u00b7 public research memory; native company memory stays private.",
+  "exports": {
+    "primary": "atlas.json",
+    "typedGraph": "graphs/{domain}.graphml",
+    "thirdPartyApplicationRequired": false
+  },
+  "regressionConfirmation": {
+    "cases": 4,
+    "passed": 4,
+    "source": "current generated graph-core.mjs"
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "schemaVersion": 1,
+  "testCommand": "npm test --prefix integrations/heritage-assets",
+  "tests": 24,
+  "passed": 24,
+  "failed": 0,
+  "skipped": 0,
+  "independentDecoder": "Three.js GLTFLoader0.187.0 + meshoptimizer1.2.0 fixture verifies exact position/color/index arrays and retained repeated-index face.",
+  "actualAssets": 7,
+  "allSuppliedSourceHashChecksPassed": true,
+  "allDecodedAccessorIndexTextureTransformChecksPassed": true,
+  "originalSizeTargetMet": false,
+  "reviewedSizeBudgetsMet": true,
+  "modelBytesFrozen": true,
+  "sourceFiles": [
+    {
+      "file": "preserve.mjs",
+      "sha256": "019b59a1126ccc34c5af6361e7ce2096f238723e9eb3d376193d23d854f831fd"
+    },
+    {
+      "file": "blender-review.py",
+      "sha256": "1f57d37c8065814f614759fb867211c9ce33017481ad11579183a85f59ae024b"
+    },
+    {
+      "file": "test/preserve.test.mjs",
+      "sha256": "07c93c49ed3f67b6bf9c4cde367a2f18d7518596734486756b39c041f860a3f4"
+    },
+    {
+      "file": "acquisition-manifest.json",
+      "sha256": "b77ae4966f6b3ebf492c7ad90a1b5dca6efd51fb4d761a997fa37cae77b993c7"
+    },
+    {
+      "file": "applied-guidance.json",
+      "sha256": "747939b3dc9fdfd8b7f6c1e9d16d21b459efea6038ed7ea56c268c85f77677d7"
+    },
+    {
+      "file": "package-lock.json",
+      "sha256": "c145a358c75ac0bf1de67b3d56e62f6aa42df3968df585f470c85d9143c69768"
+    },
+    {
+      "file": "test_blender_review.py",
+      "sha256": "257f8a1bf7739d8b0ed7b402dc6c0edb543d4f3d9dd10f796a47e61bc47f7ba2"
+    },
+    {
+      "file": "blender-helper-acceptance.json",
+      "sha256": "41ebe9018849509d6e386f950b38de67032132284e61f5df71f1ef95632d930f"
+    }
+  ],
+  "blenderHelperAcceptance": {
+    "schemaVersion": 1,
+    "blenderVersion": "4.5.17 LTS",
+    "sourceSha256": "a0030f18df3d3ded9b4ae5d503ad0b1b17f3157bf07941ec0104073a565ea4e9",
+    "sourceBytes": 11669704,
+    "sourceVertexEntries": 273390,
+    "sourceIndexCount": 409497,
+    "sourceTriangles": 136499,
+    "importedMeshObjects": 5,
+    "importedVertexEntries": 273390,
+    "importedTriangles": 136498,
+    "triangleCountDifference": -1,
+    "faceRemovalCause": "not established",
+    "vertexColors": [
+      {
+        "object": "Retopo_Model_Tex_0",
+        "attributes": []
+      },
+      {
+        "object": "Retopo_Model_Tex_0.001",
+        "attributes": []
+      },
+      {
+        "object": "Retopo_Model_Tex_0.002",
+        "attributes": []
+      },
+      {
+        "object": "Retopo_Model_Tex_0.003",
+        "attributes": []
+      },
+      {
+        "object": "Retopo_Model_Tex_0.004",
+        "attributes": []
+      }
+    ],
+    "worldBounds": {
+      "min": [
+        -1128.1693115234375,
+        -1304.4208984375,
+        -296.8750305175781
+      ],
+      "max": [
+        1458.0472412109375,
+        1279.2979736328125,
+        565.2213134765625
+      ],
+      "dimensions": [
+        2586.216552734375,
+        2583.7188720703125,
+        862.0963439941406
+      ],
+      "units": "unverified source units; Blender glTF axis convention applied by importer"
+    },
+    "surveyScaleVerified": false,
+    "blend": {
+      "file": "scene.blend",
+      "bytes": 7730204,
+      "sha256": "7abff07be8ad01b4c7e0a51f5d008a588294b56de19ff6cc4915e53dffaac86c"
+    }
+  },
+  "nodeTestsRecheckedAtUtc": "2026-11-25T06:31:52.750690+00:00",
+  "blenderHelperAcceptanceProvenance": {
+    "status": "historical acceptance retained unchanged",
+    "helperSha256": "751414e799ada48c585abc2df35fc2f2dc82c72008ac37030e343060c6b9efb5",
+    "note": "The blenderHelperAcceptance object records the earlier helper run. Its source count lacked the current active-scene and active-view-layer distinctions. See the new separately executed acceptance evidence for the current helper.",
+    "currentEvidence": "blender-helper-acceptance.json"
+  },
+  "blenderHelperVerification": {
+    "checkedAtUtc": "2026-11-25T06:31:52.750690+00:00",
+    "regressionTestCommand": "python3 -m unittest discover -s integrations/heritage-assets -p 'test_*.py' -v",
+    "regressionTests": 10,
+    "passed": 10,
+    "failed": 0,
+    "actualAcceptance": {
+      "file": "blender-helper-acceptance.json",
+      "sha256": "41ebe9018849509d6e386f950b38de67032132284e61f5df71f1ef95632d930f",
+      "blenderVersion": "4.5.17 LTS",
+      "syntheticFixturesPassed": 2,
+      "existingCapturesReviewed": 1,
+      "note": "Two active-scene fixtures now compare 2 source triangles with 2 imported triangles. Kailasa is separately re-imported and retains the established 136499 supplied / 136498 Blender difference; cause remains unknown."
+    }
+  }
+}

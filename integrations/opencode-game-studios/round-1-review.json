@@ -1,0 +1,391 @@
+{
+  "schemaVersion": 1,
+  "round": 1,
+  "role": "coding-and-toolchain-integration",
+  "status": "independent-review-complete-awaiting-implementation-assignment",
+  "date": "2026-11-25",
+  "hostBaseline": {
+    "branch": "feature/heritage-site-models-panel",
+    "commit": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48"
+  },
+  "upstream": {
+    "repository": "https://github.com/striderZA/OpenCodeGameStudios",
+    "commit": "85aa449a0cbc2ca44916455185c9d3b4a23a7429",
+    "packageVersion": "0.14.1",
+    "rootLicense": "MIT",
+    "packageLicenseMetadata": "ISC",
+    "submodulesFetched": false,
+    "checkoutCleanAfterTests": true
+  },
+  "reviewedSources": [
+    {
+      "path": "LICENSE",
+      "sha256": "1281ffedda7559df1a4b2c4f64a23920a839bdf4832558c846a2020b937167d5",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": "package.json",
+      "sha256": "83cb09a33b1b5c0b05c10548fa380fc552e48ecd1c03cbcf60ae53bb77efc90c",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "5fb27654256d56f0c14d52f70d8513fa9aff399f0884c6fac8c32bc32a4f2569",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": "opencode.json",
+      "sha256": "765dc6e96d5c0ca512bd1de01ba4974731f827d46b8841e2116af39961ec729a",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": ".gitmodules",
+      "sha256": "485f72ee3e3a856e32f0a2a120ee426b83bd21b14f0ca401260ffa00270917de",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": ".opencode/modules/install.mjs",
+      "sha256": "8d2ba944184922ec68676a9add28d54ec26b892666f5aa1b39fe75f933dcb501",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": "tools/git-hooks/install.mjs",
+      "sha256": "0840dd85dc2122990f9a89199e12b7237fa9fc1e374a9498328510568984f405",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": "tools/lib/harness-targets.mjs",
+      "sha256": "10a88cd6b61d5e7b02e3f9d48446989bee75edaf729b4f15179d4e420b83d735",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": "tools/lib/mcp-targets.mjs",
+      "sha256": "ee05a768676ee154f41f61904a01e3b5fd9b3111eabc99b6254cbaa6d765645f",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": "tools/lib/parse-modulefile.mjs",
+      "sha256": "9dbf6457dd45ea8166e7b2da47562d408015034830cc28bff80c773ef6a73c50",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": "tests/modules/test-install-harness.mjs",
+      "sha256": "8ddc18c7416eff9c1b8ce7d05f92d0ee19e86bf8b09c7364b3b1086452824d36",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    },
+    {
+      "path": "tests/agents/validate.mjs",
+      "sha256": "b063eb80127ce65f9b0628130a596d2a8d51e093e194b4d8982c4b4781a8e71d",
+      "depth": "full or targeted implementation sections; not a claim of all-repository security audit"
+    }
+  ],
+  "additionalSources": [
+    ".opencode/modules/art/modulefile.yaml",
+    ".opencode/modules/programming/modulefile.yaml",
+    ".opencode/modules/qa/modulefile.yaml",
+    ".opencode/modules/engine-godot/modulefile.yaml",
+    ".opencode/plugins/ccgs-hooks.ts (sampled)",
+    ".opencode/plugins/changelog-generator.ts (sampled)",
+    ".opencode/plugins/drift-detector.ts (sampled)",
+    ".opencode/modules/art/skills/asset-audit/SKILL.md (first sections)",
+    "Host integrations/creative-tools/RUNTIME_CONTRACT.md"
+  ],
+  "findings": [
+    {
+      "id": "OCGS-R1-01",
+      "priority": "high",
+      "finding": "Root license and package metadata disagree. The separate Aseprite submodule has not been fetched or audited.",
+      "evidence": [
+        {
+          "path": "LICENSE",
+          "observation": "MIT License, copyright 2026 OpenCodeGameStudios"
+        },
+        {
+          "path": "package.json",
+          "observation": "license field is ISC"
+        },
+        {
+          "path": ".gitmodules",
+          "observation": "tools/aseprite-mcp references a separate Git repository"
+        }
+      ],
+      "impact": "The framework license cannot be represented as consistent metadata, and the root license does not establish permissions for separately sourced software.",
+      "change": "Preserve the root MIT notice and pin the inspected commit; record the ISC discrepancy. Exclude submodules and packaged binaries from the resource pack.",
+      "acceptance": "Integration lock lists upstream commit, MIT notice hash, package metadata discrepancy, and zero included submodule paths."
+    },
+    {
+      "id": "OCGS-R1-02",
+      "priority": "high",
+      "finding": "Ordinary dependency installation executes a prepare lifecycle hook that changes repository hook configuration and index modes.",
+      "evidence": [
+        {
+          "path": "package.json",
+          "observation": "prepare runs node tools/git-hooks/install.mjs"
+        },
+        {
+          "path": "tools/git-hooks/install.mjs",
+          "observation": "sets local core.hooksPath .githooks and calls git update-index --chmod=+x"
+        }
+      ],
+      "impact": "Importing the framework as a dependency can alter host repository behavior beyond selected role resources.",
+      "change": "Do not run its prepare hook in the destination repository. Any future dependency installation must use ignore-scripts in an isolated source checkout; copy only explicitly selected text resources.",
+      "acceptance": "Host core.hooksPath and index modes unchanged after integration; project contains no generated upstream hook installation."
+    },
+    {
+      "id": "OCGS-R1-03",
+      "priority": "high",
+      "finding": "Art integration merges an enabled Aseprite MCP server; root configuration also defines plugin hooks and unpinned optional servers.",
+      "evidence": [
+        {
+          "path": ".opencode/modules/art/mcp",
+          "observation": "art module carries MCP configuration, mirrored in .agents/modules/art"
+        },
+        {
+          "path": "opencode.json",
+          "observation": "aseprite local server lacks enabled:false; Godot command uses npx @coding-solo/godot-mcp; three local plugin hooks are listed"
+        },
+        {
+          "path": ".opencode/modules/install.mjs",
+          "observation": "add merges module MCP fragment into selected harness configuration"
+        }
+      ],
+      "impact": "Using the stock installer can activate an unreviewed runtime or override host configuration while the user only expects game team resources.",
+      "change": "Import selected module text as project-scoped references. Keep MCP integration as an explicit capability mapping to existing approved creative operations; do not copy root opencode.json, plugins, MCP fragments or AGENTS.md over the host project.",
+      "acceptance": "Selected-resource receipt excludes executable plugins and MCP configuration. Existing host MCP files are byte-identical before and after resource import."
+    },
+    {
+      "id": "OCGS-R1-04",
+      "priority": "high",
+      "finding": "Installer exit status alone does not prove successful module installation or validation.",
+      "evidence": [
+        {
+          "path": ".opencode/modules/install.mjs",
+          "observation": "cmdAdd catches errors without assigning process.exitCode; runValidation prints WARN on nonzero child status"
+        },
+        {
+          "path": "tests/modules/test-install-harness.mjs",
+          "observation": "malformed MCP fragment test explicitly expects process exit status 0"
+        }
+      ],
+      "impact": "A pipeline could publish partial or failed integration while reporting success.",
+      "change": "Use a purpose-built resource synchronizer with fail-closed validation, exact allowlist and content hashes. Invoke upstream standalone validator independently and check its process status.",
+      "acceptance": "Missing source, wrong commit, hash mismatch, unsafe path or pre-existing altered target each fails nonzero; valid selected-resource sync succeeds with complete receipt."
+    },
+    {
+      "id": "OCGS-R1-05",
+      "priority": "high",
+      "finding": "Agent definition conversion is not native authorization or runtime budget enforcement.",
+      "evidence": [
+        {
+          "path": "tools/lib/harness-targets.mjs",
+          "observation": "Codex transform emits name, description and developer_instructions but does not enforce source maxTurns or tools fields"
+        },
+        {
+          "path": "integrations/creative-tools/RUNTIME_CONTRACT.md (host project)",
+          "observation": "Employee assignment and skill references grant no execution scope; current native creative.execute authorization is checked per run"
+        }
+      ],
+      "impact": "Registering imported agent definitions as permanent employees or permissions would silently change Donna authority and make declarative budgets appear enforceable.",
+      "change": "Map resources to existing engineering, design/graphics and QA roles; preserve employee IDs, owner authority and grant checks. Define panel roles as bounded task packets, not new privileged identities.",
+      "acceptance": "No native employee, owner, department, role or grant records are mutated by integration. All executable operations continue through the existing approved creative-tools contract."
+    },
+    {
+      "id": "OCGS-R1-06",
+      "priority": "medium",
+      "finding": "Upstream structural validation passes, but it is not an end-to-end engine, provider, asset-rights or accuracy test.",
+      "evidence": [
+        {
+          "path": "tests/agents/validate.mjs",
+          "observation": "Checks definition format and cross-references"
+        },
+        {
+          "path": "tests/modules/test-install-harness.mjs",
+          "observation": "Tests harness transformations and configuration behavior with disposable fixtures"
+        }
+      ],
+      "impact": "A passing framework suite cannot support a claim that Blender, Godot, Unreal, Aseprite or an AI provider is connected and production-ready.",
+      "change": "Report structural tests separately from local software probes, asset imports and render/export tests. Keep Unreal and Adobe declared unavailable/licensed until actual installation and access are verified.",
+      "acceptance": "Capability table distinguishes installed/probed, configured-only, reference-only, unavailable and externally licensed; no blanket complete-setup claim."
+    },
+    {
+      "id": "OCGS-R1-07",
+      "priority": "high",
+      "finding": "Generic art and game skills do not establish monument accuracy or source usage rights.",
+      "evidence": [
+        {
+          "path": ".opencode/modules/art/skills/asset-audit/SKILL.md",
+          "observation": "Focuses on art bible, asset specifications, naming, format and performance budgets"
+        },
+        {
+          "path": "heritage panel acquisition evidence (parent reports)",
+          "observation": "Actual site assets have incomplete scale/control, detail coverage and/or license provenance constraints"
+        }
+      ],
+      "impact": "A successful mesh import or attractive render could be mistaken for a survey-accurate reconstruction.",
+      "change": "Add host-project acceptance around source provenance, creator license, capture limitations, source units, coverage, vertex/face counts and measured export quality. Never generate missing ornament and label it observed.",
+      "acceptance": "Each site manifest separates observed captured geometry from modeled additions, retains source units unless calibrated, and blocks commercial-ready or survey-accurate labels without supporting evidence."
+    },
+    {
+      "id": "OCGS-R1-08",
+      "priority": "medium",
+      "finding": "Stock recursive copy follows stat-resolved paths and allows broad force replacement; it is unnecessary for a read-only selected-resource integration.",
+      "evidence": [
+        {
+          "path": ".opencode/modules/install.mjs",
+          "observation": "Recursive copy uses statSync, supports force overwrite, and installs dependency-missing modules after warnings"
+        }
+      ],
+      "impact": "Blind reuse increases accidental overwrite and path/symlink risks, especially across existing project instructions.",
+      "change": "Use fixed module identifiers; reject symlinks and path traversal; permit only enumerated regular text files; stage to a temporary directory and publish only after hash/size checks. Existing modifications require a deliberate reviewed update.",
+      "acceptance": "Boundary tests cover symlink, traversal, changed existing file, missing required module dependency and interrupted staging without partial publication."
+    }
+  ],
+  "recommendedModules": {
+    "core": {
+      "agents": 3,
+      "skills": 10,
+      "commands": 9
+    },
+    "art": {
+      "agents": 2,
+      "skills": 4,
+      "commands": 1
+    },
+    "design": {
+      "agents": 3,
+      "skills": 11,
+      "commands": 5
+    },
+    "architecture": {
+      "agents": 1,
+      "skills": 3,
+      "commands": 2
+    },
+    "programming": {
+      "agents": 5,
+      "skills": 0,
+      "commands": 0
+    },
+    "engine-godot": {
+      "agents": 5,
+      "skills": 0,
+      "commands": 0
+    },
+    "qa": {
+      "agents": 4,
+      "skills": 18,
+      "commands": 14
+    }
+  },
+  "recommendedIntegration": {
+    "mode": "project-scoped pinned source resources; no automatic execution",
+    "selectedModuleCount": 7,
+    "counts": {
+      "agents": 23,
+      "skills": 46,
+      "commands": 31
+    },
+    "lock": "upstream.lock.json recording commit, source paths, hashes, preserved license and exclusions",
+    "hostRoleMapping": {
+      "engineering": [
+        "programming",
+        "architecture",
+        "engine-godot"
+      ],
+      "design-and-graphics": [
+        "design",
+        "art"
+      ],
+      "quality-assurance": [
+        "qa"
+      ],
+      "panel-moderation": [
+        "core"
+      ]
+    },
+    "unchangedAuthority": [
+      "Donna ownership",
+      "existing employees and departments",
+      "native creative.execute scope/grants",
+      "user-authored instructions and configuration"
+    ],
+    "excluded": [
+      "upstream root AGENTS.md replacement",
+      "Git hooks",
+      "automatic MCP server activation",
+      "unreviewed submodules",
+      "global personal-skill registration",
+      "provider API calls",
+      "licensed proprietary downloads without actual access"
+    ]
+  },
+  "executedValidation": [
+    {
+      "command": "node tests/agents/validate.mjs --no-report",
+      "workingDirectory": "pinned upstream source checkout",
+      "exitCode": 0,
+      "passed": 209,
+      "failed": 0,
+      "details": {
+        "agents": 52,
+        "skills": 78,
+        "commands": 78,
+        "crossReferences": 1
+      },
+      "coverage": "structural definitions and references only"
+    },
+    {
+      "command": "node --test tests/modules/test-install-harness.mjs",
+      "workingDirectory": "pinned upstream source checkout",
+      "exitCode": 0,
+      "passed": 16,
+      "failed": 0,
+      "skipped": 0,
+      "coverage": "disposable module-installer fixtures for five harnesses; no live AI provider or engine"
+    },
+    {
+      "command": "git status --short",
+      "workingDirectory": "pinned upstream source checkout",
+      "exitCode": 0,
+      "output": "",
+      "coverage": "source checkout remained clean"
+    }
+  ],
+  "environment": {
+    "evidenceOwner": "parent moderator software probes",
+    "verifiedOrInstalled": [
+      "Blender 4.3.2 system",
+      "Blender 4.5.17 LTS verified official binary",
+      "Godot 4.7.2",
+      "GIMP 3.0.4",
+      "Inkscape",
+      "FFmpeg",
+      "GDAL 3.10.3",
+      "Node and Python"
+    ],
+    "notObservedInstalled": [
+      "Unreal Engine",
+      "Unity",
+      "Docker",
+      "VS Code binary",
+      "Aseprite",
+      "Krita",
+      "PDAL",
+      "Open3D"
+    ],
+    "plannedByOtherOwner": "glTF Transform 4.5.1 package installation; not claimed complete by this report"
+  },
+  "roundTwoRequests": [
+    "Inspect actual resource pack and hash receipt after implementation",
+    "Test failure modes and no-overwrite behavior of selected-resource tool",
+    "Validate role mapping retains native authorization boundaries",
+    "Run actual Blender/Godot asset workflow checks separately from structural framework tests"
+  ],
+  "limits": [
+    "No new employee or permission records created",
+    "No upstream package lifecycle or installer executed in the host project",
+    "No external provider call or commercial software download",
+    "No complete codebase security audit claimed",
+    "This report is not the finished integration; implementation follows moderator decision"
+  ]
+}

@@ -1,0 +1,1031 @@
+[
+  {
+    "source": "p-charge",
+    "target": "p-electric-field",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-electric-field",
+    "target": "p-coulomb",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-coulomb",
+    "target": "p-superposition",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-superposition",
+    "target": "p-potential",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-potential",
+    "target": "p-poisson",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-poisson",
+    "target": "p-greens",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-charge",
+    "target": "p-gauss",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-gauss",
+    "target": "p-poisson",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-poisson",
+    "target": "p-laplace",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-laplace",
+    "target": "p-dirichlet",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-dirichlet",
+    "target": "p-finite-element",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-potential",
+    "target": "p-conductors",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-conductors",
+    "target": "p-images",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-potential",
+    "target": "p-multipoles",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-potential",
+    "target": "p-electric-energy",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-electric-energy",
+    "target": "p-capacitance",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-polarization",
+    "target": "p-displacement",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-displacement",
+    "target": "p-dielectric-interface",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-dielectric-interface",
+    "target": "p-anisotropic-dielectric",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-poisson",
+    "target": "p-debye",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-debye",
+    "target": "p-poisson-boltzmann",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-poisson-boltzmann",
+    "target": "p-continuum-biomolecular",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-poisson",
+    "target": "p-finite-difference",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-greens",
+    "target": "p-boundary-element",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-poisson",
+    "target": "p-neumann",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-coulomb",
+    "target": "p-ewald",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-ewald",
+    "target": "p-latent-electrostatics",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-electric-energy",
+    "target": "p-charge-equilibration",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-charge-equilibration",
+    "target": "p-electrochemical-interfaces",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-multipoles",
+    "target": "p-fmm",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-spin",
+    "target": "p-berry-phase",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-exchange",
+    "target": "p-vortex-unbinding",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-current",
+    "target": "p-biot-savart",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-biot-savart",
+    "target": "p-vector-potential",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-vector-potential",
+    "target": "p-gauge",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-gauge",
+    "target": "p-nonabelian",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-nonabelian",
+    "target": "p-wilson-loop",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-wilson-loop",
+    "target": "p-ym-existence",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-current",
+    "target": "p-ampere",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-ampere",
+    "target": "p-maxwell",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-maxwell",
+    "target": "p-poynting",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-lorentz",
+    "target": "p-magnetic-dipole",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-magnetic-dipole",
+    "target": "p-magnetization",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-magnetization",
+    "target": "p-susceptibility",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-magnetic-flux",
+    "target": "p-faraday",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-faraday",
+    "target": "p-inductance",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-inductance",
+    "target": "p-maxwell",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-spin",
+    "target": "p-larmor",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-larmor",
+    "target": "p-llg",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-spin",
+    "target": "p-paramagnetism",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-paramagnetism",
+    "target": "p-exchange",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-exchange",
+    "target": "p-ising",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-ising",
+    "target": "p-ferro",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-exchange",
+    "target": "p-heisenberg",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-heisenberg",
+    "target": "p-magnons",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-susceptibility",
+    "target": "p-diamagnetism",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-diamagnetism",
+    "target": "p-superconductivity",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-exchange",
+    "target": "p-antiferro",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-antiferro",
+    "target": "p-altermagnetism",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-altermagnetism",
+    "target": "p-altermagnetic-memory",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-lorentz",
+    "target": "p-plasma-gyro",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-plasma-gyro",
+    "target": "p-mhd",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-mhd",
+    "target": "p-alfven",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-mhd",
+    "target": "p-reconnection",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-llg",
+    "target": "p-skyrmion",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-skyrmion",
+    "target": "p-spintronics",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-newton-gravity",
+    "target": "p-grav-potential",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-grav-potential",
+    "target": "p-orbits",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-orbits",
+    "target": "p-action",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-action",
+    "target": "p-geodesic",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-tidal",
+    "target": "p-equivalence",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-equivalence",
+    "target": "p-metric",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-metric",
+    "target": "p-connection",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-connection",
+    "target": "p-curvature",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-curvature",
+    "target": "p-einstein-eq",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-stress-energy",
+    "target": "p-einstein-eq",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-einstein-eq",
+    "target": "p-schwarzschild",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-schwarzschild",
+    "target": "p-horizons",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-horizons",
+    "target": "p-bh-thermodynamics",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-schwarzschild",
+    "target": "p-kerr",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-metric",
+    "target": "p-redshift",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-redshift",
+    "target": "p-nuclear-clock",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-geodesic",
+    "target": "p-lensing",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-einstein-eq",
+    "target": "p-gravitational-waves",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-gravitational-waves",
+    "target": "p-quadrupole",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-quadrupole",
+    "target": "p-gw-tests",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-einstein-eq",
+    "target": "p-numerical-relativity",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-numerical-relativity",
+    "target": "p-gw-tests",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-einstein-eq",
+    "target": "p-flrw",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-flrw",
+    "target": "p-friedmann",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-friedmann",
+    "target": "p-structure-formation",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-structure-formation",
+    "target": "p-bao-ap",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-bao-ap",
+    "target": "p-dark-energy",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-structure-formation",
+    "target": "p-dark-matter",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-einstein-eq",
+    "target": "p-gravity-eft",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-gravity-eft",
+    "target": "p-quantum-gravity",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-bh-thermodynamics",
+    "target": "p-holography",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-holography",
+    "target": "p-hawking-page",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-holography",
+    "target": "p-modular-bootstrap",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-log-potential",
+    "target": "p-modular-bootstrap",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-quantum-frequency",
+    "target": "p-gravity-entanglement",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-gravity-entanglement",
+    "target": "p-quantum-gravity",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-frequency",
+    "target": "p-harmonic-oscillator",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-harmonic-oscillator",
+    "target": "p-damping",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-damping",
+    "target": "p-forced-response",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-forced-response",
+    "target": "p-power-budget",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-harmonic-oscillator",
+    "target": "p-coupled-modes",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-coupled-modes",
+    "target": "p-wave-equation",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-wave-equation",
+    "target": "p-helmholtz",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-helmholtz",
+    "target": "p-membranes",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-membranes",
+    "target": "p-cymatics",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-membranes",
+    "target": "p-plates",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-fourier-series",
+    "target": "p-fourier-transform",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-fourier-transform",
+    "target": "p-spectral-estimation",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-harmonic-oscillator",
+    "target": "p-laplace-transform",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-laplace-transform",
+    "target": "p-convolution",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-sampling",
+    "target": "p-spectral-estimation",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-spectral-estimation",
+    "target": "p-allan",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-spectral-estimation",
+    "target": "p-wavelet",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-wave-equation",
+    "target": "p-dispersion",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-dispersion",
+    "target": "p-interference",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-wave-equation",
+    "target": "p-acoustic-impedance",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-acoustic-impedance",
+    "target": "p-metamaterials",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-harmonic-oscillator",
+    "target": "p-nonlinear-oscillations",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-nonlinear-oscillations",
+    "target": "p-solitons",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-coupled-modes",
+    "target": "p-wave-crystals",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-wave-crystals",
+    "target": "p-topological-waves",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-quantum-frequency",
+    "target": "p-phonons",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-phonons",
+    "target": "p-phonon-logic",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-allan",
+    "target": "p-nuclear-clock",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-metamaterials",
+    "target": "p-nonhermitian",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-nonhermitian",
+    "target": "p-exceptional-points",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-exceptional-points",
+    "target": "p-topological-waves",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-nonhermitian",
+    "target": "p-coherent-absorption",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-coupled-modes",
+    "target": "p-graph-modes",
+    "type": "prerequisite_of",
+    "label": "prerequisite of",
+    "source_ids": []
+  },
+  {
+    "source": "p-poisson",
+    "target": "p-grav-potential",
+    "type": "analogy",
+    "label": "same elliptic operator, different physical source/sign",
+    "source_ids": []
+  },
+  {
+    "source": "p-poisson",
+    "target": "p-graph-modes",
+    "type": "analogy",
+    "label": "continuum/discrete Laplacian analogy",
+    "source_ids": []
+  },
+  {
+    "source": "p-electric-energy",
+    "target": "p-graph-modes",
+    "type": "analogy",
+    "label": "Dirichlet quadratic-form analogy",
+    "source_ids": []
+  },
+  {
+    "source": "p-ising",
+    "target": "p-graph-modes",
+    "type": "analogy",
+    "label": "network coupling analogy, no brain-equivalence claim",
+    "source_ids": []
+  },
+  {
+    "source": "p-faraday",
+    "target": "p-forced-response",
+    "type": "related",
+    "label": "inductive drive couples energy into a response",
+    "source_ids": []
+  },
+  {
+    "source": "p-larmor",
+    "target": "p-frequency",
+    "type": "related",
+    "label": "gyromagnetic conversion sets physical scale",
+    "source_ids": []
+  },
+  {
+    "source": "p-wilson-loop",
+    "target": "p-gauge",
+    "type": "related",
+    "label": "loop invariant under endpoint gauge cancellation",
+    "source_ids": []
+  },
+  {
+    "source": "p-ym-existence",
+    "target": "p-ym-mass-gap",
+    "type": "related",
+    "label": "existence does not establish positive spectral gap",
+    "source_ids": []
+  },
+  {
+    "source": "p-hawking-page",
+    "target": "p-ym-existence",
+    "type": "related",
+    "label": "supersymmetric thermal theory differs from pure 4D YM",
+    "source_ids": []
+  },
+  {
+    "source": "p-redshift",
+    "target": "p-frequency",
+    "type": "related",
+    "label": "observer-dependent frequency comparison",
+    "source_ids": []
+  },
+  {
+    "source": "p-latent-electrostatics",
+    "target": "p-graph-modes",
+    "type": "analogy",
+    "label": "global physical tails differ from local message passing",
+    "source_ids": []
+  },
+  {
+    "source": "p-log-potential",
+    "target": "p-poisson",
+    "type": "related",
+    "label": "distributional 2D source correspondence",
+    "source_ids": []
+  }
+]

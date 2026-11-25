@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "catalogVersion": "2026-11-24.1",
+  "catalogVersion": "2026-11-25-research-memory-design",
   "source": {
     "path": "site-source/src/data/resources.ts",
     "fileSha256": "e1c4307f56b2374dfd23826bce554f1b8faa27e6482cfaf8563d071ee48a86a1",
@@ -35,6 +35,27 @@
       "compiledAt": "2026-11-20",
       "coverage": "Existing model landscape reports, with task-specific and dated evidence.",
       "evidenceNote": "A dated synthesis, not a standing ranking. Vendor and author claims remain distinct from independent measurements and registry metadata."
+    },
+    {
+      "name": "Game art and production research",
+      "path": "projects/game-development-research/README.md",
+      "compiledAt": "2026-11-25",
+      "coverage": "29 audited creator, art-reference, asset, exporter and engine-documentation records; staged production plan and original practice routine.",
+      "evidenceNote": "Primary sources and corrections retained; no claim that lessons, software installations or future asset-production tasks were completed."
+    },
+    {
+      "name": "Physics, mathematics and graph-memory atlas",
+      "path": "projects/research-memory-atlas/atlas.json",
+      "compiledAt": "2026-11-25",
+      "coverage": "367 concepts, 177 formula cards, 24 selected AI claims and a pinned catalogue of 730 manuscripts in 375 families.",
+      "evidenceNote": "Frontier coverage is selected; catalogue titles are not individually reviewed proofs. Native and hosted retrieval use the public graph only. Source reading depth and mathematical assumptions remain attached."
+    },
+    {
+      "name": "Design team background studies",
+      "path": "projects/design-backgrounds/styles.json",
+      "compiledAt": "2026-11-25",
+      "coverage": "15 original CSS/SVG styles with selectable previews, exact CSS export, static defaults and six optional gentle-motion treatments.",
+      "evidenceNote": "All examples are illustrative approximations. DOM checks and primary-doc guidance are recorded separately from browser/device measurements; no fifteen-second or performance guarantee is claimed."
     }
   ],
   "resources": [
@@ -10464,6 +10485,1542 @@
         ],
         "capabilityHints": []
       }
+    },
+    {
+      "domain": "Game production and coding",
+      "name": "OpenCodeGameStudios — pinned project resource pack",
+      "type": "Open-source framework",
+      "level": "Advanced/reference",
+      "url": "https://github.com/striderZA/OpenCodeGameStudios/tree/85aa449a0cbc2ca44916455185c9d3b4a23a7429",
+      "purpose": "Apply scoped game design, coding, architecture, Godot, art and QA guidance through the existing game and graphics team.",
+      "prereqs": "Read selected module; current native tool authorization and a target project",
+      "access": "Public MIT source; no AI provider, engine account or MCP server included",
+      "license": "Root MIT LICENSE retained; upstream package metadata says ISC and discrepancy is recorded",
+      "caveat": "Agent definitions are resources, not running employees or permissions. Selected resources are installed project-locally; source hooks, MCP fragments and automatic activation are excluded.",
+      "verified": "2026-11-24",
+      "id": "resource-01589dfc6aebb535",
+      "kind": "repository",
+      "skillIds": [
+        "engineering-organization-architect",
+        "spatial-3d-production-engineering",
+        "game-reconstruction-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-24",
+        "readingDepth": "package-source-and-offline-tests",
+        "evidenceBasis": "Inspected pinned source, module installer and license; upstream framework validator 209/209 and disposable installer tests 16/16. Selected project pack has its own integrity checks; no provider or upstream harness was activated."
+      },
+      "provenance": {
+        "version": "85aa449a0cbc2ca44916455185c9d3b4a23a7429",
+        "sourcePath": "company/role-library/engineering.md",
+        "sourceRecordSha256": "859a8e404e23183abccccd3ba67ec5a8a614b0dd001034244554043d2397c45e"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender",
+          "Godot",
+          "OpenCodeGameStudios"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Practice Drawing This",
+      "type": "Interactive Drawing Reference",
+      "level": "Foundation/production",
+      "url": "https://practicedrawingthis.com/",
+      "purpose": "Free browser references include primitive forms, rotatable anatomy, and dynamically posable body-part models. Timed drawing offers selectable intervals and browser-local progress backup; the publisher documents lighting controls in its 3D viewer.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Free public reference tools. No account wall appeared in the retrieved model index or timed-drawing page; an optional newsletter exists. Interactive browser execution was not tested.",
+      "license": "Custom reference-use terms; individual third-party source rights also apply. Drawing studies may be published or sold; raw photographs, model files and site code may not be scraped or repackaged into a competing reference library without permission.",
+      "caveat": "The service is a reference practice resource with custom terms; no blanket open-source or CC0 grant was verified. The site promotes a 25-minute routine; the fifteen-minute routine in ART_FUNDAMENTALS.md is an original Daftar practice plan.",
+      "verified": "2026-11-25",
+      "id": "resource-3000707f97565dbf",
+      "kind": "tool",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "ef80d1b03ca4174ddb5070b32eae8c9a1a677e30856b1bec06406f62a639496c"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Grant Abbitt: game art learning",
+      "type": "Creator Courses",
+      "level": "Foundation/production",
+      "url": "https://www.gabbitt.co.uk/",
+      "purpose": "The official course index includes Realistic Low Poly Game Assets - Rocks and Detailed Game Assets, alongside beginner and paid character/animation courses. A verified low-poly character lesson is Blender Low Poly Character: PS1 Style Modeling for Beginners.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Free public tutorials; premium courses and product-specific downloads are separate. YouTube viewing follows platform requirements; download checkout and course enrollment vary.",
+      "license": "Creator and platform terms; individual downloads need their own license check. Public viewing is not permission to redistribute videos or project files.",
+      "caveat": "The retrieved official channel handle is @grabbitt. Use the verified PS1-style character lesson or the creator course index rather than a guessed title. The verified store lists individual reference/model resources; the named pack was not established. Do not invent a pack URL or reuse license.",
+      "verified": "2026-11-25",
+      "id": "resource-b22605dce6e437cd",
+      "kind": "course",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "e10ecdf0c2b9073ebcee50ec32bfd8f58c60697d413e2c00681ba55070882376"
+      },
+      "use": {
+        "mode": "study",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "CG Cookie: Modeling Video Game Assets in Blender",
+      "type": "Course",
+      "level": "Foundation/production",
+      "url": "https://www.cgcookie.com/courses/modeling-video-game-assets-in-blender/",
+      "purpose": "The course is credited to Kent Trammell; its description includes work by Kent Trammell and Jonathan Williamson. It covers scale, pivots, sculpting and low-resolution retopology.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Subscription/enrollment offering; use free alternatives for the zero-spend track. Course access requires the appropriate account/entitlement; not acquired.",
+      "license": "Course and download terms; no open redistribution license verified. Link to lessons; author new exercises and original assets.",
+      "caveat": "Its named instructor is Kent Trammell. Grant Abbitt is maintained as a separate creator resource.",
+      "verified": "2026-11-25",
+      "id": "resource-ab4e663ec11b8ffe",
+      "kind": "course",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "9a409c08f41532f732a47a46dff112c26994df41e634f839a1a78d8a474a6793"
+      },
+      "use": {
+        "mode": "study",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "CG Cookie: Building Modular Game Assets",
+      "type": "Course",
+      "level": "Foundation/production",
+      "url": "https://www.cgcookie.com/courses/building-modular-game-assets",
+      "purpose": "Kent Trammell's modular course covers a grid-aligned environment kit, shared UV space and a Unity import workflow. The separate game-ready learning path covers retopology, UVs and baking.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Paid/subscription learning; optional reference only in the current zero-spend plan. Enrollment/entitlement required; not acquired.",
+      "license": "Course and download terms; no open redistribution license verified. Use as instruction; do not rehost course media or assume downloadable files are CC0.",
+      "caveat": "The learning path advertises paid access; no purchase was made.",
+      "verified": "2026-11-25",
+      "id": "resource-98a8bc7a95c8caf1",
+      "kind": "course",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "568780f770ad0c6faa286f4dc51913d08fe6998a831be176c8c4d40e3888e009"
+      },
+      "use": {
+        "mode": "study",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Ducky 3D: motion and material studies",
+      "type": "Creator Courses",
+      "level": "Foundation/production",
+      "url": "https://www.ducky3d.com/",
+      "purpose": "The creator describes work in stylized animation for brands and live concerts, plus animation education, tools and courses. The official website links its YouTube channel.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public videos plus separate commercial courses/add-ons. Per-platform viewing/download conditions; no product acquired.",
+      "license": "Creator/platform and per-product terms; no blanket open-source grant verified. Study the workflow and create original material tests; do not assume tutorial files or shaders are redistributable.",
+      "caveat": "No primary result established that exact title. Use engine documentation for import semantics and Ducky 3D as a motion/material study source. No creator-owned GitHub distribution was established from the official links. Similar community projects inspired by the creator are not his repository.",
+      "verified": "2026-11-25",
+      "id": "resource-fda2c2a9077e8e34",
+      "kind": "course",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "e69f01bbc5e7d3a69531cb60236b8573eb5e8e2f7591d3852cff5df258a47db7"
+      },
+      "use": {
+        "mode": "study",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Polyfjord tools and procedural studies",
+      "type": "Creator Tools",
+      "level": "Foundation/production",
+      "url": "https://polyfjord.com/",
+      "purpose": "The creator tools page links web experiments, a Simple Audio Visualizer, Simple Bounce Curve, and QT-Pie. The public GitHub profile links back to polyfjord.com.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public tool index and some open repositories; other products/courses have separate terms. Public index readable without login; interactive operation not tested.",
+      "license": "Per-tool code licenses and per-product asset terms. Check each linked repository or download separately; the creator catalog is not one blanket asset license.",
+      "caveat": "The GitHub repository metadata request returned 404. This does not prove it never existed; it must not be used as a pinned dependency. No primary source established this exact attribution. For a verified rock exercise use Grant Abbitt's official rock lesson; retain Polyfjord for verified tool/procedural studies.",
+      "verified": "2026-11-25",
+      "id": "resource-4aed911761e73f8e",
+      "kind": "tool",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "cd36dad12b2436e77a7eb89cbb3237379f5d22269688241d048865ac538fb92c"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Polyfjord QT-Pie",
+      "type": "Blender Addon",
+      "level": "Foundation/production",
+      "url": "https://github.com/polyfjord/QT-Pie",
+      "purpose": "QT-Pie provides a configurable pie menu across Blender editors; its README states Blender 4.5+ and the repository displays GPL-3.0 licensing.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public source code. No account needed to read the public repository.",
+      "license": "GPL-3.0 repository code. Preserve code license/notices when distributing; inspect the exact revision before installation.",
+      "caveat": "No Daftar timing experiment has been run; measure a repeatable task before deciding whether to adopt it.",
+      "verified": "2026-11-25",
+      "id": "resource-23d3e34aab90a850",
+      "kind": "repository",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "aa0818b947fd4c97909dd01f1d0bcba4a3e6a8de768e5a0e378fecd3e51b988f"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Polyfjord Animated Pattern Generator",
+      "type": "Procedural Web Tool",
+      "level": "Foundation/production",
+      "url": "https://github.com/polyfjord/Animated-Pattern-Generator",
+      "purpose": "The README describes a web app that makes loopable patterns and exports image sequences or WebM; its repository displays GPL-3.0.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public source and hosted app. No login wall appeared in the read-only repository evidence; app execution not tested.",
+      "license": "GPL-3.0 code; output-specific license not independently established. Do not infer that the code license is a separate blanket license for all inputs or generated media.",
+      "caveat": "Reference metadata only. Verify exact version, asset terms and target-engine behavior before adopting it.",
+      "verified": "2026-11-25",
+      "id": "resource-ba31a29f19ef6e9a",
+      "kind": "repository",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "7f3a131b41535e1aee581bc284ff72a470494be8020894554ec936570c499414"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Ryan King Art: animation and rigging",
+      "type": "Creator Courses",
+      "level": "Foundation/production",
+      "url": "https://ryankingart.wordpress.com/77-2/",
+      "purpose": "The creator publishes Blender tutorials and separate digital products. His portfolio lists Animation for Beginners!, and his Patreon offers Arm and Leg IK Rigging tutorial files as a free download.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public tutorials and some free files; other products paid. Patreon may require an account for downloads; no download was attempted.",
+      "license": "Creator/product terms; free tutorial files are not a verified open-source rig license. Inspect the download's terms before redistribution; this catalog links only.",
+      "caveat": "GitHub metadata returned 404; no rig dependency was imported. Use the verified Animation for Beginners! page and the IK tutorial resource instead of that unsupported exact title.",
+      "verified": "2026-11-25",
+      "id": "resource-d6acbde70b817a86",
+      "kind": "course",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "77de63d5a9948e2cd71fb589984bbb4aebe90baa71824526565afa057edb57fb"
+      },
+      "use": {
+        "mode": "study",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "MACHIN3tools",
+      "type": "Blender Addon",
+      "level": "Foundation/production",
+      "url": "https://machin3.io/MACHIN3tools/docs/",
+      "purpose": "The creator sells Prime and DeusEx variants of a Blender tool/pie-menu collection. The creator's marketplace listing identifies the code license as GPL.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Paid current creator distribution; no purchase made by this source-review task. Store acquisition requirements apply.",
+      "license": "GPL per creator marketplace; exact downloaded version/license must be checked if later acquired. GPL source rights and current distribution price are separate. No authoritative public GitHub repository was verified.",
+      "caveat": "GitHub metadata returned 404. Use creator documentation/store URLs; do not silently replace it with an unverified mirror. The current creator offering is commercial; old free/pay-what-you-want descriptions are stale. No primary evidence or controlled benchmark substantiates those figures. Omit them.",
+      "verified": "2026-11-25",
+      "id": "resource-d05f6aa104c648c9",
+      "kind": "tool",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "e11ecbc6a92f3c63635d28565556a66ce245dbacbf36353a29f01e592c37bca7"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Poly Haven",
+      "type": "Asset Library",
+      "level": "Foundation/production",
+      "url": "https://polyhaven.com/",
+      "purpose": "The publisher releases its HDRIs, textures and models under CC0, permitting commercial use and redistribution without required attribution.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Free public assets; optional paid support/add-on offerings are separate. Public catalog/license readable without login; no download attempted.",
+      "license": "CC0 assets. CC0 does not extend to all website text, logos or example renders; website scraping and public API use have separate terms.",
+      "caveat": "The license page distinguishes downloadable CC0 assets from website content and access/API terms.",
+      "verified": "2026-11-25",
+      "id": "resource-8089d1901b4fd5fa",
+      "kind": "collection",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "29eeb0fa3c208e76bf22958eb413c83059813f263ddbdb9aadd4bb29e4670a3e"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Kenney game assets",
+      "type": "Asset Library",
+      "level": "Foundation/production",
+      "url": "https://kenney.nl/assets",
+      "purpose": "Kenney states that the game assets on its asset pages are CC0 and usable commercially without required attribution. The publisher currently advertises more than 60,000 assets in its paid all-in-one convenience bundle of freely available content; this count was not independently enumerated.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Individual website asset packs free; all-in-one bundle is paid. Use individual packs for the zero-spend track. Public catalog readable without login; individual download not attempted.",
+      "license": "CC0 for assets on the asset pages. Retain the included pack license in a provenance record; the Kenney logo is reserved for official projects. Other software/products have their own terms.",
+      "caveat": "The current bundle description reports 60,000+ and sells the combined download; individual public packs remain free. Avoid treating the marketing count as an independent inventory.",
+      "verified": "2026-11-25",
+      "id": "resource-8c3e98efb9278de8",
+      "kind": "collection",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "c5a87bb0801cf79c6909edfb7caadeb62bc143519592ea4559ad0c347cd789cd"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Blender Manual: asset fundamentals",
+      "type": "Official Documentation",
+      "level": "Foundation/production",
+      "url": "https://docs.blender.org/manual/en/latest/addons/scene_gltf2.html",
+      "purpose": "The glTF exporter documents supported animation channels and export modes; its restrictions require a real engine import check. The baking manual covers UV/image targets and normal-map baking. Mirror configuration depends on origin/axis settings. Skin deformation can be adjusted with vertex-group weights, especially around joints.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public documentation. No account required for public manual; direct fetches failed, indexed primary excerpts were readable.",
+      "license": "Documentation reference; no manual text or implementation vendored. Follow the actual software/add-on license if code is later copied.",
+      "caveat": "Export support varies by data type and exporter version; bake or rebuild unsupported content, then inspect the imported result.",
+      "verified": "2026-11-25",
+      "id": "resource-b1c8caa232820ff0",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/art-and-assets.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/art-and-assets.json",
+        "sourceRecordSha256": "33e095a58adf56cfdb7fe246ac7c5dae7188bc5303f61a414c60ebfa5c8fe46e"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Robin Squares rendering workflow and compositing sheet",
+      "type": "Creator Tutorial And Reference",
+      "level": "Foundation/production",
+      "url": "https://robinsquares.gumroad.com/l/backtobeauty",
+      "purpose": "The creator's sheet page links this workflow video. The sheet page describes recombining passes and lists a zero-or-more price.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public creator page and linked video; creator checkout may be needed for the sheet. No download acquired.",
+      "license": "No redistribution license established for the video or sheet; retain links and attribution.",
+      "caveat": "HOW BIG BOYS RENDER is retained as an unverified submitted alias, not asserted as the video's exact title. No project GitHub repository was established.",
+      "verified": "2026-11-25",
+      "id": "resource-56a9f49159da443c",
+      "kind": "course",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "1929c2a4d7f734517f92fabef3182c404ed269875332a66189f71b873794b088"
+      },
+      "use": {
+        "mode": "study",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Robin Squares render-log CSV utility",
+      "type": "Creator Script Reference",
+      "level": "Foundation/production",
+      "url": "https://robinsquares.gumroad.com/l/csvlog",
+      "purpose": "The page describes a Python script for converting a Blender log to CSV and a Tkinter file-selection interface.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Listed at zero-or-more price; download not acquired.",
+      "license": "No reusable code license established; inspect the delivered script and terms before incorporating it.",
+      "caveat": "This is not evidence of a headless Daftar integration.",
+      "verified": "2026-11-25",
+      "id": "resource-8305230d2bec5bd8",
+      "kind": "course",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "0d0c88ff74c6d9892b35a8e82b026db1f31f9787685bc361d99259e82c62a3cd"
+      },
+      "use": {
+        "mode": "study",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "stache: Celsius laptop production breakdown",
+      "type": "Creator Production Case Study",
+      "level": "Foundation/production",
+      "url": "https://youtu.be/tvA_sXkdvEY",
+      "purpose": "The creator's video description includes chapters on memory limitations and optimization. A film post is marked free; the inspected Celsius source-files breakdown is locked.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public video; mixed free and locked Patreon posts. No purchase, subscription or download performed.",
+      "license": "No general asset redistribution grant established. Creator video, film and project-file terms are distinct.",
+      "caveat": "A free film does not establish that every project source file is free. The production story is not a comparative hardware benchmark.",
+      "verified": "2026-11-25",
+      "id": "resource-13290e8710cc016b",
+      "kind": "course",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "0ab50368a066d008a7daaa2a065dd8f566b24fb8d5ad0193a555559dcc97aca4"
+      },
+      "use": {
+        "mode": "study",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "InLightVFX behind-glass compositing",
+      "type": "Creator Vfx Tutorial",
+      "level": "Foundation/production",
+      "url": "https://youtu.be/qdqV4oortP0",
+      "purpose": "The creator's tutorial concerns a CG object behind glass in live-action footage. Its description refers to an infographic and project file; the creator site separately offers a commercial VFX course.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public tutorial and course landing page; unrestricted project-file access was not established. No course acquired.",
+      "license": "No open redistribution license established for the footage, project, course or tutorial.",
+      "caveat": "The submitted REAL-to-CGI wording is not verified as an exact tutorial title. Public viewing is not proof that project files are free or open source.",
+      "verified": "2026-11-25",
+      "id": "resource-b25c2d1ad2298a9c",
+      "kind": "course",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "2a17147d7ca3c5e43cc26d74b4f244ad5157ebfa2c66b03bbed5f21c23554a5a"
+      },
+      "use": {
+        "mode": "study",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "MB-Lab legacy character generator",
+      "type": "Legacy Open Source Tool",
+      "level": "Foundation/production",
+      "url": "https://github.com/animate1978/MB-Lab",
+      "purpose": "The community continuation of ManuelBastioniLAB is archived as of July 21, 2024. The README identifies final version 1.8.1, a Blender 4.0 target, and a move toward CharMorph.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public archived repository; not installed by this research.",
+      "license": "Repository contains AGPL-3.0 text and legacy per-file notices. Inspect exact code and model-data terms for the selected revision; no blanket output-asset license inferred.",
+      "caveat": "ManuelBastioniLAB and MB-Lab are related but not interchangeable current project identities. Archived Blender 4.0+ wording is not current-release compatibility evidence.",
+      "verified": "2026-11-25",
+      "id": "resource-b35291ccc1b645b9",
+      "kind": "repository",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "6e816002ff32a400d3281a20c7116e8ed281d2aa6d8ca507f1fd4712615af5ea"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "CharMorph character-tool candidate",
+      "type": "Open Source Tool Candidate",
+      "level": "Foundation/production",
+      "url": "https://github.com/Upliner/CharMorph",
+      "purpose": "MB-Lab names CharMorph as its development continuation. CharMorph's license file states GPL version 3 or later for Python code and separately discusses data.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public repository; no installation or engine import executed.",
+      "license": "GPL-3.0-or-later for Python code according to license.txt; inspect data and asset terms separately.",
+      "caveat": "Do not equate a public successor repository with validated support for this project's pinned Blender version.",
+      "verified": "2026-11-25",
+      "id": "resource-fb8cfddfc28f89e8",
+      "kind": "repository",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "b1290274aec6ba924898dff0bcade013f192b02eadf899a7259ffba14dccf673"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Blender add-ons historical mirror",
+      "type": "Archived Source Reference",
+      "level": "Foundation/production",
+      "url": "https://github.com/blender/blender-addons",
+      "purpose": "The official read-only mirror was archived on May 9, 2025. The visible tree includes historical FBX and glTF add-on directories.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public source mirror; no bulk installation performed.",
+      "license": "Check each component's license; the repository name is not a uniform asset-use grant.",
+      "caveat": "This mirror is not the current universal installer for Blender exporters. Prefer exporter code matching the actual Blender release.",
+      "verified": "2026-11-25",
+      "id": "resource-2d623aad8e9b36af",
+      "kind": "repository",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "518edb977a2da8d27d455dc0726d6e3ac0dae169c23b1b14215e20972bc647c6"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Blender glTF exporter documentation and source",
+      "type": "Exporter And Official Manual",
+      "level": "Foundation/production",
+      "url": "https://github.com/KhronosGroup/glTF-Blender-IO",
+      "purpose": "Khronos maintains the Blender glTF importer/exporter project. The Blender 5.2 LTS manual documents default activation and supported material, geometry and animation representations.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public source and manual; no exporter replacement installed.",
+      "license": "Apache-2.0 as identified by the exporter repository. Exported third-party assets retain their own rights.",
+      "caveat": "A Blender export option does not prove that a target engine has its corresponding importer installed. glTF does not preserve arbitrary Blender node graphs or all animation/property behavior.",
+      "verified": "2026-11-25",
+      "id": "resource-5dd6dbd88e10332f",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "8fbd4e7144febf8f7c46e7208650dc5594593bf748617ee96b7aacfc58495f20"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Blender import/export format overview",
+      "type": "Official Manual",
+      "level": "Foundation/production",
+      "url": "https://docs.blender.org/manual/en/5.2/files/import_export/index.html",
+      "purpose": "The manual distinguishes formats enabled by default from other bundled add-ons and lists FBX among available formats.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public versioned manual.",
+      "license": "Documentation reference; no source or asset redistribution implied.",
+      "caveat": "Default activation, bundling, extension installation and engine import are separate states.",
+      "verified": "2026-11-25",
+      "id": "resource-6ede72911aece3c9",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "05076ddcd31ac110974c2c791ccbdf343da2d32a3eab9f3cbfb50df53829a402"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Unity 6.6 model-format reference",
+      "type": "Official Engine Documentation",
+      "level": "Foundation/production",
+      "url": "https://docs.unity.com/en-us/engine/6000.6/manual/assets-and-media/asset-types/models/creating-dccassets/3d-formats",
+      "purpose": "The page identifies FBX as the normal internal model import chain and recommends it for production model files. Native authoring-file import can depend on installed authoring software.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public documentation. No Unity editor installed by this research.",
+      "license": "Unity documentation terms; engine licensing is separate.",
+      "caveat": "A universal recommendation to replace FBX with glTF for Unity is contradicted by this official model workflow.",
+      "verified": "2026-11-25",
+      "id": "resource-5a1fd7ffb3e1dd1d",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "43911d0802bdab9df8fae19462669be73f897266a14b0cfaf96c39fb33dfb300"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Unity glTFast package",
+      "type": "Official Engine Package",
+      "level": "Foundation/production",
+      "url": "https://docs.unity3d.com/Packages/com.unity.cloud.gltfast@6.14/manual/index.html",
+      "purpose": "The reviewed documentation identifies version 6.14.1. The package provides glTF import/export in the editor or at runtime and is installed by name through Package Manager.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public package documentation; package installation was not performed.",
+      "license": "Check the pinned package license and dependencies before redistribution; no asset rights inferred.",
+      "caveat": "com.unity.cloud.gltfast is a separately installed package, not automatic built-in glTF support in every Unity project.",
+      "verified": "2026-11-25",
+      "id": "resource-d4127d96e03244a6",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "2e9889c1dd93c2e8b22173c87ef3ed384b15535c961ab1815af1d38b22dbc820"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Unreal FBX content pipeline",
+      "type": "Official Engine Documentation",
+      "level": "Foundation/production",
+      "url": "https://dev.epicgames.com/documentation/unreal-engine/fbx-content-pipeline",
+      "purpose": "Epic documents FBX support for meshes, animation, morph targets and LODs. The page identifies FBX 2020.2 for the import pipeline.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public documentation; no Unreal import performed.",
+      "license": "Epic documentation terms; Unreal engine and third-party assets have separate terms.",
+      "caveat": "This does not exclude Unreal's glTF import route or prove every Blender FBX export will preserve all features.",
+      "verified": "2026-11-25",
+      "id": "resource-7f87ef404a252bd0",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "13c51544e15eed924b90b59f61660538ec653faf1af5d5039ecff31c27dccebe"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Unreal Interchange import framework",
+      "type": "Official Engine Documentation",
+      "level": "Foundation/production",
+      "url": "https://dev.epicgames.com/documentation/en-us/unreal-engine/importing-assets-using-interchange-in-unreal-engine",
+      "purpose": "The guide describes glTF support and default-enabled Interchange plugins. The reviewed page labels its Interchange FBX path experimental.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public documentation; project plugin settings not inspected.",
+      "license": "Epic documentation terms; plugin availability is not a third-party asset license.",
+      "caveat": "Unreal is not FBX-only. The Interchange FBX status must not be generalized to all of Unreal's FBX support.",
+      "verified": "2026-11-25",
+      "id": "resource-a2fc74dfc6641801",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "1706316ac50ac561521291cae29a2d5c2a3ceeec9899a2f8db693ec164d69e1a"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Godot stable scene-format reference",
+      "type": "Official Engine Documentation",
+      "level": "Foundation/production",
+      "url": "https://docs.godotengine.org/en/stable/tutorials/assets_pipeline/importing_3d_scenes/available_formats.html",
+      "purpose": "Godot recommends glTF 2.0 and supports FBX with ufbx. Direct blend import invokes Blender's glTF exporter and requires Blender to be installed.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public stable documentation; no new importer installation in this research.",
+      "license": "Documentation reference; Godot and input assets retain their own licenses.",
+      "caveat": "Old instructions requiring FBX2glTF are not the default current ufbx workflow. Direct blend support is not independent of the authoring application.",
+      "verified": "2026-11-25",
+      "id": "resource-b7fbb1c1453a9f53",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "698bfeccf50afead23c5a7d94591d362fa157da3dffe189c52e6d12db892f37f"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Blender render-pass and sampling references",
+      "type": "Official Rendering Documentation",
+      "level": "Foundation/production",
+      "url": "https://docs.blender.org/manual/en/5.2/render/layers/passes.html",
+      "purpose": "Pass documentation describes separate render information and denoising data. Sampling documentation describes adaptive sampling and denoising controls.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public manuals; examples still require testing in the pinned renderer.",
+      "license": "Documentation reference; no tutorial or asset content mirrored.",
+      "caveat": "Enabling more passes or denoising is not an automatic quality or performance improvement.",
+      "verified": "2026-11-25",
+      "id": "resource-46d9263be32c8851",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "879cb4970ca64d17ff7d3172301b4a052ec426b15a508734348427820aab4478"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Game art and production research",
+      "name": "Blender color-space and display-transform references",
+      "type": "Official Color Management Documentation",
+      "level": "Foundation/production",
+      "url": "https://docs.blender.org/manual/en/5.1/render/color_management/color_spaces.html",
+      "purpose": "The manuals distinguish color spaces from viewing/output transforms and describe intermediate OpenEXR handling.",
+      "prereqs": "Select the target asset, engine/version and relevant lesson; read the dated source audit.",
+      "access": "Public versioned manuals. The second page is the Indonesian-locale manual with the relevant technical text available in English.",
+      "license": "Documentation reference; no OCIO configuration or source assets copied.",
+      "caveat": "An ACES or AgX label does not prove that a multi-application color round trip was configured correctly.",
+      "verified": "2026-11-25",
+      "id": "resource-850eeee45bdfad80",
+      "kind": "documentation",
+      "skillIds": [
+        "game-reconstruction-engineering",
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Primary creator, repository or official documentation sections reviewed; exact claims and source URLs are in projects/game-development-research/resources/pipeline-and-rendering.json. No tutorial completion, software installation, asset acquisition or new engine import is claimed."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/game-development-research/resources/pipeline-and-rendering.json",
+        "sourceRecordSha256": "0d0b0b0a95046cd82857fb5eb0a4fd9bddf6435ae127db293feb198fdbd3a04c"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "Blender"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "Obsidian Help: Graph view",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://obsidian.md/help/plugins/graph",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-af2495a5610cf01f",
+      "kind": "documentation",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "official-documentation"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "15f98cb8dd3c1b8783c42d5ac1c925d80b370246397e314dc29b287aa7efe320"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "From RAG to Memory: Non-Parametric Continual Learning for Large Language Models",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://arxiv.org/html/2502.14802v2",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-fcd4f4d3620c3cb5",
+      "kind": "paper",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "selected-methods-and-limitations"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "0624ea7ebfecc952963f39dc1fcdcbc4a834abf75ea4a17c1b679342632df9b3"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "The evolution of GraphRAG: Advancing systems and evaluation together",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://www.microsoft.com/en-us/research/story/the-evolution-of-graphrag-advancing-systems-and-evaluation-together/",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-e52109ecb4f96768",
+      "kind": "documentation",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "official-research-announcement-selected-sections"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "e50ca9655b0c3792912e60f9554181e44989c23703464313f54eaaa79ddde6ab"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "Zep: A Temporal Knowledge Graph Architecture for Agent Memory",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://arxiv.org/html/2501.13956v1",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-c6dcc9f1916ce63b",
+      "kind": "paper",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "selected-methods"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "cdd124f872cd22d335a468ddc554b6d93ac001cde60d2235fcbd795212aa67c6"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "LongMemEval: Benchmarking Chat Assistants on Long-Term Interactive Memory",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://arxiv.org/abs/2410.10813",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-7d8bb2e98eb1cf17",
+      "kind": "paper",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "abstract"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "825b0e7778cd4c567f654a6495d5a965beb4988e06cb91fab9ec149a045cfd88"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "Reciprocal Rank Fusion outperforms Condorcet and individual Rank Learning Methods",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://cormack.uwaterloo.ca/cormack/cormacksigir09-rrf.pdf",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-9fdb2d61306deb60",
+      "kind": "paper",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "original-paper-selected-sections"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "38502529720f71c7fb72181c070ae5973b33da97e05d54b6c0414815329251a3"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Graph memory and research",
+      "name": "Daftar graph-memory implementation and executed tests",
+      "type": "Primary reference",
+      "level": "Foundations through research",
+      "url": "https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/projects/research-memory-atlas",
+      "purpose": "Study source-linked retrieval, graph memory, provenance, evaluation and cache correctness.",
+      "prereqs": "Basic probability, linear algebra and algorithms",
+      "access": "Public reference",
+      "license": "Publisher or repository terms; see linked source",
+      "caveat": "Selected reading supports the stated atlas summary; no paper-wide proof replay or independent performance reproduction is claimed.",
+      "verified": "2026-11-25",
+      "id": "resource-1d33cfef85e3cd74",
+      "kind": "repository",
+      "skillIds": [
+        "graph-memory-research"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "locally-executed-source"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/research-memory-atlas/data/memory/sources.json",
+        "sourceRecordSha256": "0e584a1599aff99fc53ea65330f5121fc077917e7cfb7cc86b9c8fb52e93580b"
+      },
+      "use": {
+        "mode": "study",
+        "software": [],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "Using CSS gradients",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Images/Using_gradients",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-14292ec1c02d3b47",
+      "kind": "documentation",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "gradient types, layered/repeating gradients sections read"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "864a53ea5a60d48b179cd727bd1da1ae4f2af96dd0e8da653e6c781b2e5e9e51"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "prefers-reduced-motion",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/At-rules/@media/prefers-reduced-motion",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-a893493200c86881",
+      "kind": "documentation",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "syntax and accessibility example read"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "cd17ee40c85150bbb5c0200ae9a49e5eef3775678ae04da55fcfd3d93b5ac9ae"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "SVG feTurbulence",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/SVG/Reference/Element/feTurbulence",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-24a97863bb048ca3",
+      "kind": "documentation",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "attributes and example read"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "9c2e04d43f0db94b058882e065f66ba36e6046f97052186011d96e3469848bbb"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "Three.js responsive design",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://threejs.org/manual/pages/responsive.html",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-94d2a99915b72887",
+      "kind": "documentation",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "responsive sizing and bounded drawing-buffer section read"
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "67ee21ae6d85845e1c942c9fc7ff59d7e2a030fae22daf6c654cc32711a2abf9"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
+    },
+    {
+      "domain": "Design systems",
+      "name": "Daftar Surface Studies: fifteen design backgrounds",
+      "type": "Design implementation reference",
+      "level": "Practical",
+      "url": "https://occult-kranti.github.io/engineering-intelligence-atlas/design-backgrounds/",
+      "purpose": "Select and implement one of fifteen background treatments with readable content, static defaults, reduced-motion support and explicit rendering limits.",
+      "prereqs": "CSS, HTML and accessible interface fundamentals",
+      "access": "Public reference",
+      "license": "Original examples in this repository; external documentation uses its own published terms.",
+      "caveat": "An illustrative texture is not a physical simulation or a measured performance guarantee.",
+      "verified": "2026-11-25",
+      "id": "resource-7d01abc5302ca8ed",
+      "kind": "collection",
+      "skillIds": [
+        "spatial-3d-production-engineering"
+      ],
+      "review": {
+        "status": "source-excerpt-reviewed",
+        "verifiedAt": "2026-11-25",
+        "readingDepth": "selected-sections",
+        "evidenceBasis": "Original local CSS/SVG source and 48 DOM/contrast/parity checks inspected; real browser verification pending CI."
+      },
+      "provenance": {
+        "version": null,
+        "sourcePath": "projects/design-backgrounds/sources.json",
+        "sourceRecordSha256": "012fc96807caeb283f26f1a6cdd976846315ee8aab4b8c2d106c1fdd869e4d6e"
+      },
+      "use": {
+        "mode": "apply-guidance",
+        "software": [
+          "CSS",
+          "SVG"
+        ],
+        "capabilityHints": []
+      }
     }
   ],
   "routes": [
@@ -10542,9 +12099,12 @@
         "resource-d5366499f6a87407",
         "resource-9c3bd1dbaf623ca4",
         "resource-0c65873b24c32d5f",
-        "resource-7383537c093c2585"
+        "resource-7383537c093c2585",
+        "resource-01589dfc6aebb535"
       ],
-      "localReferences": []
+      "localReferences": [
+        "company/role-library/engineering.md"
+      ]
     },
     {
       "skill": "engineering-job-market-intelligence",
@@ -10583,7 +12143,8 @@
       "skill": "spatial-3d-production-engineering",
       "roleKeys": [
         "design-architecture",
-        "frontend-extensions"
+        "frontend-extensions",
+        "figma-design-systems"
       ],
       "purpose": "Build and inspect an accessible, performant 3D browser or asset workflow.",
       "resourceIds": [
@@ -10593,10 +12154,30 @@
         "resource-5fe95d3f79d43af1",
         "resource-ae042f99045046d5",
         "resource-44fd81b356acff6e",
-        "resource-7383537c093c2585"
+        "resource-7383537c093c2585",
+        "resource-01589dfc6aebb535",
+        "resource-3000707f97565dbf",
+        "resource-b22605dce6e437cd",
+        "resource-8089d1901b4fd5fa",
+        "resource-8c3e98efb9278de8",
+        "resource-4aed911761e73f8e",
+        "resource-d6acbde70b817a86",
+        "resource-5a1fd7ffb3e1dd1d",
+        "resource-d4127d96e03244a6",
+        "resource-7f87ef404a252bd0",
+        "resource-b7fbb1c1453a9f53",
+        "resource-56a9f49159da443c",
+        "resource-14292ec1c02d3b47",
+        "resource-a893493200c86881",
+        "resource-24a97863bb048ca3",
+        "resource-94d2a99915b72887",
+        "resource-7d01abc5302ca8ed"
       ],
       "localReferences": [
-        "reports/sota_3d_embodied_security_models.md"
+        "reports/sota_3d_embodied_security_models.md",
+        "company/role-library/engineering.md",
+        "projects/game-development-research/README.md",
+        "projects/design-backgrounds/README.md"
       ]
     },
     {
@@ -10613,11 +12194,25 @@
         "resource-16e8d9cebfeb85d3",
         "resource-daa3b2ab043c2289",
         "resource-5ec9b5f889643569",
-        "resource-4b9d0533c39957d4"
+        "resource-4b9d0533c39957d4",
+        "resource-01589dfc6aebb535",
+        "resource-3000707f97565dbf",
+        "resource-b22605dce6e437cd",
+        "resource-8089d1901b4fd5fa",
+        "resource-8c3e98efb9278de8",
+        "resource-4aed911761e73f8e",
+        "resource-d6acbde70b817a86",
+        "resource-5a1fd7ffb3e1dd1d",
+        "resource-d4127d96e03244a6",
+        "resource-7f87ef404a252bd0",
+        "resource-b7fbb1c1453a9f53",
+        "resource-56a9f49159da443c"
       ],
       "localReferences": [
         "reports/game_reconstruction_and_forks.md",
-        "reports/sota_3d_embodied_security_models.md"
+        "reports/sota_3d_embodied_security_models.md",
+        "company/role-library/engineering.md",
+        "projects/game-development-research/README.md"
       ]
     },
     {
@@ -10652,7 +12247,10 @@
         "resource-93dbf1e0f2cb44d4",
         "resource-d9921a7dc6bd37a9"
       ],
-      "localReferences": []
+      "localReferences": [
+        "projects/architecture-library/site-models/README.md",
+        "projects/game-development-research/README.md"
+      ]
     },
     {
       "skill": "mathematics-research",
@@ -10742,6 +12340,32 @@
       ],
       "localReferences": [
         "scientific-research-library/agents/science-historian.md"
+      ]
+    },
+    {
+      "skill": "graph-memory-research",
+      "roleKeys": [
+        "donna",
+        "research-knowledge",
+        "knowledge",
+        "math-geometry",
+        "paired-research",
+        "resonance-advisor"
+      ],
+      "purpose": "Retrieve bounded public evidence, explain graph-memory mathematics, and preserve provenance through scoped cache and Obsidian workflows.",
+      "resourceIds": [
+        "resource-af2495a5610cf01f",
+        "resource-fcd4f4d3620c3cb5",
+        "resource-e52109ecb4f96768",
+        "resource-c6dcc9f1916ce63b",
+        "resource-7d8bb2e98eb1cf17",
+        "resource-9fdb2d61306deb60",
+        "resource-1d33cfef85e3cd74"
+      ],
+      "localReferences": [
+        "projects/research-memory-atlas/README.md",
+        "projects/research-memory-atlas/IMPLEMENTATION.md",
+        "skills/graph-memory-research/SKILL.md"
       ]
     }
   ]

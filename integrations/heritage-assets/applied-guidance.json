@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "repository": "https://github.com/striderZA/OpenCodeGameStudios.git",
+  "revision": "85aa449a0cbc2ca44916455185c9d3b4a23a7429",
+  "scope": "Only asset-audit and asset-spec were applied as bounded guidance to an already approved preservation task. No automatic permission or unrelated skill execution.",
+  "appliedChecks": [
+    "Explicit per-asset format, source, creator, hash and license",
+    "Stable names and recorded source identities",
+    "25 MiB target and actual byte counts",
+    "Geometry/accessor/index/texture/transform equality after decoding",
+    "Missing MTL and absent UV identified",
+    "Source/output references and JSON records checked",
+    "No geometry simplification or generated ornament to meet budgets"
+  ],
+  "upstreamArtBible": "absent",
+  "technicalPreferences": "unconfigured template; user preservation brief is the contract",
+  "skills": [
+    {
+      "path": ".agents/skills/asset-audit/SKILL.md",
+      "sha256": "9f767aa4c0ccc799596963a26eddf35568bf3ac9f86d1cfedd0f6bab9b0d7c8a"
+    },
+    {
+      "path": ".agents/skills/asset-spec/SKILL.md",
+      "sha256": "f5b74adcd62302466d5a314066e941b92191e2e596aaa3ea99d4fdbe764e9f55"
+    }
+  ]
+}

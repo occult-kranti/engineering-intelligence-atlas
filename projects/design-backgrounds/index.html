@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Fifteen original CSS and SVG background studies for the Daftar design team. Select a material, inspect its limits, and copy its CSS.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <title>Surface Studies · Daftar</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23394d3e'/%3E%3Cpath d='M8 10h16M8 16h16M8 22h16' stroke='%23f6f0df' stroke-width='2'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./studio.css">
+  <link rel="stylesheet" href="./effects.css">
+  <script type="module" src="./studio.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#collection">Skip to surface collection</a>
+  <header class="topbar">
+    <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">D</span>DAFTAR <span class="brand-divider">/</span><span class="brand-section">Design studio</span></a>
+    <nav aria-label="Study resources"><a href="./README.md">Study notes ↗</a><a href="./style-briefs.md">Design handoff ↗</a></nav>
+  </header>
+  <main id="top">
+    <section class="intro" aria-labelledby="page-title">
+      <div><p class="eyebrow">SURFACE STUDIES · COLLECTION 01</p><h1 id="page-title">Set the scene.<br><em>Keep room for the work.</em></h1></div>
+      <div class="intro-side"><p>Fifteen explorations of light, texture and depth. Choose a surface, see it behind real-sized content, and take the CSS with you.</p><p class="edition"><span aria-hidden="true">◌</span> Original CSS + SVG studies · 2026</p></div>
+    </section>
+    <section class="workbench" aria-labelledby="selected-title">
+      <div class="preview-column">
+        <div class="preview-top"><p><span id="selected-number">01</span> / 15 <span class="muted">—</span> <span id="selected-family">Light</span></p><p id="motion-state">Still by default</p></div>
+        <div id="preview" class="surface effect-thermal-gradients" data-motion="off" role="region" aria-label="Thermal gradients: original illustrative background">
+          <div id="content-plate" class="content-plate">
+            <p class="eyebrow">A SPACE TO MAKE THINGS</p>
+            <h2>Room to think.<br>Space to create.</h2>
+            <p>Let the surroundings add character while the next step stays clear.</p>
+            <a href="#collection" class="plate-link">Explore the collection <span aria-hidden="true">↗</span></a>
+            <div class="plate-foot"><span class="plate-dot" aria-hidden="true"></span> Illustrative content layout</div>
+          </div>
+        </div>
+        <div class="preview-controls">
+          <label class="plate-control"><input id="show-content" type="checkbox" checked> Show content plate</label>
+          <button id="motion-toggle" type="button" aria-pressed="false">Enable gentle motion</button>
+          <div class="step-controls"><button id="previous" type="button" aria-label="Previous surface">←</button><button id="next" type="button" aria-label="Next surface">→</button></div>
+        </div>
+      </div>
+      <aside class="inspector" aria-labelledby="selected-title">
+        <p class="eyebrow">THE SELECTED SURFACE</p>
+        <h2 id="selected-title">Thermal gradients</h2>
+        <p id="selected-description" class="selection-description">Hot coral folds into amber and a quiet violet edge.</p>
+        <div class="spec-row"><h3>Made with</h3><p id="selected-technique">Layered radial and linear CSS gradients.</p></div>
+        <div class="spec-row"><h3>Illustrative approximation</h3><p id="selected-limits">A color study, not a temperature map or measured heat field.</p></div>
+        <div class="copy-actions"><button id="copy-css" type="button" class="primary">Copy CSS <span aria-hidden="true">↗</span></button><button id="download-css" type="button" class="secondary">Download .css</button></div>
+        <p id="copy-status" class="copy-status" role="status" aria-live="polite">Static CSS, with a separate content plate.</p>
+        <details id="code-details"><summary>Inspect the CSS</summary><label class="sr-only" for="css-code">CSS for the selected surface</label><textarea id="css-code" readonly spellcheck="false" rows="12"></textarea><button id="select-code" type="button" class="secondary">Select CSS for manual copy</button></details>
+      </aside>
+    </section>
+    <section id="collection" class="collection" aria-labelledby="collection-title">
+      <div class="section-heading"><div><p class="eyebrow">LIGHT / DEPTH / PATTERN / TACTILE</p><h2 id="collection-title">Find your atmosphere.</h2></div><p>All 15 studies. Every thumbnail is a selectable preview.</p></div>
+      <div id="style-grid" class="style-grid" aria-label="Choose a background study"></div>
+      <noscript><p class="notice">The first study remains visible without JavaScript. Enable JavaScript to switch studies and copy CSS, or read the <a href="./style-briefs.md">complete style matrix</a>.</p></noscript>
+    </section>
+    <section class="practice" aria-labelledby="practice-title"><div><p class="eyebrow">DESIGN TEAM NOTES</p><h2 id="practice-title">The surface supports the task.</h2></div><div class="practice-copy"><p>These are original illustrative studies. The content plate stays opaque so the texture does not decide whether the words are readable. Motion starts off and respects your device preference.</p><p>For a company handoff, record the selected study, content colors, screen sizes and observed checks. The <a href="./style-briefs.md">handoff notes</a> describe each technique and its limits.</p></div></section>
+  </main>
+  <footer><p>DAFTAR / DESIGN STUDIO</p><p>15 original material studies · No external imagery</p><a href="./sources.json">Primary implementation references ↗</a></footer>
+</body>
+</html>

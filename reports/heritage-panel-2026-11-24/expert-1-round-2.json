@@ -1,0 +1,354 @@
+{
+  "schemaVersion": 1,
+  "round": 2,
+  "expert": {
+    "id": "expert-1",
+    "agent": "/root/native_ownership",
+    "lens": "Heritage survey and architectural accuracy"
+  },
+  "reviewedAt": "2026-11-25",
+  "artifactIdentity": {
+    "sha256": "5aa26c9d8361b786bfdf272bb80bb80ab11090275355c71a973b7f5f2070aeca",
+    "manifest": "reports/heritage-panel-2026-11-24/round-1-artifact.json",
+    "baselineCommit": "c1c5ac91fbfd929e91b3762ada7aa5864dc84a48",
+    "moderatorDecisions": "reports/heritage-panel-2026-11-24/round-1.json",
+    "reviewedPublicationFileCount": 33,
+    "allReviewedPublicationFilesMatch": true,
+    "files": [
+      {
+        "path": "projects/architecture-library/site-models/ACCURACY.md",
+        "sha256": "0f4006ea92f8979c71945a65bf9ecfc79096dc40d3939907ce866a18dab56b73",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/ATTRIBUTION.md",
+        "sha256": "3b09f7c7fa93cf4cdcf3f6a021ec843f209006c52ac206bea1074c6a795cfcce",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/README.md",
+        "sha256": "17e2f17cebd9cbf64fd02f345634d8b17bc58644781c0d2722bc960100cca1d8",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/el-markaz-islami-mosque.glb",
+        "sha256": "2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/giza-plateau.glb",
+        "sha256": "8bfdf03aa2b9cf052c11c735fd230da0a8ef182b0f0daf6f96cd9b4cc3d6f564",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/kailasa-context.glb",
+        "sha256": "f958fca0a1a98d00701675810bb9d1c1b1782506d7c2d65c66d1047355e11dbc",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/khafre.glb",
+        "sha256": "1a0901a67551806045e9f9cadbdc5053825b9dbda243873c4c1eade43bdeb7cd",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/khufu.glb",
+        "sha256": "ab98bfeee97b4a16592e0623d1157a98bdea96fb2e00a7ed22c5862809fb26a1",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/menkaure.glb",
+        "sha256": "b8c5f9c32dca745224f2ea7a534760db50d64b6468654505a2c72c9a5cf5af70",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb",
+        "sha256": "5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/capture-requirements.json",
+        "sha256": "41789c25115ab4e9f829581c74c39dcb81a556b0d5ef9f8c2bf45582632208c8",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/catalog-core.mjs",
+        "sha256": "bd0e0020eea0b37c4fd2cdc2a55b0133e3ad6e0ce7c1223376d2cb8376db85a1",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/catalog.json",
+        "sha256": "a96bc01e9df22619e0ff8a9aa0f450846403637babf67d79d0942fe1da5116ed",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/el-markaz-islami-mosque.json",
+        "sha256": "c194ea18eefa2c37c6c5a39062015b001e3f74e68f072eb4770423805c01dd1c",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/giza-plateau.json",
+        "sha256": "3543047c193af0d695df951fe7c3e147c14c51acf71d9d36b395b91121bf2ee6",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/kailasa-context.json",
+        "sha256": "87bd1f028aeb30e0ad1c87d9b342e2ae2cefe260e316ba6c137c9d5f19d8bb31",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/khafre.json",
+        "sha256": "5981ce6bb9cd04653fa43c03786723c187c33cb9d44a5b5e73bac8e96beff2d2",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/khufu.json",
+        "sha256": "3d4c066ee9125e3468ff173835d651db99935227a2b36d04b2e95eebab7ccac0",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/menkaure.json",
+        "sha256": "1104582832ef78ed539fe7835c39f8dcdd8886d5c6a8197a2b054c022c8c87fa",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/evidence/st-george-antiochian-orthodox-church.json",
+        "sha256": "f7d1e818e0f04859e26f6bd5d1b514600a9b4751692788470f1f29804a242d40",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/index.html",
+        "sha256": "7726eca38e9b88a9488f74b2476959f4695d687ebc3e7cbd9b5bb4d0b0ca804c",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/previews/el-markaz-islami-mosque.png",
+        "sha256": "fdf42f31bb7459ac7f69c8dc64f17f62ac28de1660b71cfb033b2174873a6c24",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/previews/giza-plateau.png",
+        "sha256": "519f27e6c8c0e57e734b529024df5ad64d2e10dafeed968d721cfb321935f2e5",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/previews/kailasa-context.png",
+        "sha256": "085eefea5174c71b86b66d2b0359045b1750d4624a3409fde5039950c2e80c9e",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/previews/khafre.png",
+        "sha256": "f30b127acd935f7d6183e14713a574989662380b1efe289c3e51d9d030dfd448",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/previews/khufu.png",
+        "sha256": "641e416fc1e9c35552db989bc3e4bc0baa052e400c063ce539e8f102ff39fde7",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/previews/menkaure.png",
+        "sha256": "8ac94772b75ad458b0d14ed0ec55e447ce21779be778583052470f5661151bcf",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/previews/st-george-antiochian-orthodox-church.png",
+        "sha256": "30556dacc5fd2b3b9a084fa7ce73bc27477f8da0ae0c616d3f446b48f8e328be",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/render_preview.py",
+        "sha256": "eacc28c3cb887ab92be4e2789173e29ff496d5063bd70b24e39e614dd65a3344",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/site-models.css",
+        "sha256": "b11267b857dbfa090702e80687c7a19c20d84382e901c7f5537d3218129a336b",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/site-models.mjs",
+        "sha256": "a854defdfec5943efd6ddaa1ec6fd5d1392297d5e75083b79029ca39fb94e1e8",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/tests/catalog.test.mjs",
+        "sha256": "e16490f6513312470eb0b1487d720cf4faa037284827d4bf59c81211c858908c",
+        "matches": true
+      },
+      {
+        "path": "projects/architecture-library/site-models/viewer.mjs",
+        "sha256": "6526eba8287f30aa49614086de42b9a958a2a7eafc0201272b378666ec19ce5d",
+        "matches": true
+      }
+    ]
+  },
+  "outcome": "changes-requested-for-documentation-lineage",
+  "summary": "Current catalog/viewer correctly rejects metric claims and restricted bundled geometry. Two concrete publication inconsistencies remain in the accuracy baseline and Kailasa preview lineage; no fabricated survey-accuracy claim or synthetic detail was found in the reviewed asset labels.",
+  "findings": [
+    {
+      "id": "H2-01",
+      "severity": "medium",
+      "status": "requires-fix",
+      "finding": "Accuracy baseline still describes the old church/mosque Blender inspection GLBs as the current GLB state.",
+      "evidence": [
+        {
+          "path": "projects/architecture-library/site-models/capture-requirements.json",
+          "pointer": "/currentBaseline/sacredSiteRecords",
+          "observed": "sourceTopologyPreservedInGlb=false and importedTriangles 3757757/3104122 appear as the current baseline without route/hash qualification."
+        },
+        {
+          "path": "projects/architecture-library/site-models/ACCURACY.md",
+          "section": "4. Current evidence and missing inputs",
+          "observed": "The 11/12-face Blender losses are explained, but the instruction to describe the GLBs as not topology-identical has no explicit contrast with the new preserving route."
+        },
+        {
+          "path": "projects/architecture-library/site-models/catalog.json",
+          "observed": "Published church/mosque counts are 3757768/3104134; current summaries distinguish preserving conversion."
+        },
+        {
+          "path": "projects/architecture-library/site-models/evidence/st-george-antiochian-orthodox-church.json",
+          "observed": "Preservation flags pass; output.web SHA256 5e3041a6e99cdfec75c8b992a34c6115efa6047cec885d0807ea96458b1e09a6; separate previewInspection has 3757757 triangles."
+        },
+        {
+          "path": "projects/architecture-library/site-models/evidence/el-markaz-islami-mosque.json",
+          "observed": "Preservation flags pass; output.web SHA256 2051d43a9ad92d0d51300cdddbc7888258897b07b02e1ff9a6bf34cb39a02c67; separate previewInspection has 3104122 triangles."
+        }
+      ],
+      "impact": "Readers and downstream tools can wrongly conclude that the downloadable current GLBs still lose faces, or apply an old inspection result to a new artifact. The contract and publishing evidence contradict one another despite correct runtime counts.",
+      "proposedFix": "Split currentBaseline into explicitly named immutable source, published preserving GLB and prior Blender inspection records, binding each to its evidence path/hash and counts. Update ACCURACY with the same route table; say current indices/counts are preserved while decimal-to-Float32 conversion remains disclosed. Keep the 11/12-loss records as historical inspection evidence, not current published topology.",
+      "acceptance": [
+        "Published-route counts equal catalog and preservation receipts (3757768 and 3104134).",
+        "Prior Blender route alone carries counts 3757757/3104122 and removal 11/12 with unknown cause.",
+        "Every route has an artifact hash or precise evidence reference; no ambiguous sourceTopologyPreservedInGlb boolean remains in a mixed current record.",
+        "No claim of exact decimal-coordinate preservation or metric verification is introduced."
+      ]
+    },
+    {
+      "id": "H2-02",
+      "severity": "medium",
+      "status": "requires-fix",
+      "finding": "Kailasa preview and published-model face counts differ without the explicit UI disclosure already supplied for church and mosque.",
+      "evidence": [
+        {
+          "path": "projects/architecture-library/site-models/catalog.json",
+          "pointer": "/assets[id=kailasa-context]",
+          "observed": "Published triangles=136499; previewNote mentions only a Blender render of coarse context."
+        },
+        {
+          "path": "projects/architecture-library/site-models/evidence/kailasa-context.json",
+          "pointer": "/previewInspection/triangles",
+          "observed": 136498
+        },
+        {
+          "path": "projects/architecture-library/site-models/site-models.mjs",
+          "observed": "previewNote is the user-visible preview description, while the adjacent record displays the published GLB count."
+        }
+      ],
+      "impact": "The preview may be mistaken for an exact render of the newly preserved 136499-triangle artifact. The evidence is present but its route distinction is not shown at the same point of use.",
+      "proposedFix": "Add the Kailasa 136499 published / 136498 earlier Blender inspection distinction to previewNote and the accuracy lineage table. Retain the older render if clearly identified; do not infer a face-removal cause. Bind any later replacement preview to the exact input hash and new receipt.",
+      "acceptance": [
+        "Selecting Kailasa explicitly distinguishes the preview-import count from the download count.",
+        "Catalog preview metadata agrees with evidence.previewInspection and the preserving receipt.",
+        "No automatic mesh alteration or synthetic repair is introduced to make counts agree."
+      ]
+    },
+    {
+      "id": "H2-03",
+      "severity": "low",
+      "status": "publication-condition",
+      "finding": "The collection README currently describes three completed improvement rounds while the frozen ledger contains Round 1 and Round 2 is in progress.",
+      "evidence": [
+        {
+          "path": "projects/architecture-library/site-models/README.md",
+          "section": "Coding and graphics team",
+          "observed": "States that the panel improved the collection across three implementation rounds."
+        },
+        {
+          "path": "reports/heritage-panel-2026-11-24/round-1.json",
+          "pointer": "/nextRound",
+          "observed": "Calls for independent review and accepted fixes before Round 3."
+        }
+      ],
+      "impact": "The frozen artifact overstates completed review history at this point in the workflow. This can become truthful after the moderator completes and records all rounds.",
+      "proposedFix": "Use in-progress wording until completion, or make final publication conditional on complete four-expert receipts and changed-artifact identities for all three rounds.",
+      "acceptance": [
+        "Final publication wording matches actually completed ledger rounds and their artifact identities.",
+        "A missing review round cannot be represented as passed merely by future intent."
+      ]
+    }
+  ],
+  "passedChecks": [
+    {
+      "id": "H2-P1",
+      "finding": "Unsupported physical measurement claims are blocked.",
+      "evidence": [
+        "projects/architecture-library/site-models/catalog-core.mjs",
+        "projects/architecture-library/site-models/catalog.json",
+        "projects/architecture-library/site-models/site-models.mjs"
+      ],
+      "detail": "All seven assets require metric.verified=false, units/crs/error=null and measurementEnabled=false. Viewer labels scale/accuracy unverified and has no measurement control."
+    },
+    {
+      "id": "H2-P2",
+      "finding": "Observed geometry, processed context, completeness and unknowns remain distinct.",
+      "evidence": [
+        "projects/architecture-library/site-models/catalog.json",
+        "projects/architecture-library/site-models/README.md",
+        "projects/architecture-library/site-models/ACCURACY.md"
+      ],
+      "detail": "Giza derivatives disclose upstream rescaling/simplification. Plateau and Kailasa context disclose incomplete/coarse coverage. Church/mosque identify actual named exteriors and captured RGB. Full-source geometry is described as supplied-data preservation, not a complete building."
+    },
+    {
+      "id": "H2-P3",
+      "finding": "Restricted Cave 16 and view-only references do not become public geometry.",
+      "evidence": [
+        "projects/architecture-library/site-models/catalog.json",
+        "projects/architecture-library/site-models/catalog-core.mjs",
+        "projects/architecture-library/site-models/ATTRIBUTION.md"
+      ],
+      "detail": "Public assets are CC-BY-4.0; references have no bundled file. Klein is CC-BY-NC-4.0, unregistered and source-only; Sidhu/iTek remain external references. Credits distinguish the GSXNet context from these detail sources."
+    },
+    {
+      "id": "H2-P4",
+      "finding": "Accuracy acceptance targets remain proposals with independent evidence requirements.",
+      "evidence": [
+        "projects/architecture-library/site-models/ACCURACY.md",
+        "projects/architecture-library/site-models/capture-requirements.json"
+      ],
+      "detail": "5cm/1cm/1mm P95 targets are not claimed achieved. Independent held-out checks, spatial strata, maximum error, unknown-not-zero budgets and current-versus-historical layers are specified."
+    },
+    {
+      "id": "H2-P5",
+      "finding": "Reviewed source identities, creators and licenses agree with recorded primary-source provenance.",
+      "evidence": [
+        "projects/architecture-library/site-models/ATTRIBUTION.md",
+        "projects/architecture-library/site-models/research/giza/sources.json",
+        "projects/architecture-library/site-models/research/kailasa/sources.json",
+        "projects/architecture-library/site-models/research/sacred-sites/source.json"
+      ],
+      "detail": "Original model UUIDs, creator handles and dataset records remain traceable. This pass did not perform fresh legal clearance or re-fetch source license pages."
+    }
+  ],
+  "tests": [
+    {
+      "command": "node --test projects/architecture-library/site-models/tests/catalog.test.mjs",
+      "result": "passed",
+      "passed": 6,
+      "failed": 0,
+      "skipped": 0,
+      "scope": "Actual published bytes/hashes/density/preservation checks, restricted-source rejection, metric-claim rejection, bounded paths/files, external-resource rejection and vendor receipt checks"
+    },
+    {
+      "command": "SHA256 comparison of 33 publication files against round-1-artifact.json",
+      "result": "passed",
+      "matches": 33,
+      "mismatches": 0
+    }
+  ],
+  "limits": [
+    "Read-only implementation review; only this report was written.",
+    "No new web research, model download, metric survey, provider request, engine run or browser interaction.",
+    "Existing source evidence and actual focused tests were used; no new claim that all hidden/interior surfaces or source capture rights were verified.",
+    "The current seven models remain useful visual references and do not satisfy the requested complete extreme-detail measured result."
+  ]
+}

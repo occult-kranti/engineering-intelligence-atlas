@@ -7,6 +7,11 @@ import { copyArchitectureLibrary } from './architecture-library-assets.mjs';
 
 const vite = join(webRoot, 'node_modules/vite/bin/vite.js');
 if (!existsSync(vite)) throw new Error('Install web dependencies first: npm --prefix site-source ci');
+const models = spawnSync(process.execPath, [join(repoRoot, 'scripts/materialize-heritage-models.mjs')], {
+  cwd: repoRoot, stdio: 'inherit', env: process.env,
+});
+if (models.error) throw models.error;
+if (models.status !== 0) process.exit(models.status ?? 1);
 for (const script of ['sync-company.mjs', 'build-desktop-preview.mjs']) {
   const prepare = spawnSync(process.execPath, [join(repoRoot, 'scripts', script)], { cwd: repoRoot, stdio: 'inherit', env: process.env });
   if (prepare.status !== 0) process.exit(prepare.status ?? 1);
