@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-11-24",
+  "kind": "pinned_metadata_import_with_threejs_dependency",
+  "model_revision": "4b9f05f3a0382725b679c5e32a338b88acaf0064",
+  "files": [
+    {
+      "path": "upstream/model/LICENSE",
+      "url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder/resolve/4b9f05f3a0382725b679c5e32a338b88acaf0064/LICENSE",
+      "sha256": "bbedc3fda3305820b977265f01b8619d87570a6739de3a5582c3464840f1e57a",
+      "bytes": 11544
+    },
+    {
+      "path": "upstream/model/README.md",
+      "url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder/resolve/4b9f05f3a0382725b679c5e32a338b88acaf0064/README.md",
+      "sha256": "73197aa41a59625e51939938b8b38d965e3ed31be50ee847d58654bbe4206582",
+      "bytes": 14705
+    },
+    {
+      "path": "upstream/model/config.json",
+      "url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder/resolve/4b9f05f3a0382725b679c5e32a338b88acaf0064/config.json",
+      "sha256": "02dd25e951f465523d0f0424878075607c07b96dd378a6510a787c8b0d9c0fed",
+      "bytes": 2902
+    },
+    {
+      "path": "upstream/model/generation_config.json",
+      "url": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder/resolve/4b9f05f3a0382725b679c5e32a338b88acaf0064/generation_config.json",
+      "sha256": "929a389efa8f9418c4d6eb6d916571da62784230c1b3d9e87bccd203bb3655a6",
+      "bytes": 268
+    },
+    {
+      "path": "vendor/three.module.min.js",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r160/build/three.module.min.js",
+      "sha256": "3e690ac7d180b0aadf0891bea39eec643e29e2d3e75c99b18689518665f69ba6",
+      "bytes": 670681
+    },
+    {
+      "path": "vendor/THREE-LICENSE",
+      "url": "https://raw.githubusercontent.com/mrdoob/three.js/r160/LICENSE",
+      "sha256": "852e0e8699169bf9f6fdc6bda3e682d078dcbc738b5d33e74df594721bff271d",
+      "bytes": 1081
+    }
+  ],
+  "weights_downloaded": false
+}

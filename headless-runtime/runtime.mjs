@@ -26,13 +26,15 @@ function unwrap(result) {
   if (result?.ok === true && result.snapshot) return result.snapshot;
   const code = typeof result?.code === 'string' && /^[A-Z_]{1,80}$/.test(result.code)
     ? result.code : 'NATIVE_UNAVAILABLE';
-  const conflict = ['CONFLICT', 'REMOTE_RECEIPT_MISMATCH', 'STATE_BUSY'].includes(code);
-  const uncertain = /^(?:CORE_FAILED|CORE_INVALID|NATIVE_UNAVAILABLE|OFFICE_ERROR|IO_ERROR)$/.test(code);
+  const busy = code === 'STATE_BUSY';
+  const conflict = ['CONFLICT', 'REMOTE_RECEIPT_MISMATCH'].includes(code);
+  const uncertain = /^(?:CORE_UNAVAILABLE|CORE_FAILED|CORE_INVALID|NATIVE_UNAVAILABLE|OFFICE_ERROR|IO_ERROR|STATE_(?:LOCK|READ|WRITE)_ERROR)$/.test(code);
   throw new RuntimeError(code,
     uncertain ? 'The native outcome could not be confirmed. Inspect state; retain the same command id and body if replay is needed.'
+      : busy ? 'Another native operation is active. Retry the same command id and body; do not create a new operation.'
       : conflict ? 'State or command identity changed. Read current state before a new operation.'
       : 'The native runtime rejected this operation. Existing state was preserved; inspect the job or local configuration.',
-    uncertain ? 503 : conflict ? 409 : code === 'REMOTE_ACTION_DENIED' ? 403 : 400);
+    uncertain ? 503 : conflict || busy ? 409 : code === 'REMOTE_ACTION_DENIED' ? 403 : 400);
 }
 
 /** Injectable controller; persistent command idempotency belongs to the Rust core. */
@@ -46,6 +48,7 @@ export class RuntimeController {
     this.modelPool = modelPool;
     this.cloudSync = cloudSync;
     this.singleRun = null;
+    this.closing = null;
   }
 
   status() {
@@ -110,17 +113,25 @@ export class RuntimeController {
     return { ok: true, accepted: true, worker: publicWorkerStatus(this.worker) };
   }
 
-  async close() {
-    this.office.stopObserving?.();
-    this.worker.stop();
-    await this.cloudSync?.close();
-    await this.modelPool?.close();
-    // The pool aborts provider calls. A short grace period allows their durable
-    // settlement; an unconfirmed attempt is reconciled by native lease recovery.
-    const deadline = Date.now() + 10000;
-    while (this.worker.status().running && Date.now() < deadline) {
-      await new Promise(resolve => setTimeout(resolve, 50));
-    }
+  close() {
+    return this.closing ??= (async () => {
+      // An unavailable cloud adapter must not retain the local model lease or
+      // prevent worker cancellation. Every cleanup is attempted before failure.
+      const results = await Promise.allSettled([
+        () => this.office.stopObserving?.(), () => this.worker.stop(),
+        () => this.cloudSync?.close(), () => this.modelPool?.close(),
+      ].map(async cleanup => cleanup()));
+      // The pool aborts provider calls. A short grace period allows their durable
+      // settlement; an unconfirmed attempt is reconciled by native lease recovery.
+      const deadline = Date.now() + 10000;
+      try {
+        while (this.worker.status().running && Date.now() < deadline) {
+          await new Promise(resolve => setTimeout(resolve, 50));
+        }
+      } catch (error) { results.push({ status: 'rejected', reason: error }); }
+      const failed = results.find(result => result.status === 'rejected');
+      if (failed) throw failed.reason;
+    })();
   }
 }
 

@@ -1,0 +1,144 @@
+{
+  "provider": "Anthropic",
+  "generation_calls": 3,
+  "attempts": [
+    {
+      "provider": "Anthropic",
+      "model_requested": "claude-sonnet-5-5",
+      "requested_max_tokens": 22000,
+      "started_at_utc": "2026-11-22T10:22:13.701090+00:00",
+      "purpose": "Daftar laptop endless blueprint canvas visual HTML prototype",
+      "credential_in_artifact": false,
+      "network_calls_in_frontend": false,
+      "generation_calls": 1,
+      "prompt_sha256": "50f8697d688b393826f0630e05301c7c99e606a2278ad0b4b53e345d9b654072",
+      "model_returned": "claude-sonnet-5-5",
+      "stop_reason": "max_tokens",
+      "status": "failed",
+      "error_type": "RuntimeError",
+      "error_message": "Generated output does not contain a complete HTML document",
+      "usage": {
+        "input_tokens": 1858,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 22000,
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard",
+        "output_tokens_details": {
+          "thinking_tokens": 22000
+        }
+      }
+    },
+    {
+      "provider": "Anthropic",
+      "model_requested": "claude-sonnet-5-5",
+      "requested_max_tokens": 22000,
+      "started_at_utc": "2026-11-22T10:26:41.790190+00:00",
+      "purpose": "Daftar laptop endless blueprint canvas visual HTML prototype",
+      "credential_in_artifact": false,
+      "network_calls_in_frontend": false,
+      "generation_call_index": 2,
+      "prompt_sha256": "b2b100aed58617fedeee4c0b4f1fd7809d391a756559bb54acaf5e0347b5a1e7",
+      "thinking_configuration": {
+        "type": "between_tools"
+      },
+      "output_configuration": {
+        "effort": "medium"
+      },
+      "recovery_reason": "First call consumed output cap on default upfront thinking; documented between_tools configuration requests text without upfront thinking.",
+      "model_returned": "claude-sonnet-5-5",
+      "stop_reason": "max_tokens",
+      "status": "failed",
+      "error_type": "RuntimeError",
+      "error_message": "Generated output does not contain a complete HTML document",
+      "usage": {
+        "input_tokens": 1905,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 22000,
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard",
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        }
+      },
+      "generated_characters": 40715
+    },
+    {
+      "provider": "Anthropic",
+      "model_requested": "claude-sonnet-5-5",
+      "requested_max_tokens": 18000,
+      "started_at_utc": "2026-11-22T10:30:35.529410+00:00",
+      "purpose": "Targeted completion of truncated Daftar frontend from hireForm",
+      "credential_in_artifact": false,
+      "generation_call_index": 3,
+      "prompt_sha256": "d60b2570ffdc2c7f1d24df8e8cb9e3bcfc564dec5397c0e95dd6f1f08100d058",
+      "prefix_sha256": "8221e2bedd0f2da781e766ca8d8f9fe7ade426e780bb63f800b2a068c5308703",
+      "thinking_configuration": {
+        "type": "between_tools"
+      },
+      "output_configuration": {
+        "effort": "medium"
+      },
+      "recovery_reason": "Previous HTML text response reached token cap; append only the missing function/handler tail.",
+      "model_returned": "claude-sonnet-5-5",
+      "stop_reason": "end_turn",
+      "node_syntax_check": "passed",
+      "status": "completed",
+      "completed_at_utc": "2026-11-22T10:31:12.520473+00:00",
+      "elapsed_seconds": 36.99,
+      "usage": {
+        "input_tokens": 24233,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 6355,
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard",
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        }
+      },
+      "tail_characters": 11725,
+      "output_bytes": 52219,
+      "output_sha256": "317535a79376b6b96e0b73a58c1dd71333ec2e363bd750eeef39e412e82b6bdb",
+      "output_filename": "index.html",
+      "complete_html": true
+    }
+  ],
+  "total_usage": {
+    "input_tokens": 27996,
+    "output_tokens": 50355,
+    "thinking_tokens": 22000
+  },
+  "final_output_sha256": "317535a79376b6b96e0b73a58c1dd71333ec2e363bd750eeef39e412e82b6bdb",
+  "final_output_bytes": 52219,
+  "final_reviewed_artifact": {
+    "path": "index.html",
+    "sha256": "705ceba7df169ed2f69faf992a736b98bcfd218b5e5d004c0dd02febc049c547",
+    "bytes": 69076,
+    "refinement": "Root-led visual refinement and interaction fixes after Claude generation; browser-tested local prototype; 2.5D presentation, no connected runtime."
+  },
+  "github_import": {
+    "date": "2026-11-24",
+    "source_commit": "a590007392a0a3734799478ebe9100a93c9a72fc",
+    "base_repository_commit": "3a3cc3d56d7f43195ab8b857ca9f3c2bed46390e",
+    "html_changed": false,
+    "additional_provider_calls": 0,
+    "provider_message_ids_omitted": true
+  }
+}

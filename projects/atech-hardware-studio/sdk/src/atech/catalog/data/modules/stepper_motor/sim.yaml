@@ -1,0 +1,50 @@
+# Simulation data for the Atech `stepper_motor` module, read by `atech.sim`
+# (`atech sim-assets`). Frames and every field: src/atech/docs/sim_assets.md.
+# Asset frame: metres, origin at the centre of the bottom (mounting) face,
+# +z out of the top face, +x along the long side.
+#
+# Atech has not published dimensions or masses for its modules. Every size, mass,
+# colour and position below is a plausible guess, marked PLACEHOLDER.
+#
+# Output: TMC2209 stepper driver (STEP/DIR). The motor is NOT modelled. Spans two ports.
+schema: 1
+
+size_m: [0.0395, 0.0195, 0.01]    # PLACEHOLDER: replace with Atech module datasheet (two port cells, as the CAD 2-port modules)
+mass_kg: 0.018                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  chip: [0.18, 0.18, 0.18, 1]
+  connector: [0.85, 0.85, 0.8, 1]
+
+parts:                           # PLACEHOLDER: replace with Atech module datasheet
+  - {name: driver_chip, size_m: [0.005, 0.005, 0.001], pos_m: [0, 0, 0.0105], color: chip}
+  - {name: motor_terminal, size_m: [0.01, 0.006, 0.005], pos_m: [0.013, 0, 0.0125], color: connector}
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  # Mates with the board's port frame: centre of the bottom face.
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+actuator:
+  type: stepper_driver
+  chip: TMC2209
+  frame:   # PLACEHOLDER: replace with Atech module datasheet
+    pos_m: [0, 0, 0.0105]
+    rpy_deg: [0, 0, 0]
+  control: step_dir               # catalog: STEP/DIR mode
+  motor_modelled: false           # the NEMA 17 itself is not part of this asset
+
+semantic:
+  # Wikidata Q-codes (SimReady SL.003), checked on wikidata.org.
+  # The asset is the driver board, not the NEMA 17 (motor_modelled: false).
+  wikidata_qcode: [Q131382027, Q173350]   # motor controller, printed circuit board
+  class: [motor_driver, actuator]
+
+# Fields above that are guesses, not Atech data (exported as atech:placeholders).
+placeholders: [size_m, mass_kg, colors, parts, connector, physics_material, actuator.frame]

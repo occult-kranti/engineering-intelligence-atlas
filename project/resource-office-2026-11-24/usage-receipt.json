@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "allowanceUsd": 20,
+  "confirmedUsageUsd": 0.196962,
+  "retainedUnconfirmedReservationUsd": 0.181662,
+  "accountedUsd": 0.378624,
+  "remainingUsd": 19.621376,
+  "notes": [
+    "Usage is calculated from observed provider token usage and the hosted request ledger, not a credit purchase or billing invoice.",
+    "The blocked source-context request has no confirmed response or charge; its reservation remains counted conservatively.",
+    "Both direct Claude requests reached their output limits. Complete generated modules were recovered, then repaired, integrated and tested by the project team.",
+    "The hosted Donna reply was planning only. No running employee jobs or model benchmarks are implied."
+  ],
+  "calls": [
+    {
+      "id": "d166ea32-7181-4bf2-8253-f19cca4d4370",
+      "model": "claude-sonnet-5-5",
+      "state": "blocked-review-reservation-retained",
+      "reservedUsd": 0.181662,
+      "startedAt": "2026-11-24T23:40:44Z",
+      "task": "claude-design-task.md",
+      "pricingSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "ratesPerMillion": {
+        "input": 2.0,
+        "output": 10.0,
+        "cache_write": 4.0,
+        "cache_read": 0.1
+      },
+      "outcome": "Automatic approval review blocked source-context transmission; no response or charge confirmed"
+    },
+    {
+      "id": "072b41a6-ec6b-490a-ba41-28ccbf0978ac",
+      "model": "claude-sonnet-5-5",
+      "state": "incomplete",
+      "reservedUsd": 0.125688,
+      "startedAt": "2026-11-24T23:42:14Z",
+      "task": "claude-public-component-task.md",
+      "pricingSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "ratesPerMillion": {
+        "input": 2.0,
+        "output": 10.0,
+        "cache_write": 4.0,
+        "cache_read": 0.1
+      },
+      "usage": {
+        "input_tokens": 1571,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 10000,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard"
+      },
+      "costUsd": 0.103142,
+      "stopReason": "max_tokens",
+      "responseId": "msg_011ChNe2JBLeFhwFNi3v8zWT",
+      "output": "claude-component-response.partial.txt",
+      "outputSha256": "a04e56f2155409a63c6652d512d7e3997a4bbef2756694751c1cf8d37cd8b366"
+    },
+    {
+      "id": "bdde06ea-0f23-489b-b59a-b82dfd8f5ab8",
+      "model": "claude-sonnet-5-5",
+      "state": "incomplete",
+      "reservedUsd": 0.0907,
+      "startedAt": "2026-11-24T23:43:59Z",
+      "task": "claude-public-css-task.md",
+      "pricingSource": "https://platform.claude.com/docs/en/about-claude/pricing",
+      "ratesPerMillion": {
+        "input": 2.0,
+        "output": 10.0,
+        "cache_write": 4.0,
+        "cache_read": 0.1
+      },
+      "usage": {
+        "input_tokens": 5409,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 5000,
+        "output_tokens_details": {
+          "thinking_tokens": 0
+        },
+        "service_tier": "standard",
+        "inference_geo": "global",
+        "speed": "standard"
+      },
+      "costUsd": 0.060818,
+      "stopReason": "max_tokens",
+      "responseId": "msg_011ChNeA3SJ4jweYJxnMyF4t",
+      "output": "claude-css-response.partial.txt",
+      "outputSha256": "7f465994ddd5791209248411f4814fc0db8e7ff3df0c0f423b7d2c7b5e3cd474"
+    },
+    {
+      "id": "89193c70-bf5b-4c79-8430-cf0d90300707",
+      "origin": "hosted-donna-conversation",
+      "state": "complete",
+      "startedAt": "2026-11-24T23:46:45.043Z",
+      "reservedUsd": 0.097098,
+      "usage": {
+        "input_tokens": 13451,
+        "output_tokens": 610,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0
+      },
+      "costUsd": 0.033002,
+      "outcome": "Saved planning reply only; no repository changes, jobs or deployment applied"
+    }
+  ]
+}

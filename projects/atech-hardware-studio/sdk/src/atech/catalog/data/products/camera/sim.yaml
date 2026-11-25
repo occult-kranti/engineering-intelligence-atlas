@@ -1,0 +1,30 @@
+# Simulation data for an Atech product the SDK has no firmware for: `atech sim-assets`
+# exports it, `project.yaml` cannot place it (atech.sim.spec.Product). Frames and every
+# field: src/atech/docs/sim_assets.md. Asset frame: metres, origin at the centre of the
+# bottom face of the cell over its port, +z out of the top face, +y toward the outer face.
+#
+# Camera module, two ports wide; the lens stands 14.4 mm high. Visual: Atech's CAD.
+schema: 1
+
+product: {name: "Camera", category: sensor, size: 2, interface: null}
+
+size_m: [0.0395, 0.0197, 0.01345]  # CAD: atech-module-renders v1.7 glb_plain/camera.glb bounds (housing)
+mass_kg: 0.012                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  lens: [0.05, 0.05, 0.06, 1]
+
+parts:                           # CAD: the lens barrel's bounds
+  - {name: lens, shape: cylinder, size_m: [0.0085, 0.0085, 0.006], pos_m: [-0.00015, 0.00011, 0.01135], color: lens}
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+placeholders: [mass_kg, colors, connector, physics_material]

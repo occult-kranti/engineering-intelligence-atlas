@@ -69,6 +69,14 @@
       {
         "command": "atlas.openMcpGuide",
         "title": "Daftar: Open MCP Setup Guide"
+      },
+      {
+        "command": "atlas.manageTeam",
+        "title": "Daftar: Manage Team and Departments"
+      },
+      {
+        "command": "atlas.reviewOwnership",
+        "title": "Daftar: Review Donna Ownership"
       }
     ],
     "viewsContainers": {
@@ -102,7 +110,7 @@
     }
   },
   "scripts": {
-    "check": "node --check src/extension.js && node --check src/client.js && node --check media/office.js && node --check scripts/smoke-installed.mjs && node --check test-host/index.js && node --check test-host/suite.js",
+    "check": "node --check src/extension.js && node --check src/client.js && node --check src/management.js && node --check media/office.js && node --check scripts/smoke-installed.mjs && node --check test-host/index.js && node --check test-host/suite.js",
     "test": "node --test test/*.test.js",
     "test:installed": "node scripts/smoke-installed.mjs",
     "vscode:prepublish": "npm run check && npm test",

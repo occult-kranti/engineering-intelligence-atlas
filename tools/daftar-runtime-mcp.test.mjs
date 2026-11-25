@@ -166,6 +166,16 @@ test('owner commands preserve envelope identity and return a successful compact 
   assert.ok(Buffer.byteLength(JSON.stringify(result)) < 5000);
   assert.equal(JSON.stringify(result).includes('PRIVATE'), false);
 });
+test('runtime MCP forwards employee definition and organization naming operations with stable receipts',async()=>{
+  const f=fixture(),definition=TOOL_DEFINITIONS.find(tool=>tool.name==='office_command');
+  const commands=[{action:'update_employee',employeeId:'employee-1',role:'Backend engineer',skillPaths:[]},{action:'rename_department',departmentId:'department-1',name:'Backend'},{action:'rename_office',officeId:'office-1',name:'Engineering'}];
+  for(const [index,value] of commands.entries()) {
+    assert.ok(definition.inputSchema.properties.command.properties.action.enum.includes(value.action));
+    const envelope={id:`management-${index}`,expectedStateHash:HASH,command:value};
+    const result=await f.handler('office_command',envelope);
+    assert.equal(result.id,envelope.id);assert.deepEqual(f.calls.at(-1),{method:'POST',route:'/v1/commands',body:envelope});
+  }
+});
 
 test('a saved command remains successful when its snapshot projection is unavailable', async () => {
   const f = fixture({ request: async () => ({ ok: true, id: 'request-one', replayed: true, snapshotOmitted: true, notice: 'PRIVATE server note' }) });

@@ -1,5 +1,16 @@
 # Daftar — personal agent office
 
+## Backend and workflow update — 2026-11-24
+
+The current integration adds editable employee role/skill definitions, office and
+department renaming, stronger Donna ownership validation, live worker authority
+checks, concurrent cloud-request recovery and VS Code team management. Headless
+CI now requires its native prerequisites and retains a bounded stress receipt.
+Start with [the backend validation](project/BACKEND_WORKFLOW_VALIDATION_2026-11-24.md)
+and [the resource-office validation](project/resource-office-2026-11-24/VALIDATION.md)
+for executed results and production limits. These records accompany this source
+update; existing published 0.8.0 installers keep their original source identity.
+
 **A personal workspace for Donna, your permanent agent team, and the repositories they maintain.**
 
 One continuous canvas holds the company conference table, office blueprints,
@@ -13,6 +24,22 @@ dependency graphs with queues, checkpoints, budgets and evidence.
 [Published releases and downloads](https://github.com/occult-kranti/engineering-intelligence-atlas/releases) ·
 [Roadmap](ROADMAP.md) · [Handoff / setup](HANDOFF.md) ·
 [Shared worker ledger](project/WORKER_LEDGER.md) · [Timeline](TIMELINE.md)
+
+## Reference room and company studios — 2026-11-24 continuation
+
+The shared desktop and website renderer adds a searchable **Reference room** with 303 public sources: books, papers, repositories, software and documentation. Source details retain access, license, version, reading depth and evidence limitations. Pins store only public IDs; **Draft with Donna** appends bounded context without sending it. Native OfficeWorker and hosted Donna select up to six relevant public references using the same canonical catalog and pure routing core. All 15 packaged skills include a self-contained resource-use procedure.
+
+The **3D studio** opens as a movable element of the same office canvas. Its original Three.js reference, source editor, review record and optional bounded local Ollama adapter are in [the game company project](projects/threejs-game-studio/README.md). The [hardware company project](projects/atech-hardware-studio/README.md) retains the imported Atech SDK and adds a deterministic button/NeoPixel example. Both company creation requests are queued for native sync; a website surface is not evidence that employees or model jobs are running.
+
+The additional $20 allowance is shared across this continuation. [Claude/Donna contributions](project/resource-office-2026-11-24/CLAUDE-DONNA-HANDOFF.md), [usage](project/resource-office-2026-11-24/usage-receipt.json), [independent review](project/resource-office-2026-11-24/resource-review.md), and [validation](project/resource-office-2026-11-24/VALIDATION.md) distinguish source, runtime and publication evidence. No new desktop binary release or completed Qwen inference is claimed by these source changes.
+
+## Conference-table design prototype — source imported 2026-11-24
+
+[Open the private canvas preview](https://daftar-infinite-blueprint-studio.whatswrong-inc.chatgpt.site/) · [Prototype source and guide](design/conference-table-prototype/README.md)
+
+The `design/conference-table-prototype` branch preserves the self-contained HTML frontend from the reviewed design session: company office blueprints, departments, employees, Director, floating Donna, whiteboard, hierarchy and roadmap share one laptop canvas. Emerald, cobalt and ivory themes use local synthetic data and 2.5D presentation. Donna previews local task handoffs; this import adds no backend or desktop integration.
+
+The [QA record](design/conference-table-prototype/QA-REPORT.md), [Claude build brief](design/conference-table-prototype/CLAUDE-BUILD-BRIEF.md), [sanitized authorship receipt](design/conference-table-prototype/claude-build-provenance.json), reproducible tests and visual assets accompany the source. Production code and the separate `design/infinite-blueprint-canvas` branch are preserved; the release evidence below continues to describe its original source versions.
 
 ## Endless canvas — 0.8.0 released
 

@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "decision": "reject",
+  "automatic_promotion": false,
+  "protocol_sha256": "5c36a8e29ef2024635829321e5297e6b8fda8b35d6a2cc1f4b85323b7f138c5c",
+  "receipt_sha256": "127f83b30111a09902a4934c066e79fb9db72d500f58b0b6f0a744f0b9121ec7",
+  "reasons": [
+    "Held-out mean gain did not meet the frozen positive threshold.",
+    "Comparable model/settings/tool environment is absent or unknown."
+  ],
+  "metrics": {
+    "held_out_mean_gain": 0.0,
+    "case_means": [
+      {
+        "case_id": "dev-approved-publication",
+        "split": "development",
+        "baseline_mean": 1.0,
+        "candidate_mean": 1.0,
+        "gain": 0.0
+      },
+      {
+        "case_id": "dev-offline-budget",
+        "split": "development",
+        "baseline_mean": 1.0,
+        "candidate_mean": 1.0,
+        "gain": 0.0
+      },
+      {
+        "case_id": "dev-metadata-only-paper",
+        "split": "development",
+        "baseline_mean": 1.0,
+        "candidate_mean": 1.0,
+        "gain": 0.0
+      },
+      {
+        "case_id": "dev-standalone-package",
+        "split": "development",
+        "baseline_mean": 1.0,
+        "candidate_mean": 1.0,
+        "gain": 0.0
+      },
+      {
+        "case_id": "heldout-cancelled-scope",
+        "split": "held_out",
+        "baseline_mean": 1.0,
+        "candidate_mean": 1.0,
+        "gain": 0.0
+      },
+      {
+        "case_id": "heldout-stale-attempt",
+        "split": "held_out",
+        "baseline_mean": 1.0,
+        "candidate_mean": 1.0,
+        "gain": 0.0
+      },
+      {
+        "case_id": "heldout-shared-reservation",
+        "split": "held_out",
+        "baseline_mean": 1.0,
+        "candidate_mean": 1.0,
+        "gain": 0.0
+      },
+      {
+        "case_id": "heldout-contaminated-gain",
+        "split": "held_out",
+        "baseline_mean": 1.0,
+        "candidate_mean": 1.0,
+        "gain": 0.0
+      }
+    ],
+    "repetitions": 2,
+    "paired_outcomes_complete": true
+  },
+  "claim_scope": "Bounded comparison of supplied task outcomes only; the gate cannot verify judge honesty, actual execution, or generalization.",
+  "external_provider_usd": 0.0,
+  "platform_telemetry_complete": false
+}

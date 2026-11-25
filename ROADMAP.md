@@ -1,8 +1,47 @@
 # Daftar product roadmap
 
+## Backend and workflow continuation — implemented 2026-11-24
+
+- Delivered native definition editing, scoped renames, restored ownership
+  validation and complete specialist-retirement transitions.
+- Delivered editor team/department controls, ownership inspection, protected
+  drafts and connection-generation guards; wired new actions through MCP.
+- Repaired concurrent cloud idempotency and atomic brief/reservation persistence;
+  added streaming request bounds and public-command allowlist parity.
+- Repaired live worker authority/admission semantics, headless startup/shutdown
+  and recovery guidance; added required-build and reproducible load CI gates.
+- Preserved and validated the prior resource catalog, studios and skill work.
+
+[Validation](project/BACKEND_WORKFLOW_VALIDATION_2026-11-24.md) distinguishes
+completed local checks from remote CI, private deployment, installed clients,
+production model calls and long-duration load. Those results must be recorded
+for their exact source; earlier release evidence remains historical.
+
 This file distinguishes implemented behavior from deployment and validation work.
 The detailed worker asks and returns are in [the shared ledger](project/WORKER_LEDGER.md),
 with the sequence indexed in [TIMELINE.md](TIMELINE.md).
+
+## Shared references and company studios
+
+| Outcome | Implemented behavior | Remaining acceptance |
+| --- | --- | --- |
+| One public source catalog | 303 records, 15 skill routes, bounded native/hosted context, reading and rights provenance | Task quality remains separate from structural routing tests |
+| Reference room on the canvas | Search, kind/skill filters, pins, paged detail and draft-only Donna handoff | See the continuation validation receipt for actual browser coverage |
+| Hardware company | Imported SDK fixes and reproducible button/NeoPixel source example | Native company sync, physical assembly, compilation and flashing |
+| 3D game company | Original interactive reference, isolated imported-scene review, pinned model metadata and bounded local adapter | Native company sync, actual model inference and held-out evaluation |
+| Additional $20 allowance | Shared cost receipt and consistent global budget input bounds | Global $120 request must be accepted by the native policy before it is applied |
+| Five-round skill review | Original frozen evidence preserved; resource-use procedures added and packages synchronized | Zero-gain candidate remains rejected; no new competence gain claimed |
+
+## Conference-table design reference — 2026-11-24 source import
+
+This additive work is on `design/conference-table-prototype`. It preserves the production application and the separate `design/infinite-blueprint-canvas` branch.
+
+| Outcome | State | Acceptance |
+| --- | --- | --- |
+| Standalone laptop canvas, three themes and floating Donna | Source imported with local synthetic data | [HTML and guide](design/conference-table-prototype/README.md); demo actions do not execute agents or change native records |
+| Reproducible review and visual record | Runner, prior browser observations, screenshots and concept motion study retained | [QA report](design/conference-table-prototype/QA-REPORT.md) distinguishes historical observations from import-time checks |
+| Claude authorship and integration handoff | Sanitized receipt and build brief included | [Provenance](design/conference-table-prototype/claude-build-provenance.json) and [build brief](design/conference-table-prototype/CLAUDE-BUILD-BRIEF.md); no credentials in the deliverable |
+| Native/web integration and larger-workspace acceptance | Separate future work for this prototype | Preserve canonical records and authority; verify real execution, accessibility and sustained performance on any integrated source |
 
 ## Endless company canvas — 0.8.0 released
 

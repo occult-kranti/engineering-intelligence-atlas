@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "kind": "public_regression_cases_not_blind_holdout",
+  "status": "model_evaluation_not_run",
+  "purpose": "Exercise composition, controls, source completeness and failure reporting with equal finite budgets. These visible prompts cannot substantiate an unseen-test claim.",
+  "shared_budget": {"max_attempts":2,"max_repairs_per_attempt":1,"max_output_tokens":4096,"timeout_seconds":120,"max_response_bytes":5000000},
+  "required_evidence": ["source_revision","installed_weight_identity_or_unverified","prompt_hash","seed_if_supported","original_output_hash","attempt_count","repair_count","completion_reason","syntax_result","browser_errors","controls_result","visual_observations","performance_observations"],
+  "cases": [
+    {"id":"public-01","prompt":"Create an original low-poly tidal observatory with a rotating beacon, orbit and zoom controls, reset camera, and resize support. Use only the pinned Three.js core module in a complete HTML file.","checks":["complete_file","recognizable_observatory","beacon_motion","keyboard_orbit","resize"]},
+    {"id":"public-02","prompt":"Create an original floating seed archive with three connected greenhouse islands. Show distinct footbridges and a central gathering place. Include orbit, zoom and reset controls, a stable initial camera, and reduced-motion behavior in one HTML file.","checks":["three_islands","connected_bridges","initial_framing","reduced_motion","no_external_assets"]},
+    {"id":"public-03","prompt":"Create a compact mechanical clockwork garden. Keep all gears visually separated, expose pause and reset controls, and keep the object count bounded. Use procedural geometry and no physics engine.","checks":["bounded_geometry","pause","reset","no_nan_geometry","no_claim_of_physics_accuracy"]},
+    {"id":"public-04","prompt":"Create an accessible moon-base courtyard on a laptop viewport. Keep the landmark visible after resizing to a narrow viewport and provide keyboard camera controls. Do not fetch textures or import addons.","checks":["narrow_resize","keyboard_camera","landmark_visible","dependency_profile","source_complete"]}
+  ],
+  "acceptance": "Track syntax, render, interaction and visual results separately. Preserve failures and repairs. A static render is not a playable game."
+}

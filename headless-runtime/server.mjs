@@ -47,12 +47,16 @@ async function readJson(req) {
   }
 }
 
-/** Service-to-service HTTP API. Browser origins are denied unless explicitly listed. */
-export function createServer({ runtime, token, allowedHosts = [], allowedOrigins = [], maxConcurrent = 32 }) {
+function validateServerConfiguration({ token, maxConcurrent = 32 }) {
   if (!TOKEN_PATTERN.test(token ?? '')) throw new RuntimeError('INVALID_CONFIG', 'A valid control token is required.', 503);
   if (!Number.isInteger(maxConcurrent) || maxConcurrent < 1 || maxConcurrent > 256) {
     throw new RuntimeError('INVALID_CONFIG', 'Invalid concurrency limit.', 503);
   }
+}
+
+/** Service-to-service HTTP API. Browser origins are denied unless explicitly listed. */
+export function createServer({ runtime, token, allowedHosts = [], allowedOrigins = [], maxConcurrent = 32 }) {
+  validateServerConfiguration({ token, maxConcurrent });
   const tokenHash = digest(token);
   const hosts = new Set(allowedHosts);
   const origins = new Set(allowedOrigins);
@@ -108,6 +112,7 @@ export function createServer({ runtime, token, allowedHosts = [], allowedOrigins
     })().catch(error => {
       if (res.headersSent || res.destroyed) return;
       const known = error instanceof RuntimeError;
+      if (known && ['BUSY', 'STATE_BUSY'].includes(error.code)) res.setHeader('Retry-After', '1');
       writeJson(res, known ? error.status : 500, { ok: false,
         code: known ? error.code : 'RUNTIME_ERROR',
         error: known ? error.message : 'Runtime request could not be completed. Inspect state before retrying a mutation.' });
@@ -128,23 +133,29 @@ export async function startServer(config = {}) {
   const port = config.port ?? 8788;
   if (!Number.isInteger(port) || port < 0 || port > 65535) throw new RuntimeError('INVALID_CONFIG', 'Invalid port.', 503);
   const token = config.token ?? readSecretFile(config.tokenFile, { controlToken: true });
+  // Validate before createRuntime starts observers or cloud synchronization.
+  validateServerConfiguration({ token, maxConcurrent: config.maxConcurrent });
   const runtime = config.runtime ?? createRuntime(config);
   // Fail startup rather than advertising readiness with a missing native binary.
   try { await runtime.snapshot(); } catch (error) { await runtime.close(); throw error; }
-  const server = createServer({ runtime, token, allowedHosts: config.allowedHosts,
-    allowedOrigins: config.allowedOrigins, maxConcurrent: config.maxConcurrent });
+  let server;
   try {
+    server = createServer({ runtime, token, allowedHosts: config.allowedHosts,
+      allowedOrigins: config.allowedOrigins, maxConcurrent: config.maxConcurrent });
     await new Promise((resolve, reject) => {
       server.once('error', reject);
       server.listen(port, host, () => { server.off('error', reject); resolve(); });
     });
   } catch (error) { await runtime.close(); throw error; }
-  return { server, runtime, async close() {
-    const closing = new Promise(resolve => server.close(resolve));
-    server.closeIdleConnections();
-    await runtime.close();
-    server.closeAllConnections();
-    await closing;
+  let closed;
+  return { server, runtime, close() {
+    // Multiple signal/owner cleanup paths share a single shutdown operation.
+    return closed ??= (async () => {
+      const closing = new Promise(resolve => server.close(resolve));
+      server.closeIdleConnections();
+      try { await runtime.close(); }
+      finally { server.closeAllConnections(); await closing; }
+    })();
   } };
 }
 

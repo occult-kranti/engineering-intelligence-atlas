@@ -1,0 +1,45 @@
+# Simulation data for an Atech product the SDK has no firmware for: `atech sim-assets`
+# exports it, `project.yaml` cannot place it (atech.sim.spec.Product). Frames and every
+# field: src/atech/docs/sim_assets.md. Asset frame: metres, origin at the centre of the
+# bottom face of the cell over its port, +z out of the top face, +y toward the outer face.
+#
+# Power jack module: no firmware (it carries power only). One port, but a housing two
+# cells long, as in Atech's renders (renders/optimized/modules/gallery/power-jack,
+# renders/pcb/power-jack.jpg): a DC barrel jack at the +x end, its socket facing out
+# of the end wall, an SOIC-8 and a few small parts on the PCB (top 4.14 mm). No Atech
+# CAD of it: `atech sim-assets --meshes` draws a derived model (the screen's shell).
+schema: 1
+
+product: {name: "Power Jack", category: power, size: 1, interface: null}
+
+size_m: [0.0395, 0.0195, 0.01]    # PLACEHOLDER: replace with Atech module datasheet (one port, two cells long, as Atech's render)
+mass_kg: 0.012                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  jack: [0.2, 0.2, 0.21, 1]
+  hole: [0.02, 0.02, 0.02, 1]
+  chip: [0.85, 0.85, 0.83, 1]
+  passive: [0.75, 0.75, 0.73, 1]
+
+parts:                           # PLACEHOLDER: replace with Atech module datasheet
+  - {name: jack_body, size_m: [0.009, 0.01, 0.0062], pos_m: [0.0145, 0, 0.00724], color: jack}
+  - {name: jack_barrel, shape: cylinder_x, size_m: [0.0022, 0.0075, 0.0075], pos_m: [0.0201, 0, 0.00724], color: jack}
+  - {name: jack_socket, shape: cylinder_x, size_m: [0.0004, 0.0045, 0.0045], pos_m: [0.0214, 0, 0.00724], color: hole}
+  - {name: regulator, size_m: [0.005, 0.004, 0.0015], pos_m: [0.004, -0.004, 0.00489], color: chip}
+  - {name: controller, size_m: [0.003, 0.003, 0.0009], pos_m: [-0.008, 0.004, 0.00459], color: chip}
+  - {name: passive_1, size_m: [0.001, 0.0005, 0.0004], pos_m: [-0.002, -0.004, 0.00434], color: passive}
+  - {name: passive_2, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.0, 0.002, 0.00434], color: passive}
+  - {name: passive_3, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.008, 0.005, 0.00434], color: passive}
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  # Mates with the board's port frame: centre of the bottom face of the -x cell.
+  pos_m: [-0.010, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+placeholders: [size_m, mass_kg, colors, parts, connector, physics_material]

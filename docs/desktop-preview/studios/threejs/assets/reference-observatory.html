@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tidal observatory · original Daftar reference scene</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#10252e;color:#e6ecd9;font-family:system-ui,sans-serif}canvas{display:block;outline:none;touch-action:none}canvas:focus-visible{outline:3px solid #d7dda5;outline-offset:-5px}#failure{display:none;position:absolute;inset:25%;font-size:14px;line-height:1.6;text-align:center}.notice{position:absolute;right:12px;top:12px;font:9px/1.6 system-ui;letter-spacing:1px;color:#d0deca;pointer-events:none}</style>
+</head>
+<body>
+<p id="failure" role="status">This scene needs WebGL. The source remains available for review in the studio.</p>
+<span class="notice">TIDAL OBSERVATORY<br>ORIGINAL REFERENCE / DAFTAR</span>
+<script type="module">
+// Original Daftar procedural reference, authored for this studio. Not model output.
+import * as THREE from 'https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js';
+
+let renderer;
+try { renderer=new THREE.WebGLRenderer({antialias:true,alpha:false,powerPreference:'low-power'}); }
+catch(error) { document.getElementById('failure').style.display='block'; throw error; }
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+renderer.setClearColor(0x142e3a,1);
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.3;
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.domElement.tabIndex=0;renderer.domElement.setAttribute('aria-label','Tidal observatory. Drag to orbit, scroll to zoom. Arrow keys rotate, plus and minus zoom, R resets.');document.body.append(renderer.domElement);
+const scene=new THREE.Scene();scene.fog=new THREE.Fog(0x142e3a,48,85);
+const camera=new THREE.PerspectiveCamera(42,1,.1,110),target=new THREE.Vector3(0,1.4,0);
+const hemisphere=new THREE.HemisphereLight(0xbdd9df,0x5b5744,2.1);scene.add(hemisphere);
+const sun=new THREE.DirectionalLight(0xffd7a1,3.7);sun.position.set(-12,20,8);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);Object.assign(sun.shadow.camera,{left:-14,right:14,top:14,bottom:-14,near:.5,far:60});sun.shadow.bias=-.001;scene.add(sun);
+const fill=new THREE.DirectionalLight(0x9ac9dc,.8);fill.position.set(10,7,-12);scene.add(fill);
+const materials=new Map(),geometries=new Set();
+function material(color,metalness=0){const key=`${color}/${metalness}`;if(!materials.has(key))materials.set(key,new THREE.MeshStandardMaterial({color,roughness:metalness?.4:.9,metalness,flatShading:true}));return materials.get(key);}
+function mesh(geometry,color,x,y,z,metalness=0){geometries.add(geometry);const object=new THREE.Mesh(geometry,material(color,metalness));object.position.set(x,y,z);object.castShadow=true;object.receiveShadow=true;scene.add(object);return object;}
+function box(w,h,d,color,x,y,z){return mesh(new THREE.BoxGeometry(w,h,d),color,x,y,z);}
+function cylinder(top,bottom,height,color,x,y,z,segments=32){return mesh(new THREE.CylinderGeometry(top,bottom,height,segments),color,x,y,z);}
+const water=mesh(new THREE.CircleGeometry(50,64),0x1a4a57,0,-.7,0);water.rotation.x=-Math.PI/2;water.castShadow=false;
+const shore=cylinder(10.1,10.6,.12,0x537a72,0,-.39,0,64);shore.castShadow=false;
+cylinder(9.2,9.8,.5,0x9b9b7a,0,-.05,0,48);cylinder(8.9,9.2,.38,0xb6b194,0,.35,0,48);
+const grass=cylinder(8.45,8.6,.13,0x728976,0,.59,0,48);grass.castShadow=false;
+// A circular observatory, an open colonnade, a copper dome and a harbor walk.
+cylinder(3.7,3.9,.35,0xc8bda0,0,.85,-.5);cylinder(3.22,3.3,.35,0xd8ceb0,0,1.18,-.5);
+cylinder(2.7,2.7,2.8,0xdedbc5,0,2.75,-.5,48);
+cylinder(2.86,2.86,.23,0xa3af9e,0,4.27,-.5,48);
+const dome=mesh(new THREE.SphereGeometry(2.77,36,16,0,Math.PI*2,0,Math.PI/2),0x78999a,0,4.4,-.5,.45);
+for(let i=0;i<12;i++){const angle=i/12*Math.PI*2,x=Math.sin(angle)*2.72,z=Math.cos(angle)*2.72-.5;const window=box(.52,1.13,.12,0x243d43,x,2.95,z);window.rotation.y=angle;const sill=box(.72,.12,.22,0xb8bca3,x,2.37,z);sill.rotation.y=angle;}
+for(let i=0;i<15;i++){const angle=i/15*Math.PI*2;const x=Math.sin(angle)*3.35,z=Math.cos(angle)*3.35-.5;cylinder(.13,.17,2.6,0xe4dbc0,x,2.6,z,10);cylinder(.24,.24,.16,0xc2bda1,x,3.92,z,10);}
+cylinder(3.63,3.63,.2,0xc6c5aa,0,4.06,-.5,48);
+// Reinsert the dome above the cornice; a striped ridge gives it a readable silhouette.
+for(let i=0;i<8;i++){const arc=new THREE.TorusGeometry(2.8,.025,5,30,Math.PI);const rib=mesh(arc,0xb5c4b3,0,4.4,-.5,.45);rib.rotation.x=Math.PI/2;rib.rotation.y=i/8*Math.PI;}
+cylinder(.18,.26,1.2,0xbaa578,0,7.4,-.5,12);
+const beacon=new THREE.Group();beacon.position.set(0,7.9,-.5);scene.add(beacon);
+const lens=new THREE.Mesh(new THREE.OctahedronGeometry(.28),new THREE.MeshBasicMaterial({color:0xffdd96}));beacon.add(lens);geometries.add(lens.geometry);
+const instrument=box(1.7,.1,.16,0xb59a6c,0,7.8,-.5);scene.remove(instrument);instrument.position.set(0,-.08,0);beacon.add(instrument);
+const ring=mesh(new THREE.TorusGeometry(.67,.045,8,32),0xc5ac7b,0,7.8,-.5,.6);ring.rotation.x=Math.PI/2;
+for(let i=0;i<6;i++)box(2.5,.17,1.05,0xd8ceb2,0,.7+i*.11,5.7-i*.55);
+box(2.2,.12,3.4,0xc7bc9b,0,.69,6.6);box(2.1,.2,5.7,0x8d7961,0,.05,10.0);
+for(let i=0;i<13;i++)box(2.07,.04,.32,0xb6a184,0,.18,7.5+i*.4);
+for(const side of [-1,1])for(let i=0;i<5;i++){cylinder(.07,.07,.95,0x697f79,side*.98,.35,8+i*.95,8);if(i<4)box(.07,.07,.96,0xb6ae8c,side*.98,.76,8.48+i*.95);}
+// Two small research pavilions and bounded procedural planting.
+function pavilion(x,z,rotation){const group=new THREE.Group();group.position.set(x,0,z);group.rotation.y=rotation;scene.add(group);for(const object of [box(2.2,1.5,1.8,0xd7cfb5,0,1.4,0),box(2.5,.2,2.1,0x7b9a93,0,2.25,0),box(.7,1.1,.05,0x294950,0,1.25,.92)]){scene.remove(object);group.add(object);}return group;}
+pavilion(-5.8,-1.8,-.3);pavilion(5.6,-2.1,.4);
+function tree(x,z,size){cylinder(.09,.14,size*.8,0x7f7056,x,.7+size*.4,z,7);const crown=mesh(new THREE.IcosahedronGeometry(size,0),0x426d63,x,.9+size,z);crown.scale.set(.75,1.5,.75);}
+for(const [x,z,s] of [[-6,3,1],[-5,4.6,.9],[-7,0,.75],[-4,-5,1.05],[-1,-6.8,.85],[2,-6.4,.9],[5,-5,.8],[6.4,2.7,1.1],[4.8,4.8,.8],[-6,-4.4,.65]])tree(x,z,s);
+for(let i=0;i<9;i++){const a=i*.7;const rock=mesh(new THREE.IcosahedronGeometry(.65,0),0x8c9c8b,Math.sin(a)*8.5,.5,Math.cos(a)*8.5);rock.scale.set(1.4,.55,.8);}
+// Drafting markers remain part of the scene, with no external textures or assets.
+const grid=new THREE.GridHelper(26,26,0x75958b,0x285663);grid.position.y=-.64;grid.material.transparent=true;grid.material.opacity=.35;scene.add(grid);
+const orbitRing=mesh(new THREE.TorusGeometry(11.2,.012,4,100),0x95ad99,0,-.35,0);orbitRing.rotation.x=Math.PI/2;orbitRing.castShadow=false;
+
+let yaw=.62,pitch=.65,distance=29,paused=Boolean(window.__DAFTAR_REDUCED_MOTION__??matchMedia('(prefers-reduced-motion: reduce)').matches),hostHidden=window.__DAFTAR_HOST_VISIBLE__===false,dirty=true,pointer=null,phase=0,last=0,statsAt=0,animation=0,disposed=false;
+function updateCamera(){camera.position.set(Math.sin(yaw)*Math.cos(pitch)*distance,Math.sin(pitch)*distance+target.y,Math.cos(yaw)*Math.cos(pitch)*distance);camera.lookAt(target);dirty=true;}
+function resize(){const w=Math.max(1,innerWidth),h=Math.max(1,innerHeight);renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();updateCamera();}
+function reset(){yaw=.62;pitch=.65;distance=29;updateCamera();}
+const canvas=renderer.domElement;
+canvas.addEventListener('pointerdown',event=>{pointer={id:event.pointerId,x:event.clientX,y:event.clientY};canvas.setPointerCapture(event.pointerId);canvas.focus();});
+canvas.addEventListener('pointermove',event=>{if(!pointer||pointer.id!==event.pointerId)return;yaw-=(event.clientX-pointer.x)*.006;pitch=Math.max(.15,Math.min(1.25,pitch+(event.clientY-pointer.y)*.006));pointer.x=event.clientX;pointer.y=event.clientY;updateCamera();});
+canvas.addEventListener('pointerup',()=>pointer=null);canvas.addEventListener('pointercancel',()=>pointer=null);
+canvas.addEventListener('wheel',event=>{event.preventDefault();distance=Math.max(17,Math.min(46,distance*Math.exp(event.deltaY*.001)));updateCamera();},{passive:false});
+canvas.addEventListener('keydown',event=>{const key=event.key.toLowerCase();if(!['arrowleft','arrowright','arrowup','arrowdown','+','=','-','r',' '].includes(key))return;event.preventDefault();if(key==='arrowleft')yaw+=.1;if(key==='arrowright')yaw-=.1;if(key==='arrowup')pitch=Math.min(1.25,pitch+.08);if(key==='arrowdown')pitch=Math.max(.15,pitch-.08);if(key==='+'||key==='=')distance=Math.max(17,distance-1.5);if(key==='-')distance=Math.min(46,distance+1.5);if(key==='r')reset();if(key===' ')paused=!paused;updateCamera();});
+addEventListener('resize',resize);
+addEventListener('message',event=>{if(event.source!==parent||event.data?.channel!==window.__DAFTAR_CHANNEL__||event.data?.type!=='studio-control')return;const{action,value}=event.data;if(action==='pause')paused=Boolean(value);if(action==='visibility')hostHidden=Boolean(value);if(action==='reset')reset();if(action==='wireframe'){for(const mat of materials.values())mat.wireframe=Boolean(value);}dirty=true;});
+document.addEventListener('visibilitychange',()=>{dirty=true;});
+canvas.addEventListener('webglcontextlost',event=>{event.preventDefault();paused=true;document.getElementById('failure').textContent='WebGL context was lost. Reopen the preview to recover.';document.getElementById('failure').style.display='block';});
+function tick(time){if(disposed)return;animation=requestAnimationFrame(tick);const dt=Math.min((time-last)/1000,.05);last=time;if(hostHidden||document.hidden)return;if(!paused){phase+=dt;beacon.rotation.y=phase*.6;dirty=true;}if(dirty){renderer.render(scene,camera);dirty=false;}if(time-statsAt>1500&&window.__DAFTAR_CHANNEL__){parent.postMessage({channel:window.__DAFTAR_CHANNEL__,type:'stats',detail:{drawCalls:renderer.info.render.calls,triangles:renderer.info.render.triangles}},'*');statsAt=time;}}
+addEventListener('pagehide',()=>{disposed=true;cancelAnimationFrame(animation);for(const geometry of geometries)geometry.dispose();for(const mat of materials.values())mat.dispose();lens.material.dispose();grid.geometry.dispose();grid.material.dispose();renderer.dispose();},{once:true});
+resize();animation=requestAnimationFrame(tick);
+</script>
+</body>
+</html>

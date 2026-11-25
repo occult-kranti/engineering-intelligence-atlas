@@ -1,0 +1,117 @@
+id: scd40_air_quality
+name: "SCD40 Air Quality Sensor (CO2)"
+display_name: "Air Quality"
+category: sensor
+interface: i2c
+size: 1
+i2c_address: 0x62
+description: |
+  Sensirion SCD40 NDIR CO2 sensor over I2C (address 0x62) — true CO2
+  measurement (400-2000 ppm typical), with temperature and humidity returned
+  as calibration byproducts. A background FreeRTOS task polls the sensor at
+  its native 5 s cadence and caches the reading, so the getters return
+  instantly and never block your loop. The first valid reading lands ~5 s
+  after boot. Single port: SDA on Line A, SCL on Line B.
+
+driver:
+  header: scd40.h
+  source: scd40.cpp
+  class_name: SCD40
+  shared: [i2c_software.h]
+
+templates:
+  # Its own bit-banged I2C bus on the port's two lines (SDA = Line A, SCL = Line B),
+  # as studio generates it: every I2C module has a bus of its own, so modules on
+  # different ports never share a controller.
+  globals: |
+    SoftwareI2C {{ instance }}_bus({{ pin_a }}, {{ pin_b }});
+    SCD40 {{ instance }}(&{{ instance }}_bus);
+  # 100 kHz, NOT the usual 400 kHz: the SCD4x family tops out at 100 kHz and
+  # will not ACK at all above it.
+  setup: |
+    {{ instance }}_bus.begin(100000);
+    {{ instance }}.begin();
+  # Built-in: emit CO2 + temperature + humidity as JSON events when a measurement changes them
+  # (matching the sensor's own measurement cadence). Nothing is printed until
+  # the first real measurement has landed (isReady()): before it the cache
+  # holds 0 ppm / 0.0 C / 0.0 %, which would read as a dead sensor. The first
+  # events go out as soon as that measurement arrives, then on each change (at most
+  # one per 5 s measurement) and after 10 s without one.
+  loop: |
+    // When a new measurement changes the readings (the sensor makes one every 5 s), and
+    // again after 10 s without a change. None before the first measurement.
+    static uint16_t {{ instance }}_co2Seen = 0;
+    static float {{ instance }}_tSeen = 0, {{ instance }}_rhSeen = 0;
+    static unsigned long {{ instance }}_last = 0;
+    if ({{ instance }}.isReady() &&
+        ({{ instance }}.readCO2() != {{ instance }}_co2Seen || {{ instance }}.readTemperature() != {{ instance }}_tSeen ||
+         {{ instance }}.readHumidity() != {{ instance }}_rhSeen || millis() - {{ instance }}_last >= 10000)) {
+      {{ instance }}_co2Seen = {{ instance }}.readCO2();
+      {{ instance }}_tSeen = {{ instance }}.readTemperature();
+      {{ instance }}_rhSeen = {{ instance }}.readHumidity();
+      {{ instance }}_last = millis();
+      Serial.print("{\"type\":\"event\",\"payload\":{\"event_type\":\"sensor\",\"key\":\"{{ instance }}_co2\",\"value\":");
+      Serial.print({{ instance }}.readCO2());
+      Serial.println(",\"unit\":\"ppm\",\"source\":\"scd40_air_quality\"}}");
+      Serial.print("{\"type\":\"event\",\"payload\":{\"event_type\":\"sensor\",\"key\":\"{{ instance }}_temperature\",\"value\":");
+      Serial.print({{ instance }}.readTemperature(), 2);
+      Serial.println(",\"unit\":\"C\",\"source\":\"scd40_air_quality\"}}");
+      Serial.print("{\"type\":\"event\",\"payload\":{\"event_type\":\"sensor\",\"key\":\"{{ instance }}_humidity\",\"value\":");
+      Serial.print({{ instance }}.readHumidity(), 2);
+      Serial.println(",\"unit\":\"%\",\"source\":\"scd40_air_quality\"}}");
+    }
+
+events:
+  - key: "{{ instance }}_co2"
+    type: sensor
+    value_type: int
+    unit: ppm
+    description: >
+      CO2 concentration in ppm. First emitted when the first measurement
+      lands (~5 s after boot), never as a 0 placeholder before it; then
+      whenever a measurement changes a reading, and after 10 s without a change.
+  - key: "{{ instance }}_temperature"
+    type: sensor
+    value_type: float
+    unit: C
+    description: "Temperature in degrees Celsius. From the first measurement on, with the CO2 event."
+  - key: "{{ instance }}_humidity"
+    type: sensor
+    value_type: float
+    unit: "%"
+    description: "Relative humidity in %RH. From the first measurement on, with the CO2 event."
+
+actions: []
+lib_deps: []
+
+# Real hardware read-back: the sensor ACKs at 0x62 only if it's wired and
+# powered. `atech check` uses this to report "not responding" instead of a
+# silent failure.
+health_check: "{{ instance }}.isConnected()"
+
+usage: |
+  // Public API of SCD40 — the instance is `{{ instance }}`.
+  // begin() ran in setup() and started a background polling task, so the
+  // getters below return the latest cached value instantly (no blocking).
+  // If you leave loop empty, the module already streams co2 + temperature +
+  // humidity events once the first measurement has landed — only
+  // add code here for custom behaviour.
+  uint16_t ppm = {{ instance }}.readCO2();           // 0 until first reading
+  float c      = {{ instance }}.readTemperature();   // degrees Celsius
+  float rh     = {{ instance }}.readHumidity();      // % relative humidity
+
+  // readCO2() returns 0 for the first ~5 s. Guard any UI with isReady():
+  if ({{ instance }}.isReady()) { /* a real measurement has landed */ }
+  if ({{ instance }}.isConnected()) { /* sensor is responding on the bus */ }
+
+  // The sensor only updates every 5 s — polling faster just re-reads the
+  // same cached value. Indoor CO2 reference:
+  //   <800 ppm fresh | 800-1200 acceptable | >1500 poor | >2000 uncomfortable
+  //
+  // Edge-trigger with hysteresis so it fires once per crossing, not every loop:
+  //   static bool stuffy = false;
+  //   if (!stuffy && ppm > 1200) { stuffy = true;  /* crossed into poor air */ }
+  //   else if (stuffy && ppm < 1000) { stuffy = false; /* recovered */ }
+
+feedback:
+  - {label: "{{ instance }} CO2", value: "{{ instance }}.readCO2()", kind: level, range: [400, 2000], unit: "ppm"}

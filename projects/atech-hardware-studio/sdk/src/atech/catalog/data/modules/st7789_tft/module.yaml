@@ -1,0 +1,92 @@
+id: st7789_tft
+name: "ST7789 TFT Color Display (320x240)"
+display_name: "Big Screen"
+category: display
+interface: gpio
+size: 2
+description: |
+  2.0 inch 320x240 IPS colour TFT (ST7789 controller, SPI), or 240x320 in
+  portrait. Spans TWO adjacent ports; the panel overhangs the board edge. Same
+  wiring and the same drawing API as the small Screen (st7735_tft), with four
+  times the pixels: code ports over by changing the class and the layout sizes.
+  Canvas mode needs a 150 KB framebuffer; if it does not fit, the screen runs in
+  direct mode (isDirectMode()). The backlight is always on.
+  Pin map: DC on Line A1, CS on Line B1, MOSI on Line A2, SCLK on Line B2.
+
+driver:
+  header: st7789_tft.h
+  source: st7789_tft.cpp
+  class_name: ST7789_TFT
+
+templates:
+  # Constructor is (sclk, cs, mosi, dc), the same order as ST7735_TFT.
+  # SCLK = secondary Line B (pin_b2), CS = primary Line B (pin_b),
+  # MOSI = secondary Line A (pin_a2), DC = primary Line A (pin_a).
+  globals: |
+    ST7789_TFT {{ instance }}({{ pin_b2 }}, {{ pin_b }}, {{ pin_a2 }}, {{ pin_a }});
+  # No clear() after begin(): the Atech logo stays up until the first display().
+  setup: |
+    {{ instance }}.begin();
+  loop: ""
+
+actions: []
+events: []
+# Pinned with the small screen's: the same Adafruit library drives both panels.
+# Bump on purpose, after `ATECH_COMPILE_TEST=1 pytest -m integration` and a real board.
+lib_deps:
+  - "adafruit/Adafruit GFX Library@1.12.6"
+  - "adafruit/Adafruit BusIO@1.17.4"
+  - "adafruit/Adafruit ST7735 and ST7789 Library@1.11.0"
+
+usage: |
+  // Public API of ST7789_TFT — the instance is `{{ instance }}`. 320x240 px.
+  // The same calls as the small screen (ST7735_TFT). begin() already ran in setup()
+  // and shows the Atech logo until your first display(). Colour constants:
+  // ST7789_TFT::COLOR_BLACK / _WHITE / _RED / _GREEN / _BLUE / _CYAN / _MAGENTA /
+  // _YELLOW / _ORANGE (RGB565 uint16_t; raw values and ATECH_* colours work too).
+
+  // --- CANVAS MODE (default): clear -> draw -> display. Flicker-free. ---
+  // display() pushes the whole frame in about 31 ms: redraw every 33-50 ms, not faster.
+  {{ instance }}.clear();
+  {{ instance }}.setCursor(8, 8);
+  {{ instance }}.setTextColor(ST7789_TFT::COLOR_WHITE);
+  {{ instance }}.print("Hello");                 // print() takes ONE arg; print(f, decimals) too
+  {{ instance }}.displayText("42C", 8, 60, 3, ST7789_TFT::COLOR_RED); // text+pos+size+colour
+  {{ instance }}.display();                       // push the frame to the screen
+
+  // --- shapes ---
+  {{ instance }}.fillRect(10, 10, 80, 40, ST7789_TFT::COLOR_BLUE);
+  {{ instance }}.drawCircle(160, 120, 30, ST7789_TFT::COLOR_YELLOW);
+  {{ instance }}.drawLine(0, 0, 319, 239, ST7789_TFT::COLOR_WHITE);
+  {{ instance }}.fillRoundRect(10, 10, 80, 40, 8, ST7789_TFT::COLOR_ORANGE);  // radius 8
+  {{ instance }}.fillTriangle(0, 239, 40, 180, 80, 239, ST7789_TFT::COLOR_GREEN);
+  {{ instance }}.fillEllipse(240, 120, 40, 20, ST7789_TFT::COLOR_MAGENTA);
+  // also drawPixel, drawRect, fillCircle, drawRoundRect, drawTriangle, drawEllipse, fillScreen
+
+  // --- DIRECT MODE: only for small sprites over a background that stays put ---
+  // Set once in setup. Erase the old spot with a small fillRect, draw the new one.
+  // A full-screen fill takes ~31 ms and shows: never clear()/fillScreen() per frame.
+  {{ instance }}.setDirectMode(true);
+  bool direct = {{ instance }}.isDirectMode();    // also true when the 150 KB canvas did not fit
+
+  // --- text: the built-in 5x7 font is tiny at 320x240; use a smooth font ---
+  //   in globals: #include <Fonts/FreeSansBold12pt7b.h>   (9/12/18/24 pt, FreeSans or FreeSansBold)
+  {{ instance }}.setFont(&FreeSansBold12pt7b);     // then setTextSize(1); y is the BASELINE
+  {{ instance }}.setFont(nullptr);                 // back to the built-in font
+  int16_t tw = {{ instance }}.textWidth("Hello"); // pixels in the current font and size
+  int16_t lh = {{ instance }}.lineHeight();
+  int16_t x1, y1; uint16_t bw, bh;
+  {{ instance }}.textBounds("Hello", x1, y1, bw, bh);  // y1 < 0 for smooth fonts
+
+  // --- rotation: 1 and 3 landscape (320x240), 0 and 2 portrait (240x320) ---
+  // begin() sets 3, upright on the board's right-hand column; 1 is upright on the
+  // left (st7789_tft.h; not measured by the SDK). Rotate first in setup: going
+  // landscape <-> portrait replaces the canvas, which clears it.
+  {{ instance }}.setRotation(1);
+  int16_t w = {{ instance }}.width();             // 320 landscape, 240 portrait
+  int16_t h = {{ instance }}.height();            // 240 landscape, 320 portrait
+
+  bool slow = {{ instance }}.isSoftwareSpi();     // true when no hardware SPI host was left
+  // No brightness control: the backlight is wired on.
+
+feedback_output: screen

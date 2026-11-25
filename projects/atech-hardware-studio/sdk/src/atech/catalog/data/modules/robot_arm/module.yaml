@@ -1,0 +1,133 @@
+id: robot_arm
+name: "SO-101 / SO-ARM100 6-Axis Robot Arm"
+display_name: "Robot Arm"
+category: robotics
+interface: uart
+size: 1
+description: |
+  6-axis robot-arm controller for the SO-101 / SO-ARM100 (Feetech STS3215 servos).
+  Needs a UART port.
+  Single port using half-duplex UART at 1 Mbps to drive 6 daisy-chained servos
+  (IDs 1-6, position 0-4095 = one full turn: 4096 steps per 360°, center 2048).
+  Supports per-joint and synchronized moves, position/temperature read-back, motion recording &
+  playback, and 10 flash save-slots. TX on Line A, RX on Line B. **The module
+  passes the board's high-voltage rail to the servos: the arm gets whatever supply
+  is plugged into the power jack module (or comes from the USB-C PD power module), unregulated. The supply must match the arm
+  (12 V or 5 V). See `caution`.**
+
+caution: |
+  The Robot Arm module passes the board's high-voltage rail (labelled 12 V) straight to
+  the servos. That rail is fed by a power module (the power jack module, or the USB-C PD power
+  module) and carries whatever that module is given: nothing regulates it, and the
+  standard USB-C module does not feed it. So the supply
+  must match the arm. SO-101 arms come in a 12 V and a 5 V version: use a 12 V supply
+  for the 12 V arm and a 5 V supply for the 5 V arm. A 12 V supply on a 5 V arm damages
+  the servos. Never plug more than 12 V into the jack. Check the voltage printed on the
+  supply and which arm you have before you connect anything.
+
+driver:
+  header: robot_arm.h
+  source: robot_arm.cpp
+  class_name: RobotArm
+
+templates:
+  # Constructor is (txPin, rxPin): TX = Line A (pin_a), RX = Line B (pin_b).
+  globals: |
+    RobotArm {{ instance }}({{ pin_a }}, {{ pin_b }});
+  setup: |
+    {{ instance }}.begin();
+    {{ instance }}.setTorqueAll(true);   // torque must be on before any move
+  loop: ""
+
+events:
+  - key: "{{ instance }}_positions"
+    type: sensor
+    value_type: json
+    description: "All 6 joint positions [p1..p6] (-1 = that joint did not answer), sent in answer to the {{ instance }}_read action."
+
+# Actions a host can send (`atech send` / board.send); the generated firmware runs
+# each handler. From your own `code:` block, call the methods below directly.
+actions:
+  - key: "{{ instance }}_move_joint"
+    value_type: json
+    description: 'Move one joint: {"id":1-6,"position":0-4095,"timeMs":ms}. timeMs is optional (0 = as fast as the servo goes). Fails if the servo does not answer.'
+    handler: |
+      long _id = atechNum(value, "id", 0), _to = atechNum(value, "position", -1);
+      if (_id < 1 || _id > 6 || _to < 0 || _to > 4095) atechFail("need id 1-6 and position 0-4095");
+      else if (!{{ instance }}.moveJoint(_id, _to, atechNum(value, "timeMs", 0))) atechFail("servo did not answer");
+  - key: "{{ instance }}_move_all"
+    value_type: json
+    description: 'Move all 6 joints: {"positions":[p1..p6],"timeMs":ms} (0-4095 each). timeMs is optional (0 = as fast as the servos go). The move is broadcast: an ok means it was sent, not that the arm got there. Check with {{ instance }}_read.'
+    handler: |
+      long _p[6];
+      if (atechNums(value, "positions", _p, 6) != 6) {
+        atechFail("positions must be 6 numbers");
+      } else {
+        uint16_t _pose[6];
+        for (int _i = 0; _i < 6; _i++) _pose[_i] = constrain(_p[_i], 0, 4095);
+        {{ instance }}.moveAll(_pose, atechNum(value, "timeMs", 0));
+      }
+  - key: "{{ instance }}_center_all"
+    value_type: int
+    description: "Center all joints to 2048 over the given time in ms (1000 if no value is given)."
+    handler: |
+      {{ instance }}.centerAll(value.toInt() > 0 ? value.toInt() : 1000);
+  - key: "{{ instance }}_set_torque"
+    value_type: bool
+    description: "Enable (true) or disable (false) holding torque on all joints."
+    handler: |
+      {{ instance }}.setTorqueAll(atechTruthy(value));
+  - key: "{{ instance }}_play_slot"
+    value_type: int
+    description: "Load a saved recording from flash slot 0-9 and play it back."
+    handler: |
+      if ({{ instance }}.loadFromSlot(value.toInt())) {{ instance }}.playRecording(100);
+  - key: "{{ instance }}_read"
+    value_type: "null"
+    description: 'Read all 6 joints. Answers with the event {{ instance }}_positions = [p1..p6] (0-4095 each, -1 for a joint that did not answer), sent before the acknowledgement. Fails if no joint answers.'
+    handler: |
+      uint16_t _pos[6] = {0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+      int _ok = {{ instance }}.readAll(_pos);
+      int _out[6];
+      for (int _i = 0; _i < 6; _i++) _out[_i] = (_pos[_i] > 4095) ? -1 : (int)_pos[_i];
+      Serial.printf("{\"type\":\"event\",\"payload\":{\"event_type\":\"sensor\",\"key\":\"{{ instance }}_positions\",\"value\":[%d,%d,%d,%d,%d,%d],\"source\":\"robot_arm\"}}\n",
+                    _out[0], _out[1], _out[2], _out[3], _out[4], _out[5]);
+      if (_ok == 0) atechFail("no servo answered: check the arm's power supply and cable");
+
+lib_deps: []
+
+# Real read-back: pinging joint 1 succeeds only if the servo bus is wired and
+# the supply on the power jack module is on — so `atech check` can report a dead bus.
+health_check: "{{ instance }}.pingJoint(1)"
+
+usage: |
+  // Public API of RobotArm — the instance is `{{ instance }}`.
+  // begin() + setTorqueAll(true) ran in setup(). Positions are 0-4095
+  // (4096 steps per 360°, about 0.088° per step; center 2048); joint IDs are 1-6.
+  // POWER: the servos get whatever supply is plugged into the power jack module
+  // (board high-voltage rail, unregulated; the standard USB-C module does not feed it). Match it to the
+  // arm: 12 V supply for a 12 V arm, 5 V for a 5 V arm. 12 V on a 5 V arm damages it.
+
+  // --- move ---
+  {{ instance }}.moveJoint(1, 2048, 800);           // joint 1 -> center over 800 ms
+  uint16_t pose[6] = {2048,2048,2048,2048,2048,2048};
+  {{ instance }}.moveAll(pose, 1000);               // synchronized move (uint16_t[6]!)
+  {{ instance }}.centerAll(1000);                   // all joints to 2048
+
+  // --- read (declare position buffers as uint16_t[6], NOT int[]) ---
+  uint16_t pos[6];
+  int ok = {{ instance }}.readAll(pos);             // returns count of good reads
+  int p1 = {{ instance }}.readJoint(1);             // 0-4095, or -1 on error
+  int tC = {{ instance }}.readTemperature(1);       // °C, -1 on error
+
+  // --- torque ---
+  {{ instance }}.setTorque(3, false);               // release one joint (hand-pose it)
+  {{ instance }}.setTorqueAll(true);
+
+  // --- record a motion, then replay it ---
+  {{ instance }}.startRecording(100);               // capture every 100 ms
+  // call {{ instance }}.captureFrame(); each loop while recording, then:
+  {{ instance }}.stopRecording();
+  {{ instance }}.playRecording(100);                // 100 = normal, 50 = half, 200 = double
+  {{ instance }}.saveToSlot(0);                     // persist to flash (slots 0-9)
+  {{ instance }}.loadFromSlot(0);

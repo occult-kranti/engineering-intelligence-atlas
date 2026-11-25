@@ -3,6 +3,11 @@ import { mountCanvasWorkspace, type CanvasWorkspace, type CanvasWorkspacePanel }
 import { buildDonnaTeam, proposeDonnaAction, type DonnaSnapshot, type DonnaIntent } from './freeflow/donna-team.js';
 import type { FreeflowFocus, FreeflowSnapshot, SceneNode } from './freeflow/model.js';
 import { mountModelPool, type ModelPoolBridge, type ModelPoolPanel } from './model-pool.js';
+import { mountResourceLibrary } from './resource-library/panel.js';
+import { appendDonnaDraft } from './resource-library/model.js';
+import { mountHardwareWorkbench } from './hardware-workbench.js';
+import { RESOURCE_CATALOG } from './resource-library/catalog.js';
+import { validGlobalCeiling } from './resource-library/budget.js';
 /**
  * Local chrome/launcher page logic. Runs only on file:// inside the sandboxed
  * shell window. Structural copies of the bridge types live here so the
@@ -2515,7 +2520,7 @@ function initUnifiedWorkspace():void{
   $('workspace-budget-open').onclick=()=>{const details=$('workspace-policy') as HTMLDetailsElement;details.open=!details.open;if(details.open){details.scrollIntoView({block:'nearest'});$('workspace-approval-mode').focus();}};
   workspaceForm('workspace-policy-form',async()=>{
     const hardCapUsd=Number(value('workspace-global-usd'));const tokenText=value('workspace-global-tokens');const hardCapTokens=tokenText?Number(tokenText):null;const warningPercent=Number(value('workspace-warning-percent'));
-    if(!Number.isFinite(hardCapUsd)||hardCapUsd<=0||hardCapUsd>100||hardCapTokens!==null&&(!Number.isInteger(hardCapTokens)||hardCapTokens<=0)||!Number.isFinite(warningPercent)||warningPercent<1||warningPercent>100)throw new Error('Set a positive global ceiling up to $100, optional positive token cap, and warning from 1 to 100%.');
+    if(!validGlobalCeiling(hardCapUsd)||hardCapTokens!==null&&(!Number.isInteger(hardCapTokens)||hardCapTokens<=0)||!Number.isFinite(warningPercent)||warningPercent<1||warningPercent>100)throw new Error('Set a positive global ceiling up to $1,000,000, optional positive token cap, and warning from 1 to 100%.');
     await workspaceCommand({action:'configure_policy',approvalMode:value('workspace-approval-mode'),dispatchPaused:($('workspace-dispatch-paused') as HTMLInputElement).checked,hardCapUsd,hardCapTokens,warningPercent},'Global policy saved.');setStatus($('workspace-policy-status'),'Global budget and approval mode saved.','ok');
   },'workspace-policy-status');
   $('blueprint-add-room').onclick=()=>{resetRoomForm();$('room-name').focus();};$('whiteboard-add-node').onclick=()=>{resetBoardForm();$('node-title').focus();};
@@ -3662,6 +3667,26 @@ function initEndlessWorkspace(): void {
   for(const [name,id] of Object.entries(VIEW_IDS))if(name!=='office')add(name,VIEW_LABELS[name as ViewName],$(id),'Workspace',1040,740);
   add('object-inspector','Object inspector',studio.elements.inspectorHost,'Office',420,580);
   add('source-review','Source review',source,'Donna',760,600);
+  const hardwareSurface=textElement('section','','canvas-hardware-studio');
+  const hardwareWorkbench=mountHardwareWorkbench(hardwareSurface,{onDraft:addToDonnaDraft,projectSourceUrl:'https://github.com/occult-kranti/engineering-intelligence-atlas/tree/feat/reference-room-companies/projects/atech-hardware-studio/examples/blueprint-light'});
+  add('hardware-studio','Hardware Studio',hardwareSurface,'Companies',1140,800);
+  window.addEventListener('beforeunload',()=>hardwareWorkbench.destroy(),{once:true});
+  const gameSurface=textElement('section','','canvas-game-studio');
+  const gameFrame=document.createElement('iframe');
+  gameFrame.title='3D Game Studio · local workbench';gameFrame.loading='lazy';gameFrame.referrerPolicy='same-origin';
+  gameSurface.append(gameFrame);add('game-studio','3D Game Studio',gameSurface,'Companies',1220,760);
+  let gameInView=false;
+  const syncGameVisibility=()=>{
+    if(!gameFrame.hasAttribute('src'))return;
+    const bounds=gameFrame.getBoundingClientRect();
+    const visible=!document.hidden&&gameInView&&endlessWorkspace?.isOpen('game-studio')===true&&bounds.width>0&&bounds.height>0;
+    gameFrame.contentWindow?.postMessage({type:'daftar:studio:visibility',channel:'daftar.studio.visibility.v1',visible},location.protocol==='file:'?'*':location.origin);
+  };
+  gameFrame.addEventListener('load',syncGameVisibility);
+  const gameObserver=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{gameInView=entries.some(entry=>entry.isIntersecting);syncGameVisibility();},{root:studio.elements.canvasHost,threshold:.001}):null;
+  if(gameObserver)gameObserver.observe(gameFrame);else gameInView=true;
+  document.addEventListener('visibilitychange',syncGameVisibility);
+  window.addEventListener('beforeunload',()=>{gameObserver?.disconnect();document.removeEventListener('visibilitychange',syncGameVisibility);},{once:true});
   const portals=new Map<string,HTMLIFrameElement>();
   const portalScopeLabels=new Map<string,HTMLElement>();
   if(bridge?.transport==='cloud-browser') {
@@ -3678,6 +3703,10 @@ function initEndlessWorkspace(): void {
     }
   }
   const panelChanged=(id:string,open:boolean)=>{
+      if(id==='game-studio'){
+        if(open&&!gameFrame.hasAttribute('src'))gameFrame.src=bridge?.transport==='cloud-browser'?'/studios/threejs/index.html':new URL('./studios/threejs/index.html',location.href).href;
+        syncGameVisibility();
+      }
       if(id==='donna'){donnaDockOpen=open;syncDonnaDock();}
       if(id==='portfolio'&&!open)portfolioOpen=false;
       if(id==='models')modelPoolPanel?.setActive(open);
@@ -3720,12 +3749,38 @@ function initEndlessWorkspace(): void {
 }
 
 // ---------------------------------------------------------------- boot
+function addToDonnaDraft(text: string): void {
+  const input = $('chat-message') as HTMLTextAreaElement;
+  const draft = appendDonnaDraft(input.value, text);
+  if (draft === null) throw new Error('Your Donna draft is full. Shorten it before adding another reference.');
+  input.value = draft;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  endlessWorkspace?.open('donna', { nearCamera: true });
+  donnaDockOpen = true; syncDonnaDock(); input.focus();
+  setStatus($('chat-status'), 'Context added to your draft. Review it, then ask Donna when ready.', 'ok');
+}
+function initReferenceRoom(): void {
+  $('header-open-reference-room').onclick = () => endlessWorkspace?.open('library', { nearCamera: true });
+  $('header-open-game-studio').onclick = () => endlessWorkspace?.open('game-studio', { nearCamera: true });
+  $('header-open-hardware-studio').onclick = () => endlessWorkspace?.open('hardware-studio', { nearCamera: true });
+  let storage: Storage | undefined;
+  try { storage = window.localStorage; } catch { /* In-memory pins remain usable. */ }
+  const panel = mountResourceLibrary($('resource-library-mount'), RESOURCE_CATALOG, {
+    storage,
+    onDraft: (text) => {
+      addToDonnaDraft(text);
+      setStatus($('resource-library-status'), 'Reference added to Donna’s draft. Nothing was sent.', 'ok');
+    },
+  });
+  window.addEventListener('beforeunload', () => panel.destroy(), { once: true });
+}
 function boot(): void {
   initCanvasFormDrafts();
   initStudio(); initWorkspace(); initOffice(); initCompanyHierarchy(); initUnifiedWorkspace(); initFreeflowHost(); initGitHubTools(); initPortfolio(); initAuthority(); initDecisionPanels(); initCloudConnection(); initLauncher(); initVenvForm(); initProjectForm(); renderSquadEditor(); renderRunDetail(); renderUsage();
   modelPoolPanel = mountModelPool($('system-view'), bridge, () => ({ activeCompanyId: officeState?.activeCompanyId,
     companies: officeState?.companies || [], employees: officeState?.employees || [] }), workspaceReadOnly);
   initEndlessWorkspace();
+  initReferenceRoom();
   if (!bridge) {
     $('bridge-notice').classList.remove('hidden'); $('core-label').textContent = 'Desktop preview'; $('core-note').textContent = 'Native actions need the desktop app';
     noData($('team-grid'), 'Open the desktop app to load your skill-linked team.'); noData($('project-list'), 'Create and save projects in the installed desktop app.'); noData($('key-rows'), 'Provider credentials are managed by the desktop app’s secure storage.');

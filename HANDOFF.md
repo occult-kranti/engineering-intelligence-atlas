@@ -1,5 +1,42 @@
 # Daftar maintainer handoff
 
+## Backend and workflow continuation — 2026-11-24
+
+Read `project/BACKEND_WORKFLOW_VALIDATION_2026-11-24.md` first. Native employee
+metadata edits and office/department renames are wired through MCP, the private
+cloud relay and VS Code; they preserve ownership and use existing scoped grants.
+Donna remains global, while company/office/department assistants own their exact
+scopes. Retire specialists without deleting evidence. The worker rechecks live
+authority and preserves already reserved work across global admission pauses.
+
+Cloud reservation and brief persistence share one D1 transaction. Retrying an
+uncertain command must reuse its original ID and body; duplicate submission is
+not a reason to hire or dispatch again. Headless tests require the native and
+portable builds in CI, and the new stress/resource gates retain actual evidence.
+Local fixture results do not certify a private owner-device migration or live
+provider billing. Preserve the Site audience and existing source-only concepts
+when overlaying the reviewed cloud source. No production employee records were
+edited during this implementation.
+
+## Resource and company integration
+
+Start with `project/resource-office-2026-11-24/VALIDATION.md` and `company/role-library/RESOURCE_LIBRARY.md`. The canonical resource JSON is the only editable catalog. Run `python3 scripts/sync-resource-projections.py --write`, then `node scripts/resource-router.mjs --export-atlas` for the atlas projection. Run `python3 scripts/sync-skills.py --write` after skill changes. The resource selector is shared exactly between native and cloud; changes must keep its canonical hash consistent.
+
+Build the desktop renderer, sync its content-addressed graph into `cloud-workspace`, and use `scripts/sync-company-studios.py` for the allowlisted static 3D workbench. Rebuild the retained Sites checkout from these reviewed sources before publication. Public metadata is not company knowledge, an installed package or permission to execute. The independent graph Director continues to use explicitly configured resource URLs.
+
+The current continuation has a shared $20 allowance and an honest retained uncertainty reservation. Hosted company/policy commands require native Sync now before application. Do not repeat queued company creation or infer activation from a request receipt. Platform automatic approval settings cannot be changed by this project.
+
+
+## Conference-table prototype import — 2026-11-24
+
+Branch `design/conference-table-prototype` adds a standalone design reference at [design/conference-table-prototype/index.html](design/conference-table-prototype/index.html). Start with its [README](design/conference-table-prototype/README.md). The directory also contains the [QA report](design/conference-table-prototype/QA-REPORT.md), [Claude build brief](design/conference-table-prototype/CLAUDE-BUILD-BRIEF.md), [sanitized build provenance](design/conference-table-prototype/claude-build-provenance.json), [state and geometry runner](design/conference-table-prototype/tests/state-geometry.cjs), and screenshot/motion-study [assets](design/conference-table-prototype/assets/).
+
+This is a local synthetic prototype with 2.5D presentation and scripted Donna draft actions. It does not connect to native records, model execution, billing, permissions or desktop control. The source import preserves production code and the independently developed `design/infinite-blueprint-canvas` branch. Existing release and browser results remain tied to their recorded versions; use the prototype QA report to distinguish the original browser review from import-time checks.
+
+From the repository root, run `node design/conference-table-prototype/tests/state-geometry.cjs` for its targeted state and layout checks. Validate the inline script before changing the published prototype. A later integration should map useful presentation behavior onto canonical native records and existing authority boundaries rather than adopt the demo's local state as production storage.
+
+Keep authored prototype files outside `docs/`: `scripts/build-static.mjs` deletes and regenerates that directory. Any future GitHub Pages copy must come from an intentional source/build path. This design-only import does not itself rebuild Pages, release application packages, or establish new backend/desktop integration.
+
 ## Product contract
 
 Daftar is an owner-operated personal agent office. Donna is the single user-facing

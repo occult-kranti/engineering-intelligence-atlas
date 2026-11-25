@@ -10,6 +10,8 @@ use uuid::Uuid;
 mod company_hierarchy;
 #[path = "department_hierarchy.rs"]
 mod department_hierarchy;
+#[path = "staff_management.rs"]
+mod staff_management;
 #[path = "governance.rs"]
 mod governance;
 pub use governance::*;
@@ -363,14 +365,14 @@ impl OfficeSnapshot {
             ));
         }
         let company_ids: HashSet<_> = self.companies.iter().map(|c| c.id.as_str()).collect();
-        let office_ids: HashSet<_> = self.offices.iter().map(|o| o.id.as_str()).collect();
-        let department_ids: HashSet<_> = self.departments.iter().map(|d| d.id.as_str()).collect();
-        let employee_ids: HashSet<_> = self.employees.iter().map(|e| e.id.as_str()).collect();
+        let office_ids: HashMap<_, _> = self.offices.iter().map(|o| (o.id.as_str(), o)).collect();
+        let department_ids: HashMap<_, _> = self.departments.iter().map(|d| (d.id.as_str(), d)).collect();
+        let employee_ids: HashMap<_, _> = self.employees.iter().map(|e| (e.id.as_str(), e)).collect();
         if company_ids.len() != self.companies.len()
             || office_ids.len() != self.offices.len()
             || department_ids.len() != self.departments.len()
             || employee_ids.len() != self.employees.len()
-            || !employee_ids.contains("donna")
+            || !employee_ids.contains_key("donna")
             || !company_ids.contains(self.active_company_id.as_str())
         {
             return Err(fail(
@@ -378,10 +380,11 @@ impl OfficeSnapshot {
                 "Duplicate or missing office identities",
             ));
         }
+        self.validate_staff_ownership(&employee_ids)?;
         for company in &self.companies {
             if !safe_id(&company.id)
                 || !["active", "paused"].contains(&company.status.as_str())
-                || !employee_ids.contains(company.assistant_id.as_str())
+                || !employee_ids.contains_key(company.assistant_id.as_str())
             {
                 return Err(fail("OFFICE_STATE_INVALID", "Invalid company definition"));
             }
@@ -404,32 +407,38 @@ impl OfficeSnapshot {
             }
         }
         for office in &self.offices {
-            if !company_ids.contains(office.company_id.as_str())
+            if !safe_id(&office.id)
+                || !company_ids.contains(office.company_id.as_str())
                 || !["active", "paused"].contains(&office.status.as_str())
-                || !employee_ids.contains(office.assistant_id.as_str())
+                || !employee_ids.contains_key(office.assistant_id.as_str())
             {
                 return Err(fail("OFFICE_STATE_INVALID", "Invalid office scope"));
             }
+            bounded_text(&office.name, 150, "office name")?;
         }
         for department in &self.departments {
-            if !self
-                .offices
-                .iter()
-                .any(|o| o.id == department.office_id && o.company_id == department.company_id)
+            if !safe_id(&department.id)
+                || !office_ids.get(department.office_id.as_str())
+                    .is_some_and(|o| o.company_id == department.company_id)
                 || !["active", "paused"].contains(&department.status.as_str())
-                || !employee_ids.contains(department.assistant_id.as_str())
+                || !employee_ids.contains_key(department.assistant_id.as_str())
             {
                 return Err(fail("OFFICE_STATE_INVALID", "Invalid department scope"));
             }
+            bounded_text(&department.name, 150, "department name")?;
         }
         for employee in &self.employees {
-            if !["assistant", "specialist"].contains(&employee.kind.as_str())
+            if !safe_id(&employee.id)
+                || !["assistant", "specialist"].contains(&employee.kind.as_str())
                 || !["active", "paused", "fired"].contains(&employee.status.as_str())
+                || (employee.kind == "assistant" && employee.status == "fired")
                 || employee.skill_paths.len() > 20
                 || employee.skill_paths.iter().any(|p| !safe_relative(p))
             {
                 return Err(fail("OFFICE_STATE_INVALID", "Invalid employee definition"));
             }
+            bounded_text(&employee.name, 150, "employee name")?;
+            bounded_text(&employee.role, 200, "employee role")?;
             if let Some(company) = &employee.company_id {
                 if !company_ids.contains(company.as_str()) {
                     return Err(fail("OFFICE_STATE_INVALID", "Employee company is missing"));
@@ -441,10 +450,8 @@ impl OfficeSnapshot {
                 ));
             }
             if let Some(office) = &employee.office_id {
-                if !self
-                    .offices
-                    .iter()
-                    .any(|o| &o.id == office && Some(&o.company_id) == employee.company_id.as_ref())
+                if !office_ids.get(office.as_str())
+                    .is_some_and(|o| Some(&o.company_id) == employee.company_id.as_ref())
                 {
                     return Err(fail(
                         "OFFICE_STATE_INVALID",
@@ -453,9 +460,8 @@ impl OfficeSnapshot {
                 }
             }
             if let Some(department) = &employee.department_id {
-                if !self.departments.iter().any(|d| {
-                    &d.id == department
-                        && Some(&d.office_id) == employee.office_id.as_ref()
+                if !department_ids.get(department.as_str()).is_some_and(|d| {
+                    Some(&d.office_id) == employee.office_id.as_ref()
                         && Some(&d.company_id) == employee.company_id.as_ref()
                 }) {
                     return Err(fail(
@@ -480,11 +486,8 @@ impl OfficeSnapshot {
         for (i, job) in self.jobs.iter().enumerate() {
             if !safe_id(&job.id)
                 || !company_ids.contains(job.company_id.as_str())
-                || !self
-                    .offices
-                    .iter()
-                    .any(|o| o.id == job.office_id && o.company_id == job.company_id)
-                || !employee_ids.contains(job.employee_id.as_str())
+                || !office_ids.get(job.office_id.as_str()).is_some_and(|o| o.company_id == job.company_id)
+                || !employee_ids.contains_key(job.employee_id.as_str())
                 || job.dependencies.len() > 100
                 || !["manual", "provider"].contains(&job.mode.as_str())
                 || !["anthropic", "openai", "ollama"].contains(&job.provider.as_str())
@@ -1077,6 +1080,12 @@ impl OfficeSnapshot {
     }
     fn eligible(&self, job: &Job, clock: OffsetDateTime) -> std::result::Result<(), String> {
         self.governance_allows_dispatch(job)?;
+        self.current_worker_authority(job, clock)
+    }
+    // This excludes global admission only. A reserved call may finish when a
+    // later reservation fills the cap or the owner pauses future dispatch.
+    // Identity, grants, hierarchy, service contracts and knowledge remain live.
+    fn current_worker_authority(&self, job: &Job, clock: OffsetDateTime) -> std::result::Result<(), String> {
         self.portfolio_allows_dispatch(job)?;
         self.authority_allows_dispatch(job, clock)?;
         if self
@@ -1355,6 +1364,8 @@ impl OfficeSnapshot {
                 self.last_action = Some(json!({"departmentId":department_id}));
             }
             "set_department_parent" => self.set_department_parent(p)?,
+            "rename_office" | "rename_department" => self.rename_staff_scope(&action, p)?,
+            "update_employee" => self.update_employee(p)?,
             "hire_employee" => {
                 let employee_id = self.add_staff(
                     &string(p, "companyId", 100)?,
@@ -1409,7 +1420,8 @@ impl OfficeSnapshot {
                 if action != "resume_employee" {
                     for job in self.jobs.iter_mut().filter(|j| {
                         j.employee_id == employee_id
-                            && (j.status == "queued" || j.status == "running")
+                            && (["queued", "waiting-budget", "running"].contains(&j.status.as_str())
+                                || (action == "fire_employee" && j.status == "paused"))
                     }) {
                         job.status = if action == "fire_employee" {
                             "cancelled"

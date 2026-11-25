@@ -1,0 +1,90 @@
+id: distance_sensor
+name: "Distance Sensor (VL53L5CX 8x8 ToF)"
+display_name: "Distance Sensor"
+category: distance
+interface: i2c
+size: 1
+i2c_address: 0x29
+description: |
+  ST VL53L5CX multi-zone Time-of-Flight distance sensor. Ranges an 8x8 grid
+  (64 zones) up to ~4000 mm. A background FreeRTOS task ranges at 15 Hz and
+  caches the grid, so the getters return instantly and never block your loop.
+  Single port: SDA on Line A, SCL on Line B. Uses the SparkFun VL53L5CX
+  library on the chip's hardware `Wire`, which setup() starts on this port's
+  pins. There is one `Wire`, so a project takes one distance sensor.
+
+# One hardware Wire: a second sensor's Wire.begin() would be ignored.
+max_per_project: 1
+
+driver:
+  header: vl53l5cx.h
+  source: vl53l5cx.cpp
+  class_name: VL53L5CX_Sensor
+
+templates:
+  # SDA = Line A, SCL = Line B, on the core's `Wire` (studio's wiring). The other
+  # I2C modules each have their own SoftwareI2C bus, so nothing else uses `Wire`.
+  # begin() uploads the sensor firmware and takes a few seconds.
+  globals: |
+    VL53L5CX_Sensor {{ instance }}(Wire);
+    bool {{ instance }}_ok = false;
+  setup: |
+    Wire.begin({{ pin_a }}, {{ pin_b }});
+    Wire.setClock(400000);
+    {{ instance }}_ok = {{ instance }}.begin();
+  # Built-in: emit the closest-object distance every 500 ms as a JSON event.
+  loop: |
+    static unsigned long {{ instance }}_last = 0;
+    if (millis() - {{ instance }}_last >= 500) {
+      {{ instance }}_last = millis();
+      Serial.print("{\"type\":\"event\",\"payload\":{\"event_type\":\"sensor\",\"key\":\"{{ instance }}_min_distance\",\"value\":");
+      Serial.print({{ instance }}.getMinDistance());
+      Serial.println(",\"unit\":\"mm\",\"source\":\"distance_sensor\"}}");
+    }
+
+events:
+  - key: "{{ instance }}_min_distance"
+    type: sensor
+    value_type: int
+    unit: mm
+    description: >
+      Closest object across all 64 zones, in mm. Returns the sentinel 32767
+      when nothing is in range (not 0 or -1). Emitted every 500 ms.
+
+actions: []
+# begin() must have succeeded (it uploads the sensor firmware).
+health_check: "{{ instance }}_ok"
+# Pinned: a new library release changes the firmware with no change here (Adafruit
+# ST7735 1.12.0 + GFX 1.13.0, Oct 2026: the TFT drew nothing on esp32sim). Bump on purpose,
+# after `ATECH_COMPILE_TEST=1 pytest -m integration` and a real board.
+lib_deps:
+  - "sparkfun/SparkFun VL53L5CX Arduino Library@1.0.3"
+
+usage: |
+  // Public API of VL53L5CX_Sensor — the instance is `{{ instance }}`.
+  // begin() ran in setup() and started a 15 Hz background ranging task, so the
+  // getters below return the latest cached values instantly (no blocking).
+  // If you leave loop empty, the module already streams a min_distance event
+  // every 500 ms — only add code here for custom behaviour.
+
+  // --- summary readings (mm) across the whole 8x8 field ---
+  int16_t nearest = {{ instance }}.getMinDistance();   // 32767 == nothing in range
+  int16_t far     = {{ instance }}.getMaxDistance();
+  if ({{ instance }}.isReady()) { /* at least one grid has been captured */ }
+  if (!{{ instance }}_ok) { /* not plugged in, or begin() failed */ }
+
+  // --- per-zone (0..63 == row*8 + col); -1 for an out-of-range zone index ---
+  int16_t d = {{ instance }}.getDistance(27);
+  int16_t grid[64];
+  {{ instance }}.getDistanceGrid(grid);                // copy the full 8x8 frame
+
+  // RESPONSIVE PRESENCE (the common ask: "do X when something is in front"):
+  // edge-trigger with hysteresis — fire once on entry, re-arm on exit. No cooldown.
+  //   static bool present = false;
+  //   int16_t md = {{ instance }}.getMinDistance();
+  //   if (!present && md < 300) { present = true;  /* entered: start action */ }
+  //   else if (present && md > 400) { present = false; /* left:  stop action */ }
+
+# Reversed range: closer is more. Nothing in range (32767) shows as empty.
+feedback:
+  - {label: "{{ instance }}", value: "{{ instance }}.getMinDistance()", kind: level, range: [1000, 50], unit: "mm"}

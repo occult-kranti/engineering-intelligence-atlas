@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "authorizedAdditionalUsd": 20,
+  "scope": "One shared allowance for resource-office design, Claude implementation/review and Donna planning in this continuation",
+  "isCreditPurchase": false,
+  "isPerCompanyAllowance": false,
+  "existingGlobalCeilingUsd": 100,
+  "requestedGlobalCeilingUsd": 120,
+  "globalPolicyStatus": "Not queued yet: existing browser form rejected 120 because its max was incorrectly 100; source fix is ready for deployment.",
+  "automaticRetries": false,
+  "providerAccounting": "Token-derived estimate using observed provider usage, with conservative reservations retained on uncertainty",
+  "automaticApprovalPolicy": "ChatGPT platform policy is not configurable by this application. Existing application review mode is preserved."
+}

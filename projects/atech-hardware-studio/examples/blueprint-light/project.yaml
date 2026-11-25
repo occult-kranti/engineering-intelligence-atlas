@@ -1,0 +1,29 @@
+# Sample inventory, not a claim about the user's connected hardware.
+# The board and module APIs come from the bundled Atech 1.0.0a12 catalog.
+name: blueprint-light
+board: 14port
+host_actions: false
+feedback: false
+modules:
+  - id: button
+    instance: trigger
+    port: 1
+  - id: neopixel
+    instance: light
+    port: 2
+code:
+  globals: |
+    bool lightOn = false;
+  setup: |
+    light.clear();
+    light.show();
+  loop: |
+    if (trigger.wasPressed()) {
+      lightOn = !lightOn;
+      if (lightOn) {
+        light.setAll(255, 196, 96);
+      } else {
+        light.clear();
+      }
+      light.show();
+    }

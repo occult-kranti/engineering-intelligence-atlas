@@ -1,0 +1,39 @@
+# Simulation data for an Atech product the SDK has no firmware for: `atech sim-assets`
+# exports it, `project.yaml` cannot place it (atech.sim.spec.Product). Frames and every
+# field: src/atech/docs/sim_assets.md. Asset frame: metres, origin at the centre of the
+# bottom face of the cell over its port, +z out of the top face, +y toward the outer face.
+#
+# Load cell module (coming soon on atech.dev), one port. Drawn after Atech's render of
+# its PCB (renders/pcb/load-cell.jpg): a long white chip, a thin header and small
+# parts, under the lid (PCB top 4.14 mm, glass 6.56 mm). No Atech CAD of it: `atech
+# sim-assets --meshes` draws a derived model (the temperature sensor's shell).
+schema: 1
+
+product: {name: "Load Cell", category: sensor, size: 1, interface: null}
+
+size_m: [0.0195, 0.0195, 0.01]    # PLACEHOLDER: replace with Atech module datasheet (one 19.5 mm port cell, as the CAD modules)
+mass_kg: 0.007                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+  chip: [0.88, 0.88, 0.86, 1]
+  passive: [0.75, 0.75, 0.73, 1]
+
+parts:                           # PLACEHOLDER: replace with Atech module datasheet
+  - {name: amplifier, size_m: [0.009, 0.0035, 0.001], pos_m: [0.002, 0.0045, 0.00464], color: chip}
+  - {name: header, size_m: [0.0075, 0.0008, 0.0015], pos_m: [-0.003, -0.001, 0.00489], color: chip}
+  - {name: passive_1, size_m: [0.001, 0.0005, 0.0004], pos_m: [-0.004, 0.003, 0.00434], color: passive}
+  - {name: passive_2, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.0, 0.0015, 0.00434], color: passive}
+  - {name: passive_3, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.0025, 0.0, 0.00434], color: passive}
+  - {name: passive_4, size_m: [0.001, 0.0005, 0.0004], pos_m: [0.0055, 0.0015, 0.00434], color: passive}
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+placeholders: [size_m, mass_kg, colors, parts, connector, physics_material]

@@ -15,7 +15,6 @@ OUT = Path(__file__).resolve().parents[1] / "src" / "data"
 sys.path.insert(0, str(WORK))
 
 import roles_data  # noqa: E402
-import resources_data  # noqa: E402
 import ecosystem_data  # noqa: E402
 import indexed_leads  # noqa: E402
 
@@ -54,22 +53,11 @@ write(
 )
 
 # ---------------------------------------------------------------- resources
-resources = [
-    {
-        "domain": r["domain"],
-        "name": r["name"],
-        "type": r["type"],
-        "level": r["level"],
-        "url": r["url"],
-        "purpose": r["purpose"],
-        "prereqs": r["prereqs"],
-        "access": r["access"],
-        "license": r["license"],
-        "caveat": r["caveat"],
-        "verified": r["verified"],
-    }
-    for r in resources_data.RESOURCES
-]
+# Canonical public metadata is committed; no scratch-module dependency.
+resource_catalog_path = Path(__file__).resolve().parents[2] / "company" / "role-library" / "resource-catalog.json"
+resource_catalog = json.loads(resource_catalog_path.read_text(encoding="utf-8"))
+resource_fields = ("domain", "name", "type", "level", "url", "purpose", "prereqs", "access", "license", "caveat", "verified")
+resources = [{key: item[key] for key in resource_fields} for item in resource_catalog["resources"]]
 print(f"resources: {len(resources)}")
 write(
     "resources.ts",

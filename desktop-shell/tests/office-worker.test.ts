@@ -280,3 +280,28 @@ describe('verified dependency evidence for panel synthesis', () => {
   expect(first.contentSha256).not.toBe(second.contentSha256);
  });
 });
+
+// Permission changes are independent of whether a lease still says running.
+describe('OfficeWorker live authority changes',()=>{
+ it('aborts a provider when its running lease loses authority and retains the reservation',async()=>{
+  vi.useFakeTimers();let entered!:()=>void;
+  const ready=new Promise<void>(resolve=>entered=resolve);
+  const options={refuseAuthority:false,generate:async(request:Parameters<GenerateFn>[0])=>new Promise<Awaited<ReturnType<GenerateFn>>>((_,reject)=>{
+   request.abortSignal.addEventListener('abort',()=>reject(new Error('Provider cancelled after revocation')),{once:true});entered();
+  })};
+  const f=fixture(options),pending=f.worker.runOnce();await ready;
+  options.refuseAuthority=true;await vi.advanceTimersByTimeAsync(1001);await pending;
+  expect(f.generate).toHaveBeenCalledOnce();expect(f.state.jobs[0]?.costStatus).toBe('estimated');
+  expect(f.state.jobs[0]?.usage.costUsd).toBeGreaterThan(0);expect(f.state.jobs[0]?.status).toBe('failed');
+  expect(f.worker.status()).toMatchObject({running:false,activeJobId:null});
+ });
+ it('retains a returned artifact and observed usage when authority expires between watcher ticks',async()=>{
+  const options={refuseAuthority:false,generate:async()=>{options.refuseAuthority=true;return{text:'Evidence returned before authority recheck.',inputTokens:100,outputTokens:200};}};
+  const f=fixture(options);await f.worker.runOnce();
+  expect(f.state.jobs[0]).toMatchObject({status:'failed',costStatus:'observed'});
+  expect(f.state.jobs[0]?.usage.costUsd).toBeCloseTo(.0022,8);
+  expect(fs.readFileSync(f.state.jobs[0]!.artifactUri!,'utf8')).toContain('Evidence returned');
+  expect(f.worker.status().lastError).toContain('authority expired');
+  expect(f.calls.some(c=>c.action==='put_cache')).toBe(false);
+ });
+});

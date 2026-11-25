@@ -1,0 +1,72 @@
+id: button
+name: "Button"
+display_name: "Button"
+category: input
+interface: gpio
+size: 1
+description: |
+  Single digital button input with edge detection. Active-low with internal
+  pull-up. Emits a sensor event with value 1 on press and 0 on release.
+
+driver:
+  header: button.h
+  source: button.cpp
+  class_name: ButtonModule
+
+templates:
+  globals: |
+    ButtonModule {{ instance }}({{ pin_a }}, {{ pin_b }});   // switch on Line A, V2.0 RGB light on Line B
+  setup: |
+    {{ instance }}.begin();
+  loop: |
+    // Events are derived from the pin level, never from wasPressed()/wasReleased():
+    // those consume the edge, and they belong to the user's code: block.
+    static bool {{ instance }}_evDown = false;
+    static unsigned long {{ instance }}_evAt = 0;
+    if ({{ instance }}.isPressed() != {{ instance }}_evDown && millis() - {{ instance }}_evAt >= 20) {
+      {{ instance }}_evDown = !{{ instance }}_evDown;
+      {{ instance }}_evAt = millis();
+      Serial.printf("{\"type\":\"event\",\"payload\":{\"event_type\":\"button\",\"key\":\"{{ instance }}\",\"value\":%d,\"source\":\"button\"}}\n", {{ instance }}_evDown ? 1 : 0);
+    }
+
+events:
+  - key: "{{ instance }}"
+    type: button
+    value_type: int
+    description: "1 on press edge, 0 on release edge"
+
+actions: []
+lib_deps:
+  - "adafruit/Adafruit NeoPixel@1.15.5"
+
+usage: |
+  // Public API of ButtonModule — the instance is `{{ instance }}`.
+  // Edge detection: wasPressed()/wasReleased() return true once per edge.
+  // For polling: isPressed() returns the current state.
+  if ({{ instance }}.wasPressed())  { /* button just went down */ }
+  if ({{ instance }}.wasReleased()) { /* button just released  */ }
+  bool down = {{ instance }}.isPressed();
+
+  // Taps: call getGesture() every loop, in one place. It returns each gesture once,
+  // else GESTURE_NONE. A single TAP arrives 400 ms after release (it has to wait
+  // to tell it from a double); use wasPressed() for an instant reaction.
+  AtechGesture g = {{ instance }}.getGesture();
+  if (g == GESTURE_TAP)        { /* one tap */ }
+  if (g == GESTURE_DOUBLE_TAP) { /* two quick taps */ }
+  if (g == GESTURE_TRIPLE_TAP) { /* three or more */ }
+  if (g == GESTURE_LONG_PRESS) { /* held 700 ms, reported while still held */ }
+  {{ instance }}.setGestureTiming(400, 700);   // multi-tap window, long-press time (ms)
+
+  // V2.0 buttons have an RGB light on Line B. On an older button these calls do nothing.
+  // Each call shows at once (no show()).
+  {{ instance }}.setColor(255, 0, 0);   // set and light it
+  {{ instance }}.on();                  // last colour (white if never set)
+  {{ instance }}.off();
+  bool lit = {{ instance }}.isLit();
+  {{ instance }}.setBrightness(30);     // capped at 51 (20%) by default
+  {{ instance }}.setBrightnessCap(255); // only when a brighter light is wanted
+
+
+feedback:
+  - {label: "{{ instance }}", value: "{{ instance }}.isPressed()", kind: press, person: true}
+feedback_output: light   # the V2.0 RGB light (nothing happens on an older button)

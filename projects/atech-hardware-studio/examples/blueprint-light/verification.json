@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "example": "blueprint-light",
+  "source_package": "atech 1.0.0a12 with the recorded Daftar patch",
+  "project_sha256": "e58641d9673a614b8b8cf6cc4e82d9968ad5c0c71fb40785ab450ee96fa1709b",
+  "validation": {
+    "schema_version": 1,
+    "valid": true,
+    "project": "blueprint-light",
+    "board": "14port",
+    "issues": [],
+    "cautions": [],
+    "tips": []
+  },
+  "validation_exit_code": 0,
+  "input_unchanged": true,
+  "two_generated_trees_identical": true,
+  "generated_file_count": 16,
+  "generated_source_sha256": {
+    "README.md": "ac737beeed4e7649fd11c777b4b985308c5d208f2e41510141d1977005a654b3",
+    "lib/atech_button/button.cpp": "7ee7f2f5582948af3bd66aa7fa12c6c9a188f425861638556534e71a0be97b67",
+    "lib/atech_button/button.h": "a9a52882b13cfbd8f3c9a374323241d597e413f7c84c1e94e5a252e93160893b",
+    "lib/atech_neopixel/neopixel.cpp": "f9509fc621ae55ab88608a226c1ece1a1471bc1150a16c1e759bf97a6af4838d",
+    "lib/atech_neopixel/neopixel.h": "e000668d20f9b445e683108e7e982169cf9ad88982550c89080fa85aeaa45e72",
+    "lib/atech_shared/atech_gestures.cpp": "60c38ff2ef093eb773d9048d0bfb437ec9877f041222c73dade77dddc900e2e2",
+    "lib/atech_shared/atech_gestures.h": "10e22be4add86c0507a4c633a0ab994220389f0915e2ae71c009237da47601a0",
+    "lib/atech_shared/atech_helpers.h": "1131d5982907ca88a0a3053c9f72161d5b3aabde7ba40a3aef360585919e722f",
+    "lib/atech_shared/atech_paths.h": "98167286226b03f7f9b1529dfc64bff51ca63bc03a92c37453f5a519ba4f0a8b",
+    "lib/atech_shared/atech_soft_spi.h": "c45dcfd2561e0735e545cc9f9d5050fd4188ca43cae7ac4aada1982ebe40da95",
+    "lib/atech_shared/atech_spi_hosts.h": "4d0fed90cb5980e5c7babb645cad021fc60bbed94419a3c61b79ff0841e40bf1",
+    "lib/atech_shared/atech_tap_classifier.h": "c04f9dc8c06a8a44001dc0a7c51b19e87b8b998155ee6a869547bd1d0ab6864e",
+    "lib/atech_shared/atech_ui.h": "e56f8252f4eeecddb74b04aa73405833baafe762ce5abe8302b20da167d03ecc",
+    "platformio.ini": "b49ab9c095ce4a9feb9158e0364086499d362d1fcf19b134d55f4dbf75419b7d",
+    "project.yaml": "a4801106f44806118e05998cf88f920768bdddf1c4259b06f9704a494a4726b3",
+    "src/main.cpp": "c662e0ed9eb0ec11def5cb424908bfed3538514c4011c816a6a9777fdeb55b77"
+  },
+  "reviewed_source_sha256": {
+    "src/atech/cli.py": "4842d2bb27aa4a027a12f1b3e6bafaaff85cf0c6e2a4f1d4656cd6b79210320a",
+    "src/atech/project.py": "3dbe8af1ae3da57c2e0637b72be1af685822aa9941b466937f83ce0c0c9b76a4",
+    "src/atech/placement.py": "814373cad4c1244ccbec0ddb546f64810f887ce874ae811db006cc16ddbbd0eb",
+    "src/atech/codegen.py": "eaf3bc54f0e3eecf71d6f5cac8e0b29e91c8abad76950d826ae5e42f2e4c67fc",
+    "src/atech/catalog/loader.py": "3a610466a411f5616c1d6329a805c34a8292e23278aa81db7b446924384aa231",
+    "src/atech/catalog/data/boards/14port.yaml": "af8ab7b8d6f45ee5935ae01707fb61b5abbdcd3223fa6e28dd0d1b2f885ae47c",
+    "src/atech/catalog/data/modules/button/module.yaml": "cb822a727a67930af7b50da247efd30e09635246f9e9c1c316bd33b9d4f2f2eb",
+    "src/atech/catalog/data/modules/neopixel/module.yaml": "d63134eedb53d3161c25930e42fd948c875ab2f61c1152393958429651bdee23"
+  },
+  "firmware_compiled": false,
+  "hardware_tested": false
+}

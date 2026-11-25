@@ -2,9 +2,33 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import fs from 'node:fs';
-import { handleAtlasApi, scopedContext } from '../lib/atlas-api.ts';
+import { handleAtlasApi, scopedContext, validateCommand } from '../lib/atlas-api.ts';
 
-function database(){const db=new DatabaseSync(':memory:');for(const name of fs.readdirSync(new URL('../drizzle/',import.meta.url)).filter(n=>n.endsWith('.sql')).sort())db.exec(fs.readFileSync(new URL('../drizzle/'+name,import.meta.url),'utf8'));return{raw:db,prepare(sql){let args=[];const statement={bind(...a){args=a;return statement;},async first(){return db.prepare(sql).get(...args)??null;},async all(){const results=db.prepare(sql).all(...args);return{results,meta:{changes:Number(db.prepare('SELECT changes() AS n').get().n)}};},async run(){const r=db.prepare(sql).run(...args);return{meta:{changes:Number(r.changes)}};}};return statement;},async batch(statements){db.exec('BEGIN');try{const results=[];for(const s of statements)results.push(await s.all());db.exec('COMMIT');return results;}catch(e){db.exec('ROLLBACK');throw e;}}};}
+function database(){
+ const db=new DatabaseSync(':memory:');
+ for(const name of fs.readdirSync(new URL('../drizzle/',import.meta.url)).filter(n=>n.endsWith('.sql')).sort())db.exec(fs.readFileSync(new URL('../drizzle/'+name,import.meta.url),'utf8'));
+ return {
+  raw:db,
+  prepare(sql){
+   let args=[];
+   const statement={
+    bind(...a){args=a;return statement;},
+    execute(){const results=db.prepare(sql).all(...args);return{results,meta:{changes:Number(db.prepare('SELECT changes() AS n').get().n)}};},
+    async first(){return db.prepare(sql).get(...args)??null;},
+    async all(){return statement.execute();},
+    async run(){const r=db.prepare(sql).run(...args);return{meta:{changes:Number(r.changes)}};},
+   };
+   return statement;
+  },
+  async batch(statements){
+   // No await inside the transaction: D1 batches cannot interleave statements
+   // from a second HTTP request while this sequence is executing.
+   db.exec('BEGIN');
+   try{const results=statements.map(s=>s.execute());db.exec('COMMIT');return results;}
+   catch(e){db.exec('ROLLBACK');throw e;}
+  },
+ };
+}
 const state={schemaVersion:1,activeCompanyId:'atlas',companies:[{id:'atlas',name:'Atlas'},{id:'secret-other',name:'Other company'}],offices:[{id:'office',companyId:'atlas'}],departments:[],employees:[{id:'donna',companyId:null},{id:'e',companyId:'atlas',role:'Engineer'}],jobs:[],goals:[],knowledge:[{companyId:'atlas',title:'Selected',summary:'Allowed'},{companyId:'secret-other',title:'Private other',summary:'Do not send to Atlas'}],portfolio:{groups:[],roadmap:[]},budget:{committedUsd:1}};
 const origin='https://atlas.example';
 function setup(){const DB=database(),env={DB,ATLAS_ADMIN_TOKEN:'a'.repeat(64),ATLAS_OWNER_EMAIL:'owner@example.com',ATLAS_SITE_ACCESS_TOKEN:'site-access',ATLAS_CLOUD_CAP_USD:'5',ANTHROPIC_API_KEY:'test-server-key'};const call=async(path,method='GET',data,auth='admin')=>{let headers={'content-type':'application/json'};if(auth==='admin')headers.authorization='Bearer '+env.ATLAS_ADMIN_TOKEN;else if(auth==='browser')headers={...headers,'oai-authenticated-user-id':'owner-subject','oai-authenticated-user-email':'owner@example.com',origin};else if(auth)headers.authorization='Bearer '+auth;const r=await handleAtlasApi(new Request(origin+path,{method,headers,body:data===undefined?undefined:JSON.stringify(data)}),env);return{status:r.status,body:await r.json()};};return{DB,env,call,seed:()=>call('/api/workspace','PUT',{expectedRevision:0,clientId:'initial-seed',snapshot:state})};}
@@ -57,4 +81,112 @@ test('cloud Donna ignores company-kit metadata before bounding source context',(
  {companyId:'secret-other',title:'Foreign source',summary:'PRIVATE FOREIGN SOURCE'}];
  const before=JSON.stringify(fixture);const result=scopedContext(fixture,{kind:'company',id:'atlas'});
  assert.deepEqual(result.knowledge,[{title:'Selected',summary:'Allowed'}]);assert.equal(JSON.stringify(fixture),before);assert.equal(JSON.stringify(result).includes('PRIVATE FOREIGN SOURCE'),false);
+});
+
+// Force concurrent clients to observe the same pre-insert state. Sequential
+// retries alone cannot expose the unique-key race in an HTTP relay.
+function synchronizeFirstReads(DB, table, clients) {
+ const prepare=DB.prepare.bind(DB);let seen=0,release;
+ const barrier=new Promise(resolve=>release=resolve);
+ DB.prepare=sql=>{
+  const statement=prepare(sql);
+  if(sql.startsWith('SELECT * FROM '+table+' WHERE idempotency_key')){
+   const first=statement.first.bind(statement);
+   statement.first=async()=>{
+    const row=await first();
+    if(seen<clients){seen++;if(seen===clients)release();await barrier;}
+    return row;
+   };
+  }
+  return statement;
+ };
+}
+
+test('40 simultaneous identical command retries return one durable receipt without server errors',async()=>{
+ const t=setup();await t.seed();synchronizeFirstReads(t.DB,'atlas_commands',40);
+ const packet={command:{action:'pause_employee',payload:{employeeId:'e'}},expectedRevision:1,idempotencyKey:'concurrent-same'};
+ const results=await Promise.all(Array.from({length:40},()=>t.call('/api/commands','POST',packet)));
+ assert.equal(results.filter(r=>r.status===202).length,1);
+ assert.ok(results.every(r=>[200,202].includes(r.status)),JSON.stringify(results.map(r=>r.status)));
+ assert.equal(new Set(results.map(r=>r.body.commandId)).size,1);
+ assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_commands').get().n,1);
+});
+
+test('concurrent command key reuse with different payloads is a conflict, never an internal failure',async()=>{
+ const t=setup();await t.seed();synchronizeFirstReads(t.DB,'atlas_commands',12);
+ const results=await Promise.all(Array.from({length:12},(_,i)=>t.call('/api/commands','POST',{
+  command:{action:'pause_employee',payload:{employeeId:'employee-'+i}},expectedRevision:1,idempotencyKey:'concurrent-conflict',
+ })));
+ assert.equal(results.filter(r=>r.status===202).length,1);
+ assert.equal(results.filter(r=>r.status===409).length,11);
+ assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_commands').get().n,1);
+});
+
+test('queue pressure admits only remaining capacity and retains the existing commands',async()=>{
+ const t=setup();await t.seed();const insert=t.DB.raw.prepare("INSERT INTO atlas_commands (id,idempotency_key,command,status,created_at,base_revision) VALUES (?,?,?,'queued',?,1)");
+ for(let i=0;i<990;i++)insert.run('seed-'+i,'seed-'+i,'{}','2026-11-24T00:00:00.000Z');
+ const results=await Promise.all(Array.from({length:48},(_,i)=>t.call('/api/commands','POST',{
+  command:{action:'pause_employee',payload:{employeeId:'e'}},expectedRevision:1,idempotencyKey:'capacity-'+i,
+ })));
+ assert.equal(results.filter(r=>r.status===202).length,10);
+ assert.equal(results.filter(r=>r.status===429).length,38);
+ assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_commands').get().n,1000);
+});
+
+test('simultaneous chat retries reserve and dispatch once with recoverable duplicate responses',async()=>{
+ const t=setup();await t.seed();synchronizeFirstReads(t.DB,'atlas_requests',16);
+ const previous=globalThis.fetch;let calls=0;
+ globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({content:[{type:'text',text:'One durable reply.'}],usage:{input_tokens:100,output_tokens:20}}));};
+ try{
+  const packet={companyId:'atlas',content:'Prepare one handoff.',requestId:'chat-wave'};
+  const results=await Promise.all(Array.from({length:16},()=>t.call('/api/chat','POST',packet)));
+  assert.ok(results.every(r=>[200,409].includes(r.status)),JSON.stringify(results.map(r=>r.status)));
+  assert.equal(calls,1);assert.equal(new Set(results.map(r=>r.body.jobId)).size,1);
+  assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_requests').get().n,1);
+  assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_messages').get().n,2);
+ }finally{globalThis.fetch=previous;}
+});
+
+test('cloud rejects unknown/internal commands before queuing and accepts definition edits',()=>{
+ for(const action of ['not_a_real_command','snapshot','office_query','finish_job','import_cloud_message']){
+  assert.throws(()=>validateCommand({action,payload:{}}),/not available/);
+ }
+ for(const command of [
+  {action:'update_employee',payload:{employeeId:'e',name:'Backend engineer',role:'Backend reliability'}},
+  {action:'rename_department',payload:{departmentId:'department',name:'Engineering'}},
+  {action:'rename_office',payload:{officeId:'office',name:'Delivery'}},
+ ])assert.deepEqual(validateCommand(command),command);
+});
+
+test('oversized chunked requests are cancelled during reading without consuming the full body',async()=>{
+ const t=setup();await t.seed();let chunks=0,cancelled=false;
+ const stream=new ReadableStream({pull(controller){chunks++;controller.enqueue(new Uint8Array(4096).fill(120));if(chunks===200)controller.close();},cancel(){cancelled=true;}});
+ const request=new Request(origin+'/api/commands',{method:'POST',headers:{'content-type':'application/json',authorization:'Bearer '+t.env.ATLAS_ADMIN_TOKEN},body:stream,duplex:'half'});
+ const result=await handleAtlasApi(request,t.env);
+ assert.equal(result.status,413);assert.equal(cancelled,true);assert.ok(chunks<20,'reader must stop near the 70 KB command bound');
+ assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_commands').get().n,0);
+});
+
+test('the cloud command allowlist matches native remote management except private message import',()=>{
+ const native=fs.readFileSync(new URL('../../native-core/src/remote_commands.rs',import.meta.url),'utf8');
+ const section=native.split('fn permitted(action: &str) -> bool {')[1].split('\nimpl OfficeSnapshot')[0];
+ const expected=[...section.matchAll(/"([a-z_]+)"/g)].map(match=>match[1]).filter(action=>action!=='import_cloud_message').sort();
+ // Import below is asynchronous only to avoid imposing another public API.
+ return import('../lib/atlas-api.ts').then(({CLOUD_COMMAND_ACTIONS})=>assert.deepEqual([...CLOUD_COMMAND_ACTIONS].sort(),expected));
+});
+
+test('a failed pre-dispatch brief write rolls back admission and the same request can later recover',async()=>{
+ const t=setup();await t.seed();let calls=0;const previous=globalThis.fetch;
+ globalThis.fetch=async()=>{calls++;return new Response(JSON.stringify({content:[{type:'text',text:'Recovered exactly once.'}],usage:{input_tokens:20,output_tokens:10}}));};
+ t.DB.raw.exec("CREATE TRIGGER fail_brief BEFORE INSERT ON atlas_messages WHEN NEW.role = 'user' BEGIN SELECT RAISE(ABORT, 'injected storage failure'); END;");
+ const packet={companyId:'atlas',content:'Keep this durable brief.',requestId:'brief-storage-recovery'};
+ try{
+  const failed=await t.call('/api/chat','POST',packet);assert.equal(failed.status,500);assert.equal(calls,0);
+  assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_requests').get().n,0);
+  assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_messages').get().n,0);
+  assert.equal((await t.call('/api/session')).body.budget.reservedUsd,0);
+  t.DB.raw.exec('DROP TRIGGER fail_brief');
+  const recovered=await t.call('/api/chat','POST',packet);assert.equal(recovered.status,200);assert.equal(calls,1);
+  assert.equal(t.DB.raw.prepare('SELECT COUNT(*) AS n FROM atlas_messages').get().n,2);
+ }finally{globalThis.fetch=previous;}
 });

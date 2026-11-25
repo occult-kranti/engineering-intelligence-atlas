@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="An original Daftar company studio for reviewing procedural Three.js scenes on one continuous blueprint canvas.">
+  <title>3D Game Studio · Daftar</title>
+  <link rel="stylesheet" href="studio.css">
+</head>
+<body>
+  <a class="skip-link" href="#brief-text">Skip to scene brief</a>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Daftar 3D Game Studio home"><span class="brand-mark" aria-hidden="true">D</span><strong>DAFTAR</strong></a>
+    <span class="topbar-rule" aria-hidden="true"></span><span class="company-title">3D Game Studio <small>Design & technology company</small></span>
+    <div class="topbar-actions"><span class="session-label">Local workspace</span><button id="import-button" class="quiet">Import scene <span aria-hidden="true">↗</span></button><button id="export-workspace" class="primary">Save workspace</button></div>
+  </header>
+
+  <main id="viewport" tabindex="0" aria-label="Infinite blueprint canvas. Drag empty space to pan. Use plus and minus to zoom, or Home to return to the table.">
+    <div id="world">
+      <div class="conference-table" aria-hidden="true"><div class="table-grain"></div></div>
+      <div class="blueprint-paper" aria-hidden="true"><span class="dimension top">DAFTAR / STUDIO PLAN 02</span><span class="dimension left">DESIGN · BUILD · REVIEW</span><span class="plan-stamp">THREE DIMENSIONS<br><b>ONE SHARED TABLE</b></span></div>
+      <div class="world-heading"><p class="eyebrow">COMPANY 02 <span> / </span> PROCEDURAL WORLDS</p><h1>3D Game Studio<span class="heading-dot">.</span></h1><p>Your brief, your team, your next world. All on the table.</p></div>
+      <div class="connector connector-a" aria-hidden="true"></div><div class="connector connector-b" aria-hidden="true"></div><div class="connector connector-c" aria-hidden="true"></div>
+
+      <section id="brief" class="panel brief-panel" aria-labelledby="brief-title" style="--x:100px;--y:230px;--w:280px">
+        <header class="panel-head"><button class="grip" aria-label="Move scene brief. Use arrow keys." data-drag="brief">⠿</button><span class="eyebrow">01 / DESIGN</span><span class="owner-dot" title="Design department" aria-hidden="true"></span></header>
+        <div class="panel-body"><h2 id="brief-title">Start with a place.</h2><p class="muted">Give the scene a purpose, a mood, and one thing to explore.</p>
+          <form id="brief-form"><label for="brief-text">Scene brief</label><textarea id="brief-text" rows="6" maxlength="4000">A tidal observatory on a quiet island. Warm stone, copper instruments, a rotating beacon, and an orbiting camera.</textarea><div class="input-meta"><span>Draft stays in this session</span><span id="brief-count">0 / 4,000</span></div>
+          <label for="scene-owner">Scene owner</label><select id="scene-owner"><option>Technical artist</option><option>Game designer</option><option>QA reviewer</option></select><button class="primary full" type="submit">Prepare local run <span aria-hidden="true">↗</span></button></form>
+          <p class="micro">Qwen 3D Coder is available as an optional local model. No model is connected in this browser.</p>
+        </div>
+      </section>
+
+      <section id="scene" class="panel scene-panel" aria-labelledby="scene-title" style="--x:420px;--y:230px;--w:700px">
+        <header class="panel-head"><button class="grip" aria-label="Move scene preview. Use arrow keys." data-drag="scene">⠿</button><div><span class="eyebrow">02 / WORLD LAB</span><h2 id="scene-title">Tidal observatory</h2></div><button id="source-toggle" class="quiet compact" data-focus-panel="source">View source <span aria-hidden="true">↗</span></button></header>
+        <div class="scene-stage"><iframe id="scene-frame" title="Interactive 3D scene preview" sandbox="allow-scripts" referrerpolicy="no-referrer" allow="camera 'none'; microphone 'none'; geolocation 'none'; clipboard-read 'none'; clipboard-write 'none'; fullscreen 'none'"></iframe><div id="scene-empty" class="scene-empty"><span class="empty-orbit" aria-hidden="true"></span><b>Preparing the reference scene</b><p>The bundled Three.js renderer works locally.</p></div><span id="scene-origin" class="scene-origin">Original reference · not model output</span><div class="scene-caption"><span>Drag to orbit · scroll to explore</span><span id="render-stats">Opening preview</span></div></div>
+        <div class="scene-toolbar"><button id="play-toggle" class="quiet compact" aria-pressed="false">Pause motion</button><button id="wire-toggle" class="quiet compact" aria-pressed="false">Wireframe</button><button id="camera-reset" class="quiet compact">Reset camera</button><span class="toolbar-spacer"></span><button id="stop-preview" class="quiet compact">Stop</button><button id="export-scene" class="quiet compact">Export HTML <span aria-hidden="true">↓</span></button></div>
+        <div class="scene-footer"><span class="status-dot" aria-hidden="true"></span><span id="preview-status">Loading original reference scene</span><button class="text-button" data-focus-panel="review">Review scene</button></div>
+      </section>
+
+      <section id="team" class="panel team-panel" aria-labelledby="team-title" style="--x:1160px;--y:230px;--w:250px">
+        <header class="panel-head"><button class="grip" aria-label="Move company team. Use arrow keys." data-drag="team">⠿</button><span class="eyebrow">03 / COMPANY</span></header><div class="panel-body"><h2 id="team-title">A small, focused crew.</h2><p class="muted">Plan ownership before starting work.</p><ol class="team-list"><li><span class="avatar avatar-user">Y</span><div><strong>You</strong><small>Director / CEO</small></div><span class="team-tag">Owner</span></li><li><span class="avatar avatar-donna">D</span><div><strong>Donna</strong><small>Local brief helper</small></div><button class="text-button" data-focus-panel="donna">Open</button></li><li><span class="avatar">TA</span><div><strong>Technical artist</strong><small>Scene engineering</small></div></li><li><span class="avatar">GD</span><div><strong>Game designer</strong><small>Interaction & intent</small></div></li><li><span class="avatar">QA</span><div><strong>QA reviewer</strong><small>Independent review</small></div></li></ol><p class="micro">Roles are a company plan. No employees or provider jobs are running from this standalone studio.</p></div>
+      </section>
+
+      <section id="review" class="panel review-panel" aria-labelledby="review-title" style="--x:100px;--y:780px;--w:280px">
+        <header class="panel-head"><button class="grip" aria-label="Move scene review. Use arrow keys." data-drag="review">⠿</button><span class="eyebrow">04 / QUALITY</span></header><div class="panel-body"><h2 id="review-title">Make the world hold up.</h2><p class="muted">Check the scene in motion, not only in a screenshot.</p><ul id="source-checks" class="check-status"><li>Source check pending</li></ul><fieldset class="review-list"><legend>Your review observations</legend><label><input id="review-visual" type="checkbox"> Subject and framing match the brief</label><label><input id="review-controls" type="checkbox"> Orbit, zoom, reset and resize work</label><label><input id="review-performance" type="checkbox"> Motion and performance are usable</label></fieldset><p class="micro">These checkboxes record your observations. Syntax, browser rendering, visual quality and gameplay are separate evidence.</p><button id="export-review" class="quiet full">Export review receipt</button></div>
+      </section>
+
+      <section id="source" class="panel source-panel" aria-labelledby="source-title" style="--x:420px;--y:780px;--w:700px" hidden>
+        <header class="panel-head"><button class="grip" aria-label="Move source editor. Use arrow keys." data-drag="source">⠿</button><div><span class="eyebrow">05 / SOURCE</span><h2 id="source-title">The whole scene, editable.</h2></div><button class="quiet compact" data-close-panel="source" aria-label="Close source editor">×</button></header><div class="panel-body"><label for="scene-source">Complete HTML source</label><textarea id="scene-source" spellcheck="false" aria-describedby="source-help"></textarea><p id="source-help" class="micro">Edits clear previous review observations. Imported code opens here first. Preview uses an isolated frame and restricted network policy; source checks are not a security audit.</p><div class="button-row"><button id="check-source" class="quiet">Check source</button><button id="preview-source" class="primary">Preview source</button><button id="restore-reference" class="text-button">Load reference</button></div><p id="source-message" role="status" class="source-message"></p></div>
+      </section>
+
+      <section id="run" class="panel run-panel" aria-labelledby="run-title" style="--x:1160px;--y:780px;--w:360px" hidden>
+        <header class="panel-head"><button class="grip" aria-label="Move local model panel. Use arrow keys." data-drag="run">⠿</button><span class="eyebrow">06 / LOCAL MODEL</span><button class="quiet compact" data-close-panel="run" aria-label="Close local model panel">×</button></header><div class="panel-body"><h2 id="run-title">Ready for your local model.</h2><p class="muted">Save the prompt, then run the optional CLI with your installed Ollama model. Import the resulting HTML here.</p><dl class="model-details"><div><dt>Model</dt><dd>CCORE Qwen3.5-4B-3D-Coder</dd></div><div><dt>Source revision</dt><dd><code>4b9f05f3a038…</code></dd></div><div><dt>Default limits</dt><dd>4,096 output tokens · 120 seconds</dd></div><div><dt>Runtime</dt><dd>Not connected · inference not run</dd></div></dl><pre id="run-command">python3 scripts/studio.py generate --prompt-file scene-prompt.txt --out runs/scene-001</pre><button id="save-prompt" class="primary full">Download scene prompt</button><p class="micro">The CLI preserves original responses and checks inline JavaScript syntax without executing it. Model weights are not included. A Hugging Face tag alone does not pin your installed weights.</p><a href="README.md" class="text-link" target="_blank" rel="noopener">Setup and verification details ↗</a></div>
+      </section>
+
+      <section id="donna" class="panel donna-panel" aria-labelledby="donna-title" style="--x:610px;--y:800px;--w:410px" hidden>
+        <header class="panel-head"><button class="grip" aria-label="Move Donna chat. Use arrow keys." data-drag="donna">⠿</button><span class="avatar avatar-donna small">D</span><div><h2 id="donna-title">Donna</h2><span class="micro">Local brief helper</span></div><button class="quiet compact" data-close-panel="donna" aria-label="Close Donna chat">×</button></header><div class="panel-body"><div id="chat-log" class="chat-log" role="log" aria-live="polite"><p class="chat-answer">I can organize your brief and help you find the source or review checklist. A model isn’t connected here yet.</p></div><div class="quick-actions"><button data-focus-panel="source">Open source</button><button data-focus-panel="review">Review checklist</button><button id="donna-prepare">Prepare brief</button></div><form id="chat-form"><label for="chat-input">Message Donna</label><div class="chat-compose"><input id="chat-input" maxlength="1000" placeholder="Add a detail to the scene brief…"><button class="primary" type="submit" aria-label="Add detail to brief">↑</button></div></form></div>
+      </section>
+      <div class="world-note"><span>THE STUDIO IS ONE CANVAS.</span><p>Keep exploring. Every panel stays on the table.</p></div>
+    </div>
+  </main>
+
+  <nav class="canvas-dock" aria-label="Canvas controls"><button id="home-camera" aria-label="Return to table">⌂ <span>Table</span></button><span class="dock-divider" aria-hidden="true"></span><button id="zoom-out" aria-label="Zoom out">−</button><output id="zoom-value" aria-label="Canvas zoom">100%</output><button id="zoom-in" aria-label="Zoom in">+</button><span class="dock-divider" aria-hidden="true"></span><button data-focus-panel="brief">Brief</button><button data-focus-panel="scene">Scene</button><button data-focus-panel="source">Source</button><button data-focus-panel="review">Review</button></nav>
+  <button id="donna-launcher" class="donna-launcher" data-focus-panel="donna"><span class="avatar avatar-donna">D</span><span>Ask Donna<small>Local brief helper</small></span></button>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div><input id="file-input" type="file" accept=".html,.htm,.json,text/html,application/json" hidden>
+  <script type="module" src="studio.mjs"></script>
+</body>
+</html>

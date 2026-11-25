@@ -466,6 +466,53 @@ mod tests {
             .contains("/tmp/retained-artifact.md"));
     }
     #[test]
+    fn exact_cap_reservation_keeps_authority_before_first_dispatch_but_blocks_new_claims() {
+        let mut s = state();
+        s.apply(&json!({"action":"configure_policy","hardCapUsd":0.1,"hardCapTokens":30})).unwrap();
+        let job_id = provider_job(&mut s);
+        s.apply(&json!({"action":"enqueue_job","companyId":"atlas","officeId":s.offices[0].id,"employeeId":"donna","goal":"Another provider job","mode":"provider","provider":"anthropic","model":"fixture-model","authorized":true,"maxTokens":100,"maxUsd":1,"maxMinutes":5,"priceRates":{"inputUsdPerMillion":1,"outputUsdPerMillion":1},"idempotencyKey":"after-exact-cap"})).unwrap();
+        s.apply(&json!({"action":"claim_job","workerId":"fixture","mode":"provider"})).unwrap();
+        let lease = s.last_action.as_ref().unwrap()["leaseToken"].as_str().unwrap().to_owned();
+        s.apply(&json!({"action":"reserve_job","jobId":job_id,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.1})).unwrap();
+        assert!(s.budget.at_cap);
+        s.apply(&json!({"action":"check_worker_authority","jobId":job_id,"leaseToken":lease,"capability":"provider.run"})).unwrap();
+        assert_eq!(s.last_action.as_ref().unwrap()["allowed"],true);
+        s.apply(&json!({"action":"claim_job","workerId":"next","mode":"provider"})).unwrap();
+        assert!(s.last_action.as_ref().unwrap()["jobId"].is_null());
+        assert_eq!(s.jobs[1].status,"queued"); s.validate().unwrap();
+    }
+    #[test]
+    fn reserved_authority_survives_admission_pause_but_grant_and_scope_checks_remain_live() {
+        let mut s = state();
+        let permission = grant(&mut s,"donna",json!({"kind":"company","id":"atlas"}),json!(["provider.run"]),"owner",OffsetDateTime::now_utc()+Duration::hours(1));
+        let job_id = provider_job(&mut s);
+        s.apply(&json!({"action":"claim_job","workerId":"fixture","mode":"provider"})).unwrap();
+        let lease = s.last_action.as_ref().unwrap()["leaseToken"].as_str().unwrap().to_owned();
+        s.apply(&json!({"action":"reserve_job","jobId":job_id,"leaseToken":lease,"inputTokens":10,"maxOutputTokens":20,"costUsd":0.1})).unwrap();
+        s.apply(&json!({"action":"configure_policy","hardCapUsd":0,"hardCapTokens":1,"dispatchPaused":true})).unwrap();
+        let check=json!({"action":"check_worker_authority","jobId":job_id,"leaseToken":lease,"capability":"provider.run"});
+        s.apply(&check).unwrap(); assert_eq!(s.last_action.as_ref().unwrap()["allowed"],true);
+        let mut revoked=s.clone(); revoked.apply(&json!({"action":"revoke_authority","grantId":permission,"reason":"Stop current authority"})).unwrap();
+        assert_eq!(revoked.apply(&check).unwrap_err().code,"AUTHORITY_DENIED");
+        let mut expired=s.clone(); expired.authority.grants.iter_mut().find(|g|g.id==permission).unwrap().expires_at="2020-01-01T00:00:00Z".into();
+        assert_eq!(expired.apply(&check).unwrap_err().code,"AUTHORITY_DENIED");
+        for change in [json!({"action":"pause_employee","employeeId":"donna"}),json!({"action":"pause_company","companyId":"atlas"})] {
+            let mut stopped=s.clone(); stopped.apply(&change).unwrap();
+            assert_eq!(stopped.apply(&check).unwrap_err().code,"STALE_LEASE");
+        }
+        s.apply(&json!({"action":"finish_job","jobId":job_id,"leaseToken":lease,"status":"completed","inputTokens":10,"outputTokens":10,"costUsd":0.05,"artifactUri":"/tmp/reserved-result.md"})).unwrap();
+        assert_eq!(s.jobs[0].status,"completed"); assert_eq!(s.budget.observed_usd,0.05); s.validate().unwrap();
+    }
+    #[test]
+    fn unreserved_running_claim_does_not_bypass_a_new_dispatch_pause() {
+        let mut s=state(); let job_id=provider_job(&mut s);
+        s.apply(&json!({"action":"claim_job","workerId":"fixture","mode":"provider"})).unwrap();
+        let lease=s.last_action.as_ref().unwrap()["leaseToken"].as_str().unwrap().to_owned();
+        s.apply(&json!({"action":"configure_policy","dispatchPaused":true})).unwrap();
+        assert_eq!(s.apply(&json!({"action":"check_worker_authority","jobId":job_id,"leaseToken":lease,"capability":"provider.run"})).unwrap_err().code,"AUTHORITY_DENIED");
+        assert!(s.jobs[0].reservation.is_none()); s.validate().unwrap();
+    }
+    #[test]
     fn cloud_commands_recheck_authority_but_completed_receipts_remain_noops_after_revocation() {
         let mut s = state();
         let employee = hire(&mut s);
@@ -996,14 +1043,14 @@ impl OfficeSnapshot {
         match action {
             "rename_company" | "create_office" | "pause_company" | "resume_company"
             | "set_company_parent" => Ok(("team.manage", scope("company", "companyId")?)),
-            "create_department" | "pause_office" | "resume_office" => {
+            "create_department" | "pause_office" | "resume_office" | "rename_office" => {
                 Ok(("team.manage", scope("office", "officeId")?))
             }
-            "pause_department" | "resume_department" | "set_department_parent" => {
+            "pause_department" | "resume_department" | "set_department_parent" | "rename_department" => {
                 Ok(("team.manage", scope("department", "departmentId")?))
             }
             "hire_employee" => Ok(("team.manage", self.scoped_payload(p)?)),
-            "pause_employee" | "resume_employee" | "fire_employee" => {
+            "pause_employee" | "resume_employee" | "fire_employee" | "update_employee" => {
                 Ok(("team.manage", scope("employee", "employeeId")?))
             }
             "enqueue_job" => {
@@ -1165,8 +1212,17 @@ impl OfficeSnapshot {
                         "This capability is not assigned to the worker job",
                     ));
                 }
-                self.eligible(job, OffsetDateTime::now_utc())
-                    .map_err(|reason| fail("AUTHORITY_DENIED", reason))?;
+                let clock = OffsetDateTime::now_utc();
+                let authority = if job.cost_status == "reserved"
+                    && job.reservation.is_some() && !job.usage_recorded
+                {
+                    // Reservation already passed global admission. Rechecking
+                    // its own committed spend must not cancel this same call.
+                    self.current_worker_authority(job, clock)
+                } else {
+                    self.eligible(job, clock)
+                };
+                authority.map_err(|reason| fail("AUTHORITY_DENIED", reason))?;
                 self.last_action =
                     Some(json!({"jobId":job_id,"capability":capability,"allowed":true}));
             }

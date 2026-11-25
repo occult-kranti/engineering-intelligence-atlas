@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "kind": "declarative_company_plan",
+  "company": {
+    "name": "Daftar Hardware Studio",
+    "upstream_repository": "https://github.com/atechdotdev/python-sdk",
+    "source_package": "atech==1.0.0a12",
+    "project_path": "projects/atech-hardware-studio",
+    "status": "creation_queued_awaiting_desktop_sync",
+    "provisioning_verified": false
+  },
+  "office": {
+    "name": "Hardware blueprint studio",
+    "presentation": "Company blueprint on the endless conference table; tools open as in-place elements",
+    "status": "planned"
+  },
+  "departments": [
+    {
+      "name": "Product design",
+      "roles": [
+        "Design lead",
+        "Interaction designer",
+        "Assembly documentation specialist"
+      ],
+      "owns": [
+        "idea brief",
+        "validation card",
+        "blueprint interaction",
+        "assembly explanations"
+      ],
+      "status": "planned"
+    },
+    {
+      "name": "SDK engineering",
+      "roles": [
+        "Python SDK engineer",
+        "Embedded systems engineer",
+        "Build engineer"
+      ],
+      "owns": [
+        "project validation",
+        "module placement",
+        "CLI contracts",
+        "firmware generation"
+      ],
+      "status": "planned"
+    },
+    {
+      "name": "Independent verification",
+      "roles": [
+        "QA reviewer",
+        "Source and license reviewer"
+      ],
+      "owns": [
+        "negative cases",
+        "compatibility checks",
+        "hardware evidence",
+        "release claims"
+      ],
+      "status": "planned"
+    }
+  ],
+  "coordination": {
+    "director": "User / CEO",
+    "assistant": "Donna",
+    "department_assistants": "Scoped sub-Donnas, provisioned after department creation",
+    "authority": "Use recorded scoped authority; this plan grants no access and starts no jobs."
+  },
+  "work_status": {
+    "source_import": "complete",
+    "sdk_validation_patch": "complete",
+    "canvas_adapter": "implemented_renderer_workbench_with_local_simulation_only",
+    "compiler_test": "not_run",
+    "physical_hardware_test": "not_run",
+    "hosted_atech_clone": "not_performed",
+    "catalog_example_recreation": "validated_and_source_generated"
+  },
+  "reproducible_example": {
+    "name": "Blueprint light",
+    "path": "examples/blueprint-light",
+    "idea": "Make a warm desk light that toggles when I press a button",
+    "inventory_status": "declared_sample_not_confirmed_user_hardware",
+    "board": "14port",
+    "modules": [
+      {
+        "id": "button",
+        "instance": "trigger",
+        "port": 1
+      },
+      {
+        "id": "neopixel",
+        "instance": "light",
+        "port": 2
+      }
+    ],
+    "owners": {
+      "brief_and_labels": "Product design",
+      "recipe_and_generation": "SDK engineering",
+      "repeatability_and_evidence": "Independent verification"
+    },
+    "local_validation": "passed",
+    "deterministic_generation": {
+      "runs": 2,
+      "files_per_run": 16,
+      "byte_identical": true
+    },
+    "receipt": "examples/blueprint-light/verification.json",
+    "compiler_test": "not_run",
+    "physical_hardware_test": "not_run"
+  }
+}

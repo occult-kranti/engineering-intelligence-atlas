@@ -1,0 +1,26 @@
+# Simulation data for an Atech product the SDK has no firmware for: `atech sim-assets`
+# exports it, `project.yaml` cannot place it (atech.sim.spec.Product). Frames and every
+# field: src/atech/docs/sim_assets.md. Asset frame: metres, origin at the centre of the
+# bottom face of the cell over its port, +z out of the top face, +y toward the outer face.
+#
+# USB-C power module: no firmware (it carries power only). Visual: Atech's CAD.
+schema: 1
+
+product: {name: "USB-C", category: power, size: 1, interface: null}
+
+size_m: [0.0195, 0.01975, 0.0102]  # CAD: atech-module-renders v1.7 glb_plain/usb-c.glb bounds
+mass_kg: 0.006                  # PLACEHOLDER: replace with Atech module datasheet
+
+colors:                          # PLACEHOLDER: replace with Atech module datasheet
+  body: [0.12, 0.13, 0.15, 1]
+
+connector:                       # PLACEHOLDER: replace with Atech module datasheet
+  pos_m: [0, 0, 0]
+  rpy_deg: [0, 0, 0]
+
+physics_material:                # PLACEHOLDER: replace with Atech module datasheet
+  static_friction: 0.5
+  dynamic_friction: 0.4
+  restitution: 0.1
+
+placeholders: [mass_kg, colors, connector, physics_material]

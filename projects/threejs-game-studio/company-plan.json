@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "kind": "declarative_company_plan",
+  "company": {
+    "name": "Daftar 3D Game Studio",
+    "project_path": "projects/threejs-game-studio",
+    "source_repository": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+    "source_revision": "4b9f05f3a0382725b679c5e32a338b88acaf0064",
+    "status": "creation_queued_awaiting_desktop_sync",
+    "provisioning_verified": false,
+    "provisioning_command": {
+      "id": "5f7892e8-9844-4459-a566-e85404ab1ac4",
+      "observed_status": "queued",
+      "observed_at": "2026-11-24",
+      "source": "Parent task observed the queued command in the Daftar live app",
+      "qualification": "Queued is not active; actual company provisioning still requires native sync verification."
+    }
+  },
+  "office": {
+    "name": "Procedural worlds blueprint studio",
+    "presentation": "Scene, brief, team, review, source and Donna helper are elements on one conference-table canvas",
+    "entrypoint": "index.html",
+    "status": "original_standalone_studio_implemented"
+  },
+  "departments": [
+    {"name":"World design","roles":["Game designer","Technical artist"],"owns":["scene brief","composition","original procedural reference","controls"],"status":"planned"},
+    {"name":"Local model engineering","roles":["Local model engineer","Tools engineer"],"owns":["model provenance","bounded adapter","original output preservation","dependency profile"],"status":"planned"},
+    {"name":"Independent scene review","roles":["QA reviewer","Source and license reviewer"],"owns":["unseen evaluation prompts","render and interaction evidence","performance checks","release claims"],"status":"planned"}
+  ],
+  "coordination": {
+    "director": "User / CEO",
+    "assistant": "Donna",
+    "department_assistants": "Scoped sub-Donnas after actual department provisioning",
+    "standalone_helper": "Deterministic brief editing and canvas navigation; no model-backed chat",
+    "authority": "This plan grants no access and starts no jobs. Reuse the owner's recorded scope when actual company commands are submitted."
+  },
+  "work_status": {
+    "model_metadata_import": "complete",
+    "weight_download": "not_performed",
+    "model_inference": "not_run",
+    "model_training": "not_performed",
+    "original_studio": "implemented",
+    "reference_scene": "original_daftar_code_not_model_output",
+    "local_adapter": "implemented_and_mock_tested",
+    "proprietary_game_reconstruction": "not_performed",
+    "desktop_provisioning": "not_verified"
+  },
+  "skills": ["game-reconstruction-engineering","spatial-3d-production-engineering","local-model-runtime-engineering"]
+}

@@ -3,6 +3,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { repoRoot, webRoot } from './static-build-lib.mjs';
 import { buildAssetGraph, hashName, htmlRoots, rewriteHtml, writeAssets } from './renderer-assets.mjs';
+import { copyCompanyStudio } from './company-studio-assets.mjs';
 const compiler = join(webRoot, 'node_modules/typescript/bin/tsc');
 if (!existsSync(compiler)) throw new Error('Install locked web dependencies to build the desktop preview.');
 const shell = join(repoRoot, 'desktop-shell');
@@ -23,7 +24,7 @@ const bridge = Buffer.from(bridgeText.replace(seedRef, (_, q) => `${q}./${seed}$
 
 // CSS comes from source when the renderer build has not copied it.
 const overrides = new Map([['browser-bridge.js', bridge]]);
-for (const name of ['chrome.css', 'studio-tokens.css', 'freeflow.css']) {
+for (const name of ['chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'hardware-workbench.css']) {
   if (!existsSync(join(renderer, name)) && existsSync(join(source, name))) overrides.set(name, readFileSync(join(source, name)));
 }
 
@@ -34,6 +35,7 @@ html = rewriteHtml(html, names, roots);
 files.set(hashName('preview-state.json', seedBytes), seedBytes);
 files.set('chrome.html', Buffer.from(html));
 
-const legacy = /^(?:chrome\.html|(?:chrome|browser-bridge|office-signals|model-pool)(?:\.[a-f0-9]{16})?\.js|(?:chrome|studio-tokens|freeflow)(?:\.[a-f0-9]{16})?\.css|preview-state(?:\.[a-f0-9]{16})?\.json)$/;
+const legacy = /^(?:chrome\.html|(?:chrome|browser-bridge|office-signals|model-pool|hardware-workbench)(?:\.[a-f0-9]{16})?\.js|(?:chrome|studio-tokens|freeflow|resource-library|canvas-craft|hardware-workbench)(?:\.[a-f0-9]{16})?\.css|preview-state(?:\.[a-f0-9]{16})?\.json)$/;
 writeAssets(dest, files, { prune: (rel) => legacy.test(rel) });
+copyCompanyStudio(repoRoot, join(dest, 'studios/threejs'));
 console.log('Built desktop preview with content-addressed renderer graph, styles, bridge and starter state.');

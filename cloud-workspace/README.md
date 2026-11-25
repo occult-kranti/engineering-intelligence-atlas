@@ -1,5 +1,15 @@
 # Daftar private cloud office · 0.8.0 deployed
 
+## Backend integration — 2026-11-24
+
+The current source adds conflict-safe command/chat idempotency, atomic saved
+brief/reservation admission, streaming body bounds and native command allowlist
+parity. New employee-definition and scope-renaming commands remain queued for
+explicit desktop synchronization. The owner-only audience and native writer
+rules are preserved. See the [backend validation](https://github.com/occult-kranti/engineering-intelligence-atlas/blob/main/project/BACKEND_WORKFLOW_VALIDATION_2026-11-24.md)
+for the current source's checks; older deployment receipts below describe their
+recorded versions.
+
 Daftar is the renamed personal command office built in the existing Engineering Intelligence Atlas repository. This directory contains its owner-private website: the shared desktop renderer, ChatGPT sign-in, D1 persistence, Donna chat, device pairing and a durable relay for native commands. Existing Atlas package IDs, API paths and URLs remain compatible.
 
 - [Private Daftar website](https://atlas-command-office.whatswrong-inc.chatgpt.site)

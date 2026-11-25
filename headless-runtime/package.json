@@ -7,6 +7,7 @@
   "scripts": {
     "build": "node ../desktop-shell/node_modules/typescript/bin/tsc -p tsconfig.json",
     "start": "node server.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "test:stress": "node ../scripts/backend-stress.mjs"
   }
 }

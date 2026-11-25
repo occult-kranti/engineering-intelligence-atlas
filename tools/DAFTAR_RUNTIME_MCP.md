@@ -4,6 +4,12 @@ This adapter connects a local stdio MCP client to the separately supervised Daft
 
 See the [architecture and platform research](../project/CLOUD_RUNTIME_PLAN.md), [runtime API](../headless-runtime/README.md), [VPS deployment](../deploy/README.md) and [verification record](../project/CLOUD_RUNTIME_VALIDATION.md).
 
+## Team definitions and ownership
+
+`office_command` includes `update_employee` (`employeeId`, plus at least one of `name`, `role`, `skillPaths`), `rename_department` (`departmentId`, `name`) and `rename_office` (`officeId`, `name`). These follow the same unique receipt ID and expected-state-hash contract as other owner commands. The native backend checks ownership and scoped `team.manage` authority. Metadata edits cannot move employee identity, change lifecycle, or grant capabilities. Empty `skillPaths` removes skill bindings; repository paths remain validated by the native core.
+
+Use the existing hire/fire and pause/resume commands for lifecycle changes. Donna is the global coordinator; each company, office and department retains its own permanent assistant assignment. Permanent assistants cannot be fired. A specialist retirement is terminal and retains its historical records. Scope filters in `office_query` remain read filters, not permission grants.
+
 ## Local configuration
 
 Build and start the daemon using the runtime or deployment instructions. The MCP process needs Node 22+ and an absolute path to a private control-token file. Keep this file outside the repository and set its POSIX permissions to 0400 or 0600. The daemon and adapter must use the same credential.

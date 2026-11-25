@@ -1,0 +1,190 @@
+/* Daftar studio palette. Theme is a presentation preference, never office state.
+ * Contract and measured contrast pairs: project/STUDIO_COLOR_SYSTEM.md.
+ * Numeric heat levels express the selected metric, not agent competence or risk.
+ */
+:root:not([data-theme]),
+:root[data-theme='blueprint'] {
+  color-scheme: dark;
+  --canvas: #111719;
+  --surface: #20282A;
+  --surface-soft: #192123;
+  --elevated: #2B3435;
+  --sidebar-canvas: #192123;
+  --ink: #F1EEE4;
+  --muted: #B5BDB7;
+  --line: #3C4644;
+  --line-strong: #78877F;
+  --accent: #D6ED9B;
+  --accent-hover: #D3FF85;
+  --accent-ink: #182112;
+  --accent-soft: #35442B;
+  --focus: #D6ED9B;
+  --focus-gap: #111719;
+  --brand-gold: #DBBC7C;
+  --emphasis-surface: #303C36;
+  --emphasis-ink: #F1EEE4;
+  --success: #A5D6A9;
+  --success-soft: #263E30;
+  --warning: #E8C676;
+  --warning-soft: #463722;
+  --danger: #FFAA97;
+  --danger-soft: #492C32;
+  --info: #B6C7B5;
+  --info-soft: #303D39;
+  --grid-minor: #1D2728;
+  --grid-major: #2C3838;
+  --connection: #9FAE98;
+  --shadow-soft: 0 10px 28px rgb(0 8 20 / 18%);
+  --shadow-panel: 0 16px 40px rgb(0 8 20 / 28%);
+  --heat-fill-0: #241F34;
+  --heat-fill-1: #302840;
+  --heat-fill-2: #303C2D;
+  --heat-fill-3: #424B2D;
+  --heat-fill-4: #51452A;
+  --heat-unknown: #C3BDCE;
+  --heat-unknown-fill: #302A3D;
+  --heat-unknown-ink: #F1EEE4;
+  --heat-hatch: #6D637E;
+  --font-heading: 'Manrope', 'Segoe UI', system-ui, sans-serif;
+}
+
+:root[data-theme='drafting'] {
+  color-scheme: light;
+  --canvas: #E8E5DA;
+  --surface: #FFFDF5;
+  --surface-soft: #F2EEE3;
+  --elevated: #E5DFCF;
+  --sidebar-canvas: #E5DFCF;
+  --ink: #28362F;
+  --muted: #596352;
+  --line: #C5C5B3;
+  --line-strong: #82917C;
+  --accent: #344F34;
+  --accent-hover: #284716;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #DBE4CD;
+  --focus: #344F34;
+  --focus-gap: #FFFDF5;
+  --brand-gold: #89662B;
+  --emphasis-surface: #28362F;
+  --emphasis-ink: #FFFDF5;
+  --success: #33613A;
+  --success-soft: #DBE4CD;
+  --warning: #795618;
+  --warning-soft: #FAEDD2;
+  --danger: #9B352A;
+  --danger-soft: #FBE8E3;
+  --info: #425F4A;
+  --info-soft: #DCE4D2;
+  --grid-minor: #DDDCD0;
+  --grid-major: #C9CBBC;
+  --connection: #59745D;
+  --shadow-soft: 0 10px 28px rgb(48 42 26 / 7%);
+  --shadow-panel: 0 16px 40px rgb(48 42 26 / 12%);
+  --heat-fill-0: #EEEAF3;
+  --heat-fill-1: #EAE5F1;
+  --heat-fill-2: #E7EEDC;
+  --heat-fill-3: #EEF1D7;
+  --heat-fill-4: #F9EFCD;
+  --heat-unknown: #685F72;
+  --heat-unknown-fill: #ECE9E3;
+  --heat-unknown-ink: #28362F;
+  --heat-hatch: #AEA5B4;
+  --font-heading: Georgia, 'Times New Roman', serif;
+}
+
+:root:not([data-theme]),
+:root[data-theme] {
+  /* Identical ordered swatches in both modes. Use -fill for large room surfaces;
+   * solid swatches need their paired -ink, not the page's general text color. */
+  --heat-0: #4B3F68;
+  --heat-1: #71618F;
+  --heat-2: #94B171;
+  --heat-3: #C4D88E;
+  --heat-4: #F0D38B;
+  --heat-ink-0: #FFFFFF;
+  --heat-ink-1: #FFFFFF;
+  --heat-ink-2: #111719;
+  --heat-ink-3: #111719;
+  --heat-ink-4: #111719;
+  --font-data: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
+  /* Compatibility with existing controls while components adopt semantic names. */
+  --paper: var(--canvas);
+  --text: var(--ink);
+  --green: var(--accent);
+  --green-dark: var(--emphasis-surface);
+  --green-soft: var(--accent-soft);
+  --amber: var(--warning);
+  --amber-soft: var(--warning-soft);
+  --red: var(--danger);
+  --red-soft: var(--danger-soft);
+}
+
+[data-heat-level='0'] { --heat-color: var(--heat-0); --heat-fill: var(--heat-fill-0); --heat-ink: var(--heat-ink-0); --heat-pattern: none; }
+[data-heat-level='1'] { --heat-color: var(--heat-1); --heat-fill: var(--heat-fill-1); --heat-ink: var(--heat-ink-1); --heat-pattern: none; }
+[data-heat-level='2'] { --heat-color: var(--heat-2); --heat-fill: var(--heat-fill-2); --heat-ink: var(--heat-ink-2); --heat-pattern: none; }
+[data-heat-level='3'] { --heat-color: var(--heat-3); --heat-fill: var(--heat-fill-3); --heat-ink: var(--heat-ink-3); --heat-pattern: none; }
+[data-heat-level='4'] { --heat-color: var(--heat-4); --heat-fill: var(--heat-fill-4); --heat-ink: var(--heat-ink-4); --heat-pattern: none; }
+[data-heat-level='unknown'] {
+  --heat-color: var(--heat-unknown);
+  --heat-fill: var(--heat-unknown-fill);
+  --heat-ink: var(--heat-unknown-ink);
+  --heat-pattern: repeating-linear-gradient(135deg, transparent 0 7px, var(--heat-hatch) 7px 8px);
+}
+
+/* The UI must retain visible text/counts and a dashed unknown marker. Forced
+ * colors intentionally removes the extra tint, retaining those same labels. */
+@media (forced-colors: active) {
+  :root:not([data-theme]), :root[data-theme] {
+    --canvas: Canvas;
+    --surface: Canvas;
+    --surface-soft: Canvas;
+    --elevated: Canvas;
+    --sidebar-canvas: Canvas;
+    --ink: CanvasText;
+    --muted: CanvasText;
+    --line: CanvasText;
+    --line-strong: ButtonText;
+    --accent: LinkText;
+    --accent-hover: LinkText;
+    --accent-ink: Canvas;
+    --accent-soft: Canvas;
+    --focus: Highlight;
+    --focus-gap: Canvas;
+    --brand-gold: CanvasText;
+    --emphasis-surface: Canvas;
+    --emphasis-ink: CanvasText;
+    --success: CanvasText;
+    --success-soft: Canvas;
+    --warning: CanvasText;
+    --warning-soft: Canvas;
+    --danger: CanvasText;
+    --danger-soft: Canvas;
+    --info: CanvasText;
+    --info-soft: Canvas;
+    --connection: CanvasText;
+    --grid-minor: Canvas;
+    --grid-major: Canvas;
+    --heat-0: CanvasText;
+    --heat-1: CanvasText;
+    --heat-2: CanvasText;
+    --heat-3: CanvasText;
+    --heat-4: CanvasText;
+    --heat-fill-0: Canvas;
+    --heat-fill-1: Canvas;
+    --heat-fill-2: Canvas;
+    --heat-fill-3: Canvas;
+    --heat-fill-4: Canvas;
+    --heat-unknown: CanvasText;
+    --heat-unknown-fill: Canvas;
+    --heat-unknown-ink: CanvasText;
+    --heat-hatch: CanvasText;
+    --heat-ink-0: Canvas;
+    --heat-ink-1: Canvas;
+    --heat-ink-2: Canvas;
+    --heat-ink-3: Canvas;
+    --heat-ink-4: Canvas;
+    --shadow-soft: none;
+    --shadow-panel: none;
+  }
+}

@@ -10,6 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { HeadlessCloudSync, createEncryptedCloudStorage } from '../cloud-sync.mjs';
 import { createRuntime } from '../runtime.mjs';
 import { configurationFromEnv } from '../server.mjs';
+import { requireBuild } from './build-required.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const require = createRequire(import.meta.url);
@@ -62,8 +63,7 @@ async function cloudServer(f) {
 }
 
 function nativeAvailable(t) {
-  if (!fs.existsSync(binaryPath) || !fs.existsSync(compiled)) { t.skip('Build native core and portable modules first.'); return false; }
-  return true;
+  return requireBuild(t, [binaryPath, compiled]);
 }
 
 test('AES-GCM file-key storage encrypts, authenticates origin and detects modified ciphertext', t => {

@@ -89,7 +89,7 @@ export function legacyReservationStatement(a: { id: string; key: string; scopeKe
   if (!isMicros(a.reservedMicros) || !isMicros(a.capMicros)) throw new Error('invalid accounting input');
   return {
     sql: "INSERT INTO atlas_requests (id,idempotency_key,scope_key,status,request_hash,reserved_micros,created_at) SELECT ?,?,?,'reserved',?,?,? WHERE " +
-      `${INVALID_STORED_SQL} = 0 AND ${COMMITTED_SQL} + ? <= ? AND ${ACTIVE_SQL} < ${SHARED_ACTIVE_MAX}`,
+      `${INVALID_STORED_SQL} = 0 AND ${COMMITTED_SQL} + ? <= ? AND ${ACTIVE_SQL} < ${SHARED_ACTIVE_MAX} ON CONFLICT(idempotency_key) DO NOTHING`,
     binds: [a.id, a.key, a.scopeKey, a.requestHash, a.reservedMicros, a.createdAt, a.reservedMicros, a.capMicros],
   };
 }

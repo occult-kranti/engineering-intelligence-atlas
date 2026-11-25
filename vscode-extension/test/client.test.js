@@ -91,3 +91,19 @@ test('malformed pairing text is rejected without retaining unrelated keys',()=>{
   assert.throws(()=>pairing(JSON.stringify({deviceToken:'too short'})));
   assert.deepEqual(pairing(JSON.stringify({deviceToken:cloud.deviceToken,unexpected:'do not retain'})),{deviceToken:cloud.deviceToken});
 });
+test('stored connections are validated before any credential can be sent',()=>{
+  for(const value of [null,{}, {...cloud,kind:'other'}, {...cloud,url:'http://outside.example'}, {...cloud,url:'https://atlas.example/#token'}, {...cloud,deviceToken:'short'}, {kind:'desktop',url:'http://127.0.0.1:6001',cookie:'other=secret'}])assert.throws(()=>new AtlasClient(value,()=>assert.fail('No request should be sent')));
+  const c=new AtlasClient({...cloud,privateUnrelatedKey:'discard'});
+  assert.equal(c.connection.privateUnrelatedKey,undefined);
+});
+test('native ownership errors are actionable and interrupted reads never retry mutations',async()=>{
+  const c=new AtlasClient(cloud,async()=>json({error:'Permanent assistants retain scope ownership; pause instead of firing'},400));
+  await assert.rejects(c.request('/api/commands','POST',{}),/Permanent assistants/);
+  let calls=0;
+  const interrupted=new AtlasClient(cloud,async()=>{calls++;return new Response(new ReadableStream({start(controller){controller.error(new Error('body aborted'));}}),{headers:{'Content-Type':'application/json'}});});
+  await assert.rejects(interrupted.chat('atlas','Brief','attempt-interrupted'),/may already be saved/);assert.equal(calls,1);
+});
+test('primitive JSON responses and oversized declared bodies are rejected',async()=>{
+  for(const body of [null,3,[],true])await assert.rejects(new AtlasClient(cloud,async()=>json(body)).request('/api/session'),/invalid data/);
+  await assert.rejects(new AtlasClient(cloud,async()=>json({},200,{'content-length':String(10*1024*1024)})).request('/api/session'),/exceeds/);
+});

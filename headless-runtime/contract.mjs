@@ -15,8 +15,8 @@ export class RuntimeError extends Error {
 
 // Mirrors native-core/src/remote_commands.rs, excluding its internal chat import.
 export const OWNER_ACTIONS = Object.freeze([
-  'create_company', 'rename_company', 'select_company', 'create_office', 'set_company_parent',
-  'create_department', 'set_department_parent', 'hire_employee', 'pause_employee', 'resume_employee',
+  'create_company', 'rename_company', 'select_company', 'create_office', 'rename_office', 'set_company_parent',
+  'create_department', 'rename_department', 'set_department_parent', 'hire_employee', 'update_employee', 'pause_employee', 'resume_employee',
   'fire_employee', 'pause_company', 'resume_company', 'pause_office',
   'resume_office', 'pause_department', 'resume_department', 'enqueue_job',
   'cancel_job', 'pause_job', 'resume_job', 'create_schedule', 'pause_schedule',

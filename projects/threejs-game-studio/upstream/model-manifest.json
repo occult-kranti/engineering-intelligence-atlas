@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-11-24",
+  "repository": "https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder",
+  "revision": "4b9f05f3a0382725b679c5e32a338b88acaf0064",
+  "metadata_api": "https://huggingface.co/api/models/ccore/Qwen3.5-4B-3D-Coder?blobs=true",
+  "license": "Apache-2.0",
+  "independent_finetune": true,
+  "base_model": "Qwen/Qwen3.5-4B",
+  "weights_downloaded": false,
+  "inference_run": false,
+  "artifacts": [
+    {"filename":"Qwen3.5-4B-3D-Coder-Q4_K_M.gguf","bytes":2708804096,"sha256":"32c37c83d3ca055d30aefa679f1a1670d3e2eb889ee7cc805792d53f219cfae8","included":false},
+    {"filename":"Qwen3.5-4B-3D-Coder-Q8_0.gguf","bytes":4482402816,"sha256":"c30b02629456aa2bc32e522de0f58eb1aafd8518a7634128fed67d1486fc2a9a","included":false},
+    {"filename":"mmproj-Qwen3.5-4B-BF16.gguf","bytes":675568768,"sha256":"ae08d9d7eceb8f2d0672d61b5e6aa78b611f2942b55ed71d21414980cc454b91","included":false}
+  ],
+  "dataset": {
+    "repository":"https://huggingface.co/datasets/ccore/ThreeJS-3D-Scenes",
+    "revision":"57b77a19d38eee8316c8b1f9e71c772046d9f48c",
+    "license":"MIT",
+    "examples":4146,
+    "training_examples":3933,
+    "validation_examples":213,
+    "publisher_reported_generator":"MiniMax M3.1 Flash",
+    "downloaded":false
+  },
+  "technical_report": {
+    "url":"https://huggingface.co/ccore/Qwen3.5-4B-3D-Coder/resolve/4b9f05f3a0382725b679c5e32a338b88acaf0064/Qwen3.5-4B-3D-Coder_Technical_Report.pdf",
+    "title":"Supervised Specialisation of Qwen3.5-4B for Three.js 3D Scene Generation: An exploratory study with synthetic data",
+    "date":"2026-10-28",
+    "sha256":"49758364b633bd6c119848839dd5fc1b29368e978532c5e97498cf66db13c728",
+    "bytes":1329647,
+    "reading_depth":"Text of pages 1–4, 7–8 and 10 reviewed; no figure-level reproduction",
+    "evaluation_scope":"Author-reported, exploratory, eight development prompts, unequal stopping rules; not an independent first-attempt benchmark"
+  },
+  "runtime_evidence": {
+    "author_tested_gguf":"llama.cpp b11889; short vision tests, configured 64K context, not full-context stress tests",
+    "author_tested_fp16":"Transformers 5.20.2; loading and text generation",
+    "ollama":"Hugging Face integration command documented; exact fine-tune not executed here",
+    "lm_studio_note":"Disable MTP according to the model card"
+  },
+  "boundaries": [
+    "Artifact byte count is not a RAM or VRAM requirement.",
+    "A mutable Ollama tag does not prove installed checkpoint identity.",
+    "The model repository is not a complete product application or SDK.",
+    "The original Daftar reference scene was authored for this project; it is not model output.",
+    "Do not treat third-party demo code as covered by this model's license."
+  ]
+}

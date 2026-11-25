@@ -17,8 +17,19 @@ function pairing(raw) {
   if (!valid(result.deviceToken, 2048) || result.siteAccessToken !== undefined && !valid(result.siteAccessToken, 12000)) throw new Error('Invalid device pairing credential.');
   return { deviceToken: result.deviceToken, ...(result.siteAccessToken ? { siteAccessToken: result.siteAccessToken } : {}), ...(result.baseUrl ? { baseUrl: origin(result.baseUrl) } : {}) };
 }
+function validateConnection(value) {
+  if (!value || typeof value !== 'object' || Array.isArray(value) || !['desktop','cloud'].includes(value.kind)) throw new Error('Pair this editor to a desktop or website connection.');
+  const url=origin(value.url,value.kind==='desktop');
+  if(value.url!==url)throw new Error('Stored workspace connection is invalid. Pair it again.');
+  if(value.kind==='desktop') {
+    if(typeof value.cookie!=='string'||!/^atlas_session=[a-f0-9]{64}$/.test(value.cookie))throw new Error('Stored desktop session is invalid. Pair it again.');
+    return {kind:'desktop',url,cookie:value.cookie};
+  }
+  const parsed=pairing(JSON.stringify({deviceToken:value.deviceToken,siteAccessToken:value.siteAccessToken}));
+  return {kind:'cloud',url,...parsed};
+}
 class AtlasClient {
-  constructor(connection, fetcher = fetch) { this.connection = connection; this.fetcher = fetcher; this.revision=null; }
+  constructor(connection, fetcher = fetch) { this.connection = validateConnection(connection); this.fetcher = fetcher; this.revision=null; }
   async request(route, method = 'GET', body) {
     const c = this.connection;
     if (!c) throw new Error('Connect this editor to your desktop or signed-in website first.');
@@ -35,13 +46,21 @@ class AtlasClient {
     catch { throw new Error('Workspace unavailable. Keep the desktop open or check the website connection. Your saved work is preserved.'); }
     if ([401,403].includes(response.status)) throw new Error('This editor connection expired or was revoked. Pair it again.');
     if (response.status === 409) throw new Error('The request conflicts with newer workspace state. Refresh before retrying.');
-    if (!response.ok) throw new Error(`Workspace request failed (${response.status}). Refresh before retrying a paid request.`);
     if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('The site returned its sign-in page. Use the complete device pairing JSON.');
+    const declared=Number(response.headers.get('content-length'));
+    if(Number.isFinite(declared)&&declared>MAX_RESPONSE){try{await response.body?.cancel();}catch{}throw new Error('Workspace response exceeds its limit.');}
     const reader = response.body?.getReader();
     if (!reader) throw new Error('Workspace response was empty.');
     const chunks = []; let size = 0;
-    for (;;) { const {done,value}=await reader.read(); if(done)break; size+=value.length; if(size>MAX_RESPONSE){await reader.cancel();throw new Error('Workspace response exceeds its limit.');} chunks.push(value); }
+    try {
+      for (;;) { const {done,value}=await reader.read(); if(done)break; size+=value.length; if(size>MAX_RESPONSE){try{await reader.cancel();}catch{}throw new Error('Workspace response exceeds its limit.');} chunks.push(value); }
+    } catch(error) {
+      if(error?.message==='Workspace response exceeds its limit.')throw error;
+      throw new Error('Workspace response was interrupted. The action may already be saved; refresh before retrying.');
+    } finally { reader.releaseLock(); }
     let data;try{data=JSON.parse(Buffer.concat(chunks).toString('utf8'));}catch{throw new Error('Workspace returned invalid data.');}
+    if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Workspace returned invalid data.');
+    if(!response.ok)throw new Error(typeof data.error==='string'?data.error.slice(0,500):`Workspace request failed (${response.status}). Refresh before retrying a paid request.`);
     if(data.ok===false || data.error && !data.snapshot)throw new Error(String(data.error || 'Workspace operation rejected.').slice(0,500));
     return data;
   }
@@ -109,4 +128,4 @@ function studioUrl(base, companyId, view) {
   url.hash = 'office';
   return url.href;
 }
-module.exports={AtlasClient,origin,pairing,studioUrl};
+module.exports={AtlasClient,origin,pairing,studioUrl,validateConnection};

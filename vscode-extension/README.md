@@ -31,10 +31,16 @@ Cloud Donna chat calls the server-backed provider and records usage against the 
 | View | Function |
 | --- | --- |
 | Donna | Scoped conversation, server-backed cloud replies or saved desktop briefs, draft decision panels |
-| Team | Office and department grouping, employee pause/resume, actual job lifecycle and queue pause/resume |
+| Team | Office and department grouping, permanent employee definitions, name/role/skill edits, specialist retirement, department creation/naming/hierarchy/pause/resume, office naming, and actual job lifecycle |
 | Roadmap | Global, group and company milestones with ownership/evidence, plus company goals |
 
-The extension refreshes visible state every 30 seconds. Refresh reads state; it never starts a provider request. Your explicit Send action creates one request and is not automatically retried after an ambiguous failure. A cloud chat waits up to 210 seconds for the server's bounded provider call and accounting; other requests retain a 45-second timeout. Office commands preserve the cloud revision they were based on.
+Use **Manage team** in the Team view or **Daftar: Manage Team and Departments** in the command palette. The editor selects records from a fresh snapshot and submits the scoped native command. Hiring creates a durable definition; it does not start a model. Editing a role or skill bindings does not grant permissions. **Retire specialist** retains history and cancels its work; this is terminal. Shared assistants retain ownership and can be paused instead. Department pauses retain the department and its history.
+
+**Review Donna ownership** (also available in the command palette) reads the global Donna coordinator plus company, office and department assistant assignments into a temporary editor document. It flags missing or mismatched ownership records and counts current direct grants for the displayed scope (the selected company for Donna). This count is informational: the native backend checks the full delegation chain and effective authority before applying operations. Company-scoped management cannot edit global Donna or an assistant belonging to another company.
+
+The extension refreshes visible state every 30 seconds. Refresh reads state; it never starts a provider request. Your explicit Send action creates one request and is not automatically retried after an ambiguous failure. A cloud chat waits up to 210 seconds for the server's bounded provider call and accounting; other requests retain a 45-second timeout. Office commands preserve the cloud revision they were based on. Concurrent mutation clicks are blocked, and responses from a previous company or disconnected session cannot replace the current view.
+
+Unsent briefs are retained in local VS Code webview state, separately for each connected origin and company (at most 50 drafts, 12,000 characters each). They are restored after refresh or view recreation. A completed send clears only the brief it submitted, preserving text typed while a reply was pending. Device credentials remain in SecretStorage; do not put credentials in a brief.
 
 ## Build and verify
 
@@ -45,7 +51,7 @@ npm test
 npm run package
 ```
 
-The package script runs checks and tests before creating the VSIX. Runtime code uses Node and VS Code APIs without additional bundled dependencies. Tests cover endpoint restrictions, one-use pairing, credential placement, revision conflicts, offline queue labels, response bounds and no automatic billed retries.
+The package script runs checks and tests before creating the VSIX. Runtime code uses Node and VS Code APIs without additional bundled dependencies. Tests cover endpoint restrictions, one-use pairing, stored credential validation, revision conflicts, offline queue labels, response bounds, management scope/ownership invariants, concurrent actions, stale responses, local draft preservation, and no automatic billed retries. Host tests use a synthetic VS Code API; the separate installed gate below remains necessary for installed-extension acceptance.
 
 ### Verify the installed VSIX
 
@@ -55,7 +61,7 @@ On Linux with a graphical display (or `xvfb`), run this after packaging:
 xvfb-run -a npm run test:installed
 ```
 
-The harness uses Microsoft's [`@vscode/test-electron`](https://code.visualstudio.com/api/working-with-extensions/testing-extension) and pins VS Code **1.147.0**. To test another exact release, set `ATLAS_VSCODE_TEST_VERSION`. It installs the built VSIX into an empty temporary extensions directory, then launches a separate test-host extension. Daftar must activate from its installed path; loading the source extension as a development extension fails the test. The gate checks the installed version and runtime file hashes, all seven command registrations, Open Office, disconnected refresh/disconnect, credential redaction, and absence of development files or credential-shaped material in the installed archive.
+The harness uses Microsoft's [`@vscode/test-electron`](https://code.visualstudio.com/api/working-with-extensions/testing-extension) and pins VS Code **1.147.0**. To test another exact release, set `ATLAS_VSCODE_TEST_VERSION`. It installs the built VSIX into an empty temporary extensions directory, then launches a separate test-host extension. Daftar must activate from its installed path; loading the source extension as a development extension fails the test. The gate checks the installed version and runtime file hashes, all contributed command registrations, Open Office, disconnected refresh/disconnect, credential redaction, and absence of development files or credential-shaped material in the installed archive.
 
 The empty test profile has no pairing credentials. Daftar fetches are blocked during activation and command checks, and the receipt must record zero network dispatches. Setup downloads VS Code; it does not call an AI provider. The official test runner uses its standard Chromium sandbox exception for the isolated test process; it does not change the shipped extension or desktop security settings.
 
