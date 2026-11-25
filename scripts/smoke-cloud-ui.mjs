@@ -779,10 +779,13 @@ try {
       assert(state.calls.slice(beforeDirectRenderer).every(key => ['GET /api/session', 'GET /api/workspace', 'GET /api/cloud-threads', 'GET /api/commands'].includes(key)), 'The unavailable renderer may only check session and denied read-only workspace routes');
       await capture(page, 'fixture-connected-signin-required', viewport, false);
       state.allowRejectedRendererReads = false;
+      stage = `owner-welcome-signin-${viewport.width}`;
       const beforeWelcome = state.calls.length;
       await page.locator('#cloud-welcome').click();
       await page.waitForURL(base + '/');
       await page.getByRole('link', {name: 'Sign in', exact: true}).waitFor({state: 'visible'});
+      // The header renders before OfficeHome's passive session check finishes.
+      await page.locator('.office-home .status-banner.is-error').filter({hasText: 'Fixture owner sign-in required.'}).waitFor({state: 'visible'});
       assert.deepEqual(state.calls.slice(beforeWelcome), ['GET /api/session', 'GET /api/session'], 'Unframed welcome checks entry and form sessions without requesting private records');
       checks.push('Direct renderer sign-in state: denied reads expose no metadata, cloud/budget status stays unavailable, chat is disabled and welcome opens sign-in');
     }
