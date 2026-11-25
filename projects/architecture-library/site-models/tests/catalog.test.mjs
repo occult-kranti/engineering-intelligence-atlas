@@ -66,8 +66,19 @@ test('GLB preflight rejects malformed headers and external resources', () => {
 
 test('vendored ESM runtime and licenses match pinned file receipts', () => {
   const manifest = JSON.parse(fs.readFileSync(new URL('vendor/manifest.json',root)));
+  const projection = JSON.parse(fs.readFileSync(new URL('../static-assets.json',root)));
   assert.deepEqual(manifest.packages,{three:'0.187.0',meshoptimizer:'1.2.0'});
-  for(const file of manifest.files)assert.equal(sha(fs.readFileSync(new URL(`vendor/${file.target}`,root))),file.outputSha256);
+  for(const file of manifest.files) {
+    assert.equal(sha(fs.readFileSync(new URL(`vendor/${file.target}`,root))),file.outputSha256);
+    assert(projection.files.includes(`site-models/vendor/${file.target}`), `${file.target}: pinned runtime and license must be included in the public projection`);
+  }
+});
+
+test('vendored viewer resolves its complete local module graph before a model is loaded', async () => {
+  // Import the real entry point so a missing transitive dependency fails before
+  // the browser's 3D-load deadline. This does not construct or simulate WebGL.
+  const viewer = await import('../viewer.mjs');
+  assert.equal(typeof viewer.createViewer, 'function');
 });
 
 test('accuracy baseline distinguishes preserving downloads from altered preview imports', () => {

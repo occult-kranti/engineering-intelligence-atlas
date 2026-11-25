@@ -195,7 +195,7 @@ Latest local checks for this source preparation:
 | Resource projections | Match canonical source |
 | Native resource-router integration | 13 tests passed, including required native integration |
 | Native main and renderer type checking | Passed |
-| Static build and portable asset integrity | 417 verified client files |
+| Static build and portable asset integrity | 418 verified client files |
 
 The first remote attempt, [run 45576673677](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/45576673677)
 on `ce44e94530b6541fec1bba644ec9c893088b0bc3`, passed Linux and Windows packaging
@@ -216,6 +216,18 @@ The follow-up also repairs chapter-to-notebook and AI catalogue links across sou
 Markdown, assembled documents and offline HTML. Formula anchors work in ordinary
 Markdown renderers as well as the published documents. Release validation resolves
 the actual files and public HTML anchors rather than merely checking link syntax.
+
+The next remote attempt, [run 45579226675](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/45579226675),
+passed the repaired workspace browser gate and Android compilation. Headless
+integration then identified a separate legacy static catalogue export with 333
+rows. The existing exporter now writes all 345 canonical records while preserving
+the original 296-row base; `--check-atlas` and the 13 focused integration tests pass.
+The recovered heritage viewer also exposed an omitted transitive `SkeletonUtils`
+import. Its exact Three.js 0.187.0 module is now included with the original license,
+updated source/output hashes and an explicit public asset entry. The actual viewer
+module graph imports successfully, and focused regressions cover the complete
+offline dependency closure. Independent browser scripts now all execute and retain
+evidence; any failed script still fails the combined job.
 
 Local Chromium could not start under the workspace socket policy. DOM checks are
 not reported as browser acceptance. Both GitHub CI and Pages install Chromium and

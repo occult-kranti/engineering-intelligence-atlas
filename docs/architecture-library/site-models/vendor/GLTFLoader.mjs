@@ -66,7 +66,7 @@ import {
 	InstancedBufferAttribute
 } from './three.module.mjs';
 import { toTrianglesDrawMode } from './BufferGeometryUtils.mjs';
-import { clone } from '../utils/SkeletonUtils.js';
+import { clone } from './SkeletonUtils.mjs';
 
 /**
  * A loader for the glTF 2.0 format.

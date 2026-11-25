@@ -153,6 +153,7 @@
     "site-models/vendor/GLTFLoader.mjs",
     "site-models/vendor/MESHOPT-LICENSE.md",
     "site-models/vendor/OrbitControls.mjs",
+    "site-models/vendor/SkeletonUtils.mjs",
     "site-models/vendor/THREE-LICENSE.md",
     "site-models/vendor/manifest.json",
     "site-models/vendor/meshopt_decoder.mjs",

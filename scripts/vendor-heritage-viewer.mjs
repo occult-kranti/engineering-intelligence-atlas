@@ -14,6 +14,7 @@ const files = [
   ['three/examples/jsm/loaders/GLTFLoader.js', 'GLTFLoader.mjs'],
   ['three/examples/jsm/controls/OrbitControls.js', 'OrbitControls.mjs'],
   ['three/examples/jsm/utils/BufferGeometryUtils.js', 'BufferGeometryUtils.mjs'],
+  ['three/examples/jsm/utils/SkeletonUtils.js', 'SkeletonUtils.mjs'],
   ['three/LICENSE', 'THREE-LICENSE.md'],
   ['meshoptimizer/meshopt_decoder.mjs', 'meshopt_decoder.mjs'],
   ['meshoptimizer/LICENSE.md', 'MESHOPT-LICENSE.md'],
@@ -28,7 +29,8 @@ for (const [source, target] of files) {
   const original = fs.readFileSync(path.join(dependencies, source));
   const text = original.toString('utf8').replaceAll("from 'three'", "from './three.module.mjs'")
     .replaceAll("'./three.core.js'", "'./three.core.mjs'")
-    .replaceAll("'../utils/BufferGeometryUtils.js'", "'./BufferGeometryUtils.mjs'");
+    .replaceAll("'../utils/BufferGeometryUtils.js'", "'./BufferGeometryUtils.mjs'")
+    .replaceAll("'../utils/SkeletonUtils.js'", "'./SkeletonUtils.mjs'");
   fs.writeFileSync(path.join(destination, target), text);
   receipt.push({ source, target, sourceSha256: hash(original), outputSha256: hash(text), bytes: Buffer.byteLength(text) });
 }

@@ -66,12 +66,14 @@ jobs:
         run: node scripts/smoke-static.mjs
       - name: Verify architecture library and model downloads
         run: |
-          node scripts/smoke-architecture-library.mjs
-          node scripts/smoke-heritage-viewer.mjs
-          node scripts/smoke-research-memory.mjs
-          node scripts/smoke-design-backgrounds.mjs --browser
-          node desktop-shell/scripts/copy-renderer-assets.mjs
-          node desktop-shell/tests/donna-brain-browser.mjs
+          browser_gate_status=0
+          node scripts/smoke-architecture-library.mjs || browser_gate_status=1
+          node scripts/smoke-heritage-viewer.mjs || browser_gate_status=1
+          node scripts/smoke-research-memory.mjs || browser_gate_status=1
+          node scripts/smoke-design-backgrounds.mjs --browser || browser_gate_status=1
+          node desktop-shell/scripts/copy-renderer-assets.mjs || browser_gate_status=1
+          node desktop-shell/tests/donna-brain-browser.mjs || browser_gate_status=1
+          exit "$browser_gate_status"
       - name: Save every web and desktop workspace screen
         if: always()
         uses: actions/upload-artifact@v4
