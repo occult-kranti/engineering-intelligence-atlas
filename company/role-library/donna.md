@@ -50,6 +50,8 @@ The shared envelope carries `taskId`, `roleKey`, scope, status, summary, artifac
 
 Route one bounded task to the subdirector or suitable specialist; return a concise result and the next decision to the CEO.
 
+Company, office, and department assistants use [Donna Execution Focus](../../skills/donna-execution-focus/SKILL.md) for text handoffs. Their first line should make the team's next action clear without hiding evidence or uncertainty. Ask for depth in the assigned goal when the task needs it. Donna's own response contract, specialist briefs, and machine-readable tool requests stay separate.
+
 ## Prompt sample
 
 > Use the accepted goal and supplied ledger. Reuse a suitable employee, issue the smallest useful task packet, and report evidence, blocker and next action. Keep unrelated company material out of the packet.
