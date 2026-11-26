@@ -142,6 +142,7 @@ try{
   await page.waitForFunction(names=>[...document.querySelectorAll('.ff-node-title')].some(node=>names.includes(node.textContent)),companies.map(company=>company.name));
   await settleCanvas(page);await assertEndlessShell(page,'VS Code canvas browser harness');
   assert.equal(await page.locator('iframe').count(),0,'No iframe or remote screen hosts the office');
+  assert.equal(await page.locator('.canvas-panel[data-panel-id="game-studio"]').count(),0,'The editor must not offer a studio absent from the VSIX asset graph');
   assert.equal(await page.locator('#workbench-controls').count(),1,'One editor connection control overlay');
   receipt.checks.push('Native canonical companies rendered in one full-size freeflow world at 1440×900');
   await screenshot('01-native-office');
@@ -152,6 +153,15 @@ try{
   const beforePan=await world.evaluate(node=>node.style.transform);await page.locator('.ff-canvas-host').focus();await page.keyboard.press('ArrowRight');await settleCanvas(page);
   assert.notEqual(await world.evaluate(node=>node.style.transform),beforePan,'Keyboard pan changes the actual canvas transform');
   const donna=await openCanvasSurface(page,'donna');await page.locator('#chat-message').fill('Unsent smoke-test draft');
+  for(let i=0;i<12;i++){
+    await donna.locator('#donna-tab-thread').click();
+    await donna.locator('#donna-tab-studio').click();
+    await donna.locator('#donna-tab-brief').click();
+    assert.equal(await donna.locator('#chat-message').inputValue(),'Unsent smoke-test draft','Switching creative tabs retains the same unsent draft');
+  }
+  assert.equal(await page.locator('#workspace-chat-form').count(),1,'Repeated visits retain exactly one live composer');
+  assert.equal(await page.locator('iframe').count(),0,'Creative tabs still do not introduce editor iframes');
+  receipt.checks.push('36 creative tab switches retain one live unsent brief without embedding a nested document');
   const prior=await canvasPanelState(page,'donna');await donna.locator('.canvas-panel-grip').focus();await page.keyboard.press('ArrowRight');
   const moved=await canvasPanelState(page,'donna');assert.equal(moved.rect.x,prior.rect.x+20,'Movable chat surface uses the shared canvas geometry');
   receipt.checks.push('Real camera zoom/pan and keyboard movement of the live Donna surface');

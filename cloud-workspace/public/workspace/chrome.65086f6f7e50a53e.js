@@ -2825,15 +2825,20 @@ function renderUnifiedWorkspace() {
     endlessWorkspace?.refresh();
 }
 function updateChatMode() {
-    if (bridge?.transport === 'cloud-browser') {
-        $('chat-goal-mode').closest('label')?.classList.add('hidden');
-        $('chat-provider-options').classList.add('hidden');
+    const cloud = bridge?.transport === 'cloud-browser';
+    const execute = !cloud && value('chat-goal-mode') === 'provider';
+    const options = $('chat-provider-options');
+    $('chat-goal-mode').closest('label')?.classList.toggle('hidden', cloud);
+    options.classList.toggle('hidden', !execute);
+    // Hidden form controls still participate in native validation unless disabled.
+    options.querySelectorAll('input,select').forEach(control => { control.disabled = !execute; });
+    if (!execute)
+        $('chat-authorized').checked = false;
+    if (cloud) {
         $('chat-send').textContent = 'Ask Donna';
         $('chat-mode-note').textContent = 'A real cloud reply. Code and panel jobs wait for a connected desktop; this conversation does not apply changes.';
         return;
     }
-    const execute = value('chat-goal-mode') === 'provider';
-    $('chat-provider-options').classList.toggle('hidden', !execute);
     $('chat-send').textContent = execute ? 'Create bounded goal ↑' : 'Create plan ↑';
     $('chat-mode-note').textContent = execute ? (officeState?.policy?.approvalMode === 'autonomous' ? 'Eligible work can queue automatically within every budget cap.' : 'The goal is planned first. Approve its plan before provider execution.') : 'Save a local brief and plan. No provider request.';
 }
@@ -2845,17 +2850,18 @@ function boundedUtf8(input, maxBytes) { let result = ''; let size = 0; const enc
     size += bytes;
 } return result; }
 function chatRunSettings() {
+    // Manual plans use the native no-execution defaults, never half-edited
+    // provider limits or consent from a previous mode.
+    if (value('chat-goal-mode') !== 'provider')
+        return undefined;
     const provider = value('chat-provider');
-    const mode = value('chat-goal-mode') === 'provider' ? 'provider' : 'manual';
-    const settings = { mode, provider, model: value('chat-model'), authorized: mode === 'provider' && ($('chat-authorized').checked || officeState?.policy?.approvalMode === 'autonomous'), maxTokens: Number(value('chat-max-tokens')), maxUsd: Number(value('chat-max-usd')), maxMinutes: Number(value('chat-max-minutes')), priceRates: { inputUsdPerMillion: Number(value('chat-rate-input')), outputUsdPerMillion: Number(value('chat-rate-output')) } };
-    if (mode === 'provider') {
-        if (!settings.authorized)
-            throw new Error('Authorize provider work for this goal before creating it.');
-        if (!settings.model)
-            throw new Error('Choose a model ID for bounded execution.');
-        if (provider !== 'ollama' && (!settings.priceRates.inputUsdPerMillion || settings.priceRates.inputUsdPerMillion <= 0 || !settings.priceRates.outputUsdPerMillion || settings.priceRates.outputUsdPerMillion <= 0))
-            throw new Error('Positive input and output rates are required for cloud execution.');
-    }
+    const settings = { mode: 'provider', provider, model: value('chat-model'), authorized: $('chat-authorized').checked || officeState?.policy?.approvalMode === 'autonomous', maxTokens: Number(value('chat-max-tokens')), maxUsd: Number(value('chat-max-usd')), maxMinutes: Number(value('chat-max-minutes')), priceRates: { inputUsdPerMillion: Number(value('chat-rate-input')), outputUsdPerMillion: Number(value('chat-rate-output')) } };
+    if (!settings.authorized)
+        throw new Error('Authorize provider work for this goal before creating it.');
+    if (!settings.model)
+        throw new Error('Choose a model ID for bounded execution.');
+    if (provider !== 'ollama' && (!settings.priceRates.inputUsdPerMillion || settings.priceRates.inputUsdPerMillion <= 0 || !settings.priceRates.outputUsdPerMillion || settings.priceRates.outputUsdPerMillion <= 0))
+        throw new Error('Positive input and output rates are required for cloud execution.');
     if (!Number.isInteger(settings.maxTokens) || settings.maxTokens < 1 || settings.maxTokens > 200000 || !Number.isFinite(settings.maxUsd) || settings.maxUsd <= 0 || settings.maxUsd > 100 || !Number.isFinite(settings.maxMinutes) || settings.maxMinutes <= 0 || settings.maxMinutes > 120)
         throw new Error('Use positive token, time, and spending limits, with at most $100 per job.');
     return settings;
@@ -2894,22 +2900,22 @@ function initUnifiedWorkspace() {
             return;
         }
         const runSettings = chatRunSettings();
-        const maxIterations = Number(value('chat-max-iterations'));
+        const maxIterations = runSettings ? Number(value('chat-max-iterations')) : 1;
         if (!Number.isInteger(maxIterations) || maxIterations < 1 || maxIterations > 10)
             throw new Error('Choose between one and ten goal iterations.');
         setStatus($('chat-status'), 'Saving your brief and local plan…');
         await workspaceCommand({ action: 'post_chat', scope, content }, 'Brief saved.');
         const before = new Set((officeState?.goals || []).map((goal) => goal.id));
-        const state = await workspaceCommand({ action: 'create_goal', scope, title: boundedUtf8(content.replace(/\s+/g, ' '), 120), description: content, mode: runSettings.mode === 'provider' ? 'execute' : 'plan', maxIterations, runSettings }, 'Goal saved.');
+        const state = await workspaceCommand({ action: 'create_goal', scope, title: boundedUtf8(content.replace(/\s+/g, ' '), 120), description: content, mode: runSettings ? 'execute' : 'plan', maxIterations, ...(runSettings ? { runSettings } : {}) }, 'Goal saved.');
         const goal = state.goals?.find((item) => !before.has(item.id));
         if (!goal)
             throw new Error('The brief was saved, but no new goal record was returned. Refresh the workspace to inspect it.');
         selectedGoalId = goal.id;
         await workspaceCommand({ action: 'plan_goal', goalId: goal.id }, 'Local goal plan saved.');
-        if (runSettings.mode === 'provider' && officeState?.policy?.approvalMode === 'autonomous')
+        if (runSettings && officeState?.policy?.approvalMode === 'autonomous')
             await workspaceCommand({ action: 'execute_goal', goalId: goal.id }, 'Goal queued within the global budget.');
         donnaStudio?.completeDraft(content);
-        setStatus($('chat-status'), runSettings.mode === 'provider' && officeState?.policy?.approvalMode === 'review' ? 'Plan saved. Review ownership, then approve the goal to queue its provider jobs.' : 'Brief and plan saved.', 'ok');
+        setStatus($('chat-status'), runSettings && officeState?.policy?.approvalMode === 'review' ? 'Plan saved. Review ownership, then approve the goal to queue its provider jobs.' : 'Brief and plan saved.', 'ok');
         renderUnifiedWorkspace();
     }, 'chat-status');
     $('workspace-budget-open').onclick = () => { const details = $('workspace-policy'); details.open = !details.open; if (details.open) {
@@ -5461,29 +5467,42 @@ function initEndlessWorkspace() {
     const hardwareWorkbench = mountHardwareWorkbench(hardwareSurface, { onDraft: addToDonnaDraft, projectSourceUrl: 'https://github.com/occult-kranti/engineering-intelligence-atlas/tree/feat/reference-room-companies/projects/atech-hardware-studio/examples/blueprint-light' });
     add('hardware-studio', 'Hardware Studio', hardwareSurface, 'Companies', 1140, 800);
     window.addEventListener('beforeunload', () => hardwareWorkbench.destroy(), { once: true });
-    const gameSurface = textElement('section', '', 'canvas-game-studio');
-    const gameFrame = document.createElement('iframe');
-    gameFrame.title = '3D Game Studio · local workbench';
-    gameFrame.loading = 'lazy';
-    gameFrame.referrerPolicy = 'same-origin';
-    gameSurface.append(gameFrame);
-    add('game-studio', '3D Game Studio', gameSurface, 'Companies', 1220, 760);
-    let gameInView = false;
-    const syncGameVisibility = () => {
-        if (!gameFrame.hasAttribute('src'))
-            return;
-        const bounds = gameFrame.getBoundingClientRect();
-        const visible = !document.hidden && gameInView && endlessWorkspace?.isOpen('game-studio') === true && bounds.width > 0 && bounds.height > 0;
-        gameFrame.contentWindow?.postMessage({ type: 'daftar:studio:visibility', channel: 'daftar.studio.visibility.v1', visible }, location.protocol === 'file:' ? '*' : location.origin);
-    };
-    gameFrame.addEventListener('load', syncGameVisibility);
-    const gameObserver = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => { gameInView = entries.some(entry => entry.isIntersecting); syncGameVisibility(); }, { root: studio.elements.canvasHost, threshold: .001 }) : null;
-    if (gameObserver)
-        gameObserver.observe(gameFrame);
-    else
-        gameInView = true;
-    document.addEventListener('visibilitychange', syncGameVisibility);
-    window.addEventListener('beforeunload', () => { gameObserver?.disconnect(); document.removeEventListener('visibilitychange', syncGameVisibility); }, { once: true });
+    // The Game Studio is shipped on desktop/web, not in the VS Code asset
+    // manifest. Keep the editor's canvas self-contained and avoid even a blank
+    // nested document until someone opens the studio on a supported host.
+    let openGameStudio = null;
+    let syncGameVisibility = null;
+    if (bridge?.rendererHost !== 'vscode') {
+        const gameSurface = textElement('section', '', 'canvas-game-studio');
+        add('game-studio', '3D Game Studio', gameSurface, 'Companies', 1220, 760);
+        openGameStudio = () => {
+            if (gameSurface.firstElementChild)
+                return;
+            const gameFrame = document.createElement('iframe');
+            gameFrame.title = '3D Game Studio · local workbench';
+            gameFrame.loading = 'lazy';
+            gameFrame.referrerPolicy = 'same-origin';
+            let gameInView = false;
+            syncGameVisibility = () => {
+                const bounds = gameFrame.getBoundingClientRect();
+                const visible = !document.hidden && gameInView && endlessWorkspace?.isOpen('game-studio') === true && bounds.width > 0 && bounds.height > 0;
+                gameFrame.contentWindow?.postMessage({ type: 'daftar:studio:visibility', channel: 'daftar.studio.visibility.v1', visible }, location.protocol === 'file:' ? '*' : location.origin);
+            };
+            gameFrame.addEventListener('load', syncGameVisibility);
+            const gameObserver = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
+                gameInView = entries.some(entry => entry.isIntersecting);
+                syncGameVisibility?.();
+            }, { root: studio.elements.canvasHost, threshold: .001 }) : null;
+            if (!gameObserver)
+                gameInView = true;
+            document.addEventListener('visibilitychange', syncGameVisibility);
+            const onVisibility = syncGameVisibility;
+            window.addEventListener('beforeunload', () => { gameObserver?.disconnect(); document.removeEventListener('visibilitychange', onVisibility); }, { once: true });
+            gameFrame.src = bridge?.transport === 'cloud-browser' ? '/studios/threejs/index.html' : new URL('./studios/threejs/index.html', location.href).href;
+            gameSurface.append(gameFrame);
+            gameObserver?.observe(gameFrame);
+        };
+    }
     const portals = new Map();
     const portalScopeLabels = new Map();
     if (bridge?.transport === 'cloud-browser' && bridge.rendererHost !== 'vscode') {
@@ -5515,9 +5534,9 @@ function initEndlessWorkspace() {
     }
     const panelChanged = (id, open) => {
         if (id === 'game-studio') {
-            if (open && !gameFrame.hasAttribute('src'))
-                gameFrame.src = bridge?.transport === 'cloud-browser' ? '/studios/threejs/index.html' : new URL('./studios/threejs/index.html', location.href).href;
-            syncGameVisibility();
+            if (open)
+                openGameStudio?.();
+            syncGameVisibility?.();
         }
         if (id === 'donna') {
             donnaDockOpen = open;
