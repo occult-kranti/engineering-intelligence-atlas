@@ -3,9 +3,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 import { createDesignToolchain, DesignToolchainError, assertSignedAptSources, downloadVerifiedArtifact, parseTargetOs, reviewAptResolution } from '../design-toolchain.mjs';
 import { DESIGN_CATALOG, DESIGN_TOOLCHAIN_SCHEMAS, validateDesignToolchainOperation, validateGodotArtifact } from '../design-toolchain-contract.mjs';
-import { hash } from '../host-control-contract.mjs';
+import { hash, safeEnvironment } from '../host-control-contract.mjs';
 const target = { distribution: 'debian', versionId: '12', arch: 'x86_64' };
 const version = '4.4.1-stable'; // A syntax fixture; not a deployment recommendation or fabricated digest.
 const artifact = data => ({ version, url: `https://github.com/godotengine/godot-builds/releases/download/${version}/Godot_v${version}_linux.x86_64.zip`, sha256: hash(data), maxBytes: 1024 });
@@ -35,6 +36,34 @@ test('exact pinned plans and explicit install reuse durable manual host receipts
   assert.ok(!f.calls[0].command.includes('curl')); assert.ok(!f.calls[0].command.includes('pip'));
   await reject(f.service.plan(f.plan({ packageVersion: 'different' })), 'DESIGN_IDEMPOTENCY_CONFLICT');
   await f.service.close(); assert.equal((await f.restart().install(input)).replayed, true); assert.equal(f.calls.length, 1);
+});
+test('trusted install wrapper selects Electron Node mode across a scrubbed shell without installing software', async t => {
+  const f = setup(t); const plan = (await f.service.plan(f.plan())).plan;
+  const result = await f.service.install({ id: 'wrapper-fixture', planId: plan.id, expectedPlanHash: plan.planHash });
+  assert.equal(result.job.state, 'pending_approval'); assert.equal(f.calls.length, 1);
+  const command = f.calls[0].command;
+  // Fail before execution if this binding regresses, including when the suite
+  // runs under VS Code's Electron binary; never attempt an accidental GUI.
+  assert.ok(command.startsWith('ELECTRON_RUN_AS_NODE=1 '), 'only the trusted installer wrapper must select Electron Node mode');
+  assert.ok(command.includes(process.execPath));
+  const jobDirectory = path.join(f.directory, 'design-toolchain', 'jobs', hash('wrapper-fixture'));
+  const manifestPath = path.join(jobDirectory, 'manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  // Deliberately invalidate this disposable manifest. The actual entry point
+  // must reject it before target probing, APT, fetch, or application extraction.
+  manifest.manifestHash = 'invalid-local-test-manifest';
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest));
+  const environment = safeEnvironment({ ...process.env, ELECTRON_RUN_AS_NODE: '1' });
+  assert.equal(environment.ELECTRON_RUN_AS_NODE, undefined);
+  const executed = spawnSync('/bin/bash', ['--noprofile', '--norc', '-c', command], {
+    cwd: f.directory, env: environment, encoding: 'utf8', timeout: 10000, maxBuffer: 8192,
+  });
+  assert.ifError(executed.error); assert.equal(executed.signal, null); assert.equal(executed.status, 1);
+  assert.equal(executed.stdout, ''); assert.equal(executed.stderr, 'Design installation failed; inspect the durable host receipt and target locally.\n');
+  assert.equal(fs.existsSync(path.join(jobDirectory, 'installed.json')), false);
+  assert.deepEqual(fs.readdirSync(path.join(f.directory, 'design-toolchain', 'applications')), []);
+  assert.equal((await f.service.inspect({ id: 'wrapper-fixture' })).job.state, 'pending_approval');
+  if (process.versions.electron) t.diagnostic(`Trusted design wrapper verified under Electron ${process.versions.electron} / Node ${process.version}; invalid local manifest rejected before any installation or network step.`);
 });
 test('non-root runtime returns a blocked package plan without trying sudo or submitting a job', async t => {
   const f = setup(t, undefined, () => 1000); const planned = (await f.service.plan(f.plan())).plan;

@@ -5,11 +5,14 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { execFile, spawnSync } from 'node:child_process';
+import { promisify } from 'node:util';
 import { createRuntime } from '../runtime.mjs';
 import { createWorkbench } from '../workbench.mjs';
 import { WORKBENCH_METHODS, validateWorkbenchCall } from '../workbench-contract.mjs';
 import { createServer } from '../server.mjs';
 import { OUTPUT_LIMIT } from '../contract.mjs';
+import { runVenvAcceptance } from '../../scripts/venv-acceptance.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const token = 'synthetic_workbench_control_012345678901234567890';
@@ -20,10 +23,10 @@ const project = () => ({ name: 'Portable project', goal: 'Produce one synthetic 
   nodes: [{ role: 'custom', title: 'Writer', instructions: 'Write a concise report.', dependsOn: [] }] });
 const runInput = projectId => ({ projectId, runBudget: { maxTokens: 64000, maxMinutes: 1, maxUsd: 2 }, priceRates: { inputUsdPerMillion: 1, outputUsdPerMillion: 1 } });
 const id = name => ({ id: name });
-async function until(read, predicate) {
-  const end = Date.now() + 5000; let value;
+async function until(read, predicate, timeoutMs = 5000) {
+  const end = Date.now() + timeoutMs; let value;
   do { value = await read(); if (predicate(value)) return value; await new Promise(resolve => setTimeout(resolve, 15)); } while (Date.now() < end);
-  assert.fail('Expected managed operation to settle within five seconds.');
+  assert.fail(`Expected managed operation to settle within ${timeoutMs} ms.`);
 }
 function nativeFixture(t, options = {}) {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-workbench-native-'));
@@ -47,6 +50,23 @@ test('workbench manifest covers desktop backend families and explicitly delegate
   assert.deepEqual(await wb.call('getSettings'), { runtimeUrl: null });
   assert.equal((await wb.call('cloudStatus')).configured, false);
   assert.equal((await wb.call('hostStatus')).host.configured, false);
+});
+
+test('actual workbench creates a venv with the configured Python and installs/runs an offline package', async t => {
+  const pythonPath = process.env.DAFTAR_PYTHON_PATH || spawnSync(process.platform === 'win32' ? 'python' : 'python3', ['-I', '-c', 'import sys;print(sys.executable)'], { encoding: 'utf8' }).stdout.trim();
+  assert.ok(path.isAbsolute(pythonPath), 'An installed Python with venv and ensurepip is required');
+  const calls = []; const execute = promisify(execFile);
+  const f = nativeFixture(t, { pythonPath, workbenchPlatform: { execFile: (file, args, options) => { calls.push({ file, args }); return execute(file, args, options); } } });
+  const input = { name: 'yuga-python-tools', confirmed: true, installHuggingFaceHub: false };
+  const admitted = await f.runtime.workbench.call('createVenv', [input], id('actual-venv'));
+  assert.equal(admitted.pending, true); assert.ok(path.isAbsolute(admitted.pythonPath));
+  const settled = await until(() => f.runtime.workbench.call('getJobStatus', [admitted.jobId]), jobs => jobs.some(job => ['succeeded', 'failed', 'cancelled'].includes(job.status)), 60000);
+  assert.equal(settled[0].status, 'succeeded', JSON.stringify(settled));
+  assert.equal(calls.length, 2); assert.ok(calls.every(call => call.file === pythonPath));
+  assert.deepEqual(await f.runtime.workbench.call('createVenv', [input], id('actual-venv')), admitted);
+  assert.equal(calls.length, 2, 'Receipt replay must not create another interpreter');
+  const proof = await runVenvAcceptance({ pythonPath: admitted.pythonPath, workingDirectory: f.dataDir });
+  assert.equal(proof.probeUninstalled, true); assert.equal(proof.baseInterpreterCannotImportProbe, true);
 });
 
 test('worker controls retain status receipts through the actual asynchronous runtime observer', async t => {

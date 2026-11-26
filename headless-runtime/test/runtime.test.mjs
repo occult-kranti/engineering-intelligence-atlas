@@ -121,6 +121,13 @@ test('host routes retain owner authentication, exact paths and browser origin en
   assert.equal(hostDenied, 403);
 });
 
+test('managed Python bootstrap comes only from the explicit daemon configuration', () => {
+  assert.equal(configurationFromEnv({}).pythonPath, undefined);
+  assert.equal(configurationFromEnv({ DAFTAR_PYTHON_PATH: '' }).pythonPath, undefined);
+  assert.equal(configurationFromEnv({ VIRTUAL_ENV: '/unrelated/env', PYTHONPATH: '/unrelated/site' }).pythonPath, undefined);
+  assert.equal(configurationFromEnv({ DAFTAR_PYTHON_PATH: '/opt/daftar/python/bin/python3' }).pythonPath, '/opt/daftar/python/bin/python3');
+});
+
 test('host process opt-in is exact and errors never expose backend command or secret details', async t => {
   for (const value of [undefined, '', 'true', 'yes', '0']) assert.equal(configurationFromEnv({ DAFTAR_HOST_CONTROL: value }).hostControlEnabled, false);
   assert.equal(configurationFromEnv({ DAFTAR_HOST_CONTROL: '1' }).hostControlEnabled, true);

@@ -79,6 +79,7 @@ a persistent service.
 | `DAFTAR_ALLOWED_HOSTS` | Optional comma-separated exact Host headers for an internal proxy, such as `runtime:8788` |
 | `DAFTAR_CONCURRENCY` | `2`; accepts 1–4 workers |
 | `DAFTAR_CREATIVE_CONFIG_FILE` | Optional absolute private creative tools/project configuration; absent means no configured creative adapters |
+| `DAFTAR_PYTHON_PATH` | Optional absolute bootstrap Python executable for managed Python environments; defaults to `/usr/bin/python3` on the Linux host-control path. Select an interpreter with `venv` and `ensurepip`; the setting does not activate an environment or run a job. |
 | `OPENAI_API_KEY_FILE` | Optional private OpenAI credential file |
 | `ANTHROPIC_API_KEY_FILE` | Optional private Anthropic credential file |
 | `GITHUB_TOKEN_FILE` | Optional private GitHub credential file |

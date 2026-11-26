@@ -49,6 +49,18 @@ describe('detectPython', () => {
     };
     expect(await detectPython(exec)).toBeNull();
   });
+
+  it('uses an explicit host interpreter with spaces and never falls back', async () => {
+    const calls: Call[] = [];
+    const selected = path.join(os.tmpdir(), 'Python with spaces', process.platform === 'win32' ? 'python.exe' : 'python3');
+    expect((await detectPython(fakeExecutor(calls), selected))?.executable).toBe(selected);
+    expect(calls.map(call => call.file)).toEqual([selected]);
+    const failed: string[] = [];
+    await expect(detectPython(async file => { failed.push(file); throw new Error('not installed'); }, selected)).rejects.toThrow(/configured Python executable is unavailable/);
+    expect(failed).toEqual([selected]);
+    await expect(detectPython(fakeExecutor([]), 'python3')).rejects.toThrow(/absolute host path/);
+    await expect(detectPython(fakeExecutor([], { pythonVersion: '2.7.18' }), selected)).rejects.toThrow(/did not report Python 3/);
+  });
 });
 
 describe('createVenv', () => {
@@ -68,12 +80,20 @@ describe('createVenv', () => {
       { name: 'hf-tools', confirmed: true },
     );
     expect(res.path).toBe(path.join(userData, 'venvs', 'hf-tools'));
-    const venvCall = calls.find((c) => c.args[0] === '-m' && c.args[1] === 'venv');
+    const venvCall = calls.find((c) => c.args[0] === '-I' && c.args[2] === 'venv');
     expect(venvCall).toBeDefined();
     expect(venvCall?.file).toBe('python3');
-    expect(venvCall?.args).toEqual(['-m', 'venv', path.join(userData, 'venvs', 'hf-tools')]);
+    expect(venvCall?.args).toEqual(['-I', '-m', 'venv', path.join(userData, 'venvs', 'hf-tools')]);
     // The ExecFileFn contract has no shell option; assert options carry only timeout.
     expect(Object.keys(venvCall?.options ?? {})).toEqual(['timeout']);
+  });
+
+  it('passes the selected bootstrap interpreter through creation without shell activation', async () => {
+    const calls: Call[] = []; const userData = tmpUserData();
+    const selected = path.join(userData, 'configured Python', process.platform === 'win32' ? 'python.exe' : 'python3');
+    await createVenv({ userDataPath: userData, pythonPath: selected, execFileFn: fakeExecutor(calls) }, { name: 'yuga-tools', confirmed: true });
+    expect(calls.map(call => call.file)).toEqual([selected, selected]);
+    expect(calls[1]?.args).toEqual(['-I', '-m', 'venv', path.join(userData, 'venvs', 'yuga-tools')]);
   });
 
   it('installs the pinned huggingface_hub only when requested', async () => {
@@ -83,8 +103,9 @@ describe('createVenv', () => {
       { userDataPath: userData, execFileFn: fakeExecutor(calls) },
       { name: 'hf-tools', confirmed: true, installHuggingFaceHub: true },
     );
-    const pip = calls.find((c) => c.args[1] === 'pip');
+    const pip = calls.find((c) => c.args[2] === 'pip');
     expect(pip?.args).toContain(PINNED_HUGGINGFACE_HUB);
+    expect(pip?.args.slice(0, 5)).toEqual(['-I', '-m', 'pip', '--isolated', '--require-virtualenv']);
     expect(PINNED_HUGGINGFACE_HUB).toMatch(/huggingface_hub==\d+\.\d+\.\d+/);
 
     const calls2: Call[] = [];
@@ -92,7 +113,7 @@ describe('createVenv', () => {
       { userDataPath: tmpUserData(), execFileFn: fakeExecutor(calls2) },
       { name: 'plain', confirmed: true },
     );
-    expect(calls2.find((c) => c.args[1] === 'pip')).toBeUndefined();
+    expect(calls2.find((c) => c.args[2] === 'pip')).toBeUndefined();
   });
 
   it('rejects invalid and traversing names', async () => {

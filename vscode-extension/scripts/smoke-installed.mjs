@@ -30,6 +30,7 @@ await fs.writeFile(path.join(userData, 'User', 'settings.json'), JSON.stringify(
   'workbench.startupEditor': 'none',
   'workbench.enableExperiments': false,
   'security.workspace.trust.enabled': false,
+  ...(process.env.DAFTAR_PYTHON_PATH ? { 'atlas.pythonPath': process.env.DAFTAR_PYTHON_PATH } : {}),
 }));
 const receiptPath = path.join(output, 'receipt.json');
 const installLogPath = path.join(output, 'install.log');

@@ -17,7 +17,7 @@ const executable = promisify(execFile);
 const now = () => new Date().toISOString();
 const hash = value => crypto.createHash('sha256').update(JSON.stringify(value)).digest('hex');
 
-export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, platform = {} }) {
+export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, platform = {}, pythonPath }) {
   if (!runtime?.office || !runtime?.worker || typeof repoRoot !== 'string' || typeof dataDir !== 'string') throw new WorkbenchError('WORKBENCH_CONFIG', 'Native runtime and private workbench paths are required.', 503);
   const dist = path.join(repoRoot, 'desktop-shell/dist/main');
   let modules;
@@ -177,7 +177,7 @@ export function createWorkbench({ runtime, repoRoot, dataDir, secretFiles = {}, 
         const request = args[0];
         if (request?.confirmed !== true) throw new WorkbenchError('WORKBENCH_INPUT', 'Environment creation requires explicit confirmation.');
         const destination = modules.resolveVenvPath(dataDir, request.name);
-        const receipt = background('create-venv', (job, signal) => modules.createVenv({ userDataPath: dataDir,
+        const receipt = background('create-venv', (job, signal) => modules.createVenv({ userDataPath: dataDir, pythonPath,
           execFileFn: (file, argv, options) => (platform.execFile ?? executable)(file, argv, { ...options, shell: false, windowsHide: true, signal }),
           onProgress: () => jobs.update(job.id, { detail: 'Preparing Python environment' }) }, request));
         return { ...receipt, path: destination, pythonPath: modules.venvPythonPath(destination) };

@@ -32,7 +32,7 @@ function harness(t, options = {}) {
     StatusBarAlignment: { Left: 1 }, ProgressLocation: { Notification: 1 }, ViewColumn: { Active: 1 },
     Uri: { joinPath: (root, ...parts) => uri(path.join(root.fsPath, ...parts)), parse: uri },
     env: { remoteName: options.remoteName, clipboard: { async writeText(value) { clipboard.push(value); } }, async openExternal() { return true; } },
-    workspace: { isTrusted: options.trusted !== false, getConfiguration: () => ({ get: (_key, fallback) => fallback }), fs: {
+    workspace: { isTrusted: options.trusted !== false, getConfiguration: () => ({ get: (key, fallback) => options.configuration?.[key] ?? fallback }), fs: {
       async stat() { return { size: 40 }; }, async readFile() { return Buffer.from('synthetic_provider_key_12345'); },
     } },
     commands: { registerCommand(name, callback) { commands.set(name, callback); return disposable(() => commands.delete(name)); },
@@ -198,8 +198,10 @@ test('poll requests do not overlap and old successful results cannot cross a con
 });
 
 test('activation disposal cancels owned clients, panel, launcher and all subscriptions', async t => {
-  const h = harness(t, { remoteName: 'ssh-remote' }); await h.command('atlas.startLocalRuntime'); await until(() => h.api.connectionInfo().connected);
+  const pythonPath = path.resolve(os.tmpdir(), 'selected-venv', 'bin', 'python');
+  const h = harness(t, { remoteName: 'ssh-remote', configuration: { pythonPath } }); await h.command('atlas.startLocalRuntime'); await until(() => h.api.connectionInfo().connected);
   assert.equal(h.launchers.length, 1); assert.match(h.api.connectionInfo().location, /Remote extension host/);
+  assert.equal(h.launchers[0].config.pythonPath, pythonPath);
   await h.cleanup(); assert.equal(h.intervals.size, 0); assert.ok(h.clients.every(client => client.closed));
   assert.ok(h.panels.every(panel => panel.disposed)); assert.ok(h.launchers.every(launcher => launcher.closed)); assert.ok(h.subscriptions.every(item => item.disposed));
 });

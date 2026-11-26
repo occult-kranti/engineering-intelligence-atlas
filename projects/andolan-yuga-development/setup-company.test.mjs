@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { createNativeCall, createToolHandler } from '../../tools/atlas-mcp.mjs';
-import { bindingUri, validateCompanyKits } from '../../scripts/apply-company-kits.mjs';
+import { bindingUri, validateCompanyKits, applyCompanyKits, kitEntityId } from '../../scripts/apply-company-kits.mjs';
 import { MODEL, REPOSITORY_URL, repositoryIdentity, prepareCompany, applyCompany } from './setup-company.mjs';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
@@ -28,12 +28,15 @@ async function fixture(t) {
 
 test('the reviewed company kit and model profile match the native schema and exact model admission', () => {
   assert.equal(validateCompanyKits(kit), kit);
-  assert.equal(kit.companies[0].employees.length, 10);
+  assert.equal(kit.companies[0].employees.length, 12);
   const profile = JSON.parse(fs.readFileSync(path.join(directory, 'profile.json')));
   assert.equal(profile.models[0].id, MODEL);
   assert.equal(profile.models[0].contextTokens, 8192);
   assert.equal(profile.models[0].storageCeilingBytes, 24 * 1024 ** 3);
   assert.equal(profile.models[0].trialInferenceConcurrency, 1);
+  assert.equal(profile.repository.inspectedCommit, 'a35493d67cf5111d7da2ff9eea6c58ed3499aeca');
+  assert.equal(profile.currentSourceUpdate.sharedHandoffKeys.length, 5);
+  assert.deepEqual(kit.companies[0].knowledge.slice(-5).map(row => row.key), profile.currentSourceUpdate.sharedHandoffKeys);
   for (const spec of kit.companies[0].employees) {
     assert.ok(kit.companies[0].knowledge.some(row => row.key === `prompt-${spec.key}`));
     for (const skill of spec.skillPaths) assert.ok(fs.statSync(path.join(repoRoot, skill)).isFile());
@@ -57,8 +60,9 @@ test('real native setup creates repository-bound definitions, role prompts and p
   const company = result.snapshot.companies.find(row => row.id === prepared.companyId);
   assert.equal(company.repoUrl, REPOSITORY_URL);
   assert.equal(result.receipt.created.employeeDefinitions, prepared.preview.projected.employeeDefinitions);
-  assert.equal(result.receipt.roleBindings.length, 10);
-  assert.equal(result.receipt.pendingModelSelections.length, 6);
+  assert.equal(result.receipt.roleBindings.length, 12);
+  assert.equal(result.receipt.pendingModelSelections.length, 8);
+  assert.equal(result.receipt.sourceCommit, 'a35493d67cf5111d7da2ff9eea6c58ed3499aeca');
   assert.equal(result.receipt.teamState, 'definitions_applied_execution_not_started');
   for (const request of result.receipt.pendingModelSelections) {
     assert.equal(request.body.model, MODEL);
@@ -80,6 +84,46 @@ test('real native setup creates repository-bound definitions, role prompts and p
   const repeated = await applyCompany({ snapshot: await f.restart(), command: f.command });
   assert.equal(repeated.receipt.mutations, 0);
   assert.deepEqual(repeated.receipt.roleBindings, result.receipt.roleBindings);
+});
+
+test('prior native kit gains current-source handoffs and two roles while retaining owner contracts and progress', async t => {
+  const f = await fixture(t);
+  const legacy = JSON.parse(fs.readFileSync(path.join(directory, 'fixtures/company-kit-20261125.json')));
+  const oldCompany = legacy.companies[0];
+  oldCompany.knowledge.find(row => row.key === 'prompt-moe-coder').summary = 'OWNER_CONTRACT_RETAINED: require independent review before accepting a code patch.';
+  const initial = await applyCompanyKits(legacy, { snapshot: f.snapshot,
+    command: (action, payload) => f.command(action, action === 'create_company' ? { ...payload, repoUrl: REPOSITORY_URL } : payload) });
+  const companyId = initial.receipt.companies[0].companyId;
+  const priorEmployeeIds = initial.receipt.companies[0].employeeIds;
+  const coder = priorEmployeeIds[oldCompany.employees.findIndex(row => row.key === 'moe-coder')];
+  await f.command('rename_company', { companyId, name: 'Owner current Yuga team' });
+  await f.command('pause_employee', { employeeId: coder });
+  const oldGateId = kitEntityId(oldCompany, 'roadmap', 'source-baseline');
+  const oldGate = f.snapshot.portfolio.roadmap.find(row => row.id === oldGateId);
+  await f.command('upsert_roadmap_item', { ...oldGate, title: 'Owner accepted source audit', status: 'done', evidence: 'Synthetic owner acceptance retained across the team update.' });
+  const before = structuredClone(f.snapshot);
+  const current = await applyCompany({ snapshot: f.snapshot, command: f.command });
+  assert.equal(current.receipt.created.companies, 0);
+  assert.equal(current.receipt.created.employeeDefinitions, 2);
+  assert.equal(current.receipt.created.roadmapItems, 6);
+  assert.deepEqual(current.receipt.roleBindings.slice(0, 10).map(row => row.employeeId), priorEmployeeIds);
+  assert.equal(current.snapshot.companies.find(row => row.id === companyId).name, 'Owner current Yuga team');
+  assert.equal(current.receipt.pendingModelSelections.find(row => row.roleKey === 'moe-coder').status, 'paused_scope_preserved');
+  const currentGate = current.snapshot.portfolio.roadmap.find(row => row.id === oldGateId);
+  assert.equal(currentGate.title, 'Owner accepted source audit');
+  assert.equal(currentGate.status, 'done');
+  assert.equal(currentGate.evidence, 'Synthetic owner acceptance retained across the team update.');
+  for (const record of before.knowledge) assert.deepEqual(current.snapshot.knowledge.find(row => row.id === record.id), record);
+  const shared = current.snapshot.knowledge.filter(row => row.companyId === companyId && !row.title.startsWith('Company kit identity:')).slice(-5);
+  assert.deepEqual(shared.map(row => row.title), kit.companies[0].knowledge.slice(-5).map(row => row.title));
+  assert.ok(shared.every(row => row.artifactUri.includes('a35493d67cf5111d7da2ff9eea6c58ed3499aeca')));
+  assert.deepEqual(current.snapshot.authority.grants, before.authority.grants);
+  assert.deepEqual(current.snapshot.authority.managedEmployeeIds, before.authority.managedEmployeeIds);
+  assert.deepEqual(current.snapshot.policy, before.policy);
+  assert.deepEqual(current.snapshot.budget, before.budget);
+  assert.deepEqual(current.snapshot.jobs, before.jobs);
+  assert.deepEqual(current.snapshot.schedules, before.schedules);
+  assert.equal((await applyCompany({ snapshot: await f.restart(), command: f.command })).receipt.mutations, 0);
 });
 
 test('existing exact repo identity, owner naming and paused staff are preserved on rerun', async t => {

@@ -15,11 +15,20 @@ const exec = promisify(execFile); const self = fileURLToPath(import.meta.url); c
 const quote = value => `'${value.replaceAll("'", "'\\''")}'`;
 const terminal = new Set(['completed', 'failed', 'cancelled', 'timed_out', 'output_limit']);
 const managedEnv = directory => ({ ...safeEnvironment(), VIRTUAL_ENV: directory, PATH: `${path.join(directory, 'bin')}:${safeEnvironment().PATH}`, PIP_REQUIRE_VIRTUALENV: 'true', PYTHONNOUSERSITE: '1' });
-const proofSource = 'import json,os,sys; print(json.dumps({"prefix":os.path.realpath(sys.prefix),"basePrefix":os.path.realpath(sys.base_prefix),"executable":os.path.abspath(sys.executable),"version":list(sys.version_info[:3])}))';
+const proofSource = 'import json,os,site,sys; print(json.dumps({"prefix":os.path.realpath(sys.prefix),"basePrefix":os.path.realpath(sys.base_prefix),"executable":os.path.abspath(sys.executable),"version":list(sys.version_info[:3]),"isolated":sys.flags.isolated==1,"userSiteEnabled":site.ENABLE_USER_SITE,"systemSitePackages":any(os.path.realpath(p) in [os.path.realpath(s) for s in sys.path] for p in site.getsitepackages([sys.base_prefix]))}))';
 async function verifyEnvironment(directory, expected) {
   privateDirectory(directory); privateDirectory(path.join(directory, 'bin'));
   const config = path.join(directory, 'pyvenv.cfg'); const configStat = fs.lstatSync(config);
-  if (!configStat.isFile() || configStat.isSymbolicLink()) fail('ENVIRONMENT_INVALID', 'The virtual environment configuration is invalid.', 409);
+  if (!configStat.isFile() || configStat.isSymbolicLink() || configStat.size > 16384) fail('ENVIRONMENT_INVALID', 'The virtual environment configuration is invalid.', 409);
+  // -I disables user sites and PYTHON* variables, but it does not override a
+  // pyvenv.cfg that opts into the base interpreter's site-packages.
+  const configBytes = fs.readFileSync(config);
+  const siteOptions = configBytes.toString('utf8').split(/\r?\n/).filter(line => /^\s*include-system-site-packages\s*=/i.test(line));
+  if (siteOptions.length !== 1 || !/^\s*include-system-site-packages\s*=\s*false\s*$/i.test(siteOptions[0])) fail('ENVIRONMENT_INVALID', 'The virtual environment must exclude system site-packages.', 409);
+  const configurationSha256 = hash(configBytes);
+  // Older receipts did not pin pyvenv.cfg. Recheck their isolation each time;
+  // newly prepared environments also bind the exact configuration bytes.
+  if (expected?.configurationSha256 !== undefined && expected.configurationSha256 !== configurationSha256) fail('ENVIRONMENT_CHANGED', 'The virtual environment configuration changed; prepare a new environment.', 409);
   const python = path.join(directory, 'bin', 'python'); const pythonStat = fs.lstatSync(python);
   if (!pythonStat.isFile() || pythonStat.isSymbolicLink() || pythonStat.size > 64 * 1024 * 1024) fail('ENVIRONMENT_INVALID', 'A copied private virtual environment interpreter is required.', 409);
   const interpreterSha256 = hash(fs.readFileSync(python));
@@ -28,9 +37,10 @@ async function verifyEnvironment(directory, expected) {
   catch { fail('ENVIRONMENT_INVALID', 'The virtual environment interpreter could not be verified.', 409); }
   let proof; try { proof = JSON.parse(result.stdout); } catch { fail('ENVIRONMENT_INVALID', 'The virtual environment proof is invalid.', 409); }
   const real = fs.realpathSync(directory);
-  if (!object(proof) || proof.prefix !== real || proof.basePrefix === real || proof.executable !== python || !Array.isArray(proof.version)) fail('ENVIRONMENT_INVALID', 'Python is not executing inside the expected virtual environment.', 409);
+  if (!object(proof) || proof.prefix !== real || proof.basePrefix === real || proof.executable !== python || !Array.isArray(proof.version)
+    || proof.isolated !== true || proof.userSiteEnabled !== false || proof.systemSitePackages !== false) fail('ENVIRONMENT_INVALID', 'Python is not executing inside the expected isolated virtual environment.', 409);
   if (expected && (expected.prefix !== proof.prefix || expected.basePrefix !== proof.basePrefix || JSON.stringify(expected.version) !== JSON.stringify(proof.version))) fail('ENVIRONMENT_CHANGED', 'The virtual environment identity changed.', 409);
-  return { ...proof, interpreterSha256 };
+  return { ...proof, interpreterSha256, configurationSha256 };
 }
 function validateState(value) {
   if (!object(value) || value.version !== 1 || !Array.isArray(value.environments) || value.environments.length > ENVIRONMENT_LIMITS.environments || !Array.isArray(value.jobs) || value.jobs.length > ENVIRONMENT_LIMITS.receipts) fail('ENVIRONMENT_STATE_INVALID', 'The environment registry is malformed.', 503);
@@ -39,7 +49,8 @@ function validateState(value) {
 }
 const environmentView = environment => ({ id: environment.id, companyId: environment.companyId, stewardEmployeeId: environment.employeeId,
   state: environment.state, createdAt: environment.createdAt, verifiedAt: environment.verifiedAt ?? null,
-  pythonVersion: environment.proof?.version ?? null, interpreterSha256: environment.proof?.interpreterSha256 ?? null, reason: environment.reason ?? null });
+  pythonVersion: environment.proof?.version ?? null, interpreterSha256: environment.proof?.interpreterSha256 ?? null,
+  configurationSha256: environment.proof?.configurationSha256 ?? null, reason: environment.reason ?? null });
 const jobView = job => ({ id: job.id, kind: job.kind, companyId: job.companyId, employeeId: job.employeeId, environmentId: job.environmentId,
   hostJobId: job.hostJobId, state: job.state, createdAt: job.createdAt, reason: job.reason ?? null });
 
@@ -110,7 +121,10 @@ export function createManagedEnvironments({ stateDir, hostControl, snapshot, pyt
     const manifest = { version: 1, kind, environmentId: environment.id, environmentPath: environmentPath(environment.id), pythonPath,
       ...(kind === 'run' ? { command: input.command, cwd: input.cwd, proof: environment.proof } : {}) };
     store.write(manifestPath, { ...manifest, manifestHash: hash(JSON.stringify(manifest)) });
-    const command = `${quote(process.execPath)} ${quote(self)} --managed-job ${quote(manifestPath)}`;
+    // The host runner deliberately scrubs this variable before executing bash.
+    // Reintroduce a fixed Node mode only for our wrapper: process.execPath may be
+    // VS Code's Electron binary. Its Python child still uses safeEnvironment().
+    const command = `ELECTRON_RUN_AS_NODE=1 ${quote(process.execPath)} ${quote(self)} --managed-job ${quote(manifestPath)}`;
     const hostJobId = `env-${hash(input.id).slice(0, 48)}`;
     store.update(value => {
       if (kind === 'prepare') value.environments.push(environment);

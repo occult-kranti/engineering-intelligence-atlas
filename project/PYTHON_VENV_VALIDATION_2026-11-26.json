@@ -1,0 +1,140 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-11-26T05:33:34.826362+00:00",
+  "classification": "disposable-source-runtime-acceptance",
+  "ownerWorkspaceModified": false,
+  "platform": {
+    "system": "Linux",
+    "architecture": "x86_64",
+    "python": "3.12.14",
+    "node": "v24.22.3"
+  },
+  "regression": {
+    "beforeFix": "Python -I retained base site-packages when pyvenv.cfg enabled them; managed run was accepted. Negative regression failed with missing rejection.",
+    "afterFix": "System-site opt-in is rejected before dispatch; new configuration hashes detect other byte changes; legacy proofs still require current isolation checks."
+  },
+  "checks": [
+    {
+      "command": "npm --prefix desktop-shell test -- --run tests/venv.test.ts",
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node --test --test-reporter=tap headless-runtime/test/venv-acceptance.test.mjs headless-runtime/test/managed-environments.test.mjs headless-runtime/test/workbench.test.mjs deploy/test/tmux-runtime.test.mjs",
+      "total": 33,
+      "passed": 32,
+      "failed": 0,
+      "skipped": 1,
+      "skipReason": "Real tmux executable/session unavailable (ENOENT).",
+      "outputSha256": "b9d917626389be086af506a9766dd94d9248a1bf1fa04877e1405736edb77dbf"
+    },
+    {
+      "command": "node --test --test-name-pattern='private environment|managed Python bootstrap' deploy/test/tmux-runtime.test.mjs headless-runtime/test/runtime.test.mjs",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 0
+    },
+    {
+      "command": "node desktop-shell/node_modules/typescript/bin/tsc -p headless-runtime/tsconfig.json",
+      "exitCode": 0
+    },
+    {
+      "command": "ELECTRON_RUN_AS_NODE=1 /workspace/scratch/7aedd7f27d3b/daftar-audit/vscode-extension/.vscode-test/vscode-linux-x64-1.147.0/code --test --test-reporter=tap headless-runtime/test/venv-acceptance.test.mjs headless-runtime/test/managed-environments.test.mjs",
+      "total": 13,
+      "passed": 13,
+      "failed": 0,
+      "skipped": 0,
+      "outputSha256": "c35eab31dead4954dba39b692a045b2e6029c0cd63f8ea6d91b409a2a4c38453"
+    },
+    {
+      "command": "node --test --test-reporter=tap headless-runtime/test/design-toolchain.test.mjs",
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "outputSha256": "ed7a441dca34e7a922a385755e5e25971ff820ad61c1e79302a8f58ca34eb420"
+    },
+    {
+      "command": "ELECTRON_RUN_AS_NODE=1 /workspace/scratch/7aedd7f27d3b/daftar-audit/vscode-extension/.vscode-test/vscode-linux-x64-1.147.0/code --test --test-reporter=tap headless-runtime/test/design-toolchain.test.mjs",
+      "total": 10,
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "outputSha256": "f4d6458610be53689f1b353c01343ae35c04afe18e115ab0fc21d7a4731d66ba"
+    }
+  ],
+  "observations": {
+    "actualManagedEnvironmentCreated": true,
+    "actualPortableWorkbenchEnvironmentCreated": true,
+    "offlineWheelInstalled": true,
+    "offlineModuleExecutedDirectly": true,
+    "offlineModuleExecutedThroughManagedHostJob": true,
+    "manualHostApprovalExercised": true,
+    "basePythonCannotImportProbe": true,
+    "probeUninstalled": true,
+    "receiptReplayExercised": true,
+    "workbenchReopenDisposeCycles": 200,
+    "providerCalls": 0,
+    "packageIndexRequests": 0,
+    "optionalPinnedPackageUsesIsolatedVenvPip": true,
+    "actualElectronNodeModeManagedSuite": true,
+    "electronModeScrubbedFromPython": true,
+    "electronModeScrubbedFromOrdinaryShell": true,
+    "designWrapperInvalidManifestRejectedBeforeInstall": true,
+    "designToolNetworkTransfers": 0,
+    "designSoftwareInstalled": false,
+    "portableProofFixtureCases": 6,
+    "baseExecPrefixPackageDirectoriesChecked": true,
+    "legitimateWindowsBaseStdlibRootsExcludedFromLeakCheck": true
+  },
+  "managedHostFixture": "Actual managed environment service, host controller and job runner; direct process launcher injected for tests. This does not certify tmux persistence.",
+  "notVerified": [
+    "Graphical VS Code activation",
+    "Real tmux lifecycle on this host",
+    "Windows execution in this Linux run",
+    "Unreal or Blender application execution",
+    "GPU availability or inference",
+    "Arbitrary third-party Python dependencies",
+    "Optional network installation of the pinned huggingface_hub package (not requested by acceptance)"
+  ],
+  "sourceSha256": {
+    "desktop-shell/src/main/venv.ts": "b46950a159c643867efe4232a89387de5da33b51759275ecb36bc060eb1eeeed",
+    "desktop-shell/tests/venv.test.ts": "4c0433acc4867816f3d4506b3bc07c7a329a250594647caea5b2adad1559b14c",
+    "headless-runtime/managed-environments.mjs": "70dee005d3e4bf2eaf6f9500c141772e2a1c3d95ca423ee3a6fe89e9232bc1bb",
+    "headless-runtime/runtime.mjs": "47d57590935ee76f0c3a1d8bb8bbdf5bd72ad8c7f9315d6a31f3f3427888cbc3",
+    "headless-runtime/server.mjs": "5d8184dba34a8d08c1c203bbd3ac4f26ba745261cc0729384526308c665a4d35",
+    "headless-runtime/workbench.mjs": "9ded62e53ebb772b720b894489157f975c8342c3321934c3e59e222fa3103082",
+    "headless-runtime/test/managed-environments.test.mjs": "7129b9772baf8cb0d94038606934610ee5bd794567628924604d56870ca1277b",
+    "headless-runtime/test/runtime.test.mjs": "5370922eae36d96f072ecce0a3da3475e7aa7dce7f013b57e8d6a8a9114efc78",
+    "headless-runtime/test/workbench.test.mjs": "cd8e6bb2bd2a83605461c490148fda534efcf1d20655c6c0dcf0658b77aeee8f",
+    "deploy/tmux-runtime.mjs": "216ea29f482e966132804e63ef2360701857fd76046fb0aeaaee81f385dcc3a4",
+    "deploy/test/tmux-runtime.test.mjs": "5ce4403373b97246650838addc722228af044dcd39866e8f055c2453f304d1a6",
+    "scripts/venv-acceptance.mjs": "bd80c63c34363aafc59d6142f64522262dba735410a57241d2b80083ee33a389",
+    "headless-runtime/design-toolchain.mjs": "f94306ab509b1945608763aed2e30fc6f3b4aec55a82923fcd767746eb723c75",
+    "headless-runtime/test/design-toolchain.test.mjs": "fba0ba6776bffd8a203eca591d231ec16d943b6ec2a52fc3c66e0966bf309b68",
+    "headless-runtime/test/venv-acceptance.test.mjs": "880ce927715383dd24d311fb41dccd0f6a86326221562a428c6014f21da85323"
+  },
+  "electronWrapperRegression": {
+    "beforeFix": "The regression failed under the downloaded VS Code Electron binary because the internal managed command lacked a fixed Node-mode assignment. The assertion ran before host approval, so no Electron GUI was launched.",
+    "afterFix": "Only the trusted managed wrapper command sets ELECTRON_RUN_AS_NODE=1; ordinary host shell commands and Python children retain the scrubbed environment. All seven managed tests passed under Electron Node mode."
+  },
+  "electronRuntime": {
+    "product": "Visual Studio Code",
+    "version": "1.147.0",
+    "electron": "43.8.9",
+    "node": "v24.22.1",
+    "mode": "ELECTRON_RUN_AS_NODE=1",
+    "scope": "Headless managed source-service/controller/runner acceptance and design-wrapper invalid-manifest rejection; no graphical session or tmux."
+  },
+  "designWrapperRegression": {
+    "beforeFix": "The focused regression failed under downloaded VS Code Electron because the trusted install command lacked its fixed Node-mode binding; assertion preceded command execution and no GUI was launched.",
+    "afterFix": "The trusted --install-manifest wrapper explicitly sets ELECTRON_RUN_AS_NODE=1. Both Node and Electron suites passed; the real wrapper rejected a deliberately invalid local manifest before target probing, APT, fetch or extraction.",
+    "scope": "Wrapper handoff and rejection only. Other APT/download tests use injected in-memory fixtures. No actual software installation or network transfer."
+  },
+  "portableProofRegression": {
+    "beforeFix": "Executable path-layout fixtures reproduced a false package-leak rejection for the Windows base stdlib roots and a missed package directory under a distinct POSIX base_exec_prefix.",
+    "afterFix": "Normalize real paths and case; enumerate both base_prefix and base_exec_prefix package directories; exclude only the exact base roots before testing sys.path. All six layout cases pass, and actual Linux venv/offline pip acceptance still passes.",
+    "scope": "Windows/POSIX layout fixtures executed on Linux, not a claim of Windows host execution. Shipped Linux-only managed runtime source was unchanged."
+  }
+}

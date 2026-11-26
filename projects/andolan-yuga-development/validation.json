@@ -1,61 +1,266 @@
 {
   "schemaVersion": 1,
   "checkedDate": "2026-11-26",
-  "scope": "Actual native setup in disposable synthetic workspaces; no owner state applied",
+  "teamRevision": "yuga-a35493d-20261126",
+  "sourceCommit": "a35493d67cf5111d7da2ff9eea6c58ed3499aeca",
+  "scope": "Actual native setup and prior-kit migration in disposable state; actual OfficeWorker dispatch admission with a synthetic generator and repository seed. No live owner state or model inference.",
   "nativeBinarySha256": "8e67644f9deede39cbc87f8a704e52731deac9afe52245b2ca6eca65c98239e8",
   "nodeVersion": "v24.22.3",
+  "team": {
+    "roles": 12,
+    "addedRoles": 2,
+    "roadmapGates": 13,
+    "addedRoadmapGates": 6,
+    "currentSourceHandoffs": 5,
+    "pendingModelSelections": 8
+  },
   "checks": [
     {
-      "command": "node --test --test-reporter=tap projects/andolan-yuga-development/setup-company.test.mjs",
+      "command": "node --test projects/andolan-yuga-development/setup-company.test.mjs",
       "exitCode": 0,
-      "testsPassed": 6,
-      "testsFailed": 0
+      "testsPassed": 7,
+      "testsFailed": 0,
+      "testsSkipped": 0
     },
     {
-      "command": "node --test --test-reporter=tap --test-name-pattern=creative results retain observed GPU tools/daftar-runtime-mcp.test.mjs",
+      "cwd": "desktop-shell",
+      "command": "DAFTAR_ACCEPTANCE_METRICS=1 npx vitest run tests/andolan-company-context.test.ts --reporter=verbose --disableConsoleIntercept",
       "exitCode": 0,
       "testsPassed": 1,
-      "testsFailed": 0
+      "testsFailed": 0,
+      "testsSkipped": 0,
+      "effectiveRoleRequests": 12
+    },
+    {
+      "check": "Twenty source text files read at exact Yuga source commit and SHA-256 bound in source-evidence.json",
+      "passed": true
+    },
+    {
+      "command": "git diff --check -- projects/andolan-yuga-development desktop-shell/tests/andolan-company-context.test.ts",
+      "exitCode": 0
     }
   ],
+  "workerContext": {
+    "model": "qwen3-coder:30b-a3b-q4_K_M",
+    "contextLimit": 8192,
+    "outputCeiling": 1024,
+    "allSelectedOwnerContractsAndFiveHandoffsRetained": true,
+    "fixture": "Prior kit with an owner-edited coding contract; updated kit applied through the real native boundary.",
+    "requests": [
+      {
+        "roleKey": "coordinator",
+        "systemBytes": 1206,
+        "promptBytes": 5242,
+        "inputTokenBound": 7474,
+        "outputTokenBound": 718
+      },
+      {
+        "roleKey": "layout-steward",
+        "systemBytes": 1231,
+        "promptBytes": 5171,
+        "inputTokenBound": 7428,
+        "outputTokenBound": 764
+      },
+      {
+        "roleKey": "evidence-curator",
+        "systemBytes": 1223,
+        "promptBytes": 5254,
+        "inputTokenBound": 7503,
+        "outputTokenBound": 689
+      },
+      {
+        "roleKey": "independent-qa",
+        "systemBytes": 1212,
+        "promptBytes": 5265,
+        "inputTokenBound": 7503,
+        "outputTokenBound": 689
+      },
+      {
+        "roleKey": "release-steward",
+        "systemBytes": 1215,
+        "promptBytes": 5274,
+        "inputTokenBound": 7515,
+        "outputTokenBound": 677
+      },
+      {
+        "roleKey": "moe-coder",
+        "systemBytes": 1212,
+        "promptBytes": 4996,
+        "inputTokenBound": 7234,
+        "outputTokenBound": 958
+      },
+      {
+        "roleKey": "rust-authority",
+        "systemBytes": 1237,
+        "promptBytes": 5343,
+        "inputTokenBound": 7606,
+        "outputTokenBound": 586
+      },
+      {
+        "roleKey": "blender-artist",
+        "systemBytes": 1231,
+        "promptBytes": 5362,
+        "inputTokenBound": 7619,
+        "outputTokenBound": 573
+      },
+      {
+        "roleKey": "map-engineer",
+        "systemBytes": 1237,
+        "promptBytes": 5344,
+        "inputTokenBound": 7607,
+        "outputTokenBound": 585
+      },
+      {
+        "roleKey": "unreal-engineer",
+        "systemBytes": 1234,
+        "promptBytes": 5387,
+        "inputTokenBound": 7647,
+        "outputTokenBound": 545
+      },
+      {
+        "roleKey": "gameplay-audio",
+        "systemBytes": 1241,
+        "promptBytes": 5431,
+        "inputTokenBound": 7698,
+        "outputTokenBound": 494
+      },
+      {
+        "roleKey": "animation-performance",
+        "systemBytes": 1257,
+        "promptBytes": 5376,
+        "inputTokenBound": 7659,
+        "outputTokenBound": 533
+      }
+    ],
+    "accounting": "inputTokenBound is UTF-8 bytes of joined system and prompt plus the existing 1024-token conservative allowance. This is not observed model tokenization.",
+    "limits": "494\u2013958 output tokens were reserved for these requests; 1024 is only a ceiling. Additional prepared source or a longer owner contract may correctly fail admission unchanged.",
+    "selection": "Exact Qwen 8K profile explicitly omits bulky skill/role manuals and additional Brain/public research retrieval while preserving the task and selected company contracts and handoffs.",
+    "initialFailure": "The original full company seed produced 27013\u201351992 UTF-8 bytes across these roles; the 32768-token synthetic profile already rejected the first role before provider dispatch. Root corrected context composition without widening the Qwen guard.",
+    "syntheticGenerateCalls": 12,
+    "externalProviderRequests": 0
+  },
   "files": [
     {
       "path": "README.md",
-      "sha256": "2562fae56f415b09afc6ccf25314ee3d8cc9456b1b137251c6185f6010140158"
+      "sha256": "0ada78f5d15d17c29e40cf66633f454a7d2d4213018e49fd935158a864407054"
     },
     {
       "path": "company-kit.json",
-      "sha256": "741c17218f9bd89dd127889e00b1e08c3ba44052bb5fa11c600b7a922a8a1c0c"
+      "sha256": "42e963a821f30b35f84e638b907ac2e9462217101e5e98263b9467c39e4c2c0a"
     },
     {
       "path": "profile.json",
-      "sha256": "5a98023ede1eef25be6beb1ba501df2f7854b7dcc9f71777f7ce4c6551803b03"
+      "sha256": "2de4de597d8730acf0f7aa22ba995f92d4a0360e675114e1c1c1a626927693ac"
     },
     {
       "path": "source-evidence.json",
-      "sha256": "21c42456e3b29ad0f45ff4eef0cb05173f3170e96e9636ed8323d887954708b0"
+      "sha256": "e586d6936cf27b8f1836a42a5b48a1bd3472973a1efb993351e72d11321cda42"
     },
     {
       "path": "setup-company.mjs",
-      "sha256": "a8d91ee3a603892c0629eb6a074f0c6b18e60f78f34b4e654cd60844d336cadf"
+      "sha256": "2942ec9e0042a3e603516f310b0e1dda3de84e5e2a7630ca1bb4741aaa0f7cbc"
     },
     {
       "path": "setup-company.test.mjs",
-      "sha256": "c33f13cb3541ccc7d1560897a6a7206f7446a4578ed1319a29b7b9ef61e06ffb"
+      "sha256": "a1209bbbccef10648b098228f6d16665048276250d569ff9914d356d9c0f8f35"
+    },
+    {
+      "path": "fixtures/company-kit-20261125.json",
+      "sha256": "741c17218f9bd89dd127889e00b1e08c3ba44052bb5fa11c600b7a922a8a1c0c"
+    },
+    {
+      "path": "fixtures/source-evidence-9e59880.json",
+      "sha256": "21c42456e3b29ad0f45ff4eef0cb05173f3170e96e9636ed8323d887954708b0"
+    }
+  ],
+  "runtimeSourcePins": [
+    {
+      "path": "desktop-shell/tests/andolan-company-context.test.ts",
+      "sha256": "ddc3291a773bddee1e16b5fb80c4a31e10f7aeee2da927dca1f6da7159677d19"
+    },
+    {
+      "path": "desktop-shell/src/main/officeWorker.ts",
+      "sha256": "fe33064ed0efb70903ac9419a36365a5b42123ec4cb5c1fd2abb47c329087b9e"
+    },
+    {
+      "path": "desktop-shell/src/main/ollama.ts",
+      "sha256": "b709e5df03697205160c74235904ed7fd3b3103eaae116f786a61361ebae8073"
+    },
+    {
+      "path": "desktop-shell/src/main/companyKitKnowledge.ts",
+      "sha256": "1311e55d1924f243b1d2b5cf8b890ae2a6261bed93acae706e11f6053a207b09"
     }
   ],
   "liveOwnerWorkspaceApplied": false,
   "modelDownloadsStarted": 0,
   "modelAssignmentsApplied": 0,
-  "providerRequests": 0,
+  "externalProviderRequests": 0,
   "creativeJobsStarted": 0,
-  "authorityOrBudgetChanges": 0,
+  "authorityGrantsOrBudgetChanges": 0,
   "unrealExecuted": false,
   "gpuTested": false,
-  "separateMcpSuite": {
-    "command": "node --test tools/daftar-runtime-mcp.test.mjs",
-    "testsPassed": 37,
-    "testsFailed": 0,
-    "scope": "Mocked transport and real local synthetic HTTP/stdio subprocess checks; no hardware inference"
+  "previousAcceptance": {
+    "status": "retained_historical_receipt_not_rerun_here",
+    "record": {
+      "schemaVersion": 1,
+      "checkedDate": "2026-11-26",
+      "scope": "Actual native setup in disposable synthetic workspaces; no owner state applied",
+      "nativeBinarySha256": "8e67644f9deede39cbc87f8a704e52731deac9afe52245b2ca6eca65c98239e8",
+      "nodeVersion": "v24.22.3",
+      "checks": [
+        {
+          "command": "node --test --test-reporter=tap projects/andolan-yuga-development/setup-company.test.mjs",
+          "exitCode": 0,
+          "testsPassed": 6,
+          "testsFailed": 0
+        },
+        {
+          "command": "node --test --test-reporter=tap --test-name-pattern=creative results retain observed GPU tools/daftar-runtime-mcp.test.mjs",
+          "exitCode": 0,
+          "testsPassed": 1,
+          "testsFailed": 0
+        }
+      ],
+      "files": [
+        {
+          "path": "README.md",
+          "sha256": "2562fae56f415b09afc6ccf25314ee3d8cc9456b1b137251c6185f6010140158"
+        },
+        {
+          "path": "company-kit.json",
+          "sha256": "741c17218f9bd89dd127889e00b1e08c3ba44052bb5fa11c600b7a922a8a1c0c"
+        },
+        {
+          "path": "profile.json",
+          "sha256": "5a98023ede1eef25be6beb1ba501df2f7854b7dcc9f71777f7ce4c6551803b03"
+        },
+        {
+          "path": "source-evidence.json",
+          "sha256": "21c42456e3b29ad0f45ff4eef0cb05173f3170e96e9636ed8323d887954708b0"
+        },
+        {
+          "path": "setup-company.mjs",
+          "sha256": "a8d91ee3a603892c0629eb6a074f0c6b18e60f78f34b4e654cd60844d336cadf"
+        },
+        {
+          "path": "setup-company.test.mjs",
+          "sha256": "c33f13cb3541ccc7d1560897a6a7206f7446a4578ed1319a29b7b9ef61e06ffb"
+        }
+      ],
+      "liveOwnerWorkspaceApplied": false,
+      "modelDownloadsStarted": 0,
+      "modelAssignmentsApplied": 0,
+      "providerRequests": 0,
+      "creativeJobsStarted": 0,
+      "authorityOrBudgetChanges": 0,
+      "unrealExecuted": false,
+      "gpuTested": false,
+      "separateMcpSuite": {
+        "command": "node --test tools/daftar-runtime-mcp.test.mjs",
+        "testsPassed": 37,
+        "testsFailed": 0,
+        "scope": "Mocked transport and real local synthetic HTTP/stdio subprocess checks; no hardware inference"
+      }
+    }
   }
 }

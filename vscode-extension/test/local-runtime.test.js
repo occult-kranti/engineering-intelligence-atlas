@@ -60,8 +60,9 @@ function noResources(runtime, processes) {
 
 test('launcher verifies package, probes Node, keeps owner credential private and starts paused on ephemeral loopback', async t => {
   const f = fixture(t), processes = fakeProcesses(); let request;
-  const runtime = createLocalRuntime({ ...f, ...processes, environment: { PATH: '/synthetic/bin', OPENAI_API_KEY: 'never-inherited',
-    ANTHROPIC_API_KEY_FILE: '/private/key', NODE_OPTIONS: '--inspect', SSH_AUTH_SOCK: '/agent.sock', DAFTAR_HOST: '0.0.0.0' },
+  const pythonPath = path.join(f.directory, 'chosen Python', 'python');
+  const runtime = createLocalRuntime({ ...f, ...processes, pythonPath, environment: { PATH: '/synthetic/bin', OPENAI_API_KEY: 'never-inherited',
+    ANTHROPIC_API_KEY_FILE: '/private/key', NODE_OPTIONS: '--inspect', SSH_AUTH_SOCK: '/agent.sock', DAFTAR_HOST: '0.0.0.0', DAFTAR_PYTHON_PATH: '/ambient/not-selected' },
     fetcher: async (url, options) => { request = { url, options }; return ready(); } });
   t.after(() => runtime.close());
   const first = runtime.start(), second = runtime.start(); assert.equal(first, second);
@@ -71,6 +72,7 @@ test('launcher verifies package, probes Node, keeps owner credential private and
   assert.equal(processes.calls.length, 2); const env = processes.calls[1].options.env;
   for (const key of ['OPENAI_API_KEY', 'ANTHROPIC_API_KEY_FILE', 'NODE_OPTIONS', 'SSH_AUTH_SOCK']) assert.equal(Object.hasOwn(env, key), false);
   assert.equal(env.DAFTAR_HOST, '127.0.0.1'); assert.equal(env.DAFTAR_PORT, '0'); assert.equal(env.DAFTAR_HOST_CONTROL, '0');
+  assert.equal(env.DAFTAR_PYTHON_PATH, pythonPath);
   assert.equal(env.ELECTRON_RUN_AS_NODE, '1'); assert.equal(processes.calls[1].options.shell, false);
   assert.equal(fs.readFileSync(env.DAFTAR_CONTROL_TOKEN_FILE, 'utf8').trim(), connection.controlToken);
   if (process.platform !== 'win32') assert.equal(fs.statSync(env.DAFTAR_CONTROL_TOKEN_FILE).mode & 0o777, 0o600);
@@ -80,6 +82,18 @@ test('launcher verifies package, probes Node, keeps owner credential private and
   assert.equal(fs.existsSync(env.DAFTAR_CONTROL_TOKEN_FILE), false);
   assert.deepEqual(processes.calls[0].child.kills, []); assert.deepEqual(processes.calls[1].child.kills, ['SIGTERM']);
   await assert.rejects(runtime.start(), error => error.code === 'LOCAL_RUNTIME_CLOSED');
+});
+
+test('Python selection is explicit and rejects relative paths or control characters before spawning', async t => {
+  const f = fixture(t), processes = fakeProcesses();
+  for (const pythonPath of ['python3', './.venv/bin/python', '/python\nother', null]) {
+    assert.throws(() => createLocalRuntime({ ...f, ...processes, pythonPath }), error => error.code === 'LOCAL_RUNTIME_CONFIG');
+  }
+  const env = childEnvironment({ DAFTAR_PYTHON_PATH: '/ambient/not-selected' }, {
+    runtimeRoot: f.runtimeRoot, dataDir: f.storagePath, tokenFile: path.join(f.directory, 'token'), corePath: f.manifest.corePath,
+  });
+  assert.equal(Object.hasOwn(env, 'DAFTAR_PYTHON_PATH'), false);
+  assert.equal(processes.calls.length, 0);
 });
 
 test('100 independent reopen/start/close cycles leave no children, timers, listeners or stale lock', async t => {

@@ -6,6 +6,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { execFile } = require('node:child_process');
 const { promisify } = require('node:util');
+const { pathToFileURL } = require('node:url');
 const vscode = require('vscode');
 const execute = promisify(execFile);
 
@@ -62,6 +63,7 @@ exports.run = async function run() {
     blockedRequests: 0,
     verifiedPersistent: false,
     verifiedPersistentHost: false,
+    verifiedManagedVenv: false,
     hostFixtureRequests: 0,
   };
   const originalFetch = globalThis.fetch;
@@ -117,7 +119,7 @@ exports.run = async function run() {
       catch { allowed = false; }
     }
     if (['persistent-host', 'persistent-host-cleanup'].includes(phase) && url.origin === runtimeOrigin && !url.search && !url.hash) {
-      if (method === 'GET' && url.pathname === '/v1/host') allowed = true;
+      if (method === 'GET' && ['/v1/host', '/v1/environments'].includes(url.pathname)) allowed = true;
       if (method === 'POST' && fixtureRequestPermit?.phase === phase && fixtureRequestPermit.route === url.pathname
           && fixtureRequestPermit.unused && typeof init.body === 'string' && Buffer.byteLength(init.body) <= 16384
           && init.body === fixtureRequestPermit.body) {
@@ -261,7 +263,8 @@ exports.run = async function run() {
       const storagePath = await fs.mkdtemp(path.join(os.tmpdir(), 'daftar-installed-persistent-'));
       persistentFixture = { runtimeRoot, storagePath, dataDir: path.join(storagePath, 'persistent-runtime'), adapters: [], stopped: false };
       const makePersistent = () => {
-        const adapter = createPersistentRuntime({ runtimeRoot, storagePath, nodePath: process.execPath });
+        const adapter = createPersistentRuntime({ runtimeRoot, storagePath, nodePath: process.execPath,
+          pythonPath: vscode.workspace.getConfiguration('atlas').get('pythonPath', '') });
         persistentFixture.adapters.push(adapter); return adapter;
       };
       const readOwner = async () => {
@@ -301,14 +304,15 @@ exports.run = async function run() {
       // Exercise the actual installed Electron -> tmux -> Node runner -> bash
       // chain. Ordinary provider workers remain paused throughout this fixture.
       phase = 'persistent-host';
-      const fixtureRoutes = new Set(['/v1/commands', '/v1/host/god-mode', '/v1/host/submit', '/v1/host/inspect', '/v1/host/stop-all']);
-      const fixtureRequest = async (route, body) => {
+      const fixtureRoutes = new Set(['/v1/commands', '/v1/host/god-mode', '/v1/host/submit', '/v1/host/inspect', '/v1/host/stop-all',
+        '/v1/environments/prepare', '/v1/environments/run', '/v1/environments/inspect']);
+      const fixtureRequest = async (route, body, expectedStatus = 200) => {
         const encoded = body === undefined ? undefined : JSON.stringify(body);
         if (encoded !== undefined) {
           assert.ok(fixtureRoutes.has(route) && Buffer.byteLength(encoded) <= 16384, 'Only fixed bounded fixture routes may mutate state');
           assert.equal(fixtureRequestPermit, null, 'Synthetic fixture requests must be sequential');
           fixtureRequestPermit = { phase, route, body: encoded, unused: true };
-        } else assert.ok(['/v1/office', '/v1/host'].includes(route), 'Unexpected fixture read route');
+        } else assert.ok(['/v1/office', '/v1/host', '/v1/environments'].includes(route), 'Unexpected fixture read route');
         let reader, response;
         try {
           response = await globalThis.fetch(secondConnection.url + route, {
@@ -317,7 +321,7 @@ exports.run = async function run() {
               ...(encoded === undefined ? {} : { 'Content-Type': 'application/json' }) },
             ...(encoded === undefined ? {} : { body: encoded }),
           });
-          assert.equal(response.status, 200, 'The exact installed fixture request must be confirmed; no mutation is automatically retried');
+          assert.equal(response.status, expectedStatus, 'The exact installed fixture request must be confirmed; no mutation is automatically retried');
           assert.ok(response.headers.get('content-type')?.includes('application/json'), 'Fixture responses must be JSON');
           reader = response.body.getReader();
           const chunks = []; let bytes = 0;
@@ -329,7 +333,7 @@ exports.run = async function run() {
             chunks.push(part.value);
           }
           const value = JSON.parse(Buffer.concat(chunks).toString('utf8'));
-          assert.equal(value.ok, true, 'The installed native operation must succeed');
+          assert.equal(value.ok, expectedStatus === 200, 'The installed operation must match its expected success or rejection');
           return value;
         } finally {
           if (reader) { try { await reader.cancel(); } catch {} try { reader.releaseLock(); } catch {} }
@@ -403,6 +407,97 @@ exports.run = async function run() {
       assert.ok(markerStat.isFile() && !markerStat.isSymbolicLink() && markerStat.size <= 128, 'Synthetic execution marker must remain a bounded fixture file');
       assert.equal(await fs.readFile(markerFile, 'utf8'), executionMarker, 'Replaying the completed ID must not execute the shell twice');
       assert.equal((await fixtureRequest('/v1/host')).host.jobCount, 1);
+
+      // Use the real installed managed environment service and tmux runner.
+      // The generated wheel is local, has no dependencies, and is removed
+      // after its import is verified both directly and through the host job.
+      const actor = { companyId, employeeId: company.assistantId, environmentId: 'installed-managed-python' };
+      const waitManaged = async id => {
+        const deadline = Date.now() + 120000;
+        let value;
+        do {
+          value = await fixtureRequest('/v1/environments/inspect', { id });
+          if (['completed', 'failed', 'cancelled', 'timed_out', 'output_limit', 'uncertain', 'interrupted'].includes(value.job.state)) break;
+          await new Promise(resolve => setTimeout(resolve, 200));
+        } while (Date.now() < deadline);
+        assert.equal(value?.job.state, 'completed', 'The installed managed tmux job must complete within its bounded fixture deadline');
+        assert.equal(value.eof, true); assert.equal(value.truncated, false);
+        return value;
+      };
+      const prepareRequest = { id: 'installed-managed-prepare', ...actor };
+      const preparation = await fixtureRequest('/v1/environments/prepare', prepareRequest);
+      assert.equal(preparation.replayed, false);
+      const ready = await waitManaged(prepareRequest.id);
+      assert.equal(ready.environment.state, 'ready');
+      assert.match(ready.environment.configurationSha256, /^[a-f0-9]{64}$/);
+      assert.match(ready.environment.interpreterSha256, /^[a-f0-9]{64}$/);
+      const prepareReplay = await fixtureRequest('/v1/environments/prepare', prepareRequest);
+      assert.equal(prepareReplay.replayed, true);
+      assert.equal(prepareReplay.job.hostJobId, ready.job.hostJobId);
+      const identitySource = 'import json,os,site,sys; print(json.dumps({"executable":os.path.abspath(sys.executable),"prefix":os.path.realpath(sys.prefix),"basePrefix":os.path.realpath(sys.base_prefix),"isolated":sys.flags.isolated==1,"userSiteEnabled":site.ENABLE_USER_SITE,"systemSitePackages":any(os.path.realpath(p) in [os.path.realpath(s) for s in sys.path] for p in site.getsitepackages([sys.base_prefix])),"electronMode":os.environ.get("ELECTRON_RUN_AS_NODE"),"virtualEnv":os.environ.get("VIRTUAL_ENV")}))';
+      const identityRequest = { id: 'installed-managed-identity', ...actor, command: identitySource,
+        cwd: persistentFixture.dataDir, timeoutSeconds: 15, maxOutputBytes: 4096 };
+      await fixtureRequest('/v1/environments/run', identityRequest);
+      const identityResult = await waitManaged(identityRequest.id);
+      const identity = JSON.parse(identityResult.output);
+      assert.ok(path.isAbsolute(identity.executable) && path.isAbsolute(identity.prefix));
+      const relativeVenv = path.relative(await fs.realpath(persistentFixture.dataDir), identity.prefix);
+      assert.ok(relativeVenv && !relativeVenv.startsWith('..') && !path.isAbsolute(relativeVenv), 'The returned interpreter must belong to the dedicated fixture');
+      assert.equal(identity.executable, path.join(identity.prefix, 'bin/python'));
+      assert.notEqual(identity.prefix, identity.basePrefix);
+      assert.equal(identity.isolated, true); assert.equal(identity.userSiteEnabled, false);
+      assert.equal(identity.systemSitePackages, false); assert.equal(identity.electronMode, null);
+      assert.equal(identity.virtualEnv, identity.prefix);
+      const { runVenvAcceptance } = await import(pathToFileURL(path.resolve(sourceRoot, '..', 'scripts/venv-acceptance.mjs')).href);
+      let managedPackageRun = false;
+      const venvReceipt = await runVenvAcceptance({ pythonPath: identity.executable, workingDirectory: persistentFixture.dataDir,
+        verifyInstalled: async ({ moduleName, pythonPath }) => {
+          assert.match(moduleName, /^daftar_venv_probe_[a-f0-9]{16}$/);
+          assert.equal(pythonPath, identity.executable);
+          const packageRequest = { id: 'installed-managed-package', ...actor,
+            command: `import json,os,sys; import ${moduleName} as probe; print(json.dumps({"result":probe.calculate(6,7),"isolated":sys.flags.isolated==1,"prefix":os.path.realpath(sys.prefix),"module":os.path.realpath(probe.__file__)}))`,
+            cwd: persistentFixture.dataDir, timeoutSeconds: 15, maxOutputBytes: 4096 };
+          await fixtureRequest('/v1/environments/run', packageRequest);
+          const executed = await waitManaged(packageRequest.id);
+          const result = JSON.parse(executed.output);
+          assert.equal(result.result, 42); assert.equal(result.isolated, true); assert.equal(result.prefix, identity.prefix);
+          const relativeModule = path.relative(identity.prefix, result.module);
+          assert.ok(relativeModule && !relativeModule.startsWith('..') && !path.isAbsolute(relativeModule));
+          const replayed = await fixtureRequest('/v1/environments/run', packageRequest);
+          assert.equal(replayed.replayed, true); assert.equal(replayed.job.hostJobId, executed.job.hostJobId);
+          assert.equal(replayed.output, executed.output);
+          managedPackageRun = true;
+        } });
+      assert.equal(managedPackageRun, true, 'The offline package must execute through the actual managed tmux path');
+      assert.equal(venvReceipt.probeUninstalled, true);
+      const statusBeforeTamper = await fixtureRequest('/v1/environments');
+      const hostJobsBeforeTamper = (await fixtureRequest('/v1/host')).host.jobCount;
+      const configPath = path.join(identity.prefix, 'pyvenv.cfg');
+      const originalConfiguration = await fs.readFile(configPath, 'utf8');
+      assert.match(originalConfiguration, /^[ \t]*include-system-site-packages[ \t]*=[ \t]*false[ \t]*\r?$/im);
+      try {
+        await fs.writeFile(configPath, originalConfiguration.replace(/^[ \t]*include-system-site-packages[ \t]*=[ \t]*false[ \t]*\r?$/im,
+          'include-system-site-packages = true'));
+        const contaminated = await fixtureRequest('/v1/environments/run', { ...identityRequest, id: 'installed-managed-contaminated' }, 409);
+        assert.equal(contaminated.code, 'ENVIRONMENT_INVALID');
+        await fs.writeFile(configPath, originalConfiguration + '\n# fixture configuration change\n');
+        const changed = await fixtureRequest('/v1/environments/run', { ...identityRequest, id: 'installed-managed-changed' }, 409);
+        assert.equal(changed.code, 'ENVIRONMENT_CHANGED');
+      } finally { await fs.writeFile(configPath, originalConfiguration); }
+      const statusAfterTamper = await fixtureRequest('/v1/environments');
+      assert.equal(statusAfterTamper.environments.jobs.length, statusBeforeTamper.environments.jobs.length);
+      assert.equal((await fixtureRequest('/v1/host')).host.jobCount, hostJobsBeforeTamper,
+        'Rejected environment changes must create neither a managed receipt nor a host job');
+      const restoredRequest = { ...identityRequest, id: 'installed-managed-restored' };
+      await fixtureRequest('/v1/environments/run', restoredRequest);
+      const restored = await waitManaged(restoredRequest.id);
+      assert.deepEqual(JSON.parse(restored.output), identity);
+      receipt.verifiedManagedVenv = true;
+      receipt.managedVenv = { ...venvReceipt, preparedThroughInstalledTmux: true, interpreterFromManagedRun: true,
+        installedPackageExecutedThroughTmux: true, preparationAndRunReplayedOnce: true,
+        systemSiteTamperRejected: true, configurationChangeRejected: true, rejectedChangesStartedNoJobs: true,
+        restoredConfigurationRuns: true, hostApprovalPolicy: 'inherited', secureSandbox: false };
+      receipt.checks.push('Installed managed tmux prepared an isolated venv, executed an offline installed package, replayed once and rejected changed isolation before dispatch');
       await persistentFixture.cleanupHost();
       const afterHost = await authenticatedStatus(secondConnection);
       assert.equal(afterHost.host.mode, 'off'); assert.equal(afterHost.worker.enabled, false); assert.equal(afterHost.worker.running, false);

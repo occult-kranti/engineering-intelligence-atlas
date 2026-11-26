@@ -84,7 +84,10 @@ export function createDesignToolchain({ stateDir, hostControl, snapshot, getUid 
       const manifestPath = path.join(directory, 'manifest.json');
       const manifest = { version: 1, plan: planView(plan), applicationPath: path.join(applications, hash(plan.id)), resultPath: path.join(directory, 'installed.json') };
       store.write(manifestPath, { ...manifest, manifestHash: hash(JSON.stringify(manifest)) });
-      const command = `${quote(process.execPath)} ${quote(self)} --install-manifest ${quote(manifestPath)}`; const hostJobId = `design-${hash(input.id).slice(0, 48)}`;
+      // The host shell is scrubbed; explicitly select Node mode only for this
+      // trusted wrapper when process.execPath is VS Code's Electron executable.
+      // APT and extraction subprocesses continue to use safeEnvironment().
+      const command = `ELECTRON_RUN_AS_NODE=1 ${quote(process.execPath)} ${quote(self)} --install-manifest ${quote(manifestPath)}`; const hostJobId = `design-${hash(input.id).slice(0, 48)}`;
       store.update(state => { state.jobs.push({ id: input.id, inputHash, planId: plan.id, planHash: plan.planHash, commandHash: hash(command), hostJobId, state: 'dispatching', createdAt: now() }); });
       let response;
       try { response = await hostControl.submit({ id: hostJobId, companyId: plan.companyId, employeeId: plan.employeeId, command, cwd: store.directory, timeoutSeconds: plan.timeoutSeconds, maxOutputBytes: plan.maxOutputBytes }); }

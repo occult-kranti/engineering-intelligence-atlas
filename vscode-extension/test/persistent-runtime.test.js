@@ -45,7 +45,7 @@ function fixture(t, options = {}) {
       worker: { enabled: options.workerEnabled ?? false, running: false }, host: { configured: true, mode: options.mode ?? 'off' } });
   };
   const input = { runtimeRoot, storagePath, execFileFn, fetcher, environment: { PATH: '/synthetic/bin', HOME: '/synthetic/home',
-    NODE_OPTIONS: '--inspect', OPENAI_API_KEY: 'never-inherit-this', GITHUB_TOKEN_FILE: '/do-not-inherit', SSH_AUTH_SOCK: '/agent.sock' } };
+    NODE_OPTIONS: '--inspect', OPENAI_API_KEY: 'never-inherit-this', GITHUB_TOKEN_FILE: '/do-not-inherit', SSH_AUTH_SOCK: '/agent.sock', DAFTAR_PYTHON_PATH: '/ambient/not-selected' } };
   const adapters = [];
   const create = extra => { const adapter = createPersistentRuntime({ ...input, ...extra }); adapters.push(adapter); return adapter; };
   t.after(async () => { for (const adapter of adapters) await adapter.close(); fs.rmSync(directory, { recursive: true, force: true }); });
@@ -61,12 +61,13 @@ test('persistent mode rejects unsupported platforms before touching files or sta
 });
 
 test('persistent start coalesces one fixed supervisor invocation and keeps credentials private', linux, async t => {
-  const f = fixture(t), adapter = f.create();
+  const f = fixture(t), pythonPath = path.join(f.directory, 'chosen Python', 'python'), adapter = f.create({ pythonPath });
   const pending = Array.from({ length: 20 }, () => adapter.start()); assert.ok(pending.every(value => value === pending[0]));
   const connections = await Promise.all(pending); assert.equal(f.execCalls.length, 2); assert.equal(f.fetchCalls.length, 1);
   assert.deepEqual(f.execCalls[1].args, [path.join(f.runtimeRoot, 'deploy/tmux-runtime.mjs'), 'start', '--repo', f.runtimeRoot, '--data', f.dataDir, '--enable-host-control']);
   const settings = f.execCalls[1].settings;
   assert.equal(settings.shell, false); assert.equal(settings.maxBuffer, 65536); assert.equal(settings.env.ELECTRON_RUN_AS_NODE, '1');
+  assert.equal(settings.env.DAFTAR_PYTHON_PATH, pythonPath);
   for (const key of ['NODE_OPTIONS', 'OPENAI_API_KEY', 'GITHUB_TOKEN_FILE', 'SSH_AUTH_SOCK']) assert.equal(Object.hasOwn(settings.env, key), false);
   assert.equal(connections[0].controlToken, token); assert.equal(connections[0].kind, 'runtime');
   assert.equal(f.fetchCalls[0].url, 'http://127.0.0.1:8788/v1/status'); assert.equal(f.fetchCalls[0].init.headers.Authorization, `Bearer ${token}`);
@@ -76,6 +77,16 @@ test('persistent start coalesces one fixed supervisor invocation and keeps crede
   assert.equal(fs.readFileSync(f.tokenFile, 'utf8').trim(), token);
   assert.equal(f.execCalls.some(call => call.args.includes('stop') || call.args.includes('kill-session') || call.args.includes('--build')), false);
   assert.deepEqual(adapter.diagnostics(), { pendingOperations: 0, bootstrapTimer: false, retryTimer: false });
+});
+
+test('persistent Python selection rejects relative paths and does not inherit an ambient override', linux, async t => {
+  const f = fixture(t);
+  for (const pythonPath of ['python3', './.venv/bin/python', '/python\nother', null]) {
+    assert.throws(() => f.create({ pythonPath }), error => error.code === 'PERSISTENT_RUNTIME_CONFIG');
+  }
+  const adapter = f.create(); await adapter.start();
+  assert.equal(Object.hasOwn(f.execCalls[1].settings.env, 'DAFTAR_PYTHON_PATH'), false);
+  await adapter.close();
 });
 
 test('readiness retries only authenticated reads and reconnect preserves authorized worker policy', linux, async t => {

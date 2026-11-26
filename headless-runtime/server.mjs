@@ -228,6 +228,7 @@ export function configurationFromEnv(env = process.env) {
     port: Number(env.DAFTAR_PORT || 8788), concurrency: Number(env.DAFTAR_CONCURRENCY || 2),
     allowContainerBind: env.DAFTAR_ALLOW_CONTAINER_BIND === '1',
     hostControlEnabled: env.DAFTAR_HOST_CONTROL === '1',
+    pythonPath: env.DAFTAR_PYTHON_PATH || undefined,
     tokenFile: env.DAFTAR_CONTROL_TOKEN_FILE,
     creativeConfigFile: env.DAFTAR_CREATIVE_CONFIG_FILE || undefined,
     allowedHosts: (env.DAFTAR_ALLOWED_HOSTS || '').split(',').map(s => s.trim()).filter(Boolean),

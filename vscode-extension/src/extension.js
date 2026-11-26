@@ -199,6 +199,7 @@ function activate(context) {
       assertSetup();
       if (!launcher) launcher = createLocalRuntime({ runtimeRoot: path.join(context.extensionPath, 'resources/runtime'), storagePath: context.globalStorageUri.fsPath,
         nodePath: vscode.workspace.getConfiguration('atlas').get('nodePath', '') || process.execPath,
+        pythonPath: vscode.workspace.getConfiguration('atlas').get('pythonPath', ''),
         hostControlEnabled: process.platform === 'linux' && vscode.workspace.getConfiguration('atlas').get('hostControlEnabled', true) });
       const next = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: `Starting Daftar ${vscode.env.remoteName ? 'on this remote host' : 'on this computer'}`, cancellable: true }, async (_progress, cancellation) => {
         const abort = activeSetup.abort; const listener = cancellation.onCancellationRequested(() => abort.abort());
@@ -212,7 +213,8 @@ function activate(context) {
       assertSetup();
       if (process.platform !== 'linux') throw new Error('Persistent tmux workspaces run on Linux. Open your Linux VPS in Remote-SSH and run this command there.');
       persistent ||= createPersistentRuntime({ runtimeRoot: path.join(context.extensionPath, 'resources/runtime'), storagePath: context.globalStorageUri.fsPath,
-        nodePath: vscode.workspace.getConfiguration('atlas').get('nodePath', '') || process.execPath });
+        nodePath: vscode.workspace.getConfiguration('atlas').get('nodePath', '') || process.execPath,
+        pythonPath: vscode.workspace.getConfiguration('atlas').get('pythonPath', '') });
       const next = await vscode.window.withProgress({ location: vscode.ProgressLocation.Notification, title: 'Starting persistent Daftar workspace in tmux', cancellable: true }, async (_progress, cancellation) => {
         const abort = activeSetup.abort; const listener = cancellation.onCancellationRequested(() => abort.abort());
         try { return await persistent.start({ signal: abort.signal }); } finally { listener.dispose(); }

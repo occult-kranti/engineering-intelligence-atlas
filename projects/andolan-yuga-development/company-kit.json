@@ -126,6 +126,25 @@
             "skills/game-reconstruction-engineering/SKILL.md"
           ],
           "departmentKey": "engine-experiments"
+        },
+        {
+          "key": "gameplay-audio",
+          "name": "Gameplay audio engineer",
+          "role": "Gameplay audio and listener-state engineer",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ],
+          "departmentKey": "engineering"
+        },
+        {
+          "key": "animation-performance",
+          "name": "Animation and performance engineer",
+          "role": "Hero animation contact and performance engineer",
+          "skillPaths": [
+            "skills/spatial-3d-production-engineering/SKILL.md",
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ],
+          "departmentKey": "asset-production"
         }
       ],
       "services": [],
@@ -191,6 +210,61 @@
           "dependsOn": [
             "moe-coding-pilot",
             "independent-acceptance"
+          ]
+        },
+        {
+          "key": "source-refresh-20261126",
+          "title": "Review current Yuga source and transfer register",
+          "description": "Pin a35493d67cf5111d7da2ff9eea6c58ed3499aeca and the current integration branch. Review Monsoon, audio and vertical-play receipts. Preserve prior owner work and distinguish source-only study assets from permitted Yuga production inputs.",
+          "ownerKey": "coordinator",
+          "dependsOn": []
+        },
+        {
+          "key": "monsoon-collision-objectives",
+          "title": "Commission Monsoon geometry and both objectives",
+          "description": "Bind surveyed solid IDs, ten spawn pads, seven thresholds and two level ritual disks to the existing authoritative rules. Verify floor heights, dry alternatives, capsule clearance, interruption and side swap in the engine; the browser walk and mesh rays do not close this gate.",
+          "ownerKey": "map-engineer",
+          "dependsOn": [
+            "source-refresh-20261126",
+            "mandala-authority"
+          ]
+        },
+        {
+          "key": "audio-listener-authority",
+          "title": "Integrate accepted audio receipts and reconnect state",
+          "description": "With the Rust owner, map accepted movement/casts/objective events to audience-scoped receipts. Challenge radius boundaries, repeated/stale events, interrupted holds, spectator redaction and reconnect clocks. Out-of-range clients must receive no hidden position or attempt; captions follow the same admission.",
+          "ownerKey": "gameplay-audio",
+          "dependsOn": [
+            "source-refresh-20261126"
+          ]
+        },
+        {
+          "key": "hero-contact-timing",
+          "title": "Bind vertical hero witnesses to live motion",
+          "description": "Bind accepted cast, takeoff, contact, impact and recovery states to animation/audio markers. Verify the shared receiver, muzzle, floor support and corrected two-person entrances while crouching and airborne. Record actual rendered-client and physical-device timing; generated art and synthetic FPS are not acceptance.",
+          "ownerKey": "animation-performance",
+          "dependsOn": [
+            "source-refresh-20261126"
+          ]
+        },
+        {
+          "key": "ten-seat-acceptance",
+          "title": "Run Monsoon and audio acceptance with ten seats",
+          "description": "Test ten seats with two actual rendered clients, late join, repeated/stale inputs, side swap, objective interruption and both retakes. Record first contact and cue eligibility. Keep human balance/listening and hardware profiling separate from deterministic protocol checks.",
+          "ownerKey": "independent-qa",
+          "dependsOn": [
+            "monsoon-collision-objectives",
+            "audio-listener-authority",
+            "hero-contact-timing"
+          ]
+        },
+        {
+          "key": "current-source-handoff",
+          "title": "Publish source-bound production acceptance",
+          "description": "Publish only observed results with exact source, model/asset hashes, failed gates, current audience and artifact notices. Keep original guide voices distinct from licensed human performances and a source push distinct from a qualified game release.",
+          "ownerKey": "release-steward",
+          "dependsOn": [
+            "ten-seat-acceptance"
           ]
         }
       ],
@@ -266,6 +340,48 @@
           "title": "ANDOLAN / YUGA role: Unreal experiment engineer",
           "summary": "Prepare a separate Unreal import/render experiment using an explicitly selected existing Unreal project and licensed installed engine. This inspected ANDOLAN source has no Unreal project. Keep the current Rust/Godot/browser engines in place. Import the exact portable GLB, verify the 48 by 56 m scale after metre-to-centimetre handling, set collision/navigation deliberately, and return actual editor/import/render evidence before claiming integration.",
           "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-gameplay-audio",
+          "title": "ANDOLAN / YUGA role: Gameplay audio engineer",
+          "summary": "Own listener-admitted cues, Web Audio lifecycle and the scoped server audio contract. Use accepted movement and cast events; keep hidden positions, interruptions and spectator privileges behind authority. Test radius boundaries, duplicate and stale receipts, reconnect clock, mono and captions. Synthetic guide voices and headless digital measurements do not establish human performance rights, physical listening or finished multiplayer sound. Coordinate actor state with Rust and animation owners.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-animation-performance",
+          "title": "ANDOLAN / YUGA role: Animation and performance engineer",
+          "summary": "Own source-bound hero motion, contact markers and rendered-client performance checks. Separate render mesh dimensions, movement capsule, receiver and muzzle. Reproduce vertical witnesses and cast cancel/landing cases on the actual game state; preserve rig and source assets. Capture real device, frame timings and settings. A planned hero kit, concept film or headless simulation is not a new playable hero or physical-GPU benchmark.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "current-source-20261126",
+          "title": "Current YUGA source and engine boundaries",
+          "summary": "Current source is a35493d67cf5111d7da2ff9eea6c58ed3499aeca, 13 commits after the prior 9e59880 baseline. Rust/WASM and PlayCanvas own the private Confluence match. Ember Rite solo movement/audio, isolated ritual rules, Monsoon browser walk and retained Godot build remain separate products. These current handoff notes supersede older baseline facts; preserve owner contracts. Source review is not a new engine or GPU run.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/docs/START_HERE.md"
+        },
+        {
+          "key": "current-map-20261126",
+          "title": "Current YUGA Monsoon and Mandala commissioning",
+          "summary": "Monsoon Exchange is the authored district; Daftar Route Lab remains a separate sandbox. Survey: 13 rooms, 18 connections, ten pads, seven thresholds and two sites. Change the survey first, regenerate dependents and recheck actual meshes. Reuse registered Mandala kit IDs. Next bind collision, dry routes and objective disks to authority, then test side swaps and retakes. Geometry rays and the guided walk do not establish playable multiplayer.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/art/monsoon-exchange/README.md"
+        },
+        {
+          "key": "current-audio-20261126",
+          "title": "Current YUGA listener and audio acceptance",
+          "summary": "The released solo drill has audience/radius-gated sound and captions, an adaptive score and synthetic guide voices. Multiplayer needs accepted event IDs, redacted listener streams, duplicate/stale rejection and reconnect clock state. Interrupted casts cannot emit real result cues; out-of-range clients receive no hidden position. Check mono/captions and physical listening separately. Human voice performances and agreements remain pending.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/docs/design/ember-rite-5v5/audio/roadmap.md"
+        },
+        {
+          "key": "current-motion-20261126",
+          "title": "Current YUGA vertical motion and performance",
+          "summary": "Use vertical-play geometry and hero witnesses: standing body 1.80 m, eye 1.60 m, conservative path clearance 0.65 m. Render art, receiver and release socket are separate. Bind accepted cast/takeoff/contact/recovery states to animation and audio; test raised cover, crouch, ceilings, cancel and landing. Ten-seat/two-rendered-client, human feel and physical-GPU frame measurements remain open.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/docs/design/ember-rite-5v5/atlas/vertical-play/README.md"
+        },
+        {
+          "key": "current-provenance-20261126",
+          "title": "Current YUGA reuse and release boundaries",
+          "summary": "Use original Monsoon geometry and registered Yuga kit sources with exact hashes/notices. Valve/GoldSrc maps are edition-specific study inputs; separate tool licenses do not grant their assets. Review each external map and texture grant separately. Retain accepted and failed receipts, generated-versus-authored labels and exact build identity. Unreal is an optional separate experiment; the current game gates do not wait on it.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/art/monsoon-exchange/design/transfer-register.md"
         }
       ],
       "board": {

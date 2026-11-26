@@ -53,8 +53,11 @@ export function prepareCompany(snapshot, { companyId } = {}) {
   for (const employee of company.employees) for (const skill of employee.skillPaths) {
     if (!fs.statSync(path.join(repoRoot, skill)).isFile()) fail('A required skill is missing from this Daftar checkout.');
   }
+  const profile = json('profile.json');
   return { plan, preview: planCompanyKits(plan, snapshot), companyId: company.id,
-    companyStatus: existing ? 'existing_repository_binding' : 'new_repository_binding', repository: REPOSITORY };
+    companyStatus: existing ? 'existing_repository_binding' : 'new_repository_binding', repository: REPOSITORY,
+    teamRevision: profile.teamRevision, sourceCommit: profile.repository.inspectedCommit,
+    sharedHandoffKeys: profile.currentSourceUpdate.sharedHandoffKeys };
 }
 
 function modelSelections(plan, receipt, snapshot) {
@@ -86,6 +89,9 @@ export async function applyCompany({ snapshot, command, companyId }) {
   if (repositoryIdentity(company?.repoUrl) !== REPOSITORY.toLowerCase()) fail('The final repository binding is not the expected company.');
   return { snapshot: result.snapshot, receipt: { ...result.receipt, repository: REPOSITORY,
     teamState: 'definitions_applied_execution_not_started',
+    teamRevision: prepared.teamRevision, sourceCommit: prepared.sourceCommit,
+    sharedHandoffKeys: prepared.sharedHandoffKeys,
+    knowledgePolicy: 'Versioned current-source handoffs appended; existing bound contracts and roadmap progress preserved.',
     roleBindings: prepared.plan.companies[0].employees.map((spec, index) => ({ roleKey: spec.key, employeeId: result.receipt.companies[0].employeeIds[index] })),
     pendingModelSelections: modelSelections(prepared.plan, result.receipt, result.snapshot),
     modelAssignmentsApplied: 0, downloadsStarted: 0, authorityChanges: 0, budgetChanges: 0,
@@ -118,6 +124,8 @@ export async function main(argv = process.argv.slice(2)) {
   const prepared = prepareCompany(initial, { companyId: options['--company-id'] });
   let receipt = { ...prepared.preview, repository: REPOSITORY, companyId: prepared.companyId,
     companyStatus: prepared.companyStatus, teamState: 'preview_only', modelAssignmentsApplied: 0,
+    teamRevision: prepared.teamRevision, sourceCommit: prepared.sourceCommit,
+    sharedHandoffKeys: prepared.sharedHandoffKeys,
     downloadsStarted: 0, authorityChanges: 0, budgetChanges: 0, workerProcessesStarted: 0 };
   if (options['--apply']) {
     const binary = options['--core'] ?? path.join(repoRoot, 'desktop-shell/native', process.platform === 'win32' ? 'atlas-core.exe' : 'atlas-core');

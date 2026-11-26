@@ -378,7 +378,7 @@ export function createRuntime(options = {}) {
   runtime.resources = resources;
   runtime.environments = environments;
   runtime.design = design;
-  workbench = createWorkbench({ runtime, repoRoot, dataDir, secretFiles: secrets,
+  workbench = createWorkbench({ runtime, repoRoot, dataDir, secretFiles: secrets, pythonPath: options.pythonPath,
     platform: { ...(options.generate ? { generate: options.generate } : {}), ...options.workbenchPlatform } });
   runtime.workbench = workbench;
   activity = createActivityJournal({ stateDir: dataDir });

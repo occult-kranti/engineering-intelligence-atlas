@@ -1,8 +1,8 @@
 {
   "name": "atlas-office",
-  "displayName": "Daftar — Donna and One Office",
+  "displayName": "Daftar \u2014 Donna and One Office",
   "description": "The Daftar infinite office canvas, Donna, models and owned cloud compute inside VS Code.",
-  "version": "0.9.1",
+  "version": "0.9.2",
   "publisher": "occult-kranti",
   "license": "UNLICENSED",
   "engines": {
@@ -154,6 +154,12 @@
           "default": true,
           "scope": "machine",
           "description": "On Linux, expose host-control capabilities when starting the owned runtime. Policy remains off until configured by the owner."
+        },
+        "atlas.pythonPath": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Optional absolute Python 3 interpreter on the extension host, used to create isolated Python environments. Empty uses that host\u2019s Python 3. An existing venv interpreter is allowed; VS Code and Daftar\u2019s Node/native runtime remain separate."
         }
       }
     }
@@ -165,7 +171,8 @@
     "vscode:prepublish": "npm run check && npm test",
     "package": "node scripts/package-extension.mjs",
     "build": "node scripts/build-studio-assets.mjs && node scripts/build-runtime.mjs",
-    "package:build": "npm run build && npm run package"
+    "package:build": "npm run build && npm run package",
+    "test:installed-runtime": "node scripts/stress-installed-runtime.mjs"
   },
   "devDependencies": {
     "@vscode/test-electron": "3.1.0",

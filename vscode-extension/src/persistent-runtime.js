@@ -48,11 +48,12 @@ function readToken(dataDir, filename) {
   finally { if (fd !== undefined) fs.closeSync(fd); }
 }
 
-function createPersistentRuntime({ runtimeRoot, storagePath, nodePath = process.execPath, execFileFn = execute,
+function createPersistentRuntime({ runtimeRoot, storagePath, nodePath = process.execPath, pythonPath = '', execFileFn = execute,
   fetcher = globalThis.fetch, environment = process.env, startupTimeoutMs = 30000 } = {}) {
   if (process.platform !== 'linux') throw fail('PERSISTENT_RUNTIME_PLATFORM', 'Persistent tmux workspaces require a Linux host. Use the regular standalone workspace on this platform.');
   if (!path.isAbsolute(runtimeRoot || '') || !path.isAbsolute(storagePath || '') || !path.isAbsolute(nodePath || '')
-      || !Number.isInteger(startupTimeoutMs) || startupTimeoutMs < 100 || startupTimeoutMs > 60000) throw fail('PERSISTENT_RUNTIME_CONFIG', 'Use absolute package, Node, and private storage paths with a bounded startup deadline.');
+      || typeof pythonPath !== 'string' || pythonPath.length > 4096 || /[\x00-\x1f\x7f]/.test(pythonPath) || pythonPath && !path.isAbsolute(pythonPath)
+      || !Number.isInteger(startupTimeoutMs) || startupTimeoutMs < 100 || startupTimeoutMs > 60000) throw fail('PERSISTENT_RUNTIME_CONFIG', 'Use absolute package, Node, Python, and private storage paths with a bounded startup deadline.');
   let dataDir = path.join(storagePath, 'persistent-runtime');
   let state = 'idle', starting = null, closing = null, connection = null, token = '', runtimeUrl = null, hostControlEnabled = null;
   let startDispatched = false, bootstrapTimer = null, retryTimer = null, pendingOperations = 0;
@@ -61,6 +62,7 @@ function createPersistentRuntime({ runtimeRoot, storagePath, nodePath = process.
   for (const name of ['PATH', 'HOME', 'USER', 'LOGNAME', 'LANG', 'LC_ALL', 'TMPDIR', 'TERM']) {
     if (typeof environment[name] === 'string' && !environment[name].includes('\0')) env[name] = environment[name];
   }
+  if (pythonPath) env.DAFTAR_PYTHON_PATH = pythonPath;
   const status = () => ({ state, connected: state === 'ready', persistent: true, dataDir,
     url: runtimeUrl, hostControlEnabled, daemonMayBeRunning: startDispatched });
   async function invoke(args) {

@@ -28,9 +28,10 @@ async function until(predicate, timeout = 6000) {
 
 test('private environment accepts file references but rejects inline keys and public binds', t => {
   const filename = path.join(temporary(t), 'runtime.env');
-  fs.writeFileSync(filename, 'ANTHROPIC_API_KEY_FILE="/private/path with spaces/token"\nDAFTAR_PORT=8899\n', { mode: 0o600 });
+  fs.writeFileSync(filename, 'ANTHROPIC_API_KEY_FILE="/private/path with spaces/token"\nDAFTAR_PORT=8899\nDAFTAR_PYTHON_PATH="/opt/python with spaces/bin/python3"\n', { mode: 0o600 });
   assert.equal(readEnvironment(filename).ANTHROPIC_API_KEY_FILE, '/private/path with spaces/token');
-  for (const body of ['ANTHROPIC_API_KEY=secret-value', 'DAFTAR_HOST=0.0.0.0', 'NODE_OPTIONS=--inspect', 'DAFTAR_CONTROL_TOKEN_FILE=relative', 'DAFTAR_PORT=80']) {
+  assert.equal(readEnvironment(filename).DAFTAR_PYTHON_PATH, '/opt/python with spaces/bin/python3');
+  for (const body of ['ANTHROPIC_API_KEY=secret-value', 'DAFTAR_HOST=0.0.0.0', 'NODE_OPTIONS=--inspect', 'DAFTAR_CONTROL_TOKEN_FILE=relative', 'DAFTAR_PYTHON_PATH=python3', 'DAFTAR_PORT=80']) {
     fs.writeFileSync(filename, body); assert.throws(() => readEnvironment(filename));
   }
   fs.writeFileSync(filename, 'DAFTAR_PORT=8788'); fs.chmodSync(filename, 0o644);
@@ -81,7 +82,7 @@ test('real tmux starts once, survives caller exit, and stops only its managed ru
   fs.writeFileSync(path.join(repo, 'native-core/target/release/atlas-core'), 'fixture');
   fs.writeFileSync(path.join(repo, 'headless-runtime/server.mjs'), `import fs from 'node:fs'; import path from 'node:path';
     const file = path.join(process.env.DAFTAR_DATA_DIR, 'fixture.json');
-    fs.writeFileSync(file, JSON.stringify({ pid: process.pid, host: process.env.DAFTAR_HOST, enabled: process.env.DAFTAR_HOST_CONTROL, inheritedSecret: !!process.env.DAFTAR_TEST_RAW_SECRET }));
+    fs.writeFileSync(file, JSON.stringify({ pid: process.pid, host: process.env.DAFTAR_HOST, enabled: process.env.DAFTAR_HOST_CONTROL, pythonPath: process.env.DAFTAR_PYTHON_PATH, inheritedSecret: !!process.env.DAFTAR_TEST_RAW_SECRET }));
     process.stdout.write('fixture ready\\n');
     setInterval(() => {}, 1000);
     process.on('SIGTERM', () => { fs.writeFileSync(file + '.stopped', 'yes'); process.exit(0); });
@@ -94,15 +95,19 @@ test('real tmux starts once, survives caller exit, and stops only its managed ru
     // This socket is created solely by this test, including its sibling fixture.
     spawnSync('tmux', ['-L', identity.socket, 'kill-server']);
   });
-  const first = start({ repo, data, enableHostControl: true });
+  const envFile = path.join(directory, 'runtime.env'); fs.writeFileSync(envFile, 'DAFTAR_PYTHON_PATH="/opt/pinned Python/bin/python3"\n', { mode: 0o600 });
+  const first = start({ repo, data, envFile, enableHostControl: true });
   assert.equal(first.running, true); assert.equal(first.hostControlEnabled, true);
   await until(() => fs.existsSync(path.join(data, 'fixture.json')));
   const fixture = JSON.parse(fs.readFileSync(path.join(data, 'fixture.json')));
   assert.equal(fixture.host, '127.0.0.1'); assert.equal(fixture.enabled, '1'); assert.equal(fixture.inheritedSecret, false);
+  assert.equal(fixture.pythonPath, '/opt/pinned Python/bin/python3');
   const token = fs.readFileSync(first.controlTokenFile, 'utf8');
-  const second = start({ repo, data });
+  fs.writeFileSync(envFile, 'DAFTAR_PYTHON_PATH=/opt/other/python3\n');
+  const second = start({ repo, data, envFile });
   assert.equal(second.hostControlEnabled, true); assert.equal(fs.readFileSync(first.controlTokenFile, 'utf8'), token);
   assert.equal(JSON.parse(fs.readFileSync(path.join(data, 'fixture.json'))).pid, fixture.pid);
+  assert.equal(JSON.parse(fs.readFileSync(path.join(data, 'fixture.json'))).pythonPath, fixture.pythonPath, 'connecting to an existing daemon does not replace its Python');
   for (const filename of [first.controlTokenFile, path.join(data, 'supervisor/config.json')]) assert.equal(fs.statSync(filename).mode & 0o777, 0o600);
   assert.equal(fs.statSync(data).mode & 0o777, 0o700);
   const sibling = spawnSync('tmux', ['-L', identity.socket, 'new-session', '-d', '-s', 'sibling', 'sleep 60']);

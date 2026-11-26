@@ -12,7 +12,7 @@ import { readControlToken } from '../tools/daftar-runtime-mcp.mjs';
 const SESSION = 'runtime';
 const MAX_LOG_BYTES = 1024 * 1024;
 const ENV_KEYS = new Set([
-  'DAFTAR_CONTROL_TOKEN_FILE', 'DAFTAR_CORE_BINARY', 'DAFTAR_PORT', 'DAFTAR_CONCURRENCY', 'DAFTAR_HOST_CONTROL',
+  'DAFTAR_CONTROL_TOKEN_FILE', 'DAFTAR_CORE_BINARY', 'DAFTAR_PYTHON_PATH', 'DAFTAR_PORT', 'DAFTAR_CONCURRENCY', 'DAFTAR_HOST_CONTROL',
   'OPENAI_API_KEY_FILE', 'ANTHROPIC_API_KEY_FILE', 'GITHUB_TOKEN_FILE',
   'DAFTAR_OLLAMA_BASE_URL', 'DAFTAR_OLLAMA_LOCAL_ONLY', 'DAFTAR_CLOUD_SYNC', 'DAFTAR_CLOUD_URL',
   'DAFTAR_CLOUD_PAIRING_FILE', 'DAFTAR_CLOUD_ENCRYPTION_KEY_FILE', 'DAFTAR_CLOUD_SYNC_INTERVAL_SECONDS',
@@ -83,7 +83,7 @@ export function readEnvironment(filename) {
   for (const [key, value] of Object.entries(parsed)) {
     if (!ENV_KEYS.has(key)) throw new SetupError(`Unsupported environment key ${key}. Use the documented file-based configuration; secret values are not accepted.`);
     if (value.includes('\0') || value.includes('\n') || value.includes('\r')) throw new SetupError('Configuration values must fit on one line.');
-    if ((key.endsWith('_FILE') || key === 'DAFTAR_CORE_BINARY') && value) absolute(value, key);
+    if ((key.endsWith('_FILE') || key === 'DAFTAR_CORE_BINARY' || key === 'DAFTAR_PYTHON_PATH') && value) absolute(value, key);
   }
   if (parsed.DAFTAR_HOST_CONTROL && !['0', '1'].includes(parsed.DAFTAR_HOST_CONTROL)) throw new SetupError('DAFTAR_HOST_CONTROL must be 0 or 1.');
   const port = Number(parsed.DAFTAR_PORT || 8788);

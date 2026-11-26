@@ -40,21 +40,23 @@ function privateDirectory(directory) {
   const stat = fs.lstatSync(directory); if (!stat.isDirectory() || stat.isSymbolicLink()) throw fail('LOCAL_RUNTIME_STORAGE', 'Choose a real private extension storage directory.');
   if (process.platform !== 'win32') fs.chmodSync(directory, 0o700);
 }
-function childEnvironment(source, { runtimeRoot, dataDir, tokenFile, corePath, hostControlEnabled }) {
+function childEnvironment(source, { runtimeRoot, dataDir, tokenFile, corePath, hostControlEnabled, pythonPath }) {
   const env = {};
   for (const key of ['PATH', 'Path', 'HOME', 'USERPROFILE', 'SystemRoot', 'SYSTEMROOT', 'WINDIR', 'TEMP', 'TMP', 'TMPDIR', 'LANG', 'LC_ALL']) {
     if (typeof source[key] === 'string' && !source[key].includes('\0')) env[key] = source[key];
   }
   return { ...env, NODE_ENV: 'production', ELECTRON_RUN_AS_NODE: '1', DAFTAR_REPO_ROOT: runtimeRoot,
     DAFTAR_DATA_DIR: dataDir, DAFTAR_CORE_BINARY: path.join(runtimeRoot, corePath), DAFTAR_HOST: '127.0.0.1',
-    DAFTAR_PORT: '0', DAFTAR_CONTROL_TOKEN_FILE: tokenFile, DAFTAR_HOST_CONTROL: hostControlEnabled ? '1' : '0' };
+    DAFTAR_PORT: '0', DAFTAR_CONTROL_TOKEN_FILE: tokenFile, DAFTAR_HOST_CONTROL: hostControlEnabled ? '1' : '0',
+    ...(pythonPath ? { DAFTAR_PYTHON_PATH: pythonPath } : {}) };
 }
 
-function createLocalRuntime({ runtimeRoot, storagePath, hostControlEnabled = false, nodePath = process.execPath,
+function createLocalRuntime({ runtimeRoot, storagePath, hostControlEnabled = false, nodePath = process.execPath, pythonPath = '',
   spawnProcess = spawn, fetcher = globalThis.fetch, environment = process.env, startupTimeoutMs = 20000, stopTimeoutMs = 12000 } = {}) {
   if (!path.isAbsolute(runtimeRoot || '') || !path.isAbsolute(storagePath || '') || !path.isAbsolute(nodePath || '')
+    || typeof pythonPath !== 'string' || pythonPath.length > 4096 || /[\x00-\x1f\x7f]/.test(pythonPath) || pythonPath && !path.isAbsolute(pythonPath)
     || typeof hostControlEnabled !== 'boolean' || !Number.isInteger(startupTimeoutMs) || startupTimeoutMs < 100 || startupTimeoutMs > 60000
-    || !Number.isInteger(stopTimeoutMs) || stopTimeoutMs < 10 || stopTimeoutMs > 15000) throw fail('LOCAL_RUNTIME_CONFIG', 'Use absolute runtime, Node, and private storage paths.');
+    || !Number.isInteger(stopTimeoutMs) || stopTimeoutMs < 10 || stopTimeoutMs > 15000) throw fail('LOCAL_RUNTIME_CONFIG', 'Use absolute runtime, Node, Python, and private storage paths.');
   if (hostControlEnabled && process.platform !== 'linux') throw fail('LOCAL_RUNTIME_PLATFORM', 'SSH/tmux host control requires the Linux runtime. Other workbench operations remain available.');
   const directory = path.join(storagePath, 'runtime'); const dataDir = path.join(directory, 'data');
   const tokenFile = path.join(directory, 'control-token'); const lockFile = path.join(directory, 'launcher.lock');
@@ -155,7 +157,7 @@ function createLocalRuntime({ runtimeRoot, storagePath, hostControlEnabled = fal
     startupTimer = setTimeout(cancel, startupTimeoutMs); state = 'starting';
     try {
       const manifest = verifyRuntime(runtimeRoot); acquire();
-      const env = childEnvironment(environment, { runtimeRoot, dataDir, tokenFile, corePath: manifest.corePath, hostControlEnabled });
+      const env = childEnvironment(environment, { runtimeRoot, dataDir, tokenFile, corePath: manifest.corePath, hostControlEnabled, pythonPath });
       await captureVersion(env);
       if (lifetime.signal.aborted) throw new Error();
       const record = own([path.join(runtimeRoot, manifest.entrypoint)], env); mainChild = record;

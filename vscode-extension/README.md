@@ -1,6 +1,6 @@
 # Daftar Office for VS Code
 
-## Version 0.9.1 development candidate
+## Version 0.9.2 development candidate
 
 Open the full infinite office canvas inside VS Code, run its packaged backend on this host or in Remote-SSH, and manage Donna’s compute ownership, environments and model resources. See the [complete product and setup guide](../project/VSCODE_PRIMARY_PRODUCT.md). The full office remains the shared canvas. The activity view also provides company conversation, team controls and a scoped creative development workflow. Earlier companion connection details are retained below for compatibility.
 
@@ -21,6 +21,16 @@ The extension declares VS Code **1.95 or newer**, while starting its packaged ba
 An already-running private backend can be connected with **Daftar: Connect Private Runtime**. **Daftar: Connect Vast.ai / SSH Compute** establishes the configured connection; it does not start a stopped rented instance or prove GPU readiness. **Daftar: Copy Runtime MCP Configuration** prepares configuration for an MCP client; copying it does not establish a ChatGPT connection.
 
 `atlas.hostControlEnabled` exposes host-control capabilities on Linux, with policy initially off. God mode is an explicit owner policy for the recorded current company set and the runtime's OS account. It starts no job and changes no provider budget, instance lifecycle or platform approval setting. Company and employee selectors provide attribution and policy scope, not independent tenant authentication. See [operations, roles and logs](../project/OPERATIONS_CONTROL.md) for the setup sequence and limits.
+
+## Python environments
+
+Set the machine setting **`atlas.pythonPath`** to an absolute Python 3 executable on the extension host when a particular Python installation or venv is required. Examples are `/srv/daftar/.venv/bin/python` on Linux and `C:\Daftar\.venv\Scripts\python.exe` on Windows. An empty setting uses the host's default Python selection. An explicit path is validated and forwarded to newly started runtimes; an invalid configured interpreter fails instead of silently choosing another Python. In Remote-SSH, use a path that exists on the remote machine.
+
+The configured Python creates the workbench's own isolated environments. The environment creation result supplies its exact interpreter path; run Python and install packages through that returned executable. A venv isolates Python dependencies, and [activation is optional when the interpreter is addressed directly](https://docs.python.org/3/library/venv.html#how-venvs-work). VS Code, the extension, and Daftar's Node/Rust backend keep their own runtimes. VS Code's separate **Python: Select Interpreter** command selects the interpreter for Python editing and debugging; it does not change `atlas.pythonPath`.
+
+Portable workbench environment creation is supported on Linux and Windows. Donna's managed host-job environments use Linux and tmux, including through a Linux Remote-SSH host, and inherit the current host approval policy. Managed jobs verify their copied interpreter, exclude user and system site-packages, and bind the venv configuration before execution. Enabling system site-packages or changing a pinned configuration rejects the job before dispatch. These controls provide Python dependency isolation; the runtime reports `secureSandbox: false` because a venv is not an operating-system sandbox.
+
+Changing the Python setting applies to a newly started runtime. Reconnecting to an existing persistent tmux runtime preserves that daemon's configuration. Inspect its current work and use its explicit shutdown procedure before starting it with a different interpreter.
 
 ## Compatibility connections
 
@@ -96,6 +106,14 @@ The package script runs checks and tests before creating the VSIX, verifies that
 
 ### Verify the installed VSIX
 
+After packaging, first run the bounded installation, runtime lifecycle and Python acceptance gate:
+
+```sh
+npm run test:installed-runtime
+```
+
+Set `DAFTAR_PYTHON_PATH` to an absolute host Python 3 interpreter if automatic test-host discovery is unsuitable. This gate installs the exact VSIX with the real VS Code CLI into a temporary profile. It executes the installed runtime modules with the downloaded editor’s Node runtime through six actual native start/read/stop cycles, with twelve concurrent starts and sixteen concurrent reads per cycle. It checks duplicate ownership, incorrect credentials, one native mutation under sixteen duplicate deliveries, persistent state, closed listeners and released child resources. It also creates an outer launch venv, starts the Node/native runtime with that explicitly selected Python, creates another venv through the installed workbench, verifies that the new venv records the explicitly configured bootstrap interpreter, and installs, executes and removes a generated local wheel using its returned interpreter. The base interpreter must be unable to import that package. The probe uses no package index or provider. Its receipt is `.work/installed-runtime/receipt.json` and explicitly leaves GUI activation and managed tmux verification to the next gate.
+
 On Linux with a graphical display (or `xvfb`), run this after packaging:
 
 ```sh
@@ -106,7 +124,7 @@ On Windows, run `npm run test:installed` after packaging; persistent tmux host c
 
 The harness uses Microsoft's [`@vscode/test-electron`](https://code.visualstudio.com/api/working-with-extensions/testing-extension) and pins VS Code **1.147.0**. To test another exact release, set `ATLAS_VSCODE_TEST_VERSION`. It installs the matching VSIX into an empty temporary extensions directory, then launches a separate test-host extension. Daftar must activate from its installed path; loading the source extension as a development extension fails the test. The gate checks the installed version, runtime and canvas manifests, all **18 contributed command registrations**, Open Office, disconnected refresh/disconnect, credential redaction, and absence of development files or credential-shaped material in the archive. It starts the actual packaged native backend through the editor's Node mode, verifies authenticated loopback readiness with provider workers paused, and confirms owned-runtime shutdown.
 
-The empty profile has no pairing or provider credentials. Initial activation and disconnected commands must make zero requests. Later phases allow bounded authenticated requests to the test's own loopback runtime. Linux additionally exercises the installed editor → dedicated tmux → native daemon path, verifies detach/reconnect, runs one fixed bounded host-command fixture under a canonical company assistant, checks idempotent replay, returns host policy to off, and confirms cleanup. The receipt distinguishes loopback traffic from external dispatch; it must record no provider, Vast.ai, SSH or cloud requests. Setup downloads the pinned VS Code archive. The upstream test runner's isolated Chromium test settings do not change the shipped extension or desktop security settings.
+The empty profile has no pairing or provider credentials. Initial activation and disconnected commands must make zero requests. Later phases allow bounded authenticated requests to the test's own loopback runtime. Linux additionally exercises the installed editor → dedicated tmux → native daemon path, verifies detach/reconnect, runs one fixed bounded host-command fixture under a canonical company assistant, checks idempotent replay, returns host policy to off, and confirms cleanup. It prepares a real managed venv, installs a generated local wheel into its reported interpreter, executes that module through the managed tmux job path, checks stable prepare/run replay, and verifies that changed isolation or pinned configuration creates no new managed or host job. After restoring the original configuration, another managed run must succeed. The receipt distinguishes loopback traffic from external dispatch; it must record no provider, Vast.ai, SSH or cloud requests. Setup downloads the pinned VS Code archive. The upstream test runner's isolated Chromium test settings do not change the shipped extension or desktop security settings.
 
 The receipt is `.work/installed-smoke/receipt.json`, accompanied by the VSIX installation log and VS Code logs. CI publishes each platform's VSIX and receipts under `daftar-vscode-<runner OS>-<runner architecture>`. Shared-canvas browser acceptance has its own `.work/canvas-smoke/` evidence. A Linux receipt does not certify Windows installation or the separate canvas gate; consult the [current handoff](../HANDOFF.md) and the matching source revision's CI receipts for release status. Signing in on an owner's laptop, checking its display/theme, and executing a workload on the intended GPU remain separate acceptance steps. No installed-smoke result claims that the stopped Vast instance was resumed, design software was installed there, or ChatGPT was connected.
 

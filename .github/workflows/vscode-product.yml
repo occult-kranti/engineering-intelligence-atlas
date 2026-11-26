@@ -37,10 +37,15 @@ jobs:
           cache-dependency-path: |
             desktop-shell/package-lock.json
             vscode-extension/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Select the verified Python interpreter for environment acceptance
+        run: python -c "import os,sys; open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8').write('DAFTAR_PYTHON_PATH=' + os.path.realpath(sys.executable) + '\n')"
       - run: rustup default stable
-      - name: Install tmux for persistent extension acceptance
+      - name: Install display and tmux prerequisites for installed extension acceptance
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install --yes tmux
+        run: sudo apt-get update && sudo apt-get install --yes tmux xvfb
       - name: Install locked build dependencies
         run: |
           npm ci --prefix desktop-shell --ignore-scripts --no-audit --no-fund
@@ -58,6 +63,9 @@ jobs:
           npm run check
           npm test
           npm run package
+      - name: Stress the installed package and verify its Python environment
+        working-directory: vscode-extension
+        run: npm run test:installed-runtime
       - name: Activate installed Linux VSIX in a fresh editor
         if: runner.os == 'Linux'
         working-directory: vscode-extension
@@ -84,6 +92,7 @@ jobs:
           path: |
             vscode-extension/*.vsix
             vscode-extension/.work/installed-smoke/
+            vscode-extension/.work/installed-runtime/
             vscode-extension/.work/canvas-smoke/
           include-hidden-files: true
           if-no-files-found: warn
