@@ -16,6 +16,9 @@ import type { FetchLike, GenerateRequest, GenerateResult } from './providers';
  */
 
 export const OLLAMA_DEFAULT_BASE_URL = 'http://127.0.0.1:11434';
+/** Reviewed deployment profile, not the upstream model's maximum context. */
+export const QWEN_CODER_MOE_MODEL = 'qwen3-coder:30b-a3b-q4_K_M';
+export const QWEN_CODER_MOE_CONTEXT = 8192;
 
 /** Accept only loopback Ollama base URLs; throw on anything remote. */
 export function assertLoopbackOllamaUrl(rawUrl: string): string {
@@ -40,9 +43,17 @@ export function assertLoopbackOllamaUrl(rawUrl: string): string {
 
 /** Registry names, not URLs. Cloud-backed aliases cannot enter the local route. */
 export function canonicalLocalModel(raw: string): string {
-  if (typeof raw !== 'string' || raw.length > 160 || !/^[a-z0-9][a-z0-9_.-]*(?:\/[a-z0-9][a-z0-9_.-]*)?(?::[a-z0-9][a-z0-9_.-]*)?$/.test(raw)
-      || /(?:^|[/:_.-])cloud(?:$|[/:_.-])/.test(raw)) throw new Error('Choose a local model reference; cloud aliases and registry URLs are not allowed');
+  if (typeof raw !== 'string' || raw.length > 160 || !/^[a-z0-9][a-z0-9_.-]*(?:\/[a-z0-9][a-z0-9_.-]*)?(?::[A-Za-z0-9][A-Za-z0-9_.-]*)?$/.test(raw)
+      || /(?:^|[/:_.-])cloud(?:$|[/:_.-])/i.test(raw)) throw new Error('Choose a local model reference; cloud aliases and registry URLs are not allowed');
   return raw.includes(':') ? raw : `${raw}:latest`;
+}
+
+/** One prompt representation for both native budget reservation and dispatch. */
+export function prepareOllamaContext(req: Pick<GenerateRequest, 'model' | 'system' | 'prompt'>) {
+  const model = canonicalLocalModel(req.model);
+  const prompt = req.system ? `${req.system}\n\n${req.prompt}` : req.prompt;
+  return { model, prompt, inputBound: Buffer.byteLength(prompt, 'utf8') + 1024,
+    contextLimit: model === QWEN_CODER_MOE_MODEL ? QWEN_CODER_MOE_CONTEXT : 32768 };
 }
 
 export async function readOllamaJson(response: Response, limit = 2 * 1024 * 1024): Promise<Record<string, unknown>> {
@@ -143,13 +154,14 @@ export async function generateWithOllama(
   baseUrl: string = OLLAMA_DEFAULT_BASE_URL,
 ): Promise<GenerateResult> {
   const base = assertLoopbackOllamaUrl(baseUrl);
-  const prompt = req.system ? `${req.system}\n\n${req.prompt}` : req.prompt;
-  const contextBound = Buffer.byteLength(prompt, 'utf8') + 1024 + req.maxOutputTokens;
-  if (!Number.isSafeInteger(req.maxOutputTokens) || req.maxOutputTokens < 1 || contextBound > 32768) {
-    throw new Error('The self-hosted request exceeds the supported 32768-token conservative context bound. Shorten the brief or reduce its output allocation.');
+  const { model: canonical, prompt, inputBound, contextLimit } = prepareOllamaContext(req);
+  const contextBound = inputBound + req.maxOutputTokens;
+  if (!Number.isSafeInteger(req.maxOutputTokens) || req.maxOutputTokens < 1 || contextBound > contextLimit) {
+    throw new Error(`The self-hosted request exceeds the ${contextLimit}-token conservative context bound for this model. Shorten the brief or reduce its output allocation.`);
   }
-  const contextSize = Math.max(4096, 2 ** Math.ceil(Math.log2(contextBound)));
-  const model = await assertLocalOllamaModel(req.model, fetchFn, base, req.abortSignal);
+  // The MoE profile is fixed at 8k so daemon defaults cannot silently grow its KV cache.
+  const contextSize = canonical === QWEN_CODER_MOE_MODEL ? contextLimit : Math.max(4096, 2 ** Math.ceil(Math.log2(contextBound)));
+  const model = await assertLocalOllamaModel(canonical, fetchFn, base, req.abortSignal);
   const res = await fetchFn(`${base}/api/generate`, {
     method: 'POST',
     redirect: 'error',

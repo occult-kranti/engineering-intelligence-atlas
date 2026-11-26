@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "checkedDate": "2026-11-26",
+  "scope": "Actual native setup in disposable synthetic workspaces; no owner state applied",
+  "nativeBinarySha256": "8e67644f9deede39cbc87f8a704e52731deac9afe52245b2ca6eca65c98239e8",
+  "nodeVersion": "v24.22.3",
+  "checks": [
+    {
+      "command": "node --test --test-reporter=tap projects/andolan-yuga-development/setup-company.test.mjs",
+      "exitCode": 0,
+      "testsPassed": 6,
+      "testsFailed": 0
+    },
+    {
+      "command": "node --test --test-reporter=tap --test-name-pattern=creative results retain observed GPU tools/daftar-runtime-mcp.test.mjs",
+      "exitCode": 0,
+      "testsPassed": 1,
+      "testsFailed": 0
+    }
+  ],
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "2562fae56f415b09afc6ccf25314ee3d8cc9456b1b137251c6185f6010140158"
+    },
+    {
+      "path": "company-kit.json",
+      "sha256": "741c17218f9bd89dd127889e00b1e08c3ba44052bb5fa11c600b7a922a8a1c0c"
+    },
+    {
+      "path": "profile.json",
+      "sha256": "5a98023ede1eef25be6beb1ba501df2f7854b7dcc9f71777f7ce4c6551803b03"
+    },
+    {
+      "path": "source-evidence.json",
+      "sha256": "21c42456e3b29ad0f45ff4eef0cb05173f3170e96e9636ed8323d887954708b0"
+    },
+    {
+      "path": "setup-company.mjs",
+      "sha256": "a8d91ee3a603892c0629eb6a074f0c6b18e60f78f34b4e654cd60844d336cadf"
+    },
+    {
+      "path": "setup-company.test.mjs",
+      "sha256": "c33f13cb3541ccc7d1560897a6a7206f7446a4578ed1319a29b7b9ef61e06ffb"
+    }
+  ],
+  "liveOwnerWorkspaceApplied": false,
+  "modelDownloadsStarted": 0,
+  "modelAssignmentsApplied": 0,
+  "providerRequests": 0,
+  "creativeJobsStarted": 0,
+  "authorityOrBudgetChanges": 0,
+  "unrealExecuted": false,
+  "gpuTested": false,
+  "separateMcpSuite": {
+    "command": "node --test tools/daftar-runtime-mcp.test.mjs",
+    "testsPassed": 37,
+    "testsFailed": 0,
+    "scope": "Mocked transport and real local synthetic HTTP/stdio subprocess checks; no hardware inference"
+  }
+}

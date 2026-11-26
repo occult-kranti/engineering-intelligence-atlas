@@ -11,7 +11,17 @@
     "../desktop-shell/src/main/providers.ts",
     "../desktop-shell/src/main/ollama.ts",
     "../desktop-shell/src/main/modelPool.ts",
-    "../desktop-shell/src/main/cloudSync.ts"
+    "../desktop-shell/src/main/cloudSync.ts",
+    "../desktop-shell/src/main/company.ts",
+    "../desktop-shell/src/main/projects.ts",
+    "../desktop-shell/src/main/catalog.ts",
+    "../desktop-shell/src/main/systemInfo.ts",
+    "../desktop-shell/src/main/venv.ts",
+    "../desktop-shell/src/main/downloads.ts",
+    "../desktop-shell/src/main/jobs.ts",
+    "../desktop-shell/src/main/settings.ts",
+    "../desktop-shell/src/main/vault.ts",
+    "../desktop-shell/src/main/globalBudget.ts"
   ],
   "exclude": []
 }

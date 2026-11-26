@@ -1,3 +1,4 @@
+import { copyDonnaStudio } from '../../scripts/donna-studio-assets.mjs';
 // Copies static renderer assets (HTML/CSS) next to the compiled chrome.js.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -9,7 +10,7 @@ const src = path.join(here, '..', 'src', 'renderer');
 const dest = path.join(here, '..', 'dist', 'renderer');
 
 fs.mkdirSync(dest, { recursive: true });
-for (const name of ['chrome.html', 'chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'hardware-workbench.css', 'brain/panel.css']) {
+for (const name of ['chrome.html', 'chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'donna-studio.css', 'hardware-workbench.css', 'brain/panel.css']) {
   const from = path.join(src, name);
   // freeflow.css is optional so the build works before it is added.
   if (name === 'freeflow.css' && !fs.existsSync(from)) continue;
@@ -18,3 +19,5 @@ for (const name of ['chrome.html', 'chrome.css', 'studio-tokens.css', 'freeflow.
 }
 copyCompanyStudio(path.resolve(here, '../..'), path.join(dest, 'studios/threejs'));
 console.log(`Copied renderer assets to ${dest}`);
+
+copyDonnaStudio(path.resolve(here, '../..'), path.join(dest, 'assets/donna-studio'));

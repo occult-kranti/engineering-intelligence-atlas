@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-11-21",
+  "status": "planning-checkpoint",
+  "sourceBranch": "design/infinite-blueprint-canvas",
+  "priorVerifiedCommit": "7f47bde0f475085e1143e1c25f1af00f1c4553a2",
+  "activeDirection": "flat color-coded circles and company-contained floorplans in one continuous conference-table canvas; top default, optional 3D camera",
+  "documents": [
+    "design/blueprint-world/PLAN.md",
+    "design/blueprint-world/BRIEF.md"
+  ],
+  "images": [
+    {
+      "path": "design/blueprint-world/assets/01-superseded-physical-office.png",
+      "status": "superseded-by-user-correction",
+      "bytes": 2469082,
+      "sha256": "4092d13f9ec8c6894a521ace27fcdea75fa5f8287118d19d9dff346e5fe0bb17",
+      "kind": "generated concept image; not an implementation screenshot"
+    },
+    {
+      "path": "design/blueprint-world/assets/02-superseded-desk-focus.png",
+      "status": "superseded-by-user-correction",
+      "bytes": 2485127,
+      "sha256": "88aaca02492979083ba361b7a817a78a91d46f0f6905243605b44fc66d567a1f",
+      "kind": "generated concept image; not an implementation screenshot"
+    },
+    {
+      "path": "design/blueprint-world/assets/03-flat-circle-blueprint.png",
+      "status": "current-visual-direction",
+      "bytes": 1865167,
+      "sha256": "6543e526a9fc5b6c99bd253d075e3abef8ba2b72e7660e56b8ac9ee148e2b5d5",
+      "kind": "generated concept image; not an implementation screenshot"
+    }
+  ],
+  "priorFrontend": {
+    "path": "cloud-workspace/public/concepts/blueprint-office.html",
+    "bytes": 86124,
+    "sha256": "91d824237d60305a51d255b0e8ca58b1a327fc6135bd9f9150c1f370b22e69cf",
+    "changedInThisRevision": false
+  },
+  "newFrontendImplemented": false,
+  "newDeploymentPerformed": false,
+  "newPhysicsEngineIntegrated": false,
+  "newClaudeApiRequests": 0,
+  "performanceTargetsAreMeasuredResults": false,
+  "sourceResearch": "Primary technical sources are linked in PLAN.md. Recommendations and budgets are proposed design decisions."
+}

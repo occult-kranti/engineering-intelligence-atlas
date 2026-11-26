@@ -1,0 +1,272 @@
+{
+  "artifactType": "blueprint-studio-validation-index/v1",
+  "run": "blueprint-studio-20261121",
+  "createdAt": "2026-11-22T00:17:55.271490+00:00",
+  "terminationOwner": "root",
+  "status": "passed-with-gpu-verification-gap",
+  "results": {
+    "core": {
+      "passed": 12,
+      "groups": 12,
+      "receipt": "core-receipt-a16a38263dda.json",
+      "sourceUnchanged": true
+    },
+    "permissions": {
+      "passed": 17,
+      "groups": 17,
+      "receipt": "studio-receipt-3a586a4d0905.json",
+      "origin": "independent branch_review"
+    },
+    "dom": {
+      "passed": 14,
+      "groups": 14,
+      "receipt": "studio-ui-final.json",
+      "origin": "root integration harness with six prior independent regressions; renderer explicitly unavailable"
+    },
+    "renderer": {
+      "passed": 21,
+      "groups": 21,
+      "receipt": "studio-renderer-evidence.json",
+      "origin": "renderer-owner non-GPU harness, final framing review by renderer_finish",
+      "gpu": false
+    },
+    "native": {
+      "receipt": "studio-browser-receipt.json",
+      "origin": "Root managed Chrome observations; source versions 16 and 17 recorded separately."
+    },
+    "gpu": {
+      "status": "not-verified",
+      "reason": "WebGL2 unavailable in managed Chrome; no bypass attempted"
+    }
+  },
+  "sources": [
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-LICENSES.txt",
+      "bytes": 1095,
+      "sha256": "2a1f8894cb0866fcc689c6428d58397eb3d03c20c97fb5e244a87d22507ef9db",
+      "archivePath": "dist/client/concepts/blueprint-world-LICENSES.txt"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-app.js",
+      "bytes": 77342,
+      "sha256": "7d676a4a91bfa801d0d9e2f7ac837a2b8c84f38cbd5f56db422098bd0ce0d7f0",
+      "archivePath": "dist/client/concepts/blueprint-world-app.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-core.js",
+      "bytes": 35637,
+      "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea",
+      "archivePath": "dist/client/concepts/blueprint-world-core.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-relief.js",
+      "bytes": 14413,
+      "sha256": "49ee0ce33e92f7da725476008c4edc0f0c81c97ca5c2c3e81fc394cd6e09f352",
+      "archivePath": "dist/client/concepts/blueprint-world-relief.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-renderer.js",
+      "bytes": 38174,
+      "sha256": "fb7f9f89875d663494e7e3b2f9cae15167de321bf1def82b7aaa56a8d2d8ddbd",
+      "archivePath": "dist/client/concepts/blueprint-world-renderer.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-studio-edits.js",
+      "bytes": 41543,
+      "sha256": "3a586a4d09059e1fa908d2a44cf00c8a0e90fd9abfa62e1fe90f3a5fb1d7581a",
+      "archivePath": "dist/client/concepts/blueprint-world-studio-edits.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-studio-ui.js",
+      "bytes": 33064,
+      "sha256": "04f9b9b933241acd966685dc3d890fbcf9df07070b299f815cab55fcae9cb1a4",
+      "archivePath": "dist/client/concepts/blueprint-world-studio-ui.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world-vendor.js",
+      "bytes": 769573,
+      "sha256": "fc7cbff1e3c2d33d2ac1fe1ad49d8a31db926cd5c966482ce2d2762bc82147c4",
+      "archivePath": "dist/client/concepts/blueprint-world-vendor.js"
+    },
+    {
+      "path": "cloud-workspace/public/concepts/blueprint-world.html",
+      "bytes": 14434,
+      "sha256": "ecf54ec2a0dadf3e92fff9e22c05beedae4db4bc83082ef729c6714904eb69e9",
+      "archivePath": "dist/client/concepts/blueprint-world.html"
+    }
+  ],
+  "history": [
+    {
+      "commit": "287dfdf70bcece1960c7bda364e911c82dea37e2",
+      "index": "validation-index.checkpoint-287dfdf.json",
+      "note": "Historical source and README hashes refer to that checkpoint, not the expanded current UI."
+    },
+    {
+      "receipt": "studio-receipt-8a074c39c2cd.json",
+      "status": "superseded-failed",
+      "note": "Bootstrap full grant-schema integration defect; corrected."
+    },
+    {
+      "receipt": "studio-receipt-accdd9cdcaf3.json",
+      "status": "superseded-failed",
+      "note": "13/17 initial pass; two implementation defects and two demonstrated fixture-coordinate assumptions repaired."
+    },
+    {
+      "receipt": "studio-ui-copy-change.json",
+      "status": "superseded-copy-regression",
+      "note": "Header simplification dropped the explicit local-owner label. Label restored; no test weakened."
+    },
+    {
+      "receipt": "studio-ui-owner-copy-change.json",
+      "status": "superseded-copy-regression",
+      "note": "Header simplification dropped the concrete owner-tools explanation. Concise explicit explanation restored; no test weakened."
+    },
+    {
+      "receipt": "studio-ui-published-v16.json",
+      "status": "passed-historical",
+      "note": "14/14 on v16 before redundant actor success text was suppressed."
+    },
+    {
+      "receipt": "studio-ui-first.json",
+      "status": "passed-historical",
+      "note": "Initial14/14 Studio integration before notice-order and native-review polish."
+    }
+  ],
+  "files": [
+    {
+      "path": "design/blueprint-world/validation/README.md",
+      "bytes": 10561,
+      "sha256": "bd55239c74b657eec4d1eec818057c29f9b85c979ae218f1a5912fc1d35fddf4"
+    },
+    {
+      "path": "design/blueprint-world/validation/browser-receipt.json",
+      "bytes": 5819,
+      "sha256": "be01dcb7a27e78f5006388ff67aff75616ad37c4d578899e3e3fff7b8a13c0b5"
+    },
+    {
+      "path": "design/blueprint-world/validation/check-core.mjs",
+      "bytes": 26186,
+      "sha256": "4fa8e3e426a31cdd915c4c4d8c4a5005593c9b1553ca04f3611e3dc8973bd21e"
+    },
+    {
+      "path": "design/blueprint-world/validation/check-renderer-nongpu.mjs",
+      "bytes": 14714,
+      "sha256": "29c833c54174d536002833bd9aae95baeac122fc2910e82b5e73bda103db782a"
+    },
+    {
+      "path": "design/blueprint-world/validation/check-studio-renderer.mjs",
+      "bytes": 28545,
+      "sha256": "8fec8587cfea326ef2483d37fff3d8c05d887148f0779d263bdd747fc5a1dd1c"
+    },
+    {
+      "path": "design/blueprint-world/validation/check-studio-ui.mjs",
+      "bytes": 28764,
+      "sha256": "0cd124f76c9b18ba7dc2371b2493a3cf1b55e86ba839b248fd934edd356bcc73"
+    },
+    {
+      "path": "design/blueprint-world/validation/check-studio.mjs",
+      "bytes": 35630,
+      "sha256": "e1dd68e4fb08ed28e37e8a6c2ed812ce42297d64059a8ae5db47a8cec6484a83"
+    },
+    {
+      "path": "design/blueprint-world/validation/check-ui.mjs",
+      "bytes": 16685,
+      "sha256": "a26abeba77fcc676bdb9e3998fd88b58053effab15e34622a84507ae56efd4ba"
+    },
+    {
+      "path": "design/blueprint-world/validation/core-contract.json",
+      "bytes": 12625,
+      "sha256": "63fdb32f46975a5b4ba0599f99c4f69cb8601d8ac23c56e594e67aa984bc1cce"
+    },
+    {
+      "path": "design/blueprint-world/validation/core-receipt-a16a38263dda.json",
+      "bytes": 5897,
+      "sha256": "1ca1fd4178e43e19309bf44e0c7e4ba42a75ee29b38e0c7a951fa2b987f76e19"
+    },
+    {
+      "path": "design/blueprint-world/validation/fixtures.mjs",
+      "bytes": 5530,
+      "sha256": "235a32d31eeb6d9d65880946ada6bdbeb16eac97f477bf30d9e0170b8838e7fa"
+    },
+    {
+      "path": "design/blueprint-world/validation/renderer-nongpu-evidence.json",
+      "bytes": 2577,
+      "sha256": "4427745a201c6823bb7c395fa5e2a6545014326d45e46bc2fc3e74dd13c3002f"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-browser-receipt.json",
+      "bytes": 7626,
+      "sha256": "92e4707abf75a3d3f9417f5051d11ce47341fa89ba6095c626b3e750d041b1f1"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-receipt-3a586a4d0905.json",
+      "bytes": 7276,
+      "sha256": "f8275778bc30e611308fc69d30ab86de5b30880ffdbb1a67257d4e78556705f1"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-receipt-8a074c39c2cd.json",
+      "bytes": 5002,
+      "sha256": "c37fbfc1b6817d87d3e65c75a7d1258a3f356669d76e192b149a9fd49050c9cf"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-receipt-accdd9cdcaf3.json",
+      "bytes": 6934,
+      "sha256": "3c24760a9c75a36cce1f9d65f18479508a9d9988fc713de0b387db927224254f"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-renderer-evidence.json",
+      "bytes": 5521,
+      "sha256": "d30faa4ee191025f2830c53534ec3e4c260aa53dea2198ce4920021697c82327"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-ui-copy-change.json",
+      "bytes": 7787,
+      "sha256": "13f3cd0f79d40059cc7ba6324e69498b84de71fc42a0f67c2b4f113504659922"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-ui-final.json",
+      "bytes": 5743,
+      "sha256": "64a8dbe769ac1e6a198eb270b7dfccd0d0f7887e54301ac88dabac6836e9c2d2"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-ui-first.json",
+      "bytes": 5743,
+      "sha256": "faaeca6db0a92c591189a3dc79a0ecadb3b7e15503fabc49421cd116e660bc15"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-ui-owner-copy-change.json",
+      "bytes": 7814,
+      "sha256": "803033c64092b2aac88dc90602f3a8dd873b038eebafee36988d65e264156372"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-ui-published-v16.json",
+      "bytes": 5743,
+      "sha256": "5e4e60ecf487c29f22a0be264611e244ef51ad65c0138f6be144bbb9905d39bb"
+    },
+    {
+      "path": "design/blueprint-world/validation/studio-ui-receipt-3b38b4453021.json",
+      "bytes": 3511,
+      "sha256": "67a79316d69bb4a795ceb802667eb1d91f61092e3525ce57976a3055184f8bfc"
+    },
+    {
+      "path": "design/blueprint-world/validation/ui-receipt-3dd32e492c47.json",
+      "bytes": 3271,
+      "sha256": "d637a6e50e830b447db8f42485dffe13fca2212d956bebba33fcbc80b21e1b0c"
+    },
+    {
+      "path": "design/blueprint-world/validation/ui-receipt-724868f8697d-initial-harness.json",
+      "bytes": 3490,
+      "sha256": "6215a3be1a00cbf8ba7a520db5ad8f178e811579584aca089ed719ec86109b23"
+    },
+    {
+      "path": "design/blueprint-world/validation/ui-receipt-724868f8697d.json",
+      "bytes": 3271,
+      "sha256": "cd24342473a5d1601f29bebd9a4da83fc6bb25aaad8d77ebf6036dadccea9f1f"
+    },
+    {
+      "path": "design/blueprint-world/validation/validation-index.checkpoint-287dfdf.json",
+      "bytes": 6438,
+      "sha256": "0ed89b5fd68dbb2ed1983775f23c854ef2f0748af73b3c7650b8d470671cf59b"
+    }
+  ]
+}

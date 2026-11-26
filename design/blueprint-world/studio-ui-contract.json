@@ -1,0 +1,37 @@
+{
+  "artifactType": "blueprint-studio-ui-host-contract/v1",
+  "runId": "blueprint-studio-20261121",
+  "export": "createStudioUI(ctx) -> {open(companyId,departmentId?), refresh()}",
+  "file": "cloud-workspace/public/concepts/blueprint-world-studio-ui.js",
+  "imports": [
+    "import * as core from ./blueprint-world-core.js",
+    "import * as edits from ./blueprint-world-studio-edits.js"
+  ],
+  "ctx": {
+    "getModel": "() => current core model",
+    "getStudio": "() => current metadata",
+    "getActorId": "() => currently selected local blueprint-edit actor ID",
+    "setActorId": "(actorId) => host validates current actor and switches the blueprint edit actor; other owner CRUD remains CEO",
+    "blocked": "() => empty string or reason for blocked Studio editing/saving (metadata corruption or another-tab update)",
+    "commit": "(envelope) => synchronous applyEdit plus commit pair/persist/rerender; returns ApplyResult; throws on rejected input",
+    "createSubDonna": "({companyId,departmentId,name}) => atomic local owner action: staged core hire Sub-Donna, owner-change barrier, explicit actor registration and department subtree edit grant, then one commit/persist; returns {employeeId,actorId}. No worker/model execution.",
+    "openPanel": "(id,title,scopeLabel,selection,builder) => existing app world-anchored popup; builder(body,panel)",
+    "refreshPanel": "(id)=>existing renderPanelById",
+    "openProfile": "(assignmentId)=>existing person popup",
+    "getWorld": "()=> current renderer API or null",
+    "announce": "(plainText)=>aria live status",
+    "el": "(tag,props,...children)=>safe DOM creation. props.text is textContent, on* addEventListener.",
+    "btn": "(label,fn,class?,attrs?)=>button with stable data-focus-key support",
+    "field": "(label,input,id)=>unique id plus stable data-focus-key label wrapper",
+    "select": "(id,options:[{value,label}],value)=>native select"
+  },
+  "rules": [
+    "One stable studio-COMPANY_ID panel, no page/router/sidebar. Department passed to open sets selected department before opening/rerender.",
+    "Actor selection is blueprint-edit simulation only. Other record workflows remain CEO owner operations, clearly stated in concise text.",
+    "Use stable company/department/actor/operation draft keys. Preserve edited drafts across refresh/reopen.",
+    "Pure module flat commands and expectedRevision/actor sequence are authoritative. UI must not grant from names/roles.",
+    "All buttons show meaningful inline rejection and retain drafts. Never silently refresh expectedRevision and apply a stale preview.",
+    "Access and history may be collapsible details within same popup; no management screens.",
+    "UI has no network, provider, localStorage or runtime calls. Host owns persistence and authority."
+  ]
+}

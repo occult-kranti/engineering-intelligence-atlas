@@ -48,12 +48,12 @@ function idx(roles: unknown[]) {
 }
 
 describe('loadRoleReference', () => {
-  it('loads the bundled research lenses through the same bounded runtime loader', () => {
+  it('loads the bundled research and permanent operations roles through the same bounded runtime loader', () => {
     const seed = fileURLToPath(new URL('../../company/', import.meta.url));
     const repo = path.dirname(seed.replace(/[\\/]$/, ''));
-    for (const key of ['newton', 'tesla', 'research-skeptic', 'resonance-advisor', 'paired-research']) {
+    for (const key of ['newton', 'tesla', 'research-skeptic', 'resonance-advisor', 'paired-research', 'cloud-operations', 'runtime-observer', 'knowledge-steward', 'connector-steward']) {
       const result = loadRoleReference(seed, key);
-      expect(result, `Missing or invalid runtime research role: ${key}`).not.toBeNull();
+      expect(result, `Missing or invalid bundled runtime role: ${key}`).not.toBeNull();
       expect(result!.sha256).toMatch(/^[0-9a-f]{64}$/);
       expect(fs.existsSync(path.join(repo, result!.document))).toBe(true);
       for (const example of result!.examples) expect(fs.existsSync(path.join(repo, example))).toBe(true);

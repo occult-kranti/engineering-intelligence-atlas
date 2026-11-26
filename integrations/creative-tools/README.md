@@ -8,7 +8,7 @@ Setup uses the existing additive company-kit importer. It preserves company iden
 
 | Department | Added specialist definitions | Intended work |
 | --- | --- | --- |
-| Graphics production | Graphics production lead; Blender technical artist; Asset interoperability engineer | Scene inspection, bounded CPU renders, GLB export, SVG rasterization and authorized format interchange |
+| Graphics production | Graphics production lead; Blender technical artist; Asset interoperability engineer | Scene inspection, bounded CPU/CUDA/OPTIX renders, GLB export, SVG rasterization and authorized format interchange |
 | Game engineering | Unreal gameplay engineer | Review a licensed Unreal project and run fixed DataValidation; inspect related assets |
 | Creative QA | Creative QA engineer | Inspect media/project metadata, validate engine content and retain delivery evidence |
 
@@ -91,7 +91,7 @@ An approved native job can include `creative.execute` in `allowedTools`. Before 
 
 The host attaches company, employee and a stable native-job-derived request ID. It validates project/operation against the current native job scope, rechecks leased worker authority during execution, and accepts only a matching successful `creative://jobs/...` receipt. A retry cannot create another side effect with a model-chosen identity. One provider job cannot combine GitHub publication and creative execution; use a separate reviewed publication job for finished outputs.
 
-Local operations use fixed arguments/helpers. Blender disables file auto-execution and uses bounded CPU rendering. Unreal plugins can execute trusted engine code, so configure only reviewed repositories. Account separation, process limits and container/systemd controls do not make hostile project code safe.
+Local operations use fixed arguments/helpers. Blender disables file auto-execution and defaults to bounded CPU rendering. The owner may select one enumerated CUDA/OPTIX device with verified cgroup memory enforcement; an unavailable GPU fails without a CPU fallback. See [the runtime contract](RUNTIME_CONTRACT.md). Unreal plugins can execute trusted engine code, so configure only reviewed repositories. Account separation, process limits and container/systemd controls do not make hostile project code safe.
 
 ## Adobe and interoperability
 

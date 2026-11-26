@@ -5,12 +5,19 @@ disabled. Reviewed .blend inputs must embed their resources. This adapter is not
 a sandbox for hostile Blender files; the deployment still needs OS isolation.
 """
 import json
+import importlib.util
 import sys
+import time
 from pathlib import Path
 
 import bpy
 
 sys.dont_write_bytecode = True
+
+# Import only the reviewed sibling helper, independent of the project directory.
+device_spec = importlib.util.spec_from_file_location("daftar_blender_device", Path(__file__).with_name("blender_device.py"))
+device_module = importlib.util.module_from_spec(device_spec)
+device_spec.loader.exec_module(device_module)
 
 
 def bounded(value, minimum, maximum):
@@ -21,9 +28,12 @@ def bounded(value, minimum, maximum):
 
 def main():
     arguments = sys.argv[sys.argv.index("--") + 1:]
-    if len(arguments) != 4:
+    if len(arguments) not in {4, 5}:
         raise ValueError("Expected fixed creative arguments")
-    operation, source, destination, raw = arguments
+    operation, source, destination, raw = arguments[:4]
+    render_policy = json.loads(arguments[4]) if len(arguments) == 5 else {"backend": "CPU", "deviceIndex": 0}
+    if not isinstance(render_policy, dict) or set(render_policy) != {"backend", "deviceIndex"}:
+        raise ValueError("Expected reviewed device policy")
     if operation not in {"blender.inspect", "blender.render", "blender.export_glb"}:
         raise ValueError("Unsupported Blender operation")
     parameters = json.loads(raw)
@@ -77,7 +87,11 @@ def main():
         if scene.camera is None:
             raise ValueError("A reviewed render camera is required")
         scene.render.engine = "CYCLES"
-        scene.cycles.device = "CPU"
+        try:
+            device = device_module.select_cycles_device(bpy, scene, render_policy["backend"], render_policy["deviceIndex"])
+        except device_module.DeviceSelectionError:
+            print("DAFTAR_DEVICE_ERROR=GPU_DEVICE_UNAVAILABLE", file=sys.stderr, flush=True)
+            raise
         scene.cycles.samples = samples
         scene.cycles.use_denoising = False
         scene.render.resolution_x = width
@@ -89,9 +103,11 @@ def main():
         scene.render.use_file_extension = True
         scene.render.filepath = str(destination / "render.png")
         scene.frame_set(frame)
+        started = time.monotonic()
         bpy.ops.render.render(write_still=True)
         result = {"format": "png", "frame": frame, "width": width,
-                  "height": height, "samples": samples, "engine": "CYCLES", "device": "CPU"}
+                  "height": height, "samples": samples, "engine": "CYCLES",
+                  **device, "renderDurationSeconds": round(time.monotonic() - started, 6)}
     else:
         bpy.ops.export_scene.gltf(filepath=str(destination / "scene.glb"),
                                   export_format="GLB", export_animations=False,

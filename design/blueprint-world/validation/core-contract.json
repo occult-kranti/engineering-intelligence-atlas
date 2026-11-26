@@ -1,0 +1,356 @@
+{
+  "artifactType": "blueprint-world-core-contract/v1",
+  "runId": "blueprint-world-20261121",
+  "nodeId": "core",
+  "attempt": 1,
+  "idempotencyKey": "blueprint-world-20261121:core:1",
+  "terminationOwner": "root",
+  "module": "blueprint-world-core.js",
+  "moduleType": "ES module",
+  "imports": [],
+  "exports": [
+    "LIMITS",
+    "COLORS",
+    "seedState",
+    "validateState",
+    "loadState",
+    "saveState",
+    "createCompany",
+    "createDepartment",
+    "hireEmployee",
+    "addTask",
+    "updateTask",
+    "addNote",
+    "updateNote",
+    "moveAssignment",
+    "companyLayout",
+    "companyEmployees",
+    "companyTasks",
+    "companyNotes",
+    "searchRecords",
+    "describeScope",
+    "containsRect",
+    "containsCircle",
+    "clampPoint"
+  ],
+  "limits": {
+    "companies": 100,
+    "rootDepartmentsPerCompany": 32,
+    "departmentDepth": 2,
+    "childrenPerDepartment": 4,
+    "departments": 4096,
+    "employees": 1000,
+    "assignments": 2000,
+    "tasks": 500,
+    "notes": 500,
+    "companyWidth": 1100,
+    "nameLength": 60,
+    "textLength": 300,
+    "searchResults": 60,
+    "coordinateLimit": 1000000,
+    "storageBytes": 2097152
+  },
+  "colors": {
+    "ceo": "#d3b570",
+    "director": "#d3b570",
+    "donna": "#78b6ad",
+    "leadership": "#d3b570",
+    "product": "#7ba8c5",
+    "engineering": "#7b9bc9",
+    "design": "#d79f91",
+    "research": "#ae9bc7",
+    "operations": "#91b69b",
+    "employee": "#a8b5c4",
+    "visiting": "#cca16b",
+    "shared": "#9b8bc7",
+    "restricted": "#424957",
+    "company": "#f2eddf",
+    "board": "#e8e1d3",
+    "note": "#e6cb7f"
+  },
+  "storage": {
+    "key": "daftar-blueprint-world-v1",
+    "loadReturn": "State (fresh seed on unavailable, missing, oversized, invalid or unsupported-version storage)",
+    "saveReturn": "{ok:true} or {ok:false,error:string}; never throw on storage failure; no state mutation"
+  },
+  "state": {
+    "version": 1,
+    "companies": "Company[]",
+    "offices": "Office[]",
+    "departments": "Department[]",
+    "employees": "Employee[]",
+    "assignments": "Assignment[]",
+    "tasks": "Task[]",
+    "notes": "Note[]"
+  },
+  "records": {
+    "Company": {
+      "id": "co-*",
+      "name": "nonempty string <=60",
+      "parentId": "company ID|null",
+      "x": "finite world X, top-left anchor",
+      "z": "finite world Z, top-left anchor",
+      "width": 1100,
+      "officeId": "own default office ID",
+      "directorId": "own employee ID",
+      "assistantId": "own employee ID"
+    },
+    "Office": {
+      "id": "of-*",
+      "companyId": "owning company ID",
+      "name": "nonempty string <=60"
+    },
+    "Department": {
+      "id": "dp-*",
+      "companyId": "company ID",
+      "officeId": "same-company office ID",
+      "parentId": "same-office department ID|null",
+      "name": "nonempty string <=60",
+      "color": "#RRGGBB",
+      "order": "nonnegative integer sibling order"
+    },
+    "Employee": {
+      "id": "em-*",
+      "homeCompanyId": "company ID",
+      "name": "nonempty string <=60",
+      "role": "nonempty string <=60",
+      "reportsToId": "same-home-company employee ID|null"
+    },
+    "Assignment": {
+      "id": "as-*",
+      "employeeId": "canonical employee ID",
+      "companyId": "host company ID",
+      "departmentId": "same-company ordinary department ID",
+      "kind": [
+        "resident",
+        "shared",
+        "visiting"
+      ],
+      "x": "finite department-local seat offset|null",
+      "y": "finite department-local seat offset|null"
+    },
+    "Task": {
+      "id": "tk-*",
+      "companyId": "company ID",
+      "departmentId": "same-company ordinary department ID|null",
+      "title": "nonempty string <=300",
+      "ownerId": "canonical employee ID eligible through same-company assignment|null",
+      "status": [
+        "todo",
+        "doing",
+        "done"
+      ],
+      "lane": [
+        "now",
+        "next",
+        "later"
+      ]
+    },
+    "Note": {
+      "id": "nt-*",
+      "companyId": "company ID",
+      "text": "nonempty string <=300",
+      "color": "#RRGGBB",
+      "x": "finite whiteboard-local offset|null",
+      "y": "finite whiteboard-local offset|null"
+    }
+  },
+  "api": {
+    "seedState()": "new deterministic valid State, independent on every call",
+    "validateState(raw)": "independent normalized State; throws human-readable Error if malformed, over limit, cyclic or inconsistent; never mutates raw",
+    "loadState(storage)": "State; uses only the supplied getItem adapter",
+    "saveState(storage,state)": "{ok:boolean,error?:string}; uses only supplied setItem adapter; validates before serializing",
+    "createCompany(state,{name,parentId?})": "Company; creates company, one default office, six ordinary departments including Leadership, and two local employee definitions Director/Donna with resident assignments; no other employees",
+    "createDepartment(state,{companyId,officeId?,parentId?,name,color?})": "Department; omitted officeId resolves to the company default; supplied parent must be in that office",
+    "hireEmployee(state,{companyId,departmentId,name,role,kind?})": "Employee; also creates exactly one Assignment; kind defaults resident, reportsToId defaults company director",
+    "addTask(state,{companyId,departmentId?,title,ownerId?})": "Task; default departmentId/ownerId null, status todo, lane now",
+    "updateTask(state,id,patch)": "Task; allowed patch keys title,departmentId,ownerId,status,lane only; companyId/id are immutable",
+    "addNote(state,{companyId,text})": "Note; default color COLORS.note and null x/y",
+    "updateNote(state,id,patch)": "Note; allowed patch keys text,color,x,y only; x/y either both null or both finite; clamp finite offsets to whiteboard bounds for an80x48 note",
+    "moveAssignment(state,id,{x,y})": "Assignment; input is company-local geometry, converted/clamped to the assignment department own seat area; stores department-local offsets and changes no scope/identity",
+    "companyLayout(state,companyId)": "Layout; pure, deterministic, company-local geometry; unknown company throws",
+    "companyEmployees(state,companyId)": "EmployeeProjection[]; one per explicit assignment to this company, deterministic order, copied values; unknown company returns[]",
+    "companyTasks(state,companyId)": "copied company-filtered Task[]; unknown company returns[]",
+    "companyNotes(state,companyId)": "copied company-filtered Note[]; unknown company returns[]",
+    "searchRecords(state,q)": "SearchResult[] up to LIMITS.searchResults, normalized case-insensitive match; empty query returns[]; includes explicit employee assignments, excludes layout-only restricted placeholder",
+    "describeScope(state,companyId,departmentId?)": "ScopeDescription; department filter includes descendants, unknown or wrong-company scope throws",
+    "containsRect(outer,inner,epsilon=1e-7)": "boolean; rects {x,y,w,h}; false for invalid/nonfinite/negative sizes",
+    "containsCircle(outer,circle,epsilon=1e-7)": "boolean; outer rect and circle{x,y,r}; false for invalid/nonfinite/negative values",
+    "clampPoint(point,rect,padding=0)": "{x,y}; throws for invalid/nonfinite inputs or impossible padding"
+  },
+  "returns": {
+    "EmployeeProjection": {
+      "id": "employee ID",
+      "name": "string",
+      "role": "string",
+      "homeCompanyId": "company ID",
+      "reportsToId": "employee ID|null",
+      "assignmentId": "assignment ID",
+      "companyId": "host company ID",
+      "departmentId": "host department ID",
+      "kind": [
+        "resident",
+        "shared",
+        "visiting"
+      ]
+    },
+    "SearchResult": {
+      "type": [
+        "company",
+        "office",
+        "department",
+        "employee",
+        "task",
+        "note"
+      ],
+      "id": "record ID",
+      "companyId": "company ID",
+      "departmentId": "department ID|null",
+      "assignmentId": "assignment ID|null",
+      "label": "string",
+      "subtitle": "string"
+    },
+    "ScopeDescription": {
+      "companyId": "company ID",
+      "companyName": "string",
+      "departmentId": "department ID|null",
+      "departmentName": "string|null",
+      "employeeCount": "number of eligible employee definitions",
+      "taskCount": "number",
+      "openTaskCount": "number",
+      "unassignedTaskCount": "number",
+      "doneTaskCount": "number",
+      "noteCount": "company note count",
+      "summary": "plain scripted summary; explicitly employee definitions, not running processes"
+    },
+    "Layout": {
+      "width": 1100,
+      "height": "finite derived number",
+      "rooms": "Room[] including nested rooms and one layout-only restricted placeholder",
+      "boards": "Board[]",
+      "seats": "Seat[]",
+      "leadership": {
+        "directorId": "employee ID",
+        "assistantId": "employee ID"
+      }
+    },
+    "Room": {
+      "id": "stable layout ID",
+      "departmentId": "department ID|null for restricted placeholder",
+      "name": "string",
+      "color": "#RRGGBB",
+      "x": "company-local number",
+      "y": "company-local number",
+      "w": "number",
+      "h": "number",
+      "restricted": "boolean"
+    },
+    "Board": {
+      "type": [
+        "roadmap",
+        "ownership",
+        "whiteboard",
+        "hierarchy"
+      ],
+      "x": "company-local number",
+      "y": "company-local number",
+      "w": "number",
+      "h": "number"
+    },
+    "Seat": {
+      "assignmentId": "assignment ID",
+      "x": "company-local circle center",
+      "y": "company-local circle center",
+      "r": 18
+    }
+  },
+  "layout": {
+    "companyWidth": 1100,
+    "companyStepX": 1260,
+    "conferenceSpineWorldZ": -80,
+    "rootColumns": 3,
+    "leftMargin": 50,
+    "rightMargin": 50,
+    "rootColumnWidth": 320,
+    "columnGap": 20,
+    "firstRootY": 104,
+    "rowGap": 24,
+    "minimumRootHeight": 200,
+    "nestedInset": 16,
+    "boardsBelowRooms": true,
+    "boardTypes": [
+      "roadmap",
+      "ownership",
+      "whiteboard",
+      "hierarchy"
+    ],
+    "boardWidth": 238,
+    "boardHeight": 200,
+    "boardGap": 16,
+    "roomToBoardGap": 48,
+    "bottomMargin": 40,
+    "restrictedPlaceholder": {
+      "x": 850,
+      "y": 32,
+      "w": 200,
+      "h": 48,
+      "departmentId": null,
+      "restricted": true
+    },
+    "assignmentCoordinates": "Stored offsets are local to own department; output seats and moveAssignment input are company-local. Seat-owning strip precedes nested child rooms."
+  },
+  "seed": {
+    "companies": [
+      {
+        "id": "co-studio-north",
+        "name": "Studio North",
+        "x": 0,
+        "z": 0,
+        "parentId": null
+      },
+      {
+        "id": "co-orbit-works",
+        "name": "Orbit Works",
+        "x": -1260,
+        "z": 0,
+        "parentId": null
+      },
+      {
+        "id": "co-research-lab",
+        "name": "Research Lab",
+        "x": 1260,
+        "z": 0,
+        "parentId": "co-studio-north"
+      }
+    ],
+    "departmentsPerCompany": [
+      "Leadership",
+      "Product",
+      "Engineering",
+      "Design",
+      "Research",
+      "Operations"
+    ],
+    "employeesPerCompany": 12,
+    "leadershipRoles": [
+      "Director",
+      "Donna"
+    ],
+    "ordinaryEmployeesPerOtherDepartment": 2,
+    "sharedAndVisiting": "Add one explicit shared host assignment and one visiting host assignment referencing existing canonical employees; do not duplicate employees. Each company has otherwise unique synthetic names.",
+    "tasksPerCompany": 6,
+    "notesPerCompany": 2
+  },
+  "invariants": [
+    "Company, department and employee-reporting parent graphs are acyclic.",
+    "Exactly one default Office per company in this bounded prototype API.",
+    "Department depth root0,child1,grandchild2; at most4 children per department and32 roots per company.",
+    "One assignment per(employeeId,companyId); resident assignment host must equal employee home company.",
+    "Task ownerId is an employee ID, never an assignment ID; eligibility requires a host assignment in the task company and in the department subtree when department-scoped.",
+    "Restricted room is a layout-only placeholder, never an Office/Department/Employee/Task owner and never a searchable private record.",
+    "Mutations stage all changes, validate and commit only on success; failed call leaves the state deeply unchanged.",
+    "State object identity is retained on successful mutation; record-array replacement is permitted, so consumers retain stable IDs rather than stale record object references.",
+    "Queries and layout do not mutate state. Names are plain data, never HTML.",
+    "No DOM, renderer, network, provider, credentials, implicit global storage, simulation or real grants."
+  ]
+}

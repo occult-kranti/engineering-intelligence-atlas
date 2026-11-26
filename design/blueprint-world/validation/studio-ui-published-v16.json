@@ -1,0 +1,179 @@
+{
+  "artifactType": "blueprint-studio-dom-workflow-validation",
+  "run": "blueprint-studio-20261121",
+  "node": "root-dom-verification",
+  "attempt": 1,
+  "idempotencyKey": "blueprint-studio-20261121:root-dom-verification:1",
+  "terminationOwner": "root",
+  "createdAt": "2026-11-22T00:11:34.360Z",
+  "status": "passed",
+  "groups": 14,
+  "passed": 14,
+  "environment": {
+    "node": "v24.22.3",
+    "dom": "jsdom 31.0.1",
+    "renderer": "deliberately unavailable; actual renderer module not imported",
+    "network": "disabled; zero attempts required"
+  },
+  "source": {
+    "app": {
+      "path": "cloud-workspace/public/concepts/blueprint-world-app.js",
+      "bytes": 77342,
+      "sha256": "7d676a4a91bfa801d0d9e2f7ac837a2b8c84f38cbd5f56db422098bd0ce0d7f0"
+    },
+    "html": {
+      "sha256": "ecf54ec2a0dadf3e92fff9e22c05beedae4db4bc83082ef729c6714904eb69e9"
+    },
+    "studioEdits": {
+      "sha256": "3a586a4d09059e1fa908d2a44cf00c8a0e90fd9abfa62e1fe90f3a5fb1d7581a"
+    },
+    "studioUI": {
+      "sha256": "52270e7631d8cac1a6951dae7e10d282780cd610edddb7eb83f197f721bd938a"
+    },
+    "core": {
+      "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea"
+    },
+    "fixtures": {
+      "sha256": "235a32d31eeb6d9d65880946ada6bdbeb16eac97f477bf30d9e0170b8838e7fa"
+    },
+    "harness": {
+      "sha256": "0cd124f76c9b18ba7dc2371b2493a3cf1b55e86ba839b248fd934edd356bcc73"
+    }
+  },
+  "limitations": [
+    "Synthetic DOM events and fixed panel dimensions do not verify browser input delivery, CSS layout, pixels, clipping, hit-testing, accessibility announcements, or focus scrolling.",
+    "No WebGL context, rendering, raycast, GPU performance, or renderer recovery was executed.",
+    "Renderer unavailability is an explicit injected module boundary; all application form handlers and core mutations are the captured production source.",
+    "Only local fixture records are exercised; this is not production permission or provider integration verification."
+  ],
+  "results": [
+    {
+      "name": "Renderer-unavailable forms and corrupt-storage bootstrap",
+      "status": "passed",
+      "details": {
+        "renderer": "explicitly unavailable",
+        "storageBoots": 2
+      }
+    },
+    {
+      "name": "Department-specific hire drafts survive close and reopen independently",
+      "status": "passed",
+      "details": {
+        "coexistingContexts": 2,
+        "submittedDefinitions": 1,
+        "unsentDraftsPreserved": 1
+      }
+    },
+    {
+      "name": "Person-specific task drafts retain the intended owner and company",
+      "status": "passed",
+      "details": {
+        "sameDepartmentOwners": 2,
+        "foreignOwnersExcluded": true
+      }
+    },
+    {
+      "name": "Donna draft lifecycle, literal text, context separation and bounded history",
+      "status": "passed",
+      "details": {
+        "scopeDrafts": 2,
+        "rapidSends": 24,
+        "visibleMessageCap": 40,
+        "htmlExecution": false
+      }
+    },
+    {
+      "name": "Panel pointer cancellation restores the synthetic presentation position",
+      "status": "passed",
+      "details": {
+        "cancelCases": 3,
+        "layout": "fixed synthetic 380x240 panel; no browser hit-testing claim"
+      }
+    },
+    {
+      "name": "Failed persistence keeps new local records usable and reports session-only state",
+      "status": "passed",
+      "details": {
+        "writeFailures": 1,
+        "storedStateUnchanged": true,
+        "localMutationVisible": true
+      }
+    },
+    {
+      "name": "Studio opens without a write; owner rename is literal and company-contained",
+      "status": "passed",
+      "details": {
+        "combinedWrites": true,
+        "canonicalIdsPreserved": true,
+        "initialNoWrite": true,
+        "focusRestored": true
+      }
+    },
+    {
+      "name": "Actor drafts remain distinct and visitors cannot place through profile or scene callbacks",
+      "status": "passed",
+      "details": {
+        "independentActorDrafts": 2,
+        "deniedPlacementPaths": [
+          "native profile nudge",
+          "injected renderer callback"
+        ],
+        "graphics": false
+      }
+    },
+    {
+      "name": "Donna entry selects explicit company actor and cannot edit a sibling company",
+      "status": "passed",
+      "details": {
+        "explicitDonnaActor": true,
+        "foreignCompanyDenied": true
+      }
+    },
+    {
+      "name": "A local sub-Donna is created atomically with canonical reporting and a revocable subtree grant",
+      "status": "passed",
+      "details": {
+        "newEmployee": 1,
+        "newActor": 1,
+        "scopedGrant": 1,
+        "revocationImmediate": true
+      }
+    },
+    {
+      "name": "Owner work makes an edited Studio draft stale without losing its text",
+      "status": "passed",
+      "details": {
+        "ownerBarrier": true,
+        "staleRejected": true,
+        "draftPreserved": true,
+        "explicitRebase": true
+      }
+    },
+    {
+      "name": "Studio history undo compensates the latest layout edit without rewinding policy",
+      "status": "passed",
+      "details": {
+        "compensatingEvent": true,
+        "policyPreserved": true
+      }
+    },
+    {
+      "name": "Corrupt Studio metadata preserves raw bytes while a storage event fences further owner edits",
+      "status": "passed",
+      "details": {
+        "corruptBytesPreserved": true,
+        "sessionOwnerWork": true,
+        "crossTabFence": true,
+        "casClaim": false
+      }
+    },
+    {
+      "name": "Existing employee registration grants no authority until an explicit grant is added",
+      "status": "passed",
+      "details": {
+        "registrationAloneNoGrant": true,
+        "explicitCapabilityGrant": true
+      }
+    }
+  ]
+}

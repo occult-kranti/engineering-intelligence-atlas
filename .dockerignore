@@ -15,6 +15,19 @@
 !headless-runtime/contract.mjs
 !headless-runtime/creative-tools.mjs
 !headless-runtime/creative-worker.mjs
+!headless-runtime/host-control.mjs
+!headless-runtime/host-control-contract.mjs
+!headless-runtime/host-job-runner.mjs
+!headless-runtime/workbench.mjs
+!headless-runtime/workbench-contract.mjs
+!headless-runtime/managed-environments.mjs
+!headless-runtime/managed-environments-contract.mjs
+!headless-runtime/model-resources.mjs
+!headless-runtime/model-resources-contract.mjs
+!headless-runtime/design-toolchain.mjs
+!headless-runtime/design-toolchain-contract.mjs
+!headless-runtime/activity-journal.mjs
+!headless-runtime/activity-journal-contract.mjs
 !headless-runtime/runtime.mjs
 !headless-runtime/secrets.mjs
 !headless-runtime/server.mjs
@@ -22,6 +35,7 @@
 !desktop-shell/package.json
 !desktop-shell/package-lock.json
 !desktop-shell/tsconfig.json
+!desktop-shell/models.catalog.json
 !desktop-shell/src/**
 !native-core/Cargo.toml
 !native-core/Cargo.lock

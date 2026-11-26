@@ -41,8 +41,8 @@ function validateCreativeRequest(operation,input){
 function resultMetadata(value){
   if(!object(value))return undefined;
   const out={};
-  for(const key of ['objects','meshes','materials','scenes','cameras','lights','frameStart','frameEnd','frame','width','height','samples','fileVersion','modules','plugins','durationSeconds','layers'])if(Number.isFinite(value[key])&&Math.abs(value[key])<=Number.MAX_SAFE_INTEGER)out[key]=value[key];
-  for(const key of ['format','blenderVersion','engineAssociation','engine','device','provider','operation'])if(typeof value[key]==='string'&&/^[A-Za-z0-9_.:, -]{1,100}$/.test(value[key]))out[key]=text(value[key],100);
+  for(const key of ['objects','meshes','materials','scenes','cameras','lights','frameStart','frameEnd','frame','width','height','samples','fileVersion','modules','plugins','durationSeconds','layers','deviceCount','deviceIndex','renderDurationSeconds'])if(Number.isFinite(value[key])&&Math.abs(value[key])<=Number.MAX_SAFE_INTEGER)out[key]=value[key];
+  for(const key of ['format','blenderVersion','engineAssociation','engine','device','backend','deviceName','provider','operation'])if(typeof value[key]==='string'&&/^[A-Za-z0-9_.:+(), -]{1,100}$/.test(value[key]))out[key]=text(value[key],100);
   for(const key of ['engineExecuted','validationPassed','remoteAuthVerified'])if(typeof value[key]==='boolean')out[key]=value[key];
   if(HASH.test(value.inputSha256||''))out.inputSha256=value.inputSha256;
   if(['complete','pending'].includes(value.cleanup))out.cleanup=value.cleanup;
@@ -68,7 +68,8 @@ function creativeSnapshot(value,companyId){
   identifier(companyId);
   if(!object(value)||value.companyId!==companyId)throw new Error('Creative inventory belongs to a different company. Refresh the selected workspace.');
   const out={companyId,configured:value.configured===true,tools:[],projects:[],eligibleEmployees:[],assignments:[],jobs:[],limits:{}};
-  out.tools=rows(value.tools).slice(0,16).filter(row=>object(row)&&Object.hasOwn(TOOLS,row.id)).map(row=>({id:row.id,configured:row.configured===true,available:row.available===true,operations:rows(row.operations).filter(op=>OPERATIONS[op]?.tool===row.id),version:text(row.version,80),readiness:['available','unavailable','not_configured','configured_unverified','verified'].includes(row.readiness)?row.readiness:undefined,remoteAuthVerified:row.remoteAuthVerified===true,reason:row.reason?'Review runtime configuration and software availability.':''}));
+  out.tools=rows(value.tools).slice(0,16).filter(row=>object(row)&&Object.hasOwn(TOOLS,row.id)).map(row=>({id:row.id,configured:row.configured===true,available:row.available===true,operations:rows(row.operations).filter(op=>OPERATIONS[op]?.tool===row.id),version:text(row.version,80),readiness:['available','unavailable','not_configured','configured_unverified','verified'].includes(row.readiness)?row.readiness:undefined,remoteAuthVerified:row.remoteAuthVerified===true,reason:row.reason?'Review runtime configuration and software availability.':'',
+    ...(row.id==='blender'?{renderDevice:['CPU','CUDA','OPTIX'].includes(row.renderDevice)?row.renderDevice:undefined,renderDeviceIndex:Number.isSafeInteger(row.renderDeviceIndex)&&row.renderDeviceIndex>=0&&row.renderDeviceIndex<=15?row.renderDeviceIndex:undefined,renderDeviceVerified:false}:{})}));
   out.projects=rows(value.projects).slice(0,100).filter(row=>object(row)&&row.companyId===companyId&&validId(row.id)).map(row=>({id:row.id,companyId,departmentId:validId(row.departmentId)?row.departmentId:null,allowedOperations:rows(row.allowedOperations).filter(op=>Object.hasOwn(OPERATIONS,op)),allowExternalUpload:row.allowExternalUpload===true}));
   out.eligibleEmployees=rows(value.eligibleEmployees).slice(0,200).filter(row=>object(row)&&validId(row.id)&&row.status==='active'&&(!row.companyId||row.companyId===companyId)).map(row=>({id:row.id,name:text(row.name,150)||row.id,role:text(row.role,200),departmentId:validId(row.departmentId)?row.departmentId:null,status:'active'}));
   out.assignments=rows(value.assignments).slice(-100).filter(row=>object(row)&&row.companyId===companyId&&validId(row.employeeId)&&validId(row.projectId)).map(row=>({companyId,employeeId:row.employeeId,projectId:row.projectId,toolIds:[...new Set(rows(row.toolIds).filter(id=>Object.hasOwn(TOOLS,id)))]}));
@@ -80,7 +81,7 @@ function readiness(tool){
   if(!tool.configured)return 'Not configured';
   if(!tool.available)return 'Unavailable';
   if(tool.id==='adobe-photoshop')return tool.remoteAuthVerified?'Adobe authentication verified':'Configured — Adobe authentication unverified';
-  return `Detected${tool.version?' · '+tool.version:''}`;
+  return `Detected${tool.version?' · '+tool.version:''}${tool.id==='blender'&&tool.renderDevice?` · ${tool.renderDevice} requested, render device unverified`:''}`;
 }
 function inventoryText(snapshot){
   const lines=['Creative tools · '+snapshot.companyId,'','Tools are controlled by the connected runtime. Assignment metadata does not grant native authority.',''];
@@ -90,9 +91,10 @@ function inventoryText(snapshot){
   lines.push('','Employee tool assignments');for(const assignment of snapshot.assignments)lines.push(`${assignment.employeeId} · ${assignment.projectId}: ${assignment.toolIds.join(', ')||'none'}`);
   lines.push('','Runtime resource limits',JSON.stringify(snapshot.limits,null,2));return lines.join('\n');
 }
-async function askCreativeAction(ui,snapshot,companyName,assertCurrent=()=>{}){
+async function askCreativeAction(ui,snapshot,companyName,assertCurrent=()=>{},options={}){
+  if(options.tool){if(!['blender','unreal'].includes(options.tool))throw new Error('Choose Blender or Unreal development.');snapshot={...snapshot,tools:snapshot.tools.filter(row=>row.id===options.tool),jobs:snapshot.jobs.filter(row=>OPERATIONS[row.operation]?.tool===options.tool)};}
   const choose=async(items,title,extra={})=>{const value=await ui.showQuickPick(items,{title,ignoreFocusOut:true,...extra});assertCurrent();return value;};
-  const action=await choose([{id:'inventory',label:'Review detected tools and project readiness'},{id:'assign',label:'Assign tools to an employee'},{id:'revoke',label:'Remove a tool assignment'},{id:'run',label:'Start a bounded creative task'},{id:'job',label:'Check a task result or cancel'}],`Creative tools · ${companyName}`);
+  const action=options.run?{id:'run'}:await choose([{id:'inventory',label:'Review detected tools and project readiness'},{id:'assign',label:'Assign tools to an employee'},{id:'revoke',label:'Remove a tool assignment'},{id:'run',label:'Start a bounded creative task'},{id:'job',label:'Check a task result or cancel'}],`Creative tools · ${companyName}`);
   if(!action)return;
   if(action.id==='inventory')return {kind:'report',content:inventoryText(snapshot)};
   if(action.id==='revoke'){

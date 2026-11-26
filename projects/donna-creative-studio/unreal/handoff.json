@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "status": "not executed here; UnrealEditor absent",
+  "engine_version_verified": null,
+  "render_verified": false,
+  "project": "DonnaCreativeStudio.uproject",
+  "script": "Scripts/setup_donna_studio.py",
+  "source_glb": {
+    "path": "../../../desktop-shell/src/renderer/assets/donna-studio/donna-studio.glb",
+    "bytes": 327940,
+    "sha256": "b0c217830ac595c4dc9dd35cef113dc09850682b8d82066d6d418de215958f6b",
+    "scene_nodes": 20,
+    "purpose": "Sculpture geometry and materials; does not include the Blender studio camera or lights."
+  },
+  "editable_blender_source": {
+    "path": "../../../desktop-shell/src/renderer/assets/donna-studio/donna-studio.blend",
+    "bytes": 1427512,
+    "sha256": "eef523386640e8ee4b390517973841cacef44146de3a98da4792f5dfa4a64aae"
+  },
+  "asset_provenance": "../../../desktop-shell/src/renderer/assets/donna-studio/provenance.json",
+  "intended_outputs": {
+    "map": "/Game/DonnaStudio/Maps/DonnaStudio",
+    "imported_assets": "/Game/DonnaStudio/Imported",
+    "receipt": "Saved/DonnaStudio/import-receipt.json",
+    "render_directory": "Saved/DonnaStudio/Renders"
+  },
+  "scope": "Local editor content handoff only; no remote execution or runtime tool registration."
+}

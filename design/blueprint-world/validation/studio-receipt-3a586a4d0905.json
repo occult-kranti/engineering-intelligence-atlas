@@ -1,0 +1,229 @@
+{
+  "artifactType": "blueprint-studio-independent-validation/v1",
+  "run": "blueprint-studio-20261121",
+  "node": "verification",
+  "attempt": 1,
+  "idempotencyKey": "blueprint-studio-20261121:verification:1",
+  "terminationOwner": "root",
+  "createdAt": "2026-11-21T23:59:38.092Z",
+  "status": "passed",
+  "groups": 17,
+  "passed": 17,
+  "failed": 0,
+  "environment": {
+    "node": "v24.22.3",
+    "execution": "Pure Node module calls; no DOM, browser, GPU, network, provider or storage side effects introduced by harness"
+  },
+  "provenance": {
+    "contract": {
+      "path": "design/blueprint-world/studio-contract.json",
+      "bytes": 19315,
+      "sha256": "1f38c953a415004d66cb4a18f56ad6ff557f3b1ca24e83405cbaa9a7464edbe2"
+    },
+    "module": {
+      "path": "cloud-workspace/public/concepts/blueprint-world-studio-edits.js",
+      "bytes": 41543,
+      "sha256": "3a586a4d09059e1fa908d2a44cf00c8a0e90fd9abfa62e1fe90f3a5fb1d7581a"
+    },
+    "core": {
+      "path": "cloud-workspace/public/concepts/blueprint-world-core.js",
+      "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea"
+    },
+    "fixtures": {
+      "path": "design/blueprint-world/validation/fixtures.mjs",
+      "sha256": "235a32d31eeb6d9d65880946ada6bdbeb16eac97f477bf30d9e0170b8838e7fa"
+    },
+    "harness": {
+      "path": "design/blueprint-world/validation/check-studio.mjs",
+      "sha256": "e1dd68e4fb08ed28e37e8a6c2ed812ce42297d64059a8ae5db47a8cec6484a83"
+    }
+  },
+  "limitations": [
+    "Local Studio capability checks are not server authentication, account grants or secure data ownership.",
+    "Fingerprint is change detection only, not proof against metadata tampering.",
+    "No app form integration, pointer delivery, browser focus, graphics, cross-tab CAS or GPU behavior is exercised.",
+    "The accepted core module is a dependency for canonical state, layout and move clamping; independent fixtures and state-transition expectations do not import Studio implementation helpers."
+  ],
+  "results": [
+    {
+      "name": "Frozen exports, explicit bootstrap and detached canonical metadata",
+      "status": "passed",
+      "durationMs": 26,
+      "details": {
+        "requiredExports": 9,
+        "explicitOwnerGrantRequired": true
+      }
+    },
+    {
+      "name": "Roles, parent companies and department ancestry do not infer grants",
+      "status": "passed",
+      "durationMs": 34,
+      "details": {
+        "unprivilegedActorCases": 5,
+        "explicitDescendantTargets": 4,
+        "parentCompanyIsNotInherited": true
+      }
+    },
+    {
+      "name": "Shared placement uses host assignment scope and preserves canonical identity",
+      "status": "passed",
+      "durationMs": 24,
+      "details": {
+        "explicitHostGrant": true,
+        "identityFieldsPreserved": 5,
+        "employeeIdIsNotAssignmentId": true
+      }
+    },
+    {
+      "name": "Preview and floorplan edits are pure, targeted and generated-patch only",
+      "status": "passed",
+      "durationMs": 12,
+      "details": {
+        "targetedFloorplanEdits": 2,
+        "previewLeavesRevisionAndSequenceUntouched": true,
+        "hostileNameIsInertData": true
+      }
+    },
+    {
+      "name": "Reorder requires a complete sibling permutation and every changed scope",
+      "status": "passed",
+      "durationMs": 18,
+      "details": {
+        "invalidPermutations": 3,
+        "invalidOffice": 1,
+        "noOpRejected": true,
+        "unauthorizedSiblingReorderRejected": true,
+        "authorizedChildReorder": true
+      }
+    },
+    {
+      "name": "Full company footprints keep the exact 160-unit gutter",
+      "status": "passed",
+      "durationMs": 17,
+      "details": {
+        "horizontalBoundary": 160,
+        "verticalBoundary": 160,
+        "fullCompanyHeight": 1176,
+        "nonfiniteCases": 3
+      }
+    },
+    {
+      "name": "Manual circles reject occupancy and expose the core clamp",
+      "status": "passed",
+      "durationMs": 13,
+      "details": {
+        "exactOccupiedTargetRejected": true,
+        "clampedTargetExposed": true,
+        "manualRadius": 18,
+        "extraSeparation": 2
+      }
+    },
+    {
+      "name": "Malformed, prototype, accessor and unknown-field inputs reject atomically",
+      "status": "passed",
+      "durationMs": 26,
+      "details": {
+        "malformedCommands": 14,
+        "envelopeCases": 7,
+        "accessorReads": 0,
+        "cyclicRejected": true
+      }
+    },
+    {
+      "name": "Only the explicit owner administers policy and cannot lock it out",
+      "status": "passed",
+      "durationMs": 18,
+      "details": {
+        "newActorGetsNoImplicitGrant": true,
+        "grantThenRevoke": true,
+        "lastOwnerProtected": true,
+        "ownerOnlyCapabilities": 2
+      }
+    },
+    {
+      "name": "A preview is not authority after revision change and revocation",
+      "status": "passed",
+      "durationMs": 11,
+      "details": {
+        "stalePreviewRejected": true,
+        "currentRevisionStillRequiresGrant": true,
+        "fingerprintMismatchRejected": true
+      }
+    },
+    {
+      "name": "History projection uses current explicit scopes and detached records",
+      "status": "passed",
+      "durationMs": 10,
+      "details": {
+        "ownerEvents": 2,
+        "companyScopedEvents": 1,
+        "historyDetached": true
+      }
+    },
+    {
+      "name": "Retained idempotency survives later edits and same-key persistence",
+      "status": "passed",
+      "durationMs": 13,
+      "details": {
+        "retainedRetryReturnsCurrentState": true,
+        "sameStorageKey": "daftar-blueprint-world-v1",
+        "canonicalKeyOrder": true
+      }
+    },
+    {
+      "name": "Receipts and journal are bounded while actor cursors survive eviction",
+      "status": "passed",
+      "durationMs": 469,
+      "details": {
+        "acceptedCommands": 131,
+        "retainedReceipts": 64,
+        "retainedJournalEvents": 128,
+        "persistedActorCursors": 2,
+        "evictedRetryRejected": true
+      }
+    },
+    {
+      "name": "Undo compensates the latest edit under current grants without rewinding policy",
+      "status": "passed",
+      "durationMs": 57,
+      "details": {
+        "policyOnlyEventsDoNotBlockUndo": true,
+        "noRedo": true,
+        "revocationRechecked": true,
+        "otherActorRequiresUndoAny": true
+      }
+    },
+    {
+      "name": "Owner CRUD creates an atomic non-undoable model barrier",
+      "status": "passed",
+      "durationMs": 29,
+      "details": {
+        "barrierBlocksUndo": true,
+        "policyAndCursorsPreserved": true,
+        "invalidGeometryRejectedBeforeCommit": true
+      }
+    },
+    {
+      "name": "Metadata validation rejects malformed policy, history, fingerprint and caps",
+      "status": "passed",
+      "durationMs": 26,
+      "details": {
+        "badBootstrapCases": 10,
+        "badMetadataCases": 8,
+        "actorBoundary": 256,
+        "grantBoundary": 1024
+      }
+    },
+    {
+      "name": "Legacy decoding, present corruption and the 2-MiB combined byte cap",
+      "status": "passed",
+      "durationMs": 37,
+      "details": {
+        "legacyNeedsExplicitBootstrap": true,
+        "presentCorruptionFails": true,
+        "combinedByteLimit": 2097152,
+        "exactLimitAccepted": true
+      }
+    }
+  ]
+}

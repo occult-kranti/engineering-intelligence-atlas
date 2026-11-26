@@ -6,6 +6,7 @@ import {
   OLLAMA_DEFAULT_BASE_URL,
   assertLocalOllamaModel,
   canonicalLocalModel,
+  QWEN_CODER_MOE_MODEL,
 } from '../src/main/ollama';
 
 function fakeResponse(body: unknown, ok = true, status = 200): Response {
@@ -27,7 +28,8 @@ describe('Ollama loopback policy', () => {
 
   it('rejects URL aliases, credentials, paths and cloud model aliases', () => {
     for (const value of ['http://127.1:11434', 'http://user:pass@localhost:11434', 'http://localhost:11434/proxy', 'http://localhost:11434?target=cloud', 'http://localhost:11434/#x']) expect(() => assertLoopbackOllamaUrl(value)).toThrow();
-    for (const value of ['gpt-oss:120b-cloud', 'cloud/model:latest', 'https://ollama.com/model', '../qwen3:8b']) expect(() => canonicalLocalModel(value)).toThrow();
+    for (const value of ['gpt-oss:120b-cloud', 'qwen3:8b-Cloud', 'cloud/model:latest', 'https://ollama.com/model', '../qwen3:8b']) expect(() => canonicalLocalModel(value)).toThrow();
+    expect(canonicalLocalModel(QWEN_CODER_MOE_MODEL)).toBe(QWEN_CODER_MOE_MODEL);
   });
 });
 
@@ -112,5 +114,31 @@ describe('Ollama generation', () => {
     for (const metadata of [{ remote_host: 'https://ollama.com', model_info: { arch: 'remote' } }, { model_info: {} }, { details: { remote_model: 'paid' }, model_info: { arch: 'local' } }]) {
       await expect(assertLocalOllamaModel('qwen3:8b', (async () => fakeResponse(metadata)) as typeof fetch)).rejects.toThrow(/remote or unverified/);
     }
+  });
+
+  it('fixes the reviewed MoE request at 8192 context and admits the complete boundary', async () => {
+    const requests: Record<string, unknown>[] = [];
+    const fetchFn = async (url: unknown, init?: RequestInit) => {
+      if (String(url).endsWith('/api/show')) return fakeResponse({ model_info: { 'general.architecture': 'qwen3moe' } });
+      requests.push(JSON.parse(String(init?.body)));
+      return fakeResponse({ response: 'fixture', done: true, prompt_eval_count: 1, eval_count: 1 });
+    };
+    for (const prompt of ['short task', 'x'.repeat(8192 - 1024 - 128)]) {
+      await generateWithOllama({ model: QWEN_CODER_MOE_MODEL, prompt, maxOutputTokens: 128 }, fetchFn as typeof fetch);
+    }
+    expect(requests).toHaveLength(2);
+    for (const request of requests) expect(request).toMatchObject({ model: QWEN_CODER_MOE_MODEL, options: { num_ctx: 8192, num_predict: 128 } });
+  });
+
+  it('rejects MoE prompt, system, UTF-8 and output overflow before metadata or inference', async () => {
+    let calls = 0;
+    const fetchFn = async () => { calls++; return fakeResponse({}); };
+    for (const request of [
+      { prompt: 'x'.repeat(8192 - 1024 - 128 + 1), maxOutputTokens: 128 },
+      { prompt: 'task', maxOutputTokens: 8192 },
+      { system: 'x'.repeat(7000), prompt: 'task', maxOutputTokens: 256 },
+      { prompt: '界'.repeat(2400), maxOutputTokens: 1 },
+    ]) await expect(generateWithOllama({ model: QWEN_CODER_MOE_MODEL, ...request }, fetchFn as typeof fetch)).rejects.toThrow(/8192-token conservative context bound/);
+    expect(calls).toBe(0);
   });
 });

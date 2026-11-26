@@ -7,9 +7,11 @@ owner's laptop. It starts with workers **paused** on every restart.
 The service supports the current application's workspace operations, bounded
 provider jobs, saved artifacts, job/schedule/goal controls and managed GitHub
 operations. It preserves the existing native budget, lease, authority and
-shared-service contract checks. It does not execute arbitrary code or shell
-commands supplied by a client. Optional creative adapters invoke fixed tools
+shared-service contract checks. Optional creative adapters invoke fixed tools
 against reviewed project roots; trusted Unreal plugins remain executable code.
+An explicit, default-off [SSH/tmux host-control mode](../deploy/SSH_TMUX_AUTOCONTROL.md)
+adds owner-authorized shell jobs with company/employee attribution, durable
+receipts, output bounds and cancellation.
 The optional paired-device cloud adapter now reuses the existing website
 snapshot/queue protocol, with explicit opt-in and encrypted pairing storage. No live
 workspace has been migrated automatically. Desktop remote-client mode and a public
@@ -148,6 +150,21 @@ does not supply those missing client flows.
 | `POST /v1/creative/run` | `{id,companyId,employeeId,projectId,operation,input}` admits one fixed job and returns 202; admission is not completion |
 | `GET /v1/creative/jobs?companyId=...&jobId=...` | Retrieves the original durable creative job and safe output metadata |
 | `POST /v1/creative/cancel` | `{id,companyId,jobId}` stops local execution/waiting; remote Adobe completion may remain uncertain |
+| `GET /v1/host` | Host opt-in, off/manual/auto policy, revision, explicit grants and job metadata |
+| `POST /v1/host/configure` | Full `{expectedRevision,mode,grants}` replacement; stale revisions fail |
+| `POST /v1/host/submit` | Stable `{id,companyId,employeeId,command,cwd,timeoutSeconds?,maxOutputBytes?}` job |
+| `POST /v1/host/approve` | `{id}` approves a pending job after fresh scope/grant validation |
+| `POST /v1/host/cancel` | `{id}` records cancellation; inspect its eventual terminal result |
+| `POST /v1/host/inspect` | `{id,offset?}` returns at most 64 KiB of source log bytes and raw-byte offsets |
+| `POST /v1/host/stop-all` | `{}` switches host policy off and requests cancellation of managed jobs |
+
+Host control requires `DAFTAR_HOST_CONTROL=1`, working Linux tmux, an explicit
+policy and grants. Ordinary provider workers still start paused. Host jobs run as
+the daemon's OS user; company/employee selectors are owner-directed attribution,
+not separate user authentication or OS isolation. Closing the daemon leaves
+detached jobs running. Lost launch responses are retained without automatic retry;
+uncertain persistence fences the controller until restart and reconciliation.
+The host registry retains at most 256 receipts and never silently evicts them.
 
 Enabling workers or a one-shot pass can make provider calls for already-authorized
 jobs. The same native budgets and contracts remain in effect. Disabling a worker

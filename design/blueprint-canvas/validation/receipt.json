@@ -1,0 +1,151 @@
+{
+  "target": "blueprint-office.html",
+  "sha256": "91d824237d60305a51d255b0e8ca58b1a327fc6135bd9f9150c1f370b22e69cf",
+  "at": "2026-11-21T22:34:08.263Z",
+  "environment": {
+    "node": "v24.22.3",
+    "jsdom": "31.0.1",
+    "execution": "JSDOM with synthetic canvas drawing and deterministic timers",
+    "limits": "No real browser layout, compositing, hit testing, font metrics, accessibility tree, or visual verification; automatic subresource loading is disabled and explicit network APIs are trapped."
+  },
+  "scope": "full",
+  "groupCount": 15,
+  "results": [
+    {
+      "name": "standalone script and network surface",
+      "status": "passed",
+      "ms": 519,
+      "inlineScripts": 1,
+      "networkCalls": 0,
+      "companies": 3
+    },
+    {
+      "name": "corrupt and unavailable local storage",
+      "status": "passed",
+      "ms": 1057,
+      "cases": 9
+    },
+    {
+      "name": "company cap, uniqueness, and valid parent persistence",
+      "status": "passed",
+      "ms": 439,
+      "loadedCompanies": 100,
+      "persistedExtras": 97,
+      "rejectedExtraCreates": 1,
+      "parentReloads": 1
+    },
+    {
+      "name": "task/note caps, malformed entries, and unsafe geometry",
+      "status": "passed",
+      "ms": 137,
+      "loadedTasks": 60,
+      "loadedNotes": 38,
+      "notesAtCapacity": 40,
+      "rejectedOverflowActions": 2,
+      "unknownGeometryKeysRejected": 3
+    },
+    {
+      "name": "unsafe names and text use inert DOM",
+      "status": "passed",
+      "ms": 194,
+      "unsafeInputSurfaces": 4,
+      "injectedElements": 0,
+      "networkCalls": 0
+    },
+    {
+      "name": "rapid popup reopen keeps one live dialog per type",
+      "status": "passed",
+      "ms": 277,
+      "chatCycles": 50,
+      "mixedPopupCycles": 25,
+      "uncaughtErrors": 0
+    },
+    {
+      "name": "visible chat history stays bounded",
+      "status": "passed",
+      "ms": 90,
+      "messagesSent": 80,
+      "visibleMessages": 60
+    },
+    {
+      "name": "pending replies do not duplicate after chat close/reopen",
+      "status": "passed",
+      "ms": 54,
+      "messagesSentBeforeReopen": 10,
+      "messagesBefore": 21,
+      "messagesAfter": 21
+    },
+    {
+      "name": "same-clock task additions survive reload without ID collision",
+      "status": "passed",
+      "ms": 140,
+      "sameClockAdds": 2,
+      "tasksAfterReload": 8
+    },
+    {
+      "name": "all content stays in one 3D world and company bounds",
+      "status": "passed",
+      "ms": 72,
+      "companyAreas": 3,
+      "containedExtrudedBoxes": 192,
+      "containedBoards": 12,
+      "worldPopups": 3,
+      "topOrTiltAngleCycles": 12
+    },
+    {
+      "name": "cursor zoom and inverse plane drag agree with CSS-3D projection",
+      "status": "passed",
+      "ms": 256,
+      "angleOrbitCombinations": 12,
+      "cursorAnchors": 36,
+      "inverseDrags": 12,
+      "largestAnchorErrorPx": 0.01704501924295274
+    },
+    {
+      "name": "popup world anchors retain readable inverse-billboard orientation",
+      "status": "passed",
+      "ms": 637,
+      "worldAnchors": 12,
+      "inverseBillboardMatrices": 12,
+      "largestAnchorErrorPx": 0.008219961218564354,
+      "simulatedMeasuredPopupSizes": 3,
+      "unmeasuredFallbackHeight": 800,
+      "popupDepthPlanes": 48,
+      "popupDepthCorners": 192,
+      "smallestWorldZ": 113.9960751921335,
+      "smallestBoardClearance": 68.9960751921335
+    },
+    {
+      "name": "camera bounds, nonfinite input, and zero-distance pinch stay finite",
+      "status": "passed",
+      "ms": 251,
+      "zoomClicks": 200,
+      "orbitClicks": 100,
+      "nonfiniteEvents": 5,
+      "zeroDistancePinches": 1
+    },
+    {
+      "name": "tour and focus flights yield to keyboard, angle, orbit, and pointer input",
+      "status": "passed",
+      "ms": 404,
+      "interruptionCases": 6,
+      "focusedInputEscapes": 1
+    },
+    {
+      "name": "hundred-company navigation keeps selected detail live without popup loss",
+      "status": "passed",
+      "ms": 177,
+      "companyCount": 100,
+      "detailedBlueprints": 3,
+      "farCompanyKeyboardRoom": 1,
+      "draftPreserved": true
+    }
+  ],
+  "passed": true,
+  "repositoryCopy": {
+    "path": "cloud-workspace/public/concepts/blueprint-office.html",
+    "sha256": "91d824237d60305a51d255b0e8ca58b1a327fc6135bd9f9150c1f370b22e69cf",
+    "bytes": 86124,
+    "byteIdenticalToTestedInput": true
+  }
+}

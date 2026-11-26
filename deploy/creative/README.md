@@ -139,7 +139,7 @@ sudoedit /etc/daftar/creative-tools.json
 
 The example grants only listed project operations. `trusted: true` means the owner has reviewed the project, its linked assets and plugins. It does not make arbitrary downloaded files safe. `repository` is optional metadata; it does not cause an automatic clone. The employee must belong to the configured company/department, hold the scoped native `creative.execute` grant, and be assigned the tool/project through the authenticated runtime workflow. The config itself does not grant a worker native authority.
 
-The private config's top-level `limits.maxMemoryBytes` is **8 GiB** in the Blender example; the service default is 4 GiB and its accepted range is 256 MiB–16 GiB. This is a per-process guard, while systemd/container memory limits cover the aggregate service. Defaults permit one concurrent creative job, eight queued jobs and a two-minute operation. Increasing concurrency multiplies the memory needed. Large Unreal projects may exceed these bounds; they should fail with a retained receipt rather than silently evade the limit.
+The private config's top-level `limits.maxMemoryBytes` is **8 GiB** in the Blender example; the service default is 4 GiB and its accepted range is 256 MiB–16 GiB. CPU operations enforce this as a per-process address-space guard, while systemd/container memory limits cover the aggregate service. GPU renders require the verified cgroup allowance described below. Defaults permit one concurrent creative job, eight queued jobs and a two-minute operation. Increasing concurrency multiplies the memory needed. Large Unreal projects may exceed these bounds; they should fail with a retained receipt rather than silently evade the limit.
 
 FFmpeg configuration intentionally binds `/usr/bin/ffprobe` because the exposed operation inspects media; it is not a free-form transcoding shell. Krita/GIMP are installed for manual editing and format exchange, while the implemented automated raster/vector adapters remain explicit.
 
@@ -177,6 +177,47 @@ The overlay keeps the readonly root filesystem, dropped capabilities, owner cred
 
 An existing NVIDIA host with the vendor Container Toolkit can additionally apply `-f deploy/creative/compose.gpu.yaml`. This requests one existing GPU; it does not obtain a new one. No engine port is added. GPU use is optional and was not validated in the CPU-only scratch environment.
 
+## Explicit Blender GPU selection and acceptance
+
+Device exposure alone does not enable GPU rendering. Set these fields in the protected owner configuration after verifying the host driver and approved visible GPU:
+
+```json
+{
+  "tools": {
+    "blender": {
+      "executable": "/opt/daftar-tools/blender/4.5.17/blender",
+      "renderDevice": "OPTIX",
+      "renderDeviceIndex": 0
+    }
+  },
+  "limits": {
+    "maxConcurrentJobs": 1,
+    "maxMemoryBytes": 17179869184
+  }
+}
+```
+
+This is a fragment to merge into the existing configuration; retain `schemaVersion`, reviewed projects and other limits. `CUDA` is also supported. CPU remains the default. The index selects one device in the actual matching Cycles inventory sorted by device ID. All other devices and CPU rendering are disabled for that render. Missing devices and backend initialization failures produce an explicit failure; they do not silently become CPU jobs. [Blender's GPU device settings](https://docs.blender.org/manual/en/4.5/render/cycles/gpu_rendering.html).
+
+GPU drivers may reserve more virtual address space than the scene's physical memory use, so applying the CPU `RLIMIT_AS` unchanged can prevent GPU initialization. Daftar removes that new address-space limit **only after** its launcher verifies a finite kernel cgroup-v2 `memory.max` no larger than the configured `maxMemoryBytes`. With the supplied 16 GiB service/container ceiling, the fragment above permits that verification. Keeping the example's 8 GiB process allowance with a 16 GiB cgroup is deliberately rejected: lower the actual cgroup ceiling or choose a reviewed allowance up to 16 GiB. Unsupported cgroup layouts and unbounded interactive shells fail with `GPU_MEMORY_PREREQUISITE`. CPU, wall-time, file-size, artifact, output and descriptor limits remain active. See [the Linux memory controller](https://docs.kernel.org/admin-guide/cgroup-v2.html#memory).
+
+The memory ceiling includes the whole service cgroup; it is not reserved headroom for a render. Leave room for the OS and the controller, configure host swap policy, and serialize MoE inference and rendering until measured together. GPU VRAM is not constrained by `memory.max`. Cycles can spill some GPU allocations into system memory; a successful small render is not proof that a larger scene will fit.
+
+For a systemd installation, verify the deployed unit's `MemoryMax`, `DevicePolicy` and named devices, then run the bounded render through the authenticated runtime with an actual assigned employee and project. An ordinary shell does not inherit that unit's cgroup. For the already-running Compose GPU profile, the following disposable acceptance uses the CPU smoke scene created above. Pause other creative/inference work first, ensure the scene/output parent are accessible to UID 10001, and use a new output directory:
+
+```bash
+docker compose -f deploy/compose.yaml -f deploy/compose.creative.yaml -f deploy/creative/compose.gpu.yaml exec -T runtime \
+  node /app/integrations/creative-tools/smoke-service.mjs \
+  --blender /opt/daftar-tools/blender/4.5.17/blender \
+  --scene /var/lib/daftar-creative/smoke-001/scene.blend \
+  --output /var/lib/daftar-creative/gpu-acceptance-001 \
+  --render-device OPTIX --device-index 0 --max-memory-bytes 17179869184
+```
+
+The service acceptance inspects the scene, renders a 64 × 64 two-sample PNG, exports GLB, checks hashes/replay/authority callbacks and retains receipts. It uses synthetic scope in disposable state, sends no model/provider request, and grants no production employee access. `gpuTested` becomes true only after the GPU render and PNG checks succeed. Review the receipt's backend, selected device, render time, all job outcomes and final `ok`. Version inventory continues to report `renderDeviceVerified: false`, because discovering a binary version is not a GPU test. No successful GPU acceptance was performed in this development environment.
+
+Unreal remains a separate capability: the current adapter inspects project descriptors and runs the fixed DataValidation commandlet with `-NullRHI`. It does not yet render an Unreal scene, run a gameplay session, or start Pixel Streaming. Those need a licensed installed engine, reviewed project and a separate rendering adapter acceptance.
+
 ## Adobe and lawful graphics interoperability
 
 Adobe's Photoshop desktop requirements list Windows and macOS; this Linux pack does not install Photoshop desktop. A licensed Windows/macOS companion can exchange reviewed files, or the optional official Photoshop API v2 adapter can process them remotely. A regular desktop subscription is not proof of API access: Adobe documents a Developer Console account, an active Enterprise contract including Firefly Services, and OAuth Server-to-Server credentials as API prerequisites.
@@ -191,9 +232,11 @@ For workflows that stay local, use SVG for vector interchange and PNG/TIFF/EXR/O
 
 ```bash
 python3 -m unittest discover -s deploy/creative/tests -v
+python3 -B -m unittest discover -s integrations/creative-tools/tests -v
+node --test headless-runtime/test/creative-tools.test.mjs
 ```
 
-The tests use tiny synthetic archives and fake HTTP responses. They cover traversal/absolute paths, symlink escapes/chains/cycles, duplicate/special members, executable modes and timestamps, byte/entry limits, checksums, resume semantics, disk/platform preflight, concurrent installer locks, incomplete extraction, atomic publication, reuse, tamper detection, Unreal version/layout checks and read-only planning. They do not install distro packages, spend provider credits or pretend to execute a synthetic engine.
+The tests use tiny synthetic archives, fake HTTP responses, real bounded child fixtures, synthetic Cycles inventories and cgroup-file fixtures. They cover traversal/absolute paths, symlink escapes/chains/cycles, duplicate/special members, executable modes and timestamps, byte/entry limits, checksums, resume semantics, disk/platform preflight, concurrent installer locks, incomplete extraction, atomic publication, reuse, tamper detection, Unreal version/layout checks, GPU selection/failure, finite cgroup prerequisites and read-only planning. They do not install distro packages, spend provider credits or establish real GPU performance.
 
 `.github/workflows/creative-tools.yml` runs the contract tests, a real read-only Linux host preflight and assertions over the actual Docker-merged CPU/GPU profiles as a required dependency of the main CI/release workflow. A manual dispatch with `blender_smoke: true` additionally installs signed distro dependencies, downloads/verifies the official archive, checks reuse, runs the bounded CPU render/export, exercises the real creative service against that engine with synthetic scope/grant fixtures, and verifies the installed files again afterward. It retains direct-render and service receipts/artifacts. CI never downloads Unreal without its authenticated owner or uses Adobe credentials.
 

@@ -1,0 +1,187 @@
+{
+  "artifactType": "blueprint-studio-native-browser-observations/v1",
+  "run": "blueprint-studio-20261121",
+  "node": "root-native-browser",
+  "createdAt": "2026-11-22T00:17:55.271490+00:00",
+  "status": "observed-native-controls-with-gpu-gap",
+  "url": "https://atlas-command-office.whatswrong-inc.chatgpt.site/concepts/blueprint-world",
+  "viewport": {
+    "width": 1363,
+    "height": 936
+  },
+  "observations": [
+    {
+      "name": "Published route and truthful graphics recovery",
+      "versions": [
+        15,
+        16,
+        17
+      ],
+      "outcome": "HTTPS route opened after redirect; native controls loaded; WebGL2 unavailable was displayed and camera controls were disabled. No graphics success inferred."
+    },
+    {
+      "name": "Reorder permission label",
+      "versions": [
+        15,
+        16,
+        17
+      ],
+      "outcome": "v15 showed read-only beside enabled CEO reorder actions. Actual adjacent-order probes corrected the label; allowed was observed in v16 and v17."
+    },
+    {
+      "name": "Visitor controls",
+      "versions": [
+        16
+      ],
+      "outcome": "Visiting employee selection disabled Save name, Apply color and both reorder buttons."
+    },
+    {
+      "name": "Donna scoped edit and literal text",
+      "versions": [
+        16
+      ],
+      "outcome": "Donna Studio renamed Design to Design <QA>; revision 1, Saved and literal text were visible; focus returned to Save name."
+    },
+    {
+      "name": "Donna attribution and undo",
+      "versions": [
+        16
+      ],
+      "outcome": "History named Donna Studio and the field change; Undo restored Design with a new revision 2 event."
+    },
+    {
+      "name": "Donna company-position boundary",
+      "versions": [
+        16
+      ],
+      "outcome": "Company position opened with Move company disabled and an explicit missing-grant explanation."
+    },
+    {
+      "name": "Local sub-Donna creation",
+      "versions": [
+        16
+      ],
+      "outcome": "CEO created Design QA Donna; the UI selected the new actor at revision 5 and showed the explicit Design-and-children grant. The result said that no worker was started."
+    },
+    {
+      "name": "Department scope boundary",
+      "versions": [
+        16
+      ],
+      "outcome": "The sub-Donna could rename Design but selecting Engineering disabled its editing actions."
+    },
+    {
+      "name": "Delegated ownership and immediate revocation",
+      "versions": [
+        16
+      ],
+      "outcome": "Design QA Donna renamed its room to Design workshop at revision 6. CEO revoked that actor grant at revision 7; selecting the actor immediately disabled editing and showed no explicit grants."
+    },
+    {
+      "name": "Combined persistence after reload",
+      "versions": [
+        17
+      ],
+      "outcome": "After a full published-page reload, the local actor, Design workshop, revision 7 and revoked editing state remained visible."
+    },
+    {
+      "name": "Current actor presentation",
+      "versions": [
+        16,
+        17
+      ],
+      "outcome": "v16 exposed a redundant Editing as CEO message after automatic sub-Donna selection. The final UI suppresses success status text in favor of the live selector and canvas control; both showed the selected actor consistently in v17."
+    },
+    {
+      "name": "Owner undo after policy change",
+      "versions": [
+        17
+      ],
+      "outcome": "CEO history showed revocation at revision 7 and the delegated rename at revision 6. Owner Undo restored Design and advanced to revision 8. Policy retention is additionally covered by pure and DOM tests; no separate native grant assertion was made after this undo."
+    },
+    {
+      "name": "Keyboard and laptop popup layout",
+      "versions": [
+        17
+      ],
+      "outcome": "Tab from Name focused Save name. At 1363 × 936, the Studio popup measured 420 × 680 and its internal body scrolled; document dimensions equaled viewport dimensions and window scroll remained 0,0."
+    },
+    {
+      "name": "Native popup movement",
+      "versions": [
+        17
+      ],
+      "outcome": "Header drag moved the Studio popup from 40,90 to 520,110, preserving its 420 × 680 dimensions, selected CEO and zero window scroll."
+    }
+  ],
+  "sourceVersions": [
+    {
+      "version": 16,
+      "sourceCommit": "5fac9b2d584af3e13cf67374356157a147b5e4bb",
+      "inputs": {
+        "app": {
+          "path": "cloud-workspace/public/concepts/blueprint-world-app.js",
+          "bytes": 77342,
+          "sha256": "7d676a4a91bfa801d0d9e2f7ac837a2b8c84f38cbd5f56db422098bd0ce0d7f0"
+        },
+        "html": {
+          "sha256": "ecf54ec2a0dadf3e92fff9e22c05beedae4db4bc83082ef729c6714904eb69e9"
+        },
+        "studioEdits": {
+          "sha256": "3a586a4d09059e1fa908d2a44cf00c8a0e90fd9abfa62e1fe90f3a5fb1d7581a"
+        },
+        "studioUI": {
+          "sha256": "52270e7631d8cac1a6951dae7e10d282780cd610edddb7eb83f197f721bd938a"
+        },
+        "core": {
+          "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea"
+        },
+        "fixtures": {
+          "sha256": "235a32d31eeb6d9d65880946ada6bdbeb16eac97f477bf30d9e0170b8838e7fa"
+        },
+        "harness": {
+          "sha256": "0cd124f76c9b18ba7dc2371b2493a3cf1b55e86ba839b248fd934edd356bcc73"
+        }
+      },
+      "scope": "Native delegation/edit/history flows; two presentation corrections identified across v15/v16."
+    },
+    {
+      "version": 17,
+      "sourceCommit": "e0a17a669dd359a4346d9ca7c61e11394fa3760b",
+      "inputs": {
+        "app": {
+          "path": "cloud-workspace/public/concepts/blueprint-world-app.js",
+          "bytes": 77342,
+          "sha256": "7d676a4a91bfa801d0d9e2f7ac837a2b8c84f38cbd5f56db422098bd0ce0d7f0"
+        },
+        "html": {
+          "sha256": "ecf54ec2a0dadf3e92fff9e22c05beedae4db4bc83082ef729c6714904eb69e9"
+        },
+        "studioEdits": {
+          "sha256": "3a586a4d09059e1fa908d2a44cf00c8a0e90fd9abfa62e1fe90f3a5fb1d7581a"
+        },
+        "studioUI": {
+          "sha256": "04f9b9b933241acd966685dc3d890fbcf9df07070b299f815cab55fcae9cb1a4"
+        },
+        "core": {
+          "sha256": "a16a38263dda7c067c5d16ad80b6288f3ebc70fd8c6238b4d092f332a78114ea"
+        },
+        "fixtures": {
+          "sha256": "235a32d31eeb6d9d65880946ada6bdbeb16eac97f477bf30d9e0170b8838e7fa"
+        },
+        "harness": {
+          "sha256": "0cd124f76c9b18ba7dc2371b2493a3cf1b55e86ba839b248fd934edd356bcc73"
+        }
+      },
+      "scope": "Final published source: persistence, revoked controls, owner undo, corrected labels, keyboard access, layout and popup drag."
+    }
+  ],
+  "limitations": [
+    "No WebGL2 context was available in managed Chrome; shaders, rasterized appearance, 3D picking, rendered glyphs, shadows and GPU FPS remain unverified.",
+    "Native checks used synthetic local demo records, not real user grants, connected accounts or running agents.",
+    "No claim that all v16 native scenarios were rerun after the one-line v17 actor-status correction. The final complete 14-group DOM run covers the final UI hash.",
+    "The initial local-preview reload and its issue-report attempt were rejected by browser URL policy. No local retry or browser/GPU bypass was used. The independently published HTTPS route opened normally."
+  ],
+  "qaData": "One locally saved Design QA Donna definition remains in the browser with its grant revoked; the original Design name was restored. No QA records were added to shipped seed data.",
+  "earlierCheckpoint": "browser-receipt.json retains 20 observations for the older 287dfdf checkpoint only."
+}

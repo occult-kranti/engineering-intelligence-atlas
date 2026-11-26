@@ -2,8 +2,10 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
 const {AtlasClient,origin,pairing,studioUrl}=require('../src/client');
+const {PRIMARY_MODEL,MODEL_STORAGE_CEILING}=require('../src/development');
 const json=(body,status=200,headers={})=>new Response(JSON.stringify(body),{status,headers:{'Content-Type':'application/json',...headers}});
 const cloud={kind:'cloud',url:'https://atlas.example',deviceToken:'device-token-test-1234567890',siteAccessToken:'site-test-token-1234567890'};
+const modelState=(companyId='a')=>({companyId,available:true,enabled:true,catalog:[{id:PRIMARY_MODEL,name:'Qwen MoE',storageCeilingBytes:MODEL_STORAGE_CEILING,contextLimitTokens:8192}],models:[{name:PRIMARY_MODEL,digest:'a'.repeat(64),sizeBytes:19_000_000_000,loaded:false}],assignments:[{companyId,employeeId:'developer',model:PRIMARY_MODEL,digest:'a'.repeat(64)}],requests:[]});
 test('studio links preserve company scope and never turn identifiers into navigation',()=>{
   for(const view of ['blueprint','softboard','timeline','whiteboard']) {
     const result=new URL(studioUrl(cloud.url,'company/with ?/# & symbols',view));
@@ -96,12 +98,12 @@ test('stored connections are validated before any credential can be sent',()=>{
   const c=new AtlasClient({...cloud,privateUnrelatedKey:'discard'});
   assert.equal(c.connection.privateUnrelatedKey,undefined);
 });
-test('native ownership errors are actionable and interrupted reads never retry mutations',async()=>{
+test('rejected ownership requests expose bounded status and interrupted reads never retry mutations',async()=>{
   const c=new AtlasClient(cloud,async()=>json({error:'Permanent assistants retain scope ownership; pause instead of firing'},400));
-  await assert.rejects(c.request('/api/commands','POST',{}),/Permanent assistants/);
+  await assert.rejects(c.request('/api/commands','POST',{}),/failed \(400\).*Inspect its saved state/);
   let calls=0;
   const interrupted=new AtlasClient(cloud,async()=>{calls++;return new Response(new ReadableStream({start(controller){controller.error(new Error('body aborted'));}}),{headers:{'Content-Type':'application/json'}});});
-  await assert.rejects(interrupted.chat('atlas','Brief','attempt-interrupted'),/may already be saved/);assert.equal(calls,1);
+  await assert.rejects(interrupted.chat('atlas','Brief','attempt-interrupted'),/may already have been saved/);assert.equal(calls,1);
 });
 test('primitive JSON responses and oversized declared bodies are rejected',async()=>{
   for(const body of [null,3,[],true])await assert.rejects(new AtlasClient(cloud,async()=>json(body)).request('/api/session'),/invalid data/);
@@ -122,10 +124,10 @@ test('runtime connection verifies service and native snapshot while retaining ow
 });
 test('runtime commands preserve fresh state hash, stable receipt identity and applied status',async()=>{
   const calls=[];
-  const c=new AtlasClient(runtime,async(url,init)=>{calls.push({url,init});return url.endsWith('/office')?json({ok:true,stateHash:hash,snapshot:{companies:[]}}):json({ok:true,id:JSON.parse(init.body).id,replayed:false,stateHash:'b'.repeat(64)});});
+  const c=new AtlasClient(runtime,async(url,init)=>{calls.push({url,init});return url.endsWith('/office')?json({ok:true,stateHash:hash,snapshot:{companies:[]}}):json({ok:true,id:JSON.parse(init.body).id,result:{ok:true,stateHash:'b'.repeat(64)}});});
   const result=await c.command({action:'rename_office',officeId:'office-a',name:'Creative'});
-  assert.equal(result.queued,false);assert.equal(calls.length,2);
-  const sent=JSON.parse(calls[1].init.body);assert.equal(sent.expectedStateHash,hash);assert.equal(sent.id,result.id);assert.match(sent.id,/^[a-f0-9-]{36}$/);assert.equal(c.stateHash,'b'.repeat(64));
+  assert.equal(result.ok,true);assert.equal(calls.length,2);
+  const sent=JSON.parse(calls[1].init.body);assert.equal(sent.method,'officeCommand');assert.equal(sent.args[0].expectedStateHash,hash);assert.equal(calls[1].url,runtime.url+'/v1/workbench/call');assert.match(sent.id,/^[a-f0-9-]{36}$/);assert.equal(c.stateHash,'b'.repeat(64));
 });
 test('creative inventory and job result enforce company identity and omit arbitrary server content',async()=>{
   const c=new AtlasClient(runtime,async(url)=>url.includes('/jobs?')?json({ok:true,job:{id:'j',companyId:'a',employeeId:'e',projectId:'p',operation:'blender.inspect',status:'succeeded',result:{objects:3,rawConsole:'PRIVATE',token:runtime.controlToken},outputs:[{path:'inspection.json',bytes:32,sha256:hash,mediaType:'application/json',hostPath:'/PRIVATE'}]}}):json({ok:true,companyId:'a',configured:true,tools:[{id:'blender',configured:true,available:true,operations:['blender.inspect']}],projects:[{id:'p',companyId:'a',allowedOperations:['blender.inspect']},{id:'foreign',companyId:'b'}],jobs:[],secret:runtime.controlToken}));
@@ -158,4 +160,36 @@ test('creative receipts bind exact request identity and tool set even within the
   await assert.rejects(c.creative('run',run),/does not match the requested operation.*Retain creative request id new-request/);
   const input={id:'assign',companyId:'a',employeeId:'e',projectId:'p',toolIds:['blender']};
   for(const toolIds of [[],['blender','unreal'],['blender','blender'],['unreal']])await assert.rejects(new AtlasClient(runtime,async()=>json({ok:true,assignment:{...input,toolIds}})).creative('assign',input),/does not match/);
+});
+test('runtime development reads model and worker observations without mutation or secret projection',async()=>{
+  const calls=[];const client=new AtlasClient(runtime,async(url,init)=>{calls.push({url,init});return url.endsWith('/v1/status')?json({ok:true,execution:'headless',worker:{enabled:false,running:false,concurrency:2,lastError:runtime.controlToken},capabilities:{providerJobs:true}}):json({ok:true,snapshot:{...modelState(),endpoint:'PRIVATE',rawLog:runtime.controlToken}});});
+  const result=await client.development('a');assert.equal(result.models.models[0].loaded,false);assert.equal(result.status.worker.enabled,false);assert.equal(calls.length,2);
+  assert.ok(calls.every(row=>row.init.method==='GET'&&row.init.headers.Authorization===`Bearer ${runtime.controlToken}`));assert.equal(JSON.stringify(result).includes('PRIVATE'),false);assert.equal(JSON.stringify(result).includes(runtime.controlToken),false);
+});
+test('desktop development uses only the existing model-pool and worker bridge methods',async()=>{
+  const calls=[];const client=new AtlasClient({kind:'desktop',url:'http://127.0.0.1:6001',cookie:`atlas_session=${'b'.repeat(64)}`},async(url,init)=>{const body=JSON.parse(init.body);calls.push(body);assert.equal(url,'http://127.0.0.1:6001/api/call');return json({result:body.method==='officeWorkerStatus'?{enabled:false,running:false}:{ok:true,snapshot:modelState()}});});
+  const result=await client.development('a');assert.equal(result.status.execution,'desktop');assert.equal(result.models.companyId,'a');assert.deepEqual(calls.map(row=>row.method).sort(),['modelPoolSnapshot','officeWorkerStatus']);
+  await client.models('select',{companyId:'a',employeeId:'developer',model:PRIMARY_MODEL});assert.equal(calls.at(-1).method,'modelPoolSelect');
+});
+test('website pairing cannot submit model actions and capability discovery stays offline',async()=>{
+  let calls=0;const client=new AtlasClient(cloud,async()=>{calls++;return json({});});
+  const result=await client.development('a');assert.equal(result.models,null);assert.equal(result.status,null);
+  await assert.rejects(client.models('select',{companyId:'a',employeeId:'developer',model:PRIMARY_MODEL}),/desktop or a headless/);assert.equal(calls,0);
+});
+test('model download uses a scoped exact-tag body and retains its key after one ambiguous failure',async()=>{
+  const input={companyId:'a',employeeId:'developer',model:PRIMARY_MODEL,idempotencyKey:'download-one',maxBytes:MODEL_STORAGE_CEILING};let calls=0;
+  const client=new AtlasClient(runtime,async(url,init)=>{calls++;assert.equal(url,runtime.url+'/v1/models/pull');assert.deepEqual(JSON.parse(init.body),input);throw new Error('uncertain');});
+  await assert.rejects(client.models('pull',input),/No retry was sent.*download key download-one/);assert.equal(calls,1);
+  const snapshot=modelState();snapshot.requests=[{id:'model-one',companyId:'a',employeeId:'developer',model:PRIMARY_MODEL,status:'queued',completedBytes:0,totalBytes:0}];
+  const accepted=await new AtlasClient(runtime,async()=>json({ok:true,snapshot,requestId:'model-one'})).models('pull',input);assert.equal(accepted.requestId,'model-one');assert.equal(accepted.snapshot.requests[0].status,'queued');
+});
+test('model selection refuses a mismatched scope or assignment digest in its receipt',async()=>{
+  const input={companyId:'a',employeeId:'developer',model:PRIMARY_MODEL};
+  await assert.rejects(new AtlasClient(runtime,async()=>json({ok:true,snapshot:modelState('b')})).models('select',input),/different company/);
+  const changed=modelState();changed.assignments[0].digest='b'.repeat(64);
+  await assert.rejects(new AtlasClient(runtime,async()=>json({ok:true,snapshot:changed})).models('select',input),/installed digest/);
+});
+test('an unavailable model endpoint does not manufacture availability or discard real worker state',async()=>{
+  const client=new AtlasClient(runtime,async(url)=>url.endsWith('/v1/status')?json({ok:true,execution:'headless',worker:{enabled:false,running:false},capabilities:{providerJobs:true}}):json({ok:false,error:'Model unavailable'},503));
+  const result=await client.development('a');assert.equal(result.models,null);assert.equal(result.status.worker.running,false);assert.match(result.modelError,/unavailable/);
 });

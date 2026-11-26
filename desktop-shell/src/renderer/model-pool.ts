@@ -1,7 +1,10 @@
 /** Shared, reviewed Ollama resources. All changes are explicit owner actions. */
 export interface ModelPoolSnapshot {
   companyId: string; available: boolean; enabled: boolean; endpoint: string; infrastructureCost: 'separate';
-  catalog: Array<{ id: string; name: string; description: string; storageCeilingBytes: number; sourceUrl: string }>;
+  catalog: Array<{ id: string; name: string; description: string; storageCeilingBytes: number; sourceUrl: string;
+    upstreamUrl?: string; architecture?: 'dense' | 'moe'; totalParametersBillions?: number;
+    activeParametersBillions?: number; quantization?: string; contextLimitTokens?: number;
+    artifactApproxBytes?: number; license?: string }>;
   models: Array<{ name: string; digest: string; sizeBytes: number; loaded: boolean }>;
   requests: Array<{ id: string; companyId: string; employeeId: string; model: string; status: string; completedBytes: number; totalBytes: number | null; error: string | null }>;
   assignments: Array<{ companyId: string; employeeId: string; model: string; digest: string }>;
@@ -42,6 +45,8 @@ export function mountModelPool(host: HTMLElement, bridge: ModelPoolBridge | unde
   const model = el('select'); model.id = 'model-pool-model';
   for (const [label, field] of [['Company', company], ['Find employee', employeeSearch], ['Employee', employee], ['Reviewed model', model]] as const) { const l = el('label', label, 'field'); l.append(field); form.append(l); }
   const employeeCount = el('p', '', 'form-help model-pool-employee-count'); form.append(employeeCount);
+  const modelDetails = el('div', '', 'model-pool-details'); modelDetails.id = 'model-pool-details';
+  modelDetails.setAttribute('aria-live', 'polite'); form.append(modelDetails);
   const request = el('button', 'Download or reuse', 'secondary'); request.type = 'submit';
   const select = el('button', 'Assign installed model', 'secondary'); select.type = 'button';
   const actions = el('div', '', 'row wrap'); actions.append(request, select); form.append(actions);
@@ -73,10 +78,35 @@ export function mountModelPool(host: HTMLElement, bridge: ModelPoolBridge | unde
     refresh.disabled = busy || !bridge?.modelPoolSnapshot || !company.value;
     company.disabled = employee.disabled = employeeSearch.disabled = model.disabled = busy;
   }
+  function renderModelDetails(): void {
+    const entry = snapshot?.catalog.find((item) => item.id === model.value);
+    modelDetails.replaceChildren(); modelDetails.hidden = !entry;
+    if (!entry) return;
+    modelDetails.append(el('p', entry.description, 'form-help'));
+    const facts: string[] = [];
+    if (entry.architecture === 'moe') facts.push('Mixture of experts');
+    if (entry.totalParametersBillions) facts.push(`${entry.totalParametersBillions}B total parameters`);
+    if (entry.activeParametersBillions) facts.push(`${entry.activeParametersBillions}B active per token`);
+    if (entry.quantization) facts.push(entry.quantization);
+    if (entry.contextLimitTokens) facts.push(`${entry.contextLimitTokens.toLocaleString('en-US')} token runtime context limit`);
+    if (entry.license) facts.push(entry.license);
+    if (facts.length) modelDetails.append(el('p', facts.join(' · '), 'form-help'));
+    if (entry.artifactApproxBytes) modelDetails.append(el('p', `About ${bytes(entry.artifactApproxBytes)} to download. GPU memory also needs room for context and runtime buffers.`, 'form-help'));
+    const links = el('p', '', 'form-help');
+    for (const [label, url] of [['Model package', entry.sourceUrl], ['Upstream model card', entry.upstreamUrl]] as const) {
+      if (!url) continue;
+      try { if (new URL(url).protocol !== 'https:') continue; } catch { continue; }
+      const link = el('a', label); link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
+      if (links.childNodes.length) links.append(document.createTextNode(' · '));
+      links.append(link);
+    }
+    if (links.childNodes.length) modelDetails.append(links);
+  }
   function render(): void {
     endpoint.textContent = snapshot ? `${snapshot.endpoint} · VPS / GPU rental charges apply separately from model tokens.` : 'Connect the desktop or private runtime to manage shared models.';
     const selected = model.value;
     choices(model, (snapshot?.catalog ?? []).slice(0, 50).map((m) => ({ id: m.id, name: `${m.name} · up to ${bytes(m.storageCeilingBytes)}` })), selected, 'Catalog unavailable');
+    renderModelDetails();
     inventory.replaceChildren(el('h3', 'Installed on the runtime'));
     for (const item of (snapshot?.models ?? []).slice(0, 100)) {
       const row = el('div', '', 'model-pool-row'); row.append(el('strong', item.name), el('span', `${bytes(item.sizeBytes)} · ${item.loaded ? 'Loaded in memory' : 'Stored on disk'}`, 'muted')); inventory.append(row);
@@ -139,7 +169,7 @@ export function mountModelPool(host: HTMLElement, bridge: ModelPoolBridge | unde
   }
   company.onchange = () => { revision++; snapshot = null; refreshEmployees(); render(); void read(); };
   employeeSearch.oninput = () => { refreshEmployees(); render(); };
-  employee.onchange = () => render(); model.onchange = () => syncButtons(); refresh.onclick = () => void read();
+  employee.onchange = () => render(); model.onchange = () => { renderModelDetails(); syncButtons(); }; refresh.onclick = () => void read();
   form.onsubmit = (event) => {
     event.preventDefault(); if (request.disabled || !bridge?.modelPoolRequest) return;
     const input = { companyId: company.value, employeeId: employee.value, model: model.value, idempotencyKey: crypto.randomUUID() };

@@ -96,7 +96,46 @@ export function createServer({ runtime, token, allowedHosts = [], allowedOrigins
       active += 1;
       try {
         if (req.url === '/v1/status' && req.method === 'GET') return writeJson(res, 200, await runtime.status());
+        if (req.url === '/v1/workbench' && req.method === 'GET') {
+          if (!runtime.workbench) throw new RuntimeError('WORKBENCH_UNAVAILABLE', 'This runtime has no portable workbench.', 503);
+          return writeJson(res, 200, { ok: true, workbench: runtime.workbench.capabilities() });
+        }
+        if (req.url === '/v1/workbench/call' && req.method === 'POST') {
+          if (!runtime.workbench) throw new RuntimeError('WORKBENCH_UNAVAILABLE', 'This runtime has no portable workbench.', 503);
+          const { id, method, args, spec } = runtime.workbench.validateEnvelope(await readJson(req));
+          const result = await runtime.workbench.call(method, args, { id });
+          const response = { ok: true, ...(id ? { id } : {}), result };
+          if (Buffer.byteLength(JSON.stringify(response)) > OUTPUT_LIMIT) {
+            if (!spec.mutates) throw new RuntimeError('RESPONSE_TOO_LARGE', 'Workbench read exceeds its transport limit.', 503);
+            return writeJson(res, 200, { ok: true, id, result: { ok: result?.ok !== false, id, snapshotOmitted: true,
+              notice: 'The request receipt was saved. Inspect current state; do not repeat this operation with a new id.' } });
+          }
+          return writeJson(res, 200, response);
+        }
         if (req.url === '/v1/office' && req.method === 'GET') return writeJson(res, 200, await runtime.snapshot());
+        if (req.url === '/v1/host' && req.method === 'GET') return writeJson(res, 200, await runtime.hostOperation('status', {}));
+        if (req.url === '/v1/activity' && req.method === 'GET') return writeJson(res, 200, await runtime.activityOperation('status', {}));
+        if (['/v1/activity/query', '/v1/activity/summarize'].includes(req.url) && req.method === 'POST') {
+          return writeJson(res, 200, await runtime.activityOperation(req.url.split('/').at(-1), await readJson(req)));
+        }
+        if (req.url === '/v1/environments' && req.method === 'GET') return writeJson(res, 200, await runtime.environmentOperation('status', {}));
+        if (req.url === '/v1/resources' && req.method === 'GET') return writeJson(res, 200, await runtime.resourceOperation('status', {}));
+        if (req.url === '/v1/design' && req.method === 'GET') return writeJson(res, 200, await runtime.designOperation('catalog', {}));
+        const managedRoutes = {
+          '/v1/design/plan': ['designOperation','plan'], '/v1/design/install': ['designOperation','install'], '/v1/design/inspect': ['designOperation','inspect'],
+          '/v1/environments/prepare': ['environmentOperation', 'prepare'], '/v1/environments/run': ['environmentOperation', 'run'], '/v1/environments/inspect': ['environmentOperation', 'inspect'],
+          '/v1/resources/status': ['resourceOperation', 'status'], '/v1/resources/configure': ['resourceOperation', 'configure'], '/v1/resources/resolve': ['resourceOperation', 'resolve'],
+          '/v1/resources/plan': ['resourceOperation', 'plan'], '/v1/resources/start': ['resourceOperation', 'start'], '/v1/resources/inspect': ['resourceOperation', 'inspect'], '/v1/resources/cancel': ['resourceOperation', 'cancel'],
+        };
+        if (Object.hasOwn(managedRoutes, req.url) && req.method === 'POST') {
+          const [method, operation] = managedRoutes[req.url];
+          return writeJson(res, 200, await runtime[method](operation, await readJson(req)));
+        }
+        const hostRoutes = { '/v1/host/configure': 'configure', '/v1/host/god-mode': 'godMode', '/v1/host/submit': 'submit',
+          '/v1/host/approve': 'approve', '/v1/host/cancel': 'cancel', '/v1/host/inspect': 'inspect', '/v1/host/stop-all': 'stopAll' };
+        if (Object.hasOwn(hostRoutes, req.url) && req.method === 'POST') {
+          return writeJson(res, 200, await runtime.hostOperation(hostRoutes[req.url], await readJson(req)));
+        }
         if ((req.url === '/v1/models' || req.url.startsWith('/v1/models?')) && req.method === 'GET') {
           const query = new URL(req.url, 'http://127.0.0.1').searchParams;
           if ([...query.keys()].some(key => !['companyId', 'employeeId'].includes(key)) || query.getAll('companyId').length !== 1 || query.getAll('employeeId').length > 1) {
@@ -127,7 +166,7 @@ export function createServer({ runtime, token, allowedHosts = [], allowedOrigins
         }
         if (req.url === '/v1/workers/run-once' && req.method === 'POST') {
           if (Object.keys(await readJson(req)).length) throw new RuntimeError('INVALID_REQUEST', 'Provide an empty object.');
-          return writeJson(res, 202, runtime.runOnce());
+          return writeJson(res, 202, await runtime.runOnce());
         }
         throw new RuntimeError('NOT_FOUND', 'Runtime endpoint not found.', 404);
       } finally { active -= 1; }
@@ -188,6 +227,7 @@ export function configurationFromEnv(env = process.env) {
     binaryPath: env.DAFTAR_CORE_BINARY || undefined, host: env.DAFTAR_HOST || '127.0.0.1',
     port: Number(env.DAFTAR_PORT || 8788), concurrency: Number(env.DAFTAR_CONCURRENCY || 2),
     allowContainerBind: env.DAFTAR_ALLOW_CONTAINER_BIND === '1',
+    hostControlEnabled: env.DAFTAR_HOST_CONTROL === '1',
     tokenFile: env.DAFTAR_CONTROL_TOKEN_FILE,
     creativeConfigFile: env.DAFTAR_CREATIVE_CONFIG_FILE || undefined,
     allowedHosts: (env.DAFTAR_ALLOWED_HOSTS || '').split(',').map(s => s.trim()).filter(Boolean),

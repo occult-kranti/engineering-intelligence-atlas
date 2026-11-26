@@ -42,6 +42,27 @@ it('disables mutation controls in the public preview and has an honest missing-b
   expect(h.querySelector('#model-pool-status')!.textContent).toContain('connected desktop or private runtime');
 });
 
+it('explains reviewed MoE capacity without claiming GPU readiness or downloading on selection', async () => {
+  const h = host(), s = snapshot(); let writes = 0;
+  s.catalog.push({ id: 'qwen3-coder:30b-a3b-q4_K_M', name: 'Qwen3 Coder', description: 'Text-only coding model.',
+    storageCeilingBytes: 24e9, sourceUrl: 'https://ollama.com/library/qwen3-coder:30b-a3b-q4_K_M',
+    upstreamUrl: 'https://huggingface.co/Qwen/Qwen3-Coder-30B-A3B-Instruct', architecture: 'moe',
+    totalParametersBillions: 30.5, activeParametersBillions: 3.3, quantization: 'Q4_K_M',
+    contextLimitTokens: 8192, artifactApproxBytes: 19e9, license: 'Apache-2.0' });
+  panel = mountModelPool(h, { modelPoolSnapshot: async () => ({ ok: true, snapshot: s }),
+    modelPoolRequest: async () => { writes++; return { ok: true }; } }, scope, () => false);
+  panel.setActive(true); await flush();
+  const selection = h.querySelector('#model-pool-model') as HTMLSelectElement;
+  selection.value = 'qwen3-coder:30b-a3b-q4_K_M'; selection.dispatchEvent(new dom.window.Event('change'));
+  const details = h.querySelector('#model-pool-details')!;
+  expect(details.textContent).toContain('30.5B total parameters · 3.3B active per token');
+  expect(details.textContent).toContain('8,192 token runtime context limit');
+  expect(details.textContent).toContain('About 19.0 GB to download');
+  expect(details.textContent).toContain('GPU memory also needs room');
+  expect(details.querySelectorAll('a')).toHaveLength(2);
+  expect(writes).toBe(0);
+});
+
 it('filters before the employee option limit so later employees remain discoverable', () => {
   const h = host(), large = scope();
   large.employees = Array.from({ length: 700 }, (_, i) => ({ id: `employee-${i}`, companyId: 'co', name: `Employee ${i}`, role: 'Research', status: 'active' }));

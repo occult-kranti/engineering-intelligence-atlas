@@ -1,0 +1,27 @@
+{
+  "title": "Donna / Expert constellation",
+  "purpose": "Decorative studio sculpture. Not runtime telemetry or a depiction of actual neural expert activations.",
+  "creation": "Procedural Blender geometry, physically based materials, area lights and Cycles CPU rendering.",
+  "blender_version": "4.3.2",
+  "render_engine": "CYCLES",
+  "device": "CPU",
+  "threads": 4,
+  "resolution": [
+    1440,
+    810
+  ],
+  "samples_maximum": 256,
+  "adaptive_threshold": 0.019999999552965164,
+  "time_limit_seconds": 90.0,
+  "actual_render_wall_seconds": 90.664,
+  "denoising": false,
+  "color_management": "AgX / Medium High Contrast",
+  "webp_exported": true,
+  "glb_exported": true,
+  "third_party_assets": [],
+  "asset_license": "CC0-1.0",
+  "source_license": "MIT",
+  "source": "tools/donna-studio-asset.py",
+  "palette_reference": "DESIGN.md and desktop-shell/src/renderer/studio-tokens.css",
+  "composition": "16:9, sculpture on right half, left reserved for semantic HTML text."
+}

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "limits": {"maxMemoryBytes": 8589934592},
   "tools": {
-    "blender": {"executable": "/opt/daftar-tools/blender/4.5.17/blender"},
+    "blender": {"executable": "/opt/daftar-tools/blender/4.5.17/blender", "renderDevice": "CPU", "renderDeviceIndex": 0},
     "inkscape": {"executable": "/usr/bin/inkscape"},
     "ffmpeg": {"executable": "/usr/bin/ffprobe"}
   },

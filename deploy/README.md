@@ -22,7 +22,12 @@ The existing website is a separate **Sites/Cloudflare D1** application. This ima
 | Supported provider adapters | OpenAI, Anthropic, and the runtime's loopback Ollama adapter |
 | Vast inference adapter | Planned separately; do not substitute a Vast key for an OpenAI key |
 
-The runtime implements bounded office commands and provider jobs. It does not provide arbitrary shell execution, desktop GUI control, or an unrestricted cloud-account administration API.
+The runtime implements bounded office commands and provider jobs. The separate
+[SSH/tmux auto-control guide](SSH_TMUX_AUTOCONTROL.md) enables explicit owner shell
+jobs without Docker or an IDE. That mode runs as the daemon's OS user, with durable
+company/employee attribution; it does not confer physical-host ownership or a cloud
+provider account role. The reference restricted Docker service below keeps this
+mode off and does not include tmux.
 
 ## 1. Prepare the host
 

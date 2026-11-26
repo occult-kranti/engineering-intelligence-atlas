@@ -4,6 +4,8 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
+import { EventEmitter } from 'node:events';
+import { PassThrough } from 'node:stream';
 import { fileURLToPath } from 'node:url';
 import { CreativeToolsService, CreativeToolsError, readCreativeConfig } from '../creative-tools.mjs';
 
@@ -16,8 +18,9 @@ if '--version' in args or '-version' in args:
     print('Blender 4.5.17; Inkscape 1.4.2; ffprobe version 7.1; Unreal Engine 5.6.0')
     sys.exit(0)
 if '--' in args:
-    operation, source, output, raw = args[args.index('--')+1:]
+    operation, source, output, raw = args[args.index('--')+1:args.index('--')+5]
     inputs = json.loads(raw)
+    render_policy = json.loads(args[args.index('--')+5]) if len(args) > args.index('--')+5 else {'backend':'CPU','deviceIndex':0}
 elif '-of' in args:
     operation, source, output, inputs = 'ffmpeg.probe', args[-1], '.', {}
 elif '-run=DataValidation' in args:
@@ -46,7 +49,9 @@ elif 'BIG' in marker:
     destination.write_bytes(b'x'*10000)
 else:
     destination.write_text(json.dumps({'objects':3}) if filename.endswith('.json') else 'fixture-artifact')
-print('DAFTAR_RESULT='+json.dumps({'format':'blend','objects':3,'meshes':1,'blenderVersion':'4.5.17','privatePath':'/private/owner/model.blend'}))
+result = {'format':'blend','objects':3,'meshes':1,'blenderVersion':'4.5.17','privatePath':'/private/owner/model.blend'}
+if operation == 'blender.render': result.update({'engine':'CYCLES','device':'CPU','backend':'CPU','deviceCount':0,'renderDurationSeconds':0.01})
+print('DAFTAR_RESULT='+json.dumps(result))
 `;
 
 function nativeState() {
@@ -116,6 +121,75 @@ test('read-only configuration validation does not acquire a registry or probe ex
   assert.deepEqual(readCreativeConfig(undefined).projects, []);
   f.config.limits.maxConcurrentJobs = 100; f.saveConfig();
   assert.throws(() => readCreativeConfig(f.configFile), code('CREATIVE_CONFIG_INVALID'));
+});
+
+test('Blender render backend is private validated configuration, not a caller argument', async t => {
+  const f = setup(t); f.config.tools.blender.renderDevice = 'OPTIX'; f.config.tools.blender.renderDeviceIndex = 1; f.saveConfig();
+  assert.equal(readCreativeConfig(f.configFile).tools.blender.renderDevice, 'OPTIX');
+  const inventory = await f.service.snapshot({ companyId: 'acme' });
+  assert.equal(inventory.tools[0].available, true); assert.equal(inventory.tools[0].renderDevice, 'OPTIX');
+  assert.equal(inventory.tools[0].renderDeviceVerified, false);
+  for (const [backend, index] of [['AUTO', 0], ['CPU', 1], ['CUDA', 16], ['CUDA', true]]) {
+    Object.assign(f.config.tools.blender, { renderDevice: backend, renderDeviceIndex: index }); f.saveConfig();
+    assert.throws(() => readCreativeConfig(f.configFile), code('CREATIVE_CONFIG_INVALID'));
+  }
+  Object.assign(f.config.tools.blender, { renderDevice: 'CPU', renderDeviceIndex: 0 }); f.saveConfig();
+  await f.service.assign(f.assignment);
+  await assert.rejects(f.service.run({ ...f.request, operation: 'blender.render', input: { path: 'scene.blend', renderDevice: 'CUDA' } }), code('INVALID_REQUEST'));
+});
+
+test('CPU render keeps guarded memory and records the confirmed CPU receipt', async t => {
+  const f = setup(t); await f.service.assign(f.assignment);
+  await f.service.run({ ...f.request, operation: 'blender.render' });
+  const job = await waitFor(f.service, f.request.id);
+  assert.equal(job.status, 'succeeded');
+  assert.equal(job.result.device, 'CPU'); assert.equal(job.result.backend, 'CPU'); assert.equal(job.result.deviceCount, 0);
+  assert.equal(job.result.renderDurationSeconds, 0.01);
+  assert.equal(f.spawns[0][1].includes('--gpu-cgroup'), false);
+  assert.deepEqual(JSON.parse(f.spawns[0][1].at(-1)), { backend: 'CPU', deviceIndex: 0 });
+});
+
+function simulatedChild(stderr, exitCode, stdout = '') {
+  const child = new EventEmitter(); child.stdout = new PassThrough(); child.stderr = new PassThrough();
+  queueMicrotask(() => { child.stdout.end(stdout); child.stderr.end(stderr); child.emit('close', exitCode); });
+  return child;
+}
+
+test('GPU launch requires the cgroup guard and retains a clear missing-prerequisite receipt', async t => {
+  const f = setup(t); await f.service.close();
+  let argumentsSeen;
+  f.options.spawnImpl = (_executable, args) => { argumentsSeen = args; return simulatedChild('DAFTAR_GUARD_ERROR=GPU_CGROUP_REQUIRED\n', 78); };
+  f.restart(); f.config.tools.blender.renderDevice = 'OPTIX'; f.saveConfig();
+  await f.service.assign(f.assignment); await f.service.run({ ...f.request, operation: 'blender.render' });
+  const job = await waitFor(f.service, f.request.id);
+  assert.equal(job.status, 'failed'); assert.equal(job.error.code, 'GPU_MEMORY_PREREQUISITE');
+  assert.ok(argumentsSeen.includes('--gpu-cgroup'));
+  assert.deepEqual(JSON.parse(argumentsSeen.at(-1)), { backend: 'OPTIX', deviceIndex: 0 });
+  assert.equal(job.outputs.length, 0);
+});
+
+test('a GPU request cannot publish a successful CPU-fallback receipt', async t => {
+  const f = setup(t); await f.service.close();
+  f.options.spawnImpl = () => simulatedChild('', 0, 'DAFTAR_RESULT={"engine":"CYCLES","device":"CPU","backend":"CPU","deviceCount":0}\n');
+  f.restart(); f.config.tools.blender.renderDevice = 'CUDA'; f.saveConfig();
+  await f.service.assign(f.assignment); await f.service.run({ ...f.request, operation: 'blender.render' });
+  const job = await waitFor(f.service, f.request.id);
+  assert.equal(job.status, 'failed'); assert.equal(job.error.code, 'CREATIVE_DEVICE_MISMATCH');
+});
+
+test('a simulated GPU render preserves confirmed device metadata and hashed output', async t => {
+  const f = setup(t); await f.service.close();
+  f.options.spawnImpl = (_executable, args) => {
+    assert.ok(args.includes('--gpu-cgroup'));
+    const output = args[args.indexOf('--') + 3]; fs.writeFileSync(path.join(output, 'render.png'), 'synthetic render output');
+    return simulatedChild('', 0, 'DAFTAR_RESULT={"engine":"CYCLES","device":"GPU","backend":"OPTIX","deviceCount":1,"deviceIndex":0,"deviceName":"Fixture GPU","renderDurationSeconds":0.05}\n');
+  };
+  f.restart(); f.config.tools.blender.renderDevice = 'OPTIX'; f.saveConfig();
+  await f.service.assign(f.assignment); await f.service.run({ ...f.request, operation: 'blender.render' });
+  const job = await waitFor(f.service, f.request.id);
+  assert.equal(job.status, 'succeeded'); assert.equal(job.result.backend, 'OPTIX'); assert.equal(job.result.deviceCount, 1);
+  assert.equal(job.result.deviceName, 'Fixture GPU'); assert.equal(job.result.renderDurationSeconds, 0.05);
+  assert.match(job.outputs[0].sha256, /^[a-f0-9]{64}$/); assert.equal(JSON.stringify(job).includes(f.directory), false);
 });
 
 test('real child probes and fixed Blender operation produce bounded hashed evidence', async t => {
