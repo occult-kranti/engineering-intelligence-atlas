@@ -94,6 +94,8 @@ test('real creative service discovery and scoped errors survive HTTP, MCP and ed
     assert.equal(inventory.jobs.length, 0);assert.equal(JSON.stringify(inventory).includes(stateDir), false);
   }
   await assert.rejects(mcp('creative_inventory', { companyId: 'foreign' }), error => error.code === 'CREATIVE_SCOPE_DENIED');
-  await assert.rejects(editor.creative('snapshot', { companyId: 'foreign' }), /company is unavailable/);
+  // The shared runtime client preserves the public error code while sanitizing
+  // backend messages, which can otherwise include host-specific details.
+  await assert.rejects(editor.creative('snapshot', { companyId: 'foreign' }), /authorization was refused \(CREATIVE_SCOPE_DENIED\)/);
   assert.equal(f.calls.every(call => call.operation === 'snapshot'), true);
 });

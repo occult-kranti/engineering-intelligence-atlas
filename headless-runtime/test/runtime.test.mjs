@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
 import { createServer, startServer, configurationFromEnv } from '../server.mjs';
@@ -11,6 +12,8 @@ import { RuntimeController, createRuntime } from '../runtime.mjs';
 import { validateCommandEnvelope, OWNER_ACTIONS, BODY_LIMIT, OUTPUT_LIMIT, RuntimeError } from '../contract.mjs';
 import { readSecretFile } from '../secrets.mjs';
 import { requireBuild } from './build-required.mjs';
+import { createHostControl } from '../host-control.mjs';
+import { createRuntimeClient, createToolHandler } from '../../tools/daftar-runtime-mcp.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const token = 'test_control_credential_012345678901234567890123456789';
@@ -83,6 +86,139 @@ test('shared model endpoints require owner authentication and reject unrecognize
     assert.equal(calls.at(-1).operation, operation);
   }
   assert.equal(calls.length, 4);
+});
+
+test('host routes retain owner authentication, exact paths and browser origin enforcement', async t => {
+  const calls = [];
+  const { request, origin, server } = await withServer(t, fakeRuntime({ hostOperation: async (operation, input) => {
+    calls.push({ operation, input }); return { ok: true, id: input.id ?? 'host-status' };
+  } }));
+  const endpoints = [
+    ['/v1/host', undefined, 'status'],
+    ['/v1/host/configure', { expectedRevision: 0, mode: 'off', grants: [] }, 'configure'],
+    ['/v1/host/submit', { id: 'job-1', companyId: 'company-a', employeeId: 'donna', command: 'true', cwd: '/tmp' }, 'submit'],
+    ['/v1/host/approve', { id: 'job-1' }, 'approve'], ['/v1/host/cancel', { id: 'job-1' }, 'cancel'],
+    ['/v1/host/inspect', { id: 'job-1', offset: 0 }, 'inspect'], ['/v1/host/stop-all', {}, 'stopAll'],
+  ];
+  for (const [route, body, operation] of endpoints) {
+    assert.equal((await request(route, body, { Authorization: '' })).status, 401);
+    assert.equal((await request(route, body, { Origin: 'https://untrusted.example' })).status, 403);
+    assert.equal((await request(route, body)).status, 200);
+    assert.equal(calls.at(-1).operation, operation);
+  }
+  for (const route of ['/v1/host?companyId=company-a', '/v1/host/submit/extra', '/v1/host/submit?command=true', '/v1/host/close']) {
+    assert.equal((await request(route, {})).status, 404);
+  }
+  assert.equal(calls.length, endpoints.length);
+  assert.equal((await fetch(origin + '/v1/host/configure', { headers: { Authorization: `Bearer ${token}` } })).status, 404);
+  const hostDenied = await new Promise((resolve, reject) => {
+    const req = http.get({ hostname: '127.0.0.1', port: server.address().port, path: '/v1/host',
+      headers: { Host: 'untrusted.example', Authorization: `Bearer ${token}` } }, res => {
+      res.resume(); res.on('end', () => resolve(res.statusCode));
+    });
+    req.on('error', reject);
+  });
+  assert.equal(hostDenied, 403);
+});
+
+test('managed Python bootstrap comes only from the explicit daemon configuration', () => {
+  assert.equal(configurationFromEnv({}).pythonPath, undefined);
+  assert.equal(configurationFromEnv({ DAFTAR_PYTHON_PATH: '' }).pythonPath, undefined);
+  assert.equal(configurationFromEnv({ VIRTUAL_ENV: '/unrelated/env', PYTHONPATH: '/unrelated/site' }).pythonPath, undefined);
+  assert.equal(configurationFromEnv({ DAFTAR_PYTHON_PATH: '/opt/daftar/python/bin/python3' }).pythonPath, '/opt/daftar/python/bin/python3');
+});
+
+test('host process opt-in is exact and errors never expose backend command or secret details', async t => {
+  for (const value of [undefined, '', 'true', 'yes', '0']) assert.equal(configurationFromEnv({ DAFTAR_HOST_CONTROL: value }).hostControlEnabled, false);
+  assert.equal(configurationFromEnv({ DAFTAR_HOST_CONTROL: '1' }).hostControlEnabled, true);
+  const runtime = new RuntimeController({ office: {}, worker: { status: () => ({ enabled: false }) }, hostControl: {
+    submit: async () => { throw Object.assign(new Error('PRIVATE /workspace/token sk-proj-confidentialvalue'), { name: 'HostControlError', code: 'HOST_SCOPE_DENIED', status: 403 }); },
+    inspect: async () => { throw new Error('PRIVATE /workspace/token sk-proj-confidentialvalue'); },
+  } });
+  const { request } = await withServer(t, runtime);
+  const submit = await request('/v1/host/submit', { id: 'job-1', companyId: 'company-a', employeeId: 'donna', command: 'true', cwd: '/tmp' });
+  assert.equal(submit.status, 403);
+  assert.doesNotMatch(await submit.text(), /PRIVATE|workspace|confidentialvalue/);
+  const inspect = await request('/v1/host/inspect', { id: 'job-1' });
+  assert.equal(inspect.status, 503);
+  assert.doesNotMatch(await inspect.text(), /PRIVATE|workspace|confidentialvalue/);
+  await assert.rejects(runtime.hostOperation('close'), error => error.code === 'HOST_UNAVAILABLE');
+});
+
+test('malformed host HTTP bodies are rejected before a controller adapter is invoked', async t => {
+  let calls = 0;
+  const runtime = new RuntimeController({ office: {}, worker: { status: () => ({ enabled: false }) }, hostControl: Object.fromEntries(
+    ['status', 'configure', 'submit', 'approve', 'cancel', 'inspect', 'stopAll'].map(operation => [operation, async () => { calls++; return { ok: true }; }])) });
+  const { request } = await withServer(t, runtime);
+  const valid = { id: 'job-1', companyId: 'company-a', employeeId: 'donna', command: 'true', cwd: '/tmp' };
+  for (const [route, body] of [
+    ['submit', { ...valid, command: 'x'.repeat(65537) }], ['submit', { ...valid, command: '😀'.repeat(16385) }],
+    ['submit', { ...valid, environment: { TOKEN: 'no' } }], ['submit', { ...valid, timeoutSeconds: 0 }],
+    ['submit', { ...valid, cwd: '../escape' }], ['submit', { ...valid, maxOutputBytes: 8388609 }],
+    ['configure', { mode: 'auto', grants: [] }], ['configure', { expectedRevision: 0, mode: 'root', grants: [] }],
+    ['approve', { id: 'job-1', force: true }], ['cancel', { id: '../escape' }],
+    ['inspect', { id: 'job-1', offset: -1 }], ['stop-all', { arbitrary: true }],
+  ]) assert.equal((await request('/v1/host/' + route, body)).status, 400, route);
+  assert.equal(calls, 0);
+});
+
+test('real HTTP and MCP: native company scope, manual tmux approval, bounded output and stable receipts', async t => {
+  const binaryPath = path.join(repoRoot, 'native-core/target/release/atlas-core');
+  const tmuxPath = process.env.DAFTAR_TEST_TMUX_PATH ?? '/usr/bin/tmux';
+  if (!fs.existsSync(binaryPath) || !fs.existsSync(path.join(repoRoot, 'desktop-shell/dist/main/office.js')) || !fs.existsSync(tmuxPath)) {
+    assert.notEqual(process.env.DAFTAR_REQUIRE_TMUX, '1', 'The required real tmux integration prerequisites must be installed.');
+    t.skip('Build the native modules and install tmux, or set DAFTAR_TEST_TMUX_PATH to its test executable.'); return;
+  }
+  // -V alone does not prove this environment can create a tmux socket/session.
+  // CI sets DAFTAR_REQUIRE_TMUX=1 so a denied real launch is a failing gate.
+  const probeSocket = `daftar-http-probe-${process.pid}-${Date.now()}`;
+  try { execFileSync(tmuxPath, ['-L', probeSocket, 'new-session', '-d', '-s', 'probe', '/bin/true'], { timeout: 5000, stdio: 'pipe' }); }
+  catch (error) {
+    if (process.env.DAFTAR_REQUIRE_TMUX !== '1' && /Operation not permitted/.test(String(error.stderr))) {
+      t.skip('This environment denies tmux Unix-socket/session creation (EPERM); real process execution remains unverified locally.'); return;
+    }
+    throw error;
+  }
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-http-host-'));
+  const runtime = createRuntime({ repoRoot, binaryPath, dataDir });
+  await runtime.hostControl.close();
+  runtime.hostControl = createHostControl({ stateDir: dataDir, enabled: true, tmuxPath, snapshot: () => runtime.office.officeSnapshot() });
+  t.after(async () => { await runtime.hostControl.stopAll(); await runtime.close(); fs.rmSync(dataDir, { recursive: true, force: true }); });
+  const { origin, request } = await withServer(t, runtime);
+  const handle = createToolHandler({ request: createRuntimeClient({ origin, token }) });
+  const initial = await runtime.snapshot();
+  const company = initial.snapshot.companies.find(company => company.status === 'active');
+  const companyId = company.id, employeeId = company.assistantId;
+  const initialStatus = await (await request('/v1/status')).json();
+  assert.equal(initialStatus.host.mode, 'off'); assert.equal(initialStatus.capabilities.arbitraryCode, true);
+  assert.equal(initialStatus.capabilities.hostControlActive, false);
+  const status = await handle('host_status', {}); assert.equal(status.host.available, true);
+  const grant = { id: 'test-owner-grant', companyId, employeeId };
+  const configured = await handle('host_configure', { expectedRevision: status.host.revision, mode: 'manual', grants: [grant] });
+  assert.equal(configured.host.mode, 'manual');
+  assert.equal((await request('/v1/host/configure', { expectedRevision: status.host.revision, mode: 'auto', grants: [grant] })).status, 409);
+  const command = { id: 'native-http-command', companyId, employeeId, command: "printf 'managed-http'", cwd: dataDir,
+    timeoutSeconds: 10, maxOutputBytes: 8 };
+  const queued = await handle('host_submit', command); assert.equal(queued.job.status, 'pending_approval');
+  assert.equal((await handle('host_inspect', { id: command.id })).output, '');
+  assert.equal((await handle('host_submit', command)).replayed, true);
+  assert.equal((await request('/v1/host/submit', { ...command, command: 'true' })).status, 409);
+  assert.equal((await request('/v1/host/submit', { ...command, id: 'unknown-employee', employeeId: 'unknown' })).status, 403);
+  await handle('host_approve', { id: command.id });
+  let result; const deadline = Date.now() + 5000;
+  do {
+    result = await handle('host_inspect', { id: command.id });
+    if (result.eof) break;
+    await new Promise(resolve => setTimeout(resolve, 25));
+  } while (Date.now() < deadline);
+  assert.equal(result.job.status, 'output_limit'); assert.equal(result.output, 'managed-');
+  assert.equal(result.job.outputBytes, 8); assert.equal(result.truncated, true);
+  const beyond = await handle('host_inspect', { id: command.id, offset: 70000 });
+  assert.equal(beyond.output, ''); assert.equal(beyond.nextOffset, 70000);
+  const stopped = await handle('host_stop_all', {}); assert.equal(stopped.host.mode, 'off');
+  assert.equal((await request('/v1/host/submit', { ...command, id: 'after-stop' })).status, 403);
+  const finalStatus = await handle('runtime_status', {});
+  assert.equal(finalStatus.host.mode, 'off'); assert.equal(finalStatus.capabilities.hostControlActive, false);
 });
 
 test('real model service: HTTP pull receipt, poll, assignment, cancellation and scope errors are owner bounded', async t => {
@@ -206,7 +342,7 @@ test('worker status exposes no raw provider error and one-shot refuses overlap',
     runOnce: () => { running = true; return new Promise(resolve => { release = () => { running = false; resolve(); }; }); },
     stop() { running = false; } };
   const runtime = new RuntimeController({ office: {}, worker, projectSnapshot: value => value, stateHash: () => hash });
-  assert.doesNotMatch(JSON.stringify(runtime.status()), /private\/path|secret-value/);
+  assert.doesNotMatch(JSON.stringify(await runtime.status()), /private\/path|secret-value/);
   assert.equal(runtime.runOnce().accepted, true);
   assert.throws(() => runtime.runOnce(), /already running/);
   release(); await runtime.singleRun;
@@ -324,7 +460,7 @@ test('real Rust: concurrent replay, stale state, restart and internal-field reda
   t.after(async () => { for (const service of runtimes) await service.close(); fs.rmSync(dataDir, { recursive: true, force: true }); });
   const runtime = createRuntime({ repoRoot, binaryPath, dataDir });
   runtimes.push(runtime);
-  assert.equal(runtime.status().worker.enabled, false);
+  assert.equal((await runtime.status()).worker.enabled, false);
   const initial = await runtime.snapshot();
   const body = { id: 'create-test-company', expectedStateHash: initial.stateHash,
     command: { action: 'create_company', id: 'runtime-test-company', name: 'Runtime integration test' } };
@@ -343,7 +479,7 @@ test('real Rust: concurrent replay, stale state, restart and internal-field reda
   const restored = createRuntime({ repoRoot, binaryPath, dataDir });
   runtimes.push(restored);
   assert.equal((await restored.command(body)).replayed, true);
-  assert.equal(restored.status().worker.enabled, false);
+  assert.equal((await restored.status()).worker.enabled, false);
   const require = createRequire(import.meta.url);
   const { cloudSnapshot } = require(dist);
   const projected = cloudSnapshot({ ...after.snapshot,
@@ -375,7 +511,7 @@ test('failed cloud/model startup releases creative ownership before an immediate
     for (const registry of ['creative-tools', 'model-pool']) assert.equal(fs.existsSync(path.join(dataDir, registry, 'owner.lock')), false);
     const restored = await startServer({ repoRoot, binaryPath, dataDir, token, port: 0 });
     try {
-      assert.equal(restored.runtime.status().worker.enabled, false);
+      assert.equal((await restored.runtime.status()).worker.enabled, false);
       assert.equal((await restored.runtime.snapshot()).ok, true);
     } finally { await restored.close(); }
   }
@@ -452,13 +588,13 @@ test('real worker: mock provider continues after HTTP control completes and save
   // Closing the completed control connection does not own the server's job.
   server.closeIdleConnections();
   assert.equal(generation.abortSignal.aborted, false);
-  assert.equal(runtime.status().worker.running, true);
+  assert.equal((await runtime.status()).worker.running, true);
   release();
   const deadline = Date.now() + 3000;
-  while (runtime.status().worker.running && Date.now() < deadline) {
+  while ((await runtime.status()).worker.running && Date.now() < deadline) {
     await new Promise(resolve => setTimeout(resolve, 20));
   }
-  assert.equal(runtime.status().worker.running, false);
+  assert.equal((await runtime.status()).worker.running, false);
   runtime.setEnabled(false);
   const final = await runtime.snapshot();
   const job = final.snapshot.jobs.find(job => job.idempotencyKey === 'mocked-worker-job');

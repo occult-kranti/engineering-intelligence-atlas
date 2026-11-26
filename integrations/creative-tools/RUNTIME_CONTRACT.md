@@ -15,7 +15,7 @@ symlinked path components. The configuration has this shape:
 {
   "schemaVersion": 1,
   "tools": {
-    "blender": { "executable": "/opt/daftar-tools/blender/4.5.17/blender" },
+    "blender": { "executable": "/opt/daftar-tools/blender/4.5.17/blender", "renderDevice": "CPU", "renderDeviceIndex": 0 },
     "unreal": { "executable": "/opt/reviewed-unreal/Engine/Binaries/Linux/UnrealEditor-Cmd" },
     "inkscape": { "executable": "/usr/bin/inkscape" },
     "ffmpeg": { "executable": "/usr/bin/ffprobe" }
@@ -45,6 +45,24 @@ Include only tools actually configured on the host. Local inventory uses a
 bounded version probe; a configured executable path alone is not a successful
 probe. Inventory never installs software. `ffmpeg` is the catalog identifier for
 the fixed **ffprobe** operation, not a general FFmpeg command interface.
+
+Blender's optional owner-only `renderDevice` is `CPU` (default), `CUDA` or `OPTIX`;
+`renderDeviceIndex` defaults to zero and accepts 0–15 for a GPU, only zero for CPU.
+Workers cannot supply these fields in job input. The fixed helper refreshes the
+actual Cycles device inventory, sorts matching devices by their Cycles IDs,
+disables every other GPU and the CPU, and selects exactly one matching device.
+An absent backend/index fails with `GPU_DEVICE_UNAVAILABLE`; there is no automatic
+CPU fallback. Expose only the approved physical GPU through host/container device
+policy. An index refers to Blender's sorted visible backend devices, not a cloud
+instance ID or an assumed `nvidia-smi` index.
+
+Inventory includes the configured backend/index and `renderDeviceVerified: false`:
+a version probe does not establish GPU readiness. A successful render receipt
+records `engine`, `device`, `backend`, `deviceCount`, `renderDurationSeconds`, and
+for a GPU its selected `deviceIndex` and allowlisted `deviceName`. This is evidence
+of device selection and a completed render, not measured GPU utilization, VRAM
+headroom or a guarantee that a larger scene will fit. Owner configuration changes
+are covered by the existing admission fingerprint and stop queued/running work.
 
 The optional `adobe-photoshop` entry uses `enabled`, `allowPaidRequests`,
 `clientIdFile`, `clientSecretFile` and `assetStorageFile`; it has no executable
@@ -78,7 +96,7 @@ output-path fields.
 | Operation | Additional input | Output |
 | --- | --- | --- |
 | `blender.inspect` | None; `.blend` | `inspection.json`, numeric scene inventory |
-| `blender.render` | `frame` 0–100000, `width`/`height` 16–2048, `samples` 1–64 | One CPU Cycles frame, `render.png` |
+| `blender.render` | `frame` 0–100000, `width`/`height` 16–2048, `samples` 1–64 | One Cycles frame on the owner's CPU/CUDA/OPTIX device, `render.png` |
 | `blender.export_glb` | None; `.blend` | `scene.glb`, animations disabled |
 | `unreal.inspect` | None; `.uproject` | `project.json`; descriptor inspection explicitly reports `engineExecuted: false` |
 | `unreal.validate` | None; `.uproject` | Fixed DataValidation commandlet with NullRHI, `validation.json` |
@@ -121,11 +139,21 @@ written. Local cancellation does not establish that Adobe cancelled a remote job
 an uncertain paid submission must be reviewed before any new request.
 
 The Linux `process_guard.py` launcher uses standard Python 3, a parent-death
-signal, CPU/address-space/file-size/file-descriptor limits and `execve` without a
-shell. The service also enforces wall time, combined stdout/stderr bounds,
+signal, CPU/file-size/file-descriptor limits and `execve` without a shell.
+CPU operations also keep the configured `RLIMIT_AS` address-space limit. A GPU
+render can reserve a large virtual address range even for a small scene, so the
+guard uses a different prerequisite: it reads its own kernel cgroup-v2 membership,
+mount and `memory.max` hierarchy and requires an effective finite limit no larger
+than `limits.maxMemoryBytes`. Only after that verification does the GPU launch
+omit the new `RLIMIT_AS` limit; inherited limits are not increased. No environment
+flag bypasses this check. Missing, unbounded, wider or unsupported cgroup layouts
+fail as `GPU_MEMORY_PREREQUISITE` before Blender starts. cgroup memory limits bound
+system memory, not GPU VRAM; configure host swap and device isolation separately.
+
+The service also enforces wall time, combined stdout/stderr bounds,
 artifact totals and process-group cleanup. Limits permit 1–4 concurrent jobs,
 0–32 queued jobs, up to 20 minutes per job, 1 MiB console output, 100 MiB output
-artifacts, 1 GiB input and 16 GiB address space per process. SVG and Unreal
+artifacts, 1 GiB input and a configured memory allowance up to 16 GiB. SVG and Unreal
 descriptors additionally cap input at 8 MiB and 1 MiB. The supplied deployment
 must apply aggregate host/container CPU, memory, process, filesystem and network
 controls.
@@ -145,10 +173,12 @@ Run the real child-process regression suite with:
 
 ```bash
 node --test headless-runtime/test/creative-tools.test.mjs
+python3 -B -m unittest discover -s integrations/creative-tools/tests -v
 cargo test --manifest-path native-core/Cargo.toml creative_
 ```
 
-For actual engine acceptance, first create the disposable default scene with
+The device/cgroup tests use synthetic inventories and kernel-file fixtures; they
+do not establish that a GPU exists here. For actual engine acceptance, first create the disposable default scene with
 `deploy/creative/smoke_blender.py`, then run the complete service path:
 
 ```bash
@@ -198,6 +228,8 @@ records and the local Git fixture are removed before reporting success.
 Implementation references:
 
 - [Blender command-line options](https://docs.blender.org/manual/en/4.4/advanced/command_line/arguments.html)
+- [Blender Cycles GPU devices](https://docs.blender.org/manual/en/4.5/render/cycles/gpu_rendering.html)
+- [Linux cgroup-v2 memory controller](https://docs.kernel.org/admin-guide/cgroup-v2.html#memory)
 - [Unreal Data Validation commandlet and custom validators](https://dev.epicgames.com/documentation/en-us/unreal-engine/data-validation-in-unreal-engine)
 - [Inkscape command-line exports](https://wiki.inkscape.org/wiki/index.php/Using_the_Command_Line)
 - [ffprobe structured metadata options](https://ffmpeg.org/ffprobe.html)

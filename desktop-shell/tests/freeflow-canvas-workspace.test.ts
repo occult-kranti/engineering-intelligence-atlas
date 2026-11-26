@@ -39,6 +39,18 @@ function mount(settings: { storage?: Storage | null; specs?: CanvasWorkspacePane
 }
 
 describe('one live DOM canvas workspace', () => {
+  it('expands only on an explicit size request, preserves the live draft and respects the lock', () => {
+    const m = mount();
+    m.workspace.open('donna', { frame: false, size: { width: 1120, height: 820 } });
+    expect(m.panel('donna').style.width).toBe('1120px');
+    expect(m.panel('donna').style.height).toBe('820px');
+    expect(m.input.value).toBe('Keep this draft');
+    m.control('donna', '.canvas-panel-pin').click();
+    m.workspace.open('donna', { frame: false, size: { width: 1200, height: 900 } });
+    expect(m.panel('donna').style.width).toBe('1120px');
+    expect(m.host.querySelector('.canvas-layout-status')!.textContent).toContain('Unlock this surface');
+  });
+
   it('reparents the exact elements, keeps drafts/listeners and permits multiple open surfaces', () => {
     const m = mount(); let inputEvents = 0; m.input.addEventListener('input', () => inputEvents++);
     expect(m.panel('donna').contains(m.first)).toBe(true);

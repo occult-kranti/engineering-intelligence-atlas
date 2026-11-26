@@ -1,0 +1,65 @@
+{
+  "schemaVersion": 1,
+  "repository": "occult-kranti/ANDOLAN",
+  "branch": "game/yuga-hanuman-trial",
+  "commit": "9e59880f31452ce0df8d326cd4f1291b700dc228",
+  "inspectedDate": "2026-11-26",
+  "scope": "Read-only source inspection, not a new game/GPU/Unreal execution",
+  "files": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "eb688042a3041d10375eecaa0d22fdb3d5dce545ef04eba9c478c0f5b69f648f",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/AGENTS.md"
+    },
+    {
+      "path": "docs/START_HERE.md",
+      "sha256": "42fb49f7cc1c9a39ef591e2c087df2b934b4461789af0a4cdfb46bf363f19c6b",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/docs/START_HERE.md"
+    },
+    {
+      "path": "games/yuga-rust/Cargo.toml",
+      "sha256": "27334e3149ea3dcda1c851b3a80178dc29f1d9ef9c8eb79411afe41a28d9749f",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/games/yuga-rust/Cargo.toml"
+    },
+    {
+      "path": "games/yuga-rust/README.md",
+      "sha256": "befbc546964bc78855031f91e9095f65ce7c91f56dfa4c91c9bd709ebc508079",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/games/yuga-rust/README.md"
+    },
+    {
+      "path": "games/yuga-native/project.godot",
+      "sha256": "976c5fe71bb7a735013b02287701b95fc3c42452e8876675c0250b49c8a96c95",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/games/yuga-native/project.godot"
+    },
+    {
+      "path": "games/yuga-native/DESIGN.md",
+      "sha256": "21fc85c3ba967701534e668b43b6863c283f14ac00b77fa208e1e741dec80663",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/games/yuga-native/DESIGN.md"
+    },
+    {
+      "path": "games/yuga-native/docs/BUILD_HANDBOOK.md",
+      "sha256": "4ef7a95f381ee48f0c07bc82810a87521145dde094e307b817b2f22ff1472847",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/games/yuga-native/docs/BUILD_HANDBOOK.md"
+    },
+    {
+      "path": "games/yuga-native/docs/design/ember-rite-5v5/atlas/README.md",
+      "sha256": "c732e62105b6b433974645b3ba5141852f8747020891ccd27e388ba800f80ddf",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/games/yuga-native/docs/design/ember-rite-5v5/atlas/README.md"
+    },
+    {
+      "path": "games/yuga-native/docs/design/ember-rite-5v5/atlas/audit.py",
+      "sha256": "0da680cf9f101f0fb73935b948358947c38a94c52ff428249ab58f4b0ae35785",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/games/yuga-native/docs/design/ember-rite-5v5/atlas/audit.py"
+    },
+    {
+      "path": "games/yuga-native/docs/design/ember-rite-5v5/atlas/massing.py",
+      "sha256": "338b8fd4dcae5eacb33d4e75af79f4138ec67b96025bba32c174aa5ff283c48b",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/games/yuga-native/docs/design/ember-rite-5v5/atlas/massing.py"
+    },
+    {
+      "path": "games/yuga-native/docs/design/ember-rite-5v5/atlas/maps/mandala.json",
+      "sha256": "52574c462698584b770bc1fca97c41642329f7785379c0803b5204fb2ca70290",
+      "url": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/games/yuga-native/docs/design/ember-rite-5v5/atlas/maps/mandala.json"
+    }
+  ]
+}

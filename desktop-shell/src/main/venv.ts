@@ -35,9 +35,13 @@ export function parsePythonVersion(output: string): string | null {
   return m ? (m[1] ?? null) : null;
 }
 
-/** Find a usable Python 3 interpreter via `python3 --version` / `python --version`. */
-export async function detectPython(execFileFn: ExecFileFn): Promise<DetectedPython | null> {
-  for (const exe of PYTHON_CANDIDATES) {
+/** Use operator-configured Python exactly, or discover Python 3 on PATH. */
+export async function detectPython(execFileFn: ExecFileFn, pythonPath?: string): Promise<DetectedPython | null> {
+  if (pythonPath !== undefined && (typeof pythonPath !== 'string' || !path.isAbsolute(pythonPath)
+    || Buffer.byteLength(pythonPath) > 4096 || /[\x00-\x1f\x7f]/.test(pythonPath))) {
+    throw new VenvError('The configured Python executable must be an absolute host path.');
+  }
+  for (const exe of pythonPath === undefined ? PYTHON_CANDIDATES : [pythonPath]) {
     try {
       const { stdout, stderr } = await execFileFn(exe, ['--version'], { timeout: 5000 });
       const version = parsePythonVersion(`${stdout}\n${stderr}`);
@@ -45,9 +49,11 @@ export async function detectPython(execFileFn: ExecFileFn): Promise<DetectedPyth
         return { executable: exe, version };
       }
     } catch {
-      // Try next candidate.
+      // A configured interpreter never silently falls back to a different one.
+      if (pythonPath !== undefined) throw new VenvError('The configured Python executable is unavailable.');
     }
   }
+  if (pythonPath !== undefined) throw new VenvError('The configured executable did not report Python 3.');
   return null;
 }
 
@@ -61,6 +67,8 @@ export interface VenvDeps {
   /** Injectable executor; defaults to execFile with fixed args, no shell. */
   execFileFn?: ExecFileFn;
   userDataPath: string;
+  /** Trusted daemon/extension-host setting, never supplied by a workbench request. */
+  pythonPath?: string;
   onProgress?: (detail: string) => void;
 }
 
@@ -96,20 +104,20 @@ export async function createVenv(deps: VenvDeps, options: CreateVenvOptions): Pr
     throw new VenvError(`Venv "${options.name}" already exists at ${dest}; delete it first.`);
   }
 
-  const python = await detectPython(execFileFn);
+  const python = await detectPython(execFileFn, deps.pythonPath);
   if (!python) {
     throw new VenvError('No Python 3 interpreter found on PATH (tried python3, python).');
   }
 
   deps.onProgress?.(`Creating virtual environment with ${python.executable} ${python.version}…`);
-  await execFileFn(python.executable, ['-m', 'venv', dest], { timeout: 120000 });
+  await execFileFn(python.executable, ['-I', '-m', 'venv', dest], { timeout: 120000 });
 
   const pythonPath = venvPythonPath(dest);
   if (options.installHuggingFaceHub === true) {
     deps.onProgress?.(`Installing pinned ${PINNED_HUGGINGFACE_HUB}…`);
     await execFileFn(
       pythonPath,
-      ['-m', 'pip', 'install', '--disable-pip-version-check', '--no-input', PINNED_HUGGINGFACE_HUB],
+      ['-I', '-m', 'pip', '--isolated', '--require-virtualenv', 'install', '--disable-pip-version-check', '--no-input', PINNED_HUGGINGFACE_HUB],
       { timeout: 300000 },
     );
   }

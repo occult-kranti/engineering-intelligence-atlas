@@ -10,6 +10,7 @@ Turn repositories into companies on one continuous operating canvas. The confere
 - Signed-in website owners enter the canvas by default. Connections, access and applications open within it. Standalone sign-in, invitation and visiting-employee entry flows retain their own authentication and restricted-data behavior.
 - Visiting employees receive an explicit company role and expiry. Their canvas, notes and proposals use a restricted server projection; unavailable areas remain greyed out without exposing hidden content.
 - The headless service runs the Rust core and worker pool on a persistent Linux host. Website and MCP clients control bounded work while jobs remain owned by that runtime.
+- The primary VS Code product packages the same office canvas and a matching native runtime. It retains local, persistent tmux, private-runtime and Vast.ai/SSH connection choices. Creative development adds reviewed MoE selection and scoped Blender/Unreal work to that existing product.
 - The public atlas and starter preview contain only public research and synthetic example offices.
 
 ## Product truth
@@ -25,6 +26,10 @@ Source Review is another deterministic runtime service under Donna. It classifie
 The endless canvas is a presentation system with bounded geometry, panel counts and scene rendering. It preserves scope, forms and drafts; it does not create an unlimited database, bypass membership checks or start workers. Stored layout contains panel geometry and presentation preferences, not form values, credentials or access grants. Restricted member projections remain restricted before rendering.
 
 The desktop encrypts provider credentials in the OS vault. A VPS uses private operator-managed secret files. Worker startup is paused. Real model downloads, infrastructure rentals, account connections and installed-device acceptance require actual configured resources. The authorized development Claude ceiling remains USD 100, separate from individual job allowances.
+
+Donna's creative studio keeps one conversation and one composer across the Brief, Conversation and Creative tools views. Its model facts describe the reviewed artifact; installed-model digests and worker receipts establish execution. A mixture-of-experts model is separate from the employee team and from bounded request ensembles. The initial Qwen3-Coder profile uses an exact reviewed tag and an enforced 8,192-token context limit.
+
+Creative adapters execute installed binaries on their own runtime host. Forwarding Ollama over SSH does not move Blender or Unreal execution to that GPU. GPU device selection is explicit and fails when its bounded-memory prerequisites or selected backend are unavailable. An Unreal project descriptor or data-validation receipt is not a rendered frame. The original Donna form study and Yuga Route Lab are editable Blender source assets with real CPU evidence; they do not certify GPU or gameplay acceptance.
 
 The Kimi branch is an additive historical product archive. Selected coordination and interaction ideas inform current implementations; its old runtime and binaries do not replace the native authority. [The branch review](project/KIMI_BRANCH_REVIEW.md) records exact provenance and adoption boundaries.
 

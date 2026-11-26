@@ -16,7 +16,7 @@ function webview(saved={}) {
     requestSubmit(){this.onsubmit?.({preventDefault(){}});}
   }
   const get=id=>{if(!elements.has(id))elements.set(id,new Element());return elements.get(id);};
-  const document={getElementById:get,createElement:tag=>new Element(tag),querySelectorAll:selector=>selector.includes('form button')?[get('send'),get('panel'),get('manage-team'),get('creative-tools')]:[]};
+  const document={getElementById:get,createElement:tag=>new Element(tag),querySelectorAll:selector=>selector.includes('form button')?[get('send'),get('panel'),get('manage-team'),get('creative-tools'),get('creative-development')]:[]};
   const filename=path.resolve(__dirname,'../media/office.js');
   vm.runInNewContext(fs.readFileSync(filename,'utf8'),{document,window:{addEventListener:(_event,fn)=>{listener=fn;}},acquireVsCodeApi:()=>({postMessage:message=>messages.push(message),getState:()=>saved,setState:value=>stored.push(JSON.parse(JSON.stringify(value)))})},{filename});
   const state=(company='a',url='https://atlas.example',kind='cloud')=>listener({data:{type:'state',connected:true,connection:{kind,url},snapshot:{companies:[{id:'a',name:'A'},{id:'b',name:'B'}],employees:[],offices:[],departments:[],jobs:[]},selectedCompany:company,ownership:[]}});
@@ -57,4 +57,18 @@ test('runtime creative summary reports real readiness, ignores other company res
   w.get('creative-tools').onclick();assert.equal(w.messages.at(-1).type,'creativeTools');assert.equal(w.messages.at(-1).companyId,'a');assert.equal(w.get('creative-tools').disabled,true);
   const count=w.messages.length;w.get('creative-tools').onclick();assert.equal(w.messages.length,count);
   w.receive({type:'busy',value:false});assert.equal(w.get('creative-tools').disabled,false);
+});
+test('development status distinguishes install, load and selected digest without claiming a live GPU',()=>{
+  const w=webview();w.state('a','http://127.0.0.1:8788','runtime');
+  const model='qwen3-coder:30b-a3b-q4_K_M',digest='a'.repeat(64);
+  const models={available:true,enabled:true,catalog:[{id:model,contextLimitTokens:8192}],models:[{name:model,digest,loaded:false}],assignments:[{companyId:'a',model,digest,employeeId:'one'},{companyId:'b',model,digest,employeeId:'foreign'},{companyId:'a',model,digest:'b'.repeat(64),employeeId:'stale'}]};
+  w.receive({type:'developmentState',companyId:'a',models,status:{worker:{enabled:false,running:false}}});
+  assert.match(w.get('development-state').textContent,/installed; not loaded/);assert.match(w.get('development-state').textContent,/1 current company assignment/);assert.match(w.get('development-state').textContent,/workers paused/);assert.match(w.get('development-state').textContent,/GPU memory and performance are unverified/);
+  const prior=w.get('development-state').textContent;w.receive({type:'developmentState',companyId:'b',models:null});assert.equal(w.get('development-state').textContent,prior);
+  w.get('creative-development').onclick();assert.equal(w.messages.at(-1).type,'creativeDevelopment');assert.equal(w.messages.at(-1).companyId,'a');assert.equal(w.get('creative-development').disabled,true);
+  const count=w.messages.length;w.get('creative-development').onclick();assert.equal(w.messages.length,count);w.receive({type:'busy',value:false});assert.equal(w.get('creative-development').disabled,false);
+});
+test('configured OPTIX visibility is labelled as requested and unverified',()=>{
+  const w=webview();w.state('a','http://127.0.0.1:8788','runtime');w.receive({type:'creativeState',companyId:'a',inventory:{tools:[{id:'blender',configured:true,available:true,renderDevice:'OPTIX'}],projects:[],jobs:[]}});
+  assert.match(w.get('creative-state').textContent,/OPTIX requested, device unverified/);
 });

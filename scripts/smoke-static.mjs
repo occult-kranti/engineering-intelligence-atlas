@@ -346,7 +346,7 @@ try {
   }
   // A chat deep link must frame the actual composer in the first laptop viewport,
   // without a test-induced scroll or a second surface-opening action.
-  for (const viewport of [{width:1280,height:720},{width:1024,height:768}]) for (const presentation of ['blueprint','drafting']) {
+  for (const viewport of [{width:1280,height:720},{width:1152,height:720},{width:1024,height:768}]) for (const presentation of ['blueprint','drafting']) {
     const context=await browser.newContext({viewport,reducedMotion:'reduce'});
     await context.addInitScript(p=>{try{localStorage.setItem('daftar-studio-theme',p);}catch{}},presentation);
     const page=await context.newPage();
@@ -376,6 +376,12 @@ try {
     assert(layout.scroll.x===0&&layout.scroll.y===0&&!layout.overflowX,`No scroll or horizontal overflow expected at ${presentation}/${viewport.width}: ${JSON.stringify({scroll:layout.scroll,overflowX:layout.overflowX})}`);
     assert(box&&box.y>=0&&box.y+box.height<=viewport.height,`Donna composer must fit first laptop viewport ${viewport.width}: ${JSON.stringify(box)}`);
     assert(box&&box.width>=24&&box.height>=24,`Donna send target must remain at least 24px in each screen dimension at ${presentation}/${viewport.width}: ${JSON.stringify(box)}`);
+    assert.equal(await page.locator('#chat-send').evaluate(button=>{
+      const b=button.getBoundingClientRect();
+      const x=b.x+b.width/2;
+      return [b.y+1,b.y+b.height/2,b.bottom-1].every(y=>button.contains(document.elementFromPoint(x,y)));
+    }),true,`Donna send target must not be clipped or covered at ${presentation}/${viewport.width}`);
+    assert.equal(await page.locator('.canvas-game-studio iframe').count(),0,'An unopened studio must not create an iframe');
     checked++;
     await context.close();
   }

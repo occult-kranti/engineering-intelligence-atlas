@@ -1,0 +1,392 @@
+{
+  "schemaVersion": 1,
+  "classification": "public-generic-preset",
+  "companies": [
+    {
+      "key": "andolan-yuga-development",
+      "id": "andolan-yuga-development",
+      "name": "ANDOLAN / YUGA",
+      "office": {
+        "key": "main",
+        "name": "Main office"
+      },
+      "departments": [
+        {
+          "key": "engineering",
+          "name": "Engineering"
+        },
+        {
+          "key": "research",
+          "name": "Research"
+        },
+        {
+          "key": "asset-production",
+          "name": "Asset production"
+        },
+        {
+          "key": "world-design",
+          "name": "World design"
+        },
+        {
+          "key": "engine-experiments",
+          "name": "Engine experiments"
+        }
+      ],
+      "employees": [
+        {
+          "key": "coordinator",
+          "name": "Subdirector",
+          "role": "Company subdirector",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "subdirector"
+        },
+        {
+          "key": "layout-steward",
+          "name": "Blueprint steward",
+          "role": "Office blueprint steward",
+          "skillPaths": [
+            "skills/engineering-organization-architect/SKILL.md"
+          ],
+          "reuseAssignmentKey": "blueprint-steward"
+        },
+        {
+          "key": "evidence-curator",
+          "name": "Knowledge curator",
+          "role": "Knowledge curator",
+          "skillPaths": [
+            "skills/agent-research-director/SKILL.md"
+          ],
+          "reuseAssignmentKey": "knowledge-curator"
+        },
+        {
+          "key": "independent-qa",
+          "name": "QA lead",
+          "role": "Quality assurance lead",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md",
+            "skills/spatial-3d-production-engineering/SKILL.md"
+          ],
+          "reuseAssignmentKey": "qa-lead"
+        },
+        {
+          "key": "release-steward",
+          "name": "GitHub steward",
+          "role": "GitHub release steward",
+          "skillPaths": [
+            "skills/engineering-organization-architect/SKILL.md"
+          ],
+          "reuseAssignmentKey": "github-steward"
+        },
+        {
+          "key": "moe-coder",
+          "name": "Code engineer",
+          "role": "Code engineer",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md",
+            "skills/local-model-runtime-engineering/SKILL.md"
+          ],
+          "reuseAssignmentKey": "code-engineer"
+        },
+        {
+          "key": "rust-authority",
+          "name": "Rust authority engineer",
+          "role": "Rust and WebAssembly gameplay engineer",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ],
+          "departmentKey": "engineering"
+        },
+        {
+          "key": "blender-artist",
+          "name": "Blender environment artist",
+          "role": "Blender map and render artist",
+          "skillPaths": [
+            "skills/spatial-3d-production-engineering/SKILL.md"
+          ],
+          "departmentKey": "asset-production"
+        },
+        {
+          "key": "map-engineer",
+          "name": "Map and traversal engineer",
+          "role": "Map topology and traversal engineer",
+          "skillPaths": [
+            "skills/computational-geometry-engineering/SKILL.md",
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ],
+          "departmentKey": "world-design"
+        },
+        {
+          "key": "unreal-engineer",
+          "name": "Unreal experiment engineer",
+          "role": "Unreal import and scene engineer",
+          "skillPaths": [
+            "skills/spatial-3d-production-engineering/SKILL.md",
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ],
+          "departmentKey": "engine-experiments"
+        },
+        {
+          "key": "gameplay-audio",
+          "name": "Gameplay audio engineer",
+          "role": "Gameplay audio and listener-state engineer",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ],
+          "departmentKey": "engineering"
+        },
+        {
+          "key": "animation-performance",
+          "name": "Animation and performance engineer",
+          "role": "Hero animation contact and performance engineer",
+          "skillPaths": [
+            "skills/spatial-3d-production-engineering/SKILL.md",
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ],
+          "departmentKey": "asset-production"
+        }
+      ],
+      "services": [],
+      "roadmap": [
+        {
+          "key": "source-baseline",
+          "title": "Pin source, active engine and ownership",
+          "description": "Review current START_HERE, branch/HEAD, matching authority and accepted assets; preserve owner work.",
+          "ownerKey": "coordinator",
+          "dependsOn": []
+        },
+        {
+          "key": "moe-coding-pilot",
+          "title": "Run one bounded coding MoE trial",
+          "description": "Install and select the exact reviewed model through the normal model pool only when the runtime and budget are ready. Use one scoped coding task, at most 8192 context and 1024 output tokens, and independent tests. Record actual memory, elapsed time and result.",
+          "ownerKey": "moe-coder",
+          "dependsOn": [
+            "source-baseline"
+          ]
+        },
+        {
+          "key": "route-lab",
+          "title": "Reopen and verify the portable Route Lab",
+          "description": "Verify the original Blender scene, GLB digest, dimensions, axes, spawn coordinates and CPU preview. Keep authored maps and production assets unchanged.",
+          "ownerKey": "blender-artist",
+          "dependsOn": [
+            "source-baseline"
+          ]
+        },
+        {
+          "key": "mandala-authority",
+          "title": "Integrate an isolated Mandala gameplay slice",
+          "description": "Follow the existing atlas next gate: dry routes, selected collision, held interaction, interrupt/reset/side-swap and authoritative event order. Keep folds closed. A prepared roadmap is not an executed integration.",
+          "ownerKey": "rust-authority",
+          "dependsOn": [
+            "source-baseline"
+          ]
+        },
+        {
+          "key": "unreal-import",
+          "title": "Import the exact Route Lab into a separate Unreal experiment",
+          "description": "Use an owner-selected existing .uproject and installed engine. Verify scale and materials, then deliberately configure collision/navigation and capture actual engine evidence.",
+          "ownerKey": "unreal-engineer",
+          "dependsOn": [
+            "route-lab"
+          ]
+        },
+        {
+          "key": "independent-acceptance",
+          "title": "Review actual geometry and engine outcomes",
+          "description": "Reopen exact exports; distinguish stored geometry evidence, new engine tests and missing hardware/player gates. The two rendered-client qualification remains open until actually tested.",
+          "ownerKey": "independent-qa",
+          "dependsOn": [
+            "route-lab",
+            "unreal-import"
+          ]
+        },
+        {
+          "key": "reviewed-handoff",
+          "title": "Publish the reviewed development source",
+          "description": "Return exact source commits, artifact digests, checks and limits. Push the scoped development branch when authorized; release publication is a separate action.",
+          "ownerKey": "release-steward",
+          "dependsOn": [
+            "moe-coding-pilot",
+            "independent-acceptance"
+          ]
+        },
+        {
+          "key": "source-refresh-20261126",
+          "title": "Review current Yuga source and transfer register",
+          "description": "Pin a35493d67cf5111d7da2ff9eea6c58ed3499aeca and the current integration branch. Review Monsoon, audio and vertical-play receipts. Preserve prior owner work and distinguish source-only study assets from permitted Yuga production inputs.",
+          "ownerKey": "coordinator",
+          "dependsOn": []
+        },
+        {
+          "key": "monsoon-collision-objectives",
+          "title": "Commission Monsoon geometry and both objectives",
+          "description": "Bind surveyed solid IDs, ten spawn pads, seven thresholds and two level ritual disks to the existing authoritative rules. Verify floor heights, dry alternatives, capsule clearance, interruption and side swap in the engine; the browser walk and mesh rays do not close this gate.",
+          "ownerKey": "map-engineer",
+          "dependsOn": [
+            "source-refresh-20261126",
+            "mandala-authority"
+          ]
+        },
+        {
+          "key": "audio-listener-authority",
+          "title": "Integrate accepted audio receipts and reconnect state",
+          "description": "With the Rust owner, map accepted movement/casts/objective events to audience-scoped receipts. Challenge radius boundaries, repeated/stale events, interrupted holds, spectator redaction and reconnect clocks. Out-of-range clients must receive no hidden position or attempt; captions follow the same admission.",
+          "ownerKey": "gameplay-audio",
+          "dependsOn": [
+            "source-refresh-20261126"
+          ]
+        },
+        {
+          "key": "hero-contact-timing",
+          "title": "Bind vertical hero witnesses to live motion",
+          "description": "Bind accepted cast, takeoff, contact, impact and recovery states to animation/audio markers. Verify the shared receiver, muzzle, floor support and corrected two-person entrances while crouching and airborne. Record actual rendered-client and physical-device timing; generated art and synthetic FPS are not acceptance.",
+          "ownerKey": "animation-performance",
+          "dependsOn": [
+            "source-refresh-20261126"
+          ]
+        },
+        {
+          "key": "ten-seat-acceptance",
+          "title": "Run Monsoon and audio acceptance with ten seats",
+          "description": "Test ten seats with two actual rendered clients, late join, repeated/stale inputs, side swap, objective interruption and both retakes. Record first contact and cue eligibility. Keep human balance/listening and hardware profiling separate from deterministic protocol checks.",
+          "ownerKey": "independent-qa",
+          "dependsOn": [
+            "monsoon-collision-objectives",
+            "audio-listener-authority",
+            "hero-contact-timing"
+          ]
+        },
+        {
+          "key": "current-source-handoff",
+          "title": "Publish source-bound production acceptance",
+          "description": "Publish only observed results with exact source, model/asset hashes, failed gates, current audience and artifact notices. Keep original guide voices distinct from licensed human performances and a source push distinct from a qualified game release.",
+          "ownerKey": "release-steward",
+          "dependsOn": [
+            "ten-seat-acceptance"
+          ]
+        }
+      ],
+      "knowledge": [
+        {
+          "key": "source-baseline",
+          "title": "ANDOLAN / YUGA inspected source baseline",
+          "summary": "Repository occult-kranti/ANDOLAN; active source branch game/yuga-hanuman-trial inspected at 9e59880f31452ce0df8d326cd4f1291b700dc228 on 2026-11-26. Current Rust/WASM + PlayCanvas Confluence, retained Godot 4.6 native comparison and Blender map pipeline. No .uproject observed in the inspected tree. Current Ember Rite solo rehearsal is separate from networked hero knockout and isolated ritual rules. See profile.json and source-evidence.json for exact sources.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/9e59880f31452ce0df8d326cd4f1291b700dc228/docs/START_HERE.md"
+        },
+        {
+          "key": "map-prototype",
+          "title": "Daftar Route Lab portable map prototype",
+          "summary": "Original procedural Blender scale/route sandbox: 48 by 56 m, ten spawn markers, one central objective. Source, GLB, CPU preview and reimport evidence live in map-blockout/. It is not one of the authored Ember Rite maps; gameplay, collision, navmesh, GPU and Unreal acceptance remain separate.",
+          "artifactUri": "projects/andolan-yuga-development/map-blockout/README.md"
+        },
+        {
+          "key": "prompt-coordinator",
+          "title": "ANDOLAN / YUGA role: Subdirector",
+          "summary": "Coordinate one bounded source change at a time. Pin the current ANDOLAN branch and source hash, assign exclusive files, queue renders and imports, and preserve the Rust authority, browser game and Godot comparison boundaries. Track definitions, installed models, assignments, started jobs and accepted evidence separately.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-layout-steward",
+          "title": "ANDOLAN / YUGA role: Blueprint steward",
+          "summary": "Maintain the existing company office, dependency board and ownership map without replacing owner positions, names or prior work. Role count is not model concurrency. Keep the new Route Lab visibly separate from the four authored Ember Rite maps.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-evidence-curator",
+          "title": "ANDOLAN / YUGA role: Knowledge curator",
+          "summary": "Keep commit-pinned source notes, asset provenance, exact tool versions, immutable hashes and open gates. Current source is game/yuga-hanuman-trial; main and distribution branches are not interchangeable. Preserve accepted and useful failed evidence. Record actual observations without inventing performance or engine acceptance.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-independent-qa",
+          "title": "ANDOLAN / YUGA role: QA lead",
+          "summary": "Independently reopen the exact candidate and challenge its main claim. Check source/asset hashes, metres and axes, ten spawn markers, objective clearance, native scope, model digest and real failure outcomes. A passing manifest or CPU render does not prove collision, navigation, human balance, Unreal execution, online authority or GPU performance.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-release-steward",
+          "title": "ANDOLAN / YUGA role: GitHub steward",
+          "summary": "Inspect current branch, HEAD and worktree before a targeted commit. Preserve other work, push only the reviewed development branch when authorized, and return exact commit/branch URLs and the checks actually run. Keep prototype art outside accepted runtime asset paths and preserve notices. Do not publish a release merely because a branch was pushed.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-moe-coder",
+          "title": "ANDOLAN / YUGA role: Code engineer",
+          "summary": "Use the reviewed coding MoE qwen3-coder:30b-a3b-q4_K_M only after installed-model digest verification and explicit scoped selection. The first Daftar profile is 8192 context tokens, one inference request at a time, at most 1024 output tokens for the trial. Inspect current files, make a bounded patch, and request independent tests. Never substitute the short tag alias or claim role routing trains a new MoE. The approximately 19 GB artifact is not a VRAM measurement.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-rust-authority",
+          "title": "ANDOLAN / YUGA role: Rust authority engineer",
+          "summary": "Own bounded Rust/WASM simulation and protocol changes in games/yuga-rust. The current networked game is the private hero-only Confluence match; Ember Rite ritual rules and map rehearsal are separate until explicitly joined. For the first Mandala experiment keep folds closed, preserve movement/combat authority, and test interaction, damage interrupts, reset and side swap before two rendered-client acceptance.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-blender-artist",
+          "title": "ANDOLAN / YUGA role: Blender environment artist",
+          "summary": "Create original editable geometry or a source-reviewed derivative in the assigned art directory. Use metres, Blender +X east/+Y north/+Z up and GLB +X east/+Y up/-Z north. Retain recipe, .blend, .glb, preview, provenance and exact export/reimport evidence. Follow Yuga art production ownership and queue costly renders. Request the configured backend explicitly; an unavailable GPU is a failed GPU test, not silent CPU success.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-map-engineer",
+          "title": "ANDOLAN / YUGA role: Map and traversal engineer",
+          "summary": "Treat the four Ember Rite JSON plans as authored design sources. The 3 m objective radius and 1.5 m perimeter apron give a 4.5 m clearance radius. Preserve dry alternative routes and shared origins. Daftar Route Lab is an original scale/route sandbox, not an authored-map replacement or balanced mode. Separate analytic route checks from engine capsule, collision, camera, visibility, navmesh and human tests.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-unreal-engineer",
+          "title": "ANDOLAN / YUGA role: Unreal experiment engineer",
+          "summary": "Prepare a separate Unreal import/render experiment using an explicitly selected existing Unreal project and licensed installed engine. This inspected ANDOLAN source has no Unreal project. Keep the current Rust/Godot/browser engines in place. Import the exact portable GLB, verify the 48 by 56 m scale after metre-to-centimetre handling, set collision/navigation deliberately, and return actual editor/import/render evidence before claiming integration.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-gameplay-audio",
+          "title": "ANDOLAN / YUGA role: Gameplay audio engineer",
+          "summary": "Own listener-admitted cues, Web Audio lifecycle and the scoped server audio contract. Use accepted movement and cast events; keep hidden positions, interruptions and spectator privileges behind authority. Test radius boundaries, duplicate and stale receipts, reconnect clock, mono and captions. Synthetic guide voices and headless digital measurements do not establish human performance rights, physical listening or finished multiplayer sound. Coordinate actor state with Rust and animation owners.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "prompt-animation-performance",
+          "title": "ANDOLAN / YUGA role: Animation and performance engineer",
+          "summary": "Own source-bound hero motion, contact markers and rendered-client performance checks. Separate render mesh dimensions, movement capsule, receiver and muzzle. Reproduce vertical witnesses and cast cancel/landing cases on the actual game state; preserve rig and source assets. Capture real device, frame timings and settings. A planned hero kit, concept film or headless simulation is not a new playable hero or physical-GPU benchmark.",
+          "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "current-source-20261126",
+          "title": "Current YUGA source and engine boundaries",
+          "summary": "Current source is a35493d67cf5111d7da2ff9eea6c58ed3499aeca, 13 commits after the prior 9e59880 baseline. Rust/WASM and PlayCanvas own the private Confluence match. Ember Rite solo movement/audio, isolated ritual rules, Monsoon browser walk and retained Godot build remain separate products. These current handoff notes supersede older baseline facts; preserve owner contracts. Source review is not a new engine or GPU run.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/docs/START_HERE.md"
+        },
+        {
+          "key": "current-map-20261126",
+          "title": "Current YUGA Monsoon and Mandala commissioning",
+          "summary": "Monsoon Exchange is the authored district; Daftar Route Lab remains a separate sandbox. Survey: 13 rooms, 18 connections, ten pads, seven thresholds and two sites. Change the survey first, regenerate dependents and recheck actual meshes. Reuse registered Mandala kit IDs. Next bind collision, dry routes and objective disks to authority, then test side swaps and retakes. Geometry rays and the guided walk do not establish playable multiplayer.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/art/monsoon-exchange/README.md"
+        },
+        {
+          "key": "current-audio-20261126",
+          "title": "Current YUGA listener and audio acceptance",
+          "summary": "The released solo drill has audience/radius-gated sound and captions, an adaptive score and synthetic guide voices. Multiplayer needs accepted event IDs, redacted listener streams, duplicate/stale rejection and reconnect clock state. Interrupted casts cannot emit real result cues; out-of-range clients receive no hidden position. Check mono/captions and physical listening separately. Human voice performances and agreements remain pending.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/docs/design/ember-rite-5v5/audio/roadmap.md"
+        },
+        {
+          "key": "current-motion-20261126",
+          "title": "Current YUGA vertical motion and performance",
+          "summary": "Use vertical-play geometry and hero witnesses: standing body 1.80 m, eye 1.60 m, conservative path clearance 0.65 m. Render art, receiver and release socket are separate. Bind accepted cast/takeoff/contact/recovery states to animation and audio; test raised cover, crouch, ceilings, cancel and landing. Ten-seat/two-rendered-client, human feel and physical-GPU frame measurements remain open.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/docs/design/ember-rite-5v5/atlas/vertical-play/README.md"
+        },
+        {
+          "key": "current-provenance-20261126",
+          "title": "Current YUGA reuse and release boundaries",
+          "summary": "Use original Monsoon geometry and registered Yuga kit sources with exact hashes/notices. Valve/GoldSrc maps are edition-specific study inputs; separate tool licenses do not grant their assets. Review each external map and texture grant separately. Retain accepted and failed receipts, generated-versus-authored labels and exact build identity. Unreal is an optional separate experiment; the current game gates do not wait on it.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/art/monsoon-exchange/design/transfer-register.md"
+        }
+      ],
+      "board": {
+        "title": "ANDOLAN / YUGA development gates"
+      }
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const manifest=JSON.parse(fs.readFileSync(path.join(root,'resources/runtime/manifest.json'),'utf8'));
+if(manifest.platform!==process.platform || manifest.arch!==process.arch) throw new Error('Build the runtime for this host before packaging.');
+const version=JSON.parse(fs.readFileSync(path.join(root,'package.json'),'utf8')).version;
+const target=`${process.platform}-${process.arch}`;
+const result=spawnSync(process.execPath,[path.join(root,'node_modules/@vscode/vsce/vsce'),'package','--no-dependencies','--target',target,'--out',path.join(root,`atlas-office-${version}.vsix`)],{cwd:root,stdio:'inherit',shell:false});
+process.exitCode=result.status??1;

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "tools": {
-    "blender": {"executable": "/opt/daftar-tools/blender/4.5.17/blender"},
+    "blender": {"executable": "/opt/daftar-tools/blender/4.5.17/blender", "renderDevice": "CPU", "renderDeviceIndex": 0},
     "unreal": {"executable": "/opt/daftar-tools/unreal/OWNER_VERSION/Engine/Binaries/Linux/UnrealEditor"},
     "inkscape": {"executable": "/usr/bin/inkscape"},
     "ffmpeg": {"executable": "/usr/bin/ffprobe"}

@@ -14,6 +14,7 @@ jobs:
     env:
       ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
       DAFTAR_REQUIRE_NATIVE_TESTS: '1'
+      DAFTAR_REQUIRE_TMUX: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -23,6 +24,10 @@ jobs:
           cache-dependency-path: desktop-shell/package-lock.json
       - name: Select Rust stable
         run: rustup default stable
+      - name: Install tmux for required detached-host acceptance
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes tmux
       - name: Install locked dependencies and build portable modules
         run: |
           npm ci --prefix desktop-shell --ignore-scripts --no-audit --no-fund
@@ -33,7 +38,8 @@ jobs:
         run: npx vitest run tests/cloud-native-contract.test.ts tests/office-worker.test.ts tests/providers.test.ts
       - name: Verify private HTTP and stdio control
         run: |
-          node --test headless-runtime/test/*.test.mjs tools/daftar-runtime-mcp.test.mjs
+          node --test headless-runtime/test/*.test.mjs tools/daftar-runtime-mcp.test.mjs deploy/test/*.test.mjs
+          python3 -m unittest discover -s deploy/test -p 'test_*.py' -v
           node scripts/smoke-runtime-mcp.mjs
       - name: Verify resource routing, packaged skills and shared assets
         run: |
@@ -86,6 +92,11 @@ jobs:
           node -e "const a=require('/tmp/daftar-status.json'); if(!a.ok || a.worker.enabled || a.execution!=='headless') process.exit(1)"
           node -e "for (const r of [{jsonrpc:'2.0',id:1,method:'initialize',params:{protocolVersion:'2025-11-25',capabilities:{},clientInfo:{name:'container-check',version:'1'}}},{jsonrpc:'2.0',id:2,method:'tools/call',params:{name:'office_summary',arguments:{}}}]) console.log(JSON.stringify(r))" | docker compose -f deploy/compose.yaml exec -T runtime node /app/tools/daftar-runtime-mcp.mjs > /tmp/daftar-mcp.jsonl
           node -e "const rows=require('node:fs').readFileSync('/tmp/daftar-mcp.jsonl','utf8').trim().split('\n').map(JSON.parse); const r=rows.find(x=>x.id===2); if(r?.result?.isError!==false || !/^[a-f0-9]{64}$/.test(r.result.structuredContent.stateHash)) process.exit(1)"
+      - name: Show bounded startup diagnostics on failure
+        if: failure()
+        run: |
+          docker compose -f deploy/compose.yaml ps --all
+          docker compose -f deploy/compose.yaml logs --no-color --tail 80
       - name: Remove synthetic container and volume
         if: always()
         run: docker compose -f deploy/compose.yaml down --volumes

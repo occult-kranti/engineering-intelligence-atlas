@@ -43,3 +43,9 @@ local.properties
 /site-source/public/architecture-library/site-models/assets/st-george-antiochian-orthodox-church.glb
 /site-source/public/architecture-library/site-models/assets/el-markaz-islami-mosque.glb
 /site-source/public/architecture-library/site-models/assets/giza-plateau.glb
+# Reproducible platform VSIX payloads
+vscode-extension/resources/runtime/
+vscode-extension/resources/runtime.building-*/
+vscode-extension/media/studio/
+vscode-extension/media/studio.building-*/
+vscode-extension/media/studio.build-*/

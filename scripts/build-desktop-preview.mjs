@@ -1,3 +1,4 @@
+import { copyDonnaStudio } from './donna-studio-assets.mjs';
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -24,7 +25,7 @@ const bridge = Buffer.from(bridgeText.replace(seedRef, (_, q) => `${q}./${seed}$
 
 // CSS comes from source when the renderer build has not copied it.
 const overrides = new Map([['browser-bridge.js', bridge]]);
-for (const name of ['chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'hardware-workbench.css', 'brain/panel.css']) {
+for (const name of ['chrome.css', 'studio-tokens.css', 'freeflow.css', 'resource-library.css', 'canvas-craft.css', 'donna-studio.css', 'hardware-workbench.css', 'brain/panel.css']) {
   if (existsSync(join(source, name))) overrides.set(name, readFileSync(join(source, name)));
 }
 
@@ -35,7 +36,9 @@ html = rewriteHtml(html, names, roots);
 files.set(hashName('preview-state.json', seedBytes), seedBytes);
 files.set('chrome.html', Buffer.from(html));
 
-const legacy = /^(?:chrome\.html|(?:chrome|browser-bridge|office-signals|model-pool|hardware-workbench)(?:\.[a-f0-9]{16})?\.js|(?:chrome|studio-tokens|freeflow|resource-library|canvas-craft|hardware-workbench)(?:\.[a-f0-9]{16})?\.css|preview-state(?:\.[a-f0-9]{16})?\.json)$/;
+const legacy = /^(?:chrome\.html|(?:chrome|browser-bridge|office-signals|model-pool|hardware-workbench|donna-studio)(?:\.[a-f0-9]{16})?\.js|(?:chrome|studio-tokens|freeflow|resource-library|canvas-craft|donna-studio|hardware-workbench)(?:\.[a-f0-9]{16})?\.css|preview-state(?:\.[a-f0-9]{16})?\.json)$/;
 writeAssets(dest, files, { prune: (rel) => legacy.test(rel) });
 copyCompanyStudio(repoRoot, join(dest, 'studios/threejs'));
 console.log('Built desktop preview with content-addressed renderer graph, styles, bridge and starter state.');
+
+copyDonnaStudio(repoRoot, join(dest, 'assets/donna-studio'));

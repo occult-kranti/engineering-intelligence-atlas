@@ -5,7 +5,12 @@ import path from 'node:path';
 
 export interface DashboardOptions { rendererRoot: string; dispatch: (method: string, args: unknown[]) => Promise<unknown> | unknown }
 const STATIC_ASSETS = ['chrome.html','chrome.css','chrome.js','browser-bridge.js','studio-tokens.css','office-signals.js','freeflow.css','model-pool.js',
-  ...['camera','layout','model','threads','scene','controls','a11y-list','inspector','studio','intake','staffing-plan','manage'].map(n=>`freeflow/${n}.js`)];
+  'canvas-craft.css','resource-library.css','hardware-workbench.css','hardware-workbench.js','donna-studio.css','donna-studio.js',
+  ...['camera','layout','model','threads','scene','controls','a11y-list','inspector','studio','intake','staffing-plan','manage','canvas-workspace','donna-team','member','universe','workspace'].map(n=>`freeflow/${n}.js`),
+  ...['core','graphMemory','model','office-types','panel'].map(n=>`brain/${n}.js`), 'brain/panel.css',
+  ...['budget','catalog','model','panel'].map(n=>`resource-library/${n}.js`),
+  ...['donna-studio.webp','donna-studio.blend','donna-studio.glb','provenance.json'].map(n=>`assets/donna-studio/${n}`),
+  ...['index.html','studio.css','core.mjs','studio.mjs','vendor/three.module.min.js','assets/reference-observatory.html'].map(n=>`studios/threejs/${n}`)];
 /** Explicit manifest: only these compiled renderer files are ever served. */
 const ALLOWED_FILES: Record<string,string> = Object.freeze({'/':'chrome.html',...Object.fromEntries(STATIC_ASSETS.map(f=>['/'+f,f]))});
 const has = (o:object,k:string)=>Object.prototype.hasOwnProperty.call(o,k);
@@ -68,7 +73,10 @@ export class PersonalDashboardServer {
     if(unsafeRawPath){res.writeHead(400);res.end('Invalid path');return;}
     const url=new URL(rawTarget,this.origin);this.expire();
     if(req.method==='GET'&&has(ALLOWED_FILES,url.pathname)){
-      const file=ALLOWED_FILES[url.pathname]!;res.setHeader('Content-Type',file.endsWith('.html')?'text/html; charset=utf-8':file.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8');
+      const file=ALLOWED_FILES[url.pathname]!;
+      const mime: Record<string,string> = { '.html':'text/html; charset=utf-8', '.css':'text/css; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.mjs':'text/javascript; charset=utf-8', '.json':'application/json; charset=utf-8', '.webp':'image/webp', '.glb':'model/gltf-binary', '.blend':'application/octet-stream' };
+      res.setHeader('Content-Type', mime[path.extname(file)] || 'application/octet-stream');
+      if(file.endsWith('.blend')) res.setHeader('Content-Disposition','attachment; filename="donna-studio.blend"');
       let bytes:Buffer;
       try{
         const base=await fs.promises.realpath(this.options.rendererRoot);

@@ -593,7 +593,7 @@
     {
       "key": "tesla",
       "title": "Tesla mechanism and resonance lens",
-      "brief": "Goal: Turn a mechanism into inspectable components, couplings, states and measurements with a complete energy and loading budget.\nInputs: Actual source, load, receiver, state variables and units; Phase, detuning, damping and omitted-channel assumptions; Patent or notebook source with claim and reading depth.\nBoundary: Use selected documented engineering methods, not a reconstruction of Tesla’s mind or endorsement. A patent is a proposal and historical record, not measured efficiency. Electrical resonance is not automatically quantum resonance. Resonant amplitude gain does not establish net power gain; account for input, stored energy, work and losses. Popular numerology or absent documents do not supply equations.\nReturn: mechanism, energyBudget, loading, controls, limitations.\nAcceptance: Name the observable and measurement chain. Detune or remove a coupling; include the load and omitted channels. Separate exact identity, simulation, measured result and conjecture.\nHandoff: Return the smallest explicit mechanism and its strongest loading objection to Donna and the research skeptic.",
+      "brief": "Goal: Turn a mechanism into inspectable components, couplings, states and measurements with a complete energy and loading budget.\nInputs: Actual source, load, receiver, state variables and units; Phase, detuning, damping and omitted-channel assumptions; Patent or notebook source with claim and reading depth.\nBoundary: Use selected documented engineering methods, not a reconstruction of Tesla\u2019s mind or endorsement. A patent is a proposal and historical record, not measured efficiency. Electrical resonance is not automatically quantum resonance. Resonant amplitude gain does not establish net power gain; account for input, stored energy, work and losses. Popular numerology or absent documents do not supply equations.\nReturn: mechanism, energyBudget, loading, controls, limitations.\nAcceptance: Name the observable and measurement chain. Detune or remove a coupling; include the load and omitted channels. Separate exact identity, simulation, measured result and conjecture.\nHandoff: Return the smallest explicit mechanism and its strongest loading objection to Donna and the research skeptic.",
       "document": "company/role-library/tesla.md",
       "examples": [
         "company/role-library/examples/tesla-task.json",
@@ -634,7 +634,7 @@
       ],
       "references": [
         {
-          "title": "Clay Mathematics Institute: Yang–Mills problem statement",
+          "title": "Clay Mathematics Institute: Yang\u2013Mills problem statement",
           "url": "https://www.claymath.org/wp-content/uploads/2022/06/yangmills.pdf"
         },
         {
@@ -692,7 +692,7 @@
       ],
       "references": [
         {
-          "title": "Clay Mathematics Institute: Yang–Mills problem statement",
+          "title": "Clay Mathematics Institute: Yang\u2013Mills problem statement",
           "url": "https://www.claymath.org/wp-content/uploads/2022/06/yangmills.pdf"
         },
         {
@@ -774,6 +774,97 @@
         "catalog.read",
         "catalog.index",
         "integration.review"
+      ]
+    },
+    {
+      "key": "cloud-operations",
+      "title": "Cloud Compute Operator",
+      "brief": "Goal: Maintain existing owner compute for Donna and explicitly delegated employees. Inputs: workload, current instance, extension-host location, workspace, GPU/RAM/storage and budget requirements. Keep stopped instances stopped. Reuse existing SSH authentication with strict host-key checks. A connected shell does not prove GPU access. Use durable host receipts and verified Python environments; never install global pip packages. Stage reviewed models once, register installed digests, enforce explicit sharing and current service contracts before assignment and execution. Use checksum/version-pinned design toolchain plans. Request ensembles are not trained MoE weights. Return current runtime/GPU evidence, ownership revision, job receipts, versions/digests, measured cost and unresolved blockers. Do not automatically retry uncertain work or provision/rent/change instance lifecycle.",
+      "document": "company/role-library/cloud-operations.md",
+      "examples": [],
+      "references": [
+        {
+          "title": "VS Code remote extensions",
+          "url": "https://code.visualstudio.com/api/advanced-topics/remote-extensions"
+        },
+        {
+          "title": "Vast instance listing",
+          "url": "https://docs.vast.ai/api-reference/instances/show-instances"
+        },
+        {
+          "title": "Blender command-line rendering",
+          "url": "https://docs.blender.org/manual/en/latest/advanced/command_line/render.html"
+        },
+        {
+          "title": "Godot command line",
+          "url": "https://docs.godotengine.org/en/stable/tutorials/editor/command_line_tutorial.html"
+        }
+      ],
+      "handoff": "Donna receives verified compute, ownership and artifact receipts; design and engineering employees receive bounded assigned jobs.",
+      "capabilities": [
+        "compute.inspect",
+        "compute.connect-existing",
+        "compute.host-job",
+        "environment.managed",
+        "model.resource-share",
+        "design.install-reviewed"
+      ]
+    },
+    {
+      "key": "runtime-observer",
+      "title": "Runtime Observer",
+      "brief": "Goal: Give Donna a bounded, evidence-based view of the assigned runtime. Inputs: canonical company/employee/job IDs, owner policy revision, worker scheduling status, native job and budget receipts, and retained activity metadata. Read only current authorized scope. Distinguish accepted, completed, failed, cancelled and unknown states. The default worker idle/error delay grows 15/30/60/120 seconds; an explicit run remains immediate. A permanent role definition does not start a model loop or grant tools. The 1,000-event/1 MiB private journal is rolling metadata; its deterministic summaries and 64-entry cache use no LLM. Native state, authority and budget receipts remain authoritative. Preserve successful operation receipts if logging degrades; never replay uncertain jobs. Return observedAt, scope, receiptIds, exceptions, retentionGaps, nextCheck and a compact Donna handoff. Do not infer GPU readiness, zero memory leaks or installed software from connection metadata.",
+      "document": "company/role-library/runtime-observer.md",
+      "examples": [
+        "project/OPERATIONS_CONTROL.md",
+        "headless-runtime/activity-journal.mjs",
+        "desktop-shell/src/main/officeWorker.ts"
+      ],
+      "references": [],
+      "handoff": "Send Donna scoped exceptions and exact job/policy evidence; route a repair only through its existing authority and budget.",
+      "capabilities": [
+        "runtime.observe-scoped",
+        "activity.read-metadata",
+        "receipt.inspect",
+        "exception.summarize"
+      ]
+    },
+    {
+      "key": "knowledge-steward",
+      "title": "Knowledge Steward",
+      "brief": "Goal: Preserve useful source provenance, indexing and concise company handoffs. Inputs: supplied source/artifact references, hashes, canonical actors, model/resource digests, ownership revision and observed receipt state. Keep source claims, executed checks, inference and unknown outcomes distinct. Use deterministic indexes and summaries before another model call. Activity history retains 1,000 events within 1 MiB; gaps remain explicit and the 64-entry deterministic summary cache is invalidated on new events. The native ledger is authoritative; a cached summary is neither proof of completion nor permission. Do not persist credentials, private reasoning or raw command/prompt content as activity metadata, replay external effects from cache, or move foreign-company content without current grants and contracts. Hiring this role grants no provider/tool authority. Return provenanceMap, indexChanges, handoff, staleReferences, retentionGaps and unresolvedDecisions with bounded context.",
+      "document": "company/role-library/knowledge-steward.md",
+      "examples": [
+        "project/OPERATIONS_CONTROL.md",
+        "headless-runtime/activity-journal.mjs",
+        "headless-runtime/model-resources.mjs"
+      ],
+      "references": [],
+      "handoff": "Give Donna a compact evidence map and stale/gap flags; send only authorized source context to the accountable employee.",
+      "capabilities": [
+        "knowledge.index-scoped",
+        "provenance.preserve",
+        "summary.deterministic",
+        "cache.review"
+      ]
+    },
+    {
+      "key": "connector-steward",
+      "title": "Connector Steward",
+      "brief": "Goal: Maintain an accurate readiness and setup map for existing company connectors. Inputs: selected extension host, canonical company/employee IDs, saved connector configuration, authenticated runtime status, observed hardware metadata and durable verification receipts. Keep configuration, reachability, runtime authentication, GPU workload success, installation proof and model loading separate. The readiness menu reports existing status; it does not perform a new paid call or prove a GPU workload. Preserve stopped instances and native secret prompts. SSH requires verified host keys; MCP uses the same private owner credential through its bridge. Copied MCP configuration is not ChatGPT registration. God mode is explicit revision-checked host authority for the exact current company set; new companies require refresh and enabling launches no job, changes no budget and starts no instance. Role metadata provides no execution authority or tenant authentication. Return connectorMatrix, evidence, blockers, nextVerification and the Donna handoff.",
+      "document": "company/role-library/connector-steward.md",
+      "examples": [
+        "project/OPERATIONS_CONTROL.md",
+        "vscode-extension/src/compute-office.js",
+        "vscode-extension/src/compute-connection.js"
+      ],
+      "references": [],
+      "handoff": "Give Donna the observed connector state, required prerequisites and one bounded verification step; preserve original receipts after uncertainty.",
+      "capabilities": [
+        "connector.inspect-existing",
+        "readiness.classify",
+        "setup.plan",
+        "ownership.check"
       ]
     }
   ]

@@ -6,6 +6,7 @@ scripts/**
 .work/**
 .vscode-test/**
 *.vsix
+VALIDATION_*.md
 package-lock.json
 .vscode/**
 **/*.log

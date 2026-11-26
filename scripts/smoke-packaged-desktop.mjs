@@ -245,7 +245,31 @@ try {
   await openCanvasSurface(page, 'scope');
   await page.locator('#office-native-status').filter({ hasText: 'Local state loaded' }).waitFor({ state: 'visible' });
   await openCanvasSurface(page, 'donna');
-  await page.locator('#chat-goal-mode').selectOption('manual');
+  const goalMode = page.locator('#chat-goal-mode');
+  const scopeDisclosure = page.locator('.donna-scope-settings > summary');
+  assert.equal(await goalMode.isVisible(), false, 'The goal mode is behind the default-collapsed scope disclosure.');
+  assert.equal(await goalMode.inputValue(), 'manual', 'Opening Donna defaults to local planning.');
+  await scopeDisclosure.click();
+  await goalMode.selectOption('provider');
+  await page.locator('#chat-provider-options > summary').waitFor({ state: 'visible' });
+  const brief = page.locator('#chat-message');
+  await brief.fill('Packaged smoke: a bounded goal without consent must not save');
+  await brief.press('Control+Enter');
+  await page.locator('#chat-status').filter({ hasText: 'Authorize provider work for this goal before creating it.' }).waitFor({ state: 'visible' });
+  const afterDenied = await page.evaluate(() => window.desktopBridge.officeSnapshot());
+  assert.equal(afterDenied.ok, true, afterDenied.error);
+  for (const key of ['goals', 'jobs', 'events']) {
+    assert.deepEqual(afterDenied.snapshot[key], initial.office.snapshot[key], `An unconsented submission must not change native ${key}.`);
+  }
+  assert.equal(afterDenied.snapshot.budget.committedUsd, beforeSpend);
+  const providerBudget = page.locator('#chat-max-usd');
+  await providerBudget.fill('0'); // Invalid for a provider goal, irrelevant for a manual plan.
+  assert.equal(await providerBudget.evaluate(control => control.checkValidity()), false);
+  await goalMode.selectOption('manual');
+  assert.equal(await providerBudget.isDisabled(), true, 'Hidden provider inputs cannot veto a local plan.');
+  assert.equal(await page.locator('#chat-provider-options').isVisible(), false, 'Manual mode hides bounded provider configuration.');
+  await scopeDisclosure.click();
+  assert.equal(await goalMode.isVisible(), false, 'The visible scope control can close without changing the goal mode.');
   const title = 'Packaged smoke: create a local delivery plan';
   await page.locator('#chat-message').fill(title);
   // Use the browser's actual submission constraints. Dispatching a synthetic
@@ -262,6 +286,8 @@ try {
   assert.deepEqual(invalidControls, [], 'The real composer must be valid before a local plan can be submitted.');
   await page.locator('#chat-send').click();
   await page.locator('#chat-status').filter({ hasText: 'Brief and plan saved.' }).waitFor({ state: 'visible' });
+  assert.equal(await page.locator('#donna-tab-thread').getAttribute('aria-selected'), 'true',
+    'A saved brief opens its conversation before subsequent canvas interactions.');
   await openCanvasSurface(page, 'goals');
   await page.locator('#workspace-goals').getByText(title, { exact: true }).waitFor({ state: 'visible' });
   const after = await page.evaluate(() => window.desktopBridge.officeSnapshot());
@@ -269,6 +295,8 @@ try {
   assert.equal(after.snapshot.goals.length, beforeGoals + 1);
   const goal = after.snapshot.goals.find(item => item.title === title);
   assert(goal && goal.mode === 'plan' && goal.status === 'planned', 'UI action did not persist the local plan.');
+  assert.equal(goal.runSettings.mode, 'manual');
+  assert.equal(goal.runSettings.authorized, false);
   const goalEvent = after.snapshot.events.find(event => event.entityId === goal.id && event.action === 'create_goal');
   assert(goalEvent, 'The native ledger must record the created goal.');
   assert.equal(after.snapshot.budget.committedUsd, beforeSpend, 'A local plan must not consume provider budget.');

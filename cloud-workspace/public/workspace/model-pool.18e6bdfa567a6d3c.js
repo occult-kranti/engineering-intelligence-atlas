@@ -38,6 +38,10 @@ export function mountModelPool(host, bridge, getScope, readOnly) {
     }
     const employeeCount = el('p', '', 'form-help model-pool-employee-count');
     form.append(employeeCount);
+    const modelDetails = el('div', '', 'model-pool-details');
+    modelDetails.id = 'model-pool-details';
+    modelDetails.setAttribute('aria-live', 'polite');
+    form.append(modelDetails);
     const request = el('button', 'Download or reuse', 'secondary');
     request.type = 'submit';
     const select = el('button', 'Assign installed model', 'secondary');
@@ -88,10 +92,57 @@ export function mountModelPool(host, bridge, getScope, readOnly) {
         refresh.disabled = busy || !bridge?.modelPoolSnapshot || !company.value;
         company.disabled = employee.disabled = employeeSearch.disabled = model.disabled = busy;
     }
+    function renderModelDetails() {
+        const entry = snapshot?.catalog.find((item) => item.id === model.value);
+        modelDetails.replaceChildren();
+        modelDetails.hidden = !entry;
+        if (!entry)
+            return;
+        modelDetails.append(el('p', entry.description, 'form-help'));
+        const facts = [];
+        if (entry.architecture === 'moe')
+            facts.push('Mixture of experts');
+        if (entry.totalParametersBillions)
+            facts.push(`${entry.totalParametersBillions}B total parameters`);
+        if (entry.activeParametersBillions)
+            facts.push(`${entry.activeParametersBillions}B active per token`);
+        if (entry.quantization)
+            facts.push(entry.quantization);
+        if (entry.contextLimitTokens)
+            facts.push(`${entry.contextLimitTokens.toLocaleString('en-US')} token runtime context limit`);
+        if (entry.license)
+            facts.push(entry.license);
+        if (facts.length)
+            modelDetails.append(el('p', facts.join(' · '), 'form-help'));
+        if (entry.artifactApproxBytes)
+            modelDetails.append(el('p', `About ${bytes(entry.artifactApproxBytes)} to download. GPU memory also needs room for context and runtime buffers.`, 'form-help'));
+        const links = el('p', '', 'form-help');
+        for (const [label, url] of [['Model package', entry.sourceUrl], ['Upstream model card', entry.upstreamUrl]]) {
+            if (!url)
+                continue;
+            try {
+                if (new URL(url).protocol !== 'https:')
+                    continue;
+            }
+            catch {
+                continue;
+            }
+            const link = el('a', label);
+            link.href = url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            if (links.childNodes.length)
+                links.append(document.createTextNode(' · '));
+            links.append(link);
+        }
+        if (links.childNodes.length)
+            modelDetails.append(links);
+    }
     function render() {
         endpoint.textContent = snapshot ? `${snapshot.endpoint} · VPS / GPU rental charges apply separately from model tokens.` : 'Connect the desktop or private runtime to manage shared models.';
         const selected = model.value;
         choices(model, (snapshot?.catalog ?? []).slice(0, 50).map((m) => ({ id: m.id, name: `${m.name} · up to ${bytes(m.storageCeilingBytes)}` })), selected, 'Catalog unavailable');
+        renderModelDetails();
         inventory.replaceChildren(el('h3', 'Installed on the runtime'));
         for (const item of (snapshot?.models ?? []).slice(0, 100)) {
             const row = el('div', '', 'model-pool-row');
@@ -212,7 +263,7 @@ export function mountModelPool(host, bridge, getScope, readOnly) {
     company.onchange = () => { revision++; snapshot = null; refreshEmployees(); render(); void read(); };
     employeeSearch.oninput = () => { refreshEmployees(); render(); };
     employee.onchange = () => render();
-    model.onchange = () => syncButtons();
+    model.onchange = () => { renderModelDetails(); syncButtons(); };
     refresh.onclick = () => void read();
     form.onsubmit = (event) => {
         event.preventDefault();

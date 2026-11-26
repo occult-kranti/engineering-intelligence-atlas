@@ -1,0 +1,25 @@
+#workbench-controls{position:fixed;right:18px;top:66px;z-index:10000;display:flex;align-items:center;gap:8px;max-width:min(700px,calc(100vw - 36px));padding:7px 9px;border:1px solid var(--vscode-panel-border,#32423d);border-radius:12px;background:var(--vscode-editor-background,#15201b);color:var(--vscode-foreground,#e1e9e5);box-shadow:0 8px 24px #0003;font:12px var(--vscode-font-family,system-ui)}#workbench-controls button{min-height:30px;padding:4px 10px;border:1px solid var(--vscode-button-border,#486457);border-radius:7px;background:var(--vscode-button-secondaryBackground,#263e32);color:var(--vscode-button-secondaryForeground,#e6f0e9);font:inherit;cursor:pointer}#workbench-controls button:focus-visible{outline:2px solid var(--vscode-focusBorder,#75c89c);outline-offset:2px}#workbench-connection{max-width:360px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#workbench-controls[data-connected=false]{border-color:var(--vscode-inputValidation-warningBorder,#b69b55)}@media(max-width:700px){#workbench-controls{top:56px;right:9px;max-width:calc(100vw - 18px)}#workbench-connection{max-width:150px}}@media(prefers-reduced-motion:reduce){#workbench-controls{transition:none}}
+#workbench-setup-panel{box-sizing:border-box;position:fixed;right:18px;top:112px;z-index:10001;width:420px;max-width:calc(100vw - 20px);max-height:min(760px,calc(100vh - 24px));overflow:auto;overscroll-behavior:contain;padding:18px;border:1px solid var(--vscode-panel-border,#486457);border-radius:16px;background:var(--vscode-editor-background,#15201b);color:var(--vscode-foreground,#e1e9e5);box-shadow:0 16px 48px #0005;font:13px/1.5 var(--vscode-font-family,system-ui);animation:workbench-setup-enter .16s ease-out}
+#workbench-setup-panel[hidden]{display:none}
+#workbench-setup-panel :is(h2,h3,p){margin:0}
+.workbench-setup-header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+#workbench-setup-title{font-size:19px;font-weight:650;letter-spacing:-.02em}
+.workbench-setup-eyebrow{font-size:9px;letter-spacing:.13em;font-weight:650;color:var(--vscode-descriptionForeground,#a6bcaf)}
+.workbench-setup-tools,.workbench-step-actions{display:flex;flex-wrap:wrap;gap:6px}
+#workbench-setup-panel button{min-height:30px;padding:4px 9px;border:1px solid var(--vscode-button-border,#486457);border-radius:7px;background:var(--vscode-button-secondaryBackground,#263e32);color:var(--vscode-button-secondaryForeground,#e6f0e9);font:inherit;font-size:11px;cursor:pointer}
+#workbench-setup-panel button:disabled{opacity:.5;cursor:not-allowed}
+#workbench-setup-panel button:hover:not(:disabled){background:var(--vscode-button-secondaryHoverBackground,#355543)}
+#workbench-setup-panel button:focus-visible,#workbench-setup-panel:focus-visible{outline:2px solid var(--vscode-focusBorder,#75c89c);outline-offset:2px}
+#workbench-setup-move{touch-action:none;cursor:move!important}
+#workbench-setup-move-help{margin-top:9px;font-size:10px;color:var(--vscode-descriptionForeground,#a6bcaf)}
+#workbench-setup-status{margin:12px 0;padding:9px 10px;border-left:2px solid var(--vscode-focusBorder,#75c89c);background:var(--vscode-textBlockQuote-background,#1c3025);font-size:11px}
+.workbench-setup-steps{display:grid;gap:0;margin:0;padding:0;list-style:none}
+.workbench-setup-steps>li{display:grid;grid-template-columns:25px minmax(0,1fr);gap:10px;position:relative;padding:0 0 16px}
+.workbench-setup-steps>li:not(:last-child)::before{content:"";position:absolute;left:11px;top:26px;bottom:2px;width:1px;background:var(--vscode-panel-border,#486457)}
+.workbench-step-number{display:grid;place-items:center;width:23px;height:23px;margin-top:1px;border:1px solid var(--vscode-panel-border,#486457);border-radius:50%;color:var(--vscode-descriptionForeground,#a6bcaf);font-size:10px;font-variant-numeric:tabular-nums}
+#workbench-setup-panel h3{font-size:12px;font-weight:650}
+#workbench-setup-panel li p{margin:3px 0 7px;font-size:11px;color:var(--vscode-descriptionForeground,#b9c7bf)}
+#workbench-setup-panel .workbench-setup-footnote{border-top:1px solid var(--vscode-panel-border,#32423d);padding-top:10px;font-size:10px;color:var(--vscode-descriptionForeground,#a6bcaf)}
+@keyframes workbench-setup-enter{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:700px){#workbench-controls{flex-wrap:wrap}#workbench-connection{flex:1 1 110px}.workbench-setup-header{gap:6px}#workbench-setup-panel{padding:14px}}
+@media(prefers-reduced-motion:reduce){#workbench-setup-panel{animation:none;transition:none}}

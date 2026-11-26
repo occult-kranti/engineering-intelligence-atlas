@@ -135,10 +135,10 @@ function safeText(value, limit = 80) {
 function safeResult(value) {
   if (!plain(value)) return {};
   const output = {};
-  for (const key of ['objects', 'meshes', 'materials', 'scenes', 'cameras', 'lights', 'frameStart', 'frameEnd', 'frame', 'width', 'height', 'samples', 'fileVersion', 'modules', 'plugins', 'durationSeconds', 'layers']) {
+  for (const key of ['objects', 'meshes', 'materials', 'scenes', 'cameras', 'lights', 'frameStart', 'frameEnd', 'frame', 'width', 'height', 'samples', 'fileVersion', 'modules', 'plugins', 'durationSeconds', 'layers', 'deviceCount', 'deviceIndex', 'renderDurationSeconds']) {
     if (typeof value[key] === 'number' && Number.isFinite(value[key]) && Math.abs(value[key]) < 1e12) output[key] = value[key];
   }
-  for (const key of ['format', 'blenderVersion', 'engine', 'device', 'engineAssociation', 'provider', 'operation']) {
+  for (const key of ['format', 'blenderVersion', 'engine', 'device', 'backend', 'deviceName', 'engineAssociation', 'provider', 'operation']) {
     const text = safeText(value[key]); if (text !== undefined) output[key] = text;
   }
   for (const key of ['engineExecuted', 'validationPassed', 'remoteAuthVerified']) if (typeof value[key] === 'boolean') output[key] = value[key];
@@ -168,7 +168,15 @@ export function readCreativeConfig(configFile) {
         fields(tool, ['enabled', 'allowPaidRequests', 'clientIdFile', 'clientSecretFile', 'assetStorageFile']);
         if (typeof tool.enabled !== 'boolean' || typeof tool.allowPaidRequests !== 'boolean'
           || ![tool.clientIdFile, tool.clientSecretFile, tool.assetStorageFile].every(p => typeof p === 'string' && path.isAbsolute(p))) throw new Error('invalid Adobe config');
-      } else { fields(tool, ['executable']); if (typeof tool.executable !== 'string' || !path.isAbsolute(tool.executable)) throw new Error('invalid executable'); }
+      } else {
+        fields(tool, id === 'blender' ? ['executable', 'renderDevice', 'renderDeviceIndex'] : ['executable'], ['executable']);
+        if (typeof tool.executable !== 'string' || !path.isAbsolute(tool.executable)) throw new Error('invalid executable');
+        if (id === 'blender') {
+          if (tool.renderDevice !== undefined && !['CPU', 'CUDA', 'OPTIX'].includes(tool.renderDevice)) throw new Error('invalid render device');
+          if (tool.renderDeviceIndex !== undefined) integer(tool.renderDeviceIndex, 0, 15);
+          if ((tool.renderDevice ?? 'CPU') === 'CPU' && (tool.renderDeviceIndex ?? 0) !== 0) throw new Error('CPU has no GPU index');
+        }
+      }
     }
     const ids = new Set();
     for (const project of value.projects) {
@@ -497,7 +505,7 @@ export class CreativeToolsService {
       XDG_CACHE_HOME: directory, XDG_DATA_HOME: directory, PYTHONNOUSERSITE: '1', PYTHONDONTWRITEBYTECODE: '1', OMP_NUM_THREADS: '2',
       BLENDER_USER_CONFIG: directory, BLENDER_USER_SCRIPTS: directory, BLENDER_USER_EXTENSIONS: directory };
   }
-  executeProcess(executable, args, { directory, signal, durationMs, outputBytes, memoryBytes = DEFAULT_LIMITS.maxMemoryBytes, artifactBytes = DEFAULT_LIMITS.maxArtifactBytes }) {
+  executeProcess(executable, args, { directory, signal, durationMs, outputBytes, memoryBytes = DEFAULT_LIMITS.maxMemoryBytes, artifactBytes = DEFAULT_LIMITS.maxArtifactBytes, gpuMemory = false }) {
     return new Promise((resolve, reject) => {
       if (signal?.aborted) { reject(signal.reason ?? new CreativeToolsError('CREATIVE_CANCELLED', 'Creative execution was cancelled.', 409)); return; }
       let child; let settled = false; let reason; let count = 0; let stdout = ''; let stderr = ''; let killTimer; let hardTimer;
@@ -516,6 +524,8 @@ export class CreativeToolsService {
         if (settled) return; settled = true;
         clearTimeout(timer); clearTimeout(killTimer); clearTimeout(hardTimer); signal?.removeEventListener('abort', abort);
         if (error || reason) reject(error ?? reason);
+        else if (code !== 0 && stderr.split(/\r?\n/).includes('DAFTAR_GUARD_ERROR=GPU_CGROUP_REQUIRED')) reject(new CreativeToolsError('GPU_MEMORY_PREREQUISITE', 'GPU rendering requires a verified cgroup-v2 memory.max no larger than the configured maxMemoryBytes. Configure the bounded GPU host before retrying; no CPU fallback was used.', 503));
+        else if (code !== 0 && stderr.split(/\r?\n/).includes('DAFTAR_DEVICE_ERROR=GPU_DEVICE_UNAVAILABLE')) reject(new CreativeToolsError('GPU_DEVICE_UNAVAILABLE', 'The configured Blender GPU backend or device is unavailable. No CPU fallback was used.', 503));
         else if (code !== 0) reject(new CreativeToolsError('TOOL_EXIT_FAILED', 'The configured tool did not complete successfully. Its private console output was not published.', 422));
         else resolve({ stdout, stderr });
       };
@@ -525,7 +535,7 @@ export class CreativeToolsService {
         if (process.platform !== 'linux') fail('CREATIVE_PLATFORM_UNSUPPORTED', 'Managed creative execution currently requires a Linux runtime.', 503);
         const guard = path.join(this.repoRoot, 'integrations/creative-tools/process_guard.py'); noLinks(guard);
         const python = fs.realpathSync('/usr/bin/python3'); noLinks(python);
-        const guardedArgs = ['-B', '-I', guard, String(process.pid), String(Math.ceil(durationMs / 1000) + 1), String(memoryBytes), String(artifactBytes), executable, ...args];
+        const guardedArgs = ['-B', '-I', guard, String(process.pid), String(Math.ceil(durationMs / 1000) + 1), String(memoryBytes), String(artifactBytes), ...(gpuMemory ? ['--gpu-cgroup'] : []), executable, ...args];
         child = this.spawnImpl(python, guardedArgs, { cwd: directory, env: this.childEnvironment(directory), shell: false,
           detached: process.platform !== 'win32', windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'] });
         signal?.addEventListener('abort', abort, { once: true });
@@ -546,7 +556,9 @@ export class CreativeToolsService {
     });
   }
   async probe(id, config) {
-    const base = { id, operations: [...TOOL_OPERATIONS[id]], configured: !!config, available: false };
+    const base = { id, operations: [...TOOL_OPERATIONS[id]], configured: !!config, available: false,
+      ...(id === 'blender' && config ? { renderDevice: config.renderDevice ?? 'CPU', renderDeviceIndex: config.renderDeviceIndex ?? 0,
+        renderDeviceVerified: false, notice: 'Version discovery does not verify render-device availability; inspect a completed render receipt.' } : {}) };
     if (!config) return { ...base, readiness: 'not_configured', reason: 'TOOL_NOT_CONFIGURED' };
     if (id === 'adobe-photoshop') {
       try {
@@ -558,7 +570,7 @@ export class CreativeToolsService {
       } catch { return { ...base, readiness: 'unavailable', remoteAuthVerified: false, reason: 'TOOL_CONFIGURATION_UNAVAILABLE' }; }
     }
     let key;
-    try { const { info } = noLinks(config.executable); key = `${id}:${config.executable}:${info.ino}:${info.size}:${info.mtimeMs}`; }
+    try { const { info } = noLinks(config.executable); key = `${id}:${config.executable}:${info.ino}:${info.size}:${info.mtimeMs}:${config.renderDevice ?? 'CPU'}:${config.renderDeviceIndex ?? 0}`; }
     catch { return { ...base, readiness: 'unavailable', reason: 'TOOL_EXECUTABLE_UNAVAILABLE' }; }
     const prior = this.probes.get(key);
     if (prior && Date.now() - prior.at < 30000) return copy(await prior.promise);
@@ -671,10 +683,18 @@ export class CreativeToolsService {
       await current();
       if (toolId === 'blender') {
         const helper = path.join(this.repoRoot, 'integrations/creative-tools/blender_worker.py'); noLinks(helper);
+        noLinks(path.join(this.repoRoot, 'integrations/creative-tools/blender_device.py'));
+        const renderPolicy = { backend: config.tools.blender.renderDevice ?? 'CPU', deviceIndex: config.tools.blender.renderDeviceIndex ?? 0 };
+        const gpuMemory = job.operation === 'blender.render' && renderPolicy.backend !== 'CPU';
         const execution = await this.executeProcess(config.tools.blender.executable,
-          ['--background', '--factory-startup', '--disable-autoexec', '--threads', '2', '--python-exit-code', '1', '--python', helper, '--', job.operation, inputPath, outputDir, JSON.stringify(job.input)], processOptions);
+          ['--background', '--factory-startup', '--disable-autoexec', '--threads', '2', '--python-exit-code', '1', '--python', helper, '--', job.operation, inputPath, outputDir, JSON.stringify(job.input), JSON.stringify(renderPolicy)], { ...processOptions, gpuMemory });
         const rows = execution.stdout.split(/\r?\n/).filter(line => line.startsWith('DAFTAR_RESULT='));
         try { result = JSON.parse(rows.at(-1)?.slice('DAFTAR_RESULT='.length)); } catch { fail('CREATIVE_RESULT_INVALID', 'Blender did not produce the fixed helper result.', 422); }
+        if (job.operation === 'blender.render' && (result?.engine !== 'CYCLES' || result?.backend !== renderPolicy.backend
+          || result?.device !== (gpuMemory ? 'GPU' : 'CPU') || result?.deviceCount !== (gpuMemory ? 1 : 0)
+          || (gpuMemory && result?.deviceIndex !== renderPolicy.deviceIndex))) {
+          fail('CREATIVE_DEVICE_MISMATCH', 'Blender did not confirm the configured render device. No successful render receipt was recorded.', 422);
+        }
       } else if (job.operation === 'unreal.inspect') {
         const document = readJson(inputPath, Math.min(limits.maxInputBytes, 1024 * 1024));
         if (!plain(document)) fail('CREATIVE_RESULT_INVALID', 'The Unreal project descriptor is invalid.', 422);

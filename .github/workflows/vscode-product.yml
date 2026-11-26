@@ -1,0 +1,98 @@
+name: Verify standalone VS Code product
+on:
+  push:
+    branches: [design/infinite-blueprint-canvas]
+    paths:
+      - 'vscode-extension/**'
+      - 'headless-runtime/**'
+      - 'desktop-shell/**'
+      - 'company/**'
+      - 'tools/**'
+      - 'deploy/**'
+      - '.github/workflows/vscode-product.yml'
+  workflow_call:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  extension:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    defaults:
+      run:
+        shell: bash
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+      DAFTAR_REQUIRE_LOCAL_RUNTIME: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: |
+            desktop-shell/package-lock.json
+            vscode-extension/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Select the verified Python interpreter for environment acceptance
+        run: python -c "import os,sys; open(os.environ['GITHUB_ENV'], 'a', encoding='utf-8').write('DAFTAR_PYTHON_PATH=' + os.path.realpath(sys.executable) + '\n')"
+      - run: rustup default stable
+      - name: Install display and tmux prerequisites for installed extension acceptance
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install --yes tmux xvfb
+      - name: Install locked build dependencies
+        run: |
+          npm ci --prefix desktop-shell --ignore-scripts --no-audit --no-fund
+          npm ci --prefix vscode-extension --ignore-scripts --no-audit --no-fund
+      - name: Build native core and shared renderer
+        run: |
+          npm --prefix desktop-shell run build:native
+          node desktop-shell/node_modules/typescript/bin/tsc -p headless-runtime/tsconfig.json
+          node desktop-shell/node_modules/typescript/bin/tsc -p desktop-shell/tsconfig.renderer.json
+          node desktop-shell/scripts/copy-renderer-assets.mjs
+      - name: Build complete extension payload and exercise packaged runtime
+        working-directory: vscode-extension
+        run: |
+          npm run build
+          npm run check
+          npm test
+          npm run package
+      - name: Stress the installed package and verify its Python environment
+        working-directory: vscode-extension
+        run: npm run test:installed-runtime
+      - name: Activate installed Linux VSIX in a fresh editor
+        if: runner.os == 'Linux'
+        working-directory: vscode-extension
+        run: xvfb-run -a npm run test:installed
+      - name: Activate installed Windows VSIX in a fresh editor
+        if: runner.os == 'Windows'
+        working-directory: vscode-extension
+        run: npm run test:installed
+      - name: Prepare locked driver and installed Chrome for shared-canvas acceptance
+        if: runner.os == 'Linux'
+        run: |
+          npm ci --prefix site-source --ignore-scripts --no-audit --no-fund
+          google-chrome --version
+      - name: Exercise actual shared canvas against the native backend
+        if: runner.os == 'Linux'
+        env:
+          DAFTAR_CANVAS_BROWSER_CHANNEL: chrome
+        run: node vscode-extension/scripts/smoke-canvas.mjs
+      - name: Retain install evidence and platform package
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daftar-vscode-${{ runner.os }}-${{ runner.arch }}
+          path: |
+            vscode-extension/*.vsix
+            vscode-extension/.work/installed-smoke/
+            vscode-extension/.work/installed-runtime/
+            vscode-extension/.work/canvas-smoke/
+          include-hidden-files: true
+          if-no-files-found: warn

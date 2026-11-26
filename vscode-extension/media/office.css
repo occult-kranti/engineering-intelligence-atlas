@@ -12,3 +12,5 @@ body:is(.vscode-dark,.vscode-light) .room{border-top:2px solid var(--studio-gold
 .studio-links button{font-size:12px;min-height:38px}
 
 .team-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.team-actions button{flex:1;min-width:130px}
+.development-panel{border:1px solid var(--vscode-panel-border);border-top:2px solid var(--studio-gold,var(--vscode-focusBorder));border-radius:12px;padding:16px;margin:18px 0;background:var(--vscode-editor-background)}
+.development-panel .eyebrow{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--vscode-descriptionForeground);margin:0 0 7px}.development-panel h2{margin:0 0 9px}.development-actions{display:grid;gap:8px;margin:14px 0}.development-actions button{width:100%;min-height:40px;white-space:normal}.development-limit{font-size:12px;color:var(--vscode-descriptionForeground);padding-top:10px;border-top:1px solid var(--vscode-panel-border);margin-bottom:0}

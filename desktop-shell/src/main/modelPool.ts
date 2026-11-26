@@ -5,7 +5,7 @@ import type { OfficeJob, OfficeResult, OfficeSnapshot } from '../shared/office';
 import type { FetchLike, GenerateRequest, GenerateResult } from './providers';
 import type { ModelScope, ModelPullInput, ModelCancelInput, ModelSelectInput, ModelPoolSnapshot, ModelPoolResult, ModelRequestStatus, ModelRequestRecord, ModelAssignment, SharedModel } from '../shared/model-pool';
 export type { ModelScope, ModelPullInput, ModelCancelInput, ModelSelectInput, ModelPoolSnapshot, ModelPoolResult } from '../shared/model-pool';
-import { assertLocalOllamaModel, assertLoopbackOllamaUrl, canonicalLocalModel, generateWithOllama, OLLAMA_DEFAULT_BASE_URL, readOllamaJson } from './ollama';
+import { assertLocalOllamaModel, assertLoopbackOllamaUrl, canonicalLocalModel, generateWithOllama, OLLAMA_DEFAULT_BASE_URL, QWEN_CODER_MOE_MODEL, QWEN_CODER_MOE_CONTEXT, readOllamaJson } from './ollama';
 
 const GiB = 1024 ** 3;
 /** Reviewed references and admission ceilings, not a claim about exact disk/RAM needs. */
@@ -13,6 +13,12 @@ export const MODEL_CATALOG = Object.freeze([
   { id: 'llama3.2:1b', name: 'Llama 3.2 1B', description: 'Small local text model for short, low-stakes work. Review outputs before use.', storageCeilingBytes: 3 * GiB, sourceUrl: 'https://ollama.com/library/llama3.2:1b' },
   { id: 'qwen3:4b', name: 'Qwen3 4B', description: 'Local general-purpose model; a middle option when the small model is insufficient.', storageCeilingBytes: 6 * GiB, sourceUrl: 'https://ollama.com/library/qwen3:4b' },
   { id: 'qwen3:8b', name: 'Qwen3 8B', description: 'Larger local model for a machine with adequate memory. Benchmark your own work.', storageCeilingBytes: 10 * GiB, sourceUrl: 'https://ollama.com/library/qwen3:8b' },
+  { id: QWEN_CODER_MOE_MODEL, name: 'Qwen3 Coder 30B A3B · MoE',
+    description: 'Text-only, non-thinking coding MoE: 30.5B total / 3.3B active parameters, Q4_K_M, Apache-2.0. Published download is about 19 GB; this is not measured VRAM. Daftar enforces an 8,192-token context profile. Install and benchmark before use; GPU rental is charged separately.',
+    storageCeilingBytes: 24 * GiB, sourceUrl: 'https://ollama.com/library/qwen3-coder:30b-a3b-q4_K_M',
+    upstreamUrl: 'https://huggingface.co/Qwen/Qwen3-Coder-30B-A3B-Instruct', architecture: 'moe' as const,
+    totalParametersBillions: 30.5, activeParametersBillions: 3.3, quantization: 'Q4_K_M',
+    contextLimitTokens: QWEN_CODER_MOE_CONTEXT, artifactApproxBytes: 19_000_000_000, license: 'Apache-2.0' },
 ]);
 export interface ModelPoolOptions {
   stateDir: string; snapshot: () => Promise<OfficeResult>; baseUrl?: string; localOnlyConfirmed?: boolean;

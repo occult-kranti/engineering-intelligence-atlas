@@ -58,7 +58,11 @@ export async function checkEndlessPanelInteractions(page, label) {
   const conversation=await page.locator('#donna-conversation').elementHandle();
   assert.ok(conversation, 'Donna has one live conversation element');
   const draft=`Unsent canvas draft · ${label}`;
-  await page.locator('#chat-message').fill(draft);
+  const briefTab=donna.locator('#donna-tab-brief');
+  // Sending a brief moves the real studio to Conversation. Open the composer
+  // through its public tab rather than assuming an already-open Brief view.
+  if(await briefTab.getAttribute('aria-selected')!=='true')await briefTab.click();
+  await donna.locator('#chat-message').fill(draft);
   const blueprint=await openCanvasSurface(page,'workspace-blueprint');
   const roomDraft=`Unsent room · ${label}`;
   await page.locator('#room-name').fill(roomDraft);

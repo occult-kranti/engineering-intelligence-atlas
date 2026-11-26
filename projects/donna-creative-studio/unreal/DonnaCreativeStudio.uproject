@@ -1,0 +1,9 @@
+{
+  "FileVersion": 3,
+  "Category": "Daftar",
+  "Description": "Donna studio content handoff. Engine version and GPU rendering require acceptance on the chosen workstation.",
+  "Plugins": [
+    { "Name": "PythonScriptPlugin", "Enabled": true },
+    { "Name": "EditorScriptingUtilities", "Enabled": true }
+  ]
+}

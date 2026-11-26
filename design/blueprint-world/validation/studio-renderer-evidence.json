@@ -1,0 +1,196 @@
+{
+  "artifactType": "studio-renderer-non-gpu-evidence/v1",
+  "runId": "blueprint-studio-20261121",
+  "nodeId": "renderer-integration",
+  "attempt": 1,
+  "scope": "NON-GPU: actual Three 0.187.0 math, geometries and OrbitControls; mocked WebGLRenderer and 2D text measurement; synthetic DOM/events",
+  "sourceSHA256": "fb7f9f89875d663494e7e3b2f9cae15167de321bf1def82b7aaa56a8d2d8ddbd",
+  "reliefSHA256": "49ee0ce33e92f7da725476008c4edc0f0c81c97ca5c2c3e81fc394cd6e09f352",
+  "groups": [
+    {
+      "name": "Initial scene, stable idle and ready notification",
+      "ok": true,
+      "settleFrames": 1,
+      "mountedAssignments": 38
+    },
+    {
+      "name": "Independent orthographic equations and ray round trips",
+      "ok": true,
+      "cases": 36,
+      "maxScreenError": 7.346888194559166e-12,
+      "maxWorldError": 1.3642420526593924e-12
+    },
+    {
+      "name": "Actual generated room/sheet geometry is finite and contained",
+      "ok": true,
+      "inkMeshes": 6,
+      "triangles": 2178
+    },
+    {
+      "name": "Normal-motion camera flight is interrupted by manual canvas input",
+      "ok": true,
+      "reducedMotion": false
+    },
+    {
+      "name": "Fast release commits a core-stable, contained point",
+      "ok": true,
+      "commits": 1
+    },
+    {
+      "name": "Escape, pointer cancel, capture loss, blur and hidden restore exactly",
+      "ok": true,
+      "cases": 5
+    },
+    {
+      "name": "Collisions, extreme corner targets and long frame gap remain contained",
+      "ok": true,
+      "cases": 4,
+      "frameGapMs": 250
+    },
+    {
+      "name": "Malformed public camera/projection input remains finite",
+      "ok": true
+    },
+    {
+      "name": "Camera survives state refresh and resource churn is bounded",
+      "ok": true,
+      "liveResources": {
+        "geometry": 21,
+        "material": 142,
+        "texture": 112
+      }
+    },
+    {
+      "name": "Context restore notifies the host ready again",
+      "ok": true
+    },
+    {
+      "name": "Plan/Relief round trips retain exact anchors, state and camera",
+      "ok": true,
+      "styleTransitions": 20,
+      "stableAnchors": 4
+    },
+    {
+      "name": "Generated relief bounds and exact bottom door gaps",
+      "ok": true,
+      "partitionBoxes": 90,
+      "doorOpenings": 18,
+      "slabBoxes": 9
+    },
+    {
+      "name": "Independent camera rays keep disc centers and rims clear of walls",
+      "ok": true,
+      "rays": 3800,
+      "tilts": 4,
+      "yaws": 5
+    },
+    {
+      "name": "Overview fits projected raised envelopes in laptop viewport insets",
+      "ok": true,
+      "viewports": 2,
+      "corners": 16
+    },
+    {
+      "name": "Company-first Overview excludes a distant spine and restores editing bounds",
+      "ok": true,
+      "companyPosition": {
+        "x": -60000,
+        "z": 50000
+      },
+      "corners": 8,
+      "overviewIncludesSpine": false,
+      "editingMinimumZoom": 0.12
+    },
+    {
+      "name": "Relief validation is atomic; invalid and distant room data rejected",
+      "ok": true,
+      "rejected": 4
+    },
+    {
+      "name": "Nested department cutaway protects parent and child seat rims",
+      "ok": true,
+      "nestedDepth": 2,
+      "rays": 300
+    },
+    {
+      "name": "Shadow render targets are released exactly once on style removal",
+      "ok": true,
+      "simulatedRenderTargets": 2,
+      "actualGpuAllocation": false
+    },
+    {
+      "name": "Dense 1000-employee company fits Overview with bounded labels",
+      "ok": true,
+      "employees": 1000,
+      "departmentAssignments": 966,
+      "companyHeight": 16152,
+      "zoom": 0.07186452855140499,
+      "liveObjects": {
+        "geometry": 21,
+        "material": 128,
+        "texture": 96
+      },
+      "cpuBuildAndSyntheticFramesMs": 48.66977900000029
+    },
+    {
+      "name": "100-company / 1000-employee CPU and object capacity observation",
+      "ok": true,
+      "companies": 100,
+      "employees": 1000,
+      "mountedAssignments": 30,
+      "detailedCompanies": [
+        "co-cap-0",
+        "co-cap-99",
+        "co-cap-98"
+      ],
+      "partitionInstances": 90,
+      "slabInstances": 300,
+      "shadowWindow": {
+        "x": 125312,
+        "z": 320,
+        "width": 3600,
+        "height": 3600
+      },
+      "cpuBuildAndSyntheticFramesMs": 763.166217,
+      "liveObjects": {
+        "geometry": 310,
+        "material": 533,
+        "texture": 501,
+        "texturePixels": 8804566
+      },
+      "measurement": "Node CPU + synthetic text canvas object counts only; no GPU timing or FPS"
+    },
+    {
+      "name": "Dispose releases observed resources, listeners, observer and frames",
+      "ok": true,
+      "observed": {
+        "geometry": 980,
+        "material": 7415,
+        "texture": 7373
+      }
+    }
+  ],
+  "limitations": [
+    "No WebGL context, shader compilation or GPU rasterization was tested.",
+    "Synthetic text measurements do not validate glyph sizing or legibility.",
+    "Synthetic pointer events do not establish real-browser hit targets."
+  ],
+  "denseObservation": {
+    "employees": 1000,
+    "departmentAssignments": 966,
+    "companyHeight": 16152,
+    "zoom": 0.07186452855140499,
+    "liveObjects": {
+      "geometry": 21,
+      "material": 128,
+      "texture": 96
+    },
+    "cpuBuildAndSyntheticFramesMs": 48.66977900000029
+  },
+  "passed": 21,
+  "failed": 0,
+  "renderCallsMocked": 649,
+  "expectedErrorCallbacks": [
+    "The graphics context was interrupted. Your records remain saved. Waiting for graphics recovery."
+  ]
+}

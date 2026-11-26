@@ -9,6 +9,7 @@ import { mountHardwareWorkbench } from './hardware-workbench.js';
 import { RESOURCE_CATALOG } from './resource-library/catalog.js';
 import { validGlobalCeiling } from './resource-library/budget.js';
 import { mountDonnaBrain, type DonnaBrainPanel } from './brain/panel.js';
+import { mountDonnaStudio, type DonnaStudio } from './donna-studio.js';
 import type { OfficeSnapshot as BrainOfficeSnapshot } from './brain/office-types.js';
 /**
  * Local chrome/launcher page logic. Runs only on file:// inside the sandboxed
@@ -499,6 +500,7 @@ interface CloudConnectionResult { ok: boolean; status: CloudConnectionStatus; er
 interface DesktopBridge extends ModelPoolBridge {
   version: number;
   transport?: 'personal-browser' | 'public-preview' | 'cloud-browser';
+  rendererHost?: 'vscode';
   openPersonalDashboard?(): Promise<{ok:boolean;url?:string;error?:string}>;
   importCredentialFile?(provider:CredentialProvider): Promise<{ok:boolean;error?:string;cancelled?:boolean;status?:VaultStatus}>;
   getSystemInfo(): Promise<SystemInfo>;
@@ -918,7 +920,9 @@ function initVenvForm(): void {
     }
     setStatus(status, 'Creating venv…');
     const res = await bridge.createVenv({ name, confirmed, installHuggingFaceHub });
-    if (res.ok) setStatus(status, `Venv ready at ${res.path}`, 'ok');
+    if (res.ok && res.jobId) setStatus(status, `Environment preparation queued as ${res.jobId}. Inspect its status before running Python; it is not ready yet.`, 'ok');
+    else if (res.ok && res.path) setStatus(status, `Venv ready at ${res.path}`, 'ok');
+    else if (res.ok) setStatus(status, 'Environment preparation accepted. Inspect its status before running Python.', 'ok');
     else setStatus(status, res.error ?? 'Failed to create venv.', 'error');
     void refreshJobs();
   });
@@ -2197,6 +2201,7 @@ let roomDraftDirty = false;
 let selectedBoardId = '';
 let selectedDeskEmployeeId = '';
 let conversationSignature = '';
+let donnaStudio: DonnaStudio | null = null;
 let blueprintLoading = false;
 let spatialSaving = false;
 let spatialOfficeId = '';
@@ -2268,10 +2273,41 @@ function renderWorkspaceControls(): void {
   const available = workspaceAvailable() && !workspaceReadOnly();
   for (const id of ['chat-send','room-save','node-save']) ($(id) as HTMLButtonElement).disabled = !available;
   const policySubmit = $('workspace-policy-form').querySelector<HTMLButtonElement>('button[type="submit"]'); if (policySubmit) policySubmit.disabled = !available;
+  updateChatMode();
   if (!available) {
     $('workspace-budget-label').textContent = !bridge ? 'Desktop workspace required' : !officeState ? 'Budget not loaded' : 'Workspace upgrade required';
     $('chat-mode-note').textContent = bridge?.transport==='cloud-browser'&&!officeState ? 'Load your cloud workspace from welcome before starting a conversation.' : bridge ? (workspaceReadOnly() ? 'Example workspace · read only. Open your private workspace to save a goal.' : 'Load the current native workspace to save goals and conversations.') : 'This preview shows the workspace. Open the desktop app to save a goal.';
-  } else updateChatMode();
+  }
+}
+function focusDonnaComposer(): void { donnaStudio?.show('brief'); $('chat-message').focus(); }
+function renderDonnaStudio(): void {
+  if (!donnaStudio) return;
+  const scope = workspaceScopeOrNull();
+  const employees = (officeState?.employees || []).filter(e => scope?.kind === 'employee' ? e.id === scope.id : scope?.kind === 'department' ? e.departmentId === scope.id : scope?.kind === 'office' ? e.officeId === scope.id : scope?.kind === 'company' && e.companyId === scope.id);
+  const jobs = (officeState?.jobs || []).filter(j => scope?.kind === 'employee' ? j.employeeId === scope.id : scope?.kind === 'department' ? j.departmentId === scope.id : scope?.kind === 'office' ? j.officeId === scope.id : scope?.kind === 'company' && j.companyId === scope.id);
+  const goals = scopedGoals();
+  const thread = officeState?.chatThreads?.find(t => t.scope.kind === scope?.kind && t.scope.id === scope.id);
+  const hasScope = workspaceAvailable() && !!scope;
+  donnaStudio.refresh({ scope: scope ? scopeLabel(scope) : 'Choose a company', available: workspaceAvailable(), transport: bridge?.transport || 'unavailable',
+    employeeCount: hasScope ? employees.length : null, openGoals: hasScope ? goals.filter(g => !['completed','cancelled'].includes(g.status)).length : null,
+    recordedRunning: hasScope ? jobs.filter(j => j.status === 'running').length : null,
+    messageCount: hasScope ? (thread?.messages.length || 0) : null, runtime: bridge?.transport === 'cloud-browser' || workspaceReadOnly() || !workspaceAvailable() ? null : officeWorker,
+    recentGoals: goals.slice(-3).reverse().map(g => ({ title: g.title, status: g.status === 'running' ? (jobs.some(j => g.jobIds.includes(j.id) && j.status === 'running') ? 'recorded running' : 'work queued') : g.status })) });
+}
+function initDonnaStudio(): void {
+  donnaStudio = mountDonnaStudio($('donna-conversation'), {
+    addDraft: addToDonnaDraft,
+    expand: () => { if (endlessWorkspace) endlessWorkspace.open('donna', { size: { width: 1120, height: 720 } }); },
+    openSurface: name => {
+      if (name === 'connections') { donnaOption('connections'); return; }
+      if (endlessWorkspace) { endlessWorkspace.open(name, { nearCamera: true }); return; }
+      if (name === 'models') navigate('models');
+      else if (name === 'crew') navigate('team');
+      else if (name === 'policy') { ($('workspace-policy') as HTMLDetailsElement).open = true; $('workspace-policy').scrollIntoView({ block: 'nearest' }); }
+      else switchWorkspaceTab('chat');
+    },
+  });
+  renderDonnaStudio();
 }
 function renderConversation(): void {
   const scope = workspaceScopeOrNull();
@@ -2284,7 +2320,8 @@ function renderConversation(): void {
   if (!rows.length) {
     if (!container.querySelector('.conversation-empty')) {
       container.replaceChildren(); const empty = textElement('div','','conversation-empty');
-      empty.append(textElement('span','START WITH AN OUTCOME','eyebrow'),textElement('h2','A shared place to think, plan, and do.'),textElement('p','Give Donna a clear goal. The saved plan and its results will stay connected to the people responsible.'));
+      empty.append(textElement('span','d.','donna-empty-mark'),textElement('h2','Room for your next idea.'),textElement('p','Your briefs, Donna’s replies, and saved checkpoints will appear here, connected to this scope.'));
+      const start = textElement('button','Start with a brief ↗','text-button'); start.type = 'button'; start.dataset.donnaAction = 'brief'; empty.append(start);
       container.append(empty);
     }
     return;
@@ -2429,7 +2466,7 @@ function renderBlueprint(): void {
     const roomEmployees=blueprint.desks.filter((item)=>item.roomId===room.id).map(desk=>officeState?.employees.find(employee=>employee.id===desk.employeeId)).filter((employee):employee is OfficeEmployee=>Boolean(employee));
     for(const employee of roomEmployees.slice(0,6)) {
       const button=textElement('button',employee.name,`room-occupant${selectedDeskEmployeeId===employee.id?' selected':''}`); button.type='button'; button.title=`${employee.role} · ${employee.status}`;button.replaceChildren(studioAvatar(employee),textElement('span',employee.name,'room-occupant-name'));
-      button.onclick=()=>{if(employee.companyId&&employee.companyId!==officeCompany()?.id){selectRoom(room);if(portfolioState()?.services.some(service=>service.companyId===officeCompany()?.id&&service.officeId===selectedOfficeId&&service.employeeIds.includes(employee.id))){setStatus($('room-status'),`${employee.name} is a shared specialist whose original company assignment is preserved. Assign recipient work through that company’s active service contract.`);return;}selectedDepartmentId=room.departmentId||'';renderOfficeScope();const contract=scopedServiceContracts().find(item=>item.employeeIds.includes(employee.id));if(!contract){setStatus($('room-status'),'This historical assignment has no active staffing contract.','error');return;}($('queue-service-contract') as HTMLSelectElement).value=contract.id;renderOfficeScope();($('queue-employee') as HTMLSelectElement).value=employee.id;switchOfficeTab('queue');($('queue-composer') as HTMLDetailsElement).open=true;$('queue-composer').scrollIntoView({block:'nearest'});$('queue-goal').focus();return;}selectedDeskEmployeeId=employee.id;selectedDepartmentId=employee.departmentId||'';renderOfficeScope();renderWorkspaceControls();selectRoom(room);($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=employee.id;switchWorkspaceTab('chat');renderUnifiedWorkspace();$('chat-message').focus();}; occupants.append(button);
+      button.onclick=()=>{if(employee.companyId&&employee.companyId!==officeCompany()?.id){selectRoom(room);if(portfolioState()?.services.some(service=>service.companyId===officeCompany()?.id&&service.officeId===selectedOfficeId&&service.employeeIds.includes(employee.id))){setStatus($('room-status'),`${employee.name} is a shared specialist whose original company assignment is preserved. Assign recipient work through that company’s active service contract.`);return;}selectedDepartmentId=room.departmentId||'';renderOfficeScope();const contract=scopedServiceContracts().find(item=>item.employeeIds.includes(employee.id));if(!contract){setStatus($('room-status'),'This historical assignment has no active staffing contract.','error');return;}($('queue-service-contract') as HTMLSelectElement).value=contract.id;renderOfficeScope();($('queue-employee') as HTMLSelectElement).value=employee.id;switchOfficeTab('queue');($('queue-composer') as HTMLDetailsElement).open=true;$('queue-composer').scrollIntoView({block:'nearest'});$('queue-goal').focus();return;}selectedDeskEmployeeId=employee.id;selectedDepartmentId=employee.departmentId||'';renderOfficeScope();renderWorkspaceControls();selectRoom(room);($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=employee.id;switchWorkspaceTab('chat');renderUnifiedWorkspace();focusDonnaComposer();}; occupants.append(button);
     }
     if(roomEmployees.length>6){const more=textElement('button',`+${roomEmployees.length-6} more`,'room-occupant room-occupant-more');more.type='button';more.setAttribute('aria-label',`View all ${roomEmployees.length} employees in ${room.name}`);more.onclick=()=>{selectRoom(room);$('room-people').focus();$('room-people').scrollIntoView({block:'nearest'});};occupants.append(more);}
     if(!occupants.children.length)occupants.append(textElement('span','Place an employee','form-help'));
@@ -2484,41 +2521,50 @@ function renderUnifiedWorkspace():void{
   $('workspace-studio-signals').classList.toggle('hidden',!endlessWorkspace&&(workspaceTab==='chat'||workspaceTab==='decisions'));
   renderWorkspaceControls();renderPortfolio();renderWorkspaceLocator();renderDecisionPanels();renderCloudConnection();
   if(spatialOfficeId!==selectedOfficeId){spatialOfficeId=selectedOfficeId;resetRoomForm();resetBoardForm();}
-  renderWorkspacePolicy();renderConversation();renderWorkspaceGoals();renderSpatialSelectors();renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();renderStudioRoadmap();syncDonnaDock();
+  renderWorkspacePolicy();renderConversation();renderWorkspaceGoals();renderDonnaStudio();renderSpatialSelectors();renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();renderStudioRoadmap();syncDonnaDock();
   $('github-repository-label').textContent=officeCompany()?.repoUrl||'Choose a repository company.';
   endlessWorkspace?.refresh();
 }
 function updateChatMode():void{
-  if(bridge?.transport==='cloud-browser'){ $('chat-goal-mode').closest('label')?.classList.add('hidden');$('chat-provider-options').classList.add('hidden');$('chat-send').textContent='Ask Donna';$('chat-mode-note').textContent='A real cloud reply. Code and panel jobs wait for a connected desktop; this conversation does not apply changes.';return;}
-  const execute=value('chat-goal-mode')==='provider';$('chat-provider-options').classList.toggle('hidden',!execute);$('chat-send').textContent=execute?'Create bounded goal ↑':'Create plan ↑';
+  const cloud=bridge?.transport==='cloud-browser';
+  const execute=!cloud&&value('chat-goal-mode')==='provider';
+  const options=$('chat-provider-options');
+  $('chat-goal-mode').closest('label')?.classList.toggle('hidden',cloud);
+  options.classList.toggle('hidden',!execute);
+  // Hidden form controls still participate in native validation unless disabled.
+  options.querySelectorAll<HTMLInputElement|HTMLSelectElement>('input,select').forEach(control=>{control.disabled=!execute;});
+  if(!execute)($('chat-authorized') as HTMLInputElement).checked=false;
+  if(cloud){$('chat-send').textContent='Ask Donna';$('chat-mode-note').textContent='A real cloud reply. Code and panel jobs wait for a connected desktop; this conversation does not apply changes.';return;}
+  $('chat-send').textContent=execute?'Create bounded goal ↑':'Create plan ↑';
   $('chat-mode-note').textContent=execute?(officeState?.policy?.approvalMode==='autonomous'?'Eligible work can queue automatically within every budget cap.':'The goal is planned first. Approve its plan before provider execution.'):'Save a local brief and plan. No provider request.';
 }
 function boundedUtf8(input:string,maxBytes:number):string{let result='';let size=0;const encoder=new TextEncoder();for(const char of input){const bytes=encoder.encode(char).length;if(size+bytes>maxBytes)break;result+=char;size+=bytes;}return result;}
-function chatRunSettings():OfficeGoalRunSettings{
-  const provider=value('chat-provider') as ProjectProvider;const mode=value('chat-goal-mode')==='provider'?'provider':'manual';
-  const settings:OfficeGoalRunSettings={mode,provider,model:value('chat-model'),authorized:mode==='provider'&&(($('chat-authorized') as HTMLInputElement).checked||officeState?.policy?.approvalMode==='autonomous'),maxTokens:Number(value('chat-max-tokens')),maxUsd:Number(value('chat-max-usd')),maxMinutes:Number(value('chat-max-minutes')),priceRates:{inputUsdPerMillion:Number(value('chat-rate-input')),outputUsdPerMillion:Number(value('chat-rate-output'))}};
-  if(mode==='provider'){
-    if(!settings.authorized)throw new Error('Authorize provider work for this goal before creating it.');if(!settings.model)throw new Error('Choose a model ID for bounded execution.');
-    if(provider!=='ollama'&&(!settings.priceRates.inputUsdPerMillion||settings.priceRates.inputUsdPerMillion<=0||!settings.priceRates.outputUsdPerMillion||settings.priceRates.outputUsdPerMillion<=0))throw new Error('Positive input and output rates are required for cloud execution.');
-  }
+function chatRunSettings():OfficeGoalRunSettings|undefined{
+  // Manual plans use the native no-execution defaults, never half-edited
+  // provider limits or consent from a previous mode.
+  if(value('chat-goal-mode')!=='provider')return undefined;
+  const provider=value('chat-provider') as ProjectProvider;
+  const settings:OfficeGoalRunSettings={mode:'provider',provider,model:value('chat-model'),authorized:($('chat-authorized') as HTMLInputElement).checked||officeState?.policy?.approvalMode==='autonomous',maxTokens:Number(value('chat-max-tokens')),maxUsd:Number(value('chat-max-usd')),maxMinutes:Number(value('chat-max-minutes')),priceRates:{inputUsdPerMillion:Number(value('chat-rate-input')),outputUsdPerMillion:Number(value('chat-rate-output'))}};
+  if(!settings.authorized)throw new Error('Authorize provider work for this goal before creating it.');if(!settings.model)throw new Error('Choose a model ID for bounded execution.');
+  if(provider!=='ollama'&&(!settings.priceRates.inputUsdPerMillion||settings.priceRates.inputUsdPerMillion<=0||!settings.priceRates.outputUsdPerMillion||settings.priceRates.outputUsdPerMillion<=0))throw new Error('Positive input and output rates are required for cloud execution.');
   if(!Number.isInteger(settings.maxTokens)||settings.maxTokens<1||settings.maxTokens>200000||!Number.isFinite(settings.maxUsd)||settings.maxUsd<=0||settings.maxUsd>100||!Number.isFinite(settings.maxMinutes)||settings.maxMinutes<=0||settings.maxMinutes>120)throw new Error('Use positive token, time, and spending limits, with at most $100 per job.');
   return settings;
 }
 function initUnifiedWorkspace():void{
   document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]').forEach((button)=>{button.onclick=()=>switchWorkspaceTab(button.dataset.workspaceTab||'chat');button.addEventListener('keydown',(event)=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();const buttons=Array.from(document.querySelectorAll<HTMLButtonElement>('[data-workspace-tab]'));const i=buttons.indexOf(button);const next=event.key==='Home'?buttons[0]:event.key==='End'?buttons.at(-1):buttons[(i+(event.key==='ArrowRight'?1:-1)+buttons.length)%buttons.length];next?.click();next?.focus();});});
   document.querySelectorAll<HTMLButtonElement>('[data-open-workspace-tab]').forEach((button)=>button.onclick=()=>switchWorkspaceTab(button.dataset.openWorkspaceTab||'chat'));
-  document.querySelectorAll<HTMLButtonElement>('[data-brief]').forEach((button)=>button.onclick=()=>{($('chat-message') as HTMLTextAreaElement).value=button.dataset.brief||'';$('chat-message').focus();});
-  const newBrief=()=>{setPortfolioOpen(false);navigate('office');switchWorkspaceTab('chat');$('chat-message').focus();};$('header-new-goal').onclick=()=>{if(document.body.classList.contains('ff-canvas-mode')){const f=ffFocus;const ctx:StudioActionContext=f.kind==='portfolio'?{}:{companyId:f.companyId,...('officeId' in f&&f.officeId?{officeId:f.officeId}:{}),...(f.kind==='department'?{departmentId:f.departmentId}:{})};ffAction('new-goal' as unknown as StudioActionKind,ctx);}else newBrief();};$('brief-donna').onclick=newBrief;
+  document.querySelectorAll<HTMLButtonElement>('[data-brief]').forEach((button)=>button.onclick=()=>{($('chat-message') as HTMLTextAreaElement).value=button.dataset.brief||'';focusDonnaComposer();});
+  const newBrief=()=>{setPortfolioOpen(false);navigate('office');switchWorkspaceTab('chat');donnaStudio?.show('brief');focusDonnaComposer();};$('header-new-goal').onclick=()=>{if(document.body.classList.contains('ff-canvas-mode')){const f=ffFocus;const ctx:StudioActionContext=f.kind==='portfolio'?{}:{companyId:f.companyId,...('officeId' in f&&f.officeId?{officeId:f.officeId}:{}),...(f.kind==='department'?{departmentId:f.departmentId}:{})};ffAction('new-goal' as unknown as StudioActionKind,ctx);}else newBrief();};$('brief-donna').onclick=newBrief;
   $('chat-scope').addEventListener('change',renderUnifiedWorkspace);$('chat-employee').addEventListener('change',renderUnifiedWorkspace);$('chat-goal-mode').addEventListener('change',()=>{updateChatMode();if(value('chat-goal-mode')==='provider')($('chat-provider-options') as HTMLDetailsElement).open=true;});
   $('chat-message').addEventListener('keydown',(event)=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();($('workspace-chat-form') as HTMLFormElement).requestSubmit();}});
   workspaceForm('workspace-chat-form',async()=>{
-    const content=value('chat-message');if(!content)throw new Error('Write a goal first.');if(new TextEncoder().encode(content).byteLength>12000)throw new Error('Keep the conversation brief under 12 KB of text.');const scope=workspaceScope();if(bridge?.transport==='cloud-browser'){await sendDonnaCloud(content,scope);return;}const runSettings=chatRunSettings();const maxIterations=Number(value('chat-max-iterations'));if(!Number.isInteger(maxIterations)||maxIterations<1||maxIterations>10)throw new Error('Choose between one and ten goal iterations.');
+    const content=value('chat-message');if(!content)throw new Error('Write a goal first.');if(new TextEncoder().encode(content).byteLength>12000)throw new Error('Keep the conversation brief under 12 KB of text.');const scope=workspaceScope();if(bridge?.transport==='cloud-browser'){await sendDonnaCloud(content,scope);return;}const runSettings=chatRunSettings();const maxIterations=runSettings?Number(value('chat-max-iterations')):1;if(!Number.isInteger(maxIterations)||maxIterations<1||maxIterations>10)throw new Error('Choose between one and ten goal iterations.');
     setStatus($('chat-status'),'Saving your brief and local plan…');await workspaceCommand({action:'post_chat',scope,content},'Brief saved.');
-    const before=new Set((officeState?.goals||[]).map((goal)=>goal.id));const state=await workspaceCommand({action:'create_goal',scope,title:boundedUtf8(content.replace(/\s+/g,' '),120),description:content,mode:runSettings.mode==='provider'?'execute':'plan',maxIterations,runSettings},'Goal saved.');
+    const before=new Set((officeState?.goals||[]).map((goal)=>goal.id));const state=await workspaceCommand({action:'create_goal',scope,title:boundedUtf8(content.replace(/\s+/g,' '),120),description:content,mode:runSettings?'execute':'plan',maxIterations,...(runSettings?{runSettings}:{})},'Goal saved.');
     const goal=state.goals?.find((item)=>!before.has(item.id));if(!goal)throw new Error('The brief was saved, but no new goal record was returned. Refresh the workspace to inspect it.');selectedGoalId=goal.id;
     await workspaceCommand({action:'plan_goal',goalId:goal.id},'Local goal plan saved.');
-    if(runSettings.mode==='provider'&&officeState?.policy?.approvalMode==='autonomous')await workspaceCommand({action:'execute_goal',goalId:goal.id},'Goal queued within the global budget.');
-    ($('chat-message') as HTMLTextAreaElement).value='';setStatus($('chat-status'),runSettings.mode==='provider'&&officeState?.policy?.approvalMode==='review'?'Plan saved. Review ownership, then approve the goal to queue its provider jobs.':'Brief and plan saved.','ok');renderUnifiedWorkspace();
+    if(runSettings&&officeState?.policy?.approvalMode==='autonomous')await workspaceCommand({action:'execute_goal',goalId:goal.id},'Goal queued within the global budget.');
+    donnaStudio?.completeDraft(content);setStatus($('chat-status'),runSettings&&officeState?.policy?.approvalMode==='review'?'Plan saved. Review ownership, then approve the goal to queue its provider jobs.':'Brief and plan saved.','ok');renderUnifiedWorkspace();
   },'chat-status');
   $('workspace-budget-open').onclick=()=>{const details=$('workspace-policy') as HTMLDetailsElement;details.open=!details.open;if(details.open){details.scrollIntoView({block:'nearest'});$('workspace-approval-mode').focus();}};
   workspaceForm('workspace-policy-form',async()=>{
@@ -2936,7 +2982,7 @@ function initCloudConnection():void{
 }
 async function sendDonnaCloud(message:string,scope:OfficeScope):Promise<void>{
   if(cloudChatBusy)return;if(!bridge?.sendCloudChat)throw new Error('The cloud conversation service is unavailable.');cloudChatBusy=true;($('chat-send') as HTMLButtonElement).disabled=true;setStatus($('chat-status'),'Donna is reviewing your brief…');
-  try{const result=await bridge.sendCloudChat({scope,message,idempotencyKey:crypto.randomUUID(),goalMode:'manual'});if(!result.ok||!result.snapshot)throw new Error(result.error||'Donna’s cloud request did not complete.');if(!result.reply?.trim())throw new Error('No provider reply was returned. Your brief remains here to retry.');officeWriteRevision++;officeState=result.snapshot;officeSampledAt=new Date().toISOString();($('chat-message') as HTMLTextAreaElement).value='';renderOffice();setStatus($('chat-status'),'Cloud reply saved. No repository changes were applied.','ok');}
+  try{const result=await bridge.sendCloudChat({scope,message,idempotencyKey:crypto.randomUUID(),goalMode:'manual'});if(!result.ok||!result.snapshot)throw new Error(result.error||'Donna’s cloud request did not complete.');if(!result.reply?.trim())throw new Error('No provider reply was returned. Your brief remains here to retry.');officeWriteRevision++;officeState=result.snapshot;officeSampledAt=new Date().toISOString();donnaStudio?.completeDraft(message);renderOffice();setStatus($('chat-status'),'Cloud reply saved. No repository changes were applied.','ok');}
   finally{cloudChatBusy=false;($('chat-send') as HTMLButtonElement).disabled=workspaceReadOnly();}
 }
 
@@ -2993,7 +3039,7 @@ function initDecisionPanels():void{
   $('ceo-open-decisions').onclick=()=>{setPortfolioOpen(false);navigate('office');switchWorkspaceTab('decisions');$('workspace-tab-decisions').focus();};
   $('decision-focus').onchange=()=>{decisionRoles=new Set(DECISION_PRESETS[value('decision-focus') as DecisionPanel['focus']]);renderDecisionRoleOptions();};$('decision-scope').onchange=renderDecisionSelectors;
   $('decision-start').onclick=()=>{($('decision-run-options') as HTMLDetailsElement).open=true;$('decision-model').focus();};
-  $('decision-to-chat').onclick=()=>{switchWorkspaceTab('chat');$('chat-message').focus();};
+  $('decision-to-chat').onclick=()=>{switchWorkspaceTab('chat');focusDonnaComposer();};
   $('decision-map-goal').onclick=()=>workspaceTask(async()=>{const panel=selectedDecisionPanel();const goalId=panel?.goalIds.at(-1);if(!panel||!goalId)throw new Error('Start a panel round before mapping its work.');await ensureWorkspaceBlueprint();switchWorkspaceTab('whiteboard');resetBoardForm();($('node-title') as HTMLInputElement).value=panel.title;($('node-goal') as HTMLSelectElement).value=goalId;($('node-owner') as HTMLSelectElement).value='donna';$('node-title').focus();},'decision-status');
   $('decision-pause').onclick=()=>workspaceTask(async()=>{const panel=selectedDecisionPanel();if(!panel)throw new Error('Choose a panel first.');await workspaceCommand({action:panel.status==='paused'?'resume_panel':'pause_panel',panelId:panel.id},panel.status==='paused'?'Panel resumed.':'Panel paused.');},'decision-status');
   workspaceForm('decision-create-form',async()=>{const company=officeCompany();const title=value('decision-title');const task=value('decision-task');const id=value('decision-scope-target');if(!company||!title||!task||!id)throw new Error('Give the decision a title, brief, and valid scope.');if(decisionRoles.size<1||decisionRoles.size>5)throw new Error('Choose between one and five expert perspectives.');const maxRounds=Number(value('decision-max-rounds'));const maxUsd=Number(value('decision-max-usd'));const maxTokens=Number(value('decision-max-tokens'));const maxMinutes=Number(value('decision-max-minutes'));if(!Number.isInteger(maxRounds)||maxRounds<1||maxRounds>5||!Number.isFinite(maxUsd)||maxUsd<=0||maxUsd>100||!Number.isInteger(maxTokens)||maxTokens<1||maxTokens>200000||!Number.isFinite(maxMinutes)||maxMinutes<=0||maxMinutes>120)throw new Error('Use 1–5 rounds and positive panel limits, with a ceiling no greater than $100.');const before=new Set((officeState?.decisionPanels||[]).map(panel=>panel.id));const state=await workspaceCommand({action:'convene_panel',companyId:company.id,scope:{kind:value('decision-scope'),id},title,task,focus:value('decision-focus'),roleKeys:[...decisionRoles],maxRounds,maxUsd,maxTokens,maxMinutes,roadmapItemIds:value('decision-roadmap')?[value('decision-roadmap')]:[]},'Decision panel saved. No provider request was made.');const created=state.decisionPanels?.find(panel=>!before.has(panel.id));if(created){selectedDecisionPanelId=created.id;decisionCreating=false;renderDecisionPanels();}setStatus($('decision-status'),'Panel created with accountable expert roles. Choose a provider to start its first review round.','ok');},'decision-status');
@@ -3092,9 +3138,9 @@ function initStudio():void{
   const heat=studioPreference('heat','workload');($('workspace-heat-mode') as HTMLSelectElement).value=['workload','budget','attention','off'].includes(heat)?heat:'workload';
   $('workspace-heat-mode').onchange=()=>{saveStudioPreference('heat',studioHeatMode());renderStudioSignals();renderBlueprint();renderWhiteboard();renderSoftboard();};
   $('softboard-search').oninput=renderSoftboard;$('studio-roadmap-status').onchange=renderStudioRoadmap;
-  $('softboard-person-chat').onclick=()=>{const e=scopedEmployees().find(item=>item.id===softboardEmployeeId);if(!e||e.status!=='active')return;renderWorkspaceControls();($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=e.id;switchWorkspaceTab('chat');$('chat-message').focus();};
+  $('softboard-person-chat').onclick=()=>{const e=scopedEmployees().find(item=>item.id===softboardEmployeeId);if(!e||e.status!=='active')return;renderWorkspaceControls();($('chat-scope') as HTMLSelectElement).value='employee';($('chat-employee') as HTMLSelectElement).value=e.id;switchWorkspaceTab('chat');focusDonnaComposer();};
   $('softboard-person-authority').onclick=()=>{if(!softboardEmployeeId)return;setPortfolioOpen(true);renderAuthority();($('authority-employee') as HTMLSelectElement).value=softboardEmployeeId;renderAuthorityForm();renderAuthorityGrants();($('ceo-authority-editor') as HTMLDetailsElement).open=true;$('authority-employee').focus();$('ceo-authority-editor').scrollIntoView({block:'nearest'});syncDonnaDock();};
-  $('donna-dock-toggle').onclick=()=>{if(donnaSuppressClick){donnaSuppressClick=false;return;}donnaDockOpen=true;endlessWorkspace?.open('donna');syncDonnaDock();donnaClamp();$('chat-message').focus();};$('donna-dock-close').onclick=()=>{donnaDockOpen=false;endlessWorkspace?.close('donna');donnaCloseOptions(false);syncDonnaDock();donnaClamp();$('donna-dock-toggle').focus();};
+  $('donna-dock-toggle').onclick=()=>{if(donnaSuppressClick){donnaSuppressClick=false;return;}donnaDockOpen=true;endlessWorkspace?.open('donna');syncDonnaDock();donnaClamp();focusDonnaComposer();};$('donna-dock-close').onclick=()=>{donnaDockOpen=false;endlessWorkspace?.close('donna');donnaCloseOptions(false);syncDonnaDock();donnaClamp();$('donna-dock-toggle').focus();};
   initDonnaPresentation();
 }
 // ---------------------------------------------------------------- Donna presentation (position, options, entry actions)
@@ -3163,6 +3209,7 @@ function donnaOption(name:string):void{
   if (endlessWorkspace && name === 'collapse') { endlessWorkspace.close('donna'); donnaCloseOptions(false); return; }
   if (endlessWorkspace && name === 'company') { endlessWorkspace.open('scope'); donnaCloseOptions(false); return; }
   if (endlessWorkspace && name === 'team' && bridge?.transport === 'cloud-browser') { endlessWorkspace.open('access'); donnaCloseOptions(false); return; }
+  if (endlessWorkspace && name === 'connections' && bridge?.transport === 'cloud-browser') { endlessWorkspace.open('connections'); donnaCloseOptions(false); return; }
   if (endlessWorkspace && name === 'agents') { endlessWorkspace.open('crew'); donnaCloseOptions(false); return; }
   const canvasOptions:Record<string,string>={budget:'policy',source:'source-review',ledger:'office-ledger',models:'models'};
   if(endlessWorkspace&&canvasOptions[name]){endlessWorkspace.open(canvasOptions[name]!);donnaCloseOptions(false);return;}
@@ -3171,7 +3218,7 @@ function donnaOption(name:string):void{
   if(name==='dock-left'||name==='dock-right'){const el=donnaActiveEl(),w=el.getBoundingClientRect().width||el.offsetWidth||420,h=el.getBoundingClientRect().height||el.offsetHeight||300;donnaMoveTo(name==='dock-left'?8:(window.innerWidth||1200)-w-8,Math.max(8,(window.innerHeight||800)-h-24),true);return;}
   if(name==='reset'){donnaReset();return;}
   if(name==='collapse'){donnaDockOpen=false;syncDonnaDock();donnaClamp();$('donna-dock-toggle').focus();return;}
-  if(name==='scope'){ffRevealComposer();const t=$('chat-scope');t.focus();return;}
+  if(name==='scope'){ffRevealComposer();const t=$('chat-scope');const details=t.closest('details');if(details)details.open=true;t.focus();return;}
   if(name==='company'){donnaDockOpen=false;syncDonnaDock();if(activeView!=='office')navigate('office');ffOperations=true;setPortfolioOpen(false);ffApplyMode();switchWorkspaceTab('chat');const sel=document.getElementById('office-company-select')||document.getElementById('office-department-select');sel?.focus();return;}
   if(name==='keys'){donnaRevealSettings('key-rows','key-rows');return;}
   if(name==='connections'){donnaRevealSettings('cloud-connection-panel',($('cloud-open-site') as HTMLButtonElement).disabled?'cloud-connection-panel':'cloud-open-site');return;}
@@ -3461,7 +3508,8 @@ function ffAction(action: StudioActionKind, ctx: StudioActionContext): void {
   ffActionConfirmed(action, ctx);
 }
 function ffRevealComposer(): void {
-  if (endlessWorkspace) { endlessWorkspace.open('donna'); donnaDockOpen = true; syncDonnaDock(); $('chat-message').focus(); return; }
+  donnaStudio?.show('brief');
+  if (endlessWorkspace) { endlessWorkspace.open('donna'); donnaDockOpen = true; syncDonnaDock(); focusDonnaComposer(); return; }
   donnaDockOpen = true; ffOperations = false; ffApplyMode();
   workspaceTab = workspaceTab === 'chat' ? 'blueprint' : workspaceTab;
   if (ffBootSettled) ffSerializeUrl();
@@ -3653,7 +3701,7 @@ function initEndlessWorkspace(): void {
   const add=(id:string,title:string,element:HTMLElement,group='Workspace',width=900,height=660)=>{
     const index=panels.length;panels.push({id,title,element,group,rect:{x:-1000+(index%4)*1040,y:1100+Math.floor(index/4)*800,width,height},minWidth:320,minHeight:220});
   };
-  add('donna','Donna · conversation',donna,'Donna',680,400);
+  add('donna','Donna · creative studio',donna,'Donna',1120,720);
   add('crew','Donna & sub-Donnas',crew,'Donna',800,720);
   add('brain','Donna Brain · company memory',$('donna-brain-surface'),'Donna',1180,820);
   add('policy','Budget & autonomy',$('workspace-policy'),'Donna',880,680);
@@ -3675,25 +3723,40 @@ function initEndlessWorkspace(): void {
   const hardwareWorkbench=mountHardwareWorkbench(hardwareSurface,{onDraft:addToDonnaDraft,projectSourceUrl:'https://github.com/occult-kranti/engineering-intelligence-atlas/tree/feat/reference-room-companies/projects/atech-hardware-studio/examples/blueprint-light'});
   add('hardware-studio','Hardware Studio',hardwareSurface,'Companies',1140,800);
   window.addEventListener('beforeunload',()=>hardwareWorkbench.destroy(),{once:true});
-  const gameSurface=textElement('section','','canvas-game-studio');
-  const gameFrame=document.createElement('iframe');
-  gameFrame.title='3D Game Studio · local workbench';gameFrame.loading='lazy';gameFrame.referrerPolicy='same-origin';
-  gameSurface.append(gameFrame);add('game-studio','3D Game Studio',gameSurface,'Companies',1220,760);
-  let gameInView=false;
-  const syncGameVisibility=()=>{
-    if(!gameFrame.hasAttribute('src'))return;
-    const bounds=gameFrame.getBoundingClientRect();
-    const visible=!document.hidden&&gameInView&&endlessWorkspace?.isOpen('game-studio')===true&&bounds.width>0&&bounds.height>0;
-    gameFrame.contentWindow?.postMessage({type:'daftar:studio:visibility',channel:'daftar.studio.visibility.v1',visible},location.protocol==='file:'?'*':location.origin);
-  };
-  gameFrame.addEventListener('load',syncGameVisibility);
-  const gameObserver=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{gameInView=entries.some(entry=>entry.isIntersecting);syncGameVisibility();},{root:studio.elements.canvasHost,threshold:.001}):null;
-  if(gameObserver)gameObserver.observe(gameFrame);else gameInView=true;
-  document.addEventListener('visibilitychange',syncGameVisibility);
-  window.addEventListener('beforeunload',()=>{gameObserver?.disconnect();document.removeEventListener('visibilitychange',syncGameVisibility);},{once:true});
+  // The Game Studio is shipped on desktop/web, not in the VS Code asset
+  // manifest. Keep the editor's canvas self-contained and avoid even a blank
+  // nested document until someone opens the studio on a supported host.
+  let openGameStudio: (() => void)|null=null;
+  let syncGameVisibility: (() => void)|null=null;
+  if(bridge?.rendererHost!=='vscode'){
+    const gameSurface=textElement('section','','canvas-game-studio');
+    add('game-studio','3D Game Studio',gameSurface,'Companies',1220,760);
+    openGameStudio=()=>{
+      if(gameSurface.firstElementChild)return;
+      const gameFrame=document.createElement('iframe');
+      gameFrame.title='3D Game Studio · local workbench';
+      gameFrame.loading='lazy';gameFrame.referrerPolicy='same-origin';
+      let gameInView=false;
+      syncGameVisibility=()=>{
+        const bounds=gameFrame.getBoundingClientRect();
+        const visible=!document.hidden&&gameInView&&endlessWorkspace?.isOpen('game-studio')===true&&bounds.width>0&&bounds.height>0;
+        gameFrame.contentWindow?.postMessage({type:'daftar:studio:visibility',channel:'daftar.studio.visibility.v1',visible},location.protocol==='file:'?'*':location.origin);
+      };
+      gameFrame.addEventListener('load',syncGameVisibility);
+      const gameObserver=typeof IntersectionObserver==='function'?new IntersectionObserver(entries=>{
+        gameInView=entries.some(entry=>entry.isIntersecting);syncGameVisibility?.();
+      },{root:studio.elements.canvasHost,threshold:.001}):null;
+      if(!gameObserver)gameInView=true;
+      document.addEventListener('visibilitychange',syncGameVisibility);
+      const onVisibility=syncGameVisibility;
+      window.addEventListener('beforeunload',()=>{gameObserver?.disconnect();document.removeEventListener('visibilitychange',onVisibility);},{once:true});
+      gameFrame.src=bridge?.transport==='cloud-browser'?'/studios/threejs/index.html':new URL('./studios/threejs/index.html',location.href).href;
+      gameSurface.append(gameFrame);gameObserver?.observe(gameFrame);
+    };
+  }
   const portals=new Map<string,HTMLIFrameElement>();
   const portalScopeLabels=new Map<string,HTMLElement>();
-  if(bridge?.transport==='cloud-browser') {
+  if(bridge?.transport==='cloud-browser'&&bridge.rendererHost!=='vscode') {
     const outerParams=new URLSearchParams(location.search);
     for(const [id,title,path] of [['connections','Website & device connections','/'],['access','People & access','/access'],['applications','Applications & integrations','/applications'],['visit','Visiting employees','/visit'],['join','Invitation review','/join']]) {
       const wrapper=textElement('section','','canvas-web-surface');
@@ -3708,8 +3771,8 @@ function initEndlessWorkspace(): void {
   }
   const panelChanged=(id:string,open:boolean)=>{
       if(id==='game-studio'){
-        if(open&&!gameFrame.hasAttribute('src'))gameFrame.src=bridge?.transport==='cloud-browser'?'/studios/threejs/index.html':new URL('./studios/threejs/index.html',location.href).href;
-        syncGameVisibility();
+        if(open)openGameStudio?.();
+        syncGameVisibility?.();
       }
       if(id==='donna'){donnaDockOpen=open;syncDonnaDock();}
       if(id==='portfolio'&&!open)portfolioOpen=false;
@@ -3779,6 +3842,7 @@ function addToDonnaDraft(text: string): void {
   const draft = appendDonnaDraft(input.value, text);
   if (draft === null) throw new Error('Your Donna draft is full. Shorten it before adding another reference.');
   input.value = draft;
+  donnaStudio?.show('brief');
   input.dispatchEvent(new Event('input', { bubbles: true }));
   endlessWorkspace?.open('donna', { nearCamera: true });
   donnaDockOpen = true; syncDonnaDock(); input.focus();
@@ -3807,6 +3871,7 @@ function boot(): void {
   initDonnaBrain();
   initEndlessWorkspace();
   initReferenceRoom();
+  initDonnaStudio();
   if (!bridge) {
     $('bridge-notice').classList.remove('hidden'); $('core-label').textContent = 'Desktop preview'; $('core-note').textContent = 'Native actions need the desktop app';
     noData($('team-grid'), 'Open the desktop app to load your skill-linked team.'); noData($('project-list'), 'Create and save projects in the installed desktop app.'); noData($('key-rows'), 'Provider credentials are managed by the desktop app’s secure storage.');

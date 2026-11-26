@@ -4,7 +4,8 @@ import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
 import type { OfficeJob, OfficeSnapshot } from '../src/shared/office';
-import { ModelPoolService } from '../src/main/modelPool';
+import { ModelPoolService, MODEL_CATALOG } from '../src/main/modelPool';
+import { QWEN_CODER_MOE_MODEL } from '../src/main/ollama';
 
 const digest = 'a'.repeat(64);
 const otherDigest = 'b'.repeat(64);
@@ -56,6 +57,26 @@ async function fixture(enabled = true) {
 }
 
 describe('shared self-hosted model pool', () => {
+  it('admits the reviewed MoE artifact without inferring installation, scope or digest readiness', async () => {
+    const f = await fixture();
+    const catalog = MODEL_CATALOG.find(row => row.id === QWEN_CODER_MOE_MODEL);
+    expect(catalog).toMatchObject({ architecture: 'moe', contextLimitTokens: 8192, totalParametersBillions: 30.5,
+      activeParametersBillions: 3.3, artifactApproxBytes: 19_000_000_000 });
+    const state = (await f.service.snapshot({ companyId: 'company1' })).snapshot;
+    expect(state.models).toEqual([]); expect(state.assignments).toEqual([]);
+    const selected = { ...selection(), model: QWEN_CODER_MOE_MODEL };
+    f.data.installed = [{ name: QWEN_CODER_MOE_MODEL, digest, size: 19_000_000_000 }];
+    await f.service.select(selected);
+    const moeJob = { ...job(), model: QWEN_CODER_MOE_MODEL };
+    await expect(f.service.generateForJob(moeJob, { model: QWEN_CODER_MOE_MODEL, prompt: 'Review a small function', maxOutputTokens: 64 })).resolves.toMatchObject({ usageObserved: true });
+    await expect(f.service.request({ ...request(), model: QWEN_CODER_MOE_MODEL, maxBytes: catalog!.storageCeilingBytes + 1 })).rejects.toMatchObject({ code: 'INVALID_REQUEST' });
+    await expect(f.service.select({ ...selected, employeeId: 'employee2' })).rejects.toMatchObject({ code: 'MODEL_SCOPE_DENIED' });
+    f.data.installed[0]!.digest = otherDigest;
+    await expect(f.service.validateJob(moeJob)).rejects.toMatchObject({ code: 'MODEL_DIGEST_CHANGED' });
+    await expect(f.service.request({ ...request(), model: 'qwen3-coder:30b' })).rejects.toMatchObject({ code: 'MODEL_NOT_REVIEWED' });
+    expect(f.data.pulls).toHaveLength(0);
+  });
+
   it('requires a reviewed model, local-only confirmation and an active scoped employee before any download', async () => {
     const f = await fixture(false);
     await expect(f.service.request(request())).rejects.toMatchObject({ code: 'MODEL_POOL_DISABLED' });

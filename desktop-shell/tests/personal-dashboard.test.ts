@@ -204,6 +204,14 @@ describe('personal dashboard request boundaries', () => {
     expect((await send(f.origin, '/studio-tokens.css')).status).toBe(200);
     expect((await send(f.origin, '/office-signals.js')).headers['content-type']).toMatch(/javascript/);
     expect((await send(f.origin, '/chrome.js')).status).toBe(200);
+    // These are transitive imports of the shared office renderer. A missing
+    // allowlist entry previously left the real page unable to load its canvas.
+    for (const module of ['canvas-workspace', 'donna-team', 'universe', 'workspace']) {
+      fs.writeFileSync(path.join(renderer, 'freeflow', `${module}.js`), 'export const loaded = true;');
+      const response = await send(f.origin, `/freeflow/${module}.js`);
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toMatch(/javascript/);
+    }
     for (const missing of ['/freeflow/manage.js', '/freeflow/intake.js', '/freeflow/camera.js']) {
       const reply = await send(f.origin, missing);
       expect(reply.status).toBe(404);
@@ -227,6 +235,31 @@ describe('personal dashboard request boundaries', () => {
     const escaped = await send(f.origin, '/freeflow/model.js');
     expect(escaped.status).toBe(404);
     expect(escaped.body).not.toContain('Private fixture outside renderer');
+  });
+
+  it('serves the Donna module graph and only reviewed creative assets with correct MIME', async () => {
+    const f = await fixture();
+    const renderer = path.join(roots[roots.length - 1]!, 'renderer');
+    const files = [
+      ['donna-studio.js', 'text/javascript'], ['donna-studio.css', 'text/css'],
+      ['freeflow/canvas-workspace.js', 'text/javascript'], ['freeflow/donna-team.js', 'text/javascript'],
+      ['brain/panel.js', 'text/javascript'], ['resource-library/panel.js', 'text/javascript'],
+      ['assets/donna-studio/donna-studio.webp', 'image/webp'], ['assets/donna-studio/donna-studio.blend', 'application/octet-stream'],
+      ['assets/donna-studio/donna-studio.glb', 'model/gltf-binary'], ['assets/donna-studio/provenance.json', 'application/json'],
+      ['studios/threejs/index.html', 'text/html'], ['studios/threejs/studio.mjs', 'text/javascript'],
+      ['studios/threejs/vendor/three.module.min.js', 'text/javascript'],
+    ];
+    for (const [file, mime] of files) {
+      fs.mkdirSync(path.dirname(path.join(renderer, file!)), { recursive: true });
+      fs.writeFileSync(path.join(renderer, file!), `fixture ${file}`);
+      const reply = await send(f.origin, `/${file}`);
+      expect(reply.status, file).toBe(200);
+      expect(reply.headers['content-type'], file).toContain(mime);
+      if (file!.endsWith('.blend')) expect(reply.headers['content-disposition']).toContain('attachment');
+    }
+    fs.writeFileSync(path.join(renderer, 'assets/donna-studio/private.blend'), 'unreviewed scene');
+    expect((await send(f.origin, '/assets/donna-studio/private.blend')).status).toBeGreaterThanOrEqual(400);
+    expect(f.dispatch).not.toHaveBeenCalled();
   });
 
   it('does not return backend errors or credentials to browser callers', async () => {

@@ -1,12 +1,14 @@
 import { mountStudio } from './freeflow/studio.e09a34b8e4243ecc.js';
-import { mountCanvasWorkspace } from './freeflow/canvas-workspace.2d7c83e126316c7d.js';
+import { mountCanvasWorkspace } from './freeflow/canvas-workspace.c8e7d31cd6566dd0.js';
 import { buildDonnaTeam, proposeDonnaAction } from './freeflow/donna-team.5cb2baa7c7bddcfb.js';
-import { mountModelPool } from './model-pool.ea9e9ba1c164d356.js';
+import { mountModelPool } from './model-pool.18e6bdfa567a6d3c.js';
 import { mountResourceLibrary } from './resource-library/panel.374737e3d10df121.js';
 import { appendDonnaDraft } from './resource-library/model.542d169556b0324a.js';
 import { mountHardwareWorkbench } from './hardware-workbench.3545929af89e886f.js';
-import { RESOURCE_CATALOG } from './resource-library/catalog.b5294582b676282c.js';
+import { RESOURCE_CATALOG } from './resource-library/catalog.cbc34df6d7b737a1.js';
 import { validGlobalCeiling } from './resource-library/budget.b11c1448a6dc69d7.js';
+import { mountDonnaBrain } from './brain/panel.49821f7dfe5f6361.js';
+import { mountDonnaStudio } from './donna-studio.6107bc44671dbeba.js';
 const bridge = window.desktopBridge;
 let modelPoolPanel = null;
 function $(id) {
@@ -45,6 +47,7 @@ const VIEW_LABELS = {
 let activeView = 'office';
 let contentMode = false;
 let endlessWorkspace = null;
+let donnaBrainPanel = null;
 // Live surfaces share refreshes, but an unfinished policy edit belongs to its
 // form until confirmed saved or explicitly reset, even after focus moves away.
 const canvasFormDrafts = new Set();
@@ -353,8 +356,12 @@ function initVenvForm() {
         }
         setStatus(status, 'Creating venv…');
         const res = await bridge.createVenv({ name, confirmed, installHuggingFaceHub });
-        if (res.ok)
+        if (res.ok && res.jobId)
+            setStatus(status, `Environment preparation queued as ${res.jobId}. Inspect its status before running Python; it is not ready yet.`, 'ok');
+        else if (res.ok && res.path)
             setStatus(status, `Venv ready at ${res.path}`, 'ok');
+        else if (res.ok)
+            setStatus(status, 'Environment preparation accepted. Inspect its status before running Python.', 'ok');
         else
             setStatus(status, res.error ?? 'Failed to create venv.', 'error');
         void refreshJobs();
@@ -1781,6 +1788,7 @@ function renderOffice() {
     renderCompanyHierarchy();
     renderUnifiedWorkspace();
     modelPoolPanel?.refreshScope();
+    donnaBrainPanel?.refresh();
     if (!officeState)
         return;
     const employees = scopedEmployees();
@@ -2164,6 +2172,7 @@ let roomDraftDirty = false;
 let selectedBoardId = '';
 let selectedDeskEmployeeId = '';
 let conversationSignature = '';
+let donnaStudio = null;
 let blueprintLoading = false;
 let spatialSaving = false;
 let spatialOfficeId = '';
@@ -2288,12 +2297,55 @@ function renderWorkspaceControls() {
     const policySubmit = $('workspace-policy-form').querySelector('button[type="submit"]');
     if (policySubmit)
         policySubmit.disabled = !available;
+    updateChatMode();
     if (!available) {
         $('workspace-budget-label').textContent = !bridge ? 'Desktop workspace required' : !officeState ? 'Budget not loaded' : 'Workspace upgrade required';
         $('chat-mode-note').textContent = bridge?.transport === 'cloud-browser' && !officeState ? 'Load your cloud workspace from welcome before starting a conversation.' : bridge ? (workspaceReadOnly() ? 'Example workspace · read only. Open your private workspace to save a goal.' : 'Load the current native workspace to save goals and conversations.') : 'This preview shows the workspace. Open the desktop app to save a goal.';
     }
-    else
-        updateChatMode();
+}
+function focusDonnaComposer() { donnaStudio?.show('brief'); $('chat-message').focus(); }
+function renderDonnaStudio() {
+    if (!donnaStudio)
+        return;
+    const scope = workspaceScopeOrNull();
+    const employees = (officeState?.employees || []).filter(e => scope?.kind === 'employee' ? e.id === scope.id : scope?.kind === 'department' ? e.departmentId === scope.id : scope?.kind === 'office' ? e.officeId === scope.id : scope?.kind === 'company' && e.companyId === scope.id);
+    const jobs = (officeState?.jobs || []).filter(j => scope?.kind === 'employee' ? j.employeeId === scope.id : scope?.kind === 'department' ? j.departmentId === scope.id : scope?.kind === 'office' ? j.officeId === scope.id : scope?.kind === 'company' && j.companyId === scope.id);
+    const goals = scopedGoals();
+    const thread = officeState?.chatThreads?.find(t => t.scope.kind === scope?.kind && t.scope.id === scope.id);
+    const hasScope = workspaceAvailable() && !!scope;
+    donnaStudio.refresh({ scope: scope ? scopeLabel(scope) : 'Choose a company', available: workspaceAvailable(), transport: bridge?.transport || 'unavailable',
+        employeeCount: hasScope ? employees.length : null, openGoals: hasScope ? goals.filter(g => !['completed', 'cancelled'].includes(g.status)).length : null,
+        recordedRunning: hasScope ? jobs.filter(j => j.status === 'running').length : null,
+        messageCount: hasScope ? (thread?.messages.length || 0) : null, runtime: bridge?.transport === 'cloud-browser' || workspaceReadOnly() || !workspaceAvailable() ? null : officeWorker,
+        recentGoals: goals.slice(-3).reverse().map(g => ({ title: g.title, status: g.status === 'running' ? (jobs.some(j => g.jobIds.includes(j.id) && j.status === 'running') ? 'recorded running' : 'work queued') : g.status })) });
+}
+function initDonnaStudio() {
+    donnaStudio = mountDonnaStudio($('donna-conversation'), {
+        addDraft: addToDonnaDraft,
+        expand: () => { if (endlessWorkspace)
+            endlessWorkspace.open('donna', { size: { width: 1120, height: 720 } }); },
+        openSurface: name => {
+            if (name === 'connections') {
+                donnaOption('connections');
+                return;
+            }
+            if (endlessWorkspace) {
+                endlessWorkspace.open(name, { nearCamera: true });
+                return;
+            }
+            if (name === 'models')
+                navigate('models');
+            else if (name === 'crew')
+                navigate('team');
+            else if (name === 'policy') {
+                $('workspace-policy').open = true;
+                $('workspace-policy').scrollIntoView({ block: 'nearest' });
+            }
+            else
+                switchWorkspaceTab('chat');
+        },
+    });
+    renderDonnaStudio();
 }
 function renderConversation() {
     const scope = workspaceScopeOrNull();
@@ -2310,7 +2362,11 @@ function renderConversation() {
         if (!container.querySelector('.conversation-empty')) {
             container.replaceChildren();
             const empty = textElement('div', '', 'conversation-empty');
-            empty.append(textElement('span', 'START WITH AN OUTCOME', 'eyebrow'), textElement('h2', 'A shared place to think, plan, and do.'), textElement('p', 'Give Donna a clear goal. The saved plan and its results will stay connected to the people responsible.'));
+            empty.append(textElement('span', 'd.', 'donna-empty-mark'), textElement('h2', 'Room for your next idea.'), textElement('p', 'Your briefs, Donna’s replies, and saved checkpoints will appear here, connected to this scope.'));
+            const start = textElement('button', 'Start with a brief ↗', 'text-button');
+            start.type = 'button';
+            start.dataset.donnaAction = 'brief';
+            empty.append(start);
             container.append(empty);
         }
         return;
@@ -2607,7 +2663,7 @@ function renderBlueprint() {
                 $('queue-composer').scrollIntoView({ block: 'nearest' });
                 $('queue-goal').focus();
                 return;
-            } selectedDeskEmployeeId = employee.id; selectedDepartmentId = employee.departmentId || ''; renderOfficeScope(); renderWorkspaceControls(); selectRoom(room); $('chat-scope').value = 'employee'; $('chat-employee').value = employee.id; switchWorkspaceTab('chat'); renderUnifiedWorkspace(); $('chat-message').focus(); };
+            } selectedDeskEmployeeId = employee.id; selectedDepartmentId = employee.departmentId || ''; renderOfficeScope(); renderWorkspaceControls(); selectRoom(room); $('chat-scope').value = 'employee'; $('chat-employee').value = employee.id; switchWorkspaceTab('chat'); renderUnifiedWorkspace(); focusDonnaComposer(); };
             occupants.append(button);
         }
         if (roomEmployees.length > 6) {
@@ -2757,6 +2813,7 @@ function renderUnifiedWorkspace() {
     renderWorkspacePolicy();
     renderConversation();
     renderWorkspaceGoals();
+    renderDonnaStudio();
     renderSpatialSelectors();
     renderStudioSignals();
     renderBlueprint();
@@ -2768,15 +2825,20 @@ function renderUnifiedWorkspace() {
     endlessWorkspace?.refresh();
 }
 function updateChatMode() {
-    if (bridge?.transport === 'cloud-browser') {
-        $('chat-goal-mode').closest('label')?.classList.add('hidden');
-        $('chat-provider-options').classList.add('hidden');
+    const cloud = bridge?.transport === 'cloud-browser';
+    const execute = !cloud && value('chat-goal-mode') === 'provider';
+    const options = $('chat-provider-options');
+    $('chat-goal-mode').closest('label')?.classList.toggle('hidden', cloud);
+    options.classList.toggle('hidden', !execute);
+    // Hidden form controls still participate in native validation unless disabled.
+    options.querySelectorAll('input,select').forEach(control => { control.disabled = !execute; });
+    if (!execute)
+        $('chat-authorized').checked = false;
+    if (cloud) {
         $('chat-send').textContent = 'Ask Donna';
         $('chat-mode-note').textContent = 'A real cloud reply. Code and panel jobs wait for a connected desktop; this conversation does not apply changes.';
         return;
     }
-    const execute = value('chat-goal-mode') === 'provider';
-    $('chat-provider-options').classList.toggle('hidden', !execute);
     $('chat-send').textContent = execute ? 'Create bounded goal ↑' : 'Create plan ↑';
     $('chat-mode-note').textContent = execute ? (officeState?.policy?.approvalMode === 'autonomous' ? 'Eligible work can queue automatically within every budget cap.' : 'The goal is planned first. Approve its plan before provider execution.') : 'Save a local brief and plan. No provider request.';
 }
@@ -2788,17 +2850,18 @@ function boundedUtf8(input, maxBytes) { let result = ''; let size = 0; const enc
     size += bytes;
 } return result; }
 function chatRunSettings() {
+    // Manual plans use the native no-execution defaults, never half-edited
+    // provider limits or consent from a previous mode.
+    if (value('chat-goal-mode') !== 'provider')
+        return undefined;
     const provider = value('chat-provider');
-    const mode = value('chat-goal-mode') === 'provider' ? 'provider' : 'manual';
-    const settings = { mode, provider, model: value('chat-model'), authorized: mode === 'provider' && ($('chat-authorized').checked || officeState?.policy?.approvalMode === 'autonomous'), maxTokens: Number(value('chat-max-tokens')), maxUsd: Number(value('chat-max-usd')), maxMinutes: Number(value('chat-max-minutes')), priceRates: { inputUsdPerMillion: Number(value('chat-rate-input')), outputUsdPerMillion: Number(value('chat-rate-output')) } };
-    if (mode === 'provider') {
-        if (!settings.authorized)
-            throw new Error('Authorize provider work for this goal before creating it.');
-        if (!settings.model)
-            throw new Error('Choose a model ID for bounded execution.');
-        if (provider !== 'ollama' && (!settings.priceRates.inputUsdPerMillion || settings.priceRates.inputUsdPerMillion <= 0 || !settings.priceRates.outputUsdPerMillion || settings.priceRates.outputUsdPerMillion <= 0))
-            throw new Error('Positive input and output rates are required for cloud execution.');
-    }
+    const settings = { mode: 'provider', provider, model: value('chat-model'), authorized: $('chat-authorized').checked || officeState?.policy?.approvalMode === 'autonomous', maxTokens: Number(value('chat-max-tokens')), maxUsd: Number(value('chat-max-usd')), maxMinutes: Number(value('chat-max-minutes')), priceRates: { inputUsdPerMillion: Number(value('chat-rate-input')), outputUsdPerMillion: Number(value('chat-rate-output')) } };
+    if (!settings.authorized)
+        throw new Error('Authorize provider work for this goal before creating it.');
+    if (!settings.model)
+        throw new Error('Choose a model ID for bounded execution.');
+    if (provider !== 'ollama' && (!settings.priceRates.inputUsdPerMillion || settings.priceRates.inputUsdPerMillion <= 0 || !settings.priceRates.outputUsdPerMillion || settings.priceRates.outputUsdPerMillion <= 0))
+        throw new Error('Positive input and output rates are required for cloud execution.');
     if (!Number.isInteger(settings.maxTokens) || settings.maxTokens < 1 || settings.maxTokens > 200000 || !Number.isFinite(settings.maxUsd) || settings.maxUsd <= 0 || settings.maxUsd > 100 || !Number.isFinite(settings.maxMinutes) || settings.maxMinutes <= 0 || settings.maxMinutes > 120)
         throw new Error('Use positive token, time, and spending limits, with at most $100 per job.');
     return settings;
@@ -2807,8 +2870,8 @@ function initUnifiedWorkspace() {
     document.querySelectorAll('[data-workspace-tab]').forEach((button) => { button.onclick = () => switchWorkspaceTab(button.dataset.workspaceTab || 'chat'); button.addEventListener('keydown', (event) => { if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key))
         return; event.preventDefault(); const buttons = Array.from(document.querySelectorAll('[data-workspace-tab]')); const i = buttons.indexOf(button); const next = event.key === 'Home' ? buttons[0] : event.key === 'End' ? buttons.at(-1) : buttons[(i + (event.key === 'ArrowRight' ? 1 : -1) + buttons.length) % buttons.length]; next?.click(); next?.focus(); }); });
     document.querySelectorAll('[data-open-workspace-tab]').forEach((button) => button.onclick = () => switchWorkspaceTab(button.dataset.openWorkspaceTab || 'chat'));
-    document.querySelectorAll('[data-brief]').forEach((button) => button.onclick = () => { $('chat-message').value = button.dataset.brief || ''; $('chat-message').focus(); });
-    const newBrief = () => { setPortfolioOpen(false); navigate('office'); switchWorkspaceTab('chat'); $('chat-message').focus(); };
+    document.querySelectorAll('[data-brief]').forEach((button) => button.onclick = () => { $('chat-message').value = button.dataset.brief || ''; focusDonnaComposer(); });
+    const newBrief = () => { setPortfolioOpen(false); navigate('office'); switchWorkspaceTab('chat'); donnaStudio?.show('brief'); focusDonnaComposer(); };
     $('header-new-goal').onclick = () => { if (document.body.classList.contains('ff-canvas-mode')) {
         const f = ffFocus;
         const ctx = f.kind === 'portfolio' ? {} : { companyId: f.companyId, ...('officeId' in f && f.officeId ? { officeId: f.officeId } : {}), ...(f.kind === 'department' ? { departmentId: f.departmentId } : {}) };
@@ -2837,22 +2900,22 @@ function initUnifiedWorkspace() {
             return;
         }
         const runSettings = chatRunSettings();
-        const maxIterations = Number(value('chat-max-iterations'));
+        const maxIterations = runSettings ? Number(value('chat-max-iterations')) : 1;
         if (!Number.isInteger(maxIterations) || maxIterations < 1 || maxIterations > 10)
             throw new Error('Choose between one and ten goal iterations.');
         setStatus($('chat-status'), 'Saving your brief and local plan…');
         await workspaceCommand({ action: 'post_chat', scope, content }, 'Brief saved.');
         const before = new Set((officeState?.goals || []).map((goal) => goal.id));
-        const state = await workspaceCommand({ action: 'create_goal', scope, title: boundedUtf8(content.replace(/\s+/g, ' '), 120), description: content, mode: runSettings.mode === 'provider' ? 'execute' : 'plan', maxIterations, runSettings }, 'Goal saved.');
+        const state = await workspaceCommand({ action: 'create_goal', scope, title: boundedUtf8(content.replace(/\s+/g, ' '), 120), description: content, mode: runSettings ? 'execute' : 'plan', maxIterations, ...(runSettings ? { runSettings } : {}) }, 'Goal saved.');
         const goal = state.goals?.find((item) => !before.has(item.id));
         if (!goal)
             throw new Error('The brief was saved, but no new goal record was returned. Refresh the workspace to inspect it.');
         selectedGoalId = goal.id;
         await workspaceCommand({ action: 'plan_goal', goalId: goal.id }, 'Local goal plan saved.');
-        if (runSettings.mode === 'provider' && officeState?.policy?.approvalMode === 'autonomous')
+        if (runSettings && officeState?.policy?.approvalMode === 'autonomous')
             await workspaceCommand({ action: 'execute_goal', goalId: goal.id }, 'Goal queued within the global budget.');
-        $('chat-message').value = '';
-        setStatus($('chat-status'), runSettings.mode === 'provider' && officeState?.policy?.approvalMode === 'review' ? 'Plan saved. Review ownership, then approve the goal to queue its provider jobs.' : 'Brief and plan saved.', 'ok');
+        donnaStudio?.completeDraft(content);
+        setStatus($('chat-status'), runSettings && officeState?.policy?.approvalMode === 'review' ? 'Plan saved. Review ownership, then approve the goal to queue its provider jobs.' : 'Brief and plan saved.', 'ok');
         renderUnifiedWorkspace();
     }, 'chat-status');
     $('workspace-budget-open').onclick = () => { const details = $('workspace-policy'); details.open = !details.open; if (details.open) {
@@ -3808,7 +3871,7 @@ async function sendDonnaCloud(message, scope) {
         officeWriteRevision++;
         officeState = result.snapshot;
         officeSampledAt = new Date().toISOString();
-        $('chat-message').value = '';
+        donnaStudio?.completeDraft(message);
         renderOffice();
         setStatus($('chat-status'), 'Cloud reply saved. No repository changes were applied.', 'ok');
     }
@@ -3970,7 +4033,7 @@ function initDecisionPanels() {
     $('decision-focus').onchange = () => { decisionRoles = new Set(DECISION_PRESETS[value('decision-focus')]); renderDecisionRoleOptions(); };
     $('decision-scope').onchange = renderDecisionSelectors;
     $('decision-start').onclick = () => { $('decision-run-options').open = true; $('decision-model').focus(); };
-    $('decision-to-chat').onclick = () => { switchWorkspaceTab('chat'); $('chat-message').focus(); };
+    $('decision-to-chat').onclick = () => { switchWorkspaceTab('chat'); focusDonnaComposer(); };
     $('decision-map-goal').onclick = () => workspaceTask(async () => { const panel = selectedDecisionPanel(); const goalId = panel?.goalIds.at(-1); if (!panel || !goalId)
         throw new Error('Start a panel round before mapping its work.'); await ensureWorkspaceBlueprint(); switchWorkspaceTab('whiteboard'); resetBoardForm(); $('node-title').value = panel.title; $('node-goal').value = goalId; $('node-owner').value = 'donna'; $('node-title').focus(); }, 'decision-status');
     $('decision-pause').onclick = () => workspaceTask(async () => { const panel = selectedDecisionPanel(); if (!panel)
@@ -4253,13 +4316,13 @@ function initStudio() {
     $('softboard-search').oninput = renderSoftboard;
     $('studio-roadmap-status').onchange = renderStudioRoadmap;
     $('softboard-person-chat').onclick = () => { const e = scopedEmployees().find(item => item.id === softboardEmployeeId); if (!e || e.status !== 'active')
-        return; renderWorkspaceControls(); $('chat-scope').value = 'employee'; $('chat-employee').value = e.id; switchWorkspaceTab('chat'); $('chat-message').focus(); };
+        return; renderWorkspaceControls(); $('chat-scope').value = 'employee'; $('chat-employee').value = e.id; switchWorkspaceTab('chat'); focusDonnaComposer(); };
     $('softboard-person-authority').onclick = () => { if (!softboardEmployeeId)
         return; setPortfolioOpen(true); renderAuthority(); $('authority-employee').value = softboardEmployeeId; renderAuthorityForm(); renderAuthorityGrants(); $('ceo-authority-editor').open = true; $('authority-employee').focus(); $('ceo-authority-editor').scrollIntoView({ block: 'nearest' }); syncDonnaDock(); };
     $('donna-dock-toggle').onclick = () => { if (donnaSuppressClick) {
         donnaSuppressClick = false;
         return;
-    } donnaDockOpen = true; endlessWorkspace?.open('donna'); syncDonnaDock(); donnaClamp(); $('chat-message').focus(); };
+    } donnaDockOpen = true; endlessWorkspace?.open('donna'); syncDonnaDock(); donnaClamp(); focusDonnaComposer(); };
     $('donna-dock-close').onclick = () => { donnaDockOpen = false; endlessWorkspace?.close('donna'); donnaCloseOptions(false); syncDonnaDock(); donnaClamp(); $('donna-dock-toggle').focus(); };
     initDonnaPresentation();
 }
@@ -4439,6 +4502,11 @@ function donnaOption(name) {
         donnaCloseOptions(false);
         return;
     }
+    if (endlessWorkspace && name === 'connections' && bridge?.transport === 'cloud-browser') {
+        endlessWorkspace.open('connections');
+        donnaCloseOptions(false);
+        return;
+    }
     if (endlessWorkspace && name === 'agents') {
         endlessWorkspace.open('crew');
         donnaCloseOptions(false);
@@ -4476,6 +4544,9 @@ function donnaOption(name) {
     if (name === 'scope') {
         ffRevealComposer();
         const t = $('chat-scope');
+        const details = t.closest('details');
+        if (details)
+            details.open = true;
         t.focus();
         return;
     }
@@ -4964,11 +5035,12 @@ function ffAction(action, ctx) {
     ffActionConfirmed(action, ctx);
 }
 function ffRevealComposer() {
+    donnaStudio?.show('brief');
     if (endlessWorkspace) {
         endlessWorkspace.open('donna');
         donnaDockOpen = true;
         syncDonnaDock();
-        $('chat-message').focus();
+        focusDonnaComposer();
         return;
     }
     donnaDockOpen = true;
@@ -5370,8 +5442,9 @@ function initEndlessWorkspace() {
         const index = panels.length;
         panels.push({ id, title, element, group, rect: { x: -1000 + (index % 4) * 1040, y: 1100 + Math.floor(index / 4) * 800, width, height }, minWidth: 320, minHeight: 220 });
     };
-    add('donna', 'Donna · conversation', donna, 'Donna', 680, 400);
+    add('donna', 'Donna · creative studio', donna, 'Donna', 1120, 720);
     add('crew', 'Donna & sub-Donnas', crew, 'Donna', 800, 720);
+    add('brain', 'Donna Brain · company memory', $('donna-brain-surface'), 'Donna', 1180, 820);
     add('policy', 'Budget & autonomy', $('workspace-policy'), 'Donna', 880, 680);
     add('scope', 'Company & department', scope, 'Office', 760, 510);
     add('company-directory', 'Find a company', studio.elements.listHost, 'Office', 620, 690);
@@ -5394,32 +5467,45 @@ function initEndlessWorkspace() {
     const hardwareWorkbench = mountHardwareWorkbench(hardwareSurface, { onDraft: addToDonnaDraft, projectSourceUrl: 'https://github.com/occult-kranti/engineering-intelligence-atlas/tree/feat/reference-room-companies/projects/atech-hardware-studio/examples/blueprint-light' });
     add('hardware-studio', 'Hardware Studio', hardwareSurface, 'Companies', 1140, 800);
     window.addEventListener('beforeunload', () => hardwareWorkbench.destroy(), { once: true });
-    const gameSurface = textElement('section', '', 'canvas-game-studio');
-    const gameFrame = document.createElement('iframe');
-    gameFrame.title = '3D Game Studio · local workbench';
-    gameFrame.loading = 'lazy';
-    gameFrame.referrerPolicy = 'same-origin';
-    gameSurface.append(gameFrame);
-    add('game-studio', '3D Game Studio', gameSurface, 'Companies', 1220, 760);
-    let gameInView = false;
-    const syncGameVisibility = () => {
-        if (!gameFrame.hasAttribute('src'))
-            return;
-        const bounds = gameFrame.getBoundingClientRect();
-        const visible = !document.hidden && gameInView && endlessWorkspace?.isOpen('game-studio') === true && bounds.width > 0 && bounds.height > 0;
-        gameFrame.contentWindow?.postMessage({ type: 'daftar:studio:visibility', channel: 'daftar.studio.visibility.v1', visible }, location.protocol === 'file:' ? '*' : location.origin);
-    };
-    gameFrame.addEventListener('load', syncGameVisibility);
-    const gameObserver = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => { gameInView = entries.some(entry => entry.isIntersecting); syncGameVisibility(); }, { root: studio.elements.canvasHost, threshold: .001 }) : null;
-    if (gameObserver)
-        gameObserver.observe(gameFrame);
-    else
-        gameInView = true;
-    document.addEventListener('visibilitychange', syncGameVisibility);
-    window.addEventListener('beforeunload', () => { gameObserver?.disconnect(); document.removeEventListener('visibilitychange', syncGameVisibility); }, { once: true });
+    // The Game Studio is shipped on desktop/web, not in the VS Code asset
+    // manifest. Keep the editor's canvas self-contained and avoid even a blank
+    // nested document until someone opens the studio on a supported host.
+    let openGameStudio = null;
+    let syncGameVisibility = null;
+    if (bridge?.rendererHost !== 'vscode') {
+        const gameSurface = textElement('section', '', 'canvas-game-studio');
+        add('game-studio', '3D Game Studio', gameSurface, 'Companies', 1220, 760);
+        openGameStudio = () => {
+            if (gameSurface.firstElementChild)
+                return;
+            const gameFrame = document.createElement('iframe');
+            gameFrame.title = '3D Game Studio · local workbench';
+            gameFrame.loading = 'lazy';
+            gameFrame.referrerPolicy = 'same-origin';
+            let gameInView = false;
+            syncGameVisibility = () => {
+                const bounds = gameFrame.getBoundingClientRect();
+                const visible = !document.hidden && gameInView && endlessWorkspace?.isOpen('game-studio') === true && bounds.width > 0 && bounds.height > 0;
+                gameFrame.contentWindow?.postMessage({ type: 'daftar:studio:visibility', channel: 'daftar.studio.visibility.v1', visible }, location.protocol === 'file:' ? '*' : location.origin);
+            };
+            gameFrame.addEventListener('load', syncGameVisibility);
+            const gameObserver = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
+                gameInView = entries.some(entry => entry.isIntersecting);
+                syncGameVisibility?.();
+            }, { root: studio.elements.canvasHost, threshold: .001 }) : null;
+            if (!gameObserver)
+                gameInView = true;
+            document.addEventListener('visibilitychange', syncGameVisibility);
+            const onVisibility = syncGameVisibility;
+            window.addEventListener('beforeunload', () => { gameObserver?.disconnect(); document.removeEventListener('visibilitychange', onVisibility); }, { once: true });
+            gameFrame.src = bridge?.transport === 'cloud-browser' ? '/studios/threejs/index.html' : new URL('./studios/threejs/index.html', location.href).href;
+            gameSurface.append(gameFrame);
+            gameObserver?.observe(gameFrame);
+        };
+    }
     const portals = new Map();
     const portalScopeLabels = new Map();
-    if (bridge?.transport === 'cloud-browser') {
+    if (bridge?.transport === 'cloud-browser' && bridge.rendererHost !== 'vscode') {
         const outerParams = new URLSearchParams(location.search);
         for (const [id, title, path] of [['connections', 'Website & device connections', '/'], ['access', 'People & access', '/access'], ['applications', 'Applications & integrations', '/applications'], ['visit', 'Visiting employees', '/visit'], ['join', 'Invitation review', '/join']]) {
             const wrapper = textElement('section', '', 'canvas-web-surface');
@@ -5448,9 +5534,9 @@ function initEndlessWorkspace() {
     }
     const panelChanged = (id, open) => {
         if (id === 'game-studio') {
-            if (open && !gameFrame.hasAttribute('src'))
-                gameFrame.src = bridge?.transport === 'cloud-browser' ? '/studios/threejs/index.html' : new URL('./studios/threejs/index.html', location.href).href;
-            syncGameVisibility();
+            if (open)
+                openGameStudio?.();
+            syncGameVisibility?.();
         }
         if (id === 'donna') {
             donnaDockOpen = open;
@@ -5516,12 +5602,40 @@ function initEndlessWorkspace() {
         endlessWorkspace.open(portal);
 }
 // ---------------------------------------------------------------- boot
+function initDonnaBrain() {
+    donnaBrainPanel = mountDonnaBrain($('donna-brain-mount'), {
+        context: () => ({
+            snapshot: officeState,
+            companyId: officeCompany()?.id ?? null,
+            writable: Boolean(officeState && bridge?.officeCommand && workspaceAvailable() && !workspaceReadOnly()),
+            modeLabel: workspaceReadOnly() ? 'Example company · read only' : bridge?.transport === 'cloud-browser' ? 'Private company · native confirmation' : 'Saved company records',
+            unavailableReason: workspaceReadOnly() ? 'This sample is read only. Open your private workspace to save memories and setup goals.' : 'Load a connected company workspace to save memories and setup goals.',
+        }),
+        command: async (command) => {
+            if (command.action !== 'add_knowledge' && command.action !== 'create_goal')
+                throw new Error('This Brain action is not supported by the saved-record controls.');
+            return await workspaceCommand({ ...command, action: command.action }, 'Donna Brain record confirmed.');
+        },
+    });
+    $('header-open-brain').onclick = () => {
+        if (endlessWorkspace)
+            endlessWorkspace.open('brain', { nearCamera: true });
+        else {
+            navigate('office');
+            $('donna-brain-surface').classList.remove('hidden');
+            $('donna-brain-surface').scrollIntoView({ block: 'nearest' });
+        }
+        donnaBrainPanel?.refresh();
+    };
+    window.addEventListener('beforeunload', () => donnaBrainPanel?.destroy(), { once: true });
+}
 function addToDonnaDraft(text) {
     const input = $('chat-message');
     const draft = appendDonnaDraft(input.value, text);
     if (draft === null)
         throw new Error('Your Donna draft is full. Shorten it before adding another reference.');
     input.value = draft;
+    donnaStudio?.show('brief');
     input.dispatchEvent(new Event('input', { bubbles: true }));
     endlessWorkspace?.open('donna', { nearCamera: true });
     donnaDockOpen = true;
@@ -5568,8 +5682,10 @@ function boot() {
     renderUsage();
     modelPoolPanel = mountModelPool($('system-view'), bridge, () => ({ activeCompanyId: officeState?.activeCompanyId,
         companies: officeState?.companies || [], employees: officeState?.employees || [] }), workspaceReadOnly);
+    initDonnaBrain();
     initEndlessWorkspace();
     initReferenceRoom();
+    initDonnaStudio();
     if (!bridge) {
         $('bridge-notice').classList.remove('hidden');
         $('core-label').textContent = 'Desktop preview';

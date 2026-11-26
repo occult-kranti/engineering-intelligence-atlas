@@ -1,0 +1,267 @@
+{
+  "schemaVersion": 1,
+  "suite": "donna-real-blender-worker-acceptance",
+  "checkedAt": "2026-11-26T00:30:46.142Z",
+  "sourceScene": "desktop-shell/src/renderer/assets/donna-studio/donna-studio.blend",
+  "sourceSha256": "eef523386640e8ee4b390517973841cacef44146de3a98da4792f5dfa4a64aae",
+  "sourceBytes": 1427512,
+  "scope": "Disposable synthetic company, employee, assignment and authority snapshot; no owner workspace.",
+  "providerCalls": 0,
+  "privateWorkspaceUsed": false,
+  "gpuTested": false,
+  "cpuRenderVerified": true,
+  "implementationHashesBefore": {
+    "headless-runtime/creative-tools.mjs": "390239e94b9d5ad1ee5fd0dc84b06024a32527ba4b4f21a296a2b9ae58db12bd",
+    "integrations/creative-tools/blender_worker.py": "28a9fe200772a9e680b7d293cf02869cb33e0962c7a725e73683a866fac2a920",
+    "integrations/creative-tools/blender_device.py": "b5a3da8ca6ccc1f2827cf440a8c388920242c3b91128199dc33f241792eaa151",
+    "integrations/creative-tools/process_guard.py": "ce942d71d3a3e61dd93e33960f862fd49dd159723627300f4e2362536378ac5c"
+  },
+  "jobs": [
+    {
+      "id": "donna-inspect",
+      "companyId": "fixture-company",
+      "employeeId": "fixture-artist",
+      "projectId": "fixture-project",
+      "operation": "blender.inspect",
+      "status": "succeeded",
+      "createdAt": "2026-11-26T00:30:46.745Z",
+      "startedAt": "2026-11-26T00:30:46.746Z",
+      "finishedAt": "2026-11-26T00:30:48.348Z",
+      "evidenceUri": "creative://jobs/donna-inspect",
+      "outputs": [
+        {
+          "path": "inspection.json",
+          "bytes": 146,
+          "sha256": "26c6192c9de20edcd1953eb947470c784152efad1f38f96e83006de7e417c1ab",
+          "mediaType": "application/json"
+        }
+      ],
+      "result": {
+        "objects": 26,
+        "meshes": 21,
+        "materials": 7,
+        "scenes": 1,
+        "cameras": 1,
+        "lights": 4,
+        "frameStart": 1,
+        "frameEnd": 250,
+        "format": "blend",
+        "blenderVersion": "4.3.2"
+      },
+      "observedWallSeconds": 1.607481
+    },
+    {
+      "id": "donna-render-cpu",
+      "companyId": "fixture-company",
+      "employeeId": "fixture-artist",
+      "projectId": "fixture-project",
+      "operation": "blender.render",
+      "status": "succeeded",
+      "createdAt": "2026-11-26T00:30:48.352Z",
+      "startedAt": "2026-11-26T00:30:48.353Z",
+      "finishedAt": "2026-11-26T00:30:50.388Z",
+      "evidenceUri": "creative://jobs/donna-render-cpu",
+      "outputs": [
+        {
+          "path": "render.png",
+          "bytes": 38435,
+          "sha256": "0cadace924369292686efd4d5ac2fc83e1a07777d18447a3c3c47c169387df37",
+          "mediaType": "image/png"
+        }
+      ],
+      "result": {
+        "frame": 1,
+        "width": 128,
+        "height": 128,
+        "samples": 4,
+        "deviceCount": 0,
+        "renderDurationSeconds": 0.432828,
+        "format": "png",
+        "engine": "CYCLES",
+        "device": "CPU",
+        "backend": "CPU"
+      },
+      "observedWallSeconds": 2.074271
+    },
+    {
+      "id": "donna-render-optix-unavailable",
+      "companyId": "fixture-company",
+      "employeeId": "fixture-artist",
+      "projectId": "fixture-project",
+      "operation": "blender.render",
+      "status": "failed",
+      "createdAt": "2026-11-26T00:30:50.955Z",
+      "startedAt": "2026-11-26T00:30:50.956Z",
+      "finishedAt": "2026-11-26T00:30:50.999Z",
+      "evidenceUri": "creative://jobs/donna-render-optix-unavailable",
+      "outputs": [],
+      "error": {
+        "code": "GPU_MEMORY_PREREQUISITE",
+        "message": "GPU rendering requires a verified cgroup-v2 memory.max no larger than the configured maxMemoryBytes. Configure the bounded GPU host before retrying; no CPU fallback was used."
+      },
+      "observedWallSeconds": 0.050726
+    }
+  ],
+  "processCalls": [
+    {
+      "executable": "/usr/bin/blender",
+      "args": [
+        "--version"
+      ],
+      "configuredRenderDevice": "CPU",
+      "durationLimitMs": 5000,
+      "memoryBytes": 4294967296,
+      "gpuMemoryPrerequisite": false,
+      "ok": true,
+      "wallSeconds": 0.585448
+    },
+    {
+      "executable": "/usr/bin/blender",
+      "args": [
+        "--background",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--threads",
+        "2",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "<repository>/integrations/creative-tools/blender_worker.py",
+        "--",
+        "blender.inspect",
+        "<disposable-fixture>/state-CPU/creative-tools/artifacts/2b5957c0524fac96c2a5d23bf14735fe/temporary/input.blend",
+        "<disposable-fixture>/state-CPU/creative-tools/artifacts/2b5957c0524fac96c2a5d23bf14735fe/outputs",
+        "{\"path\":\"donna-studio.blend\"}",
+        "{\"backend\":\"CPU\",\"deviceIndex\":0}"
+      ],
+      "configuredRenderDevice": "CPU",
+      "durationLimitMs": 45000,
+      "memoryBytes": 4294967296,
+      "gpuMemoryPrerequisite": false,
+      "ok": true,
+      "wallSeconds": 1.594605
+    },
+    {
+      "executable": "/usr/bin/blender",
+      "args": [
+        "--background",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--threads",
+        "2",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "<repository>/integrations/creative-tools/blender_worker.py",
+        "--",
+        "blender.render",
+        "<disposable-fixture>/state-CPU/creative-tools/artifacts/178e53f5cbec492efd90c291db5b3e12/temporary/input.blend",
+        "<disposable-fixture>/state-CPU/creative-tools/artifacts/178e53f5cbec492efd90c291db5b3e12/outputs",
+        "{\"path\":\"donna-studio.blend\",\"width\":128,\"height\":128,\"frame\":1,\"samples\":4}",
+        "{\"backend\":\"CPU\",\"deviceIndex\":0}"
+      ],
+      "configuredRenderDevice": "CPU",
+      "durationLimitMs": 45000,
+      "memoryBytes": 4294967296,
+      "gpuMemoryPrerequisite": false,
+      "ok": true,
+      "wallSeconds": 2.030089
+    },
+    {
+      "executable": "/usr/bin/blender",
+      "args": [
+        "--version"
+      ],
+      "configuredRenderDevice": "OPTIX",
+      "durationLimitMs": 5000,
+      "memoryBytes": 4294967296,
+      "gpuMemoryPrerequisite": false,
+      "ok": true,
+      "wallSeconds": 0.523571
+    },
+    {
+      "executable": "/usr/bin/blender",
+      "args": [
+        "--background",
+        "--factory-startup",
+        "--disable-autoexec",
+        "--threads",
+        "2",
+        "--python-exit-code",
+        "1",
+        "--python",
+        "<repository>/integrations/creative-tools/blender_worker.py",
+        "--",
+        "blender.render",
+        "<disposable-fixture>/state-OPTIX/creative-tools/artifacts/82f66fc9dbfc60e6071fe0250c5caf9b/temporary/input.blend",
+        "<disposable-fixture>/state-OPTIX/creative-tools/artifacts/82f66fc9dbfc60e6071fe0250c5caf9b/outputs",
+        "{\"path\":\"donna-studio.blend\",\"width\":128,\"height\":128,\"frame\":1,\"samples\":4}",
+        "{\"backend\":\"OPTIX\",\"deviceIndex\":0}"
+      ],
+      "configuredRenderDevice": "OPTIX",
+      "durationLimitMs": 45000,
+      "memoryBytes": 4294967296,
+      "gpuMemoryPrerequisite": true,
+      "ok": false,
+      "error": {
+        "code": "GPU_MEMORY_PREREQUISITE",
+        "message": "GPU rendering requires a verified cgroup-v2 memory.max no larger than the configured maxMemoryBytes. Configure the bounded GPU host before retrying; no CPU fallback was used."
+      },
+      "wallSeconds": 0.038099
+    }
+  ],
+  "authorityChecks": 20,
+  "limits": {
+    "maxDurationMs": 45000,
+    "maxMemoryBytes": 4294967296,
+    "maxArtifactBytes": 33554432
+  },
+  "inventoryCPU": {
+    "id": "blender",
+    "operations": [
+      "blender.inspect",
+      "blender.render",
+      "blender.export_glb"
+    ],
+    "configured": true,
+    "available": true,
+    "renderDevice": "CPU",
+    "renderDeviceIndex": 0,
+    "renderDeviceVerified": false,
+    "notice": "Version discovery does not verify render-device availability; inspect a completed render receipt.",
+    "readiness": "verified",
+    "version": "4.3.2"
+  },
+  "inventoryOPTIX": {
+    "id": "blender",
+    "operations": [
+      "blender.inspect",
+      "blender.render",
+      "blender.export_glb"
+    ],
+    "configured": true,
+    "available": true,
+    "renderDevice": "OPTIX",
+    "renderDeviceIndex": 0,
+    "renderDeviceVerified": false,
+    "notice": "Version discovery does not verify render-device availability; inspect a completed render receipt.",
+    "readiness": "verified",
+    "version": "4.3.2"
+  },
+  "gpuNegativePathVerified": true,
+  "gpuNegativeOutcome": {
+    "code": "GPU_MEMORY_PREREQUISITE",
+    "message": "GPU rendering requires a verified cgroup-v2 memory.max no larger than the configured maxMemoryBytes. Configure the bounded GPU host before retrying; no CPU fallback was used."
+  },
+  "disposableStateRemoved": true,
+  "implementationHashesAfter": {
+    "headless-runtime/creative-tools.mjs": "390239e94b9d5ad1ee5fd0dc84b06024a32527ba4b4f21a296a2b9ae58db12bd",
+    "integrations/creative-tools/blender_worker.py": "28a9fe200772a9e680b7d293cf02869cb33e0962c7a725e73683a866fac2a920",
+    "integrations/creative-tools/blender_device.py": "b5a3da8ca6ccc1f2827cf440a8c388920242c3b91128199dc33f241792eaa151",
+    "integrations/creative-tools/process_guard.py": "ce942d71d3a3e61dd93e33960f862fd49dd159723627300f4e2362536378ac5c"
+  },
+  "implementationUnchangedDuringRun": true,
+  "totalWallSeconds": 4.854525,
+  "ok": true,
+  "evidenceNote": "Observed original run; repository and disposable fixture paths sanitized for publication. Reproducible runner is run-acceptance.mjs."
+}

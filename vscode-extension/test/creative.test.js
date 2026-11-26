@@ -46,3 +46,12 @@ test('Adobe uncertain outcomes retain distinct remote identity and cleanup evide
   assert.throws(()=>validateCreativeInput('adobe.manifest',{path:'image.png'}));
   assert.equal(validateCreativeInput('adobe.render',{path:'image.jpeg'}).path,'image.jpeg');
 });
+test('Blender receipt retains bounded actual device metadata while inventory stays unverified',()=>{
+  const value=inventory();value.tools[0].renderDevice='OPTIX';value.tools[0].renderDeviceIndex=0;value.tools[0].renderDeviceVerified=true;
+  const projected=creativeSnapshot(value,'a');assert.equal(projected.tools[0].renderDevice,'OPTIX');assert.equal(projected.tools[0].renderDeviceVerified,false);assert.match(readiness(projected.tools[0]),/device unverified/);
+  const job=creativeJob({id:'gpu-job',companyId:'a',employeeId:'e',projectId:'p',operation:'blender.render',status:'succeeded',outputs:[],result:{engine:'CYCLES',device:'GPU',backend:'OPTIX',deviceCount:1,deviceIndex:0,deviceName:'NVIDIA Fixture GPU',renderDurationSeconds:0.25,rawLog:'/PRIVATE'}},'a','gpu-job');
+  assert.equal(job.result.backend,'OPTIX');assert.equal(job.result.deviceCount,1);assert.equal(job.result.deviceName,'NVIDIA Fixture GPU');assert.equal(job.result.renderDurationSeconds,0.25);assert.equal(JSON.stringify(job).includes('PRIVATE'),false);
+});
+test('filtered Unreal development cannot dispatch an unrelated Blender operation',async()=>{
+  await assert.rejects(askCreativeAction({showQuickPick:async rows=>rows[0]},inventory(),'A',()=>{},{tool:'unreal',run:true}),/Assign an available tool/);
+});

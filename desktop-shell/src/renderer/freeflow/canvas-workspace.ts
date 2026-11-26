@@ -25,7 +25,7 @@ export interface CanvasWorkspaceOptions {
   storage?: Storage | null;
 }
 export interface CanvasWorkspace {
-  open(id: string, options?: { frame?: boolean; nearCamera?: boolean }): void;
+  open(id: string, options?: { frame?: boolean; nearCamera?: boolean; size?: Size }): void;
   close(id: string): void;
   isOpen(id: string): boolean;
   revealElement(element: HTMLElement): boolean;
@@ -175,10 +175,14 @@ export function mountCanvasWorkspace(host: HTMLElement, options: CanvasWorkspace
     const next = focusPanel(state, id);
     if (next !== state) { state = next; render(); persist(); }
   }
-  function open(id: string, settings: { frame?: boolean; nearCamera?: boolean } = {}): void {
+  function open(id: string, settings: { frame?: boolean; nearCamera?: boolean; size?: Size } = {}): void {
     if (destroyed || !live.has(id)) return;
     endGesture(false); options.showCanvas(); options.stopMotion();
     const wasOpen = current(id)!.open;
+    if (settings.size) {
+      if (current(id)!.pinned) status.textContent = 'Unlock this surface to move or resize it.';
+      else state = updatePanelRect(state, id, { ...current(id)!.rect, width: settings.size.width, height: settings.size.height }, live.get(id)!.spec);
+    }
     // New surfaces start at a usable reading width on phones. A saved or locked
     // world position is never silently resized when switching devices or views.
     if (!seen.has(id) && !current(id)!.pinned && options.viewport.clientWidth > 0 && options.viewport.clientWidth <= 650) {

@@ -72,7 +72,7 @@ test('control credential is read only from a bounded private regular file, never
 test('the adapter advertises only owner-facing tools and accurate worker side effects', async () => {
   const f = fixture(); const process = await initialized(f.handler);
   const response = await process(JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/list' }));
-  assert.deepEqual(response.result.tools.map(t => t.name), ['runtime_status', 'office_summary', 'office_query', 'office_command', 'worker_set_enabled', 'model_pool_status', 'model_pool_request', 'model_pool_cancel', 'model_pool_select', 'creative_inventory', 'creative_assign', 'creative_run', 'creative_job', 'creative_cancel']);
+  assert.deepEqual(response.result.tools.map(t => t.name), ['activity_status', 'activity_query', 'activity_summarize', 'design_catalog', 'design_plan', 'design_install', 'design_inspect', 'environment_status', 'environment_prepare', 'environment_inspect', 'environment_run', 'resource_status', 'resource_configure', 'resource_resolve', 'resource_plan', 'resource_start', 'resource_inspect', 'resource_cancel', 'runtime_status', 'office_summary', 'office_query', 'office_command', 'worker_set_enabled', 'model_pool_status', 'model_pool_request', 'model_pool_cancel', 'model_pool_select', 'creative_inventory', 'creative_assign', 'creative_run', 'creative_job', 'creative_cancel', 'host_status', 'host_configure', 'host_god_mode', 'host_submit', 'host_approve', 'host_cancel', 'host_inspect', 'host_stop_all']);
   assert.equal(f.calls.length, 0);
   const owner = TOOL_DEFINITIONS.find(t => t.name === 'office_command');
   assert.equal(owner.annotations.openWorldHint, true);
@@ -121,6 +121,29 @@ test('model inventory route accepts only exact bounded scope query fields', asyn
   assert.equal(calls.length, 1);
 });
 
+test('MoE model admission preserves the exact reviewed tag and its larger storage ceiling', async () => {
+  const model = 'qwen3-coder:30b-a3b-q4_K_M';
+  const f = fixture({ request: async () => ({ ok: true, snapshot: {
+    companyId: 'company-a', available: true, enabled: true,
+    catalog: [{ id: model, name: 'Qwen3 Coder MoE', description: 'Reviewed 8K profile', storageCeilingBytes: 24 * 1024 ** 3 }],
+    models: [{ name: model, digest: HASH, sizeBytes: 19_000_000_000, loaded: false }],
+    requests: [], assignments: [{ companyId: 'company-a', employeeId: 'employee-0', model, digest: HASH }],
+  } }) });
+  const scope = { companyId: 'company-a', employeeId: 'employee-0' };
+  const input = { ...scope, model, idempotencyKey: 'moe-pull', maxBytes: 24 * 1024 ** 3 };
+  const result = await f.handler('model_pool_request', input);
+  assert.deepEqual(f.calls[0].body, input);
+  assert.equal(result.snapshot.catalog[0].id, model);
+  assert.equal(result.snapshot.models[0].loaded, false);
+  assert.equal(result.snapshot.assignments[0].model, model);
+  await f.handler('model_pool_select', { ...scope, model });
+  for (const invalid of [{ ...input, model: 'qwen3-coder:30b' }, { ...input, maxBytes: 24 * 1024 ** 3 + 1 },
+    { ...input, model: 'qwen3:8b', maxBytes: 24 * 1024 ** 3 }]) {
+    await assert.rejects(f.handler('model_pool_request', invalid));
+  }
+  assert.equal(f.calls.length, 2, 'Rejected requests never reach the authenticated runtime.');
+});
+
 test('creative tools reject arbitrary execution, path escapes and unbounded render inputs before transport', async () => {
   const f = fixture();
   const valid = { id: 'creative-1', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'blender.render', input: { path: 'scene.blend' } };
@@ -157,6 +180,18 @@ test('creative starts, reads, assignment removal and cancellation preserve exact
   await assert.rejects(f.handler('creative_job', { companyId: 'company-a', jobId: 'different-job' }), /outside the requested scope/);
 });
 
+test('creative results retain observed GPU backend evidence without manufacturing device readiness', async () => {
+  let observed = { device: 'GPU', backend: 'OPTIX', deviceCount: 1, deviceIndex: 0, deviceName: 'NVIDIA RTX A6000', renderDurationSeconds: 2.25, rawConsole: 'PRIVATE' };
+  const f = fixture({ request: async () => ({ ok: true, job: { id: 'render-1', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'blender.render', status: 'succeeded', outputs: [], result: observed } }) });
+  const args = { companyId: 'company-a', jobId: 'render-1' };
+  assert.deepEqual((await f.handler('creative_job', args)).job.result,
+    { device: 'GPU', backend: 'OPTIX', deviceCount: 1, deviceIndex: 0, deviceName: 'NVIDIA RTX A6000', renderDurationSeconds: 2.25 });
+  observed = { device: 'CPU', backend: 'CPU', deviceCount: 0 };
+  assert.deepEqual((await f.handler('creative_job', args)).job.result, observed);
+  observed = { device: 'CPU', backend: 'unknown', deviceCount: -1, deviceIndex: 99, renderDurationSeconds: Infinity };
+  assert.deepEqual((await f.handler('creative_job', args)).job.result, { device: 'CPU' });
+});
+
 test('creative transport admits only exact scoped query routes and never repeats an uncertain task', async () => {
   let calls = 0;
   const client = createRuntimeClient(config, { fetchImpl: async () => { calls++;return json({ ok: true }); } });
@@ -190,6 +225,128 @@ test('Adobe cancellation retains remote outcome and cleanup evidence without pro
   const f = fixture({ request: async () => ({ ok: true, job: { id: 'adobe-task', companyId: 'company-a', employeeId: 'employee-0', projectId: 'project-a', operation: 'adobe.render', status: 'cancelled', evidenceUri: 'creative://jobs/adobe-task', outputs: [], result: { provider: 'adobe-photoshop-v2', adobeJobId, inputSha256: HASH, cleanup: 'pending', state: 'outcome_unconfirmed', signedUrl: 'https://PRIVATE/?token=secret' } } }) });
   const result = await f.handler('creative_cancel', { id: 'cancel-1', companyId: 'company-a', jobId: 'adobe-task' });
   assert.equal(result.job.result.adobeJobId, adobeJobId);assert.equal(result.job.result.cleanup, 'pending');assert.equal(result.job.result.state, 'outcome_unconfirmed');assert.equal(result.job.evidenceUri, 'creative://jobs/adobe-task');assert.match(result.guidance, /does not confirm that Adobe stopped/);assert.equal(JSON.stringify(result).includes('PRIVATE'), false);
+});
+
+const hostJob = (overrides = {}) => ({ id: 'host-job', companyId: 'company-a', employeeId: 'donna', status: 'running',
+  commandHash: HASH, createdAt: '2026-11-22T00:00:00.000Z', startedAt: '2026-11-22T00:00:01.000Z', finishedAt: null,
+  timeoutSeconds: 30, maxOutputBytes: 65536, outputBytes: 7, exitCode: null, reason: null, tmuxSession: 'daftar-host-job', ...overrides });
+const hostStatus = (overrides = {}) => ({ configured: true, available: true, mode: 'auto', revision: 4,
+  grants: [{ id: 'grant-1', companyId: 'company-a', employeeId: 'donna' }], jobCount: 1, jobs: [hostJob()],
+  capabilities: { arbitraryCode: true }, limits: { outputBytes: 8388608 }, ...overrides });
+const hostSubmission = () => ({ id: 'host-job', companyId: 'company-a', employeeId: 'donna', command: 'printf ready', cwd: '/tmp', timeoutSeconds: 30, maxOutputBytes: 65536 });
+
+test('host tool schemas advertise owner shell authority and reject malformed input before transport', async () => {
+  const f = fixture();
+  for (const args of [
+    { ...hostSubmission(), env: { SECRET: 'forbidden' } }, { ...hostSubmission(), command: '' },
+    { ...hostSubmission(), command: 'x'.repeat(65537) }, { ...hostSubmission(), cwd: 'relative' },
+    { ...hostSubmission(), timeoutSeconds: 86401 }, { ...hostSubmission(), maxOutputBytes: 8388609 },
+    { ...hostSubmission(), id: '../escape' }, { ...hostSubmission(), companyId: '' },
+  ]) await assert.rejects(f.handler('host_submit', args));
+  for (const args of [
+    { expectedRevision: -1, mode: 'auto', grants: [] }, { expectedRevision: 0, mode: 'root', grants: [] },
+    { expectedRevision: 0, mode: 'auto', grants: [{ id: 'x', companyId: 'a', employeeId: null, administrator: true }] },
+    { expectedRevision: 0, mode: 'auto', grants: Array.from({ length: 257 }, (_, i) => ({ id: `g${i}`, companyId: 'a', employeeId: null })) },
+  ]) await assert.rejects(f.handler('host_configure', args));
+  await assert.rejects(f.handler('host_status', { companyId: 'company-a' }));
+  await assert.rejects(f.handler('host_inspect', { id: 'host-job', offset: -1 }));
+  await assert.rejects(f.handler('host_approve', { id: 'host-job', command: 'changed' }));
+  await assert.rejects(f.handler('host_stop_all', { includeUnmanaged: true }));
+  assert.equal(f.calls.length, 0);
+  for (const name of ['host_submit', 'host_configure', 'host_approve', 'host_cancel', 'host_stop_all']) {
+    const definition = TOOL_DEFINITIONS.find(tool => tool.name === name);
+    assert.equal(definition.annotations.readOnlyHint, false); assert.equal(definition.annotations.openWorldHint, true);
+    assert.equal(definition.annotations.destructiveHint, true);
+  }
+  for (const name of ['host_status', 'host_inspect']) assert.equal(TOOL_DEFINITIONS.find(tool => tool.name === name).annotations.readOnlyHint, true);
+});
+
+test('host tools use exact routes, compact receipts and explicitly bounded output', async () => {
+  const f = fixture({ request: async (_method, route) => {
+    if (['/v1/host', '/v1/host/configure', '/v1/host/stop-all'].includes(route)) return { ok: true, host: hostStatus({ command: 'PRIVATE COMMAND', secret: TOKEN }) };
+    return { ok: true, id: 'host-job', replayed: true, job: hostJob({ command: 'PRIVATE COMMAND', cwd: '/workspace/private', secret: TOKEN }),
+      output: 'ready\n/workspace/project\napi_key=sk-proj-abcdefghijk\n', offset: 0, nextOffset: 54, eof: true, truncated: false };
+  } });
+  const status = await f.handler('host_status', {});
+  const configure = await f.handler('host_configure', { expectedRevision: 4, mode: 'manual', grants: [] });
+  const submitted = await f.handler('host_submit', hostSubmission());
+  await f.handler('host_approve', { id: 'host-job' }); await f.handler('host_cancel', { id: 'host-job' });
+  const inspected = await f.handler('host_inspect', { id: 'host-job', offset: 0 });
+  await f.handler('host_stop_all', {});
+  assert.deepEqual(f.calls.map(call => call.route), ['/v1/host', '/v1/host/configure', '/v1/host/submit', '/v1/host/approve', '/v1/host/cancel', '/v1/host/inspect', '/v1/host/stop-all']);
+  assert.deepEqual(f.calls[2].body, hostSubmission());
+  assert.equal(status.host.mode, 'auto'); assert.equal(configure.host.revision, 4); assert.equal(submitted.id, 'host-job');
+  assert.equal(submitted.replayed, true); assert.equal('output' in submitted, false);
+  assert.doesNotMatch(JSON.stringify({ status, configure, submitted }), /PRIVATE|workspace|synthetic_control_token/);
+  assert.match(inspected.output, /ready\n\/workspace\/project/); assert.doesNotMatch(inspected.output, /sk-proj|abcdefghijk/);
+  assert.equal(inspected.nextOffset, 54);
+});
+
+test('host metadata and output stay within MCP limits and reject mismatched receipts', async () => {
+  const long = 'x'.repeat(150);
+  const f = fixture({ request: async () => ({ ok: true, host: hostStatus({
+    grants: Array.from({ length: 256 }, (_, i) => ({ id: `${long}${i}`, companyId: long, employeeId: long })),
+    jobs: Array.from({ length: 256 }, (_, i) => hostJob({ id: `${long}${i}`, companyId: long, employeeId: long, reason: '\\'.repeat(180), tmuxSession: long })), jobCount: 256,
+  }) }) });
+  const processor = await initialized(f.handler);
+  const status = await processor(JSON.stringify({ jsonrpc: '2.0', id: 2, method: 'tools/call', params: { name: 'host_status', arguments: {} } }));
+  assert.equal(status.result.isError, false); assert.equal(status.result.structuredContent.host.jobs.length, 50);
+  assert.equal(status.result.structuredContent.host.jobsOmitted, 206);
+  assert.ok(Buffer.byteLength(JSON.stringify(status)) < TOOL_OUTPUT_LIMIT);
+  for (const output of ['x'.repeat(65537), '😀'.repeat(32769)]) {
+    const handler = fixture({ request: async () => ({ ok: true, id: 'host-job', job: hostJob(), output, offset: 0, nextOffset: 65537, eof: true, truncated: false }) }).handler;
+    await assert.rejects(handler('host_inspect', { id: 'host-job' }), error => error.code === 'runtime_bad_response');
+  }
+  const bad = fixture({ request: async () => ({ ok: true, id: 'another-job', job: hostJob() }) });
+  await assert.rejects(bad.handler('host_submit', hostSubmission()), error => error.code === 'runtime_bad_response');
+  assert.equal(bad.calls.length, 1);
+});
+
+test('host job and scope identifiers round-trip unchanged even with credential-like prefixes', async () => {
+  for (const prefix of ['sk-', 'sk-proj-', 'ghp_', 'github_pat_']) {
+    const id = `${prefix}syntheticjob1234`, companyId = `${prefix}syntheticcompany1234`, employeeId = `${prefix}syntheticemployee1234`, grantId = `${prefix}syntheticgrant1234`;
+    const job = hostJob({ id, companyId, employeeId });
+    const f = fixture({ request: async (_method, route, body) => {
+      if (route === '/v1/host' || route === '/v1/host/configure') return { ok: true, host: hostStatus({ grants: [{ id: grantId, companyId, employeeId }], jobs: [job] }) };
+      return { ok: true, id: body.id, job, output: 'done', offset: body.offset ?? 0, nextOffset: (body.offset ?? 0) + 4, eof: true, truncated: false };
+    } });
+    const submitted = await f.handler('host_submit', { ...hostSubmission(), id, companyId, employeeId });
+    assert.equal(submitted.id, id); assert.equal(submitted.job.id, id);
+    const status = await f.handler('host_status', {});
+    assert.deepEqual(status.host.grants, [{ id: grantId, companyId, employeeId }]);
+    assert.equal(status.host.jobs[0].id, id);
+    await f.handler('host_configure', { expectedRevision: status.host.revision, mode: 'manual', grants: status.host.grants });
+    for (const name of ['host_inspect', 'host_approve', 'host_cancel']) {
+      const receipt = await f.handler(name, { id: status.host.jobs[0].id });
+      assert.equal(receipt.id, id); assert.equal(receipt.job.id, id);
+      assert.equal(receipt.job.companyId, companyId); assert.equal(receipt.job.employeeId, employeeId);
+      assert.equal(f.calls.at(-1).body.id, id);
+    }
+  }
+});
+
+test('host output offsets must match the requested byte offset and never rewind', async () => {
+  const make = (offset, nextOffset) => fixture({ request: async () => ({ ok: true, id: 'host-job', job: hostJob(), output: '', offset, nextOffset, eof: false, truncated: false }) });
+  for (const [args, offset, nextOffset] of [
+    [{ id: 'host-job' }, 1, 1], [{ id: 'host-job', offset: 70000 }, 0, 0],
+    [{ id: 'host-job', offset: 70000 }, 70000, 8], [{ id: 'host-job', offset: 70000 }, 70001, 70001],
+  ]) await assert.rejects(make(offset, nextOffset).handler('host_inspect', args), error => error.code === 'runtime_bad_response');
+  const beyond = await make(70000, 70000).handler('host_inspect', { id: 'host-job', offset: 70000 });
+  assert.equal(beyond.offset, 70000); assert.equal(beyond.nextOffset, 70000); assert.equal(beyond.output, '');
+  const initial = await make(0, 0).handler('host_inspect', { id: 'host-job' }); assert.equal(initial.offset, 0);
+});
+
+test('host HTTP whitelist forbids route tricks and uncertain launches are never retried', async () => {
+  const calls = [];
+  const client = createRuntimeClient(config, { fetchImpl: async (url) => { calls.push(url); return json({ ok: true }); } });
+  await client('GET', '/v1/host'); await client('POST', '/v1/host/submit', hostSubmission());
+  for (const route of ['/v1/host/submit?command=true', '/v1/host/../commands', '/v1/host/close', '/v1/host/submit#fragment']) {
+    await assert.rejects(client('POST', route, {}));
+  }
+  assert.equal(calls.length, 2);
+  const hung = createRuntimeClient(config, { timeoutMs: 10, fetchImpl: async () => { calls.push('hung'); return new Promise(() => {}); } });
+  await assert.rejects(hung('POST', '/v1/host/submit', hostSubmission()), error => error.code === 'runtime_timeout' && /host_status or host_inspect/.test(error.message) && /No retry/.test(error.message));
+  assert.equal(calls.filter(value => value === 'hung').length, 1);
 });
 
 test('status and summary use allowlisted metadata and never expose a worker lease, error, or prompt', async () => {
@@ -371,4 +528,17 @@ test('CLI launches as a clean stdio subprocess against a synthetic HTTP runtime'
   const wire = Buffer.concat(out).toString('utf8'); assert.equal(wire.includes(TOKEN), false);
   const responses = wire.trim().split('\n').map(JSON.parse);
   assert.deepEqual(responses.map(r => r.id), [1, 2, 3]); assert.equal(responses[2].result.structuredContent.worker.enabled, false);
+});
+
+test('God mode uses the fixed owner route with current membership and rejects malformed scopes before transport', async () => {
+  const f = fixture({ request: async () => ({ ok: true, host: hostStatus({ godMode: { enabled: true, companyIds: ['company-a'], activatedAt: '2026-01-01T00:00:00.000Z' } }) }) });
+  const input = { expectedRevision: 4, enabled: true, companyIds: ['company-a'] };
+  const result = await f.handler('host_god_mode', input);
+  assert.deepEqual(f.calls.map(call => [call.method, call.route, call.body]), [['POST', '/v1/host/god-mode', input]]);
+  assert.equal(result.host.godMode.enabled, true); assert.deepEqual(result.host.godMode.companyIds, ['company-a']);
+  for (const malformed of [{ ...input, companyIds: [] }, { ...input, companyIds: ['a', 'a'] }, { ...input, enabled: false }, { ...input, disableChecks: true }]) {
+    await assert.rejects(f.handler('host_god_mode', malformed));
+  }
+  assert.equal(f.calls.length, 1);
+  assert.equal(TOOL_DEFINITIONS.find(tool => tool.name === 'host_god_mode').annotations.readOnlyHint, false);
 });

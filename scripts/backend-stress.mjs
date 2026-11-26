@@ -141,8 +141,8 @@ try {
   record('A second full daemon cannot acquire the exclusive creative/model controllers');
   const second = await boot({ secondary: true });
   const initial = await read(first);
-  assert.equal(first.runtime.status().worker.enabled, false);
-  assert.equal(second.runtime.status().worker.enabled, false);
+  assert.equal((await first.runtime.status()).worker.enabled, false);
+  assert.equal((await second.runtime.status()).worker.enabled, false);
   const denied = await request(first, '/v1/commands', {}, { Authorization: '' });
   assert.equal(denied.status, 401);
   record('The daemon and independent native client start paused and reject unauthenticated mutations');
@@ -243,7 +243,7 @@ try {
   assert.equal(replayed.result.replayed, true);
   assert.equal(replayed.result.stateHash, current.stateHash);
   assistants(replayed.result.snapshot);
-  assert.equal(restored.runtime.status().worker.enabled, false);
+  assert.equal((await restored.runtime.status()).worker.enabled, false);
   assert.equal(externalCalls, 0);
   record('Restart retains native receipts, employee history, ownership and paused workers');
   await cleanup();

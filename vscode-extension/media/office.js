@@ -1,6 +1,7 @@
 'use strict';
 const vscode=acquireVsCodeApi();
 const $=id=>document.getElementById(id);
+for(const button of document.querySelectorAll('[data-command]'))button.onclick=()=>vscode.postMessage({command:button.dataset.command});
 let current=null,companyId='',kind=null,busy=false,scopeKey='',connectionUrl='';
 const stored=vscode.getState?.();
 const drafts=Object.create(null);
@@ -11,7 +12,7 @@ const node=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefi
 const money=value=>typeof value==='number'?new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:3}).format(value):'—';
 function send(message){vscode.postMessage({...message,...(companyId?{companyId}:{})});}
 function notice(text,error=false){$('notice').textContent=text;$('notice').classList.toggle('error',error);}
-function setBusy(value){busy=value;for(const b of document.querySelectorAll('form button,#panel,#manage-team,#creative-tools,.minor'))b.disabled=value;$('company').disabled=value;$('send').textContent=value?'Working…':kind==='cloud'?'Ask Donna via API':kind==='runtime'?'Save runtime brief':'Save desktop brief';}
+function setBusy(value){busy=value;for(const b of document.querySelectorAll('form button,#panel,#manage-team,#creative-tools,#creative-development,.minor'))b.disabled=value;$('company').disabled=value;$('send').textContent=value?'Working…':kind==='cloud'?'Ask Donna via API':kind==='runtime'?'Save runtime brief':'Save desktop brief';}
 function actionButton(label,type,id,operation){const b=node('button',label,'minor');b.disabled=busy;b.onclick=()=>{if(busy)return;setBusy(true);send({type,id,operation});};return b;}
 function row(title,meta){const card=node('article',undefined,'card');card.append(node('h3',title),node('p',meta,'muted'));return card;}
 function fill(id,items,empty){$(id).replaceChildren(...(items.length?items:[node('p',empty,'muted')]));}
@@ -47,20 +48,28 @@ function render(){
 function renderMessages(messages){fill('messages',messages.slice(-30).map(m=>{const el=node('article',undefined,`message ${m.role==='user'?'user':'assistant'}`);el.append(node('strong',m.role==='user'?'You':'Donna'),node('p',m.content||m.message||''));return el;}),'Your company conversation starts here.');}
 for(const [id,type] of [['refresh','refresh'],['connect-desktop','connectDesktop'],['connect-cloud','connectCloud'],['connect-runtime','connectRuntime'],['disconnect','disconnect'],['open-website','openWebsite']])$(id).onclick=()=>send({type});
 for(const button of document.querySelectorAll('[data-studio]'))button.onclick=()=>send({type:'openStudio',view:button.dataset.studio});
-$('company').onchange=()=>{saveDraft();companyId=$('company').value;selectDraft(`${kind}|${connectionUrl}|${companyId}`);$('messages').replaceChildren();$('creative-state').textContent=kind==='runtime'?'Discovering tools for the selected company…':'Connect a headless runtime to discover tools and approved projects.';send({type:'company',id:companyId});};
+$('company').onchange=()=>{saveDraft();companyId=$('company').value;selectDraft(`${kind}|${connectionUrl}|${companyId}`);$('messages').replaceChildren();$('development-state').textContent='Reading the selected company’s model assignments…';$('creative-state').textContent=kind==='runtime'?'Discovering tools for the selected company…':'Connect a headless runtime to discover tools and approved projects.';send({type:'company',id:companyId});};
 for(const button of document.querySelectorAll('[data-tab]'))button.onclick=()=>{for(const b of document.querySelectorAll('[data-tab]'))b.setAttribute('aria-pressed',String(b===button));for(const id of ['chat','team','roadmap'])$(`tab-${id}`).hidden=id!==button.dataset.tab;};
 $('chat-form').onsubmit=event=>{event.preventDefault();const content=$('brief').value.trim();if(!content||busy)return;setBusy(true);notice('Sending to the selected company…');send({type:'chat',content});};
 $('brief').oninput=saveDraft;
 $('manage-team').onclick=()=>{if(busy)return;setBusy(true);send({type:'manageTeam'});};
 $('creative-tools').onclick=()=>{if(busy)return;setBusy(true);send({type:'creativeTools'});};
+$('creative-development').onclick=()=>{if(busy)return;setBusy(true);send({type:'creativeDevelopment'});};
 $('review-ownership').onclick=()=>send({type:'reviewOwnership'});
 $('brief').onkeydown=event=>{if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();$('chat-form').requestSubmit();}};
 $('panel').onclick=()=>{const task=$('brief').value.trim();if(!task){notice('Write the panel question in the brief first.',true);$('brief').focus();return;}setBusy(true);send({type:'panel',task,focus:$('panel-focus').value});};
 window.addEventListener('message',event=>{const m=event.data;
-  if(m.type==='state'){$('connect').hidden=m.connected;$('workspace').hidden=!m.connected;kind=m.connection?.kind||null;connectionUrl=m.connection?.url||'';$('connection').textContent=m.connected?`${kind==='cloud'?'Cloud · explicit desktop sync':kind==='runtime'?'Headless runtime · live state':'Local desktop · live state'}${m.updatedAt?' · '+new Date(m.updatedAt).toLocaleString():''}`:'Not connected';$('creative-state').textContent=kind==='runtime'?'Discovering configured creative tools…':'Connect a headless runtime to discover tools and approved projects.';if(m.connected){current=m.snapshot;companyId=m.selectedCompany;selectDraft(`${kind}|${m.connection.url}|${companyId}`);if($('notice').classList.contains('error'))notice('');render();fill('ownership',(m.ownership||[]).filter(row=>row.kind==='global'||row.kind==='company').map(row=>{const card=rowCard(row);return card;}),'Ownership is unavailable.');}else{selectDraft('');current=null;companyId='';}setBusy(busy);}
+  if(m.type==='state'){$('connect').hidden=m.connected;$('workspace').hidden=!m.connected;kind=m.connection?.kind||null;connectionUrl=m.connection?.url||'';$('connection').textContent=m.connected?`${kind==='cloud'?'Cloud · explicit desktop sync':kind==='runtime'?'Headless runtime · live state':'Local desktop · live state'}${m.updatedAt?' · '+new Date(m.updatedAt).toLocaleString():''}`:'Not connected';$('development-state').textContent=kind==='cloud'?'Website pairing does not expose a shared model pool or provider-worker state.':'Reading installed models and worker state…';$('creative-state').textContent=kind==='runtime'?'Discovering configured creative tools…':'Connect a headless runtime to discover tools and approved projects.';if(m.connected){current=m.snapshot;companyId=m.selectedCompany;selectDraft(`${kind}|${m.connection.url}|${companyId}`);if($('notice').classList.contains('error'))notice('');render();fill('ownership',(m.ownership||[]).filter(row=>row.kind==='global'||row.kind==='company').map(row=>{const card=rowCard(row);return card;}),'Ownership is unavailable.');}else{selectDraft('');current=null;companyId='';}setBusy(busy);}
+  if(m.type==='developmentState'&&m.companyId===companyId&&current){
+    const models=m.models,profile=models?.catalog?.find(row=>row.id==='qwen3-coder:30b-a3b-q4_K_M'&&row.contextLimitTokens===8192),model=models?.models?.find(row=>row.name==='qwen3-coder:30b-a3b-q4_K_M');
+    const state=!models?'Model inventory unavailable':!profile?'Reviewed MoE profile unavailable':!models.available||!models.enabled?'Local model controller unavailable':!model?'MoE not installed':model.loaded?'MoE installed and loaded':'MoE installed; not loaded';
+    const assigned=model?(models.assignments||[]).filter(row=>row.companyId===companyId&&row.model===model.name&&row.digest===model.digest).length:0;
+    const worker=m.status?.worker;
+    $('development-state').textContent=`${state}${model?` · ${assigned} current company assignment(s)`:''} · ${worker?`provider workers ${worker.enabled?'enabled':'paused'}, ${worker.running?'busy':'idle'}`:'worker status unavailable'}. GPU memory and performance are unverified.`;
+  }
   if(m.type==='creativeState'&&m.companyId===companyId&&kind==='runtime'){
     if(m.error)$('creative-state').textContent=`Creative discovery unavailable: ${m.error}`;
-    else {const inventory=m.inventory;const labels={blender:'Blender',unreal:'Unreal Engine',inkscape:'Inkscape',ffmpeg:'FFmpeg / ffprobe','adobe-photoshop':'Adobe Photoshop'};const tools=(inventory?.tools||[]).map(tool=>`${labels[tool.id]||tool.id}: ${!tool.configured?'not configured':!tool.available?'unavailable':tool.id==='adobe-photoshop'?tool.remoteAuthVerified?'authentication verified':'configured — authentication unverified':'detected'}`);const active=(inventory?.jobs||[]).filter(job=>['queued','running'].includes(job.status)).length;$('creative-state').textContent=`${tools.join(' · ')||'No tools configured.'} · ${inventory?.projects?.length||0} approved project(s) · ${active} queued or running task(s)`;}
+    else {const inventory=m.inventory;const labels={blender:'Blender',unreal:'Unreal Engine',inkscape:'Inkscape',ffmpeg:'FFmpeg / ffprobe','adobe-photoshop':'Adobe Photoshop'};const tools=(inventory?.tools||[]).map(tool=>`${labels[tool.id]||tool.id}: ${!tool.configured?'not configured':!tool.available?'unavailable':tool.id==='adobe-photoshop'?tool.remoteAuthVerified?'authentication verified':'configured — authentication unverified':tool.id==='blender'&&tool.renderDevice?`detected; ${tool.renderDevice} requested, device unverified`:'detected'}`);const active=(inventory?.jobs||[]).filter(job=>['queued','running'].includes(job.status)).length;$('creative-state').textContent=`${tools.join(' · ')||'No tools configured.'} · ${inventory?.projects?.length||0} approved project(s) · ${active} queued or running task(s)`;}
   }
   if(m.type==='chatHistory'&&m.companyId===companyId)renderMessages(m.messages);
   if(m.type==='notice')notice(m.message);

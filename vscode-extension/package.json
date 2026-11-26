@@ -1,8 +1,8 @@
 {
   "name": "atlas-office",
   "displayName": "Daftar \u2014 Donna and One Office",
-  "description": "Control your Daftar companies, Donna chat, decision panels, roadmaps and bounded jobs from VS Code.",
-  "version": "0.8.0",
+  "description": "The Daftar infinite office canvas, Donna, models and owned cloud compute inside VS Code.",
+  "version": "0.9.2",
   "publisher": "occult-kranti",
   "license": "UNLICENSED",
   "engines": {
@@ -28,6 +28,7 @@
   "homepage": "https://github.com/occult-kranti/engineering-intelligence-atlas/tree/main/vscode-extension",
   "main": "./src/extension.js",
   "extensionKind": [
+    "workspace",
     "ui"
   ],
   "capabilities": {
@@ -35,7 +36,7 @@
       "supported": false,
       "description": "Daftar can enqueue agent work and control the connected workspace. Trust the VS Code folder before connecting."
     },
-    "virtualWorkspaces": true
+    "virtualWorkspaces": false
   },
   "activationEvents": [
     "onView:atlas.office"
@@ -55,10 +56,6 @@
         "title": "Daftar: Connect to Signed-in Website"
       },
       {
-        "command": "atlas.connectRuntime",
-        "title": "Daftar: Connect to Headless Runtime"
-      },
-      {
         "command": "atlas.disconnect",
         "title": "Daftar: Disconnect This Editor"
       },
@@ -75,6 +72,34 @@
         "title": "Daftar: Open MCP Setup Guide"
       },
       {
+        "command": "atlas.startLocalRuntime",
+        "title": "Daftar: Start Workspace on This Host"
+      },
+      {
+        "command": "atlas.connectRuntime",
+        "title": "Daftar: Connect Private Runtime"
+      },
+      {
+        "command": "atlas.connectCompute",
+        "title": "Daftar: Connect Vast.ai / SSH Compute"
+      },
+      {
+        "command": "atlas.openComputeCenter",
+        "title": "Daftar: Donna Compute and Ownership"
+      },
+      {
+        "command": "atlas.hireCloudOperator",
+        "title": "Daftar: Hire Cloud Compute Operator"
+      },
+      {
+        "command": "atlas.copyMcpConfig",
+        "title": "Daftar: Copy Runtime MCP Configuration"
+      },
+      {
+        "command": "atlas.startPersistentRuntime",
+        "title": "Daftar: Start Persistent Workspace in tmux"
+      },
+      {
         "command": "atlas.manageTeam",
         "title": "Daftar: Manage Team and Departments"
       },
@@ -85,6 +110,10 @@
       {
         "command": "atlas.creativeTools",
         "title": "Daftar: Creative Tools"
+      },
+      {
+        "command": "atlas.creativeDevelopment",
+        "title": "Daftar: Creative Development"
       }
     ],
     "viewsContainers": {
@@ -113,19 +142,41 @@
           "default": "",
           "scope": "application",
           "description": "HTTPS origin of your private Daftar website. Device secrets are stored separately in VS Code SecretStorage."
+        },
+        "atlas.nodePath": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Optional absolute path to Node.js 22+ on the extension host. Empty uses VS Code bundled Node mode."
+        },
+        "atlas.hostControlEnabled": {
+          "type": "boolean",
+          "default": true,
+          "scope": "machine",
+          "description": "On Linux, expose host-control capabilities when starting the owned runtime. Policy remains off until configured by the owner."
+        },
+        "atlas.pythonPath": {
+          "type": "string",
+          "default": "",
+          "scope": "machine",
+          "description": "Optional absolute Python 3 interpreter on the extension host, used to create isolated Python environments. Empty uses that host\u2019s Python 3. An existing venv interpreter is allowed; VS Code and Daftar\u2019s Node/native runtime remain separate."
         }
       }
     }
   },
   "scripts": {
-    "check": "node --check src/extension.js && node --check src/client.js && node --check src/management.js && node --check src/creative.js && node --check media/office.js && node --check scripts/smoke-installed.mjs && node --check test-host/index.js && node --check test-host/suite.js",
+    "check": "node scripts/check.mjs",
     "test": "node --test test/*.test.js",
     "test:installed": "node scripts/smoke-installed.mjs",
     "vscode:prepublish": "npm run check && npm test",
-    "package": "vsce package --no-dependencies"
+    "package": "node scripts/package-extension.mjs",
+    "build": "node scripts/build-studio-assets.mjs && node scripts/build-runtime.mjs",
+    "package:build": "npm run build && npm run package",
+    "test:installed-runtime": "node scripts/stress-installed-runtime.mjs"
   },
   "devDependencies": {
     "@vscode/test-electron": "3.1.0",
-    "@vscode/vsce": "4.1.1"
+    "@vscode/vsce": "4.1.1",
+    "esbuild": "0.27.2"
   }
 }
