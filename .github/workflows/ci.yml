@@ -171,6 +171,7 @@ jobs:
           node ../scripts/smoke-architecture-dom.mjs
           node --test ../tools/atlas-mcp.test.mjs
           node --test ../scripts/test-company-kits.mjs ../scripts/reconcile-company-hierarchy.test.mjs ../scripts/refresh-company-setup.test.mjs
+          node --test ../projects/andolan-yuga-development/setup-company.test.mjs
       - name: Package Linux desktop
         working-directory: desktop-shell
         run: npm run package:linux

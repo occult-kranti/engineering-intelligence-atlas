@@ -22,6 +22,7 @@ async function until(predicate) { for (let count = 0; count < 40; count++) { if 
 function harness(t, options = {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'daftar-activation-'));
   const commands = new Map(), inputs = [], picks = [], errors = [], notices = [], clipboard = [], outgoing = [];
+  const documents = [];
   const clients = [], panels = [], tunnels = [], launchers = [], subscriptions = [], intervals = new Map(), requests = [];
   const secrets = new Map(options.connection ? [[SECRET_KEY, JSON.stringify(options.connection)]] : []); const globals = new Map();
   const controls = { inputs, picks, requests, storeGate: null, storeStarted: false, fileGate: null, fetch: null, vastCalls: 0,
@@ -32,12 +33,13 @@ function harness(t, options = {}) {
     StatusBarAlignment: { Left: 1 }, ProgressLocation: { Notification: 1 }, ViewColumn: { Active: 1 },
     Uri: { joinPath: (root, ...parts) => uri(path.join(root.fsPath, ...parts)), parse: uri },
     env: { remoteName: options.remoteName, clipboard: { async writeText(value) { clipboard.push(value); } }, async openExternal() { return true; } },
-    workspace: { isTrusted: options.trusted !== false, getConfiguration: () => ({ get: (_key, fallback) => fallback }), fs: {
+    workspace: { async openTextDocument(spec){ documents.push(spec); return spec; }, isTrusted: options.trusted !== false, getConfiguration: () => ({ get: (_key, fallback) => fallback }), fs: {
       async stat() { return { size: 40 }; }, async readFile() { return Buffer.from('synthetic_provider_key_12345'); },
     } },
     commands: { registerCommand(name, callback) { commands.set(name, callback); return disposable(() => commands.delete(name)); },
       executeCommand(name, ...args) { return commands.get(name)?.(...args); } },
     window: {
+      async showTextDocument(spec) { return spec; },
       createStatusBarItem() { return Object.assign(disposable(), { show() {} }); },
       registerWebviewViewProvider(_name, value) { controls.viewProvider = value; return disposable(); },
       async showInputBox(spec) { controls.inputCount = (controls.inputCount ?? 0) + 1; const value = inputs.shift(); return typeof value === 'function' ? value(spec) : value; },
@@ -112,7 +114,7 @@ function harness(t, options = {}) {
     delete require.cache[extensionFile]; fs.rmSync(directory, { recursive: true, force: true });
   }
   t.after(cleanup);
-  return { api, vscode, context, controls, commands, panels, clients, launchers, tunnels, secrets, globals, clipboard, outgoing, errors, notices,
+  return { api, vscode, context, controls, commands, panels, clients, launchers, tunnels, secrets, globals, clipboard, outgoing, documents, errors, notices,
     subscriptions, intervals, cleanup, async command(name) { return commands.get(name)(); }, tick() { for (const callback of intervals.values()) callback(); } };
 }
 
@@ -251,4 +253,26 @@ test('website canvas preserves queued state and shows only confirmed scoped chat
   assert.equal(chat.reply, 'Confirmed synthetic reply.'); assert.equal(chat.snapshot.chatThreads[0].messages.length, 2);
   assert.equal(chat.snapshot.chatThreads[0].messages[1].source, 'cloud-receipt');
   assert.ok(!JSON.stringify(h.outgoing).includes(cloud.deviceToken));
+});
+
+
+test('registered Yuga workbench command reads scoped runtime inventory and opens a non-authorizing plan', async t => {
+  const h=harness(t,{connection,remoteName:'ssh-remote'});
+  const companyId='andolan-yuga-development';
+  const company={id:companyId,name:'Yuga',repoUrl:'https://github.com/occult-kranti/ANDOLAN',status:'active'};
+  h.controls.fetch=async ({url})=>{
+    if(url.endsWith('/v1/office')) return response({ok:true,stateHash:hash,snapshot:{activeCompanyId:companyId,companies:[company],jobs:[]}});
+    if(url.includes('/v1/models')) return response({ok:true,snapshot:{companyId,available:true,enabled:true}});
+    if(url.includes('/v1/creative')) return response({ok:true,inventory:{companyId,configured:true}});
+    if(url.endsWith('/v1/status')) return response({ok:true,execution:'headless',worker:{enabled:false,running:false},capabilities:{workbench:true}});
+  };
+  await h.command('atlas.openOffice');await until(()=>h.api.connectionInfo().connected);
+  h.controls.picks.push(items=>items.find(row=>row.id==='cpu-ci'),items=>items.find(row=>row.id==='skip'));
+  await h.command('atlas.yugaWorkbench');
+  assert.deepEqual(h.errors,[]);
+  assert.equal(h.documents.length,1);const doc=h.documents[0];
+  assert.match(doc.content,/remote-extension-host/);assert.match(doc.content,/plan_only_not_authorization/);
+  assert.match(doc.content,/gltf-validator/);assert.ok(!doc.content.includes(token));
+  assert.equal(h.controls.vastCalls,0);assert.equal(h.launchers.length+h.tunnels.length,0);
+  assert.ok(h.controls.requests.every(row=>row.init.method!=='POST'||row.body?.method==='getJobStatus'||row.body?.method==='listRuns'));
 });

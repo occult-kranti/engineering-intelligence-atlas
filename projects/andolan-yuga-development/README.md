@@ -174,3 +174,5 @@ company/model/creative inventory, apply this kit to that exact workspace, and ru
 one bounded code task plus a creative operation. Record the actual model digest,
 memory, elapsed time, artifact hash and outcome. Keep the existing bounded
 development allowance distinct from recurring instance or hosting authorization.
+
+See [Yuga GPU Workbench and resource index](WORKBENCH.md) for the editor preflight, model boundaries, and five additive specialist roles.

@@ -184,7 +184,7 @@ exports.run = async function run() {
 
     const commands = await vscode.commands.getCommands(true);
     const expectedCommands = extension.packageJSON.contributes.commands.map(command => command.command);
-    assert.equal(expectedCommands.length, 18, 'The installed candidate must retain all released commands and scoped company tools');
+    assert.equal(expectedCommands.length, 19, 'The installed candidate must retain all released commands and scoped company tools');
     assert.equal(new Set(expectedCommands).size,18,'Commands must not duplicate a released identity');
     assert.ok(expectedCommands.includes('atlas.connectRuntime'));
     assert.ok(expectedCommands.includes('atlas.creativeTools'));
