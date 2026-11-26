@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "recordedAtUtc": "2026-11-26T05:33:34.826362+00:00",
+  "recordedAtUtc": "2026-11-26T05:46:27.443334+00:00",
   "classification": "disposable-source-runtime-acceptance",
   "ownerWorkspaceModified": false,
   "platform": {
@@ -27,7 +27,8 @@
       "failed": 0,
       "skipped": 1,
       "skipReason": "Real tmux executable/session unavailable (ENOENT).",
-      "outputSha256": "b9d917626389be086af506a9766dd94d9248a1bf1fa04877e1405736edb77dbf"
+      "outputSha256": "b9d917626389be086af506a9766dd94d9248a1bf1fa04877e1405736edb77dbf",
+      "scopeNote": "Recorded before the persistent Python forwarding correction; the focused supervisor suites below validate that later change."
     },
     {
       "command": "node --test --test-name-pattern='private environment|managed Python bootstrap' deploy/test/tmux-runtime.test.mjs headless-runtime/test/runtime.test.mjs",
@@ -62,6 +63,24 @@
       "failed": 0,
       "skipped": 0,
       "outputSha256": "f4d6458610be53689f1b353c01343ae35c04afe18e115ab0fc21d7a4731d66ba"
+    },
+    {
+      "command": "node --test --test-reporter=tap deploy/test/tmux-runtime.test.mjs",
+      "total": 7,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 1,
+      "skipReason": "Real tmux executable/session unavailable (ENOENT); actual CLI/config/daemon child regression uses a local tmux simulator.",
+      "outputSha256": "bf731f1e67d303c89cafebbdaeab43d7c7f128a862cd0cbef0cb05ed7ebaa468"
+    },
+    {
+      "command": "ELECTRON_RUN_AS_NODE=1 /workspace/scratch/7aedd7f27d3b/daftar-audit/vscode-extension/.vscode-test/vscode-linux-x64-1.147.0/code --test --test-reporter=tap deploy/test/tmux-runtime.test.mjs",
+      "total": 7,
+      "passed": 6,
+      "failed": 0,
+      "skipped": 1,
+      "skipReason": "Real tmux executable/session unavailable (ENOENT); actual CLI/config/daemon child regression uses a local tmux simulator.",
+      "outputSha256": "4576520012a5396ea6943c72bc4261d15484d805f77113f8151adfad40b7e21d"
     }
   ],
   "observations": {
@@ -86,7 +105,11 @@
     "designSoftwareInstalled": false,
     "portableProofFixtureCases": 6,
     "baseExecPrefixPackageDirectoriesChecked": true,
-    "legitimateWindowsBaseStdlibRootsExcludedFromLeakCheck": true
+    "legitimateWindowsBaseStdlibRootsExcludedFromLeakCheck": true,
+    "explicitPythonPassedThroughSupervisorCliConfigAndDaemonChild": true,
+    "ambientPythonConfigurationExcluded": true,
+    "runningSessionPythonConfigurationPreserved": true,
+    "postFixRealTmuxPythonSelectionLocallyVerified": false
   },
   "managedHostFixture": "Actual managed environment service, host controller and job runner; direct process launcher injected for tests. This does not certify tmux persistence.",
   "notVerified": [
@@ -108,8 +131,8 @@
     "headless-runtime/test/managed-environments.test.mjs": "7129b9772baf8cb0d94038606934610ee5bd794567628924604d56870ca1277b",
     "headless-runtime/test/runtime.test.mjs": "5370922eae36d96f072ecce0a3da3475e7aa7dce7f013b57e8d6a8a9114efc78",
     "headless-runtime/test/workbench.test.mjs": "cd8e6bb2bd2a83605461c490148fda534efcf1d20655c6c0dcf0658b77aeee8f",
-    "deploy/tmux-runtime.mjs": "216ea29f482e966132804e63ef2360701857fd76046fb0aeaaee81f385dcc3a4",
-    "deploy/test/tmux-runtime.test.mjs": "5ce4403373b97246650838addc722228af044dcd39866e8f055c2453f304d1a6",
+    "deploy/tmux-runtime.mjs": "554f7ada3fbd5f72bcd68084147a604329e25f661734f2e964b3eab5b3d89b04",
+    "deploy/test/tmux-runtime.test.mjs": "bd316a267e3af40708a3aa9ef90f34ffcd34a0482a0bd7953c2e90fc62b9702c",
     "scripts/venv-acceptance.mjs": "bd80c63c34363aafc59d6142f64522262dba735410a57241d2b80083ee33a389",
     "headless-runtime/design-toolchain.mjs": "f94306ab509b1945608763aed2e30fc6f3b4aec55a82923fcd767746eb723c75",
     "headless-runtime/test/design-toolchain.test.mjs": "fba0ba6776bffd8a203eca591d231ec16d943b6ec2a52fc3c66e0966bf309b68",
@@ -136,5 +159,11 @@
     "beforeFix": "Executable path-layout fixtures reproduced a false package-leak rejection for the Windows base stdlib roots and a missed package directory under a distinct POSIX base_exec_prefix.",
     "afterFix": "Normalize real paths and case; enumerate both base_prefix and base_exec_prefix package directories; exclude only the exact base roots before testing sys.path. All six layout cases pass, and actual Linux venv/offline pip acceptance still passes.",
     "scope": "Windows/POSIX layout fixtures executed on Linux, not a claim of Windows host execution. Shipped Linux-only managed runtime source was unchanged."
+  },
+  "persistentPythonForwardingRegression": {
+    "beforeFix": "The installed Linux CI receipt for source 1a5b4fb used selected Python 3.12.16 for portable creation but fallback Python 3.14.4 for managed tmux creation. The extension provided the choice only in supervisor environment, which was scrubbed; no env-file captured it.",
+    "afterFix": "The extension supplies a literal --python argument. New supervisor configuration captures that validated override (CLI over env-file) or its absence, and _run forwards the captured value to the daemon. Live-session attachment does not rewrite configuration. Legacy records without the new field retain env-file behavior.",
+    "localProof": "The actual supervisor CLI, private configuration and daemon child execute under Node and VS Code Electron with a local tmux simulator. Tests cover spaces/quotes, precedence, absence of override, env-file changes, legacy records, rejected ambient settings and unchanged existing-session configuration.",
+    "pending": "The strengthened real-tmux and installed VS Code interpreter-identity tests require the follow-up CI run; local real tmux remains unavailable."
   }
 }

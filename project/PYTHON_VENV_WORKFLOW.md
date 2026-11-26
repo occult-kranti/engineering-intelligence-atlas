@@ -20,12 +20,20 @@ Direct daemon and systemd deployments use the trusted startup variable:
 DAFTAR_PYTHON_PATH=/absolute/path/to/python3
 ```
 
-The tmux launcher accepts this key in its private `--env-file`; it does not source
-the file as shell code or copy arbitrary login-shell variables. The selected
-interpreter needs standard-library `venv` and bundled `ensurepip`. A missing or
-invalid explicit interpreter fails instead of falling back to a different Python.
-The path is operator configuration, not an argument accepted from a model or
-workbench request.
+The tmux launcher accepts this key in its private `--env-file`, or an explicit
+`start --python /absolute/path/to/python3` option. VS Code uses the explicit option.
+For a new session, `--python` takes precedence over the env-file and the supervisor
+saves the explicit choice or its absence in private configuration before starting
+the daemon. Later env-file changes do not add or replace that override. An absent
+override leaves the runtime's normal default selection in effect. Existing sessions retain their recorded
+configuration when another editor attaches. Older supervisor records without a
+saved Python field retain their original env-file behavior.
+
+The launcher does not source the file as shell code or inherit ambient Python
+settings. The selected interpreter needs standard-library `venv` and bundled
+`ensurepip`. A missing or invalid explicit interpreter fails instead of falling
+back to a different Python. The path is operator configuration, not an argument
+accepted from a model or workbench request.
 
 When no path is configured, portable environment creation retains its `python3`,
 then `python` PATH discovery. Managed host jobs retain the existing Linux
@@ -135,6 +143,13 @@ runner with an injected direct process launcher, so it does not certify tmux.
 Six portable-proof fixtures exercise Windows and POSIX path layouts, including
 package leakage through either base prefix. They check the classifier on the
 current host; they do not substitute for execution in the Windows CI job.
+
+The persistent-interpreter regression executes the real supervisor CLI, private
+configuration reader and daemon child launch with a local tmux simulator. It checks
+explicit paths with spaces/quotes, precedence, captured defaults, legacy records,
+unchanged existing-session configuration and rejected ambient settings. The real
+tmux and installed VS Code tests additionally check the selected interpreter;
+their post-change CI result must be reviewed separately from the simulator proof.
 
 The managed suite also ran under the downloaded VS Code 1.147.0 Electron binary
 in Node mode, without a graphical session. The trusted managed wrapper explicitly

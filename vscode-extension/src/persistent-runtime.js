@@ -62,7 +62,6 @@ function createPersistentRuntime({ runtimeRoot, storagePath, nodePath = process.
   for (const name of ['PATH', 'HOME', 'USER', 'LOGNAME', 'LANG', 'LC_ALL', 'TMPDIR', 'TERM']) {
     if (typeof environment[name] === 'string' && !environment[name].includes('\0')) env[name] = environment[name];
   }
-  if (pythonPath) env.DAFTAR_PYTHON_PATH = pythonPath;
   const status = () => ({ state, connected: state === 'ready', persistent: true, dataDir,
     url: runtimeUrl, hostControlEnabled, daemonMayBeRunning: startDispatched });
   async function invoke(args) {
@@ -145,7 +144,8 @@ function createPersistentRuntime({ runtimeRoot, storagePath, nodePath = process.
       if (lifetime.signal.aborted) throw fail('PERSISTENT_RUNTIME_ABORTED', 'Persistent runtime startup was cancelled.');
       startDispatched = true;
       let description;
-      try { description = JSON.parse(await invoke([path.join(runtimeRoot, 'deploy/tmux-runtime.mjs'), 'start', '--repo', runtimeRoot, '--data', dataDir, '--enable-host-control'])); }
+      try { description = JSON.parse(await invoke([path.join(runtimeRoot, 'deploy/tmux-runtime.mjs'), 'start', '--repo', runtimeRoot, '--data', dataDir, '--enable-host-control',
+        ...(pythonPath ? ['--python', pythonPath] : [])])); }
       catch (error) { if (typeof error?.code === 'string' && error.code.startsWith('PERSISTENT_RUNTIME_')) throw error; throw fail('PERSISTENT_RUNTIME_BOOTSTRAP', 'Supervisor returned no verifiable startup receipt. Inspect the persistent session; no start was retried.'); }
       if (description?.ok !== true || description.running !== true || description.dataDir !== dataDir
           || description.repoRoot !== fs.realpathSync(runtimeRoot) || typeof description.hostControlEnabled !== 'boolean'

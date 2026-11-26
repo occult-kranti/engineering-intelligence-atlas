@@ -63,6 +63,14 @@ executable on the extension host. The trusted daemon equivalent is
 managed Linux Python jobs. Invalid explicit configuration fails without silently
 choosing another interpreter.
 
+Receipt inspection of the first 0.9.2 CI run found that the persistent launcher
+lost this selection across tmux's intentionally scrubbed environment. Persistent
+startup now passes a literal `--python` argument and records the choice in the
+private supervisor configuration. The installed-editor gate checks the exact
+bootstrap interpreter recorded by the created venv. Attaching to a running
+session preserves its existing configuration; changing the editor setting alone
+does not rewrite that session or existing environments.
+
 The previous managed verifier accepted `pyvenv.cfg` after system site-packages
 were enabled. Python's isolated flag alone does not undo that setting. Verification
 now rejects this configuration, checks actual interpreter isolation and records

@@ -1,5 +1,18 @@
 # Daftar — personal agent office
 
+## Yuga development and Python environments — 0.9.2 candidate
+
+The [current development update](project/YUGA_VENV_UPDATE_2026-11-26.md) follows
+the newer Yuga source with a twelve-role team, thirteen roadmap gates and preserved
+owner contracts. The reviewed local MoE profile uses bounded task context, and the
+VS Code package includes its native backend and shared Donna workspace.
+
+Use the [Python workflow](project/PYTHON_VENV_WORKFLOW.md) to select the execution
+host's interpreter and create isolated environments. The
+[installed-package checkpoint](vscode-extension/VALIDATION_0.9.2.md) records actual
+CLI installation, lifecycle stress and offline package execution; the matching
+published commit's CI supplies Linux/Windows graphical editor and desktop evidence.
+
 ## Company setup refresh — 2026-11-25
 
 The [repository audit](project/repository-audit-2026-11-25.json) checks **37 accessible repositories**: 31 public and six private, with private identities omitted from the public record. Daftar now bundles **21 runtime skill summaries**, routes **350 public resource records**, and provides **four company kits**, including Hardware Studio and 3D Game Studio. New source-acquisition, consolidation, skill-evolution and Olympus adapters retain exact public source pins and feature-branch status.
@@ -167,7 +180,7 @@ download hashes and remaining owner-laptop/keychain acceptance.
 - **Private browser:** open the same owner workspace on your laptop through the desktop app's authenticated loopback server.
 - **Credentials and models:** OS-backed credential storage and native file import; live provider discovery; existing local hardware/model and Ollama controls.
 - **Decision expert panels:** Donna selects reusable specialists, queues independent reviews followed by synthesis, and records evidence, disagreements and bounded decisions. Newton, Tesla, skeptic, resonance and paired-research lenses extend the role library.
-- **VS Code:** an installable thin client with SecretStorage, scoped Donna, teams, roadmaps, queued commands and local/website pairing.
+- **VS Code:** an installable workspace with a packaged native backend, shared Donna canvas, SecretStorage, scoped teams/roadmaps, persistent Linux tmux, private-runtime connections and local/website pairing.
 - **Private website:** ChatGPT sign-in, durable D1 workspace and conversations, server-held Claude credentials, explicit revision-safe desktop sync and a separately reserved cloud allocation.
 - **Rust core:** durable control state, cross-process locking, atomic writes and bounded parallel repository metadata indexing.
 - **Timed management:** scoped grants, Donna delegation, temporary promotions, searchable control history and an indexed company hierarchy.

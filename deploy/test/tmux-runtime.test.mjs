@@ -95,17 +95,19 @@ test('real tmux starts once, survives caller exit, and stops only its managed ru
     // This socket is created solely by this test, including its sibling fixture.
     spawnSync('tmux', ['-L', identity.socket, 'kill-server']);
   });
-  const envFile = path.join(directory, 'runtime.env'); fs.writeFileSync(envFile, 'DAFTAR_PYTHON_PATH="/opt/pinned Python/bin/python3"\n', { mode: 0o600 });
-  const first = start({ repo, data, envFile, enableHostControl: true });
+  const envFile = path.join(directory, 'runtime.env'); fs.writeFileSync(envFile, 'DAFTAR_PYTHON_PATH=/opt/env-file/python3\n', { mode: 0o600 });
+  const first = start({ repo, data, envFile, pythonPath: '/opt/pinned Python/bin/python3', enableHostControl: true });
   assert.equal(first.running, true); assert.equal(first.hostControlEnabled, true);
+  assert.equal(first.pythonPath, '/opt/pinned Python/bin/python3');
   await until(() => fs.existsSync(path.join(data, 'fixture.json')));
   const fixture = JSON.parse(fs.readFileSync(path.join(data, 'fixture.json')));
   assert.equal(fixture.host, '127.0.0.1'); assert.equal(fixture.enabled, '1'); assert.equal(fixture.inheritedSecret, false);
   assert.equal(fixture.pythonPath, '/opt/pinned Python/bin/python3');
   const token = fs.readFileSync(first.controlTokenFile, 'utf8');
   fs.writeFileSync(envFile, 'DAFTAR_PYTHON_PATH=/opt/other/python3\n');
-  const second = start({ repo, data, envFile });
+  const second = start({ repo, data, envFile, pythonPath: '/opt/new-selection/python3' });
   assert.equal(second.hostControlEnabled, true); assert.equal(fs.readFileSync(first.controlTokenFile, 'utf8'), token);
+  assert.equal(second.pythonPath, first.pythonPath);
   assert.equal(JSON.parse(fs.readFileSync(path.join(data, 'fixture.json'))).pid, fixture.pid);
   assert.equal(JSON.parse(fs.readFileSync(path.join(data, 'fixture.json'))).pythonPath, fixture.pythonPath, 'connecting to an existing daemon does not replace its Python');
   for (const filename of [first.controlTokenFile, path.join(data, 'supervisor/config.json')]) assert.equal(fs.statSync(filename).mode & 0o777, 0o600);
@@ -151,4 +153,44 @@ test('supervisor argv and private state remain scoped when a local tmux simulato
   const launch = calls.find(args => args.includes('new-session'));
   assert.equal(launch.at(-1), [process.execPath, path.join(repo, 'deploy/tmux-runtime.mjs'), '_run', '--data', data].map(shellQuote).join(' '));
   assert.equal(fs.statSync(first.controlTokenFile).mode & 0o777, 0o600);
+});
+
+test('explicit Python survives supervisor CLI and daemon launch without inheriting ambient configuration', t => {
+  const directory = temporary(t); const repo = path.join(directory, 'repo'); const data = path.join(directory, 'data'); const bin = path.join(directory, 'bin');
+  for (const name of ['headless-runtime', 'desktop-shell/dist/main', 'native-core/target/release']) fs.mkdirSync(path.join(repo, name), { recursive: true });
+  fs.mkdirSync(bin);
+  for (const filename of ['desktop-shell/dist/main/office.js', 'native-core/target/release/atlas-core']) fs.writeFileSync(path.join(repo, filename), 'fixture');
+  const observed = path.join(data, 'daemon-observed.json');
+  fs.writeFileSync(path.join(repo, 'headless-runtime/server.mjs'), `import fs from 'node:fs';
+    fs.writeFileSync(${JSON.stringify(observed)}, JSON.stringify({pythonPath:process.env.DAFTAR_PYTHON_PATH??null,secret:process.env.DAFTAR_TEST_RAW_SECRET??null}));
+  `);
+  const active = path.join(directory, 'active'); const stopped = path.join(data, 'supervisor/stop-request');
+  fs.writeFileSync(path.join(bin, 'tmux'), `#!/usr/bin/env node
+    const fs=require('node:fs');const args=process.argv.slice(2);
+    if(args.includes('-V')){console.log('tmux simulator');process.exit(0);}
+    if(args.includes('has-session'))process.exit(fs.existsSync(${JSON.stringify(active)})&&!fs.existsSync(${JSON.stringify(stopped)})?0:1);
+    if(args.includes('new-session'))fs.writeFileSync(${JSON.stringify(active)},'active');
+  `, { mode: 0o700 });
+  const supervisor = fileURLToPath(new URL('../tmux-runtime.mjs', import.meta.url));
+  const environment = { ...process.env, PATH: `${bin}:${process.env.PATH}`, ELECTRON_RUN_AS_NODE: '1', DAFTAR_PYTHON_PATH: '/ambient/python-must-not-leak', DAFTAR_TEST_RAW_SECRET: 'synthetic-never-inherit' };
+  const invoke = args => spawnSync(process.execPath, [supervisor, ...args], { env: environment, encoding: 'utf8', timeout: 10000, maxBuffer: 8192 });
+  const launch = (...args) => { const result = invoke(['start', '--repo', repo, '--data', data, ...args]); assert.equal(result.status, 0, result.stderr); return JSON.parse(result.stdout); };
+  const run = expected => { const result = invoke(['_run', '--data', data]); assert.equal(result.status, 0, result.stderr); assert.deepEqual(JSON.parse(fs.readFileSync(observed, 'utf8')), { pythonPath: expected, secret: null }); };
+  const stopFixture = () => { const result = invoke(['stop', '--data', data]); assert.equal(result.status, 0, result.stderr); assert.equal(JSON.parse(result.stdout).running, false); };
+  const configPath = path.join(data, 'supervisor/config.json');
+  const selected = path.join(directory, "selected Python ' path", 'bin/python3');
+  const first = launch('--python', selected); assert.equal(first.pythonPath, selected); run(selected);
+  const original = fs.readFileSync(configPath, 'utf8'); assert.equal(JSON.parse(original).envFile, null);
+  assert.equal(launch('--python', '/new-selection/python3').pythonPath, selected);
+  assert.equal(fs.readFileSync(configPath, 'utf8'), original, 'reattachment must preserve the running configuration'); stopFixture();
+  for (const invalid of ['python3', '/absolute/with\nnewline']) { const result = invoke(['start', '--repo', repo, '--data', data, '--python', invalid]); assert.equal(result.status, 1); assert.equal(fs.readFileSync(configPath, 'utf8'), original); }
+  const envFile = path.join(directory, 'runtime.env'); fs.writeFileSync(envFile, 'DAFTAR_PYTHON_PATH=/file-selected/python3\n', { mode: 0o600 });
+  assert.equal(launch('--env-file', envFile, '--python', selected).pythonPath, selected);
+  fs.writeFileSync(envFile, 'DAFTAR_PYTHON_PATH=/file-changed/python3\n'); run(selected); stopFixture();
+  assert.equal(launch('--env-file', envFile).pythonPath, '/file-changed/python3'); run('/file-changed/python3'); stopFixture();
+  const legacy = JSON.parse(fs.readFileSync(configPath, 'utf8')); delete legacy.pythonPath; fs.writeFileSync(configPath, JSON.stringify(legacy));
+  run('/file-changed/python3');
+  assert.equal(launch().pythonPath, null); run(null); stopFixture();
+  fs.writeFileSync(envFile, 'DAFTAR_PORT=8788\n'); assert.equal(launch('--env-file', envFile).pythonPath, null);
+  fs.writeFileSync(envFile, 'DAFTAR_PYTHON_PATH=/late-file/python3\n'); run(null); stopFixture();
 });

@@ -1,6 +1,22 @@
 # Daftar maintainer handoff
 
-## Current integration: Donna / MoE creative development — 2026-11-25
+## Current integration: Yuga team, VS Code and Python — 2026-11-26
+
+Desktop and VS Code candidate versions are **0.9.2**. The current additive Yuga
+kit follows source `a35493d67cf5111d7da2ff9eea6c58ed3499aeca` with twelve roles,
+thirteen roadmap gates and five versioned source handoffs. Existing owner
+contracts, employee identity and completed work are preserved.
+
+Read the [update and validation guide](project/YUGA_VENV_UPDATE_2026-11-26.md),
+[Python workflow](project/PYTHON_VENV_WORKFLOW.md), and
+[installed-package checkpoint](vscode-extension/VALIDATION_0.9.2.md). The matching
+published source's CI receipts establish platform installation and runtime
+acceptance; earlier candidate receipts retain their original scope. Python venvs
+isolate Python packages while the editor, Node/Rust backend and creative engines
+retain their own runtimes. Source delivery does not imply a live owner-workspace
+migration or GPU/model execution.
+
+## Previous integration: Donna / MoE creative development — 2026-11-25
 
 The `feat/donna-moe-creative-studio-20261125` candidate reconciles main's current
 creative adapters and resource/company work with the released

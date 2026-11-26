@@ -262,9 +262,12 @@ exports.run = async function run() {
       const { createPersistentRuntime } = require(path.join(installedRoot, 'src/persistent-runtime.js'));
       const storagePath = await fs.mkdtemp(path.join(os.tmpdir(), 'daftar-installed-persistent-'));
       persistentFixture = { runtimeRoot, storagePath, dataDir: path.join(storagePath, 'persistent-runtime'), adapters: [], stopped: false };
+      const selectedPython = vscode.workspace.getConfiguration('atlas').get('pythonPath', '');
+      if (process.env.DAFTAR_PYTHON_PATH) assert.equal(selectedPython, process.env.DAFTAR_PYTHON_PATH,
+        'The isolated editor profile must expose the explicitly selected Python setting');
       const makePersistent = () => {
         const adapter = createPersistentRuntime({ runtimeRoot, storagePath, nodePath: process.execPath,
-          pythonPath: vscode.workspace.getConfiguration('atlas').get('pythonPath', '') });
+          pythonPath: selectedPython });
         persistentFixture.adapters.push(adapter); return adapter;
       };
       const readOwner = async () => {
@@ -448,6 +451,12 @@ exports.run = async function run() {
       assert.equal(identity.isolated, true); assert.equal(identity.userSiteEnabled, false);
       assert.equal(identity.systemSitePackages, false); assert.equal(identity.electronMode, null);
       assert.equal(identity.virtualEnv, identity.prefix);
+      if (selectedPython) {
+        const configuration = await fs.readFile(path.join(identity.prefix, 'pyvenv.cfg'), 'utf8');
+        const bootstrap = /^command = (.+) -m venv /m.exec(configuration)?.[1];
+        assert.ok(typeof bootstrap === 'string' && path.resolve(bootstrap) === path.resolve(selectedPython),
+          'Persistent tmux must create the venv with the explicitly configured interpreter');
+      }
       const { runVenvAcceptance } = await import(pathToFileURL(path.resolve(sourceRoot, '..', 'scripts/venv-acceptance.mjs')).href);
       let managedPackageRun = false;
       const venvReceipt = await runVenvAcceptance({ pythonPath: identity.executable, workingDirectory: persistentFixture.dataDir,
@@ -494,6 +503,7 @@ exports.run = async function run() {
       assert.deepEqual(JSON.parse(restored.output), identity);
       receipt.verifiedManagedVenv = true;
       receipt.managedVenv = { ...venvReceipt, preparedThroughInstalledTmux: true, interpreterFromManagedRun: true,
+        configuredBootstrapInterpreterVerified: Boolean(selectedPython),
         installedPackageExecutedThroughTmux: true, preparationAndRunReplayedOnce: true,
         systemSiteTamperRejected: true, configurationChangeRejected: true, rejectedChangesStartedNoJobs: true,
         restoredConfigurationRuns: true, hostApprovalPolicy: 'inherited', secureSandbox: false };

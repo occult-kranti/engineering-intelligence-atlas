@@ -20,12 +20,14 @@ const ENV_KEYS = new Set([
 ]);
 export const HELP = `Usage: node deploy/tmux-runtime.mjs <action> [options]
   start --repo /absolute/checkout --data /absolute/private/data
-        [--env-file /absolute/private/runtime.env] [--enable-host-control] [--build]
+        [--env-file /absolute/private/runtime.env] [--python /absolute/python3]
+        [--enable-host-control] [--build]
   status --data /absolute/private/data
   stop --data /absolute/private/data
   attach --data /absolute/private/data
 
 start is idempotent and does not change an already running session.
+--python overrides the env-file Python setting for a new session; ambient Python settings are not inherited.
 --build explicitly runs Cargo and TypeScript; it never installs npm dependencies.
 The runtime stays on 127.0.0.1. Host control starts disabled unless explicitly enabled.
 For a new data directory, a private control-token file is created automatically.
@@ -39,6 +41,11 @@ class SetupError extends Error {
 function absolute(value, label) {
   if (typeof value !== 'string' || !path.isAbsolute(value) || value.includes('\0') || value.length > 4096) throw new SetupError(`${label} must be an absolute path.`);
   return path.resolve(value);
+}
+
+function pythonExecutable(value, label = '--python') {
+  if (typeof value !== 'string' || /[\x00-\x1f\x7f]/.test(value)) throw new SetupError(`${label} must be an absolute executable path without control characters.`);
+  return absolute(value, label);
 }
 
 function privateDirectory(directory, create = false) {
@@ -83,7 +90,8 @@ export function readEnvironment(filename) {
   for (const [key, value] of Object.entries(parsed)) {
     if (!ENV_KEYS.has(key)) throw new SetupError(`Unsupported environment key ${key}. Use the documented file-based configuration; secret values are not accepted.`);
     if (value.includes('\0') || value.includes('\n') || value.includes('\r')) throw new SetupError('Configuration values must fit on one line.');
-    if ((key.endsWith('_FILE') || key === 'DAFTAR_CORE_BINARY' || key === 'DAFTAR_PYTHON_PATH') && value) absolute(value, key);
+    if (key === 'DAFTAR_PYTHON_PATH' && value) pythonExecutable(value, key);
+    else if ((key.endsWith('_FILE') || key === 'DAFTAR_CORE_BINARY') && value) absolute(value, key);
   }
   if (parsed.DAFTAR_HOST_CONTROL && !['0', '1'].includes(parsed.DAFTAR_HOST_CONTROL)) throw new SetupError('DAFTAR_HOST_CONTROL must be 0 or 1.');
   const port = Number(parsed.DAFTAR_PORT || 8788);
@@ -133,12 +141,14 @@ function readConfiguration(data) {
   if (value.version !== 1 || value.data !== data || !Number.isInteger(value.port) || value.port < 1024 || value.port > 65535 || typeof value.hostControl !== 'boolean') throw new SetupError('Invalid supervisor configuration.');
   absolute(value.repo, 'repo'); absolute(value.tokenFile, 'token file');
   if (value.envFile) absolute(value.envFile, 'env file');
+  if (Object.hasOwn(value, 'pythonPath') && value.pythonPath !== null) pythonExecutable(value.pythonPath, 'configured Python');
   return value;
 }
 
 function description(data, identity, running, configuration) {
   return { ok: true, running, socket: identity.socket, session: SESSION, dataDir: data,
-    ...(configuration ? { repoRoot: configuration.repo, runtimeUrl: `http://127.0.0.1:${configuration.port}`, controlTokenFile: configuration.tokenFile, hostControlEnabled: configuration.hostControl } : {}),
+    ...(configuration ? { repoRoot: configuration.repo, runtimeUrl: `http://127.0.0.1:${configuration.port}`, controlTokenFile: configuration.tokenFile, hostControlEnabled: configuration.hostControl,
+      ...(Object.hasOwn(configuration, 'pythonPath') ? { pythonPath: configuration.pythonPath } : {}) } : {}),
     logFile: paths(data).log, notice: running ? 'tmux session exists; use host-control status to verify API readiness.' : 'No managed runtime tmux session is running.' };
 }
 
@@ -160,7 +170,7 @@ function build(repo) {
   }
 }
 
-export function start({ repo: repoInput, data: dataInput, envFile, enableHostControl = false, build: shouldBuild = false }) {
+export function start({ repo: repoInput, data: dataInput, envFile, pythonPath, enableHostControl = false, build: shouldBuild = false }) {
   const repo = fs.realpathSync(absolute(repoInput, '--repo'));
   const requestedData = absolute(dataInput, '--data');
   // Probe tmux before creating credentials or doing a build.
@@ -176,6 +186,10 @@ export function start({ repo: repoInput, data: dataInput, envFile, enableHostCon
     if (sessionExists(identity)) return status(data);
     const source = envFile ? absolute(envFile, '--env-file') : null;
     const settings = readEnvironment(source);
+    // Capture only explicit operator configuration. In particular, an editor's
+    // startup environment is scrubbed across tmux and is never a config source.
+    const selectedPython = pythonPath !== undefined ? pythonExecutable(pythonPath)
+      : settings.DAFTAR_PYTHON_PATH ? pythonExecutable(settings.DAFTAR_PYTHON_PATH, 'DAFTAR_PYTHON_PATH') : null;
     if (!fs.statSync(path.join(repo, 'headless-runtime/server.mjs')).isFile()) throw new SetupError('The checkout does not contain the headless runtime.');
     if (shouldBuild) build(repo);
     const binary = settings.DAFTAR_CORE_BINARY || path.join(repo, 'native-core/target/release/atlas-core');
@@ -191,7 +205,7 @@ export function start({ repo: repoInput, data: dataInput, envFile, enableHostCon
       catch (error) { if (error.code !== 'EEXIST') throw error; }
     }
     readControlToken(tokenFile);
-    const configuration = { version: 1, repo, data, envFile: source, tokenFile, port: Number(settings.DAFTAR_PORT || 8788), hostControl: enableHostControl || settings.DAFTAR_HOST_CONTROL === '1' };
+    const configuration = { version: 1, repo, data, envFile: source, pythonPath: selectedPython, tokenFile, port: Number(settings.DAFTAR_PORT || 8788), hostControl: enableHostControl || settings.DAFTAR_HOST_CONTROL === '1' };
     writePrivateFile(p.config, `${JSON.stringify(configuration, null, 2)}\n`);
     try { fs.unlinkSync(p.stop); } catch (error) { if (error.code !== 'ENOENT') throw error; }
     const runner = path.join(repo, 'deploy/tmux-runtime.mjs');
@@ -255,6 +269,12 @@ async function run(dataInput) {
   privateDirectory(paths(data).dir);
   const configuration = readConfiguration(data);
   const settings = readEnvironment(configuration.envFile);
+  // New configurations capture the explicit interpreter override or its absence.
+  // Legacy configurations without this field retain their env-file behavior.
+  if (Object.hasOwn(configuration, 'pythonPath')) {
+    if (configuration.pythonPath === null) delete settings.DAFTAR_PYTHON_PATH;
+    else settings.DAFTAR_PYTHON_PATH = configuration.pythonPath;
+  }
   const token = readControlToken(configuration.tokenFile);
   const env = { ...cleanEnvironment(), ...settings, DAFTAR_REPO_ROOT: configuration.repo, DAFTAR_DATA_DIR: data,
     DAFTAR_CONTROL_TOKEN_FILE: configuration.tokenFile, DAFTAR_HOST: '127.0.0.1', DAFTAR_PORT: String(configuration.port), DAFTAR_HOST_CONTROL: configuration.hostControl ? '1' : '0' };
@@ -299,7 +319,7 @@ function parseArguments(argv) {
   const parsed = { action };
   for (let index = 0; index < rest.length; index++) {
     const key = rest[index];
-    const name = ({ '--repo': 'repo', '--data': 'data', '--env-file': 'envFile', '--build': 'build', '--enable-host-control': 'enableHostControl' })[key];
+    const name = ({ '--repo': 'repo', '--data': 'data', '--env-file': 'envFile', '--python': 'pythonPath', '--build': 'build', '--enable-host-control': 'enableHostControl' })[key];
     if (!name || Object.hasOwn(parsed, name) || (action !== 'start' && name !== 'data')) throw new SetupError('Unknown or repeated supervisor option.');
     if (['build', 'enableHostControl'].includes(name)) parsed[name] = true;
     else {

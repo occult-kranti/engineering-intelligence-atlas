@@ -10,14 +10,14 @@ The exact local VSIX below passed the official VS Code CLI installation, all **1
 | --- | --- |
 | File | `atlas-office-0.9.2.vsix` |
 | Target | `linux-x64` |
-| Size | 3,499,697 bytes |
-| VSIX SHA-256 | `8d1427183df16ee2b5fdfa7f0442a7376d931d3e427bcc942c859b00bc6614c4` |
-| Runtime manifest SHA-256 | `47d207e5282a9ee513c37c8567aa6e50490c41329e074daafcb1e5560bed3932` |
+| Size | 3,500,123 bytes |
+| VSIX SHA-256 | `6bc4e2b09aca5808ff22f63f3f0ddec926f01f45c5f6f0b45fb30ac6926775cf` |
+| Runtime manifest SHA-256 | `616821988807b965632328fb0435ce7723f62f1d699ccc989b6802ce0db88f62` |
 | Canvas manifest SHA-256 | `8fb7254befd85b9753673954ec2eae2872a72a00047e9dd25eb317456c87dcc4` |
-| Selected source-tree SHA-256 | `8404a10d77b9a8e985153122df2170ed8b959a1ba0ebb781a7051b6c8513d31d` |
+| Selected source-tree SHA-256 | `f6669ccc0fc509be4272d9498ceab8bf2d0f27b9bf73c841686bf92cc2f4b02d` |
 | Source file count | 443 |
-| Restored base commit | `6c94b76b18260903f2db7fda54617f009b379d71` |
-| Final installed-runtime run | 2026-11-26T05:32:59.332Z to 2026-11-26T05:33:06.860Z |
+| Source base commit | `1a5b4fbd381129ec9f6c104c11ce24278b034a48` |
+| Final installed-runtime run | 2026-11-26T05:47:32.210Z to 2026-11-26T05:47:39.968Z |
 
 The package includes 208 archive files, with 146 files bound by the native runtime manifest. The source fingerprint is computed from the sorted sequence `relative path + NUL + SHA256(file bytes) + LF` for existing tracked or unignored code/configuration files under the roots recorded in `.work/installed-runtime/source-digests.json`. That file contains every included path and hash, along with the exact scope and extensions. It identifies the tested working tree before publication; it is not a claim that the unchanged base commit contains these changes. Documentation files are excluded so this validation record does not hash itself.
 
@@ -27,6 +27,7 @@ The hash above identifies this **local** artifact. A separately built CI artifac
 
 - Machine-scoped `atlas.pythonPath` passes an explicitly selected absolute Python interpreter to newly started owned and persistent runtimes. Invalid paths fail before dispatch, and an ambient `DAFTAR_PYTHON_PATH` cannot silently override the setting.
 - The installed workbench uses that configured interpreter to create its own venv. VS Code and the Node/Rust backend retain their separate runtimes.
+- Persistent startup passes the selection as one literal `--python` argument and captures the explicit override, or its absence, in private supervisor configuration. Reattaching to a live daemon preserves its existing selection. The installed tmux fixture checks the exact bootstrap interpreter recorded by the created venv.
 - Managed environments reject system site-packages and changed pinned configuration before starting another job.
 - Trusted managed-environment and design-tool wrapper commands explicitly retain Electron Node mode. Python, package-manager and ordinary shell subprocesses continue to receive their scrubbed environments.
 - The package also incorporates the completed Donna/Andolan company-context changes from the shared source tree.
@@ -45,7 +46,7 @@ The hash above identifies this **local** artifact. A separately built CI artifac
 | Duplicate native mutation delivery | 16 identical deliveries; one resulting company persisted across all six lifetimes |
 | Authentication/ownership | Wrong credential rejected and a second same-storage launcher refused in every cycle |
 | Cleanup | Closed listener and zero child/timer/listener residue in every cycle; lock/token files removed |
-| Recorded runtime HTTP requests | 146; the read-only creation poll count can vary with completion time |
+| Recorded runtime HTTP requests | 147; the read-only creation poll count can vary with completion time |
 | Python workbench creation | Real venv created through the separately installed package, stable replay used one job |
 | Explicit interpreter | New `pyvenv.cfg` recorded the selected launch-venv Python as its bootstrap interpreter |
 | Offline package execution | Local wheel installed, imported and executed with result 42, then uninstalled |
@@ -75,6 +76,8 @@ DAFTAR_PYTHON_PATH=/absolute/path/to/python3 npm run test:installed-runtime
 On Windows, set the environment variables using that shell's normal syntax and use the matching Windows package.
 
 ## Normal CI acceptance added for this candidate
+
+The preceding source revision `1a5b4fbd381129ec9f6c104c11ce24278b034a48` passed its [Linux and Windows editor jobs in run 45762556507](https://github.com/occult-kranti/engineering-intelligence-atlas/actions/runs/45762556507). Inspection of its Linux receipts nevertheless found a configuration defect: the portable workbench used the selected Python 3.12.16, while persistent managed jobs used the host default Python 3.14.4. This follow-up package fixes that explicit-selection handoff and adds the missing installed bootstrap assertion. Receipts and packages from that prior run remain historical evidence; they do not certify this follow-up artifact.
 
 The existing `test:installed` gate launches the separate test-host extension and activates Daftar from the installed VSIX, as described by the [official extension-testing documentation](https://code.visualstudio.com/api/working-with-extensions/testing-extension). Linux additionally checks the actual installed editor → dedicated tmux → native host runner path. This candidate extends that Linux fixture to prepare an isolated managed venv, execute its locally installed package through the managed tmux job, check stable prepare/run replay, reject changed system-site and pinned configuration without creating jobs, restore the original configuration, and run successfully again. The fixture returns host policy to off and stops only its own test supervisor.
 

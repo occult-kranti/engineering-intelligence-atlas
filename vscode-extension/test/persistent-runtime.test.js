@@ -61,14 +61,13 @@ test('persistent mode rejects unsupported platforms before touching files or sta
 });
 
 test('persistent start coalesces one fixed supervisor invocation and keeps credentials private', linux, async t => {
-  const f = fixture(t), pythonPath = path.join(f.directory, 'chosen Python', 'python'), adapter = f.create({ pythonPath });
+  const f = fixture(t), pythonPath = path.join(f.directory, "chosen Python $(literal)'s", 'python'), adapter = f.create({ pythonPath });
   const pending = Array.from({ length: 20 }, () => adapter.start()); assert.ok(pending.every(value => value === pending[0]));
   const connections = await Promise.all(pending); assert.equal(f.execCalls.length, 2); assert.equal(f.fetchCalls.length, 1);
-  assert.deepEqual(f.execCalls[1].args, [path.join(f.runtimeRoot, 'deploy/tmux-runtime.mjs'), 'start', '--repo', f.runtimeRoot, '--data', f.dataDir, '--enable-host-control']);
+  assert.deepEqual(f.execCalls[1].args, [path.join(f.runtimeRoot, 'deploy/tmux-runtime.mjs'), 'start', '--repo', f.runtimeRoot, '--data', f.dataDir, '--enable-host-control', '--python', pythonPath]);
   const settings = f.execCalls[1].settings;
   assert.equal(settings.shell, false); assert.equal(settings.maxBuffer, 65536); assert.equal(settings.env.ELECTRON_RUN_AS_NODE, '1');
-  assert.equal(settings.env.DAFTAR_PYTHON_PATH, pythonPath);
-  for (const key of ['NODE_OPTIONS', 'OPENAI_API_KEY', 'GITHUB_TOKEN_FILE', 'SSH_AUTH_SOCK']) assert.equal(Object.hasOwn(settings.env, key), false);
+  for (const key of ['NODE_OPTIONS', 'OPENAI_API_KEY', 'GITHUB_TOKEN_FILE', 'SSH_AUTH_SOCK', 'DAFTAR_PYTHON_PATH']) assert.equal(Object.hasOwn(settings.env, key), false);
   assert.equal(connections[0].controlToken, token); assert.equal(connections[0].kind, 'runtime');
   assert.equal(f.fetchCalls[0].url, 'http://127.0.0.1:8788/v1/status'); assert.equal(f.fetchCalls[0].init.headers.Authorization, `Bearer ${token}`);
   assert.equal(JSON.stringify(adapter.status()).includes(token), false); assert.equal(adapter.dataDir, f.dataDir);
@@ -86,6 +85,7 @@ test('persistent Python selection rejects relative paths and does not inherit an
   }
   const adapter = f.create(); await adapter.start();
   assert.equal(Object.hasOwn(f.execCalls[1].settings.env, 'DAFTAR_PYTHON_PATH'), false);
+  assert.equal(f.execCalls[1].args.includes('--python'), false);
   await adapter.close();
 });
 
