@@ -126,6 +126,76 @@
             "skills/game-reconstruction-engineering/SKILL.md"
           ],
           "departmentKey": "engine-experiments"
+        },
+        {
+          "key": "model-eval",
+          "name": "Local model evaluation lead",
+          "role": "Yuga coding and vision model evaluator",
+          "departmentKey": "research",
+          "skillPaths": [
+            "skills/local-model-runtime-engineering/SKILL.md",
+            "skills/ai-open-model-research/SKILL.md"
+          ]
+        },
+        {
+          "key": "asset-provenance",
+          "name": "Asset provenance steward",
+          "role": "Yuga generated asset and source rights steward",
+          "departmentKey": "asset-production",
+          "skillPaths": [
+            "skills/architecture-and-built-heritage-research/SKILL.md",
+            "skills/spatial-3d-production-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "gpu-preflight",
+          "name": "GPU preflight steward",
+          "role": "Yuga compute topology and device receipt steward",
+          "departmentKey": "engineering",
+          "skillPaths": [
+            "skills/local-model-runtime-engineering/SKILL.md",
+            "skills/donna-execution-focus/SKILL.md"
+          ]
+        },
+        {
+          "key": "browser-renderer",
+          "name": "Browser renderer engineer",
+          "role": "Yuga PlayCanvas integration and performance engineer",
+          "departmentKey": "engineering",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md",
+            "skills/computational-geometry-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "native-acceptance",
+          "name": "Native acceptance engineer",
+          "role": "Yuga Godot and engine-crosscheck acceptance engineer",
+          "departmentKey": "engine-experiments",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md",
+            "skills/spatial-3d-production-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "district-commissioning",
+          "name": "District commissioning engineer",
+          "role": "Yuga map-to-authority integration engineer",
+          "departmentKey": "world-design",
+          "skillPaths": [
+            "skills/computational-geometry-engineering/SKILL.md",
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "competitive-audio-qa",
+          "name": "Competitive audio QA lead",
+          "role": "Yuga listener and accessibility acceptance lead",
+          "departmentKey": "engineering",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md",
+            "skills/donna-execution-focus/SKILL.md"
+          ]
         }
       ],
       "services": [],
@@ -192,6 +262,79 @@
             "moe-coding-pilot",
             "independent-acceptance"
           ]
+        },
+        {
+          "key": "gpu-preflight",
+          "title": "Review Yuga device placement",
+          "description": "Run the read-only editor plan on the actual extension hosts, distinguish observed devices from runtime selection, verify host identities, budget and fallback. Do not rent or run automatically.",
+          "ownerKey": "gpu-preflight",
+          "dependsOn": [
+            "source-baseline"
+          ]
+        },
+        {
+          "key": "models-curation",
+          "title": "Evaluate models offline on held-out Yuga tasks",
+          "description": "Compare one pinned baseline and reviewed candidate on identical inputs; scores are blocked until local rights, measured device, structured outputs and repeatable same-engine tests are documented.",
+          "ownerKey": "model-eval",
+          "dependsOn": [
+            "source-baseline"
+          ]
+        },
+        {
+          "key": "asset-rights",
+          "title": "Record asset source and rights before import",
+          "description": "Collect the source revision, terms, notices and derived-asset identifiers; generated meshes remain concept-only until rebuilt and independently validated.",
+          "ownerKey": "asset-provenance",
+          "dependsOn": [
+            "source-baseline"
+          ]
+        },
+        {
+          "key": "native-crosscheck",
+          "title": "Cross-check route boundaries and keyboard focus",
+          "description": "Run exact Godot and browser gates on pinned sources; preserve production authority and keep Unreal import validation separate from playable evidence.",
+          "ownerKey": "native-acceptance",
+          "dependsOn": [
+            "source-baseline"
+          ]
+        },
+        {
+          "key": "browser-scene-budgets",
+          "title": "Measure browser scene budgets",
+          "description": "Profile a deliberately isolated PlayCanvas scene for draw calls, texture footprint, and first interaction; do not migrate gameplay authority to the renderer.",
+          "ownerKey": "browser-renderer",
+          "dependsOn": [
+            "route-lab"
+          ]
+        },
+        {
+          "key": "monsoon-geometry-intake",
+          "title": "Commission the authored Monsoon Exchange geometry",
+          "ownerKey": "district-commissioning",
+          "dependsOn": [
+            "native-crosscheck"
+          ],
+          "description": "Use the pinned survey and independent Blender/GLB checks to stage exactly ten pads, two rite disks and seven thresholds with runtime collision, scale, and clearance tests. Never use reference map files as production assets."
+        },
+        {
+          "key": "ember-listener-acceptance",
+          "title": "Validate Ember Rite recipient-scoped cues",
+          "ownerKey": "competitive-audio-qa",
+          "dependsOn": [
+            "source-baseline"
+          ],
+          "description": "First replay solo Chromium audio and Rust ritual checks, then collect eligible and ineligible listener receipts, reconnect lifecycle and device listening observations in an authorized test. Solo or unit results do not prove online Ember Rite."
+        },
+        {
+          "key": "monsoon-ten-seat-retake",
+          "title": "Qualify the ten-seat side-swapped Monsoon retake",
+          "ownerKey": "district-commissioning",
+          "dependsOn": [
+            "monsoon-geometry-intake",
+            "ember-listener-acceptance"
+          ],
+          "description": "After the Mandala integration control and the Monsoon runtime gates, test two teams of five: opening, interrupted rite, legal cross-site return, reconnect and retake. Keep the experimental map out of production matches until accepted."
         }
       ],
       "knowledge": [
@@ -266,6 +409,60 @@
           "title": "ANDOLAN / YUGA role: Unreal experiment engineer",
           "summary": "Prepare a separate Unreal import/render experiment using an explicitly selected existing Unreal project and licensed installed engine. This inspected ANDOLAN source has no Unreal project. Keep the current Rust/Godot/browser engines in place. Import the exact portable GLB, verify the 48 by 56 m scale after metre-to-centimetre handling, set collision/navigation deliberately, and return actual editor/import/render evidence before claiming integration.",
           "artifactUri": "projects/andolan-yuga-development/README.md#team-responsibilities"
+        },
+        {
+          "key": "workbench-references",
+          "title": "Yuga resources and device preflight",
+          "artifactUri": "projects/andolan-yuga-development/WORKBENCH.md",
+          "summary": "Reviewed sources, suggested versus guarded actions, compatibility and resource eval handoff."
+        },
+        {
+          "key": "prompt-model-eval",
+          "title": "ANDOLAN / YUGA role: Local model evaluation lead",
+          "summary": "Pin model repository revisions and exact weight artifacts. Compare repeatable code/test and owned-image evaluation tasks before recommending any model. Do not initiate downloads or training, and never treat a model card as a measured Yuga result.",
+          "artifactUri": "projects/andolan-yuga-development/WORKBENCH.md#team-role-additions"
+        },
+        {
+          "key": "prompt-asset-provenance",
+          "title": "ANDOLAN / YUGA role: Asset provenance steward",
+          "summary": "Separate original production assets, approved derivatives and generated concepts. Track rights, source revisions, input ownership and each derivative digest before accepting any mesh, texture or render.",
+          "artifactUri": "projects/andolan-yuga-development/WORKBENCH.md#team-role-additions"
+        },
+        {
+          "key": "prompt-gpu-preflight",
+          "title": "ANDOLAN / YUGA role: GPU preflight steward",
+          "summary": "Collect read-only host facts and scope evidence. Keep observed versus job-verified devices separate. Verify owners, cost ceilings and placement from device receipts; planning does not start or rent compute.",
+          "artifactUri": "projects/andolan-yuga-development/WORKBENCH.md#team-role-additions"
+        },
+        {
+          "key": "prompt-browser-renderer",
+          "title": "ANDOLAN / YUGA role: Browser renderer engineer",
+          "summary": "Own bounded PlayCanvas loading, visibility and browser frame-budget changes. Keep Rust/WASM as gameplay authority; measure draw calls and first render on pinned fixtures and respect asset notices.",
+          "artifactUri": "projects/andolan-yuga-development/WORKBENCH.md#team-role-additions"
+        },
+        {
+          "key": "prompt-native-acceptance",
+          "title": "ANDOLAN / YUGA role: Native acceptance engineer",
+          "summary": "Own exact Godot and browser acceptance and verify engine presentation across keyboard and map boundaries. Unreal NullRHI is descriptor validation only; preserve native baseline and unrelated authoring work.",
+          "artifactUri": "projects/andolan-yuga-development/WORKBENCH.md#team-role-additions"
+        },
+        {
+          "key": "pushed-baseline-monsoon-20261126",
+          "title": "Yuga update: authored Monsoon district and solo Ember listening",
+          "summary": "Inspection at a35493d67cf5111d7da2ff9eea6c58ed3499aeca; asset source 146474831e2354122dd121f43ffda53e19efa9b1. Monsoon Exchange is an authored survey, Blender/GLB, drawings and browser walk. Ember audio is a separate solo drill. Monsoon native authority, ten connected seats and human audio acceptance are pending. The earlier Route Lab remains a fixture, not this district.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/art/monsoon-exchange/README.md"
+        },
+        {
+          "key": "prompt-district-commissioning",
+          "title": "ANDOLAN / YUGA role: District commissioning engineer",
+          "summary": "Pin the survey and scene. Audit coordinate transforms, legal surfaces, player start pads, objective disks, exits and dry routes. Stage the Rust room adapter on an isolated branch; keep Godot/PlayCanvas presentation and Valve reference rights separate. Return observed results for each gate, not a single blanket pass.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/art/monsoon-exchange/qa/README.md"
+        },
+        {
+          "key": "prompt-competitive-audio-qa",
+          "title": "ANDOLAN / YUGA role: Competitive audio QA lead",
+          "summary": "Compare expected vs actual cue eligibility and captions without disclosing hidden positions. Test boundaries, both duties, reconnect without stale sounds, muted captions and mono; measure intelligibility separately on physical devices. Do not claim that solo playback or Rust rule tests are a ten-player audio acceptance.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/docs/design/ember-rite-5v5/audio/qa.md"
         }
       ],
       "board": {

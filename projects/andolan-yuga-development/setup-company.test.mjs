@@ -6,7 +6,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { spawnSync } from 'node:child_process';
 import { createNativeCall, createToolHandler } from '../../tools/atlas-mcp.mjs';
-import { bindingUri, validateCompanyKits } from '../../scripts/apply-company-kits.mjs';
+import { applyCompanyKits, bindingUri, validateCompanyKits } from '../../scripts/apply-company-kits.mjs';
 import { MODEL, REPOSITORY_URL, repositoryIdentity, prepareCompany, applyCompany } from './setup-company.mjs';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
@@ -28,7 +28,7 @@ async function fixture(t) {
 
 test('the reviewed company kit and model profile match the native schema and exact model admission', () => {
   assert.equal(validateCompanyKits(kit), kit);
-  assert.equal(kit.companies[0].employees.length, 10);
+  assert.equal(kit.companies[0].employees.length, 17);
   const profile = JSON.parse(fs.readFileSync(path.join(directory, 'profile.json')));
   assert.equal(profile.models[0].id, MODEL);
   assert.equal(profile.models[0].contextTokens, 8192);
@@ -57,7 +57,7 @@ test('real native setup creates repository-bound definitions, role prompts and p
   const company = result.snapshot.companies.find(row => row.id === prepared.companyId);
   assert.equal(company.repoUrl, REPOSITORY_URL);
   assert.equal(result.receipt.created.employeeDefinitions, prepared.preview.projected.employeeDefinitions);
-  assert.equal(result.receipt.roleBindings.length, 10);
+  assert.equal(result.receipt.roleBindings.length, 17);
   assert.equal(result.receipt.pendingModelSelections.length, 6);
   assert.equal(result.receipt.teamState, 'definitions_applied_execution_not_started');
   for (const request of result.receipt.pendingModelSelections) {
@@ -131,4 +131,43 @@ test('CLI preview is read-only and explicit apply writes a real native receipt i
   assert.equal(receipt.providerRequests, 0);
   assert.equal(receipt.externalWrites, 0);
   assert.equal((await f.restart()).companies.find(row => row.id === 'andolan-yuga-development').repoUrl, REPOSITORY_URL);
+});
+
+
+test('upgrades a real existing ten-role Yuga kit additively without reassigning staff, grants or queues', async t => {
+  const f=await fixture(t),old=structuredClone(kit),spec=old.companies[0];
+  const additions=new Set(['model-eval','asset-provenance','gpu-preflight','browser-renderer','native-acceptance','district-commissioning','competitive-audio-qa']);
+  spec.employees=spec.employees.filter(e=>!additions.has(e.key));
+  spec.roadmap=spec.roadmap.filter(r=>!additions.has(r.ownerKey));
+  spec.knowledge=spec.knowledge.filter(r=>!['workbench-references','pushed-baseline-monsoon-20261126'].includes(r.key)&&!additions.has(r.key.replace(/^prompt-/,'')));
+  await applyCompanyKits(old,{snapshot:f.snapshot,command:(action,body)=>f.command(action,action==='create_company'?{...body,repoUrl:REPOSITORY_URL}:body)});
+  const before=structuredClone(f.snapshot);
+  const older=before.employees.filter(row=>row.companyId===spec.id).map(row=>row.id);
+  assert.ok(older.length>=10);
+  const result=await applyCompany({snapshot:f.snapshot,command:f.command});
+  assert.equal(result.receipt.created.employeeDefinitions,7);
+  assert.equal(result.receipt.roleBindings.filter(row=>additions.has(row.roleKey)).length,7);
+  assert.ok(older.every(id=>result.snapshot.employees.some(row=>row.id===id)));
+  assert.deepEqual(result.snapshot.authority.grants,before.authority.grants);
+  assert.deepEqual(result.snapshot.jobs,before.jobs);
+  assert.deepEqual(result.snapshot.policy,before.policy);
+  assert.equal((await applyCompany({snapshot:f.snapshot,command:f.command})).receipt.mutations,0);
+});
+
+test('migrates a prior workbench kit exactly once without expanding model or execution scope', async t => {
+  const f=await fixture(t),old=structuredClone(kit),spec=old.companies[0];
+  const roles=new Set(['district-commissioning','competitive-audio-qa']);
+  spec.employees=spec.employees.filter(row=>!roles.has(row.key));
+  spec.roadmap=spec.roadmap.filter(row=>!roles.has(row.ownerKey));
+  spec.knowledge=spec.knowledge.filter(row=>row.key!=='pushed-baseline-monsoon-20261126'&&!roles.has(row.key.replace(/^prompt-/,'')));
+  await applyCompanyKits(old,{snapshot:f.snapshot,command:(action,body)=>f.command(action,action==='create_company'?{...body,repoUrl:REPOSITORY_URL}:body)});
+  const before=structuredClone(f.snapshot);
+  const result=await applyCompany({snapshot:f.snapshot,command:f.command});
+  assert.equal(result.receipt.created.employeeDefinitions,2);
+  assert.equal(result.receipt.pendingModelSelections.length,6);
+  assert.equal(result.receipt.pendingModelSelections.some(row=>roles.has(row.roleKey)),false);
+  assert.equal(result.receipt.roleBindings.filter(row=>roles.has(row.roleKey)).length,2);
+  for (const key of ['policy','schedules','jobs','activeCompanyId']) assert.deepEqual(result.snapshot[key],before[key]);
+  assert.deepEqual(result.snapshot.authority.grants,before.authority.grants);
+  assert.equal((await applyCompany({snapshot:await f.restart(),command:f.command})).receipt.mutations,0);
 });

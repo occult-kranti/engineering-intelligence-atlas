@@ -114,6 +114,10 @@
       {
         "command": "atlas.creativeDevelopment",
         "title": "Daftar: Creative Development"
+      },
+      {
+        "command": "atlas.yugaWorkbench",
+        "title": "Daftar: Plan Yuga GPU Workbench"
       }
     ],
     "viewsContainers": {

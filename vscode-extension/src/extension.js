@@ -7,6 +7,7 @@ const { AtlasClient, origin, studioUrl } = require('./client');
 const {OPERATIONS,scopeRecords,managementCommand,ownershipSummary}=require('./management');
 const {askCreativeAction,inventoryText}=require('./creative');
 const {PRIMARY_MODEL,developmentReport,askDevelopmentAction,boundedMoECommand}=require('./development');
+const {chooseWorkbench,repoIdentity,REPO:YUGA_REPO}=require('./yuga-workbench');
 const { RuntimeClient } = require('./runtime-client');
 const { ComputeConnection, fetchVastInstances, validateProfile } = require('./compute-connection');
 const { createOfficePanel } = require('./workbench-panel');
@@ -473,6 +474,7 @@ function activate(context) {
     post({type:'developmentState',companyId,...development});if(inventory)post({type:'creativeState',companyId,inventory});
     const context={company,snapshot,...development,inventory,connectionKind};
     const action=await askDevelopmentAction(vscode.window,context,assertCurrent);assertCurrent();if(!action)return;
+    if(action.kind==='yuga')return await runYugaWorkbench(context,assertCurrent);
     if(action.kind==='connect')return await connectRuntime();
     if(['blender','unreal'].includes(action.kind))return await creativeTools({tool:action.kind,run:true});
     if(action.kind==='report') {
@@ -515,9 +517,27 @@ function activate(context) {
     }
     await refresh();
   }
+  async function runYugaWorkbench(context,assertCurrent) {
+    const webContext={...context,hostKind:vscode.env.remoteName?'remote-extension-host':'local-extension-host'};
+    return await chooseWorkbench({ui:vscode.window,context:webContext,assertCurrent,showReport:async content=>{
+      const document=await vscode.workspace.openTextDocument({language:'markdown',content});assertCurrent();
+      await vscode.window.showTextDocument(document,{preview:true});assertCurrent();
+    }});
+  }
+  async function yugaWorkbench() {
+    requireTrust(); await ensureCompanySelection();
+    const c=currentClient(),companyId=selectedCompany,version=epoch,scopeVersion=scopeEpoch,kind=connection.kind;
+    const assertCurrent=()=>{requireTrust();if(disposed||version!==epoch||scopeVersion!==scopeEpoch||companyId!==selectedCompany)throw new Error('The selected workspace changed. Review the Yuga plan again.');};
+    const snapshot=(await c.snapshot()).snapshot;assertCurrent();
+    const company=snapshot.companies?.find(row=>row.id===companyId);
+    if(company?.status!=='active'||repoIdentity(company.repoUrl)!==YUGA_REPO)throw new Error('Select the active ANDOLAN / YUGA company bound to the exact repository.');
+    const [development,creative]=await Promise.allSettled([c.development(companyId),kind==='runtime'?c.creative('snapshot',{companyId}):Promise.resolve(null)]);assertCurrent();
+    return await runYugaWorkbench({company,models:development.status==='fulfilled'?development.value.models:null,inventory:creative.status==='fulfilled'?creative.value:null},assertCurrent);
+  }
   async function openWebsite(){return vscode.env.openExternal(vscode.Uri.parse(connection?.kind==='cloud'?connection.url:'https://occult-kranti.github.io/engineering-intelligence-atlas/'));}
   async function computeCenter() {
     const selected = await vscode.window.showQuickPick([
+      { label:'Yuga GPU Workbench',action:yugaWorkbench,description:'Read-only device preflight and project handoff' },
       { label:'Creative development · MoE, Blender & Unreal',action:()=>onMessage({type:'creativeDevelopment'}),description:'Review scoped model and creative work'},
       { label: 'Donna · ownership, models & environments', action: () => computeOffice.menu(), description: verified ? 'Manage this workspace' : 'Connect a workspace first' },
       { label: 'Start workspace on this host', action: startLocalRuntime, description: vscode.env.remoteName ? 'Uses the current Remote-SSH extension host' : 'Standalone backend; no desktop app needed' },
@@ -539,6 +559,7 @@ function activate(context) {
     })().finally(() => { pollPromise = null; }); return pollPromise;
   }
   const commands = {
+    'atlas.yugaWorkbench':yugaWorkbench,
     'atlas.manageTeam':()=>onMessage({type:'manageTeam'}),'atlas.reviewOwnership':reviewOwnership,'atlas.creativeTools':()=>onMessage({type:'creativeTools'}),'atlas.creativeDevelopment':()=>onMessage({type:'creativeDevelopment'}),
     'atlas.openOffice': openOffice, 'atlas.startLocalRuntime': startLocalRuntime, 'atlas.startPersistentRuntime': startPersistentRuntime, 'atlas.connectRuntime': () => connectRuntime(), 'atlas.connectCompute': connectCompute,
     'atlas.openComputeCenter': computeCenter, 'atlas.hireCloudOperator': () => computeOffice.hireOperator(), 'atlas.copyMcpConfig': copyMcpConfig,

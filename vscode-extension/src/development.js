@@ -124,6 +124,7 @@ async function askDevelopmentAction(ui, context, assertCurrent=()=>{}) {
   const {company,snapshot,models,status,connectionKind}=context;
   const choose=async(items,title)=>{const selected=await ui.showQuickPick(items,{title,ignoreFocusOut:true});assertCurrent();return selected;};
   const items=[{id:'report',label:'Review model, worker and creative readiness',description:modelReadiness(models)}];
+  if (require('./yuga-workbench').repoIdentity(company.repoUrl)==='occult-kranti/andolan' && company.status==='active') items.push({id:'yuga',label:'Plan Yuga GPU Workbench',description:'Read-only local or Remote-SSH host evidence'});
   if (connectionKind!=='cloud' && models) items.push({id:'select',label:'Assign installed Qwen MoE to an employee'},
     {id:'pull',label:'Download reviewed Qwen MoE',description:'About 19 GB published artifact; review before download'},
     {id:'cancel',label:'Cancel a pending model download'},
@@ -132,7 +133,7 @@ async function askDevelopmentAction(ui, context, assertCurrent=()=>{}) {
     {id:'unreal',label:'Unreal · inspect or validate an approved project',description:'NullRHI validation; no rendering or gameplay'});
   else items.push({id:'connect',label:'Connect a headless creative runtime',description:'Replaces this editor’s current connection'});
   const action=await choose(items,`Creative development · ${safeText(company.name,120)}`);if(!action)return;
-  if (['report','blender','unreal','connect'].includes(action.id)) return {kind:action.id};
+  if (['report','blender','unreal','connect','yuga'].includes(action.id)) return {kind:action.id};
   if (action.id==='cancel') {
     const requests=models.requests.filter(row=>['queued','pulling'].includes(row.status)&&row.model===PRIMARY_MODEL);
     if (!requests.length) throw new Error('This company has no pending Qwen MoE download.');

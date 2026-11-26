@@ -1,0 +1,47 @@
+# Yuga compute workbench and resource index
+
+From a trusted VS Code workspace, open **Daftar: Plan Yuga GPU Workbench** on the active company whose repository binding is exactly `occult-kranti/ANDOLAN`. The command also appears in **Daftar: Donna Compute and Ownership** and in that company's **Creative Development** menu. It reads model/creative inventory from the configured Daftar runtime and offers a separate optional read-only query on the VS Code extension host. If VS Code is connected to a runtime through a local SSH tunnel but the extension runs locally, the inventory probe addresses your local machine. For real remote GPU observation open VS Code **Remote–SSH** on the previously owner-approved host, check its host key, and run this command there. A runtime connected to that window is still a separate identity until reconciled with evidence.
+
+1. Start with **CPU / CI only** and pin the exact active ANDOLAN commit, checked-in lockfiles, fixtures and acceptance commands. Keep Rust/WASM gameplay authority, PlayCanvas rendering, Godot native comparison and experimental Unreal import separate.
+2. Review **Single graphics GPU · 48 GiB target** first for supervised integrated work. Run Qwen, Blender, then Unreal sequentially, releasing each device allocation and checking memory between stages. For overlap, use **Two GPU hosts · 24 + 48 GiB targets** or **Two GPUs on one host · 24 + 48 GiB targets**, after measuring each. The coding target is conditional; 24 GiB is not a guaranteed fit. With split hosts choose the coding/graphics lane in each corresponding editor and compare their separate plans. With one two-GPU host, the plan suggests distinct physical GPU UUIDs, not pooled VRAM. An observed memory threshold is not a concurrency, graphics API, driver or tool-specific binding guarantee.
+3. Optional local read-only query executes a fixed executable and arguments equivalent to:
+   ```sh
+   nvidia-smi --query-gpu=uuid,name,memory.total,memory.free,driver_version --format=csv,noheader,nounits
+   ```
+   Nothing is probe-launched until that exact chooser item is selected. Missing executable, timeout or invalid report does not produce a device claim. The workbench shows observed GPU summary plus configured runtime inventory; it never treats one as evidence for the other.
+4. Review the unsaved Markdown plan. Keep UUIDs private. The SHA-256 digest covers the plan body and binds reported input state; it is not a signature, expiration mechanism, authorization, assignment or rate quote. The document does not launch a job. Re-run after a connection, assignment, device, project or price change. Check interconnect, per-card measured memory, driver and graphics support on the precise host; model parameter count, total VRAM and offer marketing do not establish task fit.
+5. Reopen the existing approval-gated **Daftar: Creative Development** to assign the approved installed `qwen3-coder:30b-a3b-q4_K_M` digest to an eligible employee and separately review a 2-minute bounded text task. Profile: 8192 total context tokens, max 8000 task token budget and first single-concurrency trial. Existing model controller enforces the exact tag; others are evaluation links only. A proposed device in this plan does not change the daemon configuration.
+6. Open **Daftar: Creative Tools** on the configured workspace to review assigned tools and approved projects for Blender or Unreal checks. Run one bounded actual Blender job first and compare its real CPU/GPU output with the 48 × 56 m Route Lab evidence. The existing Unreal path is descriptor inspection and DataValidation with NullRHI. Use an independently approved Unreal editor project for actual GLB import, orientation, 4,800 × 5,600 cm dimensions, collision, traversal and frames. No renderer fallback is treated as GPU success.
+7. **Paid hardware remains a separate decision.** Use the existing read-only Vast instance discovery/connect flow for a host you already own. Review a real offer, price/transfer/storage/overrun ceilings, isolation and refund terms before renting. Use scoped SSH keys, loopback for runtime/provider services, verified known hosts and trusted pinned images. Keep authorized outputs in an actual backup before stopping/destroying; stop can leave storage charges. This feature does not search marketplace offers, buy, stop, destroy, download model weights, launch provider/tool jobs, or mutate company authority.
+
+## Resource catalog
+
+The [extension catalog](../../vscode-extension/src/yuga-resources.json) includes 22 stable IDs, each with a primary-source link, Yuga use and execution classification. It is data for the reader, not installation instructions. Start with the pinned [ANDOLAN source](https://github.com/occult-kranti/ANDOLAN/commit/a35493d67cf5111d7da2ff9eea6c58ed3499aeca), check the reported draft [Route Lab](https://github.com/occult-kranti/ANDOLAN/pull/1) and preserve active branch edits. Compare Godot 4.6.3 tests against the committed accepted editor version; retain exact lockfile hashes and GLB scene/version evidence.
+
+- **Use in project**: PlayCanvas loads browser HUD/geometry, Rust/WASM owns authoritative state, Godot supplies native practice/acceptance, Blender authors the .blend and exports GLB, Khronos validates glTF structure. None substitute for held-out collision and focus tests.
+- **Reference or independent study**: Unreal Interchange experimental import, Recast navigation comparison, OpenCode Game Studios workflow review. Do not run third-party hooks or turn optional artist/demo assets into redistributable material merely because project code has a license.
+- **Guarded model**: Qwen3-Coder-30B-A3B-Instruct upstream and reviewed exact Ollama Q4_K_M distribution are separately identified. Review the actual runtime digest, resource and context ceilings; not a GPU result.
+- **Evaluation only**: Qwen2.5-Coder-7B for a small code baseline; Qwen3-VL-8B for owned screenshot criticism; FLUX.1-schnell and Qwen-Image for concept iteration; TripoSR for disposable mesh proxies; ComfyUI for explicit pinned workflow study; vLLM parallel serving for a separate fabric trial. Do not enable any via Daftar. Check immutable revision, weight/file digest, licenses/terms, input rights, exact provider dependencies and benchmark against Yuga fixtures before proposing promotion.
+- **Infrastructure references**: the Vast search and lifecycle docs and VS Code Remote–SSH apply to the chosen host and identity. This feature assumes no particular availability or price.
+
+## Production handoff
+
+Use the [Monsoon Exchange and Ember Rite handoff](PRODUCTION-HANDOFF.md) for authored district intake, competitive listener QA and the ten-seat retake backlog. The separate Route Lab remains a portable fixture. These pushes do not make Monsoon a playable server map or prove networked audio, Unreal, or GPU performance.
+
+## Team role additions
+
+The repository-bound [company kit](company-kit.json), applied by [setup-company.mjs](setup-company.mjs), adds five definition roles, five roadmap items and six knowledge entries. Preview first from the Daftar checkout using `node projects/andolan-yuga-development/setup-company.mjs --state-dir /absolute/path/to/current/native/state`. If the native target identity and consequences are approved, re-run with `--apply`; optionally provide a new `--report` absolute path. This remains a native local/admin entry point, not an editor mutation. Never start a second live writer merely to apply definitions. The importer reuses the exact repository binding and retains operator names, paused roles, jobs, schedules, current grants and budgets on repeated reads/applies. It does not start a worker or configure a model.
+
+| Role | First deliverable | Promotion evidence |
+|---|---|---|
+| Local model evaluation lead | Run a fixed Yuga Rust/GDScript/bpy/vision evaluation design | Separate model, runtime digest and measured residency; no candidate status by suggestion alone |
+| Asset provenance steward | Build approved inputs and derivative register | Source terms, identity, per-output hash, mesh quality and owned reference receipt |
+| GPU preflight steward | Pair workbench observations with owner-scoped runtime | Nonfallback model/render device receipt, independent storage/transfer cap |
+| Browser renderer engineer | Check a small PlayCanvas field/route | Browser-specific draw calls, first render and accessibility; no simulation authority drift |
+| Native acceptance engineer | Compare Godot native practice and browser contract | Independent layout, focus, collision and map ledger; Unreal outcomes separate |
+
+Existing roles continue: coordinator, Blueprint steward, knowledge curator, QA lead, GitHub steward, code engineer, Rust authority engineer, Blender artist, map engineer, Unreal experiment engineer. New specialists use vetted existing packaged skills without broadening the managed model allowlist or granting tool permissions.
+
+## Acceptance and stop points
+
+`node --test vscode-extension/test/yuga-workbench.test.js vscode-extension/test/extension.test.js` runs the extension command and parser/plan fixtures. In a directory with built native helper, `node --test projects/andolan-yuga-development/setup-company.test.mjs` exercises real isolated company application and rerun. The fixture probes use synthetic data. A real GPU/driver, paid SSH host, single/parallel inference, render, Unreal project and owner state were not touched by these tests.

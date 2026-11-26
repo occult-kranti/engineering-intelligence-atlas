@@ -184,11 +184,12 @@ exports.run = async function run() {
 
     const commands = await vscode.commands.getCommands(true);
     const expectedCommands = extension.packageJSON.contributes.commands.map(command => command.command);
-    assert.equal(expectedCommands.length, 18, 'The installed candidate must retain all released commands and scoped company tools');
-    assert.equal(new Set(expectedCommands).size,18,'Commands must not duplicate a released identity');
+    assert.equal(expectedCommands.length, 19, 'The installed candidate must retain all released commands and scoped company tools');
+    assert.equal(new Set(expectedCommands).size,expectedCommands.length,'Commands must not duplicate a released identity');
     assert.ok(expectedCommands.includes('atlas.connectRuntime'));
     assert.ok(expectedCommands.includes('atlas.creativeTools'));
     assert.ok(expectedCommands.includes('atlas.creativeDevelopment'));
+    assert.ok(expectedCommands.includes('atlas.yugaWorkbench'));
     for (const command of expectedCommands) assert.ok(commands.includes(command), `Registered command missing: ${command}`);
     receipt.commands = expectedCommands;
     receipt.checks.push('All contributed Atlas commands registered');
@@ -205,6 +206,17 @@ exports.run = async function run() {
     assert.equal(development.PRIMARY_MODEL,'qwen3-coder:30b-a3b-q4_K_M');
     assert.throws(()=>development.modelSnapshot({companyId:'other'},'selected'));
     receipt.checks.push('Installed creative contract enforces scope, bounded inputs and honest Adobe readiness');
+    const yuga = require(path.join(installedRoot, 'src', 'yuga-workbench.js'));
+    assert.ok(hashes['src/yuga-workbench.js'] && hashes['src/yuga-resources.json'], 'Installed package must include the Yuga planner and catalog');
+    const company = {id:'fixture-yuga',status:'active',repoUrl:'https://github.com/occult-kranti/ANDOLAN'};
+    const yugaPlan = yuga.planYuga({company,preset:'cpu-ci'});
+    assert.equal(yugaPlan.status,'plan_only_not_authorization');
+    assert.match(yugaPlan.sourceBaseline.commit,/^[a-f0-9]{40}$/);
+    assert.equal(yugaPlan.sourceBaseline.districtStatus,'authored_map_study_not_server_playable');
+    assert.equal(yugaPlan.sourceBaseline.audioStatus,'solo_rehearsal_not_ten_seat_acceptance');
+    assert.ok(yugaPlan.resources.includes('monsoon-exchange-source') && yugaPlan.resources.includes('ember-rite-listener-qa'));
+    assert.deepEqual(yugaPlan.effects,{rents:0,providerRequests:0,downloads:0,jobsStarted:0,grantsChanged:0});
+    assert.throws(()=>yuga.planYuga({company:{...company,repoUrl:'https://github.com.example.invalid/occult-kranti/ANDOLAN'},preset:'cpu-ci'}),/exact repository/);
 
     // Exercise the installed extension's actual commands. The separate browser
     // and desktop UI gates cover rendered layout; this gate proves installed

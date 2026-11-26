@@ -1,5 +1,7 @@
 # ANDOLAN / YUGA development company
 
+[Current production handoff: Monsoon Exchange and Ember Rite](PRODUCTION-HANDOFF.md) · [GPU workbench](WORKBENCH.md)
+
 This package prepares a repository-bound Daftar company for coding, map design,
 Blender production, independent review and a separate Unreal import experiment.
 It includes a real additive native setup command and an original portable
@@ -174,3 +176,5 @@ company/model/creative inventory, apply this kit to that exact workspace, and ru
 one bounded code task plus a creative operation. Record the actual model digest,
 memory, elapsed time, artifact hash and outcome. Keep the existing bounded
 development allowance distinct from recurring instance or hosting authorization.
+
+See [Yuga GPU Workbench and resource index](WORKBENCH.md) for the editor preflight, model boundaries, and five additive specialist roles.

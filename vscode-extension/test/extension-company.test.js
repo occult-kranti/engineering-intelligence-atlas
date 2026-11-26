@@ -100,7 +100,7 @@ test('runtime restoration automatically discovers company tools without starting
   const discovery=h.calls.filter(call=>call[0]==='creative');assert.equal(discovery.length,1);assert.equal(discovery[0][1],'snapshot');assert.equal(discovery[0][2].companyId,'a');
   assert.equal(h.messages.find(message=>message.type==='creativeState').inventory.companyId,'a');
   assert.equal(JSON.stringify(h.messages).includes(runtimeConnection.controlToken),false);
-  assert.equal(h.registered.size,18);assert.equal(h.registered.has('atlas.connectRuntime'),true);assert.equal(h.registered.has('atlas.creativeTools'),true);assert.equal(h.registered.has('atlas.creativeDevelopment'),true);
+  assert.equal(h.registered.size,19);assert.equal(h.registered.has('atlas.connectRuntime'),true);assert.equal(h.registered.has('atlas.creativeTools'),true);assert.equal(h.registered.has('atlas.creativeDevelopment'),true);assert.equal(h.registered.has('atlas.yugaWorkbench'),true);
 });
 test('late creative discovery cannot replace a new company or reconnect a disconnected editor',async()=>{
   const pending=deferred();let reads=0;
