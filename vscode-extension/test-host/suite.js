@@ -211,6 +211,10 @@ exports.run = async function run() {
     const company = {id:'fixture-yuga',status:'active',repoUrl:'https://github.com/occult-kranti/ANDOLAN'};
     const yugaPlan = yuga.planYuga({company,preset:'cpu-ci'});
     assert.equal(yugaPlan.status,'plan_only_not_authorization');
+    assert.match(yugaPlan.sourceBaseline.commit,/^[a-f0-9]{40}$/);
+    assert.equal(yugaPlan.sourceBaseline.districtStatus,'authored_map_study_not_server_playable');
+    assert.equal(yugaPlan.sourceBaseline.audioStatus,'solo_rehearsal_not_ten_seat_acceptance');
+    assert.ok(yugaPlan.resources.includes('monsoon-exchange-source') && yugaPlan.resources.includes('ember-rite-listener-qa'));
     assert.deepEqual(yugaPlan.effects,{rents:0,providerRequests:0,downloads:0,jobsStarted:0,grantsChanged:0});
     assert.throws(()=>yuga.planYuga({company:{...company,repoUrl:'https://github.com.example.invalid/occult-kranti/ANDOLAN'},preset:'cpu-ci'}),/exact repository/);
 

@@ -6,6 +6,14 @@ const resources=require('./yuga-resources.json');
 const REPO='occult-kranti/andolan';
 const GPU=/^GPU-[a-fA-F0-9]{8}(?:-[a-fA-F0-9]{4}){3}-[a-fA-F0-9]{12}$/;
 const HASH=/^[a-f0-9]{64}$/;
+// Reviewed static evidence only: opening the report never contacts GitHub or a renderer.
+const SOURCE_BASELINE=Object.freeze({
+  branch:'game/yuga-hanuman-trial',
+  commit:'a35493d67cf5111d7da2ff9eea6c58ed3499aeca',
+  monsoonArtifactCommit:'146474831e2354122dd121f43ffda53e19efa9b1',
+  districtStatus:'authored_map_study_not_server_playable',
+  audioStatus:'solo_rehearsal_not_ten_seat_acceptance'
+});
 const PRESETS=Object.freeze({
   'cpu-ci':{label:'CPU / CI only',notes:'Use local authority and geometry checks. Do not provision a GPU.'},
   'one-48-sequential':{label:'Single graphics GPU · 48 GiB target',notes:'Run MoE, Blender, then Unreal separately. Wait for actual model unload and measured free VRAM before switching.'},
@@ -69,7 +77,7 @@ function planYuga({company,preset,observation,models,inventory,hostKind,splitLan
     unreal:{target:preset==='cpu-ci'?'not planned':preset==='two-split-hosts'&&splitLane!=='graphics'?'graphics host; verify separately':graphics?.uuid??'no eligible observation',
       handoff:'atlas.creativeTools',inventoryListed:!!tool('unreal'),capability:'descriptor / DataValidation with NullRHI only',gpuRenderVerified:false}
   };
-  const body={schemaVersion:1,companyId:company.id,repository:REPO,preset,status:'plan_only_not_authorization',hostKind:hostKind==='remote-extension-host'?'remote-extension-host':'local-extension-host',
+  const body={schemaVersion:1,sourceBaseline:SOURCE_BASELINE,companyId:company.id,repository:REPO,preset,status:'plan_only_not_authorization',hostKind:hostKind==='remote-extension-host'?'remote-extension-host':'local-extension-host',
     splitLane:preset==='two-split-hosts'&&['coding','graphics'].includes(splitLane)?splitLane:null,observationStatus:freshRows.length?'observed':observation?.status==='invalid'?'invalid':'unavailable',observedDevices:freshRows,
     observationBoundary:'The observed extension host is not cryptographically linked to a connected Daftar runtime/Vast instance. NVML observation alone does not prove device selection, graphics support, throughput or model fit.',
     recommendedScheduling:profile.notes,work,
@@ -79,7 +87,7 @@ function planYuga({company,preset,observation,models,inventory,hostKind,splitLan
   return {...body,planDigest:createHash('sha256').update(JSON.stringify(body)).digest('hex')};
 }
 function report(plan){
-  return '# Yuga compute handoff\n\nPrepared only. The SHA-256 digest binds this plan; it is not an execution authorization or a signature.\n\n'+'\x60\x60\x60json\n'+JSON.stringify(plan,null,2)+'\n\x60\x60\x60\n\n## Reviewed resources\n\n'+resources.map(row=>'- ['+row.id+']('+row.url+') · '+row.state+': '+row.use).join('\n')+'\n';
+  return '# Yuga compute handoff\n\nPrepared only. The SHA-256 digest binds this plan; it is not an execution authorization or a signature.\n\n'+'\x60\x60\x60json\n'+JSON.stringify(plan,null,2)+'\n\x60\x60\x60\n\n## Yuga production handoff\n\n- Monsoon Exchange: verify the authored Blender/GLB on CPU first. Stage spawn, collision and objective authority in a separate task.\n- Ember Rite: solo audio is not ten-client acceptance. Use the Mandala integration control, then check Monsoon side-swapped starts, interrupt, reconnect, and recipient-scoped cues.\n- Route Lab remains a separate fixture. This plan does not start a playtest, import, or render.\n\n## Reviewed resources\n\n'+resources.map(row=>'- ['+row.id+']('+row.url+') · '+row.state+': '+row.use).join('\n')+'\n';
 }
 async function chooseWorkbench({ui,context,assertCurrent=()=>{},observe=observeLocalGpu,showReport}){
   const options=Object.entries(PRESETS).map(([id,x])=>({id,label:x.label}));

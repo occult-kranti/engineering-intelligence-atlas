@@ -176,6 +176,26 @@
             "skills/game-reconstruction-engineering/SKILL.md",
             "skills/spatial-3d-production-engineering/SKILL.md"
           ]
+        },
+        {
+          "key": "district-commissioning",
+          "name": "District commissioning engineer",
+          "role": "Yuga map-to-authority integration engineer",
+          "departmentKey": "world-design",
+          "skillPaths": [
+            "skills/computational-geometry-engineering/SKILL.md",
+            "skills/game-reconstruction-engineering/SKILL.md"
+          ]
+        },
+        {
+          "key": "competitive-audio-qa",
+          "name": "Competitive audio QA lead",
+          "role": "Yuga listener and accessibility acceptance lead",
+          "departmentKey": "engineering",
+          "skillPaths": [
+            "skills/game-reconstruction-engineering/SKILL.md",
+            "skills/donna-execution-focus/SKILL.md"
+          ]
         }
       ],
       "services": [],
@@ -287,6 +307,34 @@
           "dependsOn": [
             "route-lab"
           ]
+        },
+        {
+          "key": "monsoon-geometry-intake",
+          "title": "Commission the authored Monsoon Exchange geometry",
+          "ownerKey": "district-commissioning",
+          "dependsOn": [
+            "native-crosscheck"
+          ],
+          "description": "Use the pinned survey and independent Blender/GLB checks to stage exactly ten pads, two rite disks and seven thresholds with runtime collision, scale, and clearance tests. Never use reference map files as production assets."
+        },
+        {
+          "key": "ember-listener-acceptance",
+          "title": "Validate Ember Rite recipient-scoped cues",
+          "ownerKey": "competitive-audio-qa",
+          "dependsOn": [
+            "source-baseline"
+          ],
+          "description": "First replay solo Chromium audio and Rust ritual checks, then collect eligible and ineligible listener receipts, reconnect lifecycle and device listening observations in an authorized test. Solo or unit results do not prove online Ember Rite."
+        },
+        {
+          "key": "monsoon-ten-seat-retake",
+          "title": "Qualify the ten-seat side-swapped Monsoon retake",
+          "ownerKey": "district-commissioning",
+          "dependsOn": [
+            "monsoon-geometry-intake",
+            "ember-listener-acceptance"
+          ],
+          "description": "After the Mandala integration control and the Monsoon runtime gates, test two teams of five: opening, interrupted rite, legal cross-site return, reconnect and retake. Keep the experimental map out of production matches until accepted."
         }
       ],
       "knowledge": [
@@ -397,6 +445,24 @@
           "title": "ANDOLAN / YUGA role: Native acceptance engineer",
           "summary": "Own exact Godot and browser acceptance and verify engine presentation across keyboard and map boundaries. Unreal NullRHI is descriptor validation only; preserve native baseline and unrelated authoring work.",
           "artifactUri": "projects/andolan-yuga-development/WORKBENCH.md#team-role-additions"
+        },
+        {
+          "key": "pushed-baseline-monsoon-20261126",
+          "title": "Yuga update: authored Monsoon district and solo Ember listening",
+          "summary": "Inspection at a35493d67cf5111d7da2ff9eea6c58ed3499aeca; asset source 146474831e2354122dd121f43ffda53e19efa9b1. Monsoon Exchange is an authored survey, Blender/GLB, drawings and browser walk. Ember audio is a separate solo drill. Monsoon native authority, ten connected seats and human audio acceptance are pending. The earlier Route Lab remains a fixture, not this district.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/art/monsoon-exchange/README.md"
+        },
+        {
+          "key": "prompt-district-commissioning",
+          "title": "ANDOLAN / YUGA role: District commissioning engineer",
+          "summary": "Pin the survey and scene. Audit coordinate transforms, legal surfaces, player start pads, objective disks, exits and dry routes. Stage the Rust room adapter on an isolated branch; keep Godot/PlayCanvas presentation and Valve reference rights separate. Return observed results for each gate, not a single blanket pass.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/art/monsoon-exchange/qa/README.md"
+        },
+        {
+          "key": "prompt-competitive-audio-qa",
+          "title": "ANDOLAN / YUGA role: Competitive audio QA lead",
+          "summary": "Compare expected vs actual cue eligibility and captions without disclosing hidden positions. Test boundaries, both duties, reconnect without stale sounds, muted captions and mono; measure intelligibility separately on physical devices. Do not claim that solo playback or Rust rule tests are a ten-player audio acceptance.",
+          "artifactUri": "https://github.com/occult-kranti/ANDOLAN/blob/a35493d67cf5111d7da2ff9eea6c58ed3499aeca/games/yuga-native/docs/design/ember-rite-5v5/audio/qa.md"
         }
       ],
       "board": {

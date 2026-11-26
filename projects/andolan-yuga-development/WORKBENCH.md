@@ -16,13 +16,17 @@ From a trusted VS Code workspace, open **Daftar: Plan Yuga GPU Workbench** on th
 
 ## Resource catalog
 
-The [extension catalog](../../vscode-extension/src/yuga-resources.json) includes 19 stable IDs, each with a primary-source link, Yuga use and execution classification. It is data for the reader, not installation instructions. Start with the pinned [ANDOLAN source](https://github.com/occult-kranti/ANDOLAN/commit/2acb45b3d61973a924fe5518c617e4fd2afb02d7), check the reported draft [Route Lab](https://github.com/occult-kranti/ANDOLAN/pull/1) and preserve active branch edits. Compare Godot 4.6.3 tests against the committed accepted editor version; retain exact lockfile hashes and GLB scene/version evidence.
+The [extension catalog](../../vscode-extension/src/yuga-resources.json) includes 22 stable IDs, each with a primary-source link, Yuga use and execution classification. It is data for the reader, not installation instructions. Start with the pinned [ANDOLAN source](https://github.com/occult-kranti/ANDOLAN/commit/a35493d67cf5111d7da2ff9eea6c58ed3499aeca), check the reported draft [Route Lab](https://github.com/occult-kranti/ANDOLAN/pull/1) and preserve active branch edits. Compare Godot 4.6.3 tests against the committed accepted editor version; retain exact lockfile hashes and GLB scene/version evidence.
 
 - **Use in project**: PlayCanvas loads browser HUD/geometry, Rust/WASM owns authoritative state, Godot supplies native practice/acceptance, Blender authors the .blend and exports GLB, Khronos validates glTF structure. None substitute for held-out collision and focus tests.
 - **Reference or independent study**: Unreal Interchange experimental import, Recast navigation comparison, OpenCode Game Studios workflow review. Do not run third-party hooks or turn optional artist/demo assets into redistributable material merely because project code has a license.
 - **Guarded model**: Qwen3-Coder-30B-A3B-Instruct upstream and reviewed exact Ollama Q4_K_M distribution are separately identified. Review the actual runtime digest, resource and context ceilings; not a GPU result.
 - **Evaluation only**: Qwen2.5-Coder-7B for a small code baseline; Qwen3-VL-8B for owned screenshot criticism; FLUX.1-schnell and Qwen-Image for concept iteration; TripoSR for disposable mesh proxies; ComfyUI for explicit pinned workflow study; vLLM parallel serving for a separate fabric trial. Do not enable any via Daftar. Check immutable revision, weight/file digest, licenses/terms, input rights, exact provider dependencies and benchmark against Yuga fixtures before proposing promotion.
 - **Infrastructure references**: the Vast search and lifecycle docs and VS Code Remote–SSH apply to the chosen host and identity. This feature assumes no particular availability or price.
+
+## Production handoff
+
+Use the [Monsoon Exchange and Ember Rite handoff](PRODUCTION-HANDOFF.md) for authored district intake, competitive listener QA and the ten-seat retake backlog. The separate Route Lab remains a portable fixture. These pushes do not make Monsoon a playable server map or prove networked audio, Unreal, or GPU performance.
 
 ## Team role additions
 

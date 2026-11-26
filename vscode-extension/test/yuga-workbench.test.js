@@ -83,3 +83,20 @@ test('workbench probes only explicitly, honors cancellation/stale view before sh
   assert.equal(probe,1);assert.equal(shown,1);
   assert.deepEqual(Object.keys(PRESETS).sort(),['cpu-ci','one-48-sequential','two-same-host','two-split-hosts']);
 });
+
+test('production handoff pins reviewed source but does not signal runtime acceptance',()=>{
+  const plan=planYuga({...base,preset:'cpu-ci'});
+  const baseline=plan.sourceBaseline;
+  const profile=require('../../projects/andolan-yuga-development/profile.json');
+  assert.equal(baseline.commit,profile.repository.inspectedCommit);
+  assert.equal(baseline.monsoonArtifactCommit,profile.repository.districtArtifactCommit);
+  assert.equal(baseline.districtStatus,'authored_map_study_not_server_playable');
+  assert.equal(baseline.audioStatus,'solo_rehearsal_not_ten_seat_acceptance');
+  for(const id of ['monsoon-exchange-source','monsoon-exchange-geometry-qa','ember-rite-listener-qa']){
+    assert.ok(plan.resources.includes(id));
+    assert.match(resources.find(row=>row.id===id).url,new RegExp('/blob/'+baseline.commit+'/'));
+  }
+  assert.match(report(plan),/solo audio is not ten-client acceptance/);
+  assert.match(report(plan),/Route Lab remains a separate fixture/);
+  assert.ok(Object.values(plan.effects).every(n=>n===0));
+});
