@@ -630,6 +630,54 @@ describe('OfficeWorker live authority changes',()=>{
 });
 
 
+describe('Donna execution focus in real worker dispatch', () => {
+ const focusPath='skills/donna-execution-focus/SKILL.md';
+ const actualBundle = fileURLToPath(new URL('../../company/skill-briefs.json', import.meta.url));
+ const actualFocus = () => (JSON.parse(fs.readFileSync(actualBundle, 'utf8')) as Array<{path:string; body:string; sha256:string}>).find(b=>b.path===focusPath)!;
+ const writeBundle = (seed:string, briefs:Array<{path:string; body:string; sha256:string}>) =>
+   fs.writeFileSync(path.join(seed,'skill-briefs.json'),JSON.stringify(briefs));
+ const assign = (f:ReturnType<typeof fixture>, kind:'assistant'|'specialist', offices:string|null, department:string|null) => {
+   f.state.employees.push({...f.state.employees[0]!,id:'scoped', companyId:'company-a', officeId:offices, departmentId:department, name:'Scoped Donna assistant', role:'Scoped operations worker', kind});
+ };
+ it.each([[null,null],['office-a',null],['office-a','department-a']])('automatically loads the checked package in scoped assistant dispatch (%s, %s)',async(office,department)=>{
+   const goal='Explain the research alternatives in depth and keep the full design deliverable.';
+   const f=fixture({jobs:[job({employeeId:'scoped',goal})]});
+   assign(f,'assistant',office,department);
+   fs.copyFileSync(actualBundle,path.join(f.seedDir,'skill-briefs.json'));
+   const bundle=JSON.parse(fs.readFileSync(actualBundle,'utf8'));
+   const specialistSkills=bundle.filter((b:{path:string})=>b.path!==focusPath).slice(0,2);
+   f.state.employees[1]!.skillPaths=[focusPath,...specialistSkills.map((b:{path:string})=>b.path)];
+   await f.worker.runOnce();
+   const [request,scope]=f.generate.mock.calls[0]!;
+   expect(request.system?.match(/Donna assistant response policy/g)).toHaveLength(1);
+   expect(request.system).toContain(actualFocus().sha256);
+   expect(request.system).toContain('give the short answer first, then the requested reasoning');
+   expect(request.system).toContain('never fill gaps with confidence');
+   expect(request.system).toContain('this skill shapes the handoff');
+   for(const brief of specialistSkills) expect(request.system).toContain(brief.sha256);
+   expect(request.prompt).toContain(goal);
+   expect(scope?.allowedTools).toEqual([]);
+   expect(f.state.jobs[0]?.status).toBe('completed');
+ });
+ it.each(['owner','specialist','ambiguous','tampered','github-tool','creative-tool'])('does not add the text-handoff policy for %s',async scenario=>{
+   const allowedTools=scenario==='github-tool'?['github.publish_changes']:scenario==='creative-tool'?['creative.execute']:[];
+   const f=fixture({jobs:[job({employeeId:scenario==='owner'?'donna':'scoped',allowedTools})],managedToolCapabilities:allowedTools,
+     executeTool:async()=>({summary:'Fixture complete',evidenceUrl:'fixture://receipt'}),
+     prepareContext:async()=>JSON.stringify({projects:[{id:'game',allowedOperations:['blender.render']}]}),
+   });
+   if(scenario!=='owner') assign(f,scenario==='specialist'?'specialist':'assistant','office-a',null);
+   const focus=actualFocus();
+   writeBundle(f.seedDir,scenario==='ambiguous'?[focus,focus]:scenario==='tampered'?[{...focus,body:focus.body+' unexpected'}]:[focus]);
+   await f.worker.runOnce();
+   expect(f.generate).toHaveBeenCalledOnce();
+   const request=f.generate.mock.calls[0]![0];
+   expect(request.system).not.toContain('Donna assistant response policy');
+   expect(request.system).not.toContain('donna-execution-focus');
+   if(allowedTools.length) expect(request.system).toContain('Return ONLY JSON');
+   expect(f.generate.mock.calls[0]![1]?.allowedTools).toEqual(allowedTools);
+ });
+});
+
 describe('scoped creative worker dispatch',()=>{
  it('refuses creative work on a host without that adapter before provider spend',async()=>{const f=fixture({jobs:[job({allowedTools:['creative.execute']})]});await f.worker.runOnce();expect(f.generate).not.toHaveBeenCalled();expect(f.calls.some(c=>c.action==='reserve_job')).toBe(false);expect(f.worker.status().lastError).toContain('not connected');});
  it('refuses two managed side effects in one model result before dispatch',async()=>{const f=fixture({jobs:[job({allowedTools:['creative.execute','github.publish_changes']})],managedToolCapabilities:['creative.execute','github.publish_changes']});await f.worker.runOnce();expect(f.generate).not.toHaveBeenCalled();expect(f.worker.status().lastError).toContain('separate jobs');});

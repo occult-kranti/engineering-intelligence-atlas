@@ -182,7 +182,13 @@ export class OfficeWorker {
     const assigned = [...new Set(employee.skillPaths)].slice(0, 20)
       .filter(skill => !ambiguous.has(skill)).map(skill => byPath.get(skill))
       .filter((brief): brief is typeof briefs[number] => brief !== undefined);
-    const selected = assigned.slice(0, 2);
+    const focusPath = 'skills/donna-execution-focus/SKILL.md';
+    const machineOutput = job.allowedTools.includes('github.publish_changes') || job.allowedTools.includes('creative.execute');
+    // Apply the packaged, verified policy to existing and future hierarchy
+    // assistants. It is not a stored grant and does not displace either skill slot.
+    const focus = employee.kind === 'assistant' && employee.id !== 'donna' && !machineOutput
+      && !ambiguous.has(focusPath) ? byPath.get(focusPath) : undefined;
+    const selected = assigned.filter(brief => brief.path !== focusPath).slice(0, 2);
     const assistantFile = employee.id === 'donna' ? 'donna.md' : employee.kind === 'assistant' ? 'shared-assistant.md' : null;
     const assistantPath = assistantFile ? path.join(this.options.seedDir, 'prompts', assistantFile) : null;
     const assistantBrief = assistantPath && fs.existsSync(assistantPath) && fs.statSync(assistantPath).size < 16000 ? fs.readFileSync(assistantPath, 'utf8') : '';
@@ -230,6 +236,7 @@ export class OfficeWorker {
     ].join('\n\n');
     const referenceSystem = [
       assistantBrief,
+      focus ? `Donna assistant response policy (${focus.sha256}):\n${focus.body}` : '',
       specialistBrief,
       roleReference ? `Role reference ${roleReference.key} (${roleReference.sha256}):\n${roleReference.brief}\nHandoff: ${roleReference.handoff}\nSource references (not fetched by this role): ${JSON.stringify(roleReference.references)}\nExamples: ${roleReference.examples.join(', ')}\nMetadata does not grant tools. Only the job's allowedActions grant capabilities.` : '',
       ...selected.map(b => `Role reference (${b.sha256}):\n${b.body.slice(0, 16000)}`),
