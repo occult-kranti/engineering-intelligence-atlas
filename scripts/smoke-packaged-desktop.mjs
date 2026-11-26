@@ -286,6 +286,8 @@ try {
   assert.deepEqual(invalidControls, [], 'The real composer must be valid before a local plan can be submitted.');
   await page.locator('#chat-send').click();
   await page.locator('#chat-status').filter({ hasText: 'Brief and plan saved.' }).waitFor({ state: 'visible' });
+  assert.equal(await page.locator('#donna-tab-thread').getAttribute('aria-selected'), 'true',
+    'A saved brief opens its conversation before subsequent canvas interactions.');
   await openCanvasSurface(page, 'goals');
   await page.locator('#workspace-goals').getByText(title, { exact: true }).waitFor({ state: 'visible' });
   const after = await page.evaluate(() => window.desktopBridge.officeSnapshot());
