@@ -2544,7 +2544,8 @@
       "kind": "documentation",
       "skillIds": [
         "agent-research-director",
-        "ai-open-model-research"
+        "ai-open-model-research",
+        "donna-execution-focus"
       ],
       "review": {
         "status": "reference-only",
@@ -12636,6 +12637,18 @@
         "skills/olympus-project-archive/SKILL.md",
         "skills/olympus-project-archive/references/source-pins.json",
         "company/role-library/research-skill-map.json"
+      ]
+    },
+    {
+      "skill": "donna-execution-focus",
+      "roleKeys": [],
+      "purpose": "Select action-first assistant text handoffs without altering task authority or machine-readable output.",
+      "resourceIds": [
+        "resource-ffc229d83891918f"
+      ],
+      "localReferences": [
+        "skills/donna-execution-focus/SKILL.md",
+        "company/role-library/donna.md"
       ]
     }
   ]
